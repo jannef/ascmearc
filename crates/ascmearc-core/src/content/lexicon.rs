@@ -18,7 +18,9 @@
 //! | `room:<id>` | a special room's `name` ("echoing hall", `data/room_effects/`) |
 //! | `skill:<id>` | its `name` in lower case ("open lock") |
 //! | `status:<id>` | its `name` in lower case ("hasted") |
+//! | `tag:<tag>` | a creature tag as the player reads it, its hyphens spaces ([`super::tag::spoken`]: "marsh thing") |
 //! | `terrain:<id>` | its `name` ("stone wall") |
+//! | `vision:<id>` | a vision profile's `name` as written ("Darkvision") |
 //! | `talent:<id>`, `tree:<id>` | a talent's (a profane gift's too) and a talent tree's `name` as written ("Cold-blooded") |
 //! | `weapon_skill:<id>` | its `name` in lower case ("long blades") |
 //! | `weapon_skill_phrase:<id>` | its `phrase`, how one is skilled in it ("with long blades") |
@@ -126,7 +128,13 @@ impl Lexicon for Content {
             "status" => Some(LexWord::new(
                 self.status(self.status_id(key)?).name.to_lowercase(),
             )),
+            // A creature tag as a word ("marsh thing"), its number guessed as `word:`'s is.
+            "tag" => {
+                let spoken = super::tag::spoken(key);
+                Some(LexWord::new(&spoken).many(is_plural(&spoken)))
+            }
             "terrain" => Some(LexWord::new(&self.terrain(self.terrain_id(key)?).name)),
+            "vision" => Some(LexWord::new(&self.vision(key)?.name)),
             "talent"
             | "tree"
             | "weapon_skill"
@@ -297,6 +305,17 @@ impl Content {
     /// A race by its name: `race:<id>` ("{race:a}": "a halfling").
     pub fn race_phrase(&self, id: &str) -> Phrase {
         Phrase::id(format!("race:{id}"))
+    }
+
+    /// A creature tag as the player reads it: `tag:<tag>` ("{target:num} {target:plural}":
+    /// "three marsh things").
+    pub fn tag_phrase(&self, tag: &str) -> Phrase {
+        Phrase::id(format!("tag:{tag}"))
+    }
+
+    /// A vision profile by its name: `vision:<id>` ("Darkvision").
+    pub fn vision_phrase(&self, id: &str) -> Phrase {
+        Phrase::id(format!("vision:{id}"))
     }
 
     /// A combat stance by its name: `stance:<id>`.

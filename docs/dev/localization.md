@@ -290,10 +290,11 @@ identified (`scroll_label_tests.rs::a_line_names_a_scroll_as_it_was_seen_then`).
 docs hold the table): `creature:<id>`, `object:<id>` (with `written`, `written_plural`, and
 `material`, for an item made of its own parts), `affix:<id>`, `material:<id>`, `part:<id>` (its
 `adjective`), `gem_size:<id>`, `gem_cut:<id>`, `stock:<material id>` (a piece's form word),
-`terrain:<id>`, `room:<id>` (a special room's name, #1998), `label:scroll|wand|rod|potion` (an
-unidentified type's name with its `{label}` and `{colour}` slots), `colour:<colour>`, and
-`word:<text>`: a word the data names without an id of its own (a natural attack's "bite", a
-thrown "stone", "something"), keyed
+`terrain:<id>`, `room:<id>` (a special room's name, #1998), `tag:<tag>` (a creature tag),
+`vision:<id>` (a vision profile's name), `label:scroll|wand|rod|potion` (an unidentified type's
+name with its `{label}` and `{colour}` slots), `colour:<colour>`, and `word:<text>`: a word the
+data names without an id of its own (a natural attack's "bite", a thrown "stone", "something"),
+keyed
 by its English, which is the word; `disease:<id>` (its name as written, "the shakes"); and
 `status:<id>`, `skill:<id>`, and `resource:<id>` (#1992: the name in lower case, as `race:<id>`'s,
 "hasted", "open lock", "rage"; `Content::status_phrase`, `skill_phrase`, `resource_phrase`), said
@@ -686,9 +687,25 @@ hunger's name (`Burden::name`, `Hunger::name`) and a burden's threshold (`Load::
 `seconds` by `n.number`, `hours_and_minutes` nesting two). A line says one in a role (the id is
 an `Arg::Msg`); a screen says one alone with `ui::text::word(id, form)` and the dumps and the
 wiki in English with `Content::english_word`. A word is lower case, as in a sentence; a label asks
-`Bare` ("Strength", "Not hungry"). The rest of #1996's words (resistance words, rarities, the
-equipment mark, `ActionKind::doing`, gender, alignment band, weather and vision, `Section::name`,
-`paths.rs`'s file kinds) are text until the issue's remainder converts them.
+`Bare` ("Strength", "Not hungry").
+
+The rest of #1996 follows the same pattern: a resistance's word and its row label
+(`ResistanceWord::word`, `label`: "resistant", "resistant to"), an item's rarity (`Rarity::word`,
+all four, `Unique` too), what a status keeps one from doing (`ActionKind::doing`, said in
+`health.cannot_while`), a gender's and an alignment band's name (`Gender::name`, `Band::name`),
+the weather's (`Weather::name`; its `Display` is its id, developer text), the weapon skills
+screen's sections (`Section::name`), and a compass direction as a sentence says it
+(`Dir::compass_word`, the voice heard from afar and a sound's direction; `compass_name` stays
+the English for what is still English text, the healing list's label). A worn
+thing's mark (`equipment::mark`) is an `Arg`: the slot's `mark` as the data's text, or
+`words.in_both_hands` nesting it. A vision profile is the lexicon id `vision:<id>` (its name as
+written, "Darkvision": the dev line and character creation) and a creature tag `tag:<tag>`
+(`tag::spoken`'s words, "marsh thing": a kill quest's target). What stays English: the quest
+roll's and a bane affix's descriptions, `Requirement::words` (the wiki's, which renders the bands
+in English), and a class's refusal (gender by its id, which is its English word). The files
+screen's kinds and what they hold (`paths.rs`, `Locations::entries`) are UI text
+(`files_screen.toml`), so `--paths` says them in English too; why a folder is where it is stays
+`paths.rs`'s.
 
 The checker needs nothing new: a nested template is an entry like any other (its roles and forms
 checked, a missing one a warning), and `lines`/`and` are list forms every language accepts.
@@ -724,8 +741,7 @@ language writes alike; a rider's damage type `damage_type:<id>`). The screens re
 the dumps and a ware's words render English (`english_msg`). Food's freshness (`rot::Stage::word`,
 `Freshness::word`) is `health.food_*`; **a sound heard** is `noise.toml`'s: what it is heard as
 (`SoundKind::heard_as`, `heard_*`), the clause (`you_hear`, `you_faintly_hear`), and the line
-(`heard`, `heard_from` with the direction a text role until `Dir::compass_name` is converted,
-#1996), nested in the look line's `heard_here`; the draught of an unseen shadow is
+(`heard`, `heard_from` with the direction `Dir::compass_word`), nested in the look line's `heard_here`; the draught of an unseen shadow is
 `creatures.cold_draught`; a special room is `room:<id>` (`{room:a}`, "in an echoing hall"; the
 wiki keeps `RoomEffectDef::with_article`). How hurt a creature looks is #1996's (`Health::word`).
 Still text (the rest of #1998): where stairs lead (`leads_to`, a level's or a branch level's
@@ -821,8 +837,7 @@ example:
      per clause, each clause its own entry or empty: `level_up_screen.toml`'s `explain`.
 
 **Words the screens still take from core as text** until core's words are converted (#1949):
-the gender's name, the alignment band's, the resistance words
-(`ResistanceWord::label`), an attack's source label and summary, the guild rank's title, the
+an attack's source label and summary, the guild rank's title, the
 conditions (`ui::conditions`), and the race, class, stance, resource, sign, skill, talent, tree, and
 need names data gives as English, the Characters list's among them (a save's summary keeps the
 race and the classes by id, "Names kept in saves").
@@ -838,7 +853,7 @@ rest prompt's words are the settings part's (`settings::fixed::REST`, #1936). Th
 segments (turn, position, light, vision, seed) and `dev.rs`'s overlay line stay literal.
 
 **The magic, scribe, and weapon skills screens** (#1938; `spells.rs` draws effects and has no
-text) still take as text the weapon skills' section names (`Section::name`) and the spell, school, caster style, and skill names data
+text) still take as text the spell, school, caster style, and skill names data
 gives as English (the scribe list's school headings are the school's id, capitalized). The magic
 screen's spell detail is cut in its room, not run over the frame (#1910 stays in `KNOWN` until its
 layout gives the detail the room).

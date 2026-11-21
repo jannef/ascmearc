@@ -412,7 +412,7 @@ fn lines_named(
     };
     let what = match stack.rarity() {
         Rarity::Normal => capitalized(&base),
-        rarity => format!("{} {base}", capitalized(rarity.word())),
+        rarity => format!("{} {base}", content.english_word(rarity.word(), "Bare")),
     };
     let parts = stack.parts(content);
     let made = content.describe_parts(&parts);

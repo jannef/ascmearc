@@ -46,7 +46,7 @@ use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
 use super::target::AimKind;
-use super::text::{UiText, object_screen as T, ui, ui_msg, ui_with};
+use super::text::{UiText, object_screen as T, ui, ui_msg, ui_with, word};
 use super::{ACCENT, ScreenName, TEXT, TEXT_DIM, rarity_color};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -459,7 +459,9 @@ impl ObjectScreen {
                 let mark = match (item, list) {
                     (Item::Floor(_), ObjectList::Eat) => Some(ui(T::MARK_LYING_HERE)),
                     (Item::Floor(_), _) => None,
-                    (Item::Pack(i), _) => equipment::mark(content, view.equipment(), i),
+                    (Item::Pack(i), _) => {
+                        equipment::mark(content, view.equipment(), i).map(|m| word(m, "bare"))
+                    }
                 };
                 let price = match item {
                     Item::Floor(_) => (view.price_tag(view.viewer(), s))

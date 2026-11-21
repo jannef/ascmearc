@@ -1,5 +1,6 @@
 //! Sight on the overworld: by daylight, twilight, moonlight, and weather.
 
+use super::util::word;
 use ascmearc_core::content::Content;
 use ascmearc_core::daylight::{
     MOONLIGHT_PER_CELL, SIGHT_DAY, SIGHT_MOONLIT, SIGHT_NIGHT, SIGHT_TWILIGHT, overworld_sight,
@@ -56,7 +57,7 @@ pub(super) fn overworld_sight_table(content: &Content) -> String {
             let sight = overworld_sight(full_moon, moonlight, def.sight);
             let under = match weather {
                 Weather::Overcast => "overcast".to_string(),
-                w => format!("in {}", w.name().to_lowercase()),
+                w => format!("in {}", word(w.name(), "bare")),
             };
             let _ = writeln!(
                 out,
@@ -69,7 +70,7 @@ pub(super) fn overworld_sight_table(content: &Content) -> String {
         let lost = content.climate().def(weather).sight;
         if lost > 0 {
             let sight = overworld_sight(noon, Light::DARK, lost);
-            let name = weather.name().to_lowercase();
+            let name = word(weather.name(), "bare");
             let _ = writeln!(out, "| Day, in {name} | {sight} cells |");
         }
     }

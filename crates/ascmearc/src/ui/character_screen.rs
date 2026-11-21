@@ -24,6 +24,7 @@ use ascmearc_core::burden::{Burden, Load};
 use ascmearc_core::character::{Character, Gender};
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::Content;
+use ascmearc_core::damage::ResistanceWord;
 use ascmearc_core::heal;
 use ascmearc_core::lang::{Arg, Phrase};
 use ascmearc_core::object::{Weight, format_weight};
@@ -37,8 +38,7 @@ const NAME_W: i32 = 14;
 
 /// The player's resistances as rows: one per word, in the order
 /// immune, resistant, vulnerable, each listing its kinds in damage type order; none at 0.
-fn resistance_rows(view: &PerceptionView<'_>) -> Vec<(&'static str, String)> {
-    use ascmearc_core::damage::ResistanceWord;
+fn resistance_rows(view: &PerceptionView<'_>) -> Vec<(ResistanceWord, String)> {
     let content = view.content();
     let own = view.own_resistances();
     [
@@ -52,7 +52,7 @@ fn resistance_rows(view: &PerceptionView<'_>) -> Vec<(&'static str, String)> {
             .filter(|(_, w)| *w == word)
             .map(|(k, _)| content.damage_type(*k).name.as_str())
             .collect();
-        (!kinds.is_empty()).then(|| (word.label(), kinds.join(", ")))
+        (!kinds.is_empty()).then(|| (word, kinds.join(", ")))
     })
     .collect()
 }
@@ -107,7 +107,7 @@ pub struct CharacterScreen {
     diseases: Vec<Phrase>,
     /// What they resist, in words only: a row per word ("Resistant
     /// to", "Vulnerable to", "Immune to") with the kinds it holds for, in that order.
-    resistances: Vec<(&'static str, String)>,
+    resistances: Vec<(ResistanceWord, String)>,
     weight: Weight,
     /// What they carry against what they can; `None` outside a run.
     load: Option<Load>,
@@ -131,7 +131,7 @@ pub struct CharacterScreen {
     talents: usize,
     /// Their alignment band's name, never the score; `None` without
     /// alignment rules.
-    alignment: Option<&'static str>,
+    alignment: Option<String>,
     /// Their oath kills (a dwarf with a Slayer's Oath, `docs/dev/oaths.md`): the tally, which
     /// they could keep themselves; `None` without an oath.
     oath_kills: Option<u32>,
@@ -278,7 +278,7 @@ impl CharacterScreen {
                 })
                 .collect(),
             talents: view.own_talents().iter().filter(|t| !t.class).count(),
-            alignment: view.own_alignment().map(|b| b.name()),
+            alignment: view.own_alignment().map(|b| word(b.name(), "Bare")),
             oath_kills: view.own_oath_kills(),
             guilds: (view.own_guilds().iter())
                 .map(|g| {
@@ -491,7 +491,7 @@ impl CharacterScreen {
             y += 1;
         }
         // `    Alignment     Kind`: the band, never the score.
-        if let Some(band) = self.alignment {
+        if let Some(band) = &self.alignment {
             if fits(y) {
                 console.print_in(x + 4, y, &ui(T::ALIGNMENT), TEXT, NAME_W - 1);
                 console.print(x + 4 + NAME_W, y, band, TEXT);
@@ -545,14 +545,14 @@ impl CharacterScreen {
             y += 1;
         }
         // `    Resistant to  fire, cold`, `    Vulnerable to acid`: words, never a percentage.
-        for (label, kinds) in &self.resistances {
+        for (resistance, kinds) in &self.resistances {
             if fits(y) {
-                let color = if *label == "Vulnerable to" {
+                let color = if *resistance == ResistanceWord::Vulnerable {
                     LOWERED
                 } else {
                     TEXT
                 };
-                console.print(x + 4, y, label, TEXT);
+                console.print(x + 4, y, &word(resistance.label(), "Bare"), TEXT);
                 console.print(x + 4 + NAME_W, y, kinds, color);
             }
             y += 1;
@@ -621,7 +621,7 @@ pub fn experience_text(progress: &Progress) -> String {
 fn gender_text(character: &Character) -> String {
     match character.spec.gender {
         Gender::Other => ui_with(T::GENDER_OTHER, &[("stat", character.raised.name().into())]),
-        gender => gender.name().to_string(),
+        gender => word(gender.name(), "Bare"),
     }
 }
 

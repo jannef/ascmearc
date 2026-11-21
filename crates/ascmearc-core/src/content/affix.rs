@@ -698,13 +698,13 @@ impl Rarity {
     /// The rarities loot rolls: a unique is made only by the data.
     pub const ROLLED: [Rarity; 3] = [Rarity::Normal, Rarity::Magic, Rarity::Rare];
 
-    /// `magic`.
-    pub const fn word(self) -> &'static str {
+    /// Its word, a message id (`messages/words.toml`): `magic` (a label asks `Bare`, "Magic").
+    pub const fn word(self) -> crate::lang::MessageId {
         match self {
-            Rarity::Normal => "normal",
-            Rarity::Magic => "magic",
-            Rarity::Rare => "rare",
-            Rarity::Unique => "unique",
+            Rarity::Normal => crate::msg::words::RARITY_NORMAL,
+            Rarity::Magic => crate::msg::words::RARITY_MAGIC,
+            Rarity::Rare => crate::msg::words::RARITY_RARE,
+            Rarity::Unique => crate::msg::words::RARITY_UNIQUE,
         }
     }
 

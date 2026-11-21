@@ -2,6 +2,7 @@
 
 use super::order;
 use super::util::stat_name;
+use super::util::word;
 use super::util::{capital, percent_of};
 use super::vision::glow_word;
 use ascmearc_core::content::Effect as ItemEffect;
@@ -48,7 +49,7 @@ pub(super) fn magic_rarity(content: &Content) -> String {
         let _ = writeln!(
             out,
             "| {} | {} |",
-            capital(rarity.word()),
+            word(rarity.word(), "Bare"),
             percent_of(affixes.rarity_weight(rarity), total.max(1))
         );
     }

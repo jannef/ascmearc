@@ -312,7 +312,7 @@ struct Choice {
     item: usize,
     shown: Item,
     /// What the inventory says of it if it is worn or wielded: "(being worn)".
-    mark: Option<String>,
+    mark: Option<Arg>,
     /// It is what the slot holds: choosing it takes it off.
     here: bool,
 }
@@ -469,7 +469,7 @@ impl ItemScreen {
             // `b - [ an iron helm (being worn)    1.5 kg`, the page's letter.
             let label = format!("{letter} -");
             console.print(x + 2, y, &label, color);
-            let mark = (choice.mark.clone()).map(|m| [("mark", Arg::from(m))]);
+            let mark = (choice.mark.clone()).map(|m| [("mark", m)]);
             let note = (mark.as_ref()).map(|args| (T::NAME_MARKED, &args[..]));
             let text = Text { color, note };
             choice.shown.draw(console, (x + 6, y), right, true, text);

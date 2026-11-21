@@ -1,6 +1,7 @@
 //! Temperature and ice: the months, the weather, what
 //! freezes, what ice holds, and how fast it grows.
 
+use super::util::word;
 use super::util::{at_normal_pace, capital};
 use ascmearc_core::content::{ActionKind, Content, LevelKind};
 use ascmearc_core::ice;
@@ -56,7 +57,7 @@ pub(super) fn temperature_weather(content: &Content) -> String {
         let _ = writeln!(
             out,
             "| {} | {}.{} °C | {chill} |",
-            w.name(),
+            word(w.name(), "Bare"),
             swing.tenths() / 10,
             swing.tenths() % 10
         );

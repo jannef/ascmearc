@@ -180,6 +180,21 @@ impl Dir {
         }
     }
 
+    /// The compass word as a sentence says it, a message id (`messages/words.toml`):
+    /// `north-east` ("You hear a voice to the north-east.").
+    pub const fn compass_word(self) -> crate::lang::MessageId {
+        match self {
+            Dir::N => crate::msg::words::DIR_NORTH,
+            Dir::NE => crate::msg::words::DIR_NORTH_EAST,
+            Dir::E => crate::msg::words::DIR_EAST,
+            Dir::SE => crate::msg::words::DIR_SOUTH_EAST,
+            Dir::S => crate::msg::words::DIR_SOUTH,
+            Dir::SW => crate::msg::words::DIR_SOUTH_WEST,
+            Dir::W => crate::msg::words::DIR_WEST,
+            Dir::NW => crate::msg::words::DIR_NORTH_WEST,
+        }
+    }
+
     /// Short uppercase name, e.g. `NE`.
     pub const fn name(self) -> &'static str {
         match self {

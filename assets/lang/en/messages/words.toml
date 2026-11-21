@@ -1,19 +1,89 @@
 # The fixed words core picks from a few (#1996): a stat's name, abbreviation, and comparative, a
-# burden's and a hunger's name, how hurt a creature looks, and a span of time. Core passes them as
-# message ids (`Stat::name`, `Burden::name`, `Hunger::name`, `Health::word`, `Duration::spoken`),
-# nested in the line or the screen entry that says them (`docs/dev/localization.md` "Nested
-# messages"). A word is lower case, as it stands in a sentence; a label asks `Bare` for its capital
-# ("Strength", "Not hungry"). Ids alphabetical (`docs/dev/localization.md` "Literal lines").
+# burden's and a hunger's name, how hurt a creature looks, a span of time, a resistance, an item's
+# rarity, what a status keeps one from doing, a gender, an alignment band, the weather, a compass
+# direction, and the weapon skills screen's sections. Core passes them as message ids
+# (`Stat::name`, `Burden::name`, `Hunger::name`, `Health::word`, `Duration::spoken`,
+# `ResistanceWord::word`, `Rarity::word`, `ActionKind::doing`, `Gender::name`, `Band::name`,
+# `Weather::name`, `Dir::compass_word`, `Section::name`), nested in the line or the screen entry
+# that says them (`docs/dev/localization.md` "Nested messages"). A word is lower case, as it stands
+# in a sentence; a label asks `Bare` for its capital ("Strength", "Not hungry"). Ids alphabetical
+# (`docs/dev/localization.md` "Literal lines").
 #
 # Roles: `burden` is a burden's name, `weight` a weight in words ("15 kg"); `hours` and `minutes`
-# are spans of time, each a `hours`/`minutes` message; `n` a count.
+# are spans of time, each a `hours`/`minutes` message; `mark` a slot's mark; `n` a count.
 
+band_callous = "callous"
+band_evil = "evil"
+band_good = "good"
+band_kind = "kind"
+band_neutral = "neutral"
+band_saintly = "saintly"
+band_wicked = "wicked"
 burden_burdened = "burdened"
 # A burden's threshold (the character screen): `burden`, the burden past it; `weight`, the weight.
 burden_over = "{burden:bare} over {weight:bare}"
 burden_overloaded = "overloaded"
 burden_strained = "strained"
 burden_unburdened = "unburdened"
+dir_east = "east"
+dir_north = "north"
+dir_north_east = "north-east"
+dir_north_west = "north-west"
+dir_south = "south"
+dir_south_east = "south-east"
+dir_south_west = "south-west"
+dir_west = "west"
+doing_body_armor = "change your armour"
+doing_call_familiar = "call a familiar"
+doing_cast = "cast spells"
+doing_chat = "talk"
+doing_climb = "climb"
+doing_close_door = "close doors"
+doing_craft = "make things by a recipe"
+doing_decipher = "decipher"
+doing_dig = "dig"
+doing_disarm = "disarm traps"
+doing_drink = "drink"
+doing_drop = "drop things"
+doing_eat = "eat"
+doing_feint = "feint"
+doing_forage = "forage"
+doing_gather = "gather"
+doing_heal = "tend your hurts"
+doing_hood = "hood a light"
+doing_intimidate = "intimidate"
+doing_kick = "kick"
+doing_light = "tend a light"
+doing_melee = "fight"
+doing_open_chest = "open chests"
+doing_open_door = "open doors"
+doing_pick_lock = "pick locks"
+doing_pick_up = "pick things up"
+doing_pray = "pray"
+doing_read = "read"
+doing_ready = "change what you have ready"
+doing_reload = "reload"
+doing_salvage = "salvage"
+doing_scribe = "write scrolls"
+doing_search = "search"
+doing_shoot = "shoot"
+doing_song = "sing"
+doing_stairs = "travel"
+doing_steal = "steal"
+doing_step = "move"
+doing_study = "study"
+doing_tame = "tame"
+doing_temper = "temper"
+doing_throw = "throw"
+doing_throw_voice = "throw your voice"
+doing_unlock = "unlock doors"
+doing_wait = "wait"
+doing_wear = "change what you wear"
+doing_whittle = "whittle"
+doing_wield = "change what you hold"
+gender_female = "female"
+gender_male = "male"
+gender_other = "other"
 health_badly_wounded = "badly wounded"
 health_lightly_wounded = "lightly wounded"
 health_nearly_dead = "nearly dead"
@@ -28,6 +98,24 @@ hunger_not_hungry = "not hungry"
 hunger_satiated = "satiated"
 hunger_starving = "starving"
 hunger_weak = "weak"
+# A two-handed thing in the hands (the item lists): `mark`, the hands' slot's mark ("wielded").
+in_both_hands = "{mark:bare} in both hands"
+rarity_magic = "magic"
+rarity_normal = "normal"
+rarity_rare = "rare"
+rarity_unique = "unique"
+resistance_immune = "immune"
+# A row of the character screen, before the kinds ("Immune to poison").
+resistance_immune_to = "immune to"
+resistance_resistant = "resistant"
+resistance_resistant_to = "resistant to"
+resistance_vulnerable = "vulnerable"
+resistance_vulnerable_to = "vulnerable to"
+# The weapon skills screen's sections.
+section_fighting_styles = "fighting styles"
+section_melee = "melee"
+section_missile = "missile and thrown"
+section_shields = "shields"
 stat_dexterity = "dexterity"
 stat_dexterity_abbrev = "Dx"
 # What a corpse gives of the stat ("Something of its nimbleness passes into you.").
@@ -54,6 +142,10 @@ stat_willpower = "willpower"
 stat_willpower_abbrev = "Wi"
 stat_willpower_gift = "resolve"
 stat_willpower_more = "more resolute"
+weather_clear = "clear"
+weather_heavy_rain = "heavy rain"
+weather_overcast = "overcast"
+weather_rain = "rain"
 
 # `n`: how many hours.
 [hours]
