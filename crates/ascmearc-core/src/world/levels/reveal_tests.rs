@@ -21,7 +21,7 @@ const QUESTS: &str =
 const BARROW: Pos = Pos::new(50, 43);
 /// A swamp cell north of it, from where the player sees it by day.
 const NEARBY: Pos = Pos::new(50, 41);
-const LEGEND: &str = r#""2" = { terrain = "swamp", hidden = { id = "old_barrow", terrain = "dungeon_entrance", to = "depths:1", name = "The Old Barrow" } }"#;
+const LEGEND: &str = r#""2" = { terrain = "swamp", hidden = { id = "old_barrow", terrain = "dungeon_entrance", to = "depths:1", name = "the Old Barrow" } }"#;
 const WHERE: &str = "The old barrow lies in the Mirefen, south of the Sallow Plains.";
 
 /// The Wildlands with the hidden barrow at [`BARROW`] (and `legend` in its legend).
@@ -105,7 +105,7 @@ fn the_legend_hides_a_location_on_the_overworld() {
         .expect("hidden");
     assert_eq!(at, BARROW);
     assert_eq!(hidden.to.as_deref(), Some("depths:1"));
-    assert_eq!(hidden.name, "The Old Barrow");
+    assert_eq!(hidden.name, "the Old Barrow");
     assert_eq!(content.terrain(hidden.terrain).id, "dungeon_entrance");
 }
 
@@ -155,11 +155,11 @@ fn the_dev_reveal_marks_it_and_it_leads_on() {
     assert_eq!(glyph(&w, Layer::Truth, BARROW), '>');
     assert_eq!(
         crate::test_support::leads_to(&w, BARROW).as_deref(),
-        Some("The Old Barrow")
+        Some("the Old Barrow")
     );
     let known = dump::layer_rows(&w, Layer::Locations);
     assert!(
-        known.contains(&"(50, 43) The Old Barrow".to_string()),
+        known.contains(&"(50, 43) the Old Barrow".to_string()),
         "{known:?}"
     );
     let json = dump::json(&w, &[], false);
@@ -169,7 +169,7 @@ fn the_dev_reveal_marks_it_and_it_leads_on() {
         .iter())
     .filter_map(|l| l["name"].as_str())
     .collect();
-    assert!(names.contains(&"The Old Barrow"), "{names:?}");
+    assert!(names.contains(&"the Old Barrow"), "{names:?}");
     // The link keeps the name's key, not its English, and reads the same after a save and load.
     let link = (w.state().current().stairs_at(BARROW)).expect("the revealed way in");
     let key = "level:overworld.hidden.old_barrow.name";
@@ -177,7 +177,7 @@ fn the_dev_reveal_marks_it_and_it_leads_on() {
     let loaded = crate::save::decode(&crate::save::encode(&w), w.content().clone()).expect("loads");
     assert_eq!(
         crate::test_support::leads_to(&loaded, BARROW).as_deref(),
-        Some("The Old Barrow")
+        Some("the Old Barrow")
     );
     // A second reveal changes nothing (but what the player is told); an unknown id is refused.
     let quiet = |w: &World| {
@@ -194,11 +194,11 @@ fn the_dev_reveal_marks_it_and_it_leads_on() {
     // Walking there, it is the way in, and `>` enters the Depths.
     put_player(&mut w, BARROW.step(Dir::N));
     w.apply(&Action::Move(Dir::S));
-    assert!(texts(&w).contains(&"The way into The Old Barrow is here.".to_string()));
+    assert!(texts(&w).contains(&"The way into the Old Barrow is here.".to_string()));
     w.apply(&Action::Descend);
     assert_eq!(w.state.current_level, "depths:1");
     assert!(
-        texts(&w).contains(&"You enter The Old Barrow.".to_string()),
+        texts(&w).contains(&"You enter the Old Barrow.".to_string()),
         "{:?}",
         texts(&w)
     );
@@ -433,7 +433,7 @@ fn files_with_quest_reveal(location: &str) -> ContentFiles {
 fn a_quest_reveals_every_location_of_its_list() {
     // A second hidden location on the plain north of the barrow, and the hermit's second quest
     // revealing both as it is given (#1785: `reveals` as a list).
-    let second = r#""3" = { terrain = "plains", hidden = { id = "old_mound", terrain = "dungeon_entrance", to = "depths:1", name = "The Old Mound" } }"#;
+    let second = r#""3" = { terrain = "plains", hidden = { id = "old_mound", terrain = "dungeon_entrance", to = "depths:1", name = "the Old Mound" } }"#;
     let overworld = overworld_with(&format!("{LEGEND}\n{second}"));
     let (head, rest) = overworld.split_once("map = '''\n").expect("a map");
     let (map, tail) = rest.split_once("'''").expect("the map ends");

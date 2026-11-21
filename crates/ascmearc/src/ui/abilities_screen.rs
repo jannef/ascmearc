@@ -25,7 +25,7 @@ use super::character_screen::fit_joined;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
-use super::text::{abilities_screen as T, ui, ui_msg, ui_with};
+use super::text::{abilities_screen as T, label, ui, ui_msg, ui_with, word};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -140,14 +140,14 @@ impl AbilitiesScreen {
                         }
                         _ => state.clone(),
                     };
-                    let name = view.ability_name(a).to_string();
-                    let said = match name == a.name(content) {
+                    let shown = view.ability_name(a);
+                    let said: Arg = match shown == a.name(content) {
                         true => content.ability_phrase(a).into(),
-                        false => name.as_str().into(),
+                        false => shown.as_ref().into(),
                     };
                     let entry = Entry {
                         ability: a,
-                        name,
+                        name: label(said.clone()),
                         said,
                         description: describe(view, a),
                         state,
@@ -157,7 +157,7 @@ impl AbilitiesScreen {
                 })
                 .collect()
         });
-        let mut entries = PagedList::grouped(entries, |source| source.name().to_string());
+        let mut entries = PagedList::grouped(entries, |source| word(source.name(), "Bare"));
         let start = (entries.iter().position(|e| Some(e.ability) == last))
             .or_else(|| entries.iter().position(|e| e.available));
         if let Some(start) = start {

@@ -116,7 +116,10 @@ fn depth_and_danger_go_up_one_a_floor_without_end() {
             depth,
             "danger is the depth"
         );
-        assert_eq!(w.state.current().name, format!("Grundlēas {depth}"));
+        assert_eq!(
+            crate::test_support::level_name(&w),
+            format!("Grundlēas {depth}")
+        );
         take(&mut w, StairsDir::Down);
     }
     // Past anything a u8 holds, the number goes on.

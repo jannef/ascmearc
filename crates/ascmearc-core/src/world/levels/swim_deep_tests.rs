@@ -289,7 +289,10 @@ fn a_failed_check_can_drown_the_player() {
     w.apply(&Action::Move(Dir::E));
     let death = w.state.death.clone().expect("drowned");
     assert_eq!(death.cause, Some(Cause::Drowned));
-    assert_eq!(Cause::Drowned.epitaph(w.content()), "Drowned in deep water");
+    assert_eq!(
+        crate::test_support::epitaph(w.content(), Cause::Drowned),
+        "Drowned in deep water"
+    );
     assert!(w.messages().iter().any(|m| m.text == "You drown..."));
 }
 

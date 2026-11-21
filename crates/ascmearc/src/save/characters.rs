@@ -2,8 +2,9 @@
 //! made of a slug of the name and a number (`brakka-1`, `brakka-2`: two Brakkas live side by
 //! side). Beside each save (`saves/<id>.sav`) lies its summary (`saves/<id>.toml`): what the
 //! list of saved characters shows (name, race, class, level, place and campaign, when last
-//! played), so the list reads no save. The race and the classes are kept by id and named as the
-//! list shows them; a summary another version wrote with their names shows them as written.
+//! played), so the list reads no save. The race and the classes are kept by id and the place as
+//! the game says it (a line of data by its key), named as the list shows them; a summary another
+//! version wrote with their names shows them as written.
 //!
 //! When a character was last played is wall-clock time, which only the app knows: seconds since
 //! 1970 (UTC), shown in UTC.
@@ -36,9 +37,11 @@ pub struct Summary {
     /// The experience level.
     #[serde(default)]
     pub level: u32,
-    /// Where the character is: the level's name.
-    #[serde(default)]
-    pub place: String,
+    /// Where the character is: the level's name as the game says it
+    /// (`PerceptionView::level_name`, a line of data by its key). One another version wrote as
+    /// text (`"The Hub"`) reads as that text.
+    #[serde(default = "no_place", deserialize_with = "place_or_text")]
+    pub place: Arg,
     /// The world the character is in: its campaign's name (`The Ascmearc`); empty in a summary
     /// written before it was kept, or for a run outside every campaign.
     #[serde(default, skip_serializing_if = "String::is_empty")]
@@ -77,12 +80,18 @@ impl Summary {
             class,
             prestige,
             level: u32::from(view.own_experience().level),
-            place: view.level_name().to_string(),
+            place: view.level_name().clone(),
             campaign: (content.campaign(world.campaign()))
                 .map_or_else(String::new, |c| c.name.clone()),
             played,
             version: ascmearc_core::GAME_VERSION.to_string(),
         }
+    }
+
+    /// Where the character is, as the list shows it, named from `content`: `Cēaptūn`,
+    /// `Grundlēas 1`.
+    pub fn place_name(&self, content: &Content) -> String {
+        crate::ui::text::label_in(content, self.place.clone())
     }
 
     /// Whether this version of the game made the save, so can continue it.
@@ -120,6 +129,26 @@ impl Summary {
             (None, None) => String::new(),
         }
     }
+}
+
+/// A summary's place before one is read: none.
+fn no_place() -> Arg {
+    Arg::Text(String::new())
+}
+
+/// A summary's place as written: the name as the game says it, or the text another version
+/// wrote.
+fn place_or_text<'de, D: serde::Deserializer<'de>>(de: D) -> Result<Arg, D::Error> {
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum Place {
+        Said(Arg),
+        Text(String),
+    }
+    Ok(match Place::deserialize(de)? {
+        Place::Said(arg) => arg,
+        Place::Text(text) => Arg::Text(text),
+    })
 }
 
 /// A saved character: its save's id and, if it could be read, its summary.
@@ -231,7 +260,8 @@ mod tests {
         );
         assert_eq!(summary.race_and_class(world.content()), "Human Thief");
         assert_eq!(summary.level, 1);
-        assert_eq!(summary.place, world.perception().level_name());
+        assert_eq!(&summary.place, world.perception().level_name());
+        assert_eq!(summary.place_name(world.content()), "The Hub");
         assert_eq!(summary.campaign, "The Showcase");
         assert!(summary.this_version());
         assert_eq!(Summary::from_text(&summary.to_text()), Some(summary));
@@ -243,9 +273,17 @@ mod tests {
         let content = Arc::new(ascmearc_assets::content().expect("content"));
         let world = World::new(content, "grundleas", Some(1)).expect("world");
         let summary = Summary::of(&world, 1_781_654_400);
-        assert_eq!(summary.place, "Grundlēas 1");
+        assert_eq!(summary.place_name(world.content()), "Grundlēas 1");
         assert!(!summary.campaign.is_empty());
         assert_eq!(Summary::from_text(&summary.to_text()), Some(summary));
+    }
+
+    #[test]
+    fn a_place_another_version_wrote_as_text_reads_as_written() {
+        let content = ascmearc_assets::content().expect("content");
+        let summary = Summary::from_text("name = \"Brakka\"\nplace = \"The Hub\"\n").expect("read");
+        assert_eq!(summary.place, Arg::Text("The Hub".into()));
+        assert_eq!(summary.place_name(&content), "The Hub");
     }
 
     #[test]
@@ -258,7 +296,7 @@ mod tests {
                 class: String::new(),
                 prestige: String::new(),
                 level: 1,
-                place: String::new(),
+                place: Arg::Text(String::new()),
                 campaign: String::new(),
                 played,
                 version: ascmearc_core::GAME_VERSION.into(),

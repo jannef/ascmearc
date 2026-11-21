@@ -26,7 +26,7 @@ use super::menu::{HINTS, Nav, Panel, Press, truncated};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
 use super::skills_screen::meter;
-use super::text::{label, level_up_screen as T, ui, ui_with};
+use super::text::{label, level_up_screen as T, ui, ui_with, word};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::Action;
@@ -212,8 +212,8 @@ impl LevelUpScreen {
                             Some(kind) => (t.openings.iter())
                                 .map(|c| {
                                     let id = c.as_deref().unwrap_or_default();
-                                    let name = kind.name(content, id).unwrap_or(id);
-                                    (name.to_string(), take(c))
+                                    let name = content.choice_phrase(kind, id);
+                                    (word(name, kind.listed_form()), take(c))
                                 })
                                 .collect(),
                             None => Vec::new(),

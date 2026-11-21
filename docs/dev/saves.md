@@ -102,7 +102,8 @@ a slug of its name and the lowest free number (`characters::fresh_id`: `brakka-1
 its snapshot), and the files `saves/<id>.sav` (the world, `ascmearc_core::save`) and, beside it,
 `saves/<id>.toml` (`save::Summary`: name, race, class, and prestige class by id, named as the list
 shows them by `Summary::race_and_class` (a summary another version wrote with the names shows them
-as written), level, place, the campaign's name
+as written), level, place (the level's name as the game says it, `Summary::place_name`; text
+another version wrote reads as text), the campaign's name
 (`docs/dev/campaign.md`), and when it was last
 saved, wall-clock seconds since 1970, shown in UTC by `save::played_text`), so the list of saved
 characters (`SaveStore::characters`, the one played last first) reads no save. A save without a

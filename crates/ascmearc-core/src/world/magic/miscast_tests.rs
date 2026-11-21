@@ -347,6 +347,10 @@ fn a_deadly_miscast_can_kill_and_is_put_down_to_it() {
     let death = w.state.death.as_ref().expect("the raw magic killed them");
     let spark = w.content.spell_id("spark").expect("spark");
     assert_eq!(death.cause, Some(Cause::Miscast(spark)));
+    assert_eq!(
+        crate::test_support::epitaph(&w.content, Cause::Miscast(spark)),
+        "Killed by their own miscast spark"
+    );
 }
 
 #[test]

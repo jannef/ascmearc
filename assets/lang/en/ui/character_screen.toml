@@ -101,6 +101,11 @@ text = "Protection"
 [race]
 text = "Race"
 
+# A resistance row's damage types ("fire, cold"): `first`, a damage type; `rest`, the others (a
+# damage type, or this again).
+[resistance_kinds]
+text = "{first:bare}, {rest:bare}"
+
 # A resource that is held in the guard of the player's mark: `mark`, the creature.
 [resource_marked]
 text = "{value:bare}/{max:bare}, in {mark:poss} guard"

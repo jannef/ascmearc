@@ -93,10 +93,14 @@ fn rows(w: &World) -> Vec<String> {
             Some(why) => format!(
                 "{}: {} ({})",
                 r.name,
-                r.takes,
+                crate::test_support::english_of(&w.content, &r.takes),
                 crate::test_support::english_of(&w.content, &why.reason(&w.content))
             ),
-            None => format!("{}: {}", r.name, r.takes),
+            None => format!(
+                "{}: {}",
+                r.name,
+                crate::test_support::english_of(&w.content, &r.takes)
+            ),
         })
         .collect()
 }
@@ -252,7 +256,7 @@ fn a_brew_chooses_nothing_and_its_plan_names_the_potion_truly() {
     let id = recipe(&w, "potion_of_healing");
     let view = w.perception();
     assert!(view.craft_steps(id).is_empty(), "nothing to choose");
-    let plan = view.craft_plan(id, &[]).expect("a plan");
+    let plan = view.craft_plan_en(id, &[]).expect("a plan");
     assert_eq!(plan.verb, "Brew");
     // Unknown to the player yet, the potion is still named: the recipe says what it makes.
     assert_eq!(plan.name, "a potion of healing");
@@ -260,7 +264,7 @@ fn a_brew_chooses_nothing_and_its_plan_names_the_potion_truly() {
     assert_eq!(plan.station, None);
     assert_eq!(plan.time, "about 20 minutes");
     assert_eq!(
-        view.craft_plan(id, &[Some(0)]).err().as_deref(),
+        view.craft_plan_en(id, &[Some(0)]).err().as_deref(),
         Some("That is more than the work takes.")
     );
     // The first stacks are taken: one sprig from the first, one from the third.

@@ -4,7 +4,7 @@
 //!
 //! - **A launcher ready** ([`shoots`]): a recipe with `launcher` wants a missile weapon ready
 //!   whose `launches` is the result's `ammo` (a bow for arrows, a crossbow for bolts); the row
-//!   names it by `data/fletch.toml`'s `[[makes]]` word ([`launcher_word`]: "a bow ready").
+//!   names it by `data/fletch.toml`'s `[[makes]]` word (`launcher:<launches>`, `Content::launcher_phrase`: "a bow ready").
 //! - **The count** ([`fletch_count`], [`fletch_most`]): `data/fletch.toml`'s `count` dice (at
 //!   least 1) plus one for every full `value_per_count` of the recipe's skill (Woodcraft), then
 //!   the margin's bands, then the ranger's Fletcher's `count_times`. Fletcher also adds its
@@ -26,14 +26,6 @@ pub(super) fn shoots(actor: &Actor, content: &Content, object: ObjectId) -> bool
     };
     let launches = (actor.launcher(content)).and_then(|(l, _)| content.object(l).launches.clone());
     launches.as_deref() == Some(ammo)
-}
-
-/// The launcher that shoots `object`, in a word (`data/fletch.toml`'s `[[makes]]`): "bow".
-pub(super) fn launcher_word(content: &Content, object: ObjectId) -> &str {
-    let ammo = content.object(object).ammo.as_deref();
-    (content.fletch().zip(ammo))
-        .and_then(|(rules, ammo)| rules.makes_for(ammo))
-        .map_or("launcher", |m| m.launcher.as_str())
 }
 
 /// Whether `recipe` counts by Fletch's rule (`count = "fletch"`).

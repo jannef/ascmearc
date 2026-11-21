@@ -145,7 +145,7 @@ fn a_leather_jerkin_is_made_of_three_hides_with_a_knife_in_an_hour() {
     carry(&mut w, "knife");
     stock(&mut w, "leather", 4);
     let plan = (w.perception())
-        .craft_plan(recipe(&w, "leather_jerkin"), &[Some(1)])
+        .craft_plan_en(recipe(&w, "leather_jerkin"), &[Some(1)])
         .expect("a plan");
     assert_eq!(plan.verb, "Make");
     assert_eq!(plan.uses, "3 leather hides");
@@ -177,12 +177,12 @@ fn a_fur_cloak_is_of_pelts_and_a_travelling_cloak_of_a_hide() {
     stock(&mut w, "fur", 2);
     stock(&mut w, "leather", 1);
     let fur = (w.perception())
-        .craft_plan(recipe(&w, "fur_cloak"), &[Some(1)])
+        .craft_plan_en(recipe(&w, "fur_cloak"), &[Some(1)])
         .expect("a plan");
     assert_eq!(fur.uses, "2 fur pelts");
     assert_eq!(fur.name, "a fur cloak");
     let leather = (w.perception())
-        .craft_plan(recipe(&w, "travelling_cloak"), &[Some(2)])
+        .craft_plan_en(recipe(&w, "travelling_cloak"), &[Some(2)])
         .expect("a plan");
     assert_eq!(leather.uses, "a leather hide");
     assert_eq!(leather.name, "a travelling cloak");

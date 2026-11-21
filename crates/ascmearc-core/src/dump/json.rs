@@ -128,13 +128,13 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
         json!({
             "turn": d.turn,
             "time": d.time.to_string(),
-            "place": d.place,
+            "place": crate::messages::english_arg(content, &d.place, crate::lang::LABEL_FORM),
             "by": d.by.map(|c| content.creature(c).id.clone()),
             "trap": match d.cause {
                 Some(Cause::Trap(t)) => Some(content.trap(t).id.clone()),
                 _ => None,
             },
-            "cause": d.cause.map(|c| c.epitaph(content)),
+            "cause": d.cause.map(|c| crate::messages::english_msg(content, &c.epitaph(content))),
             "of": d.of.map(|s| content.status(s).id.clone()),
         })
     });

@@ -2,7 +2,7 @@
 //! registry (`ascmearc_core::ability`).
 
 use super::util::stat_name;
-use super::util::{Term, anchored, at_normal_pace, link, percent_of};
+use super::util::{Term, anchored, at_normal_pace, link, percent_of, word};
 use ascmearc_core::ability::{Ability, Aim, Source};
 use ascmearc_core::check;
 use ascmearc_core::content::{
@@ -201,7 +201,7 @@ pub(super) fn abilities(content: &Content) -> String {
             out,
             "| {} | {} | {who} | {asks} | {} | {takes} | {} |",
             anchored(Term::Ability, a.id(content), &a.name(content)),
-            source(content, a).name(),
+            word(source(content, a).name(), "Bare"),
             a.description(content),
             read_more(content, a),
         );

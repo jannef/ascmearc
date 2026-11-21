@@ -93,7 +93,8 @@ fn row(w: &World, id: &str) -> (String, Option<RecipeLack>) {
     let def = w.content.recipe(recipe(w, id));
     let rows = w.perception().recipes(def.skill);
     let row = rows.iter().find(|r| r.id == recipe(w, id)).expect("listed");
-    (row.takes.clone(), row.unavailable)
+    let takes = crate::test_support::english_of(&w.content, &row.takes);
+    (takes, row.unavailable)
 }
 
 #[test]
