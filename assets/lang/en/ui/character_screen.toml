@@ -74,9 +74,10 @@ text = "Other ({stat:Bare} +1)"
 [guild]
 text = "Guild"
 
-# A guild row: `title`, the rank's title (shown in its metal's colour); `guild`, the guild's name.
+# A guild row: `title`, the rank's title (shown in its metal's colour); `guild`, the guild by its name
+# (`guild:<id>`, said `the`: "the Weyfarers' Gilde").
 [guild_rank]
-text = "{title:bare} of {guild:bare}"
+text = "{title:bare} of {guild:the}"
 
 [hit_points]
 text = "Hit points"

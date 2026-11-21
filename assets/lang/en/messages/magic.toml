@@ -11,8 +11,8 @@
 # `id`, `kind`, `usage`, `x`, `y` a dev action's words and numbers as typed. `stat` is a stat's
 # name (`words.toml`); `reason` is why an ability cannot be used, a message of its own
 # (`messages/ability.toml`), and `came` the clause that says what stopped a long action ("A kobold
-# comes into view", `turn.comes_into_view`). `spell` and `spells` are a spell's name as the data
-# writes it ("Frost"), text until they are converted.
+# comes into view", `turn.comes_into_view`). `spell` is a spell by its name (`spell:<id>`, lower
+# case: "frost"), said `Bare` where the line keeps the data's capital ("Frost").
 
 # `what`: the item, one of the stack.
 already_know = "You already know what {what:a} is."
@@ -49,10 +49,10 @@ effect_dev = "Effect: {id:bare} (dev)."
 effect_reaches_no_cell = "Effect `{id:bare}` reaches no cell there."
 # `stat`: the stat's name ("strength").
 feel_stat_return = "You feel your {stat:bare} return."
-# `spells`: the spells forgotten, a list of their names.
+# `spells`: the spells forgotten, a list of `spell_listed` items.
 forgotten = "You have forgotten {spells:and}."
 # `xp`: the experience gained; `spell`: the spell's name.
-gain_experience_for_learning = "You gain {xp:bare} experience for learning {spell:bare}."
+gain_experience_for_learning = "You gain {xp:bare} experience for learning {spell:Bare}."
 give_blood = "You give your blood, and power wells up in you."
 grimoire_crumbles = "The grimoire crumbles to dust."
 grimoire_gone = "The grimoire is gone."
@@ -67,14 +67,14 @@ is_status = "{who:The} {who:is} {status:bare}."
 it_is = "It is {what:a}."
 it_will_not_rise = "It will not rise for you."
 # `spell`: the spell's name ("Frost").
-know_all_of = "You know all there is of {spell:bare}."
+know_all_of = "You know all there is of {spell:Bare}."
 know_all_of_this_spell = "You know all there is of this spell."
 # `spell`: the spell's name.
-know_less_well = "You know {spell:bare} less well than you did."
+know_less_well = "You know {spell:Bare} less well than you did."
 know_the_spell_less_well = "You know the spell less well than you did."
 lack_mana_to_write = "You lack the mana to write it."
 # `spell`: the spell's name.
-learned_spell = "The words settle in your mind: you have learned {spell:bare}."
+learned_spell = "The words settle in your mind: you have learned {spell:Bare}."
 looks_better = "{who:The} look{who:s} better."
 # `what`: the scroll's type, now known.
 make_out_writing = "You make out the writing: {what:a}."
@@ -91,7 +91,7 @@ no_one_to_touch = "There is no one there to touch."
 no_room_beside_you = "There is no room for them beside you."
 no_room_to_stand = "There is no room for it to stand."
 # `spell`: the spell's name.
-no_scroll_can_hold = "No scroll can hold {spell:bare}."
+no_scroll_can_hold = "No scroll can hold {spell:Bare}."
 # `id`: the spell's id as typed.
 no_spell_named = "There is no spell `{id:bare}`."
 no_such_ability = "You have no such ability."
@@ -140,6 +140,8 @@ read_the = "You read {what:the}."
 shrugs_it_off = "{who:The} shrug{who:s} it off."
 slip = "You slip on the slick ground!"
 slips = "{who:The} slip{who:s}."
+# A spell in a list (`forgotten`), with its capital.
+spell_listed = "{spell:Bare}"
 spell_takes_hold_of = "Your spell takes hold of {who:the} instead."
 # A dev action's: `cost` the mana spent.
 spend_mana_dev = "You spend {cost:bare} mana (dev)."
@@ -156,7 +158,7 @@ untrained_decipher = "You have no training in Decipher script; you cannot make s
 vanishes = "{who:The} vanish{who:es}!"
 words_add_nothing = "The words add nothing new."
 # `spell`: the spell's name; `rank` the rank now known, `most` the last rank.
-words_settle_deeper = "The words settle deeper: you know {spell:bare} at rank {rank:bare} of {most:bare}."
+words_settle_deeper = "The words settle deeper: you know {spell:Bare} at rank {rank:bare} of {most:bare}."
 words_twist_away = "The words twist away from you."
 wounds_close = "Your wounds close."
 # `came`: what came, a message of its own (`turn.comes_into_view`, `turn.comes_close`).

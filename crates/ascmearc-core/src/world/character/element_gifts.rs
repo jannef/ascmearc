@@ -79,13 +79,11 @@ impl World {
         }
         self.shock(here, blaze.radius, Shock::Heat, &mut made);
         self.kindle(&cells, here, blaze.fire, blaze.burns);
-        let noun = content
-            .sign_active(SignActive::Blaze)
-            .map_or_else(|| "blaze".to_string(), |def| def.name.to_lowercase());
+        let noun = content.sign_noun_phrase(SignActive::Blaze);
         let verb = blaze
             .kind
             .map_or("burns", |k| content.damage_type(k).verb.as_str());
-        self.say_spell((&noun, verb), made, events);
+        self.say_spell_of(noun, verb, made, events);
         if self.state.death.is_none() {
             self.gift_cooldown(blaze.cooldown, 1, events);
         }

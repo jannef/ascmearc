@@ -137,7 +137,7 @@ impl World {
         };
         let player = self.state.player();
         let Some(item) = player.equipment.get(slot) else {
-            let name = content.slot(slot).name.to_lowercase();
+            let name = content.slot_phrase(slot);
             self.say(Msg::new(msg::items::NOTHING_THERE).role("slot", name));
             return Spent::Nothing;
         };

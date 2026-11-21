@@ -84,9 +84,9 @@ impl World {
         self.make_noise(player, Act::Attack(AttackKind::Spell));
         let mut made = Vec::new();
         self.cast_bolt(Caster::Actor(player), here, &path, &breath.bolt, &mut made);
-        let noun = Ability::Sign(active).name(&content).to_lowercase();
+        let noun = content.sign_noun_phrase(active);
         let verb = (breath.bolt.kind).map_or("burns", |k| content.damage_type(k).verb.as_str());
-        self.say_spell((&noun, verb), made, events);
+        self.say_spell_of(noun, verb, made, events);
         if self.state.death.is_none() {
             self.gift_cooldown(breath.cooldown, breath.degrees, events);
         }

@@ -162,16 +162,28 @@ impl World {
     /// the deaths of those they saw; then any news it brought (a level gained). Its events go to
     /// presentation the same way: the spell's own, and the blows and deaths seen. The player's
     /// own death is said as the turn is perceived. `(noun, verb)` say the spell's blows ("the
-    /// fireball burns"); a birth sign's Blaze is said the same way.
+    /// fireball burns").
     pub(in crate::world) fn say_spell(
         &mut self,
         (noun, verb): (&str, &str),
         made: Vec<Event>,
         events: &mut Vec<Event>,
     ) {
+        self.say_spell_of(word(noun), verb, made, events);
+    }
+
+    /// [`World::say_spell`] with the noun a phrase of its own: a birth sign's breath or Blaze
+    /// (`sign_noun:<active>`), a damage type (`damage_type:<id>`).
+    pub(in crate::world) fn say_spell_of(
+        &mut self,
+        noun: Phrase,
+        verb: &str,
+        made: Vec<Event>,
+        events: &mut Vec<Event>,
+    ) {
         let content = self.content.clone();
         let player = self.state.player;
-        let words = Words::named(noun, verb, &content);
+        let words = Words::new(noun.clone(), verb, &content);
         let mut said: Vec<Msg> = Vec::new();
         // Whom the last blow struck, as the player saw them (if they did).
         let mut seen: Option<(End, &str)> = None;
@@ -195,7 +207,7 @@ impl World {
                     // How the spell found the one it struck at, in its words (`surprise.rs`).
                     let caught = crate::world::combat::surprise::caught_word(&content, caught);
                     let struck_at = end.clone().caught(caught);
-                    let caster = End::Trap(word(noun));
+                    let caster = End::Trap(noun.clone());
                     let kind = AttackKind::Spell;
                     said.extend(attack_message(
                         &caster, &struck_at, &words, kind, strike, &guard,

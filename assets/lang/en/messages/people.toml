@@ -63,9 +63,9 @@ mark_the_way = "You mark the way on your map."
 marked_done_dev = "{quest:bare} is marked done."
 # A quest's giver marks a hidden location: `place`, its name.
 marks_on_map = "{who:The} marks {place:the} on your map."
-# A guild's master names the player to a rank: `title`, the rank ("Pewter"); `guild`, the guild's
-# name as written ("the Weyfarers' Gilde").
-names_you = "{master:The} names you {title:a} of {guild:bare}."
+# A guild's master names the player to a rank: `title`, the rank ("Pewter"); `guild`, the guild by
+# its name (`guild:<id>`, said `the`: "the Weyfarers' Gilde").
+names_you = "{master:The} names you {title:a} of {guild:the}."
 # What the player does next once a quest's goal is met: `step`, a `step_*` line.
 next_step = "{step:Bare}."
 no_longer_carry = "You no longer carry {what:the}."

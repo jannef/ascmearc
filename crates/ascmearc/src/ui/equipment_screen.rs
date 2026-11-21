@@ -320,9 +320,9 @@ struct Choice {
 /// Choosing what goes in one slot, opened from the equipment screen.
 #[derive(Debug)]
 pub struct ItemScreen {
-    /// The slot's id (for the action) and name (the title).
+    /// The slot's id (for the action) and name (the title; `slot:<id>`, nothing outside a run).
     slot: String,
-    name: String,
+    name: Arg,
     /// How the slot is used: what putting on and taking off are called there (`verbs`).
     kind: ActionKind,
     /// What fits, grouped by class and paged (`paged_list`); its cursor is the `>` row.
@@ -341,7 +341,7 @@ impl ItemScreen {
     pub fn new(view: Option<&PerceptionView<'_>>, slot: SlotId) -> Self {
         let mut screen = Self {
             slot: String::new(),
-            name: String::new(),
+            name: Arg::from(""),
             kind: ActionKind::Wear,
             choices: PagedList::empty(),
             rows: 0,
@@ -357,7 +357,7 @@ impl ItemScreen {
         let def = content.slot(slot);
         let worn = view.equipment();
         screen.slot = def.id.clone();
-        screen.name = def.name.clone();
+        screen.name = content.slot_phrase(slot).into();
         screen.kind = def.action;
         // A slot the body bars takes nothing (`world/items/body_slots.rs`).
         screen.barred = view.barred_words(slot);
@@ -436,7 +436,7 @@ impl ItemScreen {
         // equipment screen beneath at least. A page takes what rows the console has for it.
         self.fit(console.cols(), console.rows());
         let count = self.choices.tallest().max(self.rows).max(1) as i32;
-        let title = ui_with(T::TITLE_CHOICE, &[("slot", self.name.clone().into())]);
+        let title = ui_with(T::TITLE_CHOICE, &[("slot", self.name.clone())]);
         let title = format!(" {title} ");
         let panel = Panel::new(console, &title, WIDTH, count + 7);
         self.choices.draw_label(console, &panel);

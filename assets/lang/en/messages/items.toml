@@ -5,7 +5,7 @@
 #
 # Roles: `what` is an item as the player knows it (a phrase built where it is said; "your long
 # sword" when the line names it as the player's), `other` another such. `slot` is a slot as
-# typed or its name in lower case, text until those words are converted. `name` is a
+# typed (text), or by its name (`slot:<id>`, lower case: "main hand"). `name` is a
 # shopkeeper's name, `price` and `owed` numbers of gold.
 
 # `what`: what is already in the slot.
@@ -44,7 +44,7 @@ no_slot = "There is no slot `{slot:bare}`."
 no_longer_fits = "{what:The} no longer fits, and falls to the floor."
 no_such_thing_here = "There is no such thing here."
 not_carrying_anything = "You are not carrying anything."
-# `slot`: the slot's name, lower case.
+# `slot`: the slot by its name.
 nothing_there = "You have nothing there ({slot:bare})."
 nothing_to_identify_dev = "There is nothing to identify (dev)."
 nothing_to_pick_up = "There is nothing here to pick up."
@@ -61,8 +61,8 @@ numbers_hit = "{n:bare} hit"
 numbers_listed = "{first:bare}, {rest:bare}"
 # `n`: how far it shoots or is thrown.
 numbers_range = "range {n:bare}"
-# Damage of another kind on every hit: `dice`, signed ("+1d4"); `kind`, the damage type's name
-# (text until damage types' names are converted, #1994).
+# Damage of another kind on every hit: `dice`, signed ("+1d4"); `kind`, the damage type
+# (`damage_type:<id>`, "fire").
 numbers_rider = "{dice:bare} {kind:bare}"
 # A weapon's damage with a rider after it: `damage`, its dice (or this entry again); `rider`,
 # a `numbers_rider`.

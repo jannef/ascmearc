@@ -562,7 +562,8 @@ impl World {
             Some(RecipeUse::Cut) => return self.start_cut(id, picks),
             Some(RecipeUse::Set) => return self.start_set(id, picks),
             Some(RecipeUse::Enchant(_)) => return self.start_enchant(id, picks),
-            Some(_) => Msg::new(msg::crafting::DONE_FROM_OWN_LIST).role("recipe", def.name.clone()),
+            Some(_) => Msg::new(msg::crafting::DONE_FROM_OWN_LIST)
+                .role("recipe", content.recipe_phrase(&def.id)),
             None => return self.start_making(id, picks),
         };
         self.say(said);

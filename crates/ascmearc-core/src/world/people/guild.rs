@@ -72,7 +72,7 @@ impl World {
                     Msg::new(msg::people::NAMES_YOU)
                         .role("master", content.speaker_phrase(guild.master))
                         .role("title", Phrase::id(format!("word:{title}")))
-                        .role("guild", guild.name.as_str()),
+                        .role("guild", content.guild_phrase(&guild.id)),
                 );
                 self.train_stat(crate::content::StatUse::Promoted);
             }

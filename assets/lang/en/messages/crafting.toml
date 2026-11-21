@@ -10,9 +10,9 @@
 # gem, as a stack or as its material; `crystal` a crystal by its object; `wall` and `station` a
 # terrain; `affix` an affix by its name ("Sharp", "of the Bear"); `magic` an item's magic as a
 # salvage line names it (`its_magic_suffix`, `its_prefix_magic`, `some_of_its_magic`); `count` a
-# number. `skill` is a skill by its name (`skill:<id>`, said `Bare`: "Metalcraft"); `recipe`,
-# `launcher`, and `part` are core's and the data's English words, text until they are converted
-# (#1949); `time` how long a work went on ("3 minutes", a `words.toml` message); `came` the clause
+# number. `skill` is a skill by its name (`skill:<id>`, said `Bare`: "Metalcraft"); `recipe` a
+# recipe by its name (`recipe:<id>`, "Cut"); `launcher` and `part` are core's and the data's
+# English words, text until they are converted (#1949); `time` how long a work went on ("3 minutes", a `words.toml` message); `came` the clause
 # that says what stopped it ("A kobold comes into view"); `leave` what the player does as a work
 # is cut short, a message of its own ("you put down your work"). `rig` and `trap` a rig's and a
 # trap's name; `piece` a piece of stock; `name` a rig's id as the action wrote it.

@@ -19,7 +19,8 @@ blinks_beside = "{who:The} is suddenly beside {beside:the}."
 breathes = "{who:The} {verb:bare}!"
 # `verb`: the burst as the data writes it ("comes apart in flame").
 bursts = "{who:The} {verb:bare}!"
-# `spell`: the spell's name, lower case. Cast on itself, or at no one the player sees.
+# `spell`: the spell by its name (`spell:<id>`, lower case). Cast on itself, or at no one the
+# player sees.
 casts = "{who:The} casts {spell:bare}."
 casts_at = "{who:The} casts {spell:bare} at {target:the}."
 casts_at_you = "{who:The} casts {spell:bare} at you!"
