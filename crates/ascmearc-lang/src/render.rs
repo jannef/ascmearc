@@ -11,7 +11,7 @@ use crate::morphology::en::{En, Plurals};
 use crate::morphology::fi::Fi;
 use crate::morphology::generic::Generic;
 use crate::morphology::{Conj, FormError, Morphology, capitalize, capitalized_form, lower_form};
-use crate::phrase::Phrase;
+use crate::phrase::{Phrase, Word};
 use crate::register::{Register, Registers};
 use crate::template::{Line, Segment, Template, Templates};
 use std::collections::BTreeMap;
@@ -41,6 +41,11 @@ const ADDRESS_KEY: &str = "address";
 
 /// The list form that says its items one after another, each `bare`: sentences of one speech.
 pub const LINES_FORM: &str = "lines";
+
+/// The form a screen asks of a name it shows alone (a list row, a heading, the status bar): the
+/// lexicon word's own `label` form (the data's name as written, "Twin Blades", where a sentence
+/// says "twin blades"), else the phrase `bare` with a capital. Every language has it (#2000).
+pub const LABEL_FORM: &str = "label";
 
 /// Why one language could not render an entry: the next in the chain is tried.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -501,6 +506,9 @@ impl<'a> Ctx<'a> {
     /// An argument in a form (lower-case).
     fn arg(&self, role: &str, arg: &'a Arg, form: &str) -> Result<String, RenderError> {
         let morphology = self.language.morphology.as_ref();
+        if form == LABEL_FORM {
+            return self.label(role, arg);
+        }
         Ok(match arg {
             Arg::Phrase(phrase) => morphology
                 .phrase(phrase, form, self.lex, self.register)
@@ -542,6 +550,28 @@ impl<'a> Ctx<'a> {
             // A message inside the line, in its own words: its template picks its forms.
             Arg::Msg { id, args } => self.message(id, args)?,
         })
+    }
+
+    /// `arg` as a label ([`LABEL_FORM`]): a lone lexicon word's `label` form, text as written,
+    /// else `bare` with a capital.
+    fn label(&self, role: &str, arg: &'a Arg) -> Result<String, RenderError> {
+        if let Arg::Text(text) = arg {
+            return Ok(text.clone());
+        }
+        if let Arg::Phrase(phrase) = arg
+            && let Word::Id(id) = &phrase.head
+            && phrase.mods.is_empty()
+            && phrase.notes.is_empty()
+            && phrase.owner.is_none()
+            && phrase.count == 1
+            && let Some(label) = self
+                .lex
+                .word(id)
+                .and_then(|w| w.forms.get(LABEL_FORM).cloned())
+        {
+            return Ok(label);
+        }
+        Ok(capitalize(&self.arg(role, arg, "bare")?))
     }
 }
 
@@ -606,6 +636,36 @@ text = "{what:Bare}, {count:num} of them."
 
     fn render(en: &Language, msg: Msg) -> String {
         en.render(&Entry::new(1, msg), &lexicon(), &written_key)
+    }
+
+    #[test]
+    fn a_label_is_the_words_own_label_form_else_bare_with_a_capital() {
+        let en = english();
+        let lex = lexicon().with(
+            "weapon_skill:twin_blades",
+            LexWord::new("twin blades").form(LABEL_FORM, "Twin Blades"),
+        );
+        let label = |phrase: Phrase| {
+            en.try_arg(&phrase.into(), LABEL_FORM, &lex, &written_key)
+                .expect("a label")
+        };
+        assert_eq!(label(Phrase::id("weapon_skill:twin_blades")), "Twin Blades");
+        assert_eq!(
+            label(goblin()),
+            "Goblin",
+            "no label form: bare, capitalized"
+        );
+        let wystans = Phrase::id("creature:wystan").count(2);
+        assert_eq!(
+            label(wystans.clone()),
+            capitalize(&en.phrase(&wystans, "bare", &lex)),
+            "more than the word alone: bare, capitalized"
+        );
+        assert_eq!(
+            en.try_arg(&Arg::Text("de Wit".into()), LABEL_FORM, &lex, &written_key),
+            Ok("de Wit".to_string()),
+            "text as written"
+        );
     }
 
     #[test]

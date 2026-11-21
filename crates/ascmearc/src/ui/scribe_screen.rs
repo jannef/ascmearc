@@ -7,12 +7,13 @@
 //! the page; Esc closes it. The keys are the list's own, fixed.
 //!
 //! Its words are `assets/lang/en/ui/scribe_screen.toml` (`T::…`, [`super::text`]); the spells'
-//! and schools' names are the data's, the time in words core's (`Duration::spoken`).
+//! and schools' names are their lexicon ids as labels (`text::label`), the time in words core's
+//! (`Duration::spoken`).
 
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
-use super::text::{scribe_screen as T, ui, ui_with};
+use super::text::{label, scribe_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
@@ -20,7 +21,6 @@ use ascmearc_core::Action;
 use ascmearc_core::content::School;
 use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::PerceptionView;
-use ascmearc_core::text::capitalized;
 
 /// Panel width: room for the longest spell name with its price and time.
 const WIDTH: i32 = 64;
@@ -61,7 +61,7 @@ impl ScribeScreen {
                 let def = content.spell(own.spell);
                 let writable = Writable {
                     id: def.id.clone(),
-                    name: def.name.clone(),
+                    name: label(content.spell_phrase(def)),
                     mana: ui_with(T::MANA, &[("mana", Arg::Number(i64::from(own.mana)))]),
                     time: ui_with(T::ABOUT, &[("time", own.time.spoken().into())]),
                 };
@@ -69,7 +69,7 @@ impl ScribeScreen {
             })
             .collect();
         Self {
-            spells: PagedList::grouped(rows, |school| capitalized(school.id())),
+            spells: PagedList::grouped(rows, |school| label(content.school_phrase(school))),
             blanks: view.blank_scrolls(),
         }
     }

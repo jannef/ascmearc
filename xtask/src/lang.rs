@@ -35,9 +35,9 @@ const FEATURES: &[(&str, &[&str])] = &[
     ("person", &["you", "other"]),
 ];
 
-/// Forms every language's lists accept, beside its module's own (`Arg::List`'s conjunctions, and
-/// `lines`: one speech of several lines, said in turn).
-const LIST_FORMS: &[&str] = &["and", "or", "lines"];
+/// Forms every language accepts, beside its module's own: a list's (`Arg::List`'s conjunctions, and
+/// `lines`: one speech of several lines, said in turn), and `label`, a name shown alone (#2000).
+const LIST_FORMS: &[&str] = &["and", "or", "lines", "label"];
 
 /// The role the host fills with a key; its "form" is a command name, not a grammatical form.
 const KEY_ROLE: &str = "key";

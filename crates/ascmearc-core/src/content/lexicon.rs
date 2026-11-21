@@ -36,6 +36,9 @@
 //! | `trap:<id>`, `chest:<band>`, `status_seen:<id>`, `grade:<creature>.<n>`, ... | the data's words beside a name ([`super::data_word`], #1995) |
 //! | `word:<text>` | a word data names without an id of its own (a natural attack's "bite", a thrown "stone", "something"), keyed by its English, which is the word; with no data to say its number, a plural noun (`many`) as its spelling suggests ([`crate::lang::en::is_plural`]: "claws", "flames", "stakes") |
 //!
+//! A name said "in lower case" above keeps the data's name as written as its `label` form
+//! ([`labelled`]), what a screen shows alone ("Twin Blades", #2000).
+//!
 //! A phrase's number comes from data (#1965): its count, the `many` above, and a proper name or
 //! a literal is one thing ("The Hounds quails", "the incubus's"). Only `word:` guesses.
 
@@ -111,23 +114,19 @@ impl Lexicon for Content {
                 Some(named(&def.name, &def.plural))
             }
             // A race is a common noun in a sentence ("a halfling"); its `name` is a label.
-            "race" => Some(LexWord::new(self.race(key)?.name.to_lowercase())),
+            "race" => Some(labelled(&self.race(key)?.name)),
             // A resource, a skill, and a status are common words in a sentence ("You are still
             // hasted.", "Your open lock improves."); their `name`s are labels.
             "resource" => {
                 let def = self.resource(self.resource_id(key)?);
-                Some(LexWord::new(def.name.to_lowercase()))
+                Some(labelled(&def.name))
             }
             "room" => {
                 let effects = self.room_effects();
                 Some(LexWord::new(&effects.get(effects.id(key)?).name))
             }
-            "skill" => Some(LexWord::new(
-                self.skill(self.skill_id(key)?).name.to_lowercase(),
-            )),
-            "status" => Some(LexWord::new(
-                self.status(self.status_id(key)?).name.to_lowercase(),
-            )),
+            "skill" => Some(labelled(&self.skill(self.skill_id(key)?).name)),
+            "status" => Some(labelled(&self.status(self.status_id(key)?).name)),
             // A creature tag as a word ("marsh thing"), its number guessed as `word:`'s is.
             "tag" => {
                 let spoken = super::tag::spoken(key);
@@ -157,6 +156,13 @@ impl Lexicon for Content {
     }
 }
 
+/// A data name a sentence says in lower case ("hasted", "twin blades"), with the name as the data
+/// writes it as its `label` form ("Hasted", "Twin Blades"): what a screen shows alone (the
+/// renderer's `label` form, `ui::text::label`; #2000).
+pub(super) fn labelled(name: &str) -> LexWord {
+    LexWord::new(name.to_lowercase()).form("label", name)
+}
+
 impl Content {
     /// A resource by its name: `resource:<id>` ("too little {name:bare}": "rage").
     pub fn resource_phrase(&self, id: ResourceId) -> Phrase {
@@ -180,7 +186,7 @@ impl Content {
 /// the rest are common words in a sentence ("a warrior", "deep cut").
 impl Content {
     fn character_word(&self, kind: &str, key: &str) -> Option<LexWord> {
-        let lower = |name: &str| Some(LexWord::new(name.to_lowercase()));
+        let lower = |name: &str| Some(labelled(name));
         let book = self.talents();
         let skills = self.weapon_skills();
         match kind {
@@ -251,6 +257,14 @@ impl Content {
     /// A talent tree by its name: `tree:<id>`.
     pub fn tree_phrase(&self, id: TreeId) -> Phrase {
         Phrase::id(format!("tree:{}", self.talents().tree(id).id))
+    }
+
+    /// A weapon skill (a caster style too) by its name: `weapon_skill:<id>` ("long blades").
+    pub fn weapon_skill_phrase(&self, id: WeaponSkillId) -> Phrase {
+        Phrase::id(format!(
+            "weapon_skill:{}",
+            self.weapon_skills().skill(id).id
+        ))
     }
 
     /// A weapon skill by how one is skilled in it: `weapon_skill_phrase:<id>` ("You feel more
@@ -401,5 +415,50 @@ mod tests {
         ] {
             assert_eq!(content.word(unknown), None, "{unknown}");
         }
+    }
+
+    /// A name a sentence says in lower case shows as the data writes it when a screen shows it
+    /// alone (#2000): its `label` form, internal capitals and all.
+    #[test]
+    fn a_name_alone_reads_as_the_data_writes_it() {
+        use crate::character::class_arg;
+        use crate::lang::{Arg, LABEL_FORM, Phrase};
+        use crate::messages::english_arg;
+        let content = builtin();
+        let said = |id: &str, form: &str| english_arg(&content, &Phrase::id(id).into(), form);
+        let label = |id: &str| said(id, LABEL_FORM);
+        assert_eq!(label("weapon_skill:twin_blades"), "Twin Blades");
+        assert_eq!(said("weapon_skill:twin_blades", "bare"), "twin blades");
+        assert_eq!(label("status:hasted"), "Hasted");
+        assert_eq!(label("skill:open_lock"), "Open lock");
+        assert_eq!(label("class:warrior"), "Warrior");
+        assert_eq!(label("spell:magic_missile"), "Magic missile");
+        assert_eq!(label("item_class:melee_weapons"), "Melee weapons");
+        assert_eq!(
+            label("school:evocation"),
+            "Evocation",
+            "no label form: Bare"
+        );
+        // The classes: the class until it is full, with its cap, then the prestige class.
+        let cap = content.class("wizard").expect("a wizard").max_level;
+        let classes = |prestige, level| {
+            english_arg(
+                &content,
+                &class_arg(&content, "wizard", prestige, level),
+                LABEL_FORM,
+            )
+        };
+        assert_eq!(classes(None, cap - 1), "Wizard");
+        assert_eq!(classes(None, cap), format!("Wizard {cap}"));
+        assert_eq!(
+            classes(Some("hunter"), cap),
+            format!("Wizard {cap}, Hunter")
+        );
+        assert_eq!(
+            classes(Some("hunter"), cap + 4),
+            format!("Wizard {cap}, Hunter 4")
+        );
+        let missing = class_arg(&content, "jester", None, 3);
+        assert_eq!(missing, Arg::from("jester"), "a class the content lacks");
     }
 }

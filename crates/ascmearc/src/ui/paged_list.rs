@@ -18,7 +18,7 @@
 
 use super::cursor;
 use super::menu::{Hints, Nav, Panel};
-use super::text::{paged_list as Text, ui_with};
+use super::text::{label, paged_list as Text, ui_with};
 use super::{TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::action::{LETTERS, letter};
@@ -51,7 +51,7 @@ impl<T> PagedList<T> {
     /// The list of `items`, each with its class, grouped by class in class order (a stable sort:
     /// within a class they keep the order given), the cursor on the first.
     pub fn new(items: Vec<(ItemClassId, T)>, content: &Content) -> Self {
-        Self::grouped(items, |class| content.item_class(class).name.clone())
+        Self::grouped(items, |class| label(content.item_class_phrase(class)))
     }
 }
 

@@ -919,8 +919,8 @@ impl Need {
 
     /// The prerequisite in words, as a refusal and the Talents page say it, a
     /// `character.talent_needs_*` message: "Toughness 14", "Hardy", "Stealth 25", "to be a
-    /// dwarf". A weapon skill's name, a birth sign's animal and element, a vision's name, and an
-    /// `any_weapon_skill`'s words are the data's text inside it.
+    /// dwarf". A weapon skill is said as its label (#2000); a birth sign's animal and element, a
+    /// vision's name, and an `any_weapon_skill`'s words are the data's text inside it.
     pub fn message(&self, content: &Content) -> Msg {
         use crate::msg;
         let number = |n: u32| Arg::Number(i64::from(n));
@@ -937,14 +937,10 @@ impl Need {
             Need::Skill(id, value) => Msg::new(msg::character::TALENT_NEEDS_SKILL)
                 .role("skill", content.skill_phrase(*id))
                 .role("value", number(u32::from(*value))),
-            // The weapon skill as the data writes it ("Twin Blades"): `weapon_skill:` is lower
-            // case, and a style's name keeps its capitals here.
-            Need::WeaponSkill(id, rank) => {
-                let skill = content.weapon_skills().skill(*id);
-                Msg::new(msg::character::TALENT_NEEDS_WEAPON_SKILL)
-                    .role("skill", skill.name.as_str())
-                    .role("rank", number(u32::from(*rank)))
-            }
+            // The weapon skill as a label, as the data writes it ("Twin Blades", #2000).
+            Need::WeaponSkill(id, rank) => Msg::new(msg::character::TALENT_NEEDS_WEAPON_SKILL)
+                .role("skill", content.weapon_skill_phrase(*id))
+                .role("rank", number(u32::from(*rank))),
             Need::AnyWeaponSkill(any) => Msg::new(msg::character::TALENT_NEEDS_ANY_WEAPON_SKILL)
                 .role("skill", any.words.as_str())
                 .role("rank", number(u32::from(any.rank))),

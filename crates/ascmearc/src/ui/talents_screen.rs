@@ -13,7 +13,7 @@
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{UiText, talents_screen as T, ui, ui_msg, ui_with};
+use super::text::{UiText, label, talents_screen as T, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -69,7 +69,8 @@ impl TalentsScreen {
         let Some(view) = view else {
             return screen;
         };
-        let book = view.content().talents();
+        let content = view.content();
+        let book = content.talents();
         // The player's own, tree by tree in tree order, each tree in the order taken.
         let mut own = view.own_talents();
         own.sort_by_key(|t| t.tree);
@@ -83,7 +84,7 @@ impl TalentsScreen {
                 tree = Some(talent.tree);
                 screen
                     .lines
-                    .push(Line::Tree(book.tree(talent.tree).name.clone()));
+                    .push(Line::Tree(label(content.tree_phrase(talent.tree))));
             }
             let from = match () {
                 // A profane gift (docs/design/profane-gifts.md §11), a bane marked as a flaw.
@@ -103,7 +104,7 @@ impl TalentsScreen {
             };
             screen.lines.push(Line::Name(screen.items.len()));
             screen.items.push(Item {
-                name: talent.name,
+                name: label(content.talent_arg(talent.id, talent.choice.as_deref())),
                 from,
                 description: talent.description,
                 needs: Vec::new(),
@@ -125,13 +126,13 @@ impl TalentsScreen {
                 tree = Some(talent.tree);
                 screen
                     .lines
-                    .push(Line::Tree(book.tree(talent.tree).name.clone()));
+                    .push(Line::Tree(label(content.tree_phrase(talent.tree))));
             }
             let index = screen.items.len();
             screen.lines.push(Line::Name(index));
             screen.lines.push(Line::Needs(index));
             screen.items.push(Item {
-                name: talent.name,
+                name: label(content.talent_phrase(talent.id)),
                 from: None,
                 description: talent.description,
                 needs: talent.needs,

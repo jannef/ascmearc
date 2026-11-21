@@ -76,9 +76,10 @@ text = "In {place:bare} ({campaign:bare})."
 [played]
 text = "{date:bare} {time:bare} UTC"
 
-# A character's race and class: `race`, `class`, their names (`Dwarf Warrior`).
+# A character's race and class: `race` (`race:<id>`), `class` (`character::class_arg`), their names
+# as labels (`Dwarf Warrior`); a name a summary kept as text, as written.
 [race_class]
-text = "{race:bare} {class:bare}"
+text = "{race:label} {class:label}"
 
 [title]
 text = "Characters"

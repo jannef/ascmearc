@@ -21,7 +21,7 @@ use super::chargen_screen::{Draft, WIDTH};
 use super::menu::{HINTS, Nav, Panel, Press, truncated};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{chargen_talents_screen as T, ui, ui_with};
+use super::text::{chargen_talents_screen as T, label, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::World;
@@ -181,7 +181,7 @@ impl ChargenTalentsScreen {
                     .collect();
                 let entry = Entry {
                     talent: Some(id),
-                    name: def.name.clone(),
+                    name: label(content.talent_phrase(id)),
                     description: def.description.clone(),
                     ways,
                     done: false,
@@ -206,7 +206,7 @@ impl ChargenTalentsScreen {
             ));
         }
         self.entries = PagedList::grouped(items, |group| match group {
-            Group::Tree(tree) => book.tree(tree).name.clone(),
+            Group::Tree(tree) => label(content.tree_phrase(tree)),
             Group::Chance => ui(T::CHANCE),
         });
         let at = (self.entries.iter()).position(|e| e.talent.is_some() && e.talent == selected);
@@ -293,12 +293,7 @@ impl ChargenTalentsScreen {
                 .map(|way| {
                     let (id, choice) = split(way);
                     let name = (self.content.talents().id(id))
-                        .map(|t| {
-                            self.content
-                                .talents()
-                                .get(t)
-                                .name_for(&self.content, choice)
-                        })
+                        .map(|t| label(self.content.talent_arg(t, choice)))
                         .unwrap_or_else(|| way.clone());
                     let choice = Entry {
                         talent: entry.talent,

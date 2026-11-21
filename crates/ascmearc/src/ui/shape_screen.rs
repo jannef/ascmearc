@@ -10,7 +10,7 @@
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
-use super::text::{shape_screen as T, ui, ui_msg, ui_with};
+use super::text::{label, shape_screen as T, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
@@ -64,9 +64,9 @@ impl ShapeScreen {
                 Some((def.skill?, shape))
             })
             .collect();
-        let skills = content.weapon_skills();
+
         Self {
-            shapes: PagedList::grouped(rows, |skill| skills.skill(skill).name.clone()),
+            shapes: PagedList::grouped(rows, |skill| label(content.weapon_skill_phrase(skill))),
         }
     }
 

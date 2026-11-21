@@ -13,7 +13,7 @@
 use super::chargen_screen::{Draft, WIDTH, adjustments};
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{sign_screen as T, ui, ui_with};
+use super::text::{label, sign_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::content::Content;
@@ -115,7 +115,7 @@ impl SignScreen {
                 let name = if def.flaw {
                     ui_with(T::FLAW, &[("name", content.talent_phrase(talent).into())])
                 } else {
-                    def.name.clone()
+                    label(content.talent_phrase(talent))
                 };
                 Gift {
                     name,
