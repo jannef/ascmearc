@@ -93,9 +93,14 @@ they come from, and how often.
 
 The affix is rolled as [loot](magic-items.md#finding-them) is, at an item level: the greater of
 the item's own and your **reach** (a plain item's, Kindle's and Imbue's, is your reach). Your
-reach grows with Enchanting, from item level 1 to 12 (the table above). So a beginner kindles
-weak magic, and a master rolls the strongest tiers. A deep find you quicken, recast, or ennoble
-keeps its own item level if it is higher than your reach. The item takes the roll's item level.
+reach grows with Enchanting, from item level 1 untrained to 24 at Enchanting 110 and 40 at 200
+(the table above). A find you quicken, recast, or ennoble keeps its own item level if it is
+higher than your reach. The item takes the roll's item level.
+
+The item level sets the **highest** tier the roll can reach, not the tier you get: each affix's
+tier is drawn evenly from tier 1 up to the highest the item level reaches. So a beginner can
+only roll weak magic, and a master at 40 can roll any tier, the strongest as likely as the
+weakest. Recast is how you try again for a better one.
 
 ## The check
 
@@ -121,14 +126,14 @@ Every finished work, made or not, can [train](skills.md#improving-a-skill) Encha
 > Enchanting 20 kindles a plain long sword with a red crystal.
 >
 > - **The roll's item level:** a plain sword has none of its own, so Kindle rolls at her reach
->   at Enchanting 20: **3**.
-> - **The difficulty:** Kindle's 11, plus 3 ÷ 3 = 1: **12**.
+>   at Enchanting 20: **5**.
+> - **The difficulty:** Kindle's 11, plus 5 ÷ 3 = 1: **12**.
 > - **What she adds:** +2 for Willpower 14 (modifiers), +1 craft bonus
 >   from Enchanting 20: **+3**. The dice must reach 9: **80.6%**.
 > - **A natural 2** (1 roll in 144, 0.7%) warps the sword.
 >
 > Quicken works on a magic sword, at the higher of its item level and her reach. A
-> sword from a dungeon's sixth floor, of item level 6, rolls at its own 6: Quicken's 13 plus 2,
+> sword of item level 6, above her reach, rolls at its own 6: Quicken's 13 plus 2,
 > difficulty 15, and the dice need 12, 61.8%.
 
 See also: [Magic crystals](crystals.md), [Magic items](magic-items.md), and
