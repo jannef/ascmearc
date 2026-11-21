@@ -3,9 +3,10 @@
 #
 # Roles: `who` is the one a line is about (a person by what the player calls them; a shopkeeper
 # by name); `what` a thing; `gold`, `owed`, `price`, `have`, `need`, `xp`, and `times` numbers,
-# in digits. `skill` is a skill (`skill:<id>`). `place` (a place's name), `quest` (a quest's
-# name), and `shop` (a shop's sign) are lines of data that render as written, in no case: the
-# lines say them in the nominative ("paikkaan {place:bare}"). `id` and `target` in a dev action's
+# in digits. `skill` is a skill (`skill:<id>`). `place` and `from` (a place's name) are words in any
+# case ("saavu {place:ill}"); `quest` (a quest's
+# name) and `shop` (a shop's sign) are lines of data that render as written, in no case: the
+# lines say them in the nominative. `id` and `target` in a dev action's
 # line are as typed.
 #
 # A quest's task (`task_*`, `step_*`, `target_*`) is an imperative ("tuo miekka Hildille"), its
@@ -65,7 +66,7 @@ mark_the_way = { text = "Merkitset reitin karttaasi.", of = "5ebe3b" }
 # A dev action's.
 marked_done_dev = { text = "{quest:bare}: merkitty suoritetuksi.", of = "c4b590" }
 # A quest's giver marks a hidden location: `place`, its name as the data writes it.
-marks_on_map = { text = "{who:Nom} merkitsee karttaasi paikan {place:bare}.", of = "ea54d8" }
+marks_on_map = { text = "{who:Nom} merkitsee karttaasi {place:gen}.", of = "ea54d8" }
 # A guild's master names the player to a rank: `title`, the rank; `guild`, the guild by its name.
 names_you = { text = "{master:Nom} nimittää sinut {guild:gen} {title:tra}.", of = "1ebd9a" }
 # What the player does next once a quest's goal is met: `step`, a `step_*` line.
@@ -85,7 +86,7 @@ not_rolled_dev = { text = "{quest:bare}: et ole saanut tätä arvottua tehtävä
 # A dev action's.
 not_under_way_dev = { text = "{quest:bare}: ei ole käynnissä.", of = "67575d" }
 # A lure quest's creature not yet brought home: `place`, where it is to be bound.
-not_yet_bound = { text = "{who:Nom} ei ole vielä sidottu paikkaan {place:bare}.", of = "a72c48" }
+not_yet_bound = { text = "{who:Nom} ei ole vielä sidottu {place:ine}.", of = "a72c48" }
 nothing_to_decide = { text = "Ei ole mitään päätettävää.", of = "50e887" }
 # A dev action's: `target` as typed.
 now_asks_dev = { text = "{quest:bare} pyytää nyt kohdetta {target:bare} (dev).", of = "58cdc3" }
@@ -120,20 +121,20 @@ task_bring = { text = "tuo {what:counted}", of = "df9793" }
 task_bring_to = { text = "tuo {what:counted} {who:all}", of = "5105be" }
 task_deliver = { text = "vie {what:counted} {who:all}", of = "1b1e87" }
 # `who`, the escort; `place`, where to bring them.
-task_escort = { text = "saata {who:nom} turvallisesti paikkaan {place:bare}", of = "36a9f6" }
+task_escort = { text = "saata {who:nom} turvallisesti {place:ill}", of = "36a9f6" }
 task_kill = { text = "tapa {target:bare}", of = "c635e4" }
-task_kill_in = { text = "tapa {target:bare} paikassa {place:bare}", of = "d25140" }
-task_kill_in_members = { text = "tapa {target:bare} paikassa {place:bare}: {members:bare}", of = "b9e836" }
+task_kill_in = { text = "tapa {target:bare} {place:ine}", of = "d25140" }
+task_kill_in_members = { text = "tapa {target:bare} {place:ine}: {members:bare}", of = "b9e836" }
 task_kill_members = { text = "tapa {target:bare}: {members:bare}", of = "bd76e2" }
 # `who`, the creature to lure; `from`, where it waits; `place`, where it is bound.
-task_lure = { text = "houkuttele {who:nom} paikasta {from:bare} paikkaan {place:bare}", of = "dd5519" }
-task_reach = { text = "saavu paikkaan {place:bare}", of = "e15791" }
+task_lure = { text = "houkuttele {who:nom} {from:ela} {place:ill}", of = "dd5519" }
+task_reach = { text = "saavu {place:ill}", of = "e15791" }
 # A teacher trains the player in a skill.
 trains_you = { text = "{who:Nom} opettaa sinulle {skill:par}.", of = "b6fc72" }
 updated = { text = "Tehtävä päivittyi:", of = "114158" }
 # A quest's progress: `what`, what it counts, as many as it needs.
 updated_count = { text = "Tehtävä päivittyi: {what:bare} {have:bare} / {need:bare}.", of = "77f5a6" }
-updated_reached = { text = "Tehtävä päivittyi: olet saapunut paikkaan {place:bare}.", of = "591aae" }
+updated_reached = { text = "Tehtävä päivittyi: olet saapunut {place:ill}.", of = "591aae" }
 # A delivery picked up again: `step`, a `step_*` line.
 updated_step = { text = "Tehtävä päivittyi: {step:bare}.", of = "18fc70" }
 # What a quest asks, as the log's objective says it: `giver`, who gave it; `task`, a `task_*`

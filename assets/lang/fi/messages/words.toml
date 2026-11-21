@@ -26,6 +26,11 @@ burden_over = { text = "{burden:bare} yli {weight:bare}", of = "8319a6" }
 burden_overloaded = { text = "ylikuormittunut", of = "7d6bc0" }
 burden_strained = { text = "raskaasti kuormittunut", of = "277d36" }
 burden_unburdened = { text = "kuormaton", of = "cdd618" }
+# The chance of learning from a grimoire: the partitive, a predicate ("{what} on helppoa").
+chance_beyond = { text = "kykyjesi ulottumattomissa", of = "07c7f0" }
+chance_certain = { text = "varmaa", of = "55c856" }
+chance_easy = { text = "helppoa", of = "537a1e" }
+chance_struggle = { text = "työlästä", of = "cdb52b" }
 dir_east = { by = "slot.form", ela = "idästä", ill = "itään", ine = "idässä", else = "itä", of = "53723c" }
 dir_north = { by = "slot.form", ela = "pohjoisesta", ill = "pohjoiseen", ine = "pohjoisessa", else = "pohjoinen", of = "ef93de" }
 dir_north_east = { by = "slot.form", ela = "koillisesta", ill = "koilliseen", ine = "koillisessa", else = "koillinen", of = "ae934d" }

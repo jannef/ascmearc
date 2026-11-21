@@ -1,0 +1,23 @@
+# Lines of data: the class resources (`resources:resource.<id>.<field>`). `short` is the status
+# bar's label ("Rage 7"), kept as short as English's.
+
+[resource.focus]
+short = { text = "Keskitys", of = "57b10f" }
+
+[resource.inspiration]
+short = { text = "Innoitus", of = "661fa6" }
+
+[resource.ki]
+short = { text = "Ki", of = "eed766" }
+
+[resource.openings]
+short = { text = "Avaukset", of = "c3736d" }
+
+[resource.rage]
+short = { text = "Raivo", of = "defbd2" }
+
+[resource.stamina]
+short = { text = "Kest", of = "d654ae" }
+
+[resource.zeal]
+short = { text = "Into", of = "c1091b" }

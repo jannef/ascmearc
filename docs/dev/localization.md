@@ -298,7 +298,9 @@ docs hold the table): `creature:<id>`, `object:<id>` (with `written`, `written_p
 `terrain:<id>`, `room:<id>` (a special room's name, #1998), `tag:<tag>` (a creature tag),
 `vision:<id>` (a vision profile's name), `label:scroll|wand|rod|potion` (an unidentified type's
 name with its `{label}` and `{colour}` slots), `colour:<colour>`, `item_tag:<tag>` (a tag an
-item's name says after it, #2028), and `word:<text>`: a word the
+item's name says after it, #2028), `place:<key>` (a place's name), `speaker:<scope>` (a
+dialogue's `name`, its speaker's proper name with any title), `story_word:<key>` (a background
+story's slot word; all three #2062), and `word:<text>`: a word the
 data names without an id of its own (a natural attack's "bite", a thrown "stone", "something"),
 keyed
 by its English, which is the word; `disease:<id>` (its name as written, "the shakes"); and
@@ -514,7 +516,7 @@ named person or a shopkeeper by name), not `phrase_of`, where the string was `ca
 ice, fire, and webs. A line that differs by a value core picks from a few (the land an encounter
 is met on, the way the stairs go, one follower's type or several) is an entry per value, each a
 whole sentence; followers of several types are a list of `levels.follower` items, each taking its
-own form ("Two kobolds and the giant rat", "Nested messages"). A place is named by a literal phrase (its name as written, "The Drake's Lair"), a
+own form ("Two kobolds and the giant rat", "Nested messages"). A place is named by its lexicon word (`place:<key>`, "The names of places"), a
 terrain by `terrain:<id>`, a party met on the overworld by its entry's `name` as a line of data
 (`encounter:<campaign>.<entry>.name`, `encounter::party_name`; the data writes its article: "a
 band of footpads"), stacks that sank by `items::stacks_arg` (a list of
@@ -670,7 +672,8 @@ The `From` text impls went with #2035; `LITERAL` stays for what is language-neut
 `world/people/` (L4m, #1924) says its lines from `messages/people.toml` and `talk.toml`, and
 what its data writes by key ("Lines of data"). Someone a line names is `called_phrase` (an
 actor) or `Content::speaker_phrase` (whoever speaks a dialogue, where the string was
-`speaker_called`), a shopkeeper `Phrase::literal` of the shop's name, a quarrel's wizards a
+`speaker_called`; a proper name is its `speaker:<scope>` word, #2062), a shopkeeper `Phrase::literal`
+of the shop's name, a quarrel's wizards a
 list of phrases (`{heard:And}`). A place inside a sentence is `quest::place`: a name written
 with "The" is `word:<rest>` said `the` ("the Arena"), any other a literal ("Cealdhlāw"). Stacks
 are `items::stacks_arg` said `a` (one, a list of two or three, else a count of
@@ -723,11 +726,20 @@ chain falls back with it, so a line is never half one language. Two uses:
   ja jättirotta"). `nested_tests.rs` renders both uses in `en`, `fi`, and `generic`; the
   proptests nest messages in every argument kind and render them through all three.
 
+**The slot's form** (#2062): a nested message (and a line of data said in a slot) may read the
+form of the slot it stands in, by variants on the pseudo-role `slot` (`by = "slot.form"`, one
+variant a form, `else` for the rest; `render.rs::SLOT_ROLE`). English never needs it; Finnish
+says a branch's level in the case its line asks (`levels.branch_level`: `ill = "{branch:gen}
+kerrokseen {floor:bare}"`, `else = "{branch:nom} {floor:bare}"`) and a compass word in its case
+(`words.dir_*`). Said alone, in no slot (a label renders `bare`), a message says its `else`. The
+checker takes a form of the language as a variant's key (`shape_problems`).
+
 **Words core picks** (#1996, part of #1949): a fixed word core chooses from a few is a message
 id in `messages/words.toml`, never English in Rust: a stat's name, abbreviation, comparative, and
 gift (`Stat::name`, `abbrev`, `comparative`; "strength", "St", "stronger"), a burden's and a
 hunger's name (`Burden::name`, `Hunger::name`) and a burden's threshold (`Load::over`, a
-`words.burden_over` message), and how hurt a creature looks (`Health::word`). A span of time
+`words.burden_over` message), how hurt a creature looks (`Health::word`), and the chance of
+learning from a grimoire (`StudyRules::words`, `words.chance_*`, #2062). A span of time
 (`Duration::spoken`) is a message whose units the language counts (`hours`, `minutes`,
 `seconds` by `n.number`, `hours_and_minutes` nesting two). A line says one in a role (the id is
 an `Arg::Msg`); a screen says one alone with `ui::text::word(id, form)` and the dumps and the
@@ -830,17 +842,19 @@ the dumps and a ware's words render English (`english_msg`). Food's freshness (`
 `heard_here`; the draught of an unseen shadow is `creatures.cold_draught`; a special room is `room:<id>` (`{room:a}`, "in an echoing hall"; the
 wiki keeps `RoomEffectDef::with_article`). How hurt a creature looks is #1996's (`Health::word`).
 
-**The names of places** (#1998, its second half) are lines of data (`data_line::place_names`):
-a hand-made level's `level:<id>.name`, a branch's `dungeon:<id>.name` (a level of it
+**The names of places** (#1998, its second half; lexicon words since #2062, so a line puts
+them in a case) are `place:<key>` phrases (`content/place_word.rs`, whose module docs hold the
+table): a hand-made level's `place:level.<id>`, a branch's `place:dungeon.<id>` (a level of it
 `levels.branch_level`, "{branch} {floor}", where its name has a floor:
-`DungeonDef::level_name_arg`, `Content::level_name_arg`), a legend's named place's
-`level:<id>.legend.<char>.name` and `.note` (`vault:<id>.legend.<char>.…` in a vault;
-`Place::key`, `name_arg`, `note_arg`), a hand-made level's hidden location's
-`level:<id>.hidden.<location>.name`, and a scenario's `scenario:<id>.name` (the welcome's
-`place`). A `StairsLink` keeps its `name` as an `Arg` (a place's or a revealed location's key,
-the Pit's `levels.the_pit`), so where stairs lead (`PerceptionView::leads_to`,
-`known_locations`, rendered English by the `locations` dump) and the stairs' lines
-(`World::level_name`, `place_name`) say them by key. A `Place` and a `HiddenLocation` keep the
+`DungeonDef::level_name_arg`, `Content::level_name_arg`; it reads its slot's form, "Nested
+messages"), a legend's named place's `place:level.<id>.legend.<char>`
+(`place:vault.<id>.legend.<char>` in a vault; `Place::key`, `name_arg`) and its note the line
+of data `level:<id>.legend.<char>.note` (`note_arg`), a hand-made level's hidden location's
+`place:level.<id>.hidden.<location>`, and a scenario's `place:scenario.<id>` (the welcome's
+`place`). English's word is the name as written, proper. A `StairsLink` keeps its `name` as an
+`Arg` (a place's or a revealed location's phrase, the Pit's `levels.the_pit`), so where stairs
+lead (`PerceptionView::leads_to`, `known_locations`, rendered English by the `locations` dump)
+and the stairs' lines (`World::level_name`, `place_name`) say them by id. A `Place` and a `HiddenLocation` keep the
 data's English beside the key, which a quest's `waits` and the wiki name them by; the game never
 shows it.
 
@@ -1282,7 +1296,9 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `town:<id>.told` | a town's goodwill rising |
 | `level:<id>.hidden.<location>.opens` | a hidden location opening as a quest reveals it |
 | `dialogue:<scope>.silent` | a speaker turning away one outside its `speaks_to` |
-| `level:<id>.name`, `dungeon:<id>.name`, `level:<id>.legend.<char>.name`, `.note`, `vault:<id>.legend.<char>.name`, `.note`, `level:<id>.hidden.<location>.name`, `scenario:<id>.name` | the names of places ("Reasons core composes (#1949)", #1998) |
+| `level:<id>.legend.<char>.note`, `vault:<id>.legend.<char>.note` | a named place's note (its name is the lexicon word `place:<key>`, #2062; "Reasons core composes (#1949)") |
+| `story:<scope>.<chapter>.<line>` | a background story's line (`data` for a shared chapter, else its campaign; `Chapter::line_key`, `crate::background::lines`), given `who` (the character) and its slot words `guardian`, `home`, `trade` (`story_word:` lexicon ids, `Chapter::word_id`); the data's `{name}`, `{they}`, `{Home}` are made `{who:name}`, `{who:they}`, `{home:Bare}` (`story_template`, #2062) |
+| `resources:resource.<id>.short` | a resource's status bar label ("Sta", #2062) |
 | `scenario:<id>.arrival` | a scenario's first line after the welcome (#2035) |
 | `unique:<id>.phrase`, `.lore`; `talent:<id>.effects.spirit_weapon.phrase`; `spell:<id>.description`; `rod_effect:<id>.name`, `.description`; `slot:<id>.mark` | an item's description's words from the data, and a slot's mark in the inventory (#2035, `data_line::describe_lines`) |
 | `race:<id>.description`, `class:<id>.description`, `talent:<id>.description`, `skill:<id>.description`, `scenario:<id>.description`, `terrain:<id>.description`, `chest:<band>.description`, `sign_animal:<id>.description`, `sign_element:<id>.description`, `lucky:<element>.<animal>.<day>.description`, `animated:<body>.moves`, `status:<id>.death` | what the screens and the look line show of the data (#2035, `data_line::shown_lines`; the app's `ui::text::data_line`) |
@@ -1342,7 +1358,8 @@ every campaign) and its `npc` or `creature` id (two dialogues keyed alike are re
 fields `greet`, `greet_evil.<n>`, `greet_good.<n>`, `lines.<n>`, `after.<quest>.<n>`,
 `economy.hard.<n>`, `economy.better.<n>`, `topic.<id>`, `topic_name.<id>` and `service_name.<id>`
 (what the player picks, the dialogue screen's `TopicName::Line`), `service.<id>.reply`/`.nothing`,
-`offer.reply`/`.sold`, `mutter.<n>`, `stipend.handover`, `partner.<field>`, `patron.<field>`, and
+`offer.reply`/`.sold`, `offer_name` (the offer's topic, #2062), `mutter.<n>`, `stipend.handover`,
+`partner.<field>`, `patron.<field>`, and
 `address`. A line is a string or whole-line variants (`by = "player.gender"`, design §9.1).
 
 **No morphology** (owner, #1882): a slot names a role and takes the base form only, `name`, or
@@ -1558,11 +1575,9 @@ dwarves Ostrobothnian, elves Turku, halflings and gnomes Savo, goblins, kobolds,
 Rauma, drow Agricola's Finnish, lizardfolk Estonian), every UI file, the message files of the
 subsystems met there, the lexicon of what lives, lies, and is sold there (and every race,
 class, and starting kit), the lines of data of those places, statuses, traps, and verbs, and
-Cēaptūn's dialogue. What it lacks reads in English. Known gaps a later slice fills: a place's
-name (a line of data) takes no case, so lines say it in the nominative ("Laskeudut portaita alas
-paikkaan Cēaptūn"); words core still says as text (a resource's short name, the read dialog's
-chance, a ready weapon's name in the targeting line) stay English; an unidentified potion's label
-is a `Label` clause where Finnish wants an agreeing adjective.
+Cēaptūn's dialogue. What it lacks reads in English. The gaps it found are filled by #2062 (below)
+but one: an unidentified potion's label is a `Label` clause where Finnish wants an agreeing
+adjective (the label lexicon is #2055's).
 
 **The other towns (#2056)**: the dialogue of Holtwīc, Līctūn, Gimmwīc, Alberich's delving,
 the three wizards' towers, the roads, and the strange spirit (`dialogue/<file>.toml`, one per
@@ -1572,12 +1587,24 @@ rewards' and a lure's binding in the narrator's standard); the profane gifts
 names, notes, arrivals, and epitaphs (`data/level.toml`, `dungeon.toml`, `town.toml`). Gimmwīc
 speaks Karelian with fixed words for the deep's Cornish (its file's header names them), Alberich
 South Ostrobothnian, the wizards kirjakieli, the rest Stadin slangi. The showcase's dialogue,
-quests, and levels stay English (a dev world). Still English, as no line of data holds them yet:
-an npc's `name` ("Headman Peran sanoo: …"), a trader's offer's name ("Your wares"), a guild's
-name and ranks, the backgrounds, and the prestige classes. A place's name still takes no case:
-giving places lexicon words would let `{place:ill}` decline a hand-made level's name, but a
-branch level's name is a nested message (`levels.branch_level`, "Fyrdelf 2") that a form does
-not reach, so the place messages stay in the nominative until that is designed.
+quests, and levels stay English (a dev world).
+
+**The text the data did not expose (#2062)**: each now has a key a translation reaches, and
+Finnish its words. A place's name is a lexicon word, `place:<key>` (`content/place_word.rs`;
+`lexicon/place.toml`: an Old English name `proper = true`, inflecting as a name, "Cēaptūniin"; a
+common noun with its class, "palkkiotaulu"), so the place lines take its case ("Saavut
+{place:ill}."); a branch's level (`levels.branch_level`) reads the case of the slot it stands in
+(`by = "slot.form"`, "Nested messages": "Laskeudut portaita alas Lytelscræfin kerrokseen 2.").
+The compass words read it too (`ela` "idästä" for a sound, `ine` "idässä" for the way to an
+ally). A speaker's proper name is `speaker:<scope>` (`Content::proper_name_phrase`;
+`lexicon/speaker.toml`: a title before a name in lower case, "kylänvanhin Peran", an old one's
+by-name after it, "Tregear-vaari"); a trader's offer's name `dialogue:<scope>.offer_name`; the
+Gilde and its ranks `guild:`/`guild_rank:` (`lexicon/guild.toml`, `guild_rank.toml`: "Weyfarerien
+killan tinaksi"); a prestige class `prestige:` (`lexicon/prestige.toml`); the background story's
+lines `story:<scope>.<chapter>.<line>` and their slot words `story_word:` ("Lines of data";
+`data/story.toml`, `lexicon/story_word.toml`); a resource's status bar label
+`resources:resource.<id>.short` (`data/resources.toml`); a study's chance `words.chance_*`; and
+the ready weapon in the targeting line its phrase (`{ready:nom}`, "Ammu nuoli").
 
 ## Mods (L9)
 

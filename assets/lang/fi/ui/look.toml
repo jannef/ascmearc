@@ -106,7 +106,7 @@ text = "Tiedät, että {who:nom} on {parts:and}."
 
 [leading_to]
 of = "9a217f"
-text = ", tie: {to:bare}"
+text = ", tie {to:ill}"
 
 [lines]
 of = "976166"

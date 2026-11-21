@@ -10,4 +10,4 @@ take_stance_frenzy = { text = "Syöksyt taisteluhurmokseen.", of = "ebc510" }
 take_stance_neutral = { text = "Otat perusasennon.", of = "454d77" }
 
 # `place`: the scenario's name; `{key:help}` the key that shows the controls.
-welcome = { text = "{place:bare}. Tervetuloa! Paina {key:help} nähdäksesi ohjaimet.", of = "2d6d0d" }
+welcome = { text = "Tervetuloa {place:ill}! Paina {key:help} nähdäksesi ohjaimet.", of = "2d6d0d" }

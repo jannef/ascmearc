@@ -240,6 +240,25 @@ fn texts_fill_their_slots() {
     // A line's own `set` is read from the next line on.
     c.story = story(&["parents/foundling", "birth/quiet_birth"]);
     assert!(retell(&CONTENT, "ascmearc", &c)[0].contains("which the sisters counted"));
+    // The lines and their words are a translation's (#2062): the slot words in their cases.
+    let chain = CONTENT.shown_chain("fi");
+    let in_fi = |msg: &crate::lang::Msg| {
+        let entry = crate::lang::Entry::new(0, msg.clone());
+        crate::lang::render_chain(&chain, &entry, CONTENT.lexicon(), &crate::lang::written_key)
+    };
+    let told = retold(&CONTENT, "ascmearc", &c);
+    assert!(
+        in_fi(&told[0]).ends_with("minkä sisarkunta katsoi armoksi."),
+        "{}",
+        in_fi(&told[0])
+    );
+    c.story = story(&["parents/smiths_child", "trial/the_debt"]);
+    let told = retold(&CONTENT, "ascmearc", &c);
+    assert!(
+        in_fi(&told[1]).starts_with("Isä kuoli velkaa"),
+        "{}",
+        in_fi(&told[1])
+    );
     // The name and the gender's pronouns.
     let text = "{They} told {them} {their} name, {name}, at {Home}.";
     let template = crate::content::story_template(text);

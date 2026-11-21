@@ -18,23 +18,23 @@ of = "a11c6c"
 text = "{ready:bare}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} käyttää, Esc peruu."
 
 [prompt_exploit]
-of = "b13a85"
+of = "ff24ef"
 text = "Iske aukkoon, heitä {ready:nom}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} heittää, Esc peruu."
 
 [prompt_fire]
-of = "d3b20a"
+of = "e33363"
 text = "Ammu {ready:nom}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} ampuu, Esc peruu."
 
 [prompt_read]
-of = "db75b1"
+of = "475f27"
 text = "Lue {ready:nom}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} lukee, Esc peruu."
 
 [prompt_throw]
-of = "bdc617"
+of = "18aff1"
 text = "Heitä {ready:nom}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} heittää, Esc peruu."
 
 [prompt_zap]
-of = "49cbf2"
+of = "c16a88"
 text = "Laukaise {ready:nom}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} laukaisee, Esc peruu."
 
 [unseen]

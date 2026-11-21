@@ -700,6 +700,10 @@ fn check_lexicon(code: &str, files: &LangFiles, morphology: &dyn Morphology, rep
                     let Some(word) = lexicon.word(id) else {
                         continue;
                     };
+                    // A name without a class (`proper = true`) inflects as a name.
+                    if word.proper && !word.base.contains('/') {
+                        continue;
+                    }
                     if let Err(e) = morphology.parse_word(&word.base) {
                         report
                             .errors

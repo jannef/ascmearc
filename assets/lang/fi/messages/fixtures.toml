@@ -21,7 +21,7 @@ doors_slam = { text = "Ovet paiskautuvat kiinni!", of = "fbe0a5" }
 drink = { text = "Kauhot vettä kämmeniisi ja juot lähteestä.", of = "416421" }
 drink_broken_by = { text = "{came:bare}; lopetat juomisen.", of = "8279a7" }
 epitaph = { text = "Tässä lepää {name:bare}, {death:bare}.", of = "3bcf2d" }
-fall_to = { text = "Putoat alas: {place:bare}.", of = "be4ea0" }
+fall_to = { text = "Putoat alas {place:ill}.", of = "be4ea0" }
 # Existential: one thing in the nominative, a mass in the partitive, a plural word as it is.
 feature_here = { text = "Tässä on {what:nom}.", of = "3a3888" }
 feature_mass_here = { text = "Tässä on {what:par}.", of = "398b04" }
