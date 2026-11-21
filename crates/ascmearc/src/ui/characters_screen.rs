@@ -35,6 +35,9 @@ pub struct CharactersScreen {
     /// Each character's race and class as the list names them (`Summary::race_and_class`);
     /// empty without a summary.
     kinds: Vec<String>,
+    /// Each character's place as the details name it (`Summary::place_name`); empty without a
+    /// summary.
+    places: Vec<String>,
     selected: usize,
     /// More than one campaign is installed (a developer build, with the test world): the place
     /// is named with its campaign.
@@ -51,9 +54,13 @@ impl CharactersScreen {
         let kinds = (characters.iter())
             .map(|c| (c.summary.as_ref()).map_or_else(String::new, |s| s.race_and_class(content)))
             .collect();
+        let places = (characters.iter())
+            .map(|c| (c.summary.as_ref()).map_or_else(String::new, |s| s.place_name(content)))
+            .collect();
         Self {
             characters,
             kinds,
+            places,
             selected: 0,
             campaigns,
             died: 0,
@@ -74,7 +81,8 @@ impl CharactersScreen {
     /// Where a character is: `In Cēaptūn.`, or with more than one campaign installed and the
     /// summary's campaign known, `In Cēaptūn (The Ascmearc).`
     fn place(&self, summary: &Summary) -> String {
-        let place = ("place", summary.place.as_str().into());
+        let name = self.places.get(self.selected).cloned().unwrap_or_default();
+        let place = ("place", name.into());
         if self.campaigns && !summary.campaign.is_empty() {
             let campaign = ("campaign", summary.campaign.as_str().into());
             ui_with(T::PLACE_CAMPAIGN, &[place, campaign])

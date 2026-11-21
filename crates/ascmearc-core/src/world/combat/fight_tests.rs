@@ -829,7 +829,7 @@ fn the_players_death_ends_the_run() {
         }
     }
     let death = w.death().expect("the brute killed the player").clone();
-    assert_eq!(death.place, "The Pit");
+    assert_eq!(crate::test_support::place_text(&w, &death.place), "The Pit");
     assert_eq!(death.turn, w.turn());
     assert_eq!(death.time, w.time());
     let brute = w.content().creature_id("brute");

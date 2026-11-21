@@ -14,6 +14,7 @@ use crate::door::Lock;
 use crate::geom::Pos;
 use crate::grid::Grid;
 use crate::ice::Ice;
+use crate::lang::{Arg, Phrase};
 use crate::light::Light;
 use crate::object::Stack;
 use crate::scorch::{self, Burn};
@@ -42,7 +43,9 @@ pub struct Fire {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct LevelState {
     pub(crate) id: String,
-    pub(crate) name: String,
+    /// Its name as the game says it, a line of data by its key or a phrase
+    /// ([`Content::said_level_name`]): the status bar, a save's summary, where the player died.
+    pub(crate) name: Arg,
     /// Light everywhere on the level.
     pub(crate) ambient: Light,
     pub(crate) kind: LevelKind,
@@ -216,11 +219,12 @@ fn is_zero(n: &u8) -> bool {
 }
 
 impl LevelState {
-    /// The level as it starts at `now`: its template's terrain, things, and ice.
+    /// The level as it starts at `now`, a level of campaign `campaign`: its template's terrain,
+    /// things, and ice.
     pub(crate) fn from_template(
         template: &LevelTemplate,
         content: &Content,
-        now: GameTime,
+        (campaign, now): (&str, GameTime),
     ) -> Self {
         let terrain = template.terrain.clone();
         let memory = Grid::new(terrain.width(), terrain.height(), None);
@@ -232,7 +236,8 @@ impl LevelState {
             .collect();
         let mut level = Self {
             id: template.id.clone(),
-            name: template.name.clone(),
+            name: (content.said_level_name(campaign, &template.id))
+                .unwrap_or_else(|| Phrase::literal(&template.name).into()),
             ambient: template.ambient,
             kind: template.kind,
             terrain,
@@ -297,7 +302,7 @@ impl LevelState {
         &self.id
     }
 
-    pub fn name(&self) -> &str {
+    pub fn name(&self) -> &Arg {
         &self.name
     }
 

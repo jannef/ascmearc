@@ -838,9 +838,26 @@ the Pit's `levels.the_pit`), so where stairs lead (`PerceptionView::leads_to`,
 `known_locations`, rendered English by the `locations` dump) and the stairs' lines
 (`World::level_name`, `place_name`) say them by key. A `Place` and a `HiddenLocation` keep the
 data's English beside the key, which a quest's `waits` and the wiki name them by; the game never
-shows it. Still text: the current level's name (`LevelState::name`: the status bar, a save's
-summary), a hidden location's name where a quest marks it (`people.marks_on_map`, whose "The"
-`quest.rs::place` lowers), and the scenario's name on the new-run and chargen screens.
+shows it.
+
+**The last place names, epitaphs, and wares** (#2028, its part). **The current level's name**
+(`LevelState::name`, `PerceptionView::level_name`) is an `Arg` made as the level is
+(`Content::said_level_name`): a hand-made or a branch level's by its key, a local area's its
+cell's `terrain:` phrase; the status bar, the death screen, and a save's summary show it as a
+label (`text::label_in`, "Road", "Grundlēas 1"), and where the player died (`Death::place`) keeps
+it too. A save's summary keeps it as the `Arg` (`Summary::place`, named by `place_name`; one
+another version wrote as text reads as text), and the graveyard's record, whose format outlives
+versions, writes it as text in the language shown. **A hidden location a quest marks**
+(`people.marks_on_map`) is said by its key as the data writes it, a name with its own article
+written in lower case ("the Skeul Hir", as a unique's, `en::own_article`); `quest.rs::place` still
+lowers a level's "The" in a quest's task. **The scenario's name** on the new-run and chargen
+screens is its `scenario:<id>.name` as a label (`ScenarioPick` keeps only the id). **An
+epitaph** (`Cause::epitaph`) is a `health.epitaph_*` message: the meal or their own scroll an
+`object:` phrase, the trap `trap:`, the spell miscast `spell:`, their own spell's look noun a
+`word:` (no id yet); the death screen renders it, the json dump in English. **A trader's ware**
+(`TopicView::ware`) is a `people.ware` message, the item `Lore::listed`, each affix and power
+line after it `people.ware_listed`; the lines are `describe::lines`' English text until
+`magic/describe.rs` is converted.
 
 **An item's tags and the last labels** (#2028). A phrase's `Note::Tags` holds lexicon words, not
 English: each morphology says each tag in its base form (`en` and `generic` the lexicon's base,

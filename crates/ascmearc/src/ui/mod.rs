@@ -117,7 +117,7 @@ use bevy::prelude::*;
 use missiles::Missiles;
 use motion::Motion;
 use spells::Spells;
-use text::{label, r#mod as T, ui, ui_with, word};
+use text::{label, label_in, r#mod as T, ui, ui_with, word};
 
 const MESSAGE_ROWS: i32 = 2;
 const STATUS_ROWS: i32 = 1;
@@ -845,7 +845,7 @@ fn status_segments(view: &PerceptionView, clock: Clock, dev: bool) -> Vec<Segmen
         .collect();
     let stance = view.own_stance();
     let head = [
-        Segment::new(1, view.level_name()),
+        Segment::new(1, label_in(content, view.level_name().clone())),
         Segment::new(
             1,
             ui_with(T::HP, &[("hp", number(hp)), ("max", number(max_hp))]),

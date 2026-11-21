@@ -305,7 +305,7 @@ fn a_climb_to_the_top_and_back_down_replays_exactly() {
         act(&mut w, &mut replay, Action::Ascend);
         let id = format!("{BRANCH}:{depth}");
         assert_eq!(w.perception().level_id(), id);
-        assert_eq!(w.perception().level_name(), name);
+        assert_eq!(crate::test_support::level_name(&w), name);
         let (down, up) = t.stairs_at(depth).expect("stairs");
         assert_eq!(w.player_pos(), down, "arrived on the `>`");
         walk_to(&mut w, &mut replay, up);

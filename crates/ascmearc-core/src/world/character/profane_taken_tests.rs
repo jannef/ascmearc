@@ -78,7 +78,10 @@ fn the_thirteenth_gift_ends_the_character() {
         &w,
         "The Profane takes you, and nothing of you is left..."
     ));
-    assert_eq!(Cause::Profane.epitaph(w.content()), "Taken by the Profane");
+    assert_eq!(
+        crate::test_support::epitaph(w.content(), Cause::Profane),
+        "Taken by the Profane"
+    );
     // The gift itself took before the end.
     assert!(w.state.player().boons.iter().any(|b| b.id == last));
 }

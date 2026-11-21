@@ -316,7 +316,7 @@ fn starving_takes_hit_points_until_the_player_starves_to_death() {
     assert_eq!(death.by, None);
     assert_eq!(texts(&w).last().unwrap(), "You starve to death...");
     assert_eq!(
-        Cause::Starvation.epitaph(w.content()),
+        crate::test_support::epitaph(w.content(), Cause::Starvation),
         "Starved to death".to_string()
     );
     assert!(!w.apply(&Action::Wait).took_turn, "the run is over");
@@ -520,6 +520,10 @@ fn overeating_may_choke_vomit_or_be_lost() {
     w.apply(&Action::Eat(Meal::Floor(0)));
     let ration = object(&w, "ration");
     assert_eq!(w.death().and_then(|d| d.cause), Some(Cause::Choked(ration)));
+    assert_eq!(
+        crate::test_support::epitaph(w.content(), Cause::Choked(ration)),
+        "Choked to death on a food ration"
+    );
     assert_eq!(
         texts(&w).last().unwrap(),
         "You choke to death on the food ration..."

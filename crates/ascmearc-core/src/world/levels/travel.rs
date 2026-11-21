@@ -264,7 +264,7 @@ impl World {
             return name;
         }
         match self.state.levels.get(id) {
-            Some(level) => Phrase::literal(&level.name).into(),
+            Some(level) => level.name.clone(),
             None => Phrase::literal(id).into(),
         }
     }
@@ -621,7 +621,7 @@ pub(in crate::world) fn instantiate_level(
 ) {
     let id = template.id.as_str();
     let seed = state.level_seed(content, id);
-    let mut level = LevelState::from_template(template, content, state.time);
+    let mut level = LevelState::from_template(template, content, (&state.campaign, state.time));
     crate::rot::made_at(level.objects.values_mut().flatten(), content, state.time);
     // The wands lying there and in its chests that have no rung yet (a level file's, a
     // vault's) draw theirs now, from the level's objects stream, pile by pile in cell order.
