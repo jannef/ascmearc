@@ -1580,7 +1580,9 @@ content too pins them by its content alone. **The checker** lays each mod's `lan
 game's the same way (`xtask/src/lang/mods.rs`: an English file of the mod's merges into English,
 so a translation of it is checked against the merge; a content mod's lines of data against the
 content loaded with it) and reports, under `mods/<id>:`, what the mod adds to the game's own
-report. The examples are test mods, not shipped (`tests/mods/`, `docs/dev/mods.md`):
+report. A mod rewording English leaves the game's translations of those ids stale, which it
+cannot mend: in a language the mod has no files for, that is a warning (its own translations'
+staleness stays an error). The examples are test mods, not shipped (`tests/mods/`, `docs/dev/mods.md`):
 `creaky_doors` (English: four door lines reworded) and `tiny_language` (a new language, `xx`).
 
 **Decisions L9 made where the design left them open.** The example text mod is English
