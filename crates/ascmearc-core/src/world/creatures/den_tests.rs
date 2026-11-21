@@ -96,7 +96,6 @@ fn asleep_is_a_status_that_sleeps_and_a_den_is_data() {
     assert_eq!(w.content.sleep_status(), Some(asleep(&w)));
     let teeming = w.content.room_effects().id("teeming").expect("teeming");
     let def = w.content.room_effect(teeming);
-    assert!(def.needs_danger);
     assert_eq!(def.min_cells, 16);
     let swarm = def.swarm.clone().expect("a swarm");
     assert_eq!((swarm.wake, swarm.cry), (200, 60));
@@ -122,11 +121,6 @@ fn bad_swarms_are_refused() {
         files.replace_table("room_effects", &shipped.replace(good, bad));
         assert!(Content::load(&files).is_err(), "{bad}");
     }
-    // A den needs a danger.
-    let mut files = ContentFiles::builtin();
-    let text = shipped.replace("needs_danger = true\n", "");
-    files.replace_table("room_effects", &text);
-    assert!(Content::load(&files).is_err(), "no needs_danger");
 }
 
 #[test]

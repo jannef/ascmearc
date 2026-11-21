@@ -8,6 +8,5 @@ mark = "n"
 near = "You smell musk and old blood."
 enter = "Heavy shapes breathe in the dark around you."
 weight = 5
-needs_danger = true
 min_cells = 16
 swarm = { per_cells = 4, min = 4, max = 16, wake = 200, cry = 60, loot_level = 0, themes = { kind = 10, faction = 20 }, factions = ["wildlife", "vermin", "marsh"], hoard = "corpses" }

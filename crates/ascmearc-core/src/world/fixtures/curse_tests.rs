@@ -118,10 +118,7 @@ fn the_cursed_room_is_data() {
         (cursed.name.as_str(), cursed.mark, cursed.weight),
         ("cursed room", 'g', 6)
     );
-    assert_eq!(
-        (cursed.level_chance, cursed.needs_danger, cursed.unholy),
-        (5, true, true)
-    );
+    assert_eq!((cursed.level_chance, cursed.unholy), (5, true));
     let rise = cursed.rise.as_ref().expect("the dead rise");
     assert_eq!(rise.faction, "undead");
     assert_eq!(rise.after, crate::time::Duration::minutes(2));
@@ -143,7 +140,7 @@ fn the_cursed_room_is_data() {
 }
 
 #[test]
-fn a_rise_is_refused_without_a_danger_or_with_a_bad_time_or_faction() {
+fn a_rise_is_refused_with_a_bad_time_or_faction() {
     let builtin = ContentFiles::builtin().table_text("room_effects");
     let load = |text: String| {
         let mut files = ContentFiles::builtin();
@@ -151,10 +148,6 @@ fn a_rise_is_refused_without_a_danger_or_with_a_bad_time_or_faction() {
         Content::load(&files)
     };
     assert!(load(builtin.to_string()).is_ok());
-    let cursed = "needs_danger = true\nlevel_chance = 5";
-    assert!(builtin.contains(cursed));
-    // A rise needs a danger.
-    assert!(load(builtin.replace(cursed, "level_chance = 5")).is_err());
     let rise = "rise = { faction = \"undead\", after = \"2m\" }";
     assert!(builtin.contains(rise));
     // A time that does not parse.

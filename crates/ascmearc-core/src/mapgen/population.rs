@@ -21,7 +21,8 @@
 //! come on top of the count, and the spawner's cap does not count them
 //! ([`LevelTemplate::outside_cap`]). A marked cell is left to them whether it is drawn or not,
 //! but a hidden trap may lie on one (the traps come first, the same with any creatures): it stays
-//! empty. A pool's draws take its `status`, walk its `route` (a walk is drawn regardless, so the
+//! empty. A pool whose map writes its `route` has none on it, nor on the cells the route walks
+//! from any marked cell (`hide_traps` keeps off them, #2070). A pool's draws take its `status`, walk its `route` (a walk is drawn regardless, so the
 //! stream is the same), and the first placed carries its `carry` ([`leave_unborne`] lays it down
 //! when no one was).
 

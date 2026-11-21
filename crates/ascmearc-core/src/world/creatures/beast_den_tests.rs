@@ -37,7 +37,6 @@ fn a_beast_den_is_data() {
     let id = content.room_effects().id("beast_den").expect("beast_den");
     let def = content.room_effect(id);
     assert_eq!(def.name, "beast den");
-    assert!(def.needs_danger);
     assert_eq!(def.min_cells, 16);
     assert_eq!(def.weight, 5);
     let swarm = def.swarm.as_ref().expect("a swarm");

@@ -15,7 +15,6 @@
 #            (the room stays plain); default 0. Needs `pervade`, and never with
 #            `shunned` or `floor`
 #   pervade  the message each time the player arrives on a level it covers whole
-#   needs_danger  drawn only on a level with a danger; default false
 #   needs_below   drawn only on a dungeon level with another below it; default false
 #   min_cells, max_cells  drawn only for a room of at least / at most this many floor cells;
 #            default no limit
@@ -36,7 +35,7 @@
 #   status   a status (status/) everyone inside holds, at least at one degree, while they
 #            stay, creatures too; it eases by its own `eases` once they leave. One immune to its kind of damage never holds it; one with no mana
 #            never holds a status that only touches mana
-#   swarm    a teeming den (needs `needs_danger`; never a whole level): generators fill the room
+#   swarm    a teeming den (never a whole level): generators fill the room
 #            with sleepers (status/ `sleeps`: Asleep) drawn by the floor's danger from the
 #            branch's population (hostile types, no uniques), and their hoard.
 #            { per_cells, min, max }: one sleeper per `per_cells` floor cells, `min` to `max`;
@@ -66,7 +65,7 @@
 #   warp     percent chance, every step onto a cell inside (the player's or a creature's), that
 #            the stepper is moved to a free cell of the level as a teleport trap moves its victim;
 #            default 0
-#   hoard    a tempting hoard (needs `needs_danger`; never a whole level): generators lay `items`
+#   hoard    a tempting hoard (never a whole level): generators lay `items`
 #            items on its floor, `loot_level` item levels above the floor's. The first
 #            stack the player lifts inside seals the room: every door of it shuts and locks (a lock
 #            of the floor's level: picked, kicked, or opened with a skeleton key), and `guardians`
@@ -80,8 +79,7 @@
 #   rise     a cursed room: `{ faction, after }`: a creature that dies inside, is not of
 #            `faction` (factions/), and leaves a corpse rises from its corpse `after` (a
 #            duration) as a creature of `faction` of its level (else the nearest level,
-#            the lower on a tie), unless the corpse is gone from where it died by then. Needs
-#            `needs_danger`
+#            the lower on a tie), unless the corpse is gone from where it died by then
 #   unholy   Consecrate (the priest's and the paladin's) lifts it for good: the room becomes
 #            plain, or the whole level does; default false
 #   feature  a terrain (not walkable, transparent) generators place at the free floor cell nearest

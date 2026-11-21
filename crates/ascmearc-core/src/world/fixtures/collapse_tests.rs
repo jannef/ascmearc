@@ -123,7 +123,7 @@ fn the_collapsed_floor_is_data() {
         Some("The floor ahead is cracked and sagging.")
     );
     // Only on a level with another below it, and never the whole level.
-    assert!(def.eligible(40, false, true) && !def.eligible(40, false, false));
+    assert!(def.eligible(40, true) && !def.eligible(40, false));
     assert_eq!(def.level_chance, 0);
     for e in effects.defs().iter().filter(|e| e.id != "collapsed") {
         assert!(e.collapse.is_none(), "{}", e.id);

@@ -8,6 +8,5 @@ mark = "q"
 near = "You hear a whisper, and then nothing."
 enter = "It is very quiet here. Too quiet to sleep."
 weight = 5
-needs_danger = true
 haunt = { faction = "undead", every = "1h" }
 unholy = true

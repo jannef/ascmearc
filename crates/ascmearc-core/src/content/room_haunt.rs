@@ -23,15 +23,11 @@ pub struct Haunt {
 }
 
 impl HauntSpec {
-    /// The haunt it describes, or why not: `every` no time (the clock is taken modulo it), or
-    /// no `needs_danger` (what comes is of the floor's danger).
-    pub(super) fn resolve(&self, needs_danger: bool) -> Result<Haunt, String> {
+    /// The haunt it describes, or why not: `every` no time (the clock is taken modulo it).
+    pub(super) fn resolve(&self) -> Result<Haunt, String> {
         let every: Duration = self.every.parse()?;
         if every.as_seconds() == 0 {
             return Err("haunt.every is more than no time".into());
-        }
-        if !needs_danger {
-            return Err("a `haunt` needs `needs_danger`".into());
         }
         Ok(Haunt {
             faction: self.faction.clone(),

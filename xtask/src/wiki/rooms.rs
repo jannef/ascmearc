@@ -274,9 +274,6 @@ pub(super) fn special_rooms(content: &Content) -> String {
         if e.weight == 0 {
             only.push("in places made by hand, never in a new floor".into());
         }
-        if e.needs_danger {
-            only.push("on a level with a danger".into());
-        }
         if e.needs_below {
             only.push("with a level below".into());
         }

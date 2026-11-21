@@ -301,11 +301,8 @@ fn check(level: &LevelTemplate, depth: u32) -> Result<(), TestCaseError> {
     // Traps are hidden, on walkable ground that is not stairs, never next to
     // stairs (the player arrives there), and never on a patrol (creatures would spring them
     // every round).
-    // A vault's monster pool is drawn after the traps are hidden, and a route its map writes is
-    // not walked around them (the Depths' danger draws them since #2067), so its walks are left
-    // out here.
     let mut patrolled = Vec::new();
-    for spawn in (level.creatures.iter()).filter(|s| !level.outside_cap.contains(&s.pos)) {
+    for spawn in &level.creatures {
         let mut p = spawn.pos;
         patrolled.push(p);
         for dir in &spawn.route {
@@ -501,11 +498,9 @@ fn special_rooms_come_about_three_levels_in_five() {
         (50..=70).contains(&percent),
         "{special} of {levels} levels ({percent} %) have a special room"
     );
-    // The Depths have no danger: a teeming den never comes there; a hearth (weight 0) is
-    // placed only by hand.
+    // A hearth (weight 0) is placed only by hand.
     let defs = CONTENT.room_effects().defs();
-    let common =
-        |(n, e): (&i32, &crate::content::RoomEffectDef)| e.needs_danger || e.weight == 0 || *n > 10;
+    let common = |(n, e): (&i32, &crate::content::RoomEffectDef)| e.weight == 0 || *n > 10;
     assert!(by_effect.iter().zip(defs).all(common), "{by_effect:?}");
     assert!(by_generator.iter().all(|n| *n > 30), "{by_generator:?}");
 }

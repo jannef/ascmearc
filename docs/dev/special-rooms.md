@@ -11,8 +11,9 @@ change edits this file, not the generator notes.
 `u8` id), ids are indices (in the save fingerprint; new effects go at the end). The loader checks
 only what resolves and what the code needs (#1205): no ranges on the numbers. Fields: `id`,
 `name`, `mark` (the `rooms` dev layer), `enter`, `weight` (default 10), `near` (optional), `level_chance`
-(percent, default 0) and `pervade` (needed with it), the eligibility fields `needs_danger`,
-`needs_below`, `min_cells`, `max_cells` ([`RoomEffectDef::eligible`]), and what it does: `light`,
+(percent, default 0) and `pervade` (needed with it), the eligibility fields
+`needs_below`, `min_cells`, `max_cells` ([`RoomEffectDef::eligible`]; every generated floor has a
+danger, #2067, so none asks for one), and what it does: `light`,
 `glow`, `noise`, `regen`, `mana_regen`, `shunned`, `floor`, `status` (a status id, resolved and
 checked at load: it must ease, at least `DWELL_EASES`, 10 s a degree; `RoomEffects::parse_with`
 takes the statuses' lookup, `parse` in tests none), `swarm` (a teeming den's numbers,
@@ -22,14 +23,13 @@ kind, faction }` (percents), `factions` (faction ids, checked once the factions 
 `RoomEffects::check_factions`: known), `hoard` (`Hoard::Items`, the default, or
 `Hoard::Corpses`), `population` (creature ids, resolved into `Swarm::kinds` once the creatures
 load, `RoomEffects::resolve_populations`: known; never with `factions`),
-`danger` (default 0); it needs `needs_danger` and can never pervade), `temperature` (degrees Celsius added to
+`danger` (default 0); it can never pervade), `temperature` (degrees Celsius added to
 the level's, default 0), `burden` (percent of the carrying limit, default 100), `mirrors` (`{
 images = N }`, `content::Mirrors`), `warp` (percent a step inside warps the stepper, default 0),
 `collapse` (`{ chance, damage }`, `content::Collapse`: chance, damage dice; needs
-`needs_below`), `rise` (`{ faction, after }`, `content::Rise`: `after` a duration; needs
-`needs_danger`; the faction checked in `RoomEffects::check_factions`), `haunt` (`{ faction,
+`needs_below`), `rise` (`{ faction, after }`, `content::Rise`: `after` a duration; the faction checked in `RoomEffects::check_factions`), `haunt` (`{ faction,
 every }`, `content::Haunt`, `content/room_haunt.rs`: `every` a duration, more than no time (the
-clock is taken modulo it); needs `needs_danger`; never over a whole level; the faction checked
+clock is taken modulo it); never over a whole level; the faction checked
 in `check_factions`), `unholy` (Consecrate lifts it), `feature` (a terrain id), `sides` (`{ good = LIGHT, evil = LIGHT }`: the
 room draws a hidden side, its feature a light per side; the lights are resolved after they load,
 `RoomEffects::resolve_places`), `dressing` (`{ terrain, per_cells, most }`, `content::Dressing`:
@@ -42,7 +42,7 @@ offers, `Content::offer_at` the same with its table, for those with one; `offers
 `sides` need a `feature`), `shrine` (`{ regen, status, welcome, unwelcome }`, `content::Shrine`,
 `content/room_shrine.rs`: a shrine of a side; needs `sides`; `status` resolved), `hoard` (a
 tempting hoard, `content::Treasure`: `items`, `loot_level`, `guardians = [least, most]` (least
-at most most), `danger`; it needs `needs_danger` and can never pervade),
+at most most), `danger`; it can never pervade),
 `loot` (`{ class, count = [least, most] }`, `content::RoomLoot`: an item class id, least at most
 most; can never pervade) and `train` (`{ skill = percent }`, a mark's chance inside); both
 name content loaded after the effects, so `content/room_lore.rs` keeps the names until
@@ -61,26 +61,26 @@ same.
 
 Features today: shadowed (10), echoing (8), hushed (8), sanctuary (6), flooded (8), black chamber
 (5, `light = 0`), draining (6, `status = "ebbing"`, `level_chance` 5, #403), teeming den (8,
-`needs_danger`, `min_cells` 16, `swarm`, #405), hot (5, "sweltering chamber", `temperature = 25`,
+`min_cells` 16, `swarm`, #405), hot (5, "sweltering chamber", `temperature = 25`,
 #404), cold (5, "frigid hall", `temperature = -25`), hearth (0, "hearth-warmed room",
 `temperature = 12`, placed only by a level file's `[[room]]`: the wizards' tops, #1788,
 `docs/dev/towers.md` "Polish"), silent vault
 (5, `silent`, `noise = 1`, `status = "silenced"`, #409), heavy (4, "heavy hall", `burden = 50`,
-#412), mirrors (3, "hall of mirrors", `max_cells = 80`, `mirrors = { images = 2 }`, #419), unstable (4, "unstable room", `warp = 10`, `max_cells = 60`, #411), beast den (5, mark `n`, `needs_danger`, `min_cells` 16, `swarm` with
+#412), mirrors (3, "hall of mirrors", `max_cells = 80`, `mirrors = { images = 2 }`, #419), unstable (4, "unstable room", `warp = 10`, `max_cells = 60`, #411), beast den (5, mark `n`, `min_cells` 16, `swarm` with
 `factions = ["wildlife", "vermin", "marsh"]` and `hoard = "corpses"`, #410), collapsed (3, "collapsed
 floor", mark `k` (`c` is the cold room's), `needs_below`, `floor = "cracked_floor"`, `collapse =
 { chance = 15, damage = "2d6" }`, #420), tempting hoard (5,
-`hoard`, "tempting hoard" (#617), mark `T`, `needs_danger`, `hoard = { items = 3, loot_level = 3,
+`hoard`, "tempting hoard" (#617), mark `T`, `hoard = { items = 3, loot_level = 3,
 guardians = [2, 4], danger = 1 }`, #415), cursed (6, mark
-`g`, `needs_danger`, `level_chance` 5, `rise = { faction = "undead", after = "2m" }`, `unholy`,
+`g`, `level_chance` 5, `rise = { faction = "undead", after = "2m" }`, `unholy`,
 #408), altar (8, "altar room",
 `min_cells = 9`, `feature = "forgotten_altar"`, `sides`, `offers = { pray = "forgotten_altar" }`,
 #406), forge (3, mark `F`, `min_cells = 9`, `feature = "anvil"`, `offers = { temper = true }`,
 #418), shrine (4, mark `i`, `min_cells = 9`, `feature = "shrine_stone"`, `sides` with the
 altar's lights, `shrine = { regen = 200, status = "unwelcome", ... }`, #413), haunted (5, mark
-`q`, `needs_danger`, `haunt = { faction = "undead", every = "1h" }`, `unholy`, #417), scriptorium (5, mark
+`q`, `haunt = { faction = "undead", every = "1h" }`, `unholy`, #417), scriptorium (5, mark
 `r`, `min_cells = 9`, `feature = "shelves"`, `loot = { class = "scrolls", count = [2, 4] }`,
-`train = { decipher_script = 200 }`, #414), armoury (4, mark `R`, `needs_danger`, `min_cells` 16,
+`train = { decipher_script = 200 }`, #414), armoury (4, mark `R`, `min_cells` 16,
 `dressing` of `weapon_rack`, `swarm` with its own `population` of the three animated families and
 `danger = 4`, #487), workshop (4, mark `W`, as the armoury with `workbench` and ten household
 types, #487), treasure room (4, `treasury`, mark `$`, `min_cells = 9`, `secret_doors = "all"`,

@@ -1,4 +1,4 @@
-//! A special room's `haunt`: parsed, refused without `needs_danger` or
+//! A special room's `haunt`: parsed, refused without
 //! a period, never over a whole level, and read by [`Here::haunt`] of the room only.
 
 use super::{Here, RoomEffectId, RoomEffects};
@@ -11,7 +11,7 @@ fn effect(extra: &str) -> String {
     )
 }
 
-const HAUNT: &str = "needs_danger = true\nhaunt = { faction = \"undead\", every = \"1h\" }";
+const HAUNT: &str = "haunt = { faction = \"undead\", every = \"1h\" }";
 
 #[test]
 fn haunt_parses_and_is_none_by_default() {
@@ -24,17 +24,15 @@ fn haunt_parses_and_is_none_by_default() {
 }
 
 #[test]
-fn haunt_needs_a_danger_and_a_period() {
+fn haunt_needs_a_period() {
     let refused = |extra: &str| {
         RoomEffects::parse("e.toml", &effect(extra), |_| None)
             .unwrap_err()
             .message
     };
-    let e = refused("haunt = { faction = \"undead\", every = \"1h\" }");
-    assert!(e.contains("needs_danger"), "{e}");
-    let e = refused("needs_danger = true\nhaunt = { faction = \"undead\", every = \"0s\" }");
+    let e = refused("haunt = { faction = \"undead\", every = \"0s\" }");
     assert!(e.contains("haunt.every"), "{e}");
-    let e = refused("needs_danger = true\nhaunt = { faction = \"undead\" }");
+    let e = refused("haunt = { faction = \"undead\" }");
     assert!(e.contains("every"), "{e}");
 }
 

@@ -171,8 +171,7 @@ where a dungeon favours or bans nothing. "Only" says where it can come at all.
   Nothing the level needs is ever inside, no [trap](traps.md#finding-traps) is hidden in it, and
   no creature wanders in. Each time you arrive on its level until you have been inside,
   *something tells you a fortune lies walled up on this level*.
-- **Tempting hoard.** Only on a level with a danger. Three items lie on its floor, better than the
-  level's own (three item levels above it), and no one guards them.
+- **Tempting hoard.** Three items lie on its floor, better than the level's own (three item levels above it), and no one guards them.
 
   The moment you pick anything up inside, the room seals. Every door of it slams shut and locks
   ("The doors slam shut!"); a door with something in the doorway stays open. Two to four creatures
@@ -182,11 +181,10 @@ where a dungeon favours or bans nothing. "Only" says where it can come at all.
   [skeleton key](doors.md#keys) fits. [Pick](doors.md#picking-locks) them,
   [kick](doors.md#kicking-a-door-open) the doors in, or fight. A cave chamber has no doors, so there only the
   guardians come. A room seals once.
-- **Cursed room.** The dead do not rest in it: see [Cursed rooms](cursed-and-hallowed.md#cursed-rooms) below. Only on a
-  level with a danger. One floor in twenty that draws a cursed room is cursed throughout instead.
+- **Cursed room.** The dead do not rest in it: see [Cursed rooms](cursed-and-hallowed.md#cursed-rooms) below.
+  One floor in twenty that draws a cursed room is cursed throughout instead.
 - **Haunted room.** A fine camp spot that is not. [Rest](resting.md#how-resting-works) in it and
-  the dead come, once every hour (see [Haunted rooms](cursed-and-hallowed.md#haunted-rooms) below). Only on a level with
-  a danger.
+  the dead come, once every hour (see [Haunted rooms](cursed-and-hallowed.md#haunted-rooms) below).
 - **Altar room.** An old altar stands in the middle of the room, its god long forgotten, and a
   faint glow rises from it; you notice it from the doorway. Stand beside it and you may
   [pray](abilities.md#ability-pray) (see [Forgotten altars](altars-forges-springs.md#forgotten-altars)).

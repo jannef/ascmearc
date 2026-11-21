@@ -223,10 +223,9 @@ pub(crate) struct Canvas<'a> {
     pub pervading: Option<RoomEffectId>,
     /// The level's item level: a shop's goods are made at it (`shop.rs`).
     pub item_level: u8,
-    /// Whether the level has a danger (some effects need one) and another level below it.
-    pub danger: bool,
+    /// Whether the level has another level below it (some effects need one).
     pub below: bool,
-    /// The level's least danger (for a player of level 1; 0 without one): a den with its own
+    /// The level's least danger (for a player of level 1): a den with its own
     /// population needs a type of it that weighs something there (`den::peopled`).
     pub least: u8,
     /// The branch's own population: a den kind that names factions needs one of them in it
@@ -275,7 +274,6 @@ impl<'a> Canvas<'a> {
             rooms: Vec::new(),
             pervading: None,
             item_level: 1,
-            danger: false,
             below: false,
             least: 0,
             population: &[],
@@ -564,7 +562,6 @@ pub fn generate_for(
         let vaults = spaced_vaults(content, seed, (def, depth), danger);
         let size = (plan.width, plan.height);
         let mut canvas = Canvas::new(content, pal, odds, vaults, size);
-        canvas.danger = content.spawning(id).is_some();
         canvas.item_level = content.item_level(id);
         canvas.least = content
             .spawning(id)
@@ -791,9 +788,10 @@ fn endless_plan<'a>(
 /// each of a kind from the branch's list, all hidden. They are drawn from the level's own trap
 /// stream ([`Rng::traps`]), so the rest of the level is the same with or without them. A trap
 /// lies on plain floor that nothing else claims: never on or next to a staircase (the player
-/// arrives there), never on a creature's patrol (creatures do not know where traps are, and
-/// would spring one every round), nor where objects lie or a light stands, nor in a shop, nor in
-/// a sealed room (a greater treasure room).
+/// arrives there), never on a creature's patrol nor on a route a vault's monster pool writes
+/// ([`patrolled`]: creatures do not know where traps are, and would spring one every round), nor
+/// where objects lie or a light stands, nor in a shop, nor in a sealed room (a greater treasure
+/// room).
 fn hide_traps(
     template: &mut LevelTemplate,
     content: &Content,
@@ -842,13 +840,19 @@ fn hide_traps(
     }
 }
 
-/// The cells creatures walk on their patrols, where they start included.
+/// The cells creatures walk on their patrols, where they start included, and the cells a vault's
+/// monster pool walks the route its map writes from any cell it marks (its draws come after the
+/// traps, and a written route is not walked round them, #2070).
 fn patrolled(template: &LevelTemplate) -> std::collections::BTreeSet<Pos> {
     let mut patrolled = std::collections::BTreeSet::new();
-    for spawn in &template.creatures {
-        let mut p = spawn.pos;
+    let spawns = (template.creatures.iter()).map(|s| (s.pos, &s.route));
+    let pools = (template.monsters.iter())
+        .filter(|m| !m.route.is_empty())
+        .flat_map(|m| m.cells.iter().map(|c| (*c, &m.route)));
+    for (start, route) in spawns.chain(pools) {
+        let mut p = start;
         patrolled.insert(p);
-        for dir in &spawn.route {
+        for dir in route {
             p = p.step(*dir);
             patrolled.insert(p);
         }

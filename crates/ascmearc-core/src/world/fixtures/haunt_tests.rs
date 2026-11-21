@@ -80,7 +80,7 @@ fn the_haunted_room_is_data() {
         (haunted.name.as_str(), haunted.weight, haunted.level_chance),
         ("haunted room", 5, 0)
     );
-    assert!(haunted.needs_danger && haunted.unholy);
+    assert!(haunted.unholy);
     let haunt = haunted.haunt.as_ref().expect("it haunts");
     assert_eq!(
         (haunt.faction.as_str(), haunt.every),
