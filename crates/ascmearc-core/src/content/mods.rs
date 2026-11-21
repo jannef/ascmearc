@@ -1,7 +1,9 @@
 //! Mods laid over the content (#1731; docs/dev/mods.md): whole files, by path, the last mod
-//! laid wins. The core reads no mod folder (the binaries do, `ascmearc-assets`' `mods`): it takes
-//! the merged [`ContentFiles`] with the list of mods laid over them, which a [`Content`] keeps
-//! for the saves and replays it makes, and folds into its fingerprint.
+//! laid wins; a language file merges by id instead. The core reads no mod folder (the binaries
+//! do, `ascmearc-assets`' `mods`): it takes the merged [`ContentFiles`] with the list of mods
+//! laid over them, which a [`Content`] keeps for the saves and replays it makes, and folds into
+//! its fingerprint. A **text mod** (#1892), one whose files all lie under `lang/`, changes how
+//! the game reads, never what a save means: saves, replays, and the fingerprint leave it out.
 
 use super::{Content, ContentError, ContentFiles};
 use serde::{Deserialize, Serialize};
@@ -31,20 +33,48 @@ pub fn describe(mods: &[ModStamp]) -> String {
     }
 }
 
+/// Where the languages are: a file under it is text, never content (#1892).
+const LANG: &str = "lang/";
+
+/// Whether a mod's file at `path` is text (a language's file, under `lang/`): a mod whose files
+/// all are is a text mod. By path, never by a flag the mod sets, so no mod can call itself text
+/// while it changes a rule.
+pub fn is_text_path(path: &str) -> bool {
+    path.starts_with(LANG)
+}
+
+/// Whether a language file at `path` merges with the one it is laid over by id, rather than
+/// replacing it: every one but a language's `lang.toml`, which is one table, not entries.
+pub fn merges_by_id(path: &str) -> bool {
+    is_text_path(path) && !path.ends_with("/lang.toml")
+}
+
 impl ContentFiles {
     /// Lays the mod `stamp`'s files over these (#1731): a file at a path already here replaces
-    /// it whole, a file at a new path is added. Mods laid later win.
+    /// it whole, a file at a new path is added. A language file (under `lang/`, but its
+    /// `lang.toml`) merges by id instead (#1892): the loaders read every layer in turn, so the
+    /// mod's entries replace the same ids and the rest stay. Mods laid later win. A mod whose
+    /// files all lie under `lang/` (or that has none) is a text mod.
     pub fn overlay<'a>(
         &mut self,
         stamp: ModStamp,
         files: impl IntoIterator<Item = (&'a str, &'a str)>,
     ) {
         let index = self.mods.len();
-        for (path, text) in files {
-            self.insert(path, text);
+        let mut text = true;
+        for (path, new) in files {
+            text &= is_text_path(path);
+            let under = self.files.get(path).cloned().filter(|_| merges_by_id(path));
+            let mut layers = self.layers.remove(path).unwrap_or_default();
+            self.insert(path, new);
+            if let Some(under) = under {
+                layers.push(under);
+                self.layers.insert(path.to_string(), layers);
+            }
             self.origin.insert(path.to_string(), index);
         }
         self.mods.push(stamp);
+        self.text.push(text);
     }
 
     /// The mods laid over these files, in the order they were laid.
@@ -52,13 +82,22 @@ impl ContentFiles {
         &self.mods
     }
 
+    /// Those of the mods that are content mods, not text mods: what saves and replays record.
+    fn content_mods(&self) -> Vec<ModStamp> {
+        (self.mods.iter().zip(&self.text))
+            .filter(|(_, text)| !**text)
+            .map(|(stamp, _)| stamp.clone())
+            .collect()
+    }
+
     /// The mod that supplied the file at `path`, if any (the last one laid that has it).
     pub fn mod_of(&self, path: &str) -> Option<&ModStamp> {
         self.origin.get(path).map(|&i| &self.mods[i])
     }
 
-    /// A hash (64-bit FNV-1a) of every file a mod supplied, path and text as merged: the part
-    /// of the content the mods made, for the fingerprint.
+    /// A hash (64-bit FNV-1a) of every content file a mod supplied, path and text as merged:
+    /// the part of the content the mods made, for the fingerprint. Text (`lang/`) is left out,
+    /// a content mod's too: it changes how the game reads, never what a save means.
     fn mod_digest(&self) -> u64 {
         let mut hash: u64 = 0xcbf2_9ce4_8422_2325;
         let mut feed = |bytes: &[u8]| {
@@ -66,7 +105,7 @@ impl ContentFiles {
                 hash = (hash ^ u64::from(b)).wrapping_mul(0x0000_0100_0000_01b3);
             }
         };
-        for path in self.origin.keys() {
+        for path in self.origin.keys().filter(|p| !is_text_path(p)) {
             feed(path.as_bytes());
             feed(&[0]);
             feed(self.files[path].as_bytes());
@@ -88,24 +127,33 @@ impl ContentFiles {
 }
 
 impl Content {
-    /// The mods this content was loaded with, in the order they were laid.
+    /// The mods this content was loaded with, in the order they were laid, text mods too (the
+    /// Mods screen's).
     pub fn mods(&self) -> &[ModStamp] {
         &self.mods
+    }
+
+    /// The content mods it was loaded with, in order: every mod but the text mods (#1892). What
+    /// a save and a replay record and require, and what the fingerprint adds.
+    pub fn content_mods(&self) -> &[ModStamp] {
+        &self.content_mods
     }
 
     /// Keeps the mods of `files` (after a load).
     pub(super) fn take_mods(&mut self, files: &ContentFiles) {
         self.mods = files.mods.clone();
+        self.content_mods = files.content_mods();
         self.mod_digest = files.mod_digest();
     }
 
-    /// Feeds the mods into a fingerprint: nothing without mods (a save made without them keeps
-    /// its fingerprint), else each mod's id and version and the digest of what they supplied.
+    /// Feeds the content mods into a fingerprint: nothing without any (a save made without
+    /// them, or with text mods only, keeps its fingerprint), else each mod's id and version and
+    /// the digest of what they supplied.
     pub(super) fn feed_mods(&self, feed: &mut impl FnMut(&[u8])) {
-        if self.mods.is_empty() {
+        if self.content_mods.is_empty() {
             return;
         }
-        for stamp in &self.mods {
+        for stamp in &self.content_mods {
             feed(stamp.id.as_bytes());
             feed(&[0]);
             feed(stamp.version.as_bytes());
@@ -116,11 +164,34 @@ impl Content {
     }
 }
 
-/// The repository's example mod, `mods/pride_month/`, as the binaries read it: every TOML
-/// file under it but `mod.toml`, at its path.
+/// The repository's example mod, `mods/pride_month/`, as the binaries read it.
 #[cfg(test)]
 pub(crate) fn pride_month() -> Vec<(String, String)> {
-    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../mods/pride_month");
+    repo_mod("pride_month")
+}
+
+/// The repository's mod `mods/<id>/` as the binaries read it: every TOML file under it but
+/// `mod.toml`, at its path.
+#[cfg(test)]
+fn repo_mod(id: &str) -> Vec<(String, String)> {
+    read_mod_dir(
+        &std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../mods")
+            .join(id),
+    )
+}
+
+/// The test mod `tests/mods/<id>/` (a mod that does not ship, e.g. the example text mod
+/// `creaky_doors`), read as `repo_mod` reads one.
+#[cfg(test)]
+pub(crate) fn test_mod(id: &str) -> Vec<(String, String)> {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/mods");
+    read_mod_dir(&root.join(id))
+}
+
+#[cfg(test)]
+fn read_mod_dir(root: &std::path::Path) -> Vec<(String, String)> {
+    let root = root.to_path_buf();
     let mut files = Vec::new();
     let mut dirs = vec![root.clone()];
     while let Some(dir) = dirs.pop() {
