@@ -227,7 +227,8 @@ fn what_a_rank_gives_joins_an_own_cast_and_no_scrolls_or_wands() {
     let view = deep.perception();
     assert_eq!(view.own_spell_rank(sp("ray_of_frost")), Some(10));
     assert_eq!(
-        view.own_spell_roll(sp("ray_of_frost")).map(|r| r.text),
+        (view.own_spell_roll(sp("ray_of_frost")))
+            .map(|r| crate::test_support::english_of(deep.content(), &r.text)),
         Some("3d8 cold, numbs".to_string())
     );
 }

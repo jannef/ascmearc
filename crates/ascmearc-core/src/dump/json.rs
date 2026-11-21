@@ -41,7 +41,7 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
             let known = view.known_resistances(a);
             if !known.is_empty() {
                 let known: serde_json::Map<String, Value> = (known.into_iter())
-                    .map(|(k, w)| (content.damage_type(k).id.clone(), json!(w.word())))
+                    .map(|(k, w)| (content.damage_type(k).id.clone(), json!(content.english_word(w.word(), "bare"))))
                     .collect();
                 seen["known"] = Value::Object(known);
             }
@@ -180,7 +180,10 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
         })
         .collect();
     let locations: Vec<Value> = (view.known_locations().into_iter())
-        .map(|(p, name)| json!({ "pos": p, "name": name }))
+        .map(|(p, name)| {
+            let name = crate::messages::english_arg(content, &name, "bare");
+            json!({ "pos": p, "name": name })
+        })
         .collect();
     // The chests the player sees or remembers, as they see them.
     let chests: Vec<Value> = (view.known_chests().into_iter())
@@ -305,7 +308,7 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
         "defence": view.own_defence(),
         "protection": view.own_protection(),
         "resistances": (view.own_resistances().into_iter())
-            .map(|(k, w)| (content.damage_type(k).id.clone(), json!(w.word())))
+            .map(|(k, w)| (content.damage_type(k).id.clone(), json!(content.english_word(w.word(), "bare"))))
             .collect::<serde_json::Map<String, Value>>(),
         "hunger": view.own_hunger(),
         "stance": view.own_stance().id(),

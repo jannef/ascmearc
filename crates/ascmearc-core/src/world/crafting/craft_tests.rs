@@ -66,7 +66,12 @@ fn rows(w: &World, id: &str) -> Vec<String> {
     let content = w.content.clone();
     (w.perception().recipes(skill(w, id)).into_iter())
         .map(|r| match r.unavailable {
-            Some(why) => format!("{}: {} ({})", r.name, r.takes, why.reason(&content)),
+            Some(why) => format!(
+                "{}: {} ({})",
+                r.name,
+                r.takes,
+                crate::test_support::english_of(&content, &why.reason(&content))
+            ),
             None => format!("{}: {}", r.name, r.takes),
         })
         .collect()

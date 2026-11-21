@@ -32,8 +32,10 @@ pub(super) fn recipe_rows(view: &PerceptionView<'_>) -> Vec<String> {
             rows.push("  none".into());
         }
         for row in recipes {
-            let why = (row.unavailable)
-                .map_or(String::new(), |why| format!(" ({})", why.reason(content)));
+            let why = (row.unavailable).map_or(String::new(), |why| {
+                let reason = crate::messages::english_msg(content, &why.reason(content));
+                format!(" ({reason})")
+            });
             rows.push(format!("  {}: {}{why}", row.name, row.takes));
         }
     }

@@ -1478,14 +1478,17 @@ mod tests {
 
     /// The log is rendered in the language shown each time it is drawn, so switching it (the
     /// settings, `--lang`) switches what was already said: a test language, `xx`, with the
-    /// welcome line alone, the rest in English.
+    /// line for nothing to open alone, the rest in English (the welcome too, whose place, a line
+    /// of data, `xx` lacks).
     #[test]
     fn the_log_reads_in_the_language_chosen_and_switches_live() {
         let mut files = ascmearc_assets::files();
         let lang = "name = \"Testi\"\ncode = \"xx\"\nmorphology = \"en\"\nfallback = \"en\"\n";
         files.insert("lang/xx/lang.toml", lang);
-        let welcome = "welcome = \"Tervetuloa: {place}. Paina {key:help}.\"\n";
-        files.insert("lang/xx/messages/world.toml", welcome);
+        files.insert(
+            "lang/xx/messages/doors.toml",
+            "nothing_to_open = \"Ei avattavaa.\"\n",
+        );
         let content = Arc::new(Content::load(&files).expect("content with xx"));
         let mut world = World::new(content, "showcase", None).expect("starts");
         world.apply(&ascmearc_core::Action::Open(ascmearc_core::Dir::N));
@@ -1497,13 +1500,21 @@ mod tests {
         };
         let english = shown(&world);
         assert_eq!(english[0], "Welcome to Showcase. Press ? for controls.");
+        let door = (english
+            .iter()
+            .position(|l| l == "There is nothing to open there."))
+        .expect("the door line");
         text::use_language("xx");
         let switched = shown(&world);
         text::use_language("en");
-        assert_eq!(switched[0], "Tervetuloa: Showcase. Paina ?.");
+        assert_eq!(switched[door], "Ei avattavaa.");
         // What `xx` lacks reads as it did.
-        assert_eq!(switched[1..], english[1..]);
-        assert!(english.len() > 1, "{english:?}");
+        for (i, (s, e)) in switched.iter().zip(&english).enumerate() {
+            if i != door {
+                assert_eq!(s, e);
+            }
+        }
+        assert_eq!(switched.len(), english.len());
         assert_eq!(shown(&world), english);
     }
 

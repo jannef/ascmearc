@@ -57,6 +57,12 @@ pub(crate) fn english_of(content: &Content, msg: &Msg) -> String {
     crate::messages::english_msg(content, msg)
 }
 
+/// Where the stairs or location at `p` lead ([`crate::PerceptionView::leads_to`]), in English.
+pub(crate) fn leads_to(world: &World, p: crate::geom::Pos) -> Option<String> {
+    let to = world.perception().leads_to(p)?;
+    Some(crate::messages::english_arg(world.content(), &to, "bare"))
+}
+
 /// A quest of the log ([`crate::world::QuestView`]) with its words in English.
 #[derive(Clone, Debug)]
 pub(crate) struct LoggedQuest {

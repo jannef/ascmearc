@@ -1,6 +1,7 @@
 //! Talents: every tree with its talents, their prerequisites and their rules
 //! in full (the game says them in words), and the talents by system.
 
+use super::util::word;
 use super::util::{Term, anchored, link, signed};
 use ascmearc_core::content::{
     Content, Faced, Keep, KitLineSpec, Need, PrayerUse, SignActive, SpellData, SpellModSpec,
@@ -752,8 +753,14 @@ fn prayer_text(
              until the strain has passed to 0. With nothing to answer it is refused, with no \
              time or strain",
             order.join(", "),
-            rules.holy.min.map_or("every band", |b| b.name()),
-            rules.dark.max.map_or("every band", |b| b.name()),
+            rules
+                .holy
+                .min
+                .map_or("every band".into(), |b| word(b.name(), "Bare")),
+            rules
+                .dark
+                .max
+                .map_or("every band".into(), |b| word(b.name(), "Bare")),
             rules.strain,
             rules.decay,
             rules.fizzle_per_100,

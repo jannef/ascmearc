@@ -11,7 +11,8 @@
 //! stale.
 //!
 //! Its words are `assets/lang/en/ui/weapon_skills_screen.toml` (`T::…`, [`super::text`]); the
-//! skills' names are their lexicon ids as labels (`text::label`), the sections' core's (`Section::name`).
+//! skills' names are their lexicon ids as labels (`text::label`), the sections' core's words
+//! (`Section::name`, a message id).
 
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::screens::ScreenAction;
@@ -52,7 +53,7 @@ const WIDTH_TWO: i32 = 2 * COLUMN_W + GUTTER + 4;
 enum Row {
     /// A section's heading (`Melee`), and the legend of the in-use mark for the styles' while
     /// one is in use.
-    Section { name: &'static str, legend: bool },
+    Section { name: String, legend: bool },
     /// A skill: its name, its rank, how many of the bar's cells its marks fill (`None` at the
     /// last rank: nothing more to earn), and whether it is a fighting style in use.
     Skill {
@@ -128,7 +129,7 @@ impl WeaponSkillsScreen {
             }
             let legend = (skills.iter()).any(|r| matches!(r, Row::Skill { in_use: true, .. }));
             rows.push(Row::Section {
-                name: section.name(),
+                name: label(section.name()),
                 legend,
             });
             rows.extend(skills);

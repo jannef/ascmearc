@@ -110,14 +110,19 @@ pub fn ui_with(text: UiText, args: &[(&'static str, Arg)]) -> String {
 /// A message core made (why an ability cannot be used now, `Unavailable::reason`) in the current
 /// language, as [`ui_with`] renders its own.
 pub fn ui_msg(msg: Msg) -> String {
-    let content = content();
+    ui_msg_in(&content(), msg)
+}
+
+/// [`ui_msg`] rendered with the run's `content`, whose lines of data it may nest (the look line:
+/// a level's or a place's name, which a mod's or a test's content may add).
+pub fn ui_msg_in(content: &Content, msg: Msg) -> String {
     let entry = Entry::new(0, msg);
     #[cfg(test)]
     if let Some(shown) = SHOWN_IN.with(|l| l.borrow().clone()) {
         let chain = [&*shown, content.english()];
         return ascmearc_core::lang::render_chain(&chain, &entry, content.lexicon(), &written_key);
     }
-    message(&content, &entry, &written_key)
+    message(content, &entry, &written_key)
 }
 
 /// A logged message in the current language, English for what it lacks, each key it names by

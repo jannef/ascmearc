@@ -13,7 +13,7 @@
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{UiText, label, talents_screen as T, ui, ui_with};
+use super::text::{UiText, label, talents_screen as T, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -259,7 +259,8 @@ fn draw_needs(console: &mut Console, x: i32, y: i32, needs: &[NeedView], panel: 
         if i > 0 {
             print(console, ", ", TEXT_DIM);
         }
-        print(console, &need.words, if need.met { TEXT } else { TEXT_DIM });
+        let words = ui_msg(need.words.clone());
+        print(console, &words, if need.met { TEXT } else { TEXT_DIM });
     }
 }
 

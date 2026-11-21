@@ -295,13 +295,12 @@ impl ChoiceScreen {
         let choices: Vec<Choice> = match step {
             Step::Race => (content.races().list.iter())
                 .map(|r| {
-                    let eyes = content
-                        .vision(&r.vision)
-                        .map_or(r.vision.as_str(), |v| &v.name);
-                    let mut details = vec![
-                        adjustments(&r.stats),
-                        ui_with(T::VISION, &[("eyes", eyes.into())]),
-                    ];
+                    let eyes = match content.vision(&r.vision) {
+                        Some(_) => Arg::from(content.vision_phrase(&r.vision)),
+                        None => Arg::from(r.vision.as_str()),
+                    };
+                    let mut details =
+                        vec![adjustments(&r.stats), ui_with(T::VISION, &[("eyes", eyes)])];
                     details.extend(pace_words(r.experience).map(String::from));
                     Choice {
                         id: r.id.clone(),
@@ -315,7 +314,7 @@ impl ChoiceScreen {
                 .into_iter()
                 .map(|g| Choice {
                     id: g.id().to_string(),
-                    name: g.name().to_string(),
+                    name: word(g.name(), "Bare"),
                     description: ui(gender_description(g)),
                     details: Vec::new(),
                 })
@@ -558,7 +557,7 @@ impl SummaryScreen {
             Some(spec) => [
                 spec.race(content)
                     .map_or(spec.race.clone(), |r| label(content.race_phrase(&r.id))),
-                spec.gender.name().to_string(),
+                word(spec.gender.name(), "Bare"),
                 spec.class(content)
                     .map_or(spec.class.clone(), |c| label(content.class_phrase(&c.id))),
                 name.clone(),
@@ -571,15 +570,16 @@ impl SummaryScreen {
         let sign = (start.as_ref().ok())
             .and_then(|s| s.character.sign_title(content))
             .unwrap_or_default();
-        let eyes = start.as_ref().map_or(String::new(), |s| {
-            content
-                .vision(&s.vision)
-                .map_or(s.vision.clone(), |v| v.name.clone())
-        });
+        let eyes = start
+            .as_ref()
+            .map_or(String::new(), |s| match content.vision(&s.vision) {
+                Some(_) => label(content.vision_phrase(&s.vision)),
+                None => s.vision.clone(),
+            });
         let alignment = (start.as_ref().ok())
             .zip(content.alignment())
             .map_or(String::new(), |(s, rules)| {
-                rules.band(s.alignment).name().to_string()
+                word(rules.band(s.alignment).name(), "Bare")
             });
         let skills = start.as_ref().map_or(Vec::new(), |s| {
             (s.skills.iter())

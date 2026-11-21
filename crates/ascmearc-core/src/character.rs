@@ -97,11 +97,11 @@ impl Gender {
     }
 
     /// The name: `Female`.
-    pub const fn name(self) -> &'static str {
+    pub const fn name(self) -> crate::lang::MessageId {
         match self {
-            Gender::Male => "Male",
-            Gender::Female => "Female",
-            Gender::Other => "Other",
+            Gender::Male => crate::msg::words::GENDER_MALE,
+            Gender::Female => crate::msg::words::GENDER_FEMALE,
+            Gender::Other => crate::msg::words::GENDER_OTHER,
         }
     }
 

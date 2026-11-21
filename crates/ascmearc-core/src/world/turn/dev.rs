@@ -17,7 +17,7 @@ impl World {
         self.state.weather_override = Some(over);
         self.say(
             Msg::new(msg::turn::WEATHER_DEV)
-                .role("weather", weather.name().to_lowercase())
+                .role("weather", weather.name())
                 .role("time", weather::OVERRIDE.spoken()),
         );
         Spent::NoTime
@@ -34,11 +34,11 @@ impl World {
     }
 
     pub(in crate::world) fn set_vision(&mut self, id: &str) -> Spent {
-        let Some(profile) = self.content.vision(id) else {
+        if self.content.vision(id).is_none() {
             self.say(Msg::new(msg::turn::NO_VISION_PROFILE_DEV).role("id", id));
             return Spent::Nothing;
-        };
-        let name = profile.name.clone();
+        }
+        let name = self.content.vision_phrase(id);
         self.state.vision = id.to_string();
         self.state.vision_dev = true;
         self.say(Msg::new(msg::turn::VISION_DEV).role("name", name));

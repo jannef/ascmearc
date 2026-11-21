@@ -10,7 +10,7 @@ use crate::action::{AttackKind, Event};
 use crate::burden;
 use crate::content::{
     ActionKind, CombatStance, Content, CreatureSpawn, EdgeExit, LevelKind, LevelTemplate,
-    StairsDir, Stance, TerrainId, local_area_id,
+    StairsDir, Stance, TerrainId, data_line, local_area_id,
 };
 use crate::equipment::Equipment;
 use crate::geom::{Dir, Pos};
@@ -248,17 +248,25 @@ impl World {
         Spent::Turn(step + climb)
     }
 
-    /// What a level is called in messages; a dungeon branch goes by the branch's name.
-    pub(super) fn place_name(&self, id: &str) -> String {
+    /// What a level is called in messages; a dungeon branch goes by the branch's name (lines of
+    /// data, `data_line::dungeon_name`, `level_name`).
+    pub(super) fn place_name(&self, id: &str) -> Arg {
         if let Some((branch, _)) = self.content.branch_level(id) {
-            return branch.name.clone();
+            return Arg::said(data_line::dungeon_name(&branch.id));
         }
-        if let Some(level) = self.state.levels.get(id) {
-            return level.name.clone();
+        self.level_name(id)
+    }
+
+    /// What level `id` is called, as its name is said (`Content::level_name_arg`); a level made
+    /// with no name in the data (a local area) by its own, else its id.
+    pub(super) fn level_name(&self, id: &str) -> Arg {
+        if let Some(name) = self.content.level_name_arg(id) {
+            return name;
         }
-        self.content
-            .level(id)
-            .map_or_else(|| id.to_string(), |t| t.name.clone())
+        match self.state.levels.get(id) {
+            Some(level) => Phrase::literal(&level.name).into(),
+            None => Phrase::literal(id).into(),
+        }
     }
 
     /// Walks off the edge of an outdoor area (a local area, or a hand-made one an overworld
@@ -271,7 +279,7 @@ impl World {
             return Spent::Nothing;
         }
         events.push(Event::LevelChanged { from, to: exit.to });
-        let place = Phrase::literal(&self.state.current().name);
+        let place = self.level_name(&self.state.current_level);
         self.say(Msg::new(msg::levels::RETURN_TO).role("place", place));
         self.took(true, ActionKind::Stairs)
     }
@@ -357,7 +365,7 @@ impl World {
         });
         let level = self.state.current();
         // A revealed location goes by its own name.
-        let place = Phrase::literal(link.name.unwrap_or_else(|| level.name.clone()));
+        let place = (link.name).unwrap_or_else(|| self.level_name(&level.id));
         let id = match (kind, level.kind, dir) {
             (LevelKind::Overworld, _, _) => msg::levels::ENTER_PLACE,
             (_, LevelKind::Overworld, _) => msg::levels::CLIMB_OUT_TO,
@@ -365,8 +373,7 @@ impl World {
             (_, _, StairsDir::Up) => msg::levels::CLIMB_TO,
         };
         self.say(Msg::new(id).role("place", place));
-        if let Some(found) = found {
-            let place = Phrase::literal(found);
+        if let Some(place) = found {
             self.say(Msg::new(msg::levels::MARK_FOUND).role("place", place));
         }
         self.followers_arrive(&followers, &from, dir);

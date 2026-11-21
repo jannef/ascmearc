@@ -388,7 +388,9 @@ fn also(content: &Content, status: usize, def: &StatusDef) -> Vec<String> {
         ));
     }
     if !def.blocks.is_empty() {
-        let doing: Vec<&str> = def.blocks.iter().map(|k| k.doing()).collect();
+        let doing: Vec<String> = (def.blocks.iter())
+            .map(|k| word(k.doing(), "bare"))
+            .collect();
         let list = match doing.as_slice() {
             [init @ .., one, last] if !init.is_empty() => {
                 format!("{}, {one}, or {last}", init.join(", "))

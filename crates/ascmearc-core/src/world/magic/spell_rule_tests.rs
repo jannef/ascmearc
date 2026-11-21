@@ -145,7 +145,7 @@ fn a_leech_says_its_share_in_the_roll_words() {
         .state
         .player()
         .spell_roll_words(w.content(), def, super::spell_rung::CastBy::Own);
-    let text = roll.expect("a roll").text;
+    let text = crate::test_support::english_of(w.content(), &roll.expect("a roll").text);
     assert!(text.contains("necrotic"), "{text}");
     assert!(text.ends_with("half of it yours"), "{text}");
 }

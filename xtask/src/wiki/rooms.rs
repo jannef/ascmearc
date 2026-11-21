@@ -1,6 +1,7 @@
 //! Special rooms.
 
 use super::util::time_words;
+use super::util::word;
 use super::util::{Term, anchored, article, capital};
 use ascmearc_core::content::{Content, Hoard, Offer, StatusId};
 use ascmearc_core::world::rise_candidates;
@@ -355,7 +356,9 @@ fn held(content: &Content, status: StatusId) -> String {
         p => what.push(format!("mana back at {p}% of the pace")),
     }
     if !def.blocks.is_empty() {
-        let doing: Vec<&str> = def.blocks.iter().map(|k| k.doing()).collect();
+        let doing: Vec<String> = (def.blocks.iter())
+            .map(|k| word(k.doing(), "bare"))
+            .collect();
         let list = match doing.split_last() {
             Some((last, rest)) if !rest.is_empty() => format!("{}, or {last}", rest.join(", ")),
             _ => doing.join(""),

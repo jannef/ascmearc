@@ -332,7 +332,7 @@ pub(super) fn prayer_rites(content: &Content) -> String {
                 };
                 let works = def
                     .alignment
-                    .map_or_else(|| "any".to_string(), |a| a.words());
+                    .map_or_else(|| "any".to_string(), |a| a.words(content));
                 if out.is_empty() {
                     out.push_str(
                         "| Level | Ability | Works for | What it does |\n|---:|---|---|---|\n",

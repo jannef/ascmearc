@@ -460,6 +460,7 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
         }
     }
     people_lines(content, &mut add);
+    place_names(content, &mut add);
     super::data_word::lines(content, &mut add);
     for (key, text) in lines {
         let line = Line::parse(&text);
@@ -750,6 +751,55 @@ pub fn grave(level: &str, glyph: char) -> String {
 /// name them (`name`) and how they died (`death`).
 pub fn burial_epitaph(level: &str) -> String {
     format!("level:{level}.burial.epitaph")
+}
+
+// ----- The names of places (#1998): a level's, a branch's, a legend's named place and its
+// note, a hidden location's, and a scenario's, said by their keys so where stairs lead, the look
+// line, and the welcome render in any language. -----
+
+/// Hand-made level `id`'s name.
+pub fn level_name(id: &str) -> String {
+    format!("level:{id}.name")
+}
+
+/// Branch `id`'s name (a level of it is its name and floor, `levels.branch_level`).
+pub fn dungeon_name(id: &str) -> String {
+    format!("dungeon:{id}.name")
+}
+
+/// Hidden location `id`'s `name`, the location on hand-made level `level`.
+pub fn hidden_name(level: &str, id: &str) -> String {
+    format!("level:{level}.hidden.{id}.name")
+}
+
+/// Scenario `id`'s name (the welcome's place).
+pub fn scenario_name(id: &str) -> String {
+    format!("scenario:{id}.name")
+}
+
+/// The names of places, which name no role: every hand-made level's and branch's, every legend's
+/// named place and its note ([`super::Place::key`]), every hand-made level's hidden location's,
+/// and every scenario's.
+fn place_names(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for (id, level) in &content.levels {
+        add(level_name(id), &level.name);
+        for hidden in level.hidden.values() {
+            add(hidden_name(id, &hidden.id), &hidden.name);
+        }
+    }
+    let templates = (content.levels.values()).chain(content.vaults.iter().map(|v| &v.template));
+    for place in templates.flat_map(|t| t.places.values()) {
+        add(place.name_key(), &place.name);
+        if let Some(note) = &place.note {
+            add(place.note_key(), note);
+        }
+    }
+    for def in content.dungeons.values() {
+        add(dungeon_name(&def.id), &def.name);
+    }
+    for def in content.scenarios.values() {
+        add(scenario_name(&def.id), &def.name);
+    }
 }
 
 /// Adds the names above to English by their keys, each naming only the roles it is given.

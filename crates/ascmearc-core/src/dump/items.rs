@@ -57,8 +57,9 @@ pub(super) fn inventory_rows(view: &PerceptionView<'_>) -> Vec<String> {
             name += &format!(" (throw {range})");
         }
         let weight = format_weight(s.weight(content));
-        let mark = equipment::mark(content, view.equipment(), i)
-            .map_or(String::new(), |m| format!(" ({m})"));
+        let mark = equipment::mark(content, view.equipment(), i).map_or(String::new(), |m| {
+            format!(" ({})", content.english_word(m, "bare"))
+        });
         let owed = (unpaid.get(i).copied().flatten())
             .map_or(String::new(), |p| format!(" (unpaid, {p} gold)"));
         // Last, the affixes it holds against its capacity, as they truly are

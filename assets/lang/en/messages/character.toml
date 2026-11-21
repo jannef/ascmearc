@@ -131,15 +131,41 @@ talent_bad_choice = "`{id:bare}` is not {choice:bare}."
 talent_chosen = "{talent:bare} ({choice:bare})"
 talent_granted = "{talent:Bare} is given, not chosen."
 talent_held = "You have {talent:bare} already."
+# One prerequisite of a talent, an item of `talent_unmet`'s `needs` and a row of the Talents page
+# (`content/talent.rs::Need::message`). `animal` and `element` are a birth sign's (the data's
+# words); `n`, `rank`, `level`, and `value` numbers.
+talent_needs_animal = "to be born in the year of the {animal:bare}"
+# `skill`: the data's words for the skills ("a melee or unarmed weapon skill").
+talent_needs_any_weapon_skill = "{skill:bare} {rank:bare}"
 # `choice`: what the talent is chosen for (a `choice_*` entry).
 talent_needs_choice = "{talent:Bare} needs a choice: {choice:bare}."
-# One stat a talent needs, an item of `talent_unmet`'s `needs` (`Need::arg`): `stat` its name
-# (`words.toml`), `score` the score needed ("Strength 13").
+talent_needs_chosen_rank = "the chosen one at {rank:bare}"
+talent_needs_class = "to be {class:a}"
+talent_needs_creation = "to be a new character"
+talent_needs_eaten = "to have eaten {n:bare} sapients"
+# Any one of several: `first` a prerequisite, `rest` the others (this entry again, or the last).
+talent_needs_either = "{first:bare} or {rest:bare}"
+talent_needs_element = "to be {element:bare}-born"
+# `eyes`: the visions' names, a list, lower case ("dark", "keen").
+talent_needs_eyes = "{eyes:or} eyes"
+talent_needs_level = "level {level:bare}"
+talent_needs_lucky = "to be born on a lucky day"
+# `races`: a list of `talent_needs_one`s, each a race.
+talent_needs_not_race = "not to be {races:or}"
+# One race of `talent_needs_race`'s list (`who`, said with its article: "a dwarf").
+talent_needs_one = "{who:a}"
+talent_needs_race = "to be {races:or}"
+talent_needs_skill = "{skill:Bare} {value:bare}"
+# `stat` the stat's name (`words.toml`), `score` the score needed ("Strength 13").
 talent_needs_stat = "{stat:Bare} {score}"
+talent_needs_talent = "{talent:bare}"
+# A talent the ratfolk craving took for good, shown as a need never met again.
+talent_needs_untaken = "not taken by the craving"
+# `skill`: the weapon skill's name, a label as the data writes it ("Twin Blades").
+talent_needs_weapon_skill = "{skill:label} {rank:bare}"
 talent_stripped = "The craving has taken this from you."
 talent_takes_no_choice = "{talent:Bare} takes no choice."
-# `needs`: the prerequisites not met, a list: a stat a `talent_needs_stat` ("Strength 13"), the
-# rest their words as text until a talent's requirements are converted (#1997).
+# `needs`: the prerequisites not met, a list of `talent_needs_*` messages ("Strength 13").
 talent_unmet = "You cannot take {talent:bare}: you need {needs:and}."
 # Warnings that a stat's pile has come within reach of a drop (`stat_deeds.rs`).
 warn_dexterity = "Your hands feel less sure."

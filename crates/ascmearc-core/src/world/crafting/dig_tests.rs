@@ -125,7 +125,9 @@ fn a_tool_goes_in_the_tool_slot_and_digs_from_there() {
     assert_eq!(content.slot(tool).name, "Tool");
     assert_eq!(w.perception().equipment().get(tool), Some(0));
     assert_eq!(
-        crate::equipment::mark(&content, w.perception().equipment(), 0).as_deref(),
+        crate::equipment::mark(&content, w.perception().equipment(), 0)
+            .map(|m| content.english_word(m, "bare"))
+            .as_deref(),
         Some("in use")
     );
     assert_eq!(w.perception().ready_to_dig(), content.object_id("pick_axe"));
