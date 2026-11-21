@@ -317,7 +317,8 @@ affixes work as a rare item's do, and it is worth what a rare item would be. Onc
 name, its affixes, its power in words, and a line of lore. Each one lies in one place in the
 world, so a character finds each at most once, and loot never makes one. Most are carried by
 those who own them. Three are only ever offered, very rarely, by a
-[pedlar](npcs.md#the-pedlars-offer).
+[pedlar](npcs.md#the-pedlars-offer). Three more, the Grandmother, Silverstrike, and the Radiant,
+are not yet found anywhere in the world.
 
 Nothing harms it: no [item damage](materials.md#protected-items), no spell's ruin, and no
 [chest](chests.md) smashed or blown apart.
@@ -338,6 +339,11 @@ Its power works while it is worn or wielded, identified or not:
 - **Vision**: its wearer sees with a [vision](vision.md#the-four-types) profile wherever that is
   better than their own eyes.
 - **Ward**: its wearer never suffers a status.
+- **Light**: its bearer sheds a steady [light](light.md#light-sources) that reaches the number
+  of cells the table gives. A glowing affix's light does not add to it: the one that reaches
+  farther counts.
+- **Range**: it [shoots](ranged.md#distance) that many times as far: its own range and what its
+  affixes add are multiplied, and a talent's extra range is added after.
 
 {{#include generated/uniques.md}}
 

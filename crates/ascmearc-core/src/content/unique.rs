@@ -15,7 +15,7 @@
 use super::level::{ItemPartSpec, hand_made, item_part, magic_of};
 use super::object::AddedSpec;
 use super::status::{OnHit, OnHitSpec};
-use super::{Content, ContentError, ObjectId, Rarity, StatusId};
+use super::{Content, ContentError, LightId, ObjectDef, ObjectId, Rarity, StatusId};
 use crate::damage::Rider;
 use crate::item_parts;
 use crate::magic::{Magic, Quality};
@@ -39,6 +39,15 @@ pub enum Power {
     /// that damage, a rider of the weapon's attacks as an object's `added` is (resisted, never
     /// soaked), through the same profile.
     Inflict { hit: OnHit, added: Option<Rider> },
+    /// Its wielder carries this light (a preset of `data/lights.toml`: `{ light = "radiant" }`,
+    /// #1976) while it is worn or wielded: read where the light of what an actor wears is chosen
+    /// ([`crate::magic::Mods::worn`]), where it counts as a glowing affix's light does (the
+    /// brightest, by radius).
+    Light(LightId),
+    /// It shoots (or is thrown) this many times as far (`{ range = 2 }`, #1976): a multiplier on
+    /// its range and what its affixes add, read where its reach is computed
+    /// ([`crate::magic::Mods::local`], `Mods::range`); only on a base with a `range`.
+    Range(u8),
     /// Its wearer sees with this vision profile (an index into
     /// [`Content::vision_profiles`]) where it is better than their own (`{ vision =
     /// "darkvision" }`): read where an actor's eyes are chosen.
@@ -139,6 +148,10 @@ struct PowerSpec {
     vision: Option<String>,
     ward: Option<String>,
     message: Option<String>,
+    /// A light preset its wielder carries.
+    light: Option<String>,
+    /// How many times as far it shoots (2 or more).
+    range: Option<u8>,
     phrase: String,
 }
 
@@ -193,7 +206,10 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
     }
     let stack = hand_made(stack, spec.quality, &spec.id, content)?;
     let (power, phrase) = match spec.power {
-        Some(p) => (Some(power(&p, content)?), Some(p.phrase.trim().to_string())),
+        Some(p) => (
+            Some(power(&p, def, content)?),
+            Some(p.phrase.trim().to_string()),
+        ),
         None => (None, None),
     };
     let lore = (spec.lore.map(|l| l.trim().to_string())).filter(|l| !l.is_empty());
@@ -209,13 +225,19 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
     })
 }
 
-/// The power a `power` table names: exactly one of `inflict` (with `chance` and `severity`, and
-/// perhaps `added`),
-/// `vision`, and `ward` (with a `message`).
-fn power(p: &PowerSpec, content: &Content) -> Result<Power, String> {
-    let named = [p.inflict.is_some(), p.vision.is_some(), p.ward.is_some()];
+/// The power a `power` table names on base item `def`: exactly one of `inflict` (with `chance`
+/// and `severity`, and perhaps `added`), `vision`, `ward` (with a `message`), `light`, and
+/// `range` (2 or more, on a base with a range).
+fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, String> {
+    let named = [
+        p.inflict.is_some(),
+        p.vision.is_some(),
+        p.ward.is_some(),
+        p.light.is_some(),
+        p.range.is_some(),
+    ];
     if named.iter().filter(|&&n| n).count() != 1 {
-        return Err("power: name one of `inflict`, `vision`, and `ward`".into());
+        return Err("power: name one of `inflict`, `vision`, `ward`, `light`, and `range`".into());
     }
     if p.inflict.is_none() && (p.chance.is_some() || p.severity.is_some() || p.added.is_some()) {
         return Err("power: `chance`, `severity`, and `added` belong to `inflict`".into());
@@ -246,6 +268,20 @@ fn power(p: &PowerSpec, content: &Content) -> Result<Power, String> {
             .transpose()
             .map_err(|m| format!("power: {m}"))?;
         return Ok(Power::Inflict { hit, added });
+    }
+    if let Some(light) = &p.light {
+        let id = (content.light_id(light))
+            .ok_or_else(|| format!("power: unknown light preset `{light}`"))?;
+        return Ok(Power::Light(id));
+    }
+    if let Some(times) = p.range {
+        if times < 2 {
+            return Err("power: `range` is how many times as far, 2 or more".into());
+        }
+        if def.range.is_none() {
+            return Err("power: `range` needs a base that shoots or is thrown (a `range`)".into());
+        }
+        return Ok(Power::Range(times));
     }
     if let Some(vision) = &p.vision {
         let index = (content.vision_index(vision))
