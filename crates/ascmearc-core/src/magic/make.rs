@@ -5,10 +5,10 @@
 //!
 //! **Loot's make** ([`make`]): loot's arms and armour (floor loot, chests, hoards, dens, room
 //! loot: every find [`super::loot`] makes with `Source::Loot`) are as made but for the
-//! `[[depth]]` row of their item level: Fine, Marvellous, or Masterwork by its chances, never
+//! `[[item_level]]` row of their item level: Fine, Marvellous, or Masterwork by its chances, never
 //! damaged. One draw below [`PER_MILLE`] from the loot stream, after the wand's rung and before
 //! the trim, then one draw per improvement for its [`Aspect`](super::Aspect) among those its base
-//! item has, as the anvil draws them; none where the row gives nothing (the shallow levels,
+//! item has, as the anvil draws them; none where the row gives nothing (the low item levels,
 //! whose draws are as before) or for what takes no make ([`improvable`]).
 //!
 //! **Ammunition** (a stack of arrows, bolts, or sling stones; [`ammunition`]) takes its make the
@@ -23,10 +23,10 @@ use crate::object::Stack;
 use crate::rng::Rng;
 
 /// Loot's make (module docs): `stack`, a find at item level `level`, made Fine, Marvellous, or
-/// Masterwork by the `[[depth]]` row there, from `rng`; no draw where the row gives nothing or
+/// Masterwork by the `[[item_level]]` row there, from `rng`; no draw where the row gives nothing or
 /// `stack` takes no make.
 pub(crate) fn make(content: &Content, rng: &mut Rng, level: u8, stack: &mut Stack) {
-    let odds = content.gear_condition().depth_at(level).odds();
+    let odds = content.gear_condition().at_item_level(level).odds();
     if odds.improved() == 0 {
         return;
     }

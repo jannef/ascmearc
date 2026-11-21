@@ -55,7 +55,7 @@ fn warm() -> Stack {
         level: 8,
         affixes: vec![Affix {
             id: "of_warmth".into(),
-            tier: 9,
+            tier: 6,
             value: 30,
         }],
         name: None,

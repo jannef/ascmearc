@@ -76,18 +76,18 @@ even. A rare that loses some stays rare and keeps its name, so a rare on a plain
 just two affixes. The rares with more are rings and amulets, gem-set and finer items, and the
 precious materials.
 
-### Deeper finds
+### Better-made finds
 
-The deeper you go, the better made the things you find, so they can bear more. From
-[item level](#finding-them) 3 on, every weapon, missile weapon, shield, and piece of armour you
+The higher a find's [item level](#finding-them), the better made it is, so it can bear more.
+From item level 3 on, every weapon, missile weapon, shield, and piece of armour you
 find (on the floor, in a chest or a hoard, in a den or a room) may be **Fine**, **Marvellous**, or
 **Masterwork**, never damaged. What creatures carry gets the same chances on top of its
 [own](creature-gear.md). A stack of [ammunition](ammunition.md#fine-marvellous-and-masterwork-ammunition)
 you find takes the same chances, the whole stack at once (what creatures carry of it stays plain).
-Rings, amulets, and the [gear you start with](starting-kit.md) are not affected. Deeper finds are also set with a
-[gem](gems.md) more often, for the kinds of item that ever are:
+Rings, amulets, and the [gear you start with](starting-kit.md) are not affected. Finds of a higher item level are
+also set with a [gem](gems.md) more often, for the kinds of item that ever are:
 
-{{#include generated/gear-depth.md}}
+{{#include generated/gear-item-level.md}}
 
 The [materials](materials.md#how-often-each-material-is-found) that hold magic best come only at
 higher item levels and grow more common from there: dragonbone and dragonscale from item level
@@ -98,16 +98,16 @@ How it works out for what you find:
 
 | Item level | Rares that keep three affixes or more | Rares that keep all they rolled |
 |---:|---:|---:|
-| 1 | 11 % | 8 % |
-| 4 | 14 % | 9 % |
-| 8 | 17 % | 11 % |
-| 12 | 26 % | 17 % |
-| 16 | 34 % | 21 % |
-| 20 | 41 % | 26 % |
+| 1 | 10 % | 6 % |
+| 8 | 18 % | 11 % |
+| 16 | 32 % | 20 % |
+| 24 | 45 % | 29 % |
+| 32 | 52 % | 34 % |
+| 40 | 58 % | 39 % |
 
-Near the surface, nearly nine finds in ten can bear two enchantments, so most rares keep two
+At a low item level, nearly nine finds in ten can bear two enchantments, so most rares keep two
 affixes. A magic item (one or two affixes) almost always fits: about nine in ten lose nothing, at
-any depth.
+any item level.
 
 Only a damaged Fine, Marvellous, or Masterwork item can bear less than it holds. It keeps all its
 magic, which works as before.
@@ -121,7 +121,7 @@ enchantments.", or how many more it could bear.
 
 - **On the floor** of every level of a generated dungeon (see [Dungeons and danger](dungeons.md))
   lie a few items of loot. Now and then one is a [scroll](scrolls.md), which is never magic.
-- **Vaults** hold a reward of the floor's depth. The guard post's store room holds something
+- **Vaults** hold a reward of the floor's item level. The guard post's store room holds something
   magic, the shrine and the roofless chapel something, and the flooded cell coins, a
   [gem](gems.md), a ring, or an amulet.
 - **Creatures** may drop something magic or rare where they die, besides what they carried. A
@@ -139,9 +139,10 @@ drops has the creature's level as its item level when that is higher, so a creat
 depth](dungeons.md#out-of-depth) drops a better item. The game never shows an item's level.
 
 The item level decides which base items can turn up and which **tiers** of each affix. Low tiers
-are found from the start, and the strongest only deep down. An item rolls among the tiers close
-below its own level, so a deep find is seldom a weak one. The exact rule is under the rarity
-tables above.
+are found from the start, and the strongest only at the highest item levels, which the most
+dangerous places give. An item rolls any tier its level reaches, each as likely: a find of item
+level 40 or more can roll the weakest tier of an affix or its best. The exact rule is under the
+rarity tables above.
 
 ## Unidentified items
 

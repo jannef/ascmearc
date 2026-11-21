@@ -250,7 +250,7 @@ fn tunnels_have_chokepoints_and_loops() {
 
 /// The Skeul Hir (#1840): one floor between Lytelscræf 2 and Gimmwīc, whichever way it is
 /// entered, with the stair-cutters' waystation on it every time (its statue's named place), and
-/// rich: two chests at least (the waystation's and the floor's) and its random vaults' finds.
+/// rich: two chests at least (the waystation's and the floor's, or a mimic in its place) and its random vaults' finds.
 #[test]
 fn the_skeul_hir_always_keeps_its_waystation() {
     for seed in 0..12 {
@@ -268,9 +268,13 @@ fn the_skeul_hir_always_keeps_its_waystation() {
         );
         let jacca = (level.places.values()).filter(|p| p.name == "Jacca's stone");
         assert_eq!(jacca.count(), 1, "seed {seed}: the waystation, once");
+        // A floor's chest may be a mimic standing in for it, carrying what it would have held.
+        let mimics = (level.creatures.iter())
+            .filter(|c| FIXTURE.creature(c.creature).id.starts_with("mimic_"))
+            .count();
         assert!(
-            level.chests.len() >= 2,
-            "seed {seed}: {} chests",
+            level.chests.len() + mimics >= 2,
+            "seed {seed}: {} chests, {mimics} mimics",
             level.chests.len()
         );
         assert_eq!(

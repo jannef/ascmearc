@@ -1,0 +1,17 @@
+# The Strange Spirit (campaigns/ascmearc/data/dialogue/spirit.toml): of no race, so standard
+# Finnish, solemn; its oath said whole.
+
+[ascmearc.strange_spirit]
+greet = { text = "Tulit viimein. Olen odottanut kauan tällä tiellä.", of = "7ddbd4" }
+lines = [
+    { text = "Minä odotan.", of = "b2a3ad" },
+    { text = "Puhu, tai mene tiesi.", of = "a2ba60" },
+    { text = "Tie on pitkä. Minä olen kärsivällinen.", of = "d3563e" },
+]
+silent = { text = "Henki katsoo lävitsesi, kuin sinua ei olisikaan.", of = "76c29f" }
+
+[ascmearc.strange_spirit.topic]
+life_before_death = { text = "Elämä ennen kuolemaa. Voima ennen heikkoutta. Matka ennen määränpäätä. Suojelen niitä, jotka seisovat pimeydessä. Pyrin korjaamaan sen, mikä on rikki. Ja kun en näe valoa, otan seuraavan askeleen.", of = "30d663" }
+
+[ascmearc.strange_spirit.topic_name]
+life_before_death = { text = "Elämä ennen kuolemaa", of = "5d2181" }

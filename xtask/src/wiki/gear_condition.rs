@@ -55,11 +55,11 @@ pub(super) fn gear_condition(content: &Content) -> String {
     out
 }
 
-/// Deeper finds' make and gems by item level (#1436), from `[[depth]]`: each row's chances of
+/// The make and gems of finds by item level (#1436), from `[[item_level]]`: each row's chances of
 /// Fine, Marvellous, and Masterwork, and the percent more of a set gem, for the item levels it
 /// covers.
-pub(super) fn gear_depth(content: &Content) -> String {
-    let rows = &content.gear_condition().depth;
+pub(super) fn gear_item_level(content: &Content) -> String {
+    let rows = &content.gear_condition().item_level;
     let mut out = String::from(
         "| Item level | Fine | Marvellous | Masterwork | Better made in all | A set gem |\n\
          |---|:---:|:---:|:---:|:---:|:---:|\n",
@@ -75,7 +75,7 @@ pub(super) fn gear_depth(content: &Content) -> String {
         let levels = match rows.get(i + 1) {
             Some(next) if next.level == row.level + 1 => row.level.to_string(),
             Some(next) => format!("{} to {}", row.level, next.level - 1),
-            None => format!("{} and deeper", row.level),
+            None => format!("{} and up", row.level),
         };
         let odds = row.odds();
         let _ = write!(out, "| {levels} |");

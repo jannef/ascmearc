@@ -317,7 +317,7 @@ fn resistances_add_up_across_what_one_is_and_wears_and_count_capped_short_of_imm
         &[
             (one("fur_cloak"), "cloak"),
             (one("padded_coat"), "body"),
-            (magic("gold_amulet", "of_warmth", 9, 30, false), "neck"),
+            (magic("gold_amulet", "of_warmth", 6, 30, false), "neck"),
         ],
     );
     assert_eq!(w.resistances_of(player).get(Some(cold)), 60);
@@ -328,9 +328,9 @@ fn resistances_add_up_across_what_one_is_and_wears_and_count_capped_short_of_imm
         &[
             (one("fur_cloak"), "cloak"),
             (one("padded_coat"), "body"),
-            (magic("gold_amulet", "of_warmth", 12, 45, false), "neck"),
+            (magic("gold_amulet", "of_warmth", 10, 45, false), "neck"),
             (
-                magic("silver_ring", "of_warmth", 12, 45, false),
+                magic("silver_ring", "of_warmth", 10, 45, false),
                 "left_ring",
             ),
         ],
@@ -427,7 +427,7 @@ fn every_elemental_rider_lands_on_a_hit_and_is_never_soaked() {
     assert_eq!(elemental.len(), 6, "the six elemental prefixes ship");
     for a in elemental {
         let top = a.tiers.len() - 1;
-        let sides = a.tiers[top].max;
+        let (sides, dice) = (a.tiers[top].max, u32::from(a.tiers[top].dice));
         let element = a.damage_type.expect("an elemental affix names its kind");
         let mut me = w.state.player().clone();
         me.inventory = vec![magic("dagger", &a.id, a.tiers.len() as u8, sides, false)];
@@ -438,7 +438,7 @@ fn every_elemental_rider_lands_on_a_hit_and_is_never_soaked() {
         let riders: Vec<_> = blow.riders.iter().map(|r| (r.kind, r.dice)).collect();
         assert_eq!(
             riders,
-            [(element, crate::dice::Dice::of(1, sides as u32))],
+            [(element, crate::dice::Dice::of(dice, sides as u32))],
             "{}",
             a.id
         );
@@ -447,6 +447,10 @@ fn every_elemental_rider_lands_on_a_hit_and_is_never_soaked() {
         let mut rng = crate::rng::Rng::stream(7, "elemental");
         for _ in 0..50 {
             let hit = crate::combat::strike(&blow, &mail, &mut rng);
+            // A natural 2 misses whatever the to-hit.
+            if matches!(hit.strike, Strike::Missed { by: None }) {
+                continue;
+            }
             assert!(
                 matches!(hit.strike, Strike::Hit { .. }) && (1..=8 * 5).contains(&hit.damage),
                 "{}: {hit:?}",
@@ -629,12 +633,12 @@ fn descriptions_say_kinds_added_damage_and_resistances() {
         flaming.contains(&"Flaming: adds 1d4 fire damage".into()),
         "{flaming:?}"
     );
-    let warm = text(&magic("gold_amulet", "of_warmth", 3, 20, true));
+    let warm = text(&magic("gold_amulet", "of_warmth", 4, 20, true));
     assert!(
         warm.contains(&"of Warmth: +20% cold resistance".into()),
         "{warm:?}"
     );
-    let hidden = text(&magic("gold_amulet", "of_warmth", 3, 20, false));
+    let hidden = text(&magic("gold_amulet", "of_warmth", 4, 20, false));
     assert!(!hidden.iter().any(|l| l.contains("cold")), "{hidden:?}");
 }
 

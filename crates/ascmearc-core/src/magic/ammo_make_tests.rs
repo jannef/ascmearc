@@ -1,5 +1,5 @@
-//! Ammunition's make (`magic/worked.rs::ammunition`, `magic/make.rs`): a stack of arrows found
-//! deep is Fine, Marvellous, or Masterwork by the depth row, the whole stack at once and always
+//! Ammunition's make (`magic/worked.rs::ammunition`, `magic/make.rs`): a stack of arrows of a
+//! high item level is Fine, Marvellous, or Masterwork by the item level's row, the whole stack at once and always
 //! the same way at one quality; stacks join only their like; the grade is in the name and the
 //! worth.
 
@@ -64,10 +64,10 @@ fn one_quality_is_always_the_same_make() {
     );
 }
 
-/// Found shallow, ammunition draws nothing; found deep, a whole stack is improved by the depth
-/// row's chances, never damaged, with no draw past the one.
+/// Of a low item level, ammunition draws nothing; of a high one, a whole stack is improved by
+/// the item level's row's chances, never damaged, with no draw past the one.
 #[test]
-fn deeper_ammunition_is_better_made_and_shallow_draws_nothing() {
+fn ammunition_of_a_high_item_level_is_better_made_and_a_low_one_draws_nothing() {
     let arrows = of("arrow", 12, None);
     for level in [1, 2] {
         let mut rng = Rng::stream(1, "make");
@@ -76,7 +76,7 @@ fn deeper_ammunition_is_better_made_and_shallow_draws_nothing() {
         make(&CONTENT, &mut rng, level, &mut made);
         assert_eq!((&made, rng), (&arrows, before));
     }
-    let row = CONTENT.gear_condition().depth_at(20);
+    let row = CONTENT.gear_condition().at_item_level(20);
     let mut improved = [0u32; 3];
     const N: u32 = 4000;
     let mut rng = Rng::stream(1, "make");

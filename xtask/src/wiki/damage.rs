@@ -124,7 +124,7 @@ pub(super) fn armour_kinds(content: &Content) -> String {
 }
 
 /// The elements (the kinds that are not physical), in content order, with the magic prefix that
-/// adds a die of each and the suffix that resists it, and their ladders' ends (#638).
+/// adds dice of each and the suffix that resists it, and their ladders' ends (#638).
 pub(super) fn elements(content: &Content) -> String {
     let mut out = String::from("| Element | Prefix (adds) | Suffix (resists) |\n|---|---|---|\n");
     let affixes = content.affixes();
@@ -138,7 +138,7 @@ pub(super) fn elements(content: &Content) -> String {
                 .filter(|a| a.effect == effect && a.damage_type == Some(kind))
                 .map(|a| match (a.tiers.first(), a.tiers.last()) {
                     (Some(f), Some(l)) if effect == Effect::Elemental => {
-                        format!("{} (1d{} to 1d{})", a.name, f.min, l.max)
+                        format!("{} ({}d{} to {}d{})", a.name, f.dice, f.min, l.dice, l.max)
                     }
                     (Some(f), Some(l)) => {
                         format!(

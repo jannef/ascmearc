@@ -8,7 +8,6 @@ use super::vision::glow_word;
 use ascmearc_core::content::Effect as ItemEffect;
 use ascmearc_core::content::{AffixDef, AffixKind, Content, ItemKind, MAX_ITEM_LEVEL, Rarity};
 use ascmearc_core::magic::describe;
-use ascmearc_core::magic::loot::TIER_WINDOW;
 use ascmearc_core::object::format_weight;
 use std::fmt::Write as _;
 
@@ -72,13 +71,11 @@ pub(super) fn magic_rarity(content: &Content) -> String {
             percent_of(*weight, counts.max(1))
         );
     }
-    let window = TIER_WINDOW - 1;
     let _ = writeln!(
         out,
-        "\nAn affix's tier is drawn evenly among the tiers whose \
-         item level is at most the item's and at least {window} below it (an item of level 12 \
-         rolls the tiers of levels 9 to 12); an item whose level is past the affix's last tier, \
-         or with no tier that close, gets the highest tier it may have. What a creature drops \
+        "\nAn affix's tier is drawn evenly among those its item level reaches: every tier whose \
+         item level is at most the item's, the first as likely as the highest. An item of level \
+         40 or more can roll any tier of the ladder, the worst or the best. What a creature drops \
          has the creature's level as its item level, or the floor's where that is higher (up to \
          {MAX_ITEM_LEVEL}); what lies on the floor has the floor's."
     );
@@ -208,7 +205,7 @@ fn effect_text(content: &Content, a: &AffixDef) -> String {
         ),
         (Some(id), _) => format!("{} (a skill)", content.skill(id).name),
         (_, Some(kind)) if a.effect == ItemEffect::Elemental => {
-            format!("adds a die of {} damage", content.damage_type(kind).name)
+            format!("adds dice of {} damage", content.damage_type(kind).name)
         }
         (_, Some(kind)) => format!("{} resistance", content.damage_type(kind).name),
         (None, None) => effect_words(content, a.effect),
@@ -221,8 +218,8 @@ fn effect_words(content: &Content, effect: ItemEffect) -> String {
     match effect {
         ItemEffect::ToHit => "to hit".into(),
         ItemEffect::Damage => "damage, added to every roll".into(),
-        ItemEffect::ExtraDamage => "adds a die of damage".into(),
-        ItemEffect::Elemental => "adds a die of damage of a kind (fire, cold, ...)".into(),
+        ItemEffect::ExtraDamage => "adds dice of damage".into(),
+        ItemEffect::Elemental => "adds dice of damage of a kind (fire, cold, ...)".into(),
         ItemEffect::Threat => "criticals threaten on more rolls".into(),
         ItemEffect::Crit => "critical damage multiplier".into(),
         ItemEffect::AttackSpeed => "attacks faster".into(),
@@ -279,7 +276,7 @@ fn effect_words(content: &Content, effect: ItemEffect) -> String {
     }
 }
 
-/// What a tier of affix `a` rolls, exactly: `+1–2`, `1d3–1d4`, `20–35%`, `5–8% less time`
+/// What a tier of affix `a` rolls, exactly: `+1–2`, `1d3–1d4`, `2d8`, `20–35%`, `5–8% less time`
 /// (speed takes its percent off the cost, `magic::mods::faster`); a curse's the other way, `20–25%
 /// more time`.
 fn tier_value(a: &AffixDef, tier: &ascmearc_core::content::Tier, content: &Content) -> String {
@@ -300,10 +297,10 @@ fn tier_value(a: &AffixDef, tier: &ascmearc_core::content::Tier, content: &Conte
     }
     match a.effect {
         ItemEffect::ExtraDamage | ItemEffect::Elemental if tier.min == tier.max => {
-            format!("1d{}", tier.min)
+            format!("{}d{}", tier.dice, tier.min)
         }
         ItemEffect::ExtraDamage | ItemEffect::Elemental => {
-            format!("1d{}–1d{}", tier.min, tier.max)
+            format!("{n}d{}–{n}d{}", tier.min, tier.max, n = tier.dice)
         }
         ItemEffect::Resistance => range("+", "%"),
         ItemEffect::Draw => range("", " less"),

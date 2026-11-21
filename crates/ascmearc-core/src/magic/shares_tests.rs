@@ -1,7 +1,8 @@
-//! The balance pass of the regraded ladder (docs/design/affixes-systems.md §13, X1): 10 000
-//! magic items rolled at item levels 1, 4, 8, and 12. No affix takes more than its weight's
-//! share of the picks it could have been, none is starved below it, and a deep find rolls the
-//! tiers near its level. `cargo test -p ascmearc-core shares -- --nocapture` prints the shares.
+//! The balance pass of the ladders to item level 40 (docs/design/item-level-40.md §12): 10 000
+//! magic items rolled at item levels 1, 8, 16, 24, 32, and 40. No affix takes more than its
+//! weight's share of the picks it could have been, none is starved below it, every rolled tier
+//! is one the item level reaches, and each tier reached is picked about as often as the others
+//! (the flat roll, §4). `cargo test -p ascmearc-core shares -- --nocapture` prints the shares.
 
 use super::*;
 use crate::rng::Rng;
@@ -9,10 +10,7 @@ use crate::test_support::builtin;
 use std::collections::BTreeMap;
 
 const ITEMS: usize = 10_000;
-const LEVELS: [u8; 4] = [1, 4, 8, 12];
-
-/// The trim's levels: the shares' and two deeper (#1436: deeper finds are better made).
-const TRIM_LEVELS: [u8; 6] = [1, 4, 8, 12, 16, 20];
+const LEVELS: [u8; 6] = [1, 8, 16, 24, 32, 40];
 
 /// Each affix's chance to be a pick of its kind on `def` at `level`: its weight over the weights
 /// of every affix of that kind that may roll there (the first pick's, before any category is
@@ -32,12 +30,15 @@ fn chances<'c>(c: &'c Content, def: &ObjectDef, level: u8, kind: AffixKind) -> V
 }
 
 #[test]
-fn shares_follow_the_weights_and_deep_finds_roll_deep_tiers() {
+fn shares_follow_the_weights_and_tiers_roll_flat() {
     let c = builtin();
-    for level in LEVELS {
+    // Past the last tier the roll is the same flat one over the whole ladder.
+    for level in LEVELS.into_iter().chain([60]) {
         let mut rng = Rng::stream(11, "shares");
         // By affix id: (picks seen, picks its weight's share expects).
         let mut seen: BTreeMap<&str, (u32, f64)> = BTreeMap::new();
+        // By affix id: the picks of each tier reached.
+        let mut tiers: BTreeMap<&str, Vec<u32>> = BTreeMap::new();
         let mut items = 0;
         while items < ITEMS {
             let Some(stack) = loot::roll(&c, &mut rng, level, LootGrade::Magic) else {
@@ -53,24 +54,18 @@ fn shares_follow_the_weights_and_deep_finds_roll_deep_tiers() {
                     seen.entry(id).or_default().1 += p;
                 }
                 seen.entry(rolled.def.id.as_str()).or_default().0 += 1;
-                // The tier window: a level-12 find rolls the tiers of levels 9 to 12, or the
-                // highest found there where the ladder stops short or has a gap.
-                let window = loot::tier_window(rolled.def, level);
-                let tier = usize::from(rolled.tier - 1);
-                assert!(
-                    window.contains(&tier),
-                    "{} tier {}",
-                    rolled.def.id,
-                    rolled.tier
-                );
-                let top = usize::from(rolled.tier) == rolled.def.tiers_at(level);
+                // Every tier rolled is one the item level reaches.
                 let found = rolled.def.tier(rolled.tier).expect("tier").level;
                 assert!(
-                    top || level - found < loot::TIER_WINDOW,
+                    found <= level,
                     "level {level}: {} tier {} of level {found}",
                     rolled.def.id,
                     rolled.tier
                 );
+                let reached = rolled.def.tiers_at(level);
+                let picks =
+                    (tiers.entry(rolled.def.id.as_str())).or_insert_with(|| vec![0; reached]);
+                picks[usize::from(rolled.tier - 1)] += 1;
             }
         }
         println!("item level {level}: affix, picks, expected by weight");
@@ -86,17 +81,33 @@ fn shares_follow_the_weights_and_deep_finds_roll_deep_tiers() {
                 bad.push(format!("{id} took {got}, its weight's share {expected:.1}"));
             }
         }
+        // The flat roll: each tier reached within four standard deviations of an even share of
+        // the affix's picks (binomial, one in the number reached).
+        for (id, picks) in &tiers {
+            let n = f64::from(picks.iter().sum::<u32>());
+            let p = 1.0 / picks.len() as f64;
+            let expected = n * p;
+            let slack = 4.0 * (n * p * (1.0 - p)).sqrt() + 1.0;
+            for (i, got) in picks.iter().enumerate() {
+                if (f64::from(*got) - expected).abs() > slack {
+                    bad.push(format!(
+                        "{id} tier {}: {got} picks of {n}, {expected:.1} expected",
+                        i + 1
+                    ));
+                }
+            }
+        }
         assert!(bad.is_empty(), "level {level}: {bad:#?}");
     }
 }
 
-/// The trim's effect on loot (docs/design/enchanting.md §12, E1): 4 000 rares and 4 000 magic
-/// items rolled at item levels 1, 4, 8, 12, 16, and 20 as loot makes them (its make and
-/// materials better deeper, #1436), before and after the trim. Prints, per level, the capacity
-/// distribution, the affix counts before and after, and the share left untrimmed; fails if
-/// shallow rares (levels 1 and 4) keep three affixes or more a fifth of the time or more, or deep
-/// ones (16 and 20) less than a quarter of the time (half before #1444 scaled the quality's term
-/// down), or if any level's share is below the one before it. `cargo test -p ascmearc-core trim_shares -- --nocapture` prints it.
+/// The trim's effect on loot (docs/design/enchanting.md §12, E1; docs/design/item-level-40.md
+/// §12): 4 000 rares and 4 000 magic items rolled at item levels 1, 8, 16, 24, 32, and 40 as
+/// loot makes them (its make and materials better at a higher item level, #1436), before and
+/// after the trim. Prints, per level, the capacity distribution, the affix counts before and
+/// after, and the share left untrimmed; fails if rares of a low item level (1 and 8) keep three
+/// affixes or more a fifth of the time or more, or those of a high one (32 and 40) less than a
+/// quarter of the time, or if any level's share is below the one before it. `cargo test -p ascmearc-core trim_shares -- --nocapture` prints it.
 #[test]
 fn trim_shares_hold_every_find_to_its_capacity() {
     let c = builtin();
@@ -108,7 +119,7 @@ fn trim_shares_hold_every_find_to_its_capacity() {
     classes.dedup();
     const N: usize = 4_000;
     let mut rising = 0.0;
-    for level in TRIM_LEVELS {
+    for level in LEVELS {
         let mut rng = Rng::stream(13, "trim shares");
         for grade in [LootGrade::Rare, LootGrade::Magic] {
             // Magic grade: magic or rare, by the weights.
@@ -149,13 +160,14 @@ fn trim_shares_hold_every_find_to_its_capacity() {
             println!("  capacity       {}", row(&room));
             println!("  affixes rolled {}", row(&rolled));
             println!("  affixes kept   {}", row(&kept));
-            // Deeper finds are better made (#1436): shallow rares stay modest, deep ones keep
-            // three affixes or more far more often, and the share never falls with depth.
+            // Finds of a higher item level are better made (#1436): rares of a low one stay
+            // modest, those of a high one keep three affixes or more far more often, and the
+            // share never falls as the item level rises.
             let three_or_more = pct(kept[3..].iter().sum());
             if grade == LootGrade::Rare {
                 match level {
-                    1 | 4 => assert!(three_or_more < 20.0, "level {level}: {three_or_more:.1}%"),
-                    16 | 20 => assert!(three_or_more > 25.0, "level {level}: {three_or_more:.1}%"),
+                    1 | 8 => assert!(three_or_more < 20.0, "level {level}: {three_or_more:.1}%"),
+                    32 | 40 => assert!(three_or_more > 25.0, "level {level}: {three_or_more:.1}%"),
                     _ => {}
                 }
                 assert!(

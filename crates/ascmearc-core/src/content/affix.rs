@@ -598,6 +598,9 @@ impl Effect {
 pub struct Tier {
     /// The lowest item level it is found at.
     pub level: u8,
+    /// How many dice a dice family's tier adds (`dice = 2`, `min = max = 8`: 2d8; default 1), the
+    /// value being their sides ([`Effect::is_dice`]); 1 for every other effect.
+    pub dice: u8,
     /// The value is rolled uniformly in `min..=max`.
     pub min: i32,
     pub max: i32,
@@ -888,6 +891,7 @@ struct AffixSpec {
 #[serde(deny_unknown_fields)]
 struct TierSpec {
     level: u8,
+    dice: Option<u8>,
     min: Option<i32>,
     max: Option<i32>,
     light: Option<String>,
@@ -1094,9 +1098,22 @@ impl AffixSpec {
             if tiers.last().is_some_and(|p: &Tier| p.level >= t.level) {
                 return Err(format!("tier {n}: levels must rise from tier to tier"));
             }
+            let dice = match t.dice {
+                None => 1,
+                Some(count) if count >= 1 && effect.is_dice() => count,
+                Some(_) if effect.is_dice() => {
+                    return Err(format!("tier {n}: `dice` is at least 1"));
+                }
+                Some(_) => {
+                    return Err(format!(
+                        "tier {n}: only an extra die's or an element's tier names `dice`"
+                    ));
+                }
+            };
             let tier = match (effect, t.min, t.max, t.light) {
                 (Effect::Light, None, None, Some(id)) => Tier {
                     level: t.level,
+                    dice,
                     min: 0,
                     max: 0,
                     light: Some(light(&id).ok_or_else(|| format!("unknown light `{id}`"))?),
@@ -1113,6 +1130,7 @@ impl AffixSpec {
                     }
                     Tier {
                         level: t.level,
+                        dice,
                         min,
                         max,
                         light: None,
@@ -1323,6 +1341,7 @@ tiers = [{ level = 1, min = 1, max = 2 }]
             "tiers = [{ level = 3, min = 1, max = 1 }, { level = 2, min = 1, max = 1 }]",
             "tiers = [{ level = 1, min = 3, max = 1 }]",
             "tiers = [{ level = 1, light = \"glow\" }]",
+            "tiers = [{ level = 1, dice = 2, min = 1, max = 1 }]",
         ];
         for tiers in cases {
             let text = format!(
@@ -1335,6 +1354,20 @@ tiers = [{ level = 1, min = 1, max = 2 }]
                      [\"weapon\"]\ntiers = [{ level = 1, min = 1, max = 1 }]\n";
         let e = parse_with(&format!("{twice}{twice}")).expect_err("duplicate");
         assert!(e.to_string().contains("duplicate"), "{e}");
+    }
+
+    /// A dice family's tier may roll more than one die (`dice = 2`: 2d8); the count defaults to
+    /// one and is at least one (docs/design/item-level-40.md §4).
+    #[test]
+    fn a_dice_tier_names_its_count() {
+        let heavy = |tiers: &str| one("prefix", "x", "extra_damage", "\"weapon\"", "", tiers);
+        let text =
+            heavy("{ level = 1, min = 6, max = 8 }, { level = 4, dice = 2, min = 8, max = 8 }");
+        let table = parse_with(&text).expect("parses");
+        let x = table.get("x").expect("x");
+        assert_eq!(x.tier(1).map(|t| t.dice), Some(1));
+        assert_eq!(x.tier(2).map(|t| (t.dice, t.min)), Some((2, 8)));
+        assert!(parse_with(&heavy("{ level = 1, dice = 0, min = 6, max = 8 }")).is_err());
     }
 
     /// One affix file's text: `effect` on `bases` with `extra` lines and one tier of `tier`.

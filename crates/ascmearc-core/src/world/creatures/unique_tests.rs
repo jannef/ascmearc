@@ -267,6 +267,11 @@ fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
     let magic = content.unique("test_set").expect("loaded").magic();
     let values: Vec<i32> = magic.affixes.iter().map(|a| a.value).collect();
     assert_eq!(values, [12, 3]);
+    // Two dice take the tier of two (docs/design/item-level-40.md §4: Heavy's 2d8).
+    let content = load("dagger", "\"heavy=2d8\"").expect("two dice");
+    let affix = &content.unique("test_set").expect("loaded").magic().affixes[0];
+    let tier = &tiers(&content, "heavy")[usize::from(affix.tier) - 1];
+    assert_eq!((affix.value, tier.dice, tier.min), (8, 2, 8));
     // A light's value is its light.
     let content = load("gold_ring", "\"of_light=item_glow_bright\"").expect("a light");
     let affix = &content.unique("test_set").expect("loaded").magic().affixes[0];
@@ -283,8 +288,9 @@ fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
         ("gold_ring", "\"mystic:2\"", "not a tier"),
         ("gold_ring", "\"mystic\"", "not a tier"),
         ("gold_ring", "\"nothing=3\"", "unknown affix"),
-        ("dagger", "\"heavy=8\"", "the value is a die"),
-        ("dagger", "\"heavy=2d8\"", "one die"),
+        ("dagger", "\"heavy=8\"", "the value is dice"),
+        ("dagger", "\"heavy=3d8\"", "no tier of `heavy` rolls 3 dice"),
+        ("dagger", "\"heavy=2d6\"", "no tier of `heavy` rolls it"),
         ("dagger", "\"sharp=1d4\"", "must be a number"),
         ("gold_ring", "\"of_light=3\"", "a light's value is a light"),
         // Range on a ring does nothing, set by hand or not.

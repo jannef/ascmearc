@@ -1,7 +1,8 @@
 //! The condition creature gear spawns in (`assets/data/gear_condition.toml`; #1193): the chances in
 //! per mille that a piece is damaged, or Fine, Marvellous, or Masterwork, by default and by tribe
 //! (a creature tag), and what damaged gear of each material group is called; and by item level
-//! (`[[depth]]`, #1436), the better make every source's arms and armour take deeper, and the more
+//! (`[[item_level]]`, #1436), the better make every source's arms and armour take at a higher
+//! item level, and the more
 //! often loot is set with a gem. The rule itself is
 //! `crate::world::items::gear_condition`. Without the file every piece spawns as made.
 
@@ -52,12 +53,12 @@ impl Odds {
             .sum()
     }
 
-    /// These odds with `depth`'s added to each improvement, damaged giving way to what they then
+    /// These odds with `row`'s added to each improvement, damaged giving way to what they then
     /// leave of [`PER_MILLE`] (the loader keeps the improvements within it).
-    pub fn deeper(&self, depth: &Depth) -> Odds {
-        let fine = self.fine + depth.fine;
-        let marvellous = self.marvellous + depth.marvellous;
-        let masterwork = self.masterwork + depth.masterwork;
+    pub fn with_row(&self, row: &ItemLevelRow) -> Odds {
+        let fine = self.fine + row.fine;
+        let marvellous = self.marvellous + row.marvellous;
+        let masterwork = self.masterwork + row.masterwork;
         let improved = u32::from(fine) + u32::from(marvellous) + u32::from(masterwork);
         let room = u16::try_from(PER_MILLE.saturating_sub(improved)).unwrap_or(0);
         Odds {
@@ -69,13 +70,14 @@ impl Odds {
     }
 }
 
-/// From an item level on, the better make and the gems of deeper finds (#1436): `fine`,
+/// From an item level on, the better make and the gems of finds of a higher item
+/// level (#1436): `fine`,
 /// `marvellous`, and `masterwork` per mille added to every source's arms and armour (loot's own,
 /// which is otherwise as made, and creature gear's tribe odds), `ornament` percent added to
 /// loot's chance of a set gem (`gems.toml`'s `[[ornament]]`).
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct Depth {
+pub struct ItemLevelRow {
     /// The least item level the row is for (it holds up to the next row's).
     pub level: u8,
     #[serde(default)]
@@ -89,7 +91,7 @@ pub struct Depth {
     pub ornament: u8,
 }
 
-impl Depth {
+impl ItemLevelRow {
     /// As odds: no damaged, the three improvements.
     pub fn odds(&self) -> Odds {
         Odds {
@@ -120,8 +122,8 @@ pub struct GearConditions {
     /// By material group, the kinds damaged gear of it may show (module `crate::gear_condition`
     /// says which one is taken); a group not listed is plainly "damaged".
     pub kinds: Vec<(String, Vec<ItemHarm>)>,
-    /// By item level, ascending: what deeper finds take besides ([`Depth`]).
-    pub depth: Vec<Depth>,
+    /// By item level, ascending: what finds from each take besides ([`ItemLevelRow`]).
+    pub item_level: Vec<ItemLevelRow>,
 }
 
 impl GearConditions {
@@ -139,10 +141,10 @@ impl GearConditions {
             .map_or(&[], |(_, kinds)| kinds.as_slice())
     }
 
-    /// What finds at item level `level` take besides: the last `[[depth]]` row whose level it
+    /// What finds at item level `level` take besides: the last `[[item_level]]` row whose level it
     /// has reached, else nothing.
-    pub fn depth_at(&self, level: u8) -> Depth {
-        (self.depth.iter())
+    pub fn at_item_level(&self, level: u8) -> ItemLevelRow {
+        (self.item_level.iter())
             .rev()
             .find(|d| d.level <= level.max(1))
             .copied()
@@ -159,7 +161,7 @@ struct File {
     #[serde(default)]
     kinds: toml::Table,
     #[serde(default)]
-    depth: Vec<Depth>,
+    item_level: Vec<ItemLevelRow>,
 }
 
 #[derive(Deserialize)]
@@ -199,7 +201,7 @@ impl GearConditions {
     }
 
     /// Parses the file alone: odds that add up to at most [`PER_MILLE`] (a roll out of it falls
-    /// in one band), each tribe's tag once; `[[depth]]` rows by rising level, each one's
+    /// in one band), each tribe's tag once; `[[item_level]]` rows by rising level, each one's
     /// improvements with any table's within [`PER_MILLE`], its `ornament` at most 100.
     fn parse_text(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
@@ -231,11 +233,11 @@ impl GearConditions {
             kinds.push((group, list));
         }
         let mut last = 0;
-        for depth in &parsed.depth {
-            let level = depth.level;
+        for row in &parsed.item_level {
+            let level = row.level;
             if level <= last {
                 return Err(err(format!(
-                    "`[[depth]]` level {level} does not rise above the row before"
+                    "`[[item_level]]` level {level} does not rise above the row before"
                 )));
             }
             last = level;
@@ -243,15 +245,15 @@ impl GearConditions {
                 .chain([parsed.default.improved()])
                 .max()
                 .unwrap_or(0);
-            if most + depth.odds().improved() > PER_MILLE {
+            if most + row.odds().improved() > PER_MILLE {
                 return Err(err(format!(
-                    "`[[depth]]` level {level}'s improvements with a table's add up to more \
+                    "`[[item_level]]` level {level}'s improvements with a table's add up to more \
                      than {PER_MILLE}"
                 )));
             }
-            if depth.ornament > 100 {
+            if row.ornament > 100 {
                 return Err(err(format!(
-                    "`[[depth]]` level {level}'s `ornament` is over 100"
+                    "`[[item_level]]` level {level}'s `ornament` is over 100"
                 )));
             }
         }
@@ -259,7 +261,7 @@ impl GearConditions {
             default: parsed.default,
             tribes,
             kinds,
-            depth: parsed.depth,
+            item_level: parsed.item_level,
         })
     }
 }
@@ -297,21 +299,21 @@ mod tests {
     }
 
     #[test]
-    fn depth_rows_rise_and_add_to_the_odds() {
+    fn item_level_rows_rise_and_add_to_the_odds() {
         let text = "[default]\ndamaged = 900\nfine = 40\nmarvellous = 0\nmasterwork = 0\n\
-                    [[depth]]\nlevel = 4\nfine = 60\nornament = 2\n\
-                    [[depth]]\nlevel = 8\nfine = 100\nmarvellous = 50\n";
+                    [[item_level]]\nlevel = 4\nfine = 60\nornament = 2\n\
+                    [[item_level]]\nlevel = 8\nfine = 100\nmarvellous = 50\n";
         let rules = GearConditions::parse_text("t", text).expect("parses");
-        assert_eq!(rules.depth_at(3), Depth::default());
+        assert_eq!(rules.at_item_level(3), ItemLevelRow::default());
         assert_eq!(
-            (rules.depth_at(4).fine, rules.depth_at(7).ornament),
+            (rules.at_item_level(4).fine, rules.at_item_level(7).ornament),
             (60, 2)
         );
-        assert_eq!(rules.depth_at(99).marvellous, 50);
-        let deeper = rules.default.deeper(&rules.depth_at(8));
+        assert_eq!(rules.at_item_level(99).marvellous, 50);
+        let better = rules.default.with_row(&rules.at_item_level(8));
         // 190 improved: damaged gives way to the 810 left.
         assert_eq!(
-            (deeper.damaged, deeper.fine, deeper.marvellous),
+            (better.damaged, better.fine, better.marvellous),
             (810, 140, 50)
         );
         let falling = text.replace("level = 8", "level = 4");

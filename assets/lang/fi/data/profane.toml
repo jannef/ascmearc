@@ -1,0 +1,193 @@
+# Lines of data: profane gifts (`profane:<id>.<field>`): `line` as the gift is given, `undone`
+# as it is taken back, `instead` in place of its own line when it takes a gift held away. The
+# narrator's: written standard, second person.
+
+[adder_quick]
+line = { text = "Kätesi ovat ajatuksiasi nopeammat.", of = "7de69c" }
+undone = { text = "Kätesi hidastuvat, ja niiden nopeus valuu pois.", of = "de45dd" }
+
+[barrow_eyed]
+line = { text = "Pimeys ohenee.", of = "762b90" }
+undone = { text = "Ohut pimeys, jonka läpi näit, sulkeutuu, ja aukeaa laajemmaksi.", of = "3c37ec" }
+
+[barrow_kings_will]
+line = { text = "Sydämesi hidastuu, eikä se välitä siitä.", of = "7fba1f" }
+
+[bile_spitting]
+line = { text = "Jotakin hapanta kohoaa nieluusi, ja jää sinne.", of = "99c06f" }
+
+[blood_nosed]
+line = { text = "Haistat veren salin toiselta puolelta.", of = "937466" }
+
+[choosers_quickness]
+line = { text = "Laihaa ja kitkerää. Sydämesi lyö nopeammin, ja pitää tahtinsa.", of = "f824e6" }
+
+[clawed]
+line = { text = "Kyntesi paksuuntuvat kynsiksi.", of = "5bffe9" }
+
+[craven]
+line = { text = "Jokin sinussa säpsähtää, eikä lakkaa säpsähtelemästä.", of = "42232c" }
+
+[deep_eyed]
+line = { text = "Pimeys on poissa. On vain se, mitä siinä on.", of = "384985" }
+
+[devourer]
+line = { text = "Huomaat haluavasi lisää.", of = "515ba1" }
+
+[dim_eyed]
+line = { text = "Kalvo laskeutuu silmiesi ylle.", of = "56803d" }
+
+[ember_veined]
+line = { text = "Suonesi hehkuvat himmeästi ihon alla.", of = "d66278" }
+undone = { text = "Hehku ihosi alla sammuu.", of = "931bcf" }
+
+[extra_arm]
+line = { text = "Jokin repeää irti kylkiluidesi alla, ja kolmas käsivarsi aukeaa kyljestäsi.", of = "dc36c1" }
+undone = { text = "Kolmas käsivartesi kuihtuu, ja on poissa.", of = "ff30d1" }
+
+[fell_minded]
+line = { text = "Ajatuksesi tulevat nopeammin ja kylmempinä.", of = "a7dfb4" }
+
+[frost_breathed]
+line = { text = "Henkesi höyryää valkoisena, ja huurre hiipii huulillesi.", of = "ba64d6" }
+
+[glass_boned]
+line = { text = "Luusi muuttuvat keveiksi ja hauraiksi.", of = "eefc4f" }
+
+[hate_wyrms_heart]
+line = { text = "Lohikäärmeen liha on kuumaa kuin ahjo, ja kuumuus löytää paikan rintalastasi takaa ja jää sinne.", of = "3dabe8" }
+
+[hill_thewed]
+line = { text = "Hartiasi levenevät.", of = "659104" }
+
+[hollow_of_the_night]
+line = { text = "Kuori ei ole suussa mitään. Jälkeenpäin pimeys on hiukan vähemmän pimeä, ja sinä hiukan vähemmän täällä.", of = "08dc9f" }
+
+[hollowed]
+line = { text = "Terät kulkevat nyt puoliksi lävitsesi. Niin kulkee lämpökin.", of = "c70d71" }
+
+[hoofed]
+line = { text = "Jalkasi kovettuvat ja kopisevat kiveä vasten.", of = "73cabe" }
+
+[horned]
+line = { text = "Kaksi luunystyrää työntyy esiin otsastasi.", of = "bec634" }
+
+[hungering]
+line = { text = "Sinulla on jo taas nälkä.", of = "7c99da" }
+undone = { text = "Vatsasi kalvava tunne kiristyy joksikin pahemmaksi.", of = "f370e2" }
+
+[hurlers_arm]
+line = { text = "Se on sisälläsi kuin kivi. Käsivartesi paksuuntuvat; jalkasi raskaantuvat.", of = "816f98" }
+
+[lead_footed]
+line = { text = "Jalkasi käyvät raskaiksi kuin lyijy.", of = "a40cca" }
+
+[many_eyed]
+line = { text = "Käsivarsiisi ja kaulaasi aukeaa silmiä, jotka räpyttelevät ja katselevat ympärilleen.", of = "f21000" }
+
+[many_fingered]
+line = { text = "Kumpaankin käteen aukeaa kuudes sormi.", of = "c23a9a" }
+
+[marked_by_the_deep]
+line = { text = "Jokin kaukana alhaalla on saanut vainun sinusta.", of = "0ec2a2" }
+
+[mere_eyed]
+line = { text = "Silmäsi kalpenevat ja laajenevat.", of = "9b4e7a" }
+undone = { text = "Kalpea kalvo silmiltäsi kirkastuu, ja pimeys syvenee entisestään.", of = "ed278d" }
+
+[mere_wifes_hide]
+line = { text = "Ihosi paksuuntuu ja harmaantuu, eikä vesi enää tunnu kylmältä.", of = "f98313" }
+
+[midden_gut]
+line = { text = "Vatsasi kääntyy kerran ympäri, eikä sitä vaivaa enää koskaan mikään.", of = "70bf9b" }
+
+[oak_hearted]
+line = { text = "Sydämesi lyö hitaasti ja voimakkaasti.", of = "7ecd16" }
+undone = { text = "Sydämesi kompastuu, ja sen voima valuu pois.", of = "05ef52" }
+
+[owl_eyed]
+line = { text = "Silmäsi pyöristyvät ja kultautuvat, ja yö katsoo sinua takaisin.", of = "7b6079" }
+
+[palsied]
+line = { text = "Kätesi vapisevat, eivätkä lakkaa.", of = "a6ef3e" }
+instead = { text = "Halvaus vie nopeat kätesi, eikä mitään muuta.", of = "64559f" }
+
+[paper_skinned]
+line = { text = "Ihosi ohenee kuin paperi.", of = "4f3fd2" }
+
+[prehensile_tail]
+line = { text = "Häntä kiertyy auki takanasi ja tarttuu tyhjään, ja taas tyhjään.", of = "520666" }
+undone = { text = "Häntäsi veltostuu ja putoaa pois.", of = "14ad14" }
+
+[quick_knit]
+line = { text = "Lihasi kihelmöi, ja käden haava umpeutuu silmiesi edessä.", of = "ab1d70" }
+
+[rat_kings_court]
+line = { text = "Vingunta päässäsi vaimenee mutinaksi, ja huomaat ymmärtäväsi sitä.", of = "1dadab" }
+
+[reeking]
+line = { text = "Tunkion haju seuraa sinua, etkä saa sitä pestyä pois.", of = "1f62cc" }
+
+[rime_blooded]
+line = { text = "Lohikäärmeen liha on kylmää kuin syvyys, ja kylmyys jää.", of = "c10c5c" }
+
+[rot_breathed]
+line = { text = "Henkesi käy kylmäksi ja löyhkääväksi, kuin avatusta hautakummusta.", of = "a32aac" }
+
+[scaled]
+line = { text = "Ihosi kovettuu pieniksi harmaiksi suomuiksi.", of = "1f7b58" }
+
+[slow_blooded]
+line = { text = "Haavasi umpeutuvat hitaasti, ja jalkasi laahaavat.", of = "78394a" }
+
+[soft_footed]
+line = { text = "Jalkapohjasi paksuuntuvat ja hiljenevät.", of = "83e729" }
+
+[spinners_blood]
+line = { text = "Veresi virtaa kylmänä ja katkerana, ja salin pimeys on yhtäkkiä lohdullinen.", of = "7af1cd" }
+
+[stone_eyed]
+line = { text = "Silmäsi harmaantuvat kuin liuske, ja ihmiset kääntävät katseensa pois.", of = "5a1295" }
+
+[stone_sinewed]
+line = { text = "Jänteesi muuttuvat nyöriksi ja luusi kiveksi.", of = "b9d357" }
+
+[storm_marrowed]
+line = { text = "Luusi humisevat.", of = "0bc1f3" }
+
+[storm_wrights_marrow]
+line = { text = "Hampaitasi särkee, hiuksesi nousevat pystyyn, eikä se lakkaa.", of = "47c5c7" }
+
+[tailed]
+line = { text = "Jokin uusi pitää tasapainoasi yllä.", of = "138d9d" }
+
+[thick_blooded]
+line = { text = "Veresi virtaa hitaana ja tummana.", of = "b018c2" }
+
+[thick_skulled]
+line = { text = "Kallosi paksuuntuu. Ajatukset kulkevat pitkää reittiä.", of = "2c9c71" }
+
+[thunder_throated]
+line = { text = "Rintasi jylisee kuin kaukainen ukkonen.", of = "30f84a" }
+
+[twice_born]
+line = { text = "Jokin sinussa ei suostu pysymään kuolleena.", of = "38ac60" }
+
+[unquiet]
+line = { text = "Uni tulee, mutta lepo ei.", of = "3c9a60" }
+
+[venom_toothed]
+line = { text = "Kulmahampaasi pitenevät, ja suusi maistuu kitkerältä.", of = "f9b660" }
+
+[wing_shouldered]
+line = { text = "Kaksi nahkaista tynkää työntyy esiin lapaluistasi, liian pieninä lentämään.", of = "dd3dce" }
+
+[withered]
+line = { text = "Liha kuihtuu runkosi ympäriltä.", of = "3d5875" }
+instead = { text = "Kuihtuminen vie tammisen sydämesi, eikä mitään muuta.", of = "9debbf" }
+
+[wyrm_blooded]
+line = { text = "Veresi virtaa sakeana ja hitaana, eikä mikään juuri satuta sitä.", of = "75ec02" }
+
+[wyrms_hunger]
+line = { text = "Voisit syödä aarteen, ja lohikäärmeen sen perään.", of = "c82263" }

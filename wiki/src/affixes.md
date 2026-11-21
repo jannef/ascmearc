@@ -10,13 +10,13 @@ A [magic item](magic-items.md) is a base item with a prefix, a suffix, or both. 
 
 Prefixes are mostly offensive, or give flat [Defence](combat.md#defence) and life.
 
-- *Flaming*, *Freezing*, *Venomous*, *Shocking*, *Corrosive*, and *Withering* add a die of
+- *Flaming*, *Freezing*, *Venomous*, *Shocking*, *Corrosive*, and *Withering* add dice of
   [fire](damage-types.md#damage-fire), [cold](damage-types.md#damage-cold),
   [poison](damage-types.md#damage-poison), [electricity](damage-types.md#damage-electricity),
   [acid](damage-types.md#damage-acid), or [necrotic](damage-types.md#damage-necrotic) damage to
   every hit, which no armour soaks (see [Damage types](damage-types.md)).
 - *Mage-wrought*, *Baleful*, and *Potent* serve a caster (see [Magic](magic.md)). *Potent* adds 1
-  to 3 more to every [spell](spellcasting.md#how-a-spell-grows)'s roll, harm or healing.
+  to 5 more to every [spell](spellcasting.md#how-a-spell-grows)'s roll, harm or healing.
 - *Tireless* raises your [stamina](resources.md#resource-stamina) (see [Resources](resources.md)).
 - *Hobnailed* [boots](objects.md#class-boots) [kick doors](doors.md#kicking-a-door-open) in more easily.
 - A *Delving* tool or pair of gloves [digs](digging.md#digging) faster. Magic pick-axes do turn up

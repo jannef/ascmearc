@@ -91,11 +91,11 @@ Part of the design document; the index is [`specification.md`](../specification.
 ## Magic items
 
 - After Path of Exile: base items (weapons, armour, jewellery, tools) roll a rarity (normal, magic, rare) and prefixes and suffixes by item level. Uniques are rares with a set name, a power, and lore.
-- Only base items with a magic kind are ever magic. An item never has two affixes of one category. Affix tiers rise with item level.
+- Only base items with a magic kind are ever magic. An item never has two affixes of one category. An affix's tier is drawn evenly among those its item level reaches.
 - An item holds a limited number of affixes, its capacity: 2 for a plain base (the owner), more for jewellery, quality, material, a gem, and a maker's mark, one less for ammunition. Every item made is trimmed to it as the last step.
 - A stack of ammunition is magic as a whole: every missile shares its affixes, stacks of different magic never join, and it takes only what betters a shot (to hit, damage, typed damage, criticals, banes), never a stat. A shot adds the ammunition's magic to the launcher's.
 - Banes: one suffix per kind of creature (a creature tag), adding to hit and damage against that kind only, on weapons, missile weapons, and ammunition; each rare, together about as likely as one ordinary affix.
-- Deeper finds are better made.
+- Finds of a higher item level are better made.
 - Found unidentified: rarity shows, affixes and rare names do not, but magic works all the same while worn or wielded. Wearing never identifies.
 - Presentation reaches affixes only once identified; nothing can leak them.
 - Effects apply only while worn or wielded, never while carried. Attack effects are local on weapons, global elsewhere.

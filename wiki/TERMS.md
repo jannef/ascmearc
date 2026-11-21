@@ -170,7 +170,7 @@ above.
 | Unidentified, identify | `magic-items.md#unidentified-items` |
 | Cursed item, curse, of Hunger, Leaden, Plodding | `magic-items.md#cursed-items` |
 | Capacity, enchantments an item can bear, the trim | `magic-items.md#capacity` |
-| Deeper finds, better make and gems by item level | `magic-items.md#deeper-finds` |
+| Better-made finds, better make and gems by item level | `magic-items.md#better-made-finds` |
 | Binding (a material's) | `magic-items.md#capacity`, `materials.md` |
 | Affix, prefix, suffix | `affixes.md#prefixes`, `affixes.md#suffixes` |
 | Base item | `affixes.md#base-items` |

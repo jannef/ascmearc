@@ -1,0 +1,37 @@
+# Steorratorr's people (campaigns/ascmearc/data/dialogue/steorratorr.toml): Master Sigeric, a
+# wizard of the better-off (`register = "posh"`), so kirjakieli, uncompromising: the maker of
+# wonders of the three, ornate, courteous, and very pleased with himself. He says "sinä" to the
+# player.
+
+[ascmearc.sigeric]
+greet = { text = "Olet kiivennyt pitkän matkan tullaksesi vaikutetuksi. Salli minun.", of = "f55c34" }
+greet_evil = [
+    { text = "Ah. Näytät asialta, jota en soisi pajaani. Portaat ovat takanasi.", of = "94bcbd" },
+    { text = "Olen luonut lukuisia ihmeitä, eikä yksikään ollut sinä. Poistu.", of = "c4b1bc" },
+]
+lines = [
+    { text = "Varo planetaariota. Se on maailman hienoin, ja maailmalla on vain se.", of = "bae3fe" },
+    { text = "Portaideni koirat olivat kerran elohopeaa. Mieti, mitä sinusta tekisin.", of = "ddd929" },
+    { text = "Patsaat? Vaatimaton muotokuva. Kuvanveistäjä ei imarrellut. Vaadin sitä.", of = "1c7f36" },
+    { text = "Kulta on vain lyijyä, jolle on puhuttu asianmukaisesti.", of = "39c668" },
+    { text = "Parvekkeelta näkee kirkkaana yönä kaikki tähdet, ja useita omiani.", of = "39fe72" },
+    { text = "Istu toki. Älä riikinkukon päälle.", of = "68ad3d" },
+]
+mutter = [
+    { text = "...hieman lisää kultausta otsalle, luulisin. Kyllä...", of = "32a998" },
+    { text = "...ja kolmas kehä kiertää toista vasten, ja noin... noin...", of = "eaf62e" },
+    { text = "...Ælfswīð sanoisi sitä turhamaisuudeksi. Ælfswīðillä ei ole patsaita...", of = "8ebc49" },
+]
+mutter_verb = { text = "mutisee", of = "f17b79" }
+
+[ascmearc.sigeric.topic]
+steorratorr = { text = "Steorratorr. Tähtitorni. Seitsemän kerrosta, korkein rakennus vuorten ja meren välillä, ja sen jokainen kivi on asetettu sanastani. Portaat ovat täynnä töitäni; toivon totisesti, että ihailit niitä matkalla ylös.", of = "3649ae" }
+sea = { text = "Grægsæ. Kylmä, harmaa ja hyvin suuri, minkä vuoksi rakensin tornin sen viereen: suuri asia kaipaa suurempaa, johon sitä mitataan. Hukkuneet kävelevät siitä silloin tällöin ulos. Pidän heitä ikävystyttävänä seurana.", of = "56ca6c" }
+learning = { text = "Ordgar sanoo sinulle, että taikuus on lukemista. Ælfswīð sanoo, että se on säätä. Se ei ole kumpaakaan. Se on luomista: otat asian sellaisena kuin se on ja suostuttelet sen paremmaksi. Loitsu on vain velhon ensimmäinen luomus, ja harvoin paras.", of = "31415c" }
+wizards = { text = "Ordgar on hyvin oppinut mies, joka ei ole koskaan luonut muuta kuin muistiinpanoja. Ælfswīð on hyvin voimakas nainen, joka ei ole koskaan luonut muuta kuin melua. Pidän heistä molemmista, noin kuuden peninkulman päästä.", of = "d5c3ad" }
+
+[ascmearc.sigeric.topic_name]
+steorratorr = { text = "Torni", of = "a40da5" }
+sea = { text = "Harmaa meri", of = "eb3f1c" }
+learning = { text = "Taikuus ja sen oppiminen", of = "8266bf" }
+wizards = { text = "Muut velhot", of = "60ae2c" }

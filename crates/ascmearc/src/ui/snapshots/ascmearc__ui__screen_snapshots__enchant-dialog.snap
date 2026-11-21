@@ -12,13 +12,13 @@ expression: shown
 
 
 
-                            ┌─ Unbind ────────────────────────────────┐
-                            │                                         │
-                            │ Unbind the Storm Hunger? It takes about │
-                            │               30 minutes.               │
-                            │                                         │
-                            │             Unbind  (y)                 │
-                            │           > Not now  (n, Esc)           │
-                            │                                         │
-                            │ ↑/↓ choose  Enter select                │
-                            └─────────────────────────────────────────┘
+                            ┌─ Unbind ─────────────────────────────────┐
+                            │                                          │
+                            │ Unbind the Ghoul Edge? It takes about 30 │
+                            │                 minutes.                 │
+                            │                                          │
+                            │             Unbind  (y)                  │
+                            │           > Not now  (n, Esc)            │
+                            │                                          │
+                            │ ↑/↓ choose  Enter select                 │
+                            └──────────────────────────────────────────┘

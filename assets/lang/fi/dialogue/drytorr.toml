@@ -1,0 +1,36 @@
+# Drȳtorr's people (campaigns/ascmearc/data/dialogue/drytorr.toml): Master Ordgar, a wizard of the
+# better-off (`register = "posh"`), so kirjakieli, uncompromising: the scholar of the three, long
+# exact sentences with a dry turn. He says "sinä" to the player.
+
+[ascmearc.ordgar]
+greet = { text = "Vieras, ja jalkaisin portaitani ylös. Kovin päättäväistä. Ole hyvä ja astu sisään.", of = "667acf" }
+greet_evil = [
+    { text = "Tunnen tuon katseen. Olen lukenut siitä. Vie se ystävällisesti alas.", of = "f1adc7" },
+    { text = "Ei, en usko. Ovi on takanasi, ja pian myös portaat.", of = "9adae3" },
+]
+lines = [
+    { text = "Varo kolmatta kivilaattaa. Se varoo sinua.", of = "bb6f48" },
+    { text = "Jokainen tämän huoneen kirja on luettu kahdesti. Osa on lukenut minut.", of = "75c37e" },
+    { text = "Luudat eivät ole pahantahtoisia. Ne ovat vain perusteellisia.", of = "4a27ac" },
+    { text = "Teetä? Se on kylmää. Se on ollut kylmää juhannuksesta asti.", of = "5c5e6b" },
+    { text = "Hyvästä hakemistosta oppii enemmän kuin useimmista ihmisistä.", of = "67302a" },
+    { text = "Näköala on tornin ainoa asia, jota minun ei tarvinnut rakentaa.", of = "36bb7e" },
+]
+mutter = [
+    { text = "...ja toinen selitys kumoaa ensimmäisen, mikä on siltä ikävää...", of = "6f595b" },
+    { text = "...minne panin musteen? Minne muste on pannut itsensä...", of = "ebaac4" },
+    { text = "...yhdeksän, kymmenen, ja suojaukset pitävät. Hyvä...", of = "b6a482" },
+]
+mutter_verb = { text = "mutisee", of = "f17b79" }
+
+[ascmearc.ordgar.topic]
+drytorr = { text = "Drȳtorr: muinaisella kielellä velhon torni, mikä on varsin osuvaa. Pystytin sen vanhoille kiville ja asetin portaiden ansat itse. Olen huomannut, että ne vieraat, jotka selviävät niistä, ovat yleensä tulleet asiasta, joka kannattaa kuulla.", of = "e2f0fe" }
+holly_wood = { text = "Holegnwudu on vanhempi kuin kenenkään kartat siitä. Wynflæd tuntee sen polut minua paremmin, ja olen ollut niin viisas, että annan hänen tuntea. Siellä on kehiä, joihin ei astuta, ja kukkula, jonka alla ei aterioida. Näen siitä paljon parvekkeeltani, ja pysyttelen parvekkeella.", of = "a2a540" }
+learning = { text = "Loitsutaito on kielioppi ja loitsukirja lause. Ilman kielioppia lause on pelkkää melua, ilman lausetta kielioppi joutilasta. Useimmat taikuuteen tulevat haluavat tulipallon eivätkä kielioppia. He eivät yleensä palaa kieliopin vuoksi.", of = "0cc475" }
+wizards = { text = "Tässä maassa on kolme meistä, jotka voivat kutsua itseään velhoiksi. Rouva Ælfswīð pitää tornia nummilla ja säätä siinä. Mestari Sigeric pitää korkeampaa harmaan meren rannalla ja siitä hyvin korkeaa käsitystä. Emme ole kirjeenvaihdossa.", of = "fc731f" }
+
+[ascmearc.ordgar.topic_name]
+drytorr = { text = "Torni", of = "a40da5" }
+holly_wood = { text = "Paatsamametsä", of = "2f62a5" }
+learning = { text = "Taikuus ja sen oppiminen", of = "8266bf" }
+wizards = { text = "Muut velhot", of = "60ae2c" }
