@@ -1,0 +1,18 @@
+# Doors (`world/fixtures/door.rs`).
+
+already_closed = { text = "Ovi on jo kiinni.", of = "1809e1" }
+already_open = { text = "Ovi on jo auki.", of = "4e98ea" }
+close = { text = "Suljet oven.", of = "0ad3f0" }
+crashes_open = { text = "Ovi lentää rytisten auki!", of = "26da88" }
+in_the_way = { text = "Jokin on tiellä.", of = "ce360b" }
+kick_empty = { text = "Potkaiset tyhjää.", of = "ac7071" }
+# `what`: the terrain kicked.
+kick_hurts = { text = "{what:Gen} potkiminen satuttaisi vain jalkaasi.", of = "15dc51" }
+locked = { text = "Ovi on lukossa.", of = "b80cf8" }
+nothing_to_close = { text = "Siellä ei ole mitään suljettavaa.", of = "49d3fa" }
+nothing_to_open = { text = "Siellä ei ole mitään avattavaa.", of = "ebb281" }
+open = { text = "Avaat oven.", of = "41bb3c" }
+unwedge = { text = "Vedät kiilan irti ja avaat oven.", of = "52ce4f" }
+# `what`: the key that fits, the player's ("rauta-avaimesi").
+unlock = { text = "Aukaiset lukon {what:ade} ja avaat oven.", of = "815211" }
+whamm = { text = "RYSKIS!", of = "3cc252" }

@@ -135,6 +135,8 @@ pub fn run(options: Options) -> Result<(), String> {
             let (races, spoken) = content_voices(&content);
             let voices = registers::check_registers(&langs, &races, &spoken);
             report.errors.extend(voices.errors);
+            let words = check_lexicon_ids(&langs, content.lexicon());
+            report.errors.extend(words.errors);
             if options.dir.is_none() {
                 report.warnings.extend(unused_ids(&langs));
                 let said = neutral::check_sources(&workspace_root());
@@ -627,9 +629,24 @@ fn check_entries(
     }
 }
 
+/// A language's lexicon files as `(path, kind, text)`: `lexicon/<kind>.toml`, whose keys are ids
+/// of that kind (`lexicon/creature.toml`'s `rat` is `creature:rat`).
+fn lexicon_files(files: &LangFiles) -> impl Iterator<Item = (&str, &str, &str)> {
+    (files.under("lexicon")).filter_map(|(path, text)| {
+        let kind = path.strip_prefix("lexicon/")?.strip_suffix(".toml")?;
+        Some((path, kind, text))
+    })
+}
+
 fn check_lexicon(code: &str, files: &LangFiles, morphology: &dyn Morphology, report: &mut Report) {
-    for (path, text) in files.under("lexicon") {
-        match MapLexicon::parse("", text) {
+    for (path, kind, text) in lexicon_files(files) {
+        if kind.contains('/') {
+            report.errors.push(format!(
+                "{code}: {path}: a lexicon file is `lexicon/<kind>.toml`, in no folder"
+            ));
+            continue;
+        }
+        match MapLexicon::parse(&format!("{kind}:"), text) {
             Err(e) => report.errors.push(format!("{code}: {path}: {}", e.message)),
             Ok(lexicon) => {
                 for id in lexicon.ids() {
@@ -645,6 +662,28 @@ fn check_lexicon(code: &str, files: &LangFiles, morphology: &dyn Morphology, rep
             }
         }
     }
+}
+
+/// Every lexicon id of every language but English that `english` (the content) has no word
+/// for: a typo or a renamed id, which no line would ever ask for.
+pub fn check_lexicon_ids(langs: &BTreeMap<String, LangFiles>, english: &dyn Lexicon) -> Report {
+    let mut report = Report::default();
+    for (code, files) in langs.iter().filter(|(code, _)| *code != ENGLISH) {
+        for (path, kind, text) in lexicon_files(files) {
+            let Ok(lexicon) = MapLexicon::parse(&format!("{kind}:"), text) else {
+                continue; // reported by `check_lexicon`
+            };
+            if kind.contains('/') {
+                continue; // so is a file in a folder
+            }
+            for id in lexicon.ids().filter(|id| english.word(id).is_none()) {
+                report.errors.push(format!(
+                    "{code}: {path}: `{id}`: the content has no such word"
+                ));
+            }
+        }
+    }
+    report
 }
 
 /// English ids no source names: `msg::<file>::<ID>` nowhere under `crates/`.
@@ -1088,6 +1127,29 @@ mod tests {
         )]));
         assert!(e.iter().any(|m| m.contains("goblin")), "{e:?}");
         assert!(!e.iter().any(|m| m.contains("`rat`")), "{e:?}");
+    }
+
+    #[test]
+    fn a_lexicon_file_names_its_kind_and_ids_the_content_has() {
+        let langs = world(&[
+            (
+                "lexicon/creature.toml",
+                "rat = \"rotta/10\"\nratt = \"rotta/10\"\n",
+            ),
+            ("lexicon/x/creature.toml", "rat = \"rotta/10\"\n"),
+        ]);
+        let english =
+            MapLexicon::default().with("creature:rat", ascmearc_lang::LexWord::new("rat"));
+        let e = check_lexicon_ids(&langs, &english).errors;
+        assert_eq!(
+            e,
+            ["xx: lexicon/creature.toml: `creature:ratt`: the content has no such word"]
+        );
+        let e = errors(&langs);
+        assert!(
+            e.iter().any(|m| m.contains("lexicon/x/creature.toml")),
+            "{e:?}"
+        );
     }
 
     #[test]

@@ -1,0 +1,72 @@
+# Creatures (`world/creatures/`); the roles as in `en/messages/creatures.toml`. `verb` is a line
+# of data (a breath, a burst, a summoning), a finite verb in the third person.
+
+avert_eyes = { text = "Käännät katseesi pois.", of = "d7ced6" }
+# `verb`: the breath ("syöksee tulta").
+breathes = { text = "{who:Nom} {verb:bare}!", of = "35e17a" }
+# `verb`: the burst.
+bursts = { text = "{who:Nom} {verb:bare}!", of = "35e17a" }
+casts = { text = "{who:Nom} loitsii {spell:gen}.", of = "7230d2" }
+casts_at = { text = "{who:Nom} loitsii {spell:gen} {target:par} kohti.", of = "83619f" }
+casts_at_you = { text = "{who:Nom} loitsii {spell:gen} sinua kohti!", of = "d9171b" }
+# A heal cast on another.
+casts_on = { text = "{who:Nom} loitsii {spell:gen} {target:all}.", of = "133deb" }
+chest_breathing = { text = "Huomaat {chest:gen} hengittävän: {who:nom}!", of = "3bc0da" }
+chest_lurches = { text = "{chest:Nom} nytkähtää: se onkin {who:nom}!", of = "f896d9" }
+chest_shudders = { text = "{chest:Nom} värisee: se onkin {who:nom}!", of = "806ea0" }
+cold_draught = { text = "Tunnet kylmän henkäyksen.", of = "32748a" }
+cold_stare = { text = "Tunnet kylmän katseen niskassasi.", of = "1c5214" }
+comes_dev = { text = "{who:Nom} tulee (dev).", of = "71c1cf" }
+eyes_find_yours = { text = "{who:Gen} silmät kohtaavat omasi.", of = "8b7ed5" }
+fades_from_sight = { text = "{who:Nom} häipyy näkyvistä.", of = "3dfc78" }
+is_status = { text = "{who:Nom} on {status:nom}.", of = "24d54c" }
+keep_eyes_from = { text = "Pidät katseesi poissa {who:gen} silmistä.", of = "fddbe5" }
+looks_better = { text = "{who:Nom} näyttää voivan paremmin.", of = "650cce" }
+no_cell_out_of_sight_dev = { text = "Mitään ei voinut tulla: ei ruutua näkyvistä poissa (dev).", of = "f798ca" }
+no_danger_dev = { text = "Tänne ei tule mitään: kerroksella ei ole vaaraa (dev).", of = "20e245" }
+raise_eyes = { text = "Nostat katseesi taas.", of = "c3dbdc" }
+see_again = { text = "Näet {who:gen} taas.", of = "f273e5" }
+spins_web = { text = "{who:Nom} kutoo seitin.", of = "6d4992" }
+splits = { text = "{who:Nom} jakautuu kahtia.", of = "aa56d4" }
+splits_first = { text = "{who:Nom} hajoaa kahtia, ja molemmat puolikkaat ryömivät.", of = "57f6cc" }
+stares_at = { text = "{who:Nom} tuijottaa {target:par}.", of = "fab108" }
+statue_falls = { text = "{what:Nom} halkeaa ja murenee kappaleiksi!", of = "b21830" }
+statue_stands = { text = "TÖMPS! Jalkasi kohtaa kiven; {what:nom} pysyy pystyssä.", of = "af4818" }
+strike_at_something = { text = "Lyöt jotakin.", of = "ff84ec" }
+# `verb`: how the summoner summons ("kutsuu esiin"); `what`: what came, counted, or a list.
+summons = { text = "{who:Nom} {verb:bare}: {what:counted}!", of = "f7487b" }
+tear_eyes_from = { text = "Repäiset katseesi irti {who:gen} silmistä.", of = "3f42c3" }
+verb_summons = { text = "kutsuu esiin", of = "56fded" }
+wakes_up = { text = "{who:Nom} herää.", of = "fe57c7" }
+
+# Finnish says an appearing subject after the verb, in the singular, one or several.
+[appear]
+of = "5dd168"
+by = "what.number"
+one = "Paikalle ilmestyy {what:counted}!"
+many = "Paikalle ilmestyy {what:counted}!"
+
+[blinks_beside]
+of = "83e6e1"
+by = "beside.person"
+you = "{who:Nom} on yhtäkkiä vieressäsi."
+other = "{who:Nom} on yhtäkkiä {beside:gen} vieressä."
+
+[breaks_apart]
+of = "f9688c"
+by = "what.number"
+one = "{what:Nom} hajoaa kappaleiksi."
+many = "{what:Nom} hajoaa kappaleiksi."
+
+[crawl_out]
+of = "6db467"
+by = "what.number"
+one = "{from:Gen} ruumiista ryömii esiin {what:counted}!"
+many = "{from:Gen} ruumiista ryömii esiin {what:counted}!"
+
+# `who`: the thief; `what`: the stack, the total object (one: genitive; counted: "kolme nuolta").
+[snatches]
+of = "86af41"
+by = "what.number"
+one = "{who:Nom} sieppaa sinulta {what:gen}!"
+many = "{who:Nom} sieppaa sinulta {what:nom}!"

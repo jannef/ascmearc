@@ -1,0 +1,124 @@
+# Lines of data: terrain (`terrain:<id>.description`), as the look line shows it.
+
+[acid_pit]
+description = { text = "Kivi on syöpynyt täyteen pieniä kuoppia, ja se haisee happamalta.", of = "46d41b" }
+
+[anvil]
+description = { text = "Vanha alasin, pinta kuoppainen ja tumma, vasara kahlittuna sen viereen. Ahjo sen takana on ollut kylmänä vuosia, mutta rauta soi yhä lyötäessä.", of = "13aa87" }
+
+[bed]
+description = { text = "Olkipatja puisella kehikolla, peitto taiteltuna jalkopäähän.", of = "09c91b" }
+
+[bone_wall]
+description = { text = "Kalloja ja pitkiä luita siisteiksi kerroiksi pinottuina lattiasta kattoon.", of = "740c46" }
+
+[burning_bush]
+description = { text = "Pensas rätisee ja kohisee, sen oksat hehkuvat punaisina.", of = "d88613" }
+
+[burning_doorway]
+description = { text = "Ovi riippuu auki ja palaa karmeissaan.", of = "48f5d6" }
+
+[burning_grass]
+description = { text = "Liekit juoksevat korsien halki ja jättävät jälkeensä mustan sängen.", of = "66e304" }
+
+[burning_tree]
+description = { text = "Tuli kiipeää runkoa ylös ja kohisee oksistossa.", of = "6658dd" }
+
+[burning_web]
+description = { text = "Seitin säikeet käpertyvät ja leimahtavat, ja palavia rihmoja putoilee alas.", of = "6fe7a7" }
+
+[burning_wood]
+description = { text = "Laudat ja palkit mustuvat ja halkeilevat liekeissä.", of = "82fa32" }
+
+[candles]
+description = { text = "Loppuun palavia kynttilöitä rautaisessa jalassa.", of = "b76946" }
+
+[crystal_portal]
+description = { text = "Kalliossa riippuu hyrisevä kristallikehä; kivi sen sisällä ei ole aivan tässä.", of = "45a49b" }
+
+[drystone_wall]
+description = { text = "Laastitta ladottua peltokiveä, noin vyötärön korkuinen ja sammaloitunut.", of = "1ad0c1" }
+
+[empty_niche]
+description = { text = "Seinään hakattu syvennys, ruumiin mittainen. Se on tyhjä.", of = "54ac0d" }
+
+[fence]
+description = { text = "Paaluihin sidottuja halkaistuja riukuja, noin vyötärön korkuinen.", of = "90cc78" }
+
+[forgotten_altar]
+description = { text = "Kulunut kivialttari. Kädet tai aika ovat hioneet sen kaiverrukset sileiksi, eikä jumalalla, jota se palveli, ole enää nimeä. Jokin täällä kuuntelee yhä.", of = "876e2b" }
+
+[gate_closed]
+description = { text = "Riukuveräjä nahkasaranoilla, köysilenkillä kiinni sidottu.", of = "15cbd1" }
+
+[grave_plot]
+description = { text = "Kivireunus käännetyn maakaistaleen ympärillä, hautaa varten varattu.", of = "656bb4" }
+
+[makeshift_anvil]
+description = { text = "Kivikasan päälle asetettu metallimöhkäle: karkea alasin, mutta soi vasaran alla kyllin puhtaasti.", of = "916113" }
+
+[open_sarcophagus]
+description = { text = "Kivinen arkku, kansi nojaamassa sen kylkeen. Se on tyhjä.", of = "90b475" }
+
+[parapet]
+description = { text = "Matala muuri hakatusta kivestä, noin vyötärön korkuinen.", of = "f6de2d" }
+
+[picked_fungus]
+description = { text = "Paljaita sienenvarsia, joista hehkuvat lakit on poimittu. Täältä ei ole enää mitään kerättävää.", of = "3f0fb2" }
+
+[shelves]
+description = { text = "Hyllyjä täynnä lahoavia kääröjä, notkollaan vanhan kirjoituksen painosta. Suurin osa on murentunut tomuksi; jotain voi vielä lukea.", of = "3f0fc3" }
+
+[shrine_stone]
+description = { text = "Tanakka kivinen pyhäkkö, syvennys tyhjä ja kaiverrukset lukukelvottomiksi kuluneet. Se ei toivota kaikkia yhtä lailla tervetulleiksi.", of = "14fcae" }
+
+[spent_altar]
+description = { text = "Kulunut kivialttari, kylmä ja pimeä. Mikä täällä kuunteli, on lakannut.", of = "8e003e" }
+
+[spring]
+description = { text = "Vanha, sileäksi kulunut kiviallas, jossa kirkas vesi kumpuaa alhaalta ja valuu pois sen reunan halkeamasta.", of = "a741e3" }
+
+[statue]
+description = { text = "Kiveä, vanhaa ja sileäksi kulunutta sieltä, mihin kädet ovat koskeneet.", of = "b82198" }
+
+[stool]
+description = { text = "Kolmijalkainen jakkara, sileäksi kulunut.", of = "9cf01b" }
+
+[table]
+description = { text = "Yksinkertainen pöytä hangatuista laudoista, täynnä veitsenjälkiä ja kuppien renkaita.", of = "fc592e" }
+
+[vein_adamantium]
+description = { text = "Kallion halki kulkee adamantiummalmin suoni.", of = "9f7cb3" }
+
+[vein_copper]
+description = { text = "Kallion halki kulkee kuparimalmin suoni.", of = "ca7d76" }
+
+[vein_gold]
+description = { text = "Kallion halki kulkee kultamalmin suoni.", of = "061237" }
+
+[vein_iron]
+description = { text = "Kallion halki kulkee rautamalmin suoni.", of = "69e1b7" }
+
+[vein_mithril]
+description = { text = "Kallion halki kulkee mithrilmalmin suoni.", of = "21365f" }
+
+[vein_silver]
+description = { text = "Kallion halki kulkee hopeamalmin suoni.", of = "5a8a4a" }
+
+[vein_tin]
+description = { text = "Kallion halki kulkee tinamalmin suoni.", of = "0356cc" }
+
+[vein_zinc]
+description = { text = "Kallion halki kulkee sinkkimalmin suoni.", of = "5ce1a5" }
+
+[weapon_rack]
+description = { text = "Puinen teline keihäille ja terille. Useimmat sen tapeista ovat tyhjiä.", of = "234c60" }
+
+[web]
+description = { text = "Harmaita säikeitä, paikoin köyden paksuisia, riippuu seinästä lattiaan. Ne tarttuvat kaikkeen, mikä niitä hipaisee, ja palaisivat kuin taula.", of = "168fdd" }
+
+[window]
+description = { text = "Lasiton aukko seinässä, niin leveä, että siitä voi kurkottaa ulos.", of = "911a5d" }
+
+[workbench]
+description = { text = "Raskas, työkalujen arpeuttama höyläpenkki, sen ruuvipuristimet ruostuneet kiinni.", of = "617622" }

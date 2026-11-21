@@ -1,0 +1,21 @@
+# The Skills screen (`crates/ascmearc/src/ui/skills_screen.rs`).
+
+[choose]
+of = "c8f3e3"
+text = "{keys:bare} valitse"
+
+[close]
+of = "12c352"
+text = "Esc sulje"
+
+[close_own]
+of = "2a7cbf"
+text = "{own:bare} tai Esc sulje"
+
+[none]
+of = "913e81"
+text = "Et ole harjaantunut yhteenkään taitoon."
+
+[title]
+of = "ecba07"
+text = "Taidot"

@@ -1,0 +1,26 @@
+# The story screen (`crates/ascmearc/src/ui/story_screen.rs`).
+
+[close_continue]
+of = "98acef"
+text = "{confirm:bare} jatka"
+
+[close_esc]
+of = "12c352"
+text = "Esc sulje"
+
+[scroll]
+of = "4401ee"
+text = "{up_down:bare} vieritä"
+
+# `name` is text and cannot take the genitive.
+[title_named]
+of = "cfcf73"
+text = "Tarina: {name:bare}"
+
+[title_your]
+of = "c627e3"
+text = "Tarinasi"
+
+[unwritten]
+of = "f62216"
+text = "Tarinaasi ei ole kirjoitettu."

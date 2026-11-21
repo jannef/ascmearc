@@ -124,6 +124,10 @@ pub struct Topic {
     pub id: String,
     /// What the player picks: "The rooms".
     pub name: String,
+    /// The key of `name`'s line of data, `dialogue:<scope>.topic_name.<id>`, given as the lines
+    /// are keyed (`dialogue_line.rs`), so a translation names the topic.
+    #[serde(skip)]
+    pub name_key: String,
     /// What the speaker answers.
     pub reply: DialogueLine,
     /// The way the speaker describes, as waypoints `[x, y]` on the campaign's overworld: asking
@@ -196,6 +200,9 @@ pub struct Service {
     pub id: String,
     /// What the player picks: "A cure for what ails you" (the screen adds the price).
     pub name: String,
+    /// The key of `name`'s line of data, `dialogue:<scope>.service_name.<id>` (`dialogue_line.rs`).
+    #[serde(skip)]
+    pub name_key: String,
     /// What it costs, in the shops' currency, before talents; for `identify`, per unidentified
     /// stack carried; for `decurse`, per cursed thing worn or wielded.
     pub price: u32,

@@ -1,0 +1,38 @@
+# Born under the stars, character creation's reveal (`crates/ascmearc/src/ui/sign_screen.rs`).
+
+[adjustment]
+of = "0aaf34"
+text = "{name:bare}: {stats:bare}"
+
+[back]
+of = "03caaf"
+text = "Esc takaisin"
+
+[born]
+of = "906647"
+by = "age.number"
+one = "Synnyit {date:bare}. Olet {age:bare}-vuotias."
+many = "Synnyit {date:bare}. Olet {age:bare}-vuotias."
+
+# `sign`, a phrase ("Metallimantikora"): "Metallimantikoran vuonna".
+[born_sign]
+of = "8a2fff"
+by = "age.number"
+one = "Synnyit {date:bare}, {sign:gen} vuonna. Olet {age:bare}-vuotias."
+many = "Synnyit {date:bare}, {sign:gen} vuonna. Olet {age:bare}-vuotias."
+
+[continue]
+of = "98acef"
+text = "{confirm:bare} jatka"
+
+[flaw]
+of = "4c6fc9"
+text = "mutta {name:bare}"
+
+[no_races]
+of = "69afde"
+text = "Ei ole kansoja, joihin syntyä."
+
+[title]
+of = "f8aa7a"
+text = "Tähtien alla syntynyt"

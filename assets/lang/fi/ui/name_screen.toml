@@ -1,0 +1,30 @@
+# Character creation's name step (`crates/ascmearc/src/ui/name_screen.rs`).
+
+[accept]
+of = "c52414"
+text = "{own:bare} hyväksy"
+
+[back]
+of = "03caaf"
+text = "Esc takaisin"
+
+[erase]
+of = "d3a4ab"
+text = "{own:bare} pyyhi"
+
+[random]
+of = "2404de"
+text = "{own:bare} satunnainen"
+
+[field]
+of = "cc67d6"
+text = "Nimi: "
+
+[help]
+of = "7af03f"
+text = "Kirjoita enintään {max:bare} merkin nimi, tai {random:bare} antaa jonkin kansasi nimistä. Tyhjäksi jätettynä nimi on {name:bare}."
+
+# `character`, "ihmisvaras": the player's own character.
+[question]
+of = "afda1f"
+text = "Mikä on {character:gen} nimi?"

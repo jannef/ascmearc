@@ -1,0 +1,7 @@
+# A creature type's natural attacks by name (`attack_name:<creature>.<n>`, n from 0).
+"bat.0" = "puraisu/2"
+"beetle.0" = "puraisu/2"
+"cat.0" = { word = "kynsi/28", many = true }
+"grave_worm.0" = "puraisu/2"
+"hound.0" = "puraisu/2"
+"rat.0" = "puraisu/2"

@@ -1,0 +1,5 @@
+# Chests by band (`chest:<band>`): the first bands, the ones of Lytelscræf's depths.
+banded_chest = "vannehdittu/1*C arkku/1*A"
+chest = "arkku/1*A"
+coffer = "lipas/41*B"
+hutch = "kirstu/1"

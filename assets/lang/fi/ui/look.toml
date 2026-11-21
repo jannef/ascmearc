@@ -1,0 +1,277 @@
+# Look mode's line (`crates/ascmearc/src/ui/look.rs`). Nested clauses (ground, things, who) take
+# no case from the entry that holds them: each picks its own here. The ground after "on" is the
+# adessive (`ground`), named alone the nominative (`ground_named*`); things, traps, and creatures
+# are always said in the nominative, so a sentence that holds them is built around that.
+
+[ally]
+of = "be1cc9"
+text = "liittolaisesi"
+
+[below_creature]
+of = "b4a9cd"
+text = "{who:nom} {ground:ade}"
+
+[below_ground]
+of = "68cbed"
+text = "{ground:nom}"
+
+[below_thing]
+of = "c37423"
+text = "{what:nom} {ground:ade}"
+
+[companion]
+of = "f591c5"
+text = "{name:bare}, {who:nom} ({state:bare}){writhing:bare}{moves:bare}{wielding:bare}{wearing:bare}{ready:bare}"
+
+[creature]
+of = "b572a4"
+text = "{who:Nom} ({state:bare}){services:bare}{waits:bare}{writhing:bare}{moves:bare}{wielding:bare}{wearing:bare}{ready:bare}"
+
+[cures]
+of = "b75bb9"
+text = "parantaa"
+
+[dreaded]
+of = "6af365"
+text = "pimeyden pyhittämässä paikassa"
+
+[far_below]
+of = "c72517"
+text = "Kaukana alhaalla: {below:bare}."
+
+# Inside `statue_of`, which says it in the partitive: "kääpiö Brakkaa".
+[fallen]
+of = "526d4a"
+text = "{race:nom} {name:par}"
+
+[for_sale]
+of = "bebf62"
+text = "myynnissä, {gold:bare} kultaa"
+
+[frees_the_cursed]
+of = "76cdd2"
+text = "vapauttaa kirouksista"
+
+[ground]
+of = "315f6c"
+text = "{ground:ade}{of:bare}{where:bare}{room:bare}"
+
+[ground_named]
+of = "3db2f4"
+text = "{ground:nom}{of:bare}{where:bare}{room:bare}"
+
+[ground_named_mass]
+of = "315f6c"
+text = "{ground:nom}{of:bare}{where:bare}{room:bare}"
+
+[ground_named_plural]
+of = "315f6c"
+text = "{ground:nom}{of:bare}{where:bare}{room:bare}"
+
+[hallowed]
+of = "63a177"
+text = "pyhitetyssä paikassa"
+
+[heard_here]
+of = "8faf6b"
+text = "{heard:bare} täältä."
+
+[heard_where_remembered]
+of = "7b7114"
+text = "{heard:bare} paikasta, jossa muistaaksesi oli {memory:bare}."
+
+[here]
+of = "5d6ead"
+text = "; tässä on {things:nom}"
+
+[hostile]
+of = "f239d1"
+text = "vihamielinen"
+
+[identifies]
+of = "00e883"
+text = "tunnistaa esineitä"
+
+[immune_to]
+of = "c82c4e"
+text = "immuuni {kinds:all}"
+
+[in_room]
+of = "6c9d7e"
+text = "{room:ine}"
+
+[known]
+of = "48a80b"
+text = "Tiedät, että {who:nom} on {parts:and}."
+
+[leading_to]
+of = "9a217f"
+text = ", tie: {to:bare}"
+
+[lines]
+of = "976166"
+text = "{lines:lines}"
+
+[listed]
+of = "c38afe"
+text = "{first:bare}, {rest:bare}"
+
+[looks]
+of = "0ea00d"
+text = "näöltään {fresh:bare}"
+
+[mends]
+of = "4e6722"
+text = "korjaa"
+
+[moves]
+of = "e81e90"
+text = ", {moves:bare}"
+
+[partly_dug]
+of = "fd8b7c"
+text = ", osin kaivettu"
+
+[place]
+of = "ccad9a"
+text = ", {place:bare}"
+
+[ready]
+of = "71a1e6"
+text = ", valmiina {what:nom}"
+
+[reflection]
+of = "397fa2"
+text = "Kuvajaisesi {ground:bare}{here:bare}."
+
+[remember_ground]
+of = "f10687"
+text = "Tässä oli muistaaksesi {ground:bare}{room:bare}."
+
+[remember_things]
+of = "dca03a"
+text = "Tässä oli muistaaksesi {things:nom} {ground:bare}."
+
+[remember_trap]
+of = "6376fd"
+text = "Tässä oli muistaaksesi {trap:nom} {ground:bare}."
+
+[resistant_to]
+of = "7349aa"
+text = "vastustuskykyinen {kinds:all}"
+
+[room]
+of = "b592c8"
+text = " {room:bare}"
+
+[room_after_comma]
+of = "4f95b1"
+text = ", {room:bare}"
+
+[seen_creature]
+of = "232edb"
+text = "{who:Bare}, {ground:bare}{here:bare}."
+
+[seen_ground]
+of = "6eee75"
+text = "{ground:Bare}."
+
+[seen_things]
+of = "1efff2"
+text = "{things:Nom} {ground:bare}."
+
+[seen_trap]
+of = "df8097"
+text = "{trap:Nom} {ground:bare}."
+
+[services]
+of = "4a6abf"
+text = ", joka {verbs:and} maksusta"
+
+[statue_of]
+of = "2f253b"
+text = ", joka esittää {of:par} suu ammollaan"
+
+[tagged]
+of = "9f6bc9"
+text = "{what:nom} ({tags:bare})"
+
+[tags]
+of = "00bce2"
+text = "{first:bare}; {rest:bare}"
+
+[teaches]
+of = "eac1b1"
+text = "opettaa"
+
+[things_on]
+of = "fdba38"
+text = "{things:nom} {ground:bare}"
+
+[trap_on]
+of = "c1ed47"
+text = "{trap:nom} {ground:bare}"
+
+[trapped]
+of = "6b3b6d"
+text = ", ansoitettu: {trap:nom}"
+
+[unaware]
+of = "2bbae6"
+text = "ei huomaa sinua"
+
+[unknown]
+of = "cd107a"
+text = "Et tiedä, mitä siellä on."
+
+[vulnerable_to]
+of = "78915e"
+text = "altis {kinds:all}"
+
+[waits]
+of = "21c756"
+text = ", joka odottaa"
+
+[wearing]
+of = "159a6f"
+text = ", yllään {what:nom}"
+
+[wielding]
+of = "ae46cf"
+text = ", kädessään {what:nom}"
+
+[writhing]
+of = "2b9da6"
+text = ", sisällä jokin kiemurtelee"
+
+[you]
+of = "42e871"
+text = "Olet {ground:bare}{here:bare}."
+
+[your_companion]
+of = "c1fb88"
+text = "Seuralaisesi"
+
+[your_mark]
+of = "0b1901"
+text = "kohteesi"
+
+[zone_dark]
+of = "e213bc"
+text = "pimeyden peitossa"
+
+[zone_fire]
+of = "53ae16"
+text = "liekkien vallassa"
+
+[zone_fouled]
+of = "73947e"
+text = "löyhkän keskellä"
+
+[zone_slick]
+of = "86f863"
+text = "liukkaalla pinnalla"
+
+[zone_smoke]
+of = "689309"
+text = "sakeassa savussa"

@@ -1,0 +1,6 @@
+# Combat stances (`stance:<id>`), adjectives ("hyökkäävä asento").
+aggressive = "hyökkäävä/10"
+coward = "pelokas/41*A"
+defensive = "puolustava/10"
+frenzy = "raivopäinen/38"
+neutral = "tasapainoinen/38"

@@ -1,0 +1,41 @@
+# The Magic page (`crates/ascmearc/src/ui/magic_screen.rs`).
+
+[aimed]
+of = "82aee0"
+text = "{cost:bare}, tähdättävä"
+
+[caster_styles]
+of = "4fd17e"
+text = "Loitsintatyylit"
+
+[close]
+of = "12c352"
+text = "Esc sulje"
+
+[legend]
+of = "c9524a"
+text = "tyyli, jolla nyt loitsit"
+
+[mana]
+of = "d7ef45"
+text = "Mana {mana:bare}/{max:bare}"
+
+[no_spells]
+of = "4b4dd7"
+text = "Et osaa yhtään loitsua."
+
+[rank]
+of = "4b3a63"
+text = "aste {rank:bare}"
+
+[scroll]
+of = "0d4145"
+text = "{keys:bare} vieritä"
+
+[spells]
+of = "16512b"
+text = "Loitsut"
+
+[title]
+of = "9a78d3"
+text = "Taikuus"

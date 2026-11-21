@@ -1,0 +1,37 @@
+# The rig list (`crates/ascmearc/src/ui/rig_screen.rs`).
+
+[esc_back]
+of = "03caaf"
+text = "Esc takaisin"
+
+[group_traps]
+of = "789551"
+text = "Ansat"
+
+[none]
+of = "72d609"
+text = "Et osaa virittää yhtään ansaa."
+
+[pick_a]
+of = "942fd1"
+text = "a tai {confirm:bare} viritä"
+
+[pick_letters]
+of = "e15c88"
+text = "a-{last:bare} tai {confirm:bare} viritä"
+
+[pick_only]
+of = "1871fa"
+text = "{confirm:bare} viritä"
+
+[lacking]
+of = "05f916"
+text = "({why:bare})"
+
+[time]
+of = "e96f79"
+text = "noin {time:bare}"
+
+[title]
+of = "45568b"
+text = "Ansamestari: mikä ansa?"

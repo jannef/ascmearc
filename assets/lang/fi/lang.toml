@@ -1,0 +1,124 @@
+# Finnish (docs/dev/localization.md "The `fi` module"; the registers: #1896, owner 2026-11-20).
+# What Finnish lacks reads in English: the chain is Finnish, then English.
+name = "suomi"
+code = "fi"
+morphology = "fi"
+fallback = "en"
+
+# The registers: Finnish dialects, each a table of overrides for the words the renderer inserts
+# into a spoken line (the second-person pronoun in its cases, a number word), never for the
+# authored text, which carries the dialect itself (docs/dev/localization.md "Registers"). Who
+# speaks which (#1896's table): the rich speak the written standard, uncompromising (`posh`, the
+# name the data gives them); commoners Stadin slangi; dwarves Ostrobothnian; elves the Turku
+# dialect; halflings and gnomes Savo; goblins, kobolds, and ratfolk Rauma, laid on thick but
+# followable; drow the Old Literary Finnish of Agricola's day; the deep gnomes Karelian
+# (`cornish`, the name the data gives them); lizardfolk Estonian, untranslated. A register with
+# no overrides is still named, so the data can say it.
+[registers.standard]
+
+# Kirjakieli: standard written Finnish, no colloquialisms.
+[registers.posh]
+
+# Stadin slangi.
+[registers.stadi]
+"sinä" = "sä"
+"sinun" = "sun"
+"sinua" = "sua"
+"sinussa" = "sussa"
+"sinusta" = "susta"
+"sinuun" = "suhun"
+"sinulla" = "sulla"
+"sinulta" = "sulta"
+"sinulle" = "sulle"
+
+# Pohjalaismurre (Ostrobothnian).
+[registers.pohjalainen]
+"sinä" = "sää"
+"sinun" = "sun"
+"sinua" = "sua"
+"sinussa" = "sus"
+"sinusta" = "sust"
+"sinuun" = "suhun"
+"sinulla" = "sulla"
+"sinulta" = "sulta"
+"sinulle" = "sulle"
+
+# Turun murre.
+[registers.turku]
+"sinä" = "sää"
+"sinun" = "sun"
+"sinua" = "sua"
+"sinussa" = "sus"
+"sinusta" = "sust"
+"sinuun" = "suhu"
+"sinulla" = "sul"
+"sinulta" = "sult"
+"sinulle" = "sul"
+
+# Savon murre.
+[registers.savo]
+"sinua" = "sinnuu"
+"sinuun" = "sinnuun"
+"sinulla" = "sulla"
+"sinulta" = "sulta"
+"sinulle" = "sulle"
+
+# Rauman giäl.
+[registers.rauma]
+"sinä" = "sää"
+"sinun" = "sun"
+"sinua" = "sua"
+"sinussa" = "sus"
+"sinusta" = "sust"
+"sinuun" = "suhu"
+"sinulla" = "sul"
+"sinulta" = "sult"
+"sinulle" = "sul"
+
+# Agricolan aikainen vanha kirjasuomi (the drow).
+[registers.vanha_kirjasuomi]
+"sinä" = "sine"
+"sinuun" = "sinuhun"
+
+# Karjala (the deep gnomes; the data names their register `cornish`).
+[registers.cornish]
+"sinä" = "sie"
+"sinun" = "siun"
+"sinua" = "siuta"
+"sinussa" = "siussa"
+"sinusta" = "siusta"
+"sinuun" = "siuh"
+"sinulla" = "siula"
+"sinulta" = "siulta"
+"sinulle" = "siule"
+
+# Eesti (the lizardfolk: a foreign voice, its authored lines in Estonian).
+[registers.viro]
+"sinä" = "sina"
+"sinun" = "sinu"
+"sinua" = "sind"
+"sinussa" = "sinus"
+"sinusta" = "sinust"
+"sinuun" = "sinusse"
+"sinulla" = "sinul"
+"sinulta" = "sinult"
+"sinulle" = "sinule"
+"sinuksi" = "sinuks"
+"sinutta" = "sinuta"
+
+# Race id (`data/races.toml`) → register. A race not listed speaks `standard`; a speaker's
+# dialogue may name its own (`posh`, `cornish`).
+[race_registers]
+human = "stadi"       # commoners; the rich say `register = "posh"` in their dialogue
+half_elf = "stadi"
+half_orc = "stadi"
+dwarf = "pohjalainen"
+duergar = "pohjalainen"
+elf = "turku"
+halfling = "savo"
+gnome = "savo"
+goblin = "rauma"
+kobold = "rauma"
+ratfolk = "rauma"
+drow = "vanha_kirjasuomi"
+lizardfolk = "viro"

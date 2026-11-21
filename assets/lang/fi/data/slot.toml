@@ -1,0 +1,55 @@
+# Lines of data: an equipment slot's mark in the item lists (`slot:<id>.mark`).
+
+[body]
+mark = { text = "yllä", of = "9a7c2f" }
+
+[cloak]
+mark = { text = "yllä", of = "9a7c2f" }
+
+[extra_ring_1]
+mark = { text = "sormessa", of = "df29d1" }
+
+[extra_ring_2]
+mark = { text = "sormessa", of = "df29d1" }
+
+[extra_ring_3]
+mark = { text = "sormessa", of = "df29d1" }
+
+[feet]
+mark = { text = "jalassa", of = "9a7c2f" }
+
+[hands]
+mark = { text = "käsissä", of = "9a7c2f" }
+
+[head]
+mark = { text = "päässä", of = "9a7c2f" }
+
+[left_ring]
+mark = { text = "vasemmassa kädessä", of = "050235" }
+
+[main_hand]
+mark = { text = "kädessä", of = "1d2de5" }
+
+[missile_weapon]
+mark = { text = "valmiina", of = "26ea14" }
+
+[missiles]
+mark = { text = "viinessä", of = "2eae50" }
+
+[neck]
+mark = { text = "kaulassa", of = "9a7c2f" }
+
+[off_hand]
+mark = { text = "toisessa kädessä", of = "0b23e5" }
+
+[right_ring]
+mark = { text = "oikeassa kädessä", of = "fc8d7a" }
+
+[tail]
+mark = { text = "hännässä", of = "7d3e6c" }
+
+[third_hand]
+mark = { text = "kolmannessa kädessä", of = "7daa6d" }
+
+[tool]
+mark = { text = "käytössä", of = "6066fc" }

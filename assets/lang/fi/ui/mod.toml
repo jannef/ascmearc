@@ -1,0 +1,108 @@
+# The UI core (`crates/ascmearc/src/ui/mod.rs`): the message line's prompts and the status bar.
+
+[aim_wand]
+of = "21e86c"
+text = "{item:bare} ({does:bare})"
+
+# Status bar: eyes kept from a gaze.
+[averted]
+of = "d5be39"
+text = "Katse sivuun"
+
+[controls]
+of = "cfe7d5"
+text = "{own:bare} näppäimet"
+
+[controls_menu]
+of = "be8c85"
+text = "Esc valikko"
+
+# Status bar: strong light on light-blind eyes.
+[dazzled]
+of = "038c8a"
+text = "Häikäistynyt"
+
+[dig_way]
+of = "1a61d9"
+text = "Mihin suuntaan kaivat? (Esc peruu)"
+
+[disarm_way]
+of = "2a9f5d"
+text = "Mihin suuntaan purat ansan? (Esc peruu)"
+
+[give_way]
+of = "5d3e45"
+text = "Mihin suuntaan annat? (Esc peruu)"
+
+[hp]
+of = "05f9d6"
+text = "OP {hp:bare}/{max:bare}"
+
+[kept]
+of = "04bf1a"
+text = "{name:bare}: {health:bare}"
+
+[kept_retinue]
+of = "9a01a9"
+text = "{name:bare}: mukanasi"
+
+[level]
+of = "820b5f"
+text = "Ts {level:bare}"
+
+[listen_door]
+of = "00aef2"
+text = "Minkä oven takaa kuuntelet? (Esc peruu)"
+
+[look_hint]
+of = "15da01"
+text = "Katselet: suuntanäppäimet liikuttavat, Esc tai {own:bare} lopettaa."
+
+[look_hint_esc]
+of = "a66d31"
+text = "Katselet: suuntanäppäimet liikuttavat, Esc lopettaa."
+
+[mp]
+of = "3b760e"
+text = "MP {mp:bare}/{max:bare}"
+
+[resource]
+of = "bb3865"
+text = "{name:bare} {value:bare}/{max:bare}"
+
+[resource_value]
+of = "573ead"
+text = "{name:bare} {value:bare}"
+
+# `choices`, each with its key marked: "tunnin (h), aamuun (d), iltaan (n)".
+[rest]
+of = "1a97ea"
+text = "Lepää: {choices:bare}? (Esc peruu)"
+
+[rig_way]
+of = "c6004c"
+text = "Mihin suuntaan viritat sen? (Esc peruu)"
+
+[run_way]
+of = "afbbe0"
+text = "Mihin suuntaan tai mille portaille juokset? (Esc peruu)"
+
+[talk_way]
+of = "1773a7"
+text = "Mihin suuntaan puhut? (Esc peruu)"
+
+[tend_way]
+of = "d76587"
+text = "Mihin suuntaan hoidat? ({own:bare} itseäsi, Esc peruu)"
+
+[tend_way_esc]
+of = "2f4e03"
+text = "Mihin suuntaan hoidat? (Esc peruu)"
+
+[way]
+of = "9387f7"
+text = "Mihin suuntaan? (Esc peruu)"
+
+[wedge_door]
+of = "48e970"
+text = "Minkä oven kiilaat kiinni? (Esc peruu)"

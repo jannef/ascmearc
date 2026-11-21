@@ -1,0 +1,37 @@
+# The quest log (`crates/ascmearc/src/ui/quest_screen.rs`).
+
+[active]
+of = "96e296"
+text = "Käynnissä"
+
+[choose]
+of = "c8f3e3"
+text = "{keys:bare} valitse"
+
+[close]
+of = "12c352"
+text = "Esc sulje"
+
+[close_own]
+of = "2a7cbf"
+text = "{own:bare} tai Esc sulje"
+
+[done]
+of = "e3a944"
+text = "Päättyneet"
+
+[failed]
+of = "a6aeb8"
+text = "{name:bare} (epäonnistui)"
+
+[none]
+of = "2bb797"
+text = "Sinulla ei ole tehtäviä."
+
+[said]
+of = "a4b73d"
+text = "{giver:Nom}: ”{offer:bare}”"
+
+[title]
+of = "14340b"
+text = "Tehtävät"

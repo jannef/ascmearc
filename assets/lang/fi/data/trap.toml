@@ -1,0 +1,67 @@
+# Lines of data: traps (`trap:<id>.<field>`). `sign` is a phrase in the nominative ("You notice
+# a tripwire"); `verb` what hits from the trap does, third person singular, taking a partitive
+# object. A trap's `you` is said only for a plural noun (fight.rs: a trap is never the player),
+# so it is the third person plural here.
+
+[alarm]
+message = { text = "Kello soi kovaa!", of = "f4b7c6" }
+sign = { text = "kompastuslanka", of = "95c0aa" }
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyövät", of = "d2b8a8" }
+
+[arrow]
+message = { text = "Seinästä singahtaa nuoli!", of = "de7903" }
+sign = { text = "painolaatta", of = "2166d2" }
+verb = { text = "pistää", of = "53a2f4" }
+you = { text = "pistävät", of = "3b4840" }
+
+[fireball]
+message = { text = "Tulipallo räjähtää!", of = "6411a2" }
+sign = { text = "heikot noenjäljet", of = "62f1bb" }
+verb = { text = "polttaa", of = "15a107" }
+you = { text = "polttavat", of = "f910c9" }
+
+[frost]
+message = { text = "Lattiasta purkautuu pakkasta!", of = "06642f" }
+sign = { text = "kuurankerros", of = "078d19" }
+verb = { text = "puree", of = "bd3846" }
+you = { text = "purevat", of = "624b7b" }
+
+[lightning_bolt]
+message = { text = "Salama risteilee lattian poikki!", of = "4c7694" }
+sign = { text = "musta juova lattiassa", of = "df9f7f" }
+verb = { text = "kärventää", of = "6fdbe3" }
+you = { text = "kärventävät", of = "b4af6a" }
+
+[pit]
+sign = { text = "ohut kuori kuopan päällä", of = "7efeb1" }
+verb = { text = "lyö", of = "6fdbe3" }
+you = { text = "lyövät", of = "b4af6a" }
+
+[rigged_arrows]
+message = { text = "Kompastuslanka laukaisee nuolen!", of = "34c598" }
+sign = { text = "kompastuslanka", of = "95c0aa" }
+verb = { text = "pistää", of = "53a2f4" }
+you = { text = "pistävät", of = "3b4840" }
+
+[rigged_pit]
+sign = { text = "ohut kuori kuopan päällä", of = "7efeb1" }
+verb = { text = "lyö", of = "6fdbe3" }
+you = { text = "lyövät", of = "b4af6a" }
+
+[rigged_stakes]
+message = { text = "Teroitetut seipäät ponnahtavat esiin!", of = "b8201b" }
+sign = { text = "teroitetut seipäät", of = "5fa936" }
+verb = { text = "pistää", of = "53a2f4" }
+you = { text = "pistävät", of = "3b4840" }
+
+[spear]
+message = { text = "Lattiasta ponnahtaa keihäitä!", of = "1b99ca" }
+sign = { text = "painolaatta", of = "2166d2" }
+verb = { text = "pistää", of = "53a2f4" }
+you = { text = "pistävät", of = "3b4840" }
+
+[teleport]
+sign = { text = "himmeät riimut", of = "a151fd" }
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyövät", of = "d2b8a8" }

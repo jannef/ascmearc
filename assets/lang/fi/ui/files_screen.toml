@@ -1,0 +1,73 @@
+# Settings > Files (`crates/ascmearc/src/ui/files_screen.rs`).
+
+[back]
+of = "15e766"
+text = "Takaisin"
+
+[browser]
+of = "6027a3"
+text = "Asetukset ja tallennettu seikkailu säilytetään selaimen paikallisessa tallennustilassa ascmearc/-avaimilla. Ne säilyvät sivun uudelleenlatauksissa; sivuston tietojen tyhjentäminen poistaa ne. Avattavia kansioita ei ole."
+
+[footer]
+of = "2d2a6e"
+text = "{up_down:bare} valitse   {confirm:bare} avaa kansio   Esc takaisin"
+
+[footer_back]
+of = "03caaf"
+text = "Esc takaisin"
+
+[graveyard]
+of = "88d921"
+text = "Hautausmaa"
+
+[graveyard_holds]
+of = "5ee72c"
+text = "graveyard.toml, jokainen kuollut hahmo"
+
+[logs]
+of = "77808c"
+text = "Lokit"
+
+[logs_holds]
+of = "94ab35"
+text = "lokit ja kaatumisraportit"
+
+[not_stored]
+of = "f55537"
+text = "(ei tallenneta)"
+
+[nowhere]
+of = "78a33e"
+text = "{label:bare}: ei tallenneta minnekään."
+
+[opened]
+of = "1614b9"
+text = "Avattu: {folder:bare}."
+
+[saves]
+of = "1b89c5"
+text = "Tallennukset"
+
+[saves_holds]
+of = "ce0814"
+text = "yksi tallennus hahmoa kohden"
+
+[settings]
+of = "08e16d"
+text = "Asetukset"
+
+[settings_holds]
+of = "dc467d"
+text = "settings.toml ja näppäinasetukset"
+
+[snapshots]
+of = "de986f"
+text = "Tilannekuvat"
+
+[snapshots_holds]
+of = "48defa"
+text = "kehittäjän tilannekuvat (F5/F9), yksi hahmoa kohden"
+
+[title]
+of = "a472a7"
+text = "Missä tiedostoni ovat?"

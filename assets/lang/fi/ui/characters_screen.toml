@@ -1,0 +1,87 @@
+# The Characters screen (`crates/ascmearc/src/ui/characters_screen.rs`).
+
+[delete_keep]
+of = "c0ff5f"
+text = "Säilytä"
+
+[delete_text]
+of = "571bc1"
+text = "Poistetaanko {name:gen} tallennus? Hahmo katoaa lopullisesti."
+
+[delete_title]
+of = "63130d"
+text = "Poista hahmo"
+
+[delete_yes]
+of = "81674c"
+text = "Poista"
+
+[died]
+of = "6bfcfc"
+by = "n.number"
+one = "Yksi hahmo on kuollut."
+many = "{n:Num} hahmoa on kuollut."
+
+[footer_back]
+of = "03caaf"
+text = "Esc takaisin"
+
+[footer_choose]
+of = "c8f3e3"
+text = "{keys:bare} valitse"
+
+[footer_delete]
+of = "c6f3d0"
+text = "{keys:bare} poista"
+
+[footer_play]
+of = "4d5f6b"
+text = "{keys:bare} pelaa"
+
+[last_played]
+of = "188fed"
+text = "Pelattu viimeksi {when:bare}."
+
+[level]
+of = "85bd2b"
+text = "taso {level:bare}"
+
+[made_by]
+of = "c7f47d"
+text = "Tehty pelin versiolla {version:bare}: tässä sitä ei voi jatkaa."
+
+[made_by_older]
+of = "ff91b3"
+text = "Tehty pelin vanhemmalla versiolla: tässä sitä ei voi jatkaa."
+
+[no_characters]
+of = "0fbcae"
+text = "Ei tallennettuja hahmoja."
+
+[nothing_known]
+of = "be6040"
+text = "Tallennuksesta ei tiedetä mitään, ennen kuin sitä pelataan."
+
+[other_version]
+of = "9c3e8e"
+text = "muu versio"
+
+[place]
+of = "f559d3"
+text = "Sijainti: {place:bare}."
+
+[place_campaign]
+of = "13e95a"
+text = "Sijainti: {place:bare} ({campaign:bare})."
+
+[played]
+of = "88496f"
+text = "{date:bare} klo {time:bare} UTC"
+
+[race_class]
+of = "18f047"
+text = "{race:label}, {class:nom}"
+
+[title]
+of = "9ad278"
+text = "Hahmot"

@@ -1,0 +1,29 @@
+# A profession's screen (`crates/ascmearc/src/ui/profession_screen.rs`).
+
+[back]
+of = "03caaf"
+text = "Esc takaisin"
+
+[none]
+of = "b93d8c"
+text = "Et tunne yhtään sen ohjetta."
+
+[make_a]
+of = "42c4d0"
+text = "a tai {confirm:bare} valmista"
+
+[make_letters]
+of = "3bf053"
+text = "a-{last:bare} tai {confirm:bare} valmista"
+
+[work]
+of = "4523c5"
+text = "Yleiset"
+
+[title]
+of = "8307fe"
+text = "{profession:bare}: ohjeet"
+
+[takes]
+of = "0b6ad3"
+text = "Vaatii {takes:bare}."

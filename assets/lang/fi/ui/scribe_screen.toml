@@ -1,0 +1,43 @@
+# The scribe list (`crates/ascmearc/src/ui/scribe_screen.rs`).
+
+[about]
+of = "e96f79"
+text = "noin {time:bare}"
+
+[back]
+of = "03caaf"
+text = "Esc takaisin"
+
+[blanks]
+of = "a02cfd"
+by = "n.number"
+one = "Sinulla on {n:bare} tyhjä käärö."
+many = "Sinulla on {n:bare} tyhjää kääröä."
+
+[blanks_none]
+of = "84f1c4"
+text = "Sinulla ei ole tyhjää kääröä, jolle kirjoittaa."
+
+[mana]
+of = "c9cbd1"
+text = "{mana:bare} manaa"
+
+[none]
+of = "a1b3fe"
+text = "Et osaa yhtään loitsua, jonka voisit kirjoittaa."
+
+[title]
+of = "249d00"
+text = "Kirjuri: mikä loitsu?"
+
+[write]
+of = "1cc6e4"
+text = "{confirm:bare} kirjoita"
+
+[write_a]
+of = "014644"
+text = "a tai {confirm:bare} kirjoita"
+
+[write_letters]
+of = "972603"
+text = "a-{last:bare} tai {confirm:bare} kirjoita"

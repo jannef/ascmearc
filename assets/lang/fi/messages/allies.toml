@@ -1,0 +1,102 @@
+# Allies: the companion, the familiar, taming, charm, the collar, and orders. Roles as in the
+# English file: `who` the one a line is about; `pack` the allies an order names, a list, agreeing
+# by `pack.number`; `what` a thing; `name` and `own` a beast's own name; `kind` its type; `seen` a
+# status as it looks; `message`, `ends`, `line`, `words` lines of data (third-person verbs);
+# `came` a nested message.
+
+already_at_side = { text = "{who:Nom} on jo jonkun toisen rinnalla.", of = "8285e9" }
+beast_leaves = { text = "{who:Nom} lähtee luotasi; lopetat sen kesyttämisen.", of = "819386" }
+bond_shared = { text = "{who:Nom} on myös {seen:nom}.", of = "f19ec9" }
+calling_begins = { text = "Istuudut pimeään ja kutsut hiljaisella äänellä.", of = "9b9cd9" }
+calling_broken = { text = "Keskeytät kutsumisen.", of = "f5cea9" }
+calling_broken_by = { text = "{came:bare}; keskeytät kutsumisen.", of = "58119f" }
+cannot_be_tamed = { text = "{who:Nom} ei ole kesytettävissä.", of = "93753e" }
+carry_no_such_thing = { text = "Sinulla ei ole sellaista mukanasi.", of = "b79167" }
+charm_ends = { text = "{who:Nom} {ends:bare}.", of = "1b077c" }
+charm_takes = { text = "{who:Nom} {message:bare}.", of = "0af072" }
+collar_falls = { text = "{who:Gen} {what:nom} putoaa lattialle.", of = "e84c2f" }
+comes_to_your_hand = { text = "{who:Nom} tulee luoksesi. Annat sille nimen {own:nom}.", of = "7deb1c" }
+companion_arrives = { text = "{name:Nom}, {kind:nom_si}, astelee kintereilläsi.", of = "120a8d" }
+crouch_feed = { text = "Kyykistyt {who:gen} viereen ja ojennat {what:par}.", of = "7e46e0" }
+crouch_speak = { text = "Kyykistyt {who:gen} viereen ja puhut sille hiljaa.", of = "fce36d" }
+fades_away = { text = "{who:Nom} haalistuu olemattomiin.", of = "eb776a" }
+familiar_arrives = { text = "{name:Nom}, {kind:nom_si}, {line:bare}.", of = "7606d7" }
+familiar_back = { text = "{name:Nom}, {kind:nom_si}, palaa luoksesi pimeydestä.", of = "660911" }
+familiar_heels = { text = "{name:Nom}, {kind:nom_si}, pysyttelee kintereilläsi.", of = "7197b3" }
+familiar_lives = { text = "Apurieläimesi elää yhä.", of = "837c0f" }
+fasten_collar = { text = "Kiinnität {what:gen} {who:gen} kaulaan.", of = "69e1db" }
+goes_for_throat = { text = "{who:Nom} käy {target:gen} kurkkuun.", of = "8dde65" }
+growls_at_the_dark = { text = "{who:Nom} murisee pimeydelle.", of = "c32ed6" }
+grows_stronger = { text = "{who:Nom} vahvistuu.", of = "d4c779" }
+has_seen_you = { text = "{who:Nom} on nähnyt sinut: sitä ei nyt kesytetä.", of = "6aeeed" }
+have_companion = { text = "Sinulla on jo seuralainen.", of = "bc3426" }
+lead_no_more = { text = "Et voi johtaa useampia.", of = "bbc4bd" }
+looks_back = { text = "{who:Nom} katsahtaa sinuun.", of = "fb9177" }
+no_allies = { text = "Tämä maailma ei tunne liittolaisia.", of = "b9dc5f" }
+no_beast_kept = { text = "Sinulla ei ole eläintä, jolle sen antaisit.", of = "c5b47d" }
+no_beast_that_way = { text = "Siinä suunnassa ei ole eläintäsi.", of = "1c2e48" }
+no_beast_to_tame = { text = "Siellä ei ole kesytettävää eläintä.", of = "fadefb" }
+no_companion_here = { text = "Seuralaisesi ei ole täällä.", of = "25fc92" }
+no_mind_to_charm = { text = "{who:Ade} ei ole mieltä, jonka voisi lumota.", of = "792d73" }
+no_one_to_call = { text = "Sinulla ei ole ketään kutsuttavaa.", of = "fbdb3f" }
+no_ones_fool = { text = "{who:Nom} ei anna narrata itseään.", of = "1927a2" }
+no_quarrel_to_set_on = { text = "Siellä ei ole ketään, jonka kimppuun {who:nom} voisi käydä.", of = "888e40" }
+no_room_beside_you = { text = "Vierelläsi ei ole niille tilaa.", of = "4985c5" }
+no_such_creature = { text = "Olentoa `{creature:bare}` ei ole.", of = "eea0db" }
+no_use_for_that = { text = "{who:Ade} ei ole sille käyttöä.", of = "1229d0" }
+not_beside_you = { text = "{who:Nom} ei ole vierelläsi.", of = "87a31a" }
+not_with_that_watching = { text = "Ei, kun tuo katselee.", of = "b888d8" }
+nothing_answers = { text = "Mikään ei vastaa kutsuusi.", of = "8c9f72" }
+nothing_comes = { text = "Mitään ei tule.", of = "ec35ac" }
+nothing_to_set_on = { text = "Siellä ei ole mitään, minkä kimppuun {who:nom} voisi käydä.", of = "6bda79" }
+set_on = { by = "pack.number", one = "{pack:Nom} käy käskystäsi {target:gen} kimppuun.", many = "{pack:Nom} käyvät käskystäsi {target:gen} kimppuun.", of = "d7ce69" }
+set_on_spot = { by = "pack.number", one = "{pack:Nom} lähtee käskystäsi tuohon kohtaan.", many = "{pack:Nom} lähtevät käskystäsi tuohon kohtaan.", of = "46a8b6" }
+set_on_unseen = { text = "Voit usuttaa ne vain paikkaan, jonka näet.", of = "64c35d" }
+snaps_and_backs_away = { text = "{who:Nom} näykkäisee sinua ja perääntyy.", of = "835892" }
+something_comes = { text = "Jokin tulee pimeydestä ja istuutuu jalkojesi juureen.", of = "c23046" }
+tame_broken_by = { text = "{came:bare}; lopetat {who:gen} kesyttämisen.", of = "eb6fa7" }
+tame_stopped = { text = "Lopetat {who:gen} kesyttämisen.", of = "40037a" }
+tame_untrained = { text = "Et osaa kesyttää eläimiä.", of = "a0fcc1" }
+yours_already = { text = "{who:Nom} on jo sinun.", of = "c5348d" }
+
+# `what`: the creature, with its count; a numeral subject takes the singular verb.
+[come_to_your_side]
+of = "dca1e6"
+by = "what.number"
+one = "{what:Nom} asettuu puolellesi."
+many = "{what:Nom} asettuu puolellesi."
+
+[come_with_you]
+of = "c5652c"
+by = "pack.number"
+one = "{pack:Nom} tulee mukaasi."
+many = "{pack:Nom} tulevat mukaasi."
+
+# `words`: its kind's departure, a line of data.
+[departs]
+of = "b1dfb8"
+text = "{who:Nom} {words:bare}."
+
+[follow_you_in]
+of = "35bf9b"
+by = "pack.number"
+one = "{pack:Nom} seuraa sinua sisään."
+many = "{pack:Nom} seuraavat sinua sisään."
+
+[heel]
+of = "3d5644"
+by = "pack.number"
+one = "{pack:Nom} palaa kintereillesi."
+many = "{pack:Nom} palaavat kintereillesi."
+
+[hold]
+of = "c07159"
+by = "pack.number"
+one = "{pack:Nom} pysyy paikallaan."
+many = "{pack:Nom} pysyvät paikallaan."
+
+[left_behind]
+of = "01d6c1"
+by = "pack.number"
+one = "{pack:Nom} jää jälkeen."
+many = "{pack:Nom} jäävät jälkeen."

@@ -26,7 +26,7 @@ mod nested_tests;
 mod proptests;
 
 pub use lang::{LangError, LangFile};
-pub use lexicon::{LexWord, Lexicon, MapLexicon, NoLexicon};
+pub use lexicon::{Layered, LexWord, Lexicon, MapLexicon, NoLexicon};
 pub use message::{Arg, DATA_LINE, Entry, LITERAL, MessageId, Msg, Role};
 pub use morphology::{Conj, FormError, Morphology, ParseError, en, fi, generic};
 pub use phrase::{Gender, Modifier, Note, Person, Phrase, Word};

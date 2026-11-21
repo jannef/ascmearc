@@ -1,0 +1,180 @@
+# The fixed words core picks from a few (#1996), nested in the line or the screen entry that says
+# them, so a line cannot put them in a case: each word is written in the form its lines need.
+# Lower case, as in a sentence; a label asks `Bare` for its capital. Forms chosen:
+# - a stat's name, a hunger, a burden, a health word, a rarity, a weather: the nominative;
+# - a stat's `_more` (and `describe.stat_*`): the translative ("vahvemmaksi"), for "Tunnet itsesi
+#   …", "Tekee sinut pysyvästi …", "voisit kasvaa vielä …";
+# - a stat's `_gift`: the partitive ("notkeutta"), for "Sinuun siirtyy hiukan sen …";
+# - a direction: the elative ("idästä"), for a voice or a sound heard from there;
+# - a `doing_*`: the first infinitive, after "Et voi …".
+#
+# Roles: `burden` a burden's name, `weight` a weight in words; `hours` and `minutes` spans of time;
+# `mark` a slot's mark; `n` a count.
+
+band_callous = { text = "kovasydäminen", of = "b04be6" }
+band_evil = { text = "paha", of = "e748cf" }
+band_good = { text = "hyvä", of = "603122" }
+band_kind = { text = "hyväntahtoinen", of = "13e29a" }
+band_neutral = { text = "neutraali", of = "4b1a54" }
+band_saintly = { text = "pyhimyksellinen", of = "565535" }
+band_wicked = { text = "ilkeä", of = "175f21" }
+burden_burdened = { text = "kuormittunut", of = "c8ade9" }
+# A burden's threshold (the character screen): `burden`, the burden past it; `weight`, the weight.
+burden_over = { text = "{burden:bare} yli {weight:bare}", of = "8319a6" }
+burden_overloaded = { text = "ylikuormittunut", of = "7d6bc0" }
+burden_strained = { text = "raskaasti kuormittunut", of = "277d36" }
+burden_unburdened = { text = "kuormaton", of = "cdd618" }
+dir_east = { text = "idästä", of = "53723c" }
+dir_north = { text = "pohjoisesta", of = "ef93de" }
+dir_north_east = { text = "koillisesta", of = "ae934d" }
+dir_north_west = { text = "luoteesta", of = "c4765e" }
+dir_south = { text = "etelästä", of = "272d74" }
+dir_south_east = { text = "kaakosta", of = "81be2c" }
+dir_south_west = { text = "lounaasta", of = "5aa4ce" }
+dir_west = { text = "lännestä", of = "e94944" }
+doing_body_armor = { text = "vaihtaa haarniskaa", of = "20088c" }
+doing_call_familiar = { text = "kutsua apuhenkeä", of = "629d33" }
+doing_cast = { text = "loitsia", of = "188d87" }
+doing_chat = { text = "puhua", of = "2ce45b" }
+doing_climb = { text = "kiivetä", of = "6f76c9" }
+doing_close_door = { text = "sulkea ovia", of = "e0081b" }
+doing_craft = { text = "valmistaa mitään ohjeen mukaan", of = "0230f6" }
+doing_decipher = { text = "tulkita", of = "d42ebb" }
+doing_dig = { text = "kaivaa", of = "62937d" }
+doing_disarm = { text = "purkaa ansoja", of = "68977c" }
+doing_drink = { text = "juoda", of = "743f84" }
+doing_drop = { text = "pudottaa mitään", of = "ed3d14" }
+doing_eat = { text = "syödä", of = "6e2549" }
+doing_feint = { text = "harhauttaa", of = "ffc20f" }
+doing_forage = { text = "etsiä syötävää", of = "338610" }
+doing_gather = { text = "kerätä", of = "855957" }
+doing_heal = { text = "hoitaa haavojasi", of = "4240dd" }
+doing_hood = { text = "peittää valoa", of = "0f2c4a" }
+doing_intimidate = { text = "pelotella", of = "88a364" }
+doing_kick = { text = "potkaista", of = "1c13d9" }
+doing_light = { text = "hoitaa valoa", of = "68008b" }
+doing_melee = { text = "taistella", of = "5ccfee" }
+doing_open_chest = { text = "avata arkkuja", of = "7cca7a" }
+doing_open_door = { text = "avata ovia", of = "bcffe0" }
+doing_pick_lock = { text = "tiirikoida lukkoja", of = "424070" }
+doing_pick_up = { text = "poimia mitään", of = "a4d8dd" }
+doing_pray = { text = "rukoilla", of = "3990c7" }
+doing_read = { text = "lukea", of = "dfa30b" }
+doing_ready = { text = "vaihtaa sitä, mitä pidät valmiina", of = "c1032d" }
+doing_reload = { text = "ladata", of = "7cdd61" }
+doing_salvage = { text = "purkaa osiksi", of = "418516" }
+doing_scribe = { text = "kirjoittaa kääröjä", of = "49a35d" }
+doing_search = { text = "etsiä", of = "332829" }
+doing_shoot = { text = "ampua", of = "1596c4" }
+doing_song = { text = "laulaa", of = "d2600b" }
+doing_stairs = { text = "matkata", of = "61761f" }
+doing_steal = { text = "varastaa", of = "0a9f6d" }
+doing_step = { text = "liikkua", of = "4b000c" }
+doing_study = { text = "opiskella", of = "4a0500" }
+doing_tame = { text = "kesyttää", of = "2f0cda" }
+doing_temper = { text = "karkaista", of = "f97a61" }
+doing_throw = { text = "heittää", of = "787655" }
+doing_throw_voice = { text = "heittää ääntäsi", of = "4f66ad" }
+doing_unlock = { text = "avata lukkoja", of = "875649" }
+doing_wait = { text = "odottaa", of = "2e4c29" }
+doing_wear = { text = "vaihtaa sitä, mitä pidät yllä", of = "813e67" }
+doing_whittle = { text = "vuolla", of = "bf7f67" }
+doing_wield = { text = "vaihtaa sitä, mitä pidät kädessä", of = "d1fed3" }
+gender_female = { text = "nainen", of = "8ef20b" }
+gender_male = { text = "mies", of = "9d9f31" }
+gender_other = { text = "muu", of = "7d8d3d" }
+health_badly_wounded = { text = "pahasti haavoittunut", of = "8190a6" }
+health_lightly_wounded = { text = "lievästi haavoittunut", of = "a3d472" }
+health_nearly_dead = { text = "henkihieverissä", of = "2b47c4" }
+health_unhurt = { text = "vahingoittumaton", of = "0767ed" }
+health_wounded = { text = "haavoittunut", of = "93ab9c" }
+# Hours and minutes together, each its own message ("2 tuntia ja 30 minuuttia").
+hours_and_minutes = { text = "{hours:bare} ja {minutes:bare}", of = "87f4bf" }
+hunger_bloated = { text = "ähkyssä", of = "931f06" }
+hunger_fainting = { text = "pyörtymäisillään", of = "1b03ac" }
+hunger_hungry = { text = "nälkäinen", of = "f5d86c" }
+hunger_not_hungry = { text = "ei nälkäinen", of = "5c8c37" }
+hunger_satiated = { text = "kylläinen", of = "ada9b9" }
+hunger_starving = { text = "nääntymässä nälkään", of = "838732" }
+hunger_weak = { text = "nälästä heikko", of = "bc2e24" }
+# A two-handed thing in the hands (the item lists): `mark`, the hands' slot's mark.
+in_both_hands = { text = "{mark:bare} molemmissa käsissä", of = "ebaea3" }
+rarity_magic = { text = "lumottu", of = "eb2568" }
+rarity_normal = { text = "tavallinen", of = "8b9cb4" }
+rarity_rare = { text = "harvinainen", of = "927a4f" }
+rarity_unique = { text = "ainutlaatuinen", of = "be3b1b" }
+resistance_immune = { text = "immuuni", of = "2079cd" }
+# A row of the character screen, before the kinds ("Immuuni  myrkky").
+resistance_immune_to = { text = "immuuni", of = "11af1e" }
+resistance_resistant = { text = "kestävä", of = "40ab09" }
+resistance_resistant_to = { text = "kestää", of = "ede1b4" }
+resistance_vulnerable = { text = "altis", of = "2fa11a" }
+resistance_vulnerable_to = { text = "altis", of = "48459b" }
+# The weapon skills screen's sections.
+section_fighting_styles = { text = "taistelutyylit", of = "31fbee" }
+section_melee = { text = "lähitaistelu", of = "ca6302" }
+section_missile = { text = "ammunta ja heitto", of = "25890f" }
+section_shields = { text = "kilvet", of = "578d3d" }
+# The abilities menu's headings, by where each ability comes from.
+source_ally = { text = "liittolaiset", of = "e9893c" }
+source_class = { text = "luokka", of = "3e0b54" }
+source_item = { text = "esineet", of = "7933b5" }
+source_place = { text = "täällä", of = "3b65ea" }
+source_profane = { text = "epäpyhä", of = "38cb81" }
+source_race = { text = "kansa", of = "077408" }
+source_sign = { text = "syntymämerkki", of = "88db3c" }
+source_skill = { text = "taidot", of = "56dcfa" }
+source_spell = { text = "loitsut", of = "f5d6ba" }
+source_talent = { text = "taipumukset", of = "75ce7e" }
+source_weapon_skill = { text = "asetaidot", of = "386b12" }
+stat_dexterity = { text = "ketteryys", of = "ba0532" }
+stat_dexterity_abbrev = { text = "Ke", of = "ce9e21" }
+# What a corpse gives of the stat, partitive ("Sinuun siirtyy hiukan sen notkeutta.").
+stat_dexterity_gift = { text = "notkeutta", of = "f2d931" }
+# What a rise in the stat makes you, translative ("Tunnet itsesi nopeammaksi.").
+stat_dexterity_more = { text = "nopeammaksi", of = "b93832" }
+stat_intelligence = { text = "äly", of = "2cccfb" }
+stat_intelligence_abbrev = { text = "Äl", of = "e8c8fe" }
+stat_intelligence_gift = { text = "oveluutta", of = "06e9a9" }
+stat_intelligence_more = { text = "terävämmäksi", of = "0cd45b" }
+stat_presence = { text = "karisma", of = "d34f08" }
+stat_presence_abbrev = { text = "Ka", of = "005118" }
+stat_presence_gift = { text = "ryhtiä", of = "125869" }
+stat_presence_more = { text = "itsevarmemmaksi", of = "59a35f" }
+stat_strength = { text = "voima", of = "7a1850" }
+stat_strength_abbrev = { text = "Vo", of = "027029" }
+stat_strength_gift = { text = "voimaa", of = "7a1850" }
+stat_strength_more = { text = "vahvemmaksi", of = "7be1bf" }
+stat_toughness = { text = "sitkeys", of = "869e51" }
+stat_toughness_abbrev = { text = "Si", of = "f59605" }
+stat_toughness_gift = { text = "sitkeyttä", of = "5b7037" }
+stat_toughness_more = { text = "sitkeämmäksi", of = "608c68" }
+stat_willpower = { text = "tahto", of = "f5ce05" }
+stat_willpower_abbrev = { text = "Ta", of = "f810ca" }
+stat_willpower_gift = { text = "päättäväisyyttä", of = "f31ccd" }
+stat_willpower_more = { text = "päättäväisemmäksi", of = "df5d3b" }
+weather_clear = { text = "selkeää", of = "6e127e" }
+weather_heavy_rain = { text = "rankkasade", of = "aa3ee6" }
+weather_overcast = { text = "pilvistä", of = "807b78" }
+weather_rain = { text = "sade", of = "a3b55a" }
+
+# `n`: how many hours.
+[hours]
+of = "a963cf"
+by = "n.number"
+one = "{n:bare} tunti"
+many = "{n:bare} tuntia"
+
+# `n`: how many minutes.
+[minutes]
+of = "29064b"
+by = "n.number"
+one = "{n:bare} minuutti"
+many = "{n:bare} minuuttia"
+
+# `n`: how many seconds.
+[seconds]
+of = "2e4cd7"
+by = "n.number"
+one = "{n:bare} sekunti"
+many = "{n:bare} sekuntia"

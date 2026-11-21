@@ -133,6 +133,8 @@ The Ascmearc (`assets/campaigns/ascmearc/`):
 - `steorratorr`: on the track up to Steorratorr on the plain by the grey sea at 10:00, Master
   Sigeric's tower before you; the scenario's own character has a long sword, a small shield,
   mail, and a lantern ready (unlit: `use_tool` lights it).
+- `lytelscraef`: on the first floor of Lytelscræf, the little cave of vermin and kobolds where a
+  new character comes down first.
 - `cealdhlaw`: on the first floor of Cealdhlāw, the Ascmearc's first dungeon.
 - `deopgang`: on the first floor of Dēopgang, the deep way down from the south-west corner.
 - `gimmwic`: in Gimmwīc, the deep gnomes' town at its bottom.

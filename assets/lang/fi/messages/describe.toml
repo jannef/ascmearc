@@ -1,0 +1,331 @@
+# An item's description (`magic/describe.rs`): the describe screen's lines and the wiki's, a line
+# each: what it is and its gems, its base stats, its numbers, an affix's effect (`does_*`), a
+# grimoire's, a wand's, a rod's, and a potion's lines, what it can bear, its maker's mark, and
+# what the Eye for the make reads of it (`make_*`).
+#
+# Roles: `what` is the item (a phrase, or a message of it); `n` and `v` numbers (an affix's value
+# `v`, after a sign the template writes); `dice`, `critical`, `weight`, `made`, `hit`, a crystal's
+# `colour` and a family's `word`, and a part's or a weapon's name (`part`, `noun`) are notation or
+# text; `about` a description and `effect` a rod effect's name (text); `spell` a spell
+# (`spell:<id>`); `kind` a damage type (`damage_type:<id>`, or the message `some_kind`) and
+# `pool` a resource (`resource:<id>`, or the message `a_pool`): both said `bare`, in parentheses
+# or as a subject, since the message takes no case; `slot` an equipment slot; `status` a status;
+# `stat` a stat's name or a `stat_*` word (the translative); `skill` a skill; `bane` a creature
+# tag; `affix` an affix; `does`, `speed`, `place`, `hard`, `rarity`, and `line` messages of their
+# own; `kinds`, `cures`, `raised`, `against`, `from`, and `parts` lists (or a `listed`,
+# `and_joined`, or `or_joined` message).
+#
+# Terms: Armour panssari, Deflection kimmotus, Dodge väistö, Parry asetorjunta, Shield kilpi,
+# Protection suojaus, Defence torjunta.
+
+# `pool`: a resource the affix names none of.
+a_pool = { text = "voimavara", of = "107e78" }
+# `dice`, the dice; `kind`, a damage type.
+adds = { text = "Lisää {dice:bare} vahinkoa ({kind:bare})", of = "3aa2af" }
+# `affix`: the affix; `does`, what it does (a `does_*` message).
+affix = { text = "{affix:bare}: {does:bare}", of = "4f3b31" }
+# `noun`: the weapon's kind, text; `ammo`, what it shoots (`object:<id>`, or `ammunition`).
+ammo_launcher = { text = "{noun:Bare}, valmiina ampuma-aseena; ampuu {ammo:pl_par}", of = "8f724e" }
+# `from`: the launchers' kinds (an `and_joined`, or one).
+ammo_quivered = { text = "Ammus, nuoliviinissä; ampuma-ase: {from:bare}", of = "9ec104" }
+# What a launcher shoots when no ammunition of its kind exists (said for `ammo_launcher`'s
+# plural partitive).
+ammunition = { text = "ammuksia", of = "3f1047" }
+# Two or more said with "ja": `first`, one; `rest`, the others.
+and_joined = { text = "{first:bare} ja {rest:bare}", of = "64414b" }
+armour = { text = "Panssari +{n:bare}", of = "f96589" }
+# The first line: `what`, the item (`base_count`, `base_rarity`, or its phrase); `made`, its
+# parts and materials; `weight`, its weight.
+base = { text = "{what:Bare} · {made:bare} · {weight:bare}", of = "d3f9df" }
+# `n` of `what`, a stack of several (the phrase says its own numeral: "kaksitoista nuolta").
+base_count = { text = "{what:counted}", of = "4fd7e9" }
+# `rarity`: its rarity's word; `what`, the item.
+base_rarity = { text = "{rarity:Bare} {what:bare}", of = "58a114" }
+# `n`: a chance in percent.
+breaks = { text = "Särkyy osuessaan {n:bare} %:ssa kerroista", of = "3bb5a4" }
+capacity_all = { text = "Siinä on niin monta lumousta kuin siihen mahtuu.", of = "ffee66" }
+# `room`: how many it can bear (`enchantments`).
+capacity_can = { text = "Siihen mahtuu {room:bare}.", of = "de01e1" }
+# `has`: how many it bears (`enchantments`); `n`, how many more it could.
+capacity_more = { text = "Siinä on {has:bare}, ja siihen mahtuisi vielä {n:num} lisää.", of = "9e2ca9" }
+capacity_over = { text = "Siinä on enemmän lumouksia kuin sen rakenne kestäisi.", of = "49033c" }
+# Two or more said with commas: an item's parts.
+comma_joined = { text = "{first:bare}, {rest:bare}", of = "a51d07" }
+cursed = { text = "Kirottu: kun sen on kerran pukenut ylleen tai ottanut käteensä, se ei irtoa.", of = "646958" }
+# `dice`: the dice; `critical`, the range a critical threatens on; `crit`, its multiplier.
+damage = { text = "Vahinko {dice:bare}; kriittinen osuma {critical:bare}, vahinko ×{crit:bare}", of = "e39780" }
+# `kinds`: its damage types (an `or_joined`, or one).
+damage_kinds = { text = "Vahinkolaji: {kinds:bare}", of = "f1c4e5" }
+# `damage` of a launcher, a shot.
+damage_shot = { text = "Vahinko {dice:bare} laukausta kohden; kriittinen osuma {critical:bare}, vahinko ×{crit:bare}", of = "04c03c" }
+# `dig`: its digging power.
+digs = { text = "Kaivuteho {dig:bare}", of = "1c430d" }
+does_armour = { text = "panssari +{v:bare}", of = "b7f507" }
+does_attack_speed = { text = "hyökkää {speed:bare}", of = "2a67bc" }
+does_attack_speed_all = { text = "kaikki hyökkäyksesi käyvät {speed:bare}", of = "87e297" }
+does_bane = { text = "+{v:bare} osumaan ja vahinkoon {bane:pl_par} vastaan", of = "7d228a" }
+does_carry = { text = "+{v:bare} kg kantokykyä", of = "3fdcc2" }
+does_crit = { text = "+{v:bare} kriittisen osuman vahinkokertoimeen", of = "ceb8d0" }
+does_damage = { text = "+{v:bare} vahinkoa", of = "be21ed" }
+does_deflection = { text = "kimmotus +{v:bare}", of = "f4e743" }
+does_dig = { text = "kaivaa {v:bare} % nopeammin", of = "c0cbbf" }
+does_disease_check = { text = "+{v:bare} tautien vastustamiseen", of = "c54d09" }
+does_dodge = { text = "väistö +{v:bare}", of = "769b3e" }
+does_door_kick = { text = "potkusi murtavat ovia helpommin", of = "533775" }
+does_draw = { text = "jännittäminen vaatii {v:bare} vähemmän voimaa", of = "463ff1" }
+does_durability = { text = "särkyy {v:bare} % harvemmin", of = "35696d" }
+does_elemental = { text = "lisää 1d{v:bare} vahinkoa ({kind:bare})", of = "529473" }
+does_extra_damage = { text = "lisää 1d{v:bare} vahinkoa", of = "d091fc" }
+does_glows = { text = "hehkuu", of = "66aad8" }
+does_glows_brightly = { text = "hehkuu kirkkaasti", of = "dbfae4" }
+does_glows_faintly = { text = "hehkuu himmeästi", of = "dd3d04" }
+does_heavier = { text = "{v:bare} % raskaampi", of = "4d7e47" }
+# `effect`: the effect's id, a curse no words say.
+does_hinders = { text = "haittaa sinua ({effect:bare})", of = "a7821c" }
+does_hunger = { text = "nälkä tulee {v:bare} % hitaammin", of = "c96401" }
+does_hunger_faster = { text = "nälkä tulee {v:bare} % nopeammin", of = "385f60" }
+does_lighter = { text = "{v:bare} % kevyempi", of = "c16680" }
+does_mana_cost = { text = "kyvyt maksavat {v:bare} % vähemmän manaa", of = "32cc1a" }
+does_mana_on_kill = { text = "+{v:bare} manaa lähellä kaadetusta vihollisesta", of = "d8db39" }
+does_mana_regeneration = { text = "mana palautuu {v:bare} % nopeammin", of = "963dbe" }
+does_max_dex = { text = "ketteryys voi lisätä torjuntaan {v:bare} enemmän", of = "d38eb3" }
+does_max_hp = { text = "+{v:bare} osumapisteiden enimmäismäärään", of = "2a5286" }
+does_max_mana = { text = "+{v:bare} manan enimmäismäärään", of = "1b78b8" }
+does_move_speed = { text = "liikut {speed:bare}", of = "017d5f" }
+does_natural = { text = "luontainen panssari +{v:bare}", of = "bfb705" }
+does_parry = { text = "asetorjunta +{v:bare}", of = "a87ec5" }
+does_potion_kept = { text = "juoma jää käyttämättä {v:bare} %:ssa kerroista", of = "e510b4" }
+does_proof = { text = "mikään ei voi vahingoittaa sitä", of = "b76b4b" }
+does_protection = { text = "suojaus +{v:bare}", of = "783c58" }
+does_regeneration = { text = "osumapisteet palautuvat {v:bare} % nopeammin", of = "d5ac86" }
+does_resistance = { text = "+{v:bare} % kestävyyttä ({kind:bare})", of = "e60381" }
+does_resource_max = { text = "+{v:bare} enimmäismäärään ({pool:bare})", of = "2124a4" }
+does_resource_on_kill = { text = "+{v:bare} ({pool:bare}) lähellä kaadetusta vihollisesta", of = "efc428" }
+does_resource_rate = { text = "{pool:Bare} palautuu {v:bare} % nopeammin", of = "9d4048" }
+does_shield = { text = "kilpi +{v:bare}", of = "b895ec" }
+does_skill = { text = "{skill:Bare} +{v:bare}", of = "a683d8" }
+does_skill_any = { text = "+{v:bare} yhteen taitoon", of = "c0c91a" }
+does_spell_bonus = { text = "+{v:bare} jokaisen loitsun heittoon, vahingossa ja parannuksessa", of = "9c4258" }
+does_spell_reroll = { text = "loitsunopat, joiden silmäluku on {v:bare} tai vähemmän, heitetään kerran uudelleen", of = "a26c5d" }
+does_spell_to_hit = { text = "+{v:bare} loitsujen osumaan", of = "841350" }
+does_stamina = { text = "aseliikkeet maksavat {v:bare} vähemmän ({pool:bare})", of = "f789dc" }
+does_stat = { text = "{stat:Bare} +{v:bare}", of = "02cde0" }
+does_stealth = { text = "askeleesi ovat {v:bare} % hiljaisempia", of = "0e6ff5" }
+does_to_hit = { text = "+{v:bare} osumaan", of = "ca5689" }
+does_trap_damage = { text = "ansat vahingoittavat sinua {v:bare} % vähemmän", of = "d26745" }
+# `does`: what an affix that works on every attack does.
+does_with_every_attack = { text = "{does:bare} jokaisella hyökkäyksellä", of = "22e41e" }
+finesse = { text = "Taitava: ketteryys ohjaa sen iskuja, ei voima", of = "d8cee7" }
+flask = { text = "Heitettynä se särkyy ja vapauttaa loitsun {spell:Bare} siihen, mihin se osuu", of = "86e782" }
+# `part`: the part the gem is set in; `gem`, the gem.
+gem = { text = "{part:Bare}: {gem:bare}", of = "dbaecf" }
+# `size` (`gem_size:<id>`), `gem` (`material:<id>`), and `cut` (`gem_cut:<id>`): a gem.
+gem_cut = { text = "{size:bare} {gem:bare}, hionta: {cut:bare}", of = "d4a5bf" }
+# `gem`: a loose gem.
+gem_loose = { text = "Jalokivi: {gem:bare}", of = "036803" }
+gem_rough = { text = "{size:bare} {gem:bare}, {cut:bare}", of = "aaedc0" }
+# `line`: a gem's line; `worth`, its worth in gold.
+gem_worth = { text = "{line:bare} (arvo {worth:bare} kultaa)", of = "b30b29" }
+grimoire_known = { text = "Osaat sen tasolla {n:bare}/{most:bare}: sen lukeminen syventäisi taitoasi.", of = "0e9e1a" }
+grimoire_known_all = { text = "Osaat sen tasolla {most:bare}/{most:bare}: sillä ei ole enää mitään opetettavaa.", of = "18c584" }
+grimoire_teaches = { text = "Opettaa loitsun {spell:Bare} (taso {level:bare}): {about:bare}", of = "345910" }
+grimoire_unknown = { text = "Et osaa sitä: sen lukeminen on opiskelua.", of = "9a50db" }
+hard = { text = "vaikea työstää", of = "9aa7e1" }
+hard_soft = { text = "pehmeä ja helppo työstää", of = "403921" }
+hard_very = { text = "hyvin vaikea työstää", of = "673e70" }
+# `noun`: the weapon's kind.
+held_both_hands = { text = "{noun:Bare}, molemmin käsin pidettävä", of = "d5ff50" }
+held_in = { text = "Pidetään: {slot:bare}", of = "1d8bf1" }
+held_main = { text = "{noun:Bare}, pidetään: {slot:bare}", of = "c1db33" }
+# Parts said one after another: `first`, a part; `rest`, the others.
+listed = { text = "{first:bare}, {rest:bare}", of = "a51d07" }
+magic_unknown = { text = "Tunnistamaton: sen taikuuden vaikutus on tuntematon, mutta se toimii silti.", of = "43b51f" }
+make_apart = { text = "Osiin purettuna siitä saisi {what:counted}.", of = "9182bd" }
+make_apart_batch = { text = "Osiin purettuina riittävä määrä näitä antaisi {what:counted}.", of = "47d9e3" }
+# `place`: where it would be made good (`place_*`).
+make_damaged = { text = "Se on vaurioitunut: työ {place:bare} korjaisi sen.", of = "777edd" }
+make_damaged_mend = { text = "Se on vaurioitunut: työ {place:bare} korjaisi sen, tai omat kätesi.", of = "9698be" }
+make_finest = { text = "Sitä ei voi tehdä enää hienommaksi.", of = "4a22bb" }
+# `material`: its main material (`material:<id>`); `hard`, how hard it is to work (`hard_*`).
+make_hard = { text = "{material:Bare} on {hard:bare}.", of = "585d70" }
+make_nothing = { text = "Siinä ei ole mitään talteen otettavaa.", of = "2ff711" }
+make_protected = { text = "Se ei hajoaisi osiin.", of = "baa1be" }
+# `maker`: the maker's name.
+mark = { text = "Siinä on {maker:gen} merkki.", of = "51d84b" }
+mark_unknown = { text = "Siinä on tekijänsä merkki.", of = "e70592" }
+max_dex = { text = "Ketteryys lisää torjuntaan enintään +{n:bare}, kun tämä on yllä", of = "6ea94d" }
+needs_strength = { text = "Jännittäminen vaatii voimaa {n:bare}", of = "bbc4c3" }
+# `parts`: what it adds to every attack (`listed`, or one).
+numbers_adds_attack = { text = "Lisää jokaiseen hyökkäykseen: {parts:bare}", of = "3ab329" }
+numbers_adds_shot = { text = "Lisää laukaukseen: {parts:bare}", of = "e5def4" }
+# `hit`: its to-hit, signed ("+2"); `damage`, its damage (`items.numbers_*`).
+numbers_attack = { text = "Osuma {hit:bare}, vahinko {damage:bare}", of = "89ea53" }
+# `range`: how far it shoots or is thrown.
+numbers_attack_range = { text = "Osuma {hit:bare}, vahinko {damage:bare}, kantama {range:bare}", of = "55e999" }
+numbers_to_hit = { text = "{hit:bare} osumaan", of = "1d13f5" }
+# Two or more said with "tai", as `and_joined`.
+or_joined = { text = "{first:bare} tai {rest:bare}", of = "269c79" }
+# A part of an item as made: `material`, its material; `part`, the part.
+part_made = { text = "{material:bare} {part:bare}", of = "747b89" }
+parry = { text = "Asetorjunta +{n:bare}", of = "ed15b8" }
+pierces = { text = "Lävistää panssarin", of = "fa6183" }
+place_anvil = { text = "alasimella", of = "e1869d" }
+place_knife = { text = "veitsellä", of = "7a622f" }
+potion_blink = { text = "Siirtää sinut heti muualle", of = "8e43c4" }
+potion_boost = { text = "Tekee sinut hetkeksi {raised:and}", of = "dc7b24" }
+potion_boost_much = { text = "Tekee sinut hetkeksi paljon {raised:and}", of = "9f5896" }
+# `cures`: the statuses it ends.
+potion_cure = { text = "Parantaa heti: {cures:and}", of = "b322db" }
+potion_cure_diseases = { text = "Parantaa heti kaikki taudit", of = "14ac57" }
+potion_cure_diseases_and = { text = "Parantaa heti kaikki taudit ja lisäksi: {cures:and}", of = "dd70ed" }
+potion_dark = { text = "Antaa sinun nähdä pimeässä hetken aikaa", of = "e7d09c" }
+potion_elixir = { text = "Tekee sinut pysyvästi {stat:bare}", of = "099975" }
+potion_gamble = { text = "Tekee hyvää, pahaa tai ei mitään: uhkapeli", of = "dcff07" }
+potion_harm = { text = "Sairastuttaa juojansa", of = "63c213" }
+potion_haste = { text = "Nopeuttaa sinua hetken aikaa", of = "f98e98" }
+potion_heal = { text = "Parantaa haavat heti", of = "84c6d3" }
+potion_heal_cures = { text = "Parantaa haavat heti ja lisäksi: {cures:and}", of = "e0de4c" }
+potion_mana = { text = "Palauttaa manaa heti", of = "2f5972" }
+potion_nourish = { text = "Ravitsee kuin ateria", of = "812978" }
+potion_restore = { text = "Palauttaa sen, mitä sinusta on imetty tai vahingoitettu", of = "006c2c" }
+potion_sharpen = { text = "Terävöittää näkösi pimeässä hetken aikaa", of = "7e2964" }
+# `does`: what its status does (`potion_status_*`).
+potion_status = { text = "{does:bare} hetken aikaa", of = "17081e" }
+potion_status_feel = { text = "Antaa sinun aistia elävät ympärilläsi", of = "7c7cc2" }
+potion_status_harder = { text = "Tekee sinuun osumisesta vaikeampaa", of = "bcc174" }
+potion_status_hides = { text = "Kätkee sinut näkyvistä", of = "47560e" }
+potion_status_named = { text = "Tekee sinut {status:tra}", of = "6b909d" }
+potion_status_quickens = { text = "Nopeuttaa sinua", of = "26690d" }
+potion_status_surer = { text = "Tekee iskuistasi varmempia", of = "a4ae38" }
+potion_status_water = { text = "Antaa sinun kävellä veden päällä", of = "54285a" }
+potion_status_wounds = { text = "Sulkee haavasi nopeammin", of = "ab57be" }
+potion_unknown = { text = "Et tiedä, mitä tämä juoma tekee.", of = "667ce1" }
+potion_unseen = { text = "Näyttää sinulle hetkeksi sen, mikä piiloutuu silmältä", of = "36a25b" }
+potion_uv = { text = "Avaa silmäsi hetkeksi violetin tuolle puolen", of = "e2f0ca" }
+potion_ward = { text = "Suojaa sinua hetken aikaa: {kinds:and}", of = "b6be3b" }
+protection = { text = "Suojaus {n:bare}", of = "7435f2" }
+# `against`: what it gives against each damage type (`protects_*`, `listed`).
+protection_against = { text = "Suojaus {n:bare} ({against:bare})", of = "018fc6" }
+protects_less = { text = "−{n:bare} ({kind:bare})", of = "52d5ad" }
+protects_more = { text = "+{n:bare} ({kind:bare})", of = "97b337" }
+quick = { text = "Nopea iskemään", of = "f4c5ce" }
+readied = { text = "Valmiina: {slot:bare}", of = "077d60" }
+reloads = { text = "Ladataan jokaisen laukauksen jälkeen", of = "2dc3ff" }
+# One damage type it resists or is vulnerable to: `kind`, `n` in percent.
+resist = { text = "{kind:bare} {n:bare} %", of = "39c489" }
+# `kinds`: each a `resist`, `listed`.
+resists = { text = "Kestää: {kinds:bare}", of = "fcfcdc" }
+rod_costs = { text = "Maksaa {mana:bare} manaa käytöltä ennen taipumuksiasi; se ei koskaan tyhjene", of = "382bdc" }
+rod_holds = { text = "Sisältää vaikutuksen {effect:bare}: {about:bare}", of = "3f7af4" }
+rod_unknown = { text = "Tunnistamaton: sen vaikutus on tuntematon, kunnes sitä käytetään tai se tunnistetaan.", of = "c3ef3b" }
+shield = { text = "Kilpi +{n:bare}", of = "401ecc" }
+shoots = { text = "Ampuu enintään {n:bare} ruudun päähän", of = "98affa" }
+slow = { text = "Hidas iskemään", of = "0b2cb8" }
+some_kind = { text = "jokin laji", of = "a75aa3" }
+# How much faster or slower, in words (speed numbers stay hidden): adverbs.
+speed_faster = { text = "nopeammin", of = "9cb543" }
+speed_faster_little = { text = "hieman nopeammin", of = "af5e7c" }
+speed_faster_much = { text = "paljon nopeammin", of = "afdf47" }
+speed_slower = { text = "hitaammin", of = "cf3d9a" }
+speed_slower_little = { text = "hieman hitaammin", of = "7cced0" }
+speed_slower_much = { text = "paljon hitaammin", of = "65e67d" }
+# A boost's stat, as its drinker is made: the translative.
+stat_dexterity = { text = "ketterämmäksi", of = "d3cd17" }
+stat_intelligence = { text = "nokkelammaksi", of = "9eb01d" }
+stat_presence = { text = "vaikuttavammaksi", of = "cb7052" }
+stat_strength = { text = "vahvemmaksi", of = "7be1bf" }
+stat_toughness = { text = "sitkeämmäksi", of = "ff3743" }
+stat_willpower = { text = "lujatahtoisemmaksi", of = "e5ac95" }
+thrown = { text = "Heitettävissä enintään {n:bare} ruudun päähän", of = "bd3693" }
+vulnerable = { text = "Altis: {kinds:bare}", of = "cd8d75" }
+wand_charges_unknown = { text = "Sen lataukset ovat tuntemattomat, kunnes se tunnistetaan.", of = "b31fb1" }
+# `roll`: its roll in the user's hands; `radius`, a burst's.
+wand_does_radius = { text = "{roll:bare}, säde {radius:bare}", of = "945df7" }
+wand_empty = { text = "Tyhjä: se ei tee nyt mitään.", of = "d9d78f" }
+# `does`: what it does in the user's hands.
+wand_holds = { text = "Sisältää loitsun {spell:Bare}: {does:bare}", of = "93db40" }
+wand_holds_spell = { text = "Sisältää loitsun {spell:Bare} (taso {level:bare}): {about:bare}", of = "f64889" }
+wand_unknown = { text = "Tunnistamaton: sen sisältämä loitsu on tuntematon, kunnes sitä käytetään tai se tunnistetaan.", of = "1c9e72" }
+worn = { text = "Puettuna: {slot:bare}", of = "3c8714" }
+worn_finger = { text = "Pidetään sormessa", of = "f7962a" }
+
+# An affix's value with its unit: `v` of it, one or many.
+[does_range]
+of = "dc10d2"
+by = "v.number"
+one = "+{v:bare} ruutu kantamaan"
+many = "+{v:bare} ruutua kantamaan"
+
+[does_spell_dice]
+of = "c392e7"
+by = "v.number"
+one = "loitsut heittävät {v:bare} nopan enemmän"
+many = "loitsut heittävät {v:bare} noppaa enemmän"
+
+[does_spell_duration]
+of = "1e7870"
+by = "v.number"
+one = "vahvistukset ja kiroukset kestävät {v:bare} asteen pidempään"
+many = "vahvistukset ja kiroukset kestävät {v:bare} astetta pidempään"
+
+[does_spell_ease]
+of = "c5d8d1"
+by = "v.number"
+one = "haittaa loitsimista {v:bare} pisteen vähemmän"
+many = "haittaa loitsimista {v:bare} pistettä vähemmän"
+
+[does_spell_reach]
+of = "09b71b"
+by = "v.number"
+one = "loitsut ulottuvat {v:bare} ruudun kauemmas"
+many = "loitsut ulottuvat {v:bare} ruutua kauemmas"
+
+[does_spell_rungs]
+of = "e0db90"
+by = "v.number"
+one = "loitsut ovat {v:bare} askelman korkeammalla tikkaillaan"
+many = "loitsut ovat {v:bare} askelmaa korkeammalla tikkaillaan"
+
+[does_spell_sides]
+of = "48f854"
+by = "v.number"
+one = "loitsunopissa on {v:bare} tahko enemmän"
+many = "loitsunopissa on {v:bare} tahkoa enemmän"
+
+[does_spell_threat]
+of = "c6f7d8"
+by = "v.number"
+one = "loitsujen kriittisen osuman uhka kattaa {v:bare} heiton enemmän"
+many = "loitsujen kriittisen osuman uhka kattaa {v:bare} heittoa enemmän"
+
+[does_threat]
+of = "465a04"
+by = "v.number"
+one = "kriittisen osuman uhka kattaa {v:bare} heiton enemmän"
+many = "kriittisen osuman uhka kattaa {v:bare} heittoa enemmän"
+
+[does_wand_rungs]
+of = "b7e1fc"
+by = "v.number"
+one = "sauvat loitsivat {v:bare} askelman korkeammalta"
+many = "sauvat loitsivat {v:bare} askelmaa korkeammalta"
+
+# `n` enchantments, in words.
+[enchantments]
+of = "9809ff"
+by = "n.number"
+one = "{n:num} lumous"
+many = "{n:num} lumousta"
+
+# `n` more improvements `place` (`place_*`), in words.
+[make_improvements]
+of = "cd8684"
+by = "n.number"
+one = "Siihen tarvitaan vielä {n:num} parannus {place:bare}."
+many = "Siihen tarvitaan vielä {n:num} parannusta {place:bare}."
+
+[wand_charges]
+of = "c9dfb4"
+by = "n.number"
+one = "{n:bare} lataus jäljellä"
+many = "{n:bare} latausta jäljellä"

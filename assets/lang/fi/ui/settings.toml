@@ -1,0 +1,483 @@
+# The settings module's words (`crates/ascmearc/src/settings/`).
+
+[clock_12h]
+of = "5f79b1"
+text = "12 h (AM/PM)"
+
+[clock_24h]
+of = "8dc791"
+text = "24 h"
+
+[clock_am]
+of = "ef114b"
+text = "{time:bare} AM"
+
+[clock_pm]
+of = "c4369a"
+text = "{time:bare} PM"
+
+# A command's name, as Controls, `?`, and the messages show it.
+[command_abilities]
+of = "1510d4"
+text = "Kyvyt"
+
+[command_ascend]
+of = "29a36f"
+text = "Nouse portaita ylös"
+
+[command_back]
+of = "358d7e"
+text = "Takaisin (Esc toimii aina)"
+
+[command_bash]
+of = "2b21fd"
+text = "Iske kilvellä"
+
+[command_cancel]
+of = "a29390"
+text = "Peru"
+
+[command_character]
+of = "1f826b"
+text = "Hahmo"
+
+[command_chat]
+of = "7ffed6"
+text = "Juttele"
+
+[command_close]
+of = "e37b27"
+text = "Sulje ovi"
+
+[command_descend]
+of = "939e3f"
+text = "Laskeudu portaita alas"
+
+[command_disarm]
+of = "ee6883"
+text = "Pura ansa"
+
+[command_drop]
+of = "7b0340"
+text = "Pudota"
+
+[command_eat]
+of = "0c18c5"
+text = "Nauti"
+
+[command_equipment]
+of = "b68a3d"
+text = "Varusteet"
+
+[command_help]
+of = "5724eb"
+text = "Näytä / piilota näppäimet"
+
+[command_inventory]
+of = "b29544"
+text = "Tavarat"
+
+[command_kick]
+of = "2ae521"
+text = "Potkaise"
+
+[command_look]
+of = "b8dd9a"
+text = "Katsele ympärillesi"
+
+[command_messages]
+of = "dfff4b"
+text = "Viestihistoria"
+
+[command_missile]
+of = "1cdc83"
+text = "Heitä tai ammu kaukoaseella"
+
+[command_more_aggressive]
+of = "d95dfa"
+text = "Hyökkäävämpi asento"
+
+[command_more_defensive]
+of = "5fe2b1"
+text = "Puolustavampi asento"
+
+[command_more_next]
+of = "9bd9fe"
+text = "Näytä seuraavat viestit"
+
+[command_more_skip]
+of = "b5336d"
+text = "Ohita loput (Esc toimii aina)"
+
+[command_move_e]
+of = "79cabc"
+text = "Liiku itään"
+
+[command_move_n]
+of = "7c0a06"
+text = "Liiku pohjoiseen"
+
+[command_move_ne]
+of = "753e7a"
+text = "Liiku koilliseen"
+
+[command_move_nw]
+of = "8b216f"
+text = "Liiku luoteeseen"
+
+[command_move_s]
+of = "8f40dc"
+text = "Liiku etelään"
+
+[command_move_se]
+of = "021939"
+text = "Liiku kaakkoon"
+
+[command_move_sw]
+of = "7b8d79"
+text = "Liiku lounaaseen"
+
+[command_move_w]
+of = "a0a6bc"
+text = "Liiku länteen"
+
+[command_open]
+of = "3a33a2"
+text = "Avaa ovi"
+
+[command_pay]
+of = "308d18"
+text = "Maksa kauppiaalle"
+
+[command_pick_lock]
+of = "47bb76"
+text = "Tiirikoi lukko"
+
+[command_pick_up]
+of = "42aced"
+text = "Poimi"
+
+[command_prev_page]
+of = "3b4ecd"
+text = "Edellinen tietosivu"
+
+[command_prev_target]
+of = "0d3201"
+text = "Edellinen kohde"
+
+[command_quests]
+of = "761739"
+text = "Tehtävät"
+
+[command_quit]
+of = "298afb"
+text = "Tallenna ja lopeta"
+
+[command_read]
+of = "e28771"
+text = "Lue käärö"
+
+[command_repeat_ability]
+of = "c3dffa"
+text = "Käytä viime kykyä uudelleen"
+
+[command_rest]
+of = "ccc96c"
+text = "Lepää"
+
+[command_roundhouse]
+of = "39f2b6"
+text = "Kiertopotku"
+
+[command_run_e]
+of = "30381e"
+text = "Juokse itään"
+
+[command_run_n]
+of = "51f7e3"
+text = "Juokse pohjoiseen"
+
+[command_run_ne]
+of = "7e4178"
+text = "Juokse koilliseen"
+
+[command_run_nw]
+of = "f213d0"
+text = "Juokse luoteeseen"
+
+[command_run_prefix]
+of = "0c011c"
+text = "Juokse (sitten suunta tai portaat)"
+
+[command_run_s]
+of = "c012a5"
+text = "Juokse etelään"
+
+[command_run_se]
+of = "9c6a1c"
+text = "Juokse kaakkoon"
+
+[command_run_sw]
+of = "565e84"
+text = "Juokse lounaaseen"
+
+[command_run_w]
+of = "725b0d"
+text = "Juokse länteen"
+
+[command_search_long]
+of = "167f1c"
+text = "Etsi pidempään"
+
+[command_skills]
+of = "ecba07"
+text = "Taidot"
+
+[command_steal]
+of = "698826"
+text = "Varasta"
+
+[command_talents]
+of = "d7a243"
+text = "Taipumukset"
+
+[command_text_back]
+of = "358d7e"
+text = "Takaisin (Esc toimii aina)"
+
+[command_throw]
+of = "766d35"
+text = "Heitä repusta"
+
+[command_throw_voice]
+of = "c16b4f"
+text = "Heitä ääntäsi"
+
+[command_use_tool]
+of = "775d14"
+text = "Käytä työkalua (kaiva, valaise, savuta)"
+
+[command_wait]
+of = "6b2c71"
+text = "Odota/etsi"
+
+[command_weapon_skills]
+of = "1d28a1"
+text = "Asetaidot"
+
+# Each group's heading in Controls and `?`.
+[context_aim]
+of = "b4e507"
+text = "Tähtäys"
+
+[context_menu]
+of = "5f059c"
+text = "Valikot ja näkymät"
+
+[context_more]
+of = "4c1ac2"
+text = "Lisää viestejä (--lisää--)"
+
+[context_pages]
+of = "989527"
+text = "Tietosivut"
+
+[context_play]
+of = "d2c911"
+text = "Pelissä"
+
+[context_text]
+of = "02b77e"
+text = "Tekstikentät"
+
+[degrees_celsius]
+of = "e45942"
+text = "{degrees:bare} °C"
+
+[degrees_fahrenheit]
+of = "e45e8c"
+text = "{degrees:bare} °F"
+
+# Why a key cannot be bound. `shown`, the key.
+[fixed_in_aim]
+of = "008499"
+text = "{shown:bare} on kiinteä tähtäyksessä"
+
+[fixed_in_menu]
+of = "70c0eb"
+text = "{shown:bare} on kiinteä valikoissa ja näkymissä"
+
+[fixed_in_pages]
+of = "d3fbd2"
+text = "{shown:bare} on kiinteä tietosivuilla"
+
+[fixed_in_text]
+of = "eafe7d"
+text = "{shown:bare} on kiinteä tekstikentissä"
+
+# Importing a keymap. Command names are nested: they stay in the nominative after "komento".
+[import_keyless]
+of = "385a55"
+text = "{owner:bare} on nyt ilman näppäintä ({shown:bare} siirtyi komennolle {name:bare})"
+
+[import_listed_for_both]
+of = "23b32b"
+text = "{shown:bare} on annettu sekä komennolle {owner:bare} että {name:bare}; jäi komennolle {owner:bare}"
+
+[import_newer]
+of = "b8bb00"
+text = "kirjoitettu uudemmalla Ascmearcilla (versio {version:bare}); luettu siltä osin kuin tämä ymmärtää"
+
+[import_no_usable]
+of = "8681ca"
+text = "{place:bare}: ei käyttökelpoisia näppäimiä; jätetty ennalleen"
+
+[import_not_command]
+of = "bf3fcc"
+text = "`{name:bare}` ei ole osio eikä komento; ohitettu"
+
+[import_not_key]
+of = "9cc5f1"
+text = "{place:bare}: {item:bare} ei ole sidottava näppäin"
+
+[import_not_keymap]
+of = "88bba9"
+text = "ei näppäinkartta: {error:bare}"
+
+[import_not_list]
+of = "0d9758"
+text = "{place:bare}: odotettiin näppäinluetteloa; ohitettu"
+
+# Keep the `!`: it marks a refusal.
+[import_problem]
+of = "308f8a"
+text = "! {problem:bare}"
+
+[import_problems]
+of = "d0e7e4"
+text = "! {problem:bare} (ja {more:bare} muuta)"
+
+[import_refused]
+of = "37f880"
+text = "{place:bare}: {why:bare}; ohitettu"
+
+[import_twice]
+of = "1ba3fe"
+text = "{place:bare}: annettu kahdesti; ensimmäinen pidetty"
+
+[import_unknown_command]
+of = "250243"
+text = "{place:bare}: tuntematon komento; ohitettu"
+
+[import_version]
+of = "26187f"
+text = "versio {value:bare} ei ole luku; luettu nykyisenä"
+
+[imported_many]
+of = "518c68"
+text = "Tuotu: {source:bare}. {count:bare} komennon näppäimet muuttuivat."
+
+[imported_none]
+of = "4be9d2"
+text = "Tuotu: {source:bare}. Näppäimet eivät muuttuneet."
+
+[imported_one]
+of = "35442c"
+text = "Tuotu: {source:bare}. Komento {name:bare} muuttui."
+
+[kept_by_browser]
+of = "7b34e9"
+text = "{shown:bare} on selaimen käytössä"
+
+[kept_by_macos]
+of = "0dece5"
+text = "{shown:bare} on macOS:n käytössä"
+
+[kept_by_system]
+of = "99c128"
+text = "{shown:bare} on järjestelmän käytössä"
+
+[keymap_cannot_read]
+of = "66d487"
+text = "Tiedostoa {path:bare} ei voitu lukea: {error:bare}"
+
+[keymap_cannot_write]
+of = "774cf0"
+text = "Tiedostoon {path:bare} ei voitu kirjoittaa: {error:bare}"
+
+[keymap_downloaded]
+of = "5ec9a4"
+text = "Näppäimet tallennettu nimellä {file:bare}."
+
+[keymap_exported]
+of = "081d8e"
+text = "Näppäimet viety tiedostoon {path:bare}."
+
+[keymap_missing]
+of = "b28e38"
+text = "Polussa {path:bare} ei ole näppäinkarttaa: vie ensin yksi tai sijoita sellainen sinne."
+
+[keymap_not_stored]
+of = "06ac09"
+text = "Näppäimiä ei tallenneta tällä käynnistyskerralla."
+
+[keys_cannot_read]
+of = "805eb5"
+text = "tiedostoa {path:bare} ei voi lukea: {error:bare}"
+
+[keys_cannot_write]
+of = "c8249b"
+text = "tiedostoon {path:bare} ei voi kirjoittaa: {error:bare}"
+
+[keys_in_file]
+of = "4f5665"
+text = "{path:bare}: {error:bare}"
+
+[keys_not_saved]
+of = "01b1ff"
+text = "Ei tallennettu: asetuksia ei tallenneta tällä käynnistyskerralla."
+
+[keys_saved]
+of = "267483"
+text = "Tallennettu: {place:bare}."
+
+[keys_wrote]
+of = "1704f3"
+text = "Näppäinkartta kirjoitettu tiedostoon {path:bare}."
+
+[palette_colorblind]
+of = "280a1b"
+text = "Värisokea (puna-vihreä)"
+
+[palette_default]
+of = "cad2d5"
+text = "Oletus"
+
+[palette_high_contrast]
+of = "513be9"
+text = "Suuri kontrasti"
+
+[plain_keys_only]
+of = "d73ca0"
+text = "{name:bare} hyväksyy vain pelkät näppäimet: Ctrl, Alt ja Super ovat pelin näppäimiä varten"
+
+# The rest prompt's choices (keys h, d, n; shown after the word when it does not start with it).
+[rest_dawn]
+of = "d73f79"
+text = "aamuun"
+
+[rest_hour]
+of = "d8522a"
+text = "tunnin"
+
+[rest_nightfall]
+of = "db5ef0"
+text = "iltaan"
+
+[unit_celsius]
+of = "a2456b"
+text = "°C (Celsius)"
+
+[unit_fahrenheit]
+of = "2d08b4"
+text = "°F (Fahrenheit)"

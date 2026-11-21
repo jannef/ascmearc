@@ -1,0 +1,55 @@
+# Character creation's talents step (`crates/ascmearc/src/ui/chargen_talents_screen.rs`).
+
+[back]
+of = "03caaf"
+text = "Esc takaisin"
+
+[chance]
+of = "f6eea2"
+text = "Sattuma"
+
+[chosen_all]
+of = "c3d727"
+by = "count.number"
+one = "Olet valinnut taipumuksesi: poista ensin merkintä."
+many = "Olet valinnut {count:bare} taipumusta: poista ensin yhden merkintä."
+
+[mark]
+of = "37699c"
+text = "{confirm:bare} tai kirjain merkitse"
+
+[done]
+of = "e3a944"
+text = "Valmis"
+
+[done_hint]
+of = "ccde49"
+text = "Jatka näillä taipumuksilla."
+
+[none]
+of = "8df0ee"
+text = "Valittavia taipumuksia ei ole."
+
+[random]
+of = "8c579b"
+text = "Satunnainen"
+
+[random_hint]
+of = "130f99"
+text = "Anna sattuman valita taipumuksesi."
+
+[cannot_take]
+of = "374b83"
+text = "Et voi vielä ottaa taipumusta {name:bare}."
+
+[title_free]
+of = "6d1790"
+text = "Valitse lahjaksi {names:or} (4/5): {left:bare} jäljellä"
+
+[title_trade]
+of = "c83982"
+text = "Valitse ammatti (4/5): {left:bare} jäljellä"
+
+[title_talents]
+of = "8b50d3"
+text = "Valitse taipumukset (4/5): {left:bare} jäljellä"

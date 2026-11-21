@@ -1,0 +1,37 @@
+# What saving and resuming say in the message log (`crates/ascmearc/src/save.rs`, `game.rs`).
+
+[could_not_read]
+of = "66f2b3"
+text = "Tallennusta ei voitu lukea: {error:bare}."
+
+[could_not_resume]
+of = "bfc89c"
+text = "Jatkaminen ei onnistunut: {error:bare}."
+
+[could_not_resume_kept]
+of = "fa9105"
+text = "Jatkaminen ei onnistunut: {error:bare}. Vanha tallennus säilytettiin nimellä {file:bare}."
+
+[could_not_resume_left]
+of = "d50314"
+text = "Jatkaminen ei onnistunut: {error:bare}. Vanha tallennus jätettiin paikalleen."
+
+[game_saved]
+of = "7c0a1c"
+text = "Peli tallennettu."
+
+[snapshot_loaded]
+of = "b897e1"
+text = "Tilannekuva ladattu."
+
+[snapshot_saved]
+of = "52065d"
+text = "Tilannekuva tallennettu."
+
+[try_again]
+of = "7ac0ab"
+text = "{error:bare} Yritä uudelleen."
+
+[welcome_back]
+of = "0eaa38"
+text = "Tervetuloa takaisin."

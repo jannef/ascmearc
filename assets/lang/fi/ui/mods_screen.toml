@@ -1,0 +1,79 @@
+# The Mods screen (`crates/ascmearc/src/ui/mods_screen.rs`).
+
+[act_apply]
+of = "778d12"
+text = "Ota käyttöön"
+
+[act_back]
+of = "15e766"
+text = "Takaisin"
+
+[act_open_folder]
+of = "842d56"
+text = "Avaa modikansio"
+
+[applied]
+of = "11228b"
+by = "n.number"
+one = "Otettu käyttöön: {n:bare} modi päällä."
+many = "Otettu käyttöön: {n:bare} modia päällä."
+
+[applied_none]
+of = "4aac5a"
+text = "Otettu käyttöön: ei modeja päällä."
+
+[cannot_use]
+of = "f88633"
+text = "{id:bare} ei kelpaa: {why:bare}"
+
+[cannot_use_line]
+of = "f1ff68"
+text = "Ei kelpaa: {why:bare}"
+
+[clash]
+of = "6bc538"
+text = "{ids:bare} muuttavat kaikki tiedostoa {path:bare}: käytössä on modin {last:bare} versio."
+
+[empty_hint]
+of = "263d8a"
+text = "Modi on siellä oleva kansio, jossa on mod.toml."
+
+[footer]
+of = "dd8e93"
+text = "{up_down:bare} valitse   {confirm:bare}/{mark:bare} kytke   Shift+{up_down:bare} siirrä   Esc takaisin"
+
+[made_for]
+of = "1aedd7"
+text = "(tehty versiolle {version:bare})"
+
+[no_folder]
+of = "78e97a"
+text = "Tällä käynnistyksellä ei ole modikansiota."
+
+[none_in]
+of = "f705c8"
+text = "Kansiossa {dir:bare} ei ole modeja."
+
+[not_applied]
+of = "01e84d"
+text = "Ei otettu käyttöön: {why:bare}"
+
+[not_applied_yet]
+of = "61c919"
+text = "Muutoksia ei ole vielä otettu käyttöön."
+
+[nothing_to_apply]
+of = "2b36b1"
+text = "Ei mitään otettavaa käyttöön."
+
+[opened]
+of = "b2ef96"
+text = "Avattu: {dir:bare}."
+
+[shown]
+of = "470b2a"
+text = "{shown:bare}/{total:bare} modia näkyvissä"
+
+[title]
+of = "9702d0"
+text = "Modit"

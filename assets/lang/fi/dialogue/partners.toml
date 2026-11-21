@@ -1,0 +1,122 @@
+# A merchant's business partner (campaigns/ascmearc/data/dialogue/partners.toml), of the
+# merchant's race, each in that race's dialect (#1896); a human partner is a person of means:
+# kirjakieli, uncompromising. `{gold:name}` and `{fee:name}` are amounts in digits.
+
+# Humans, half-elves, and half-orcs: kirjakieli.
+[ascmearc.partner]
+lines = [
+    { text = "Ah, kumppani. Villa on noussut, tina laskenut, ja sola on auki. Enempää ei voi pyytää.", of = "c972bc" },
+    { text = "Kävin tilikirjat läpi kahdesti tänä aamuna. Ne täsmäävät, mikä on aina helpotus.", of = "bacbfb" },
+    { text = "Suolaproomut ovat jälleen myöhässä. Otin vapauden ostaa viivästyksen.", of = "469e54" },
+    { text = "Älkää koskaan myykö paniikissa, kumppani. Muiden paniikki sen sijaan on mainio hetki ostaa.", of = "0c5457" },
+    { text = "Wulfrun antaa minun käyttää nurkkapöytäänsä. Erittäin ystävällistä häneltä, ja vuokrakin on kohtuullinen.", of = "2d11e3" },
+    { text = "Neuvo viisaalle: Holtwīcin hunajakauppaa kannattaa pitää silmällä.", of = "5d3670" },
+]
+
+[ascmearc.partner.partner]
+worth = { text = "Osuutenne arvo on tällä viikolla {gold:name} kultaa.", of = "6739ce" }
+idle = { text = "Minulla ei ole tällä hetkellä lainkaan varojanne. Joutilas kulta ei tuota mitään, kuten tiedätte.", of = "84f321" }
+invested = { text = "{gold:name} kultaa, josta paperityöt vievät {fee:name}. Rahanne on nyt työssä.", of = "2f141b" }
+withdrawn = { text = "{gold:name} kultaa nostettu, josta vaivanpalkkani on {fee:name}. Käyttäkää se viisaasti.", of = "b4ba6e" }
+
+# Dwarves and duergar: pohjalaismurre.
+[ascmearc.partner_dwarf]
+lines = [
+    { text = "No niin, kumppani. Rauta nousoo, villa laskoo. Mää ostan rautaa.", of = "1f485f" },
+    { text = "Kirjat täsmää, tiärät sää. Mää laskin ne kahteen kertahan.", of = "2cd9ef" },
+    { text = "Älä koskaan myy ku väki hätääntyy. Osta, ihiminen. Osta.", of = "2f1c6b" },
+    { text = "Ne suolaproomut on taas myähässä. Mää ostin viivästyksen, kyllä vaan.", of = "78d657" },
+    { text = "Faktori antaa meille nurkkapöyrän. Hyvä ihiminen se on.", of = "5a10db" },
+    { text = "Jos kaivokset joskus aukiaa, kumppani, me ollahan rikkahia niinku kuninkahat.", of = "7920b6" },
+]
+
+[ascmearc.partner_dwarf.partner]
+worth = { text = "Sun osuutes arvo on tällä viikolla {gold:name} kultaa, kumppani.", of = "28ecb2" }
+idle = { text = "Sulla ei oo vielä mitään meillä. Kulta kukkarossa ei kasva, ihiminen.", of = "4c7d9d" }
+invested = { text = "{gold:name} kultaa, josta {fee:name} kirjottamisesta. Nyt se tekoo tyätä.", of = "400e6a" }
+withdrawn = { text = "{gold:name} kultaa ulos, josta {fee:name} meirän vaivoosta. Älä tuhlaa sitä.", of = "732a88" }
+
+# Elves: Turun murre.
+[ascmearc.partner_elf]
+lines = [
+    { text = "Terve, kumppan. Villa nousee, tina laskee. Ei hullumpaa, kaikenkaikkiaa.", of = "3cd4a9" },
+    { text = "Mää kävin kirjat läpi kaks kertaa. Ne täsmää, kyl ne täsmää.", of = "27a947" },
+    { text = "Älä ikin myy ku kaik on hädissää. Sillo sää ostat.", of = "5270eb" },
+    { text = "Noi suolaproomut on taas myöhäs. Mää ostin sen viivästykse, nääs.", of = "79c472" },
+    { text = "Faktori antaa meil nurkkapöydän. Tosi mukavast tehty.", of = "15683d" },
+    { text = "Pidä silmäl hunajakauppaa, kumppan. Kyl siin on tulevaisuut.", of = "2a92ee" },
+]
+
+[ascmearc.partner_elf.partner]
+worth = { text = "Sun osuus on tällä viikol {gold:name} kultaa.", of = "9f390a" }
+idle = { text = "Sul ei oo viel mittää mul. Ei kult kukkaros kasva, vai mitä?", of = "9f954b" }
+invested = { text = "{gold:name} kultaa, josta {fee:name} paperitöist. Nyt se tekee töit.", of = "7892b7" }
+withdrawn = { text = "{gold:name} kultaa ulos, josta {fee:name} mun vaivoist. Käytä se fiksust.", of = "a55d16" }
+
+# Halflings and gnomes: savon murre.
+[ascmearc.partner_halfling]
+lines = [
+    { text = "No terve, kumppani. Villa nousoo, tina laskoo. Hyvä niin, luulisin.", of = "873a94" },
+    { text = "Minä kävin kirjat läpi kahteen kertaan. Ne täsmee, kuulemma. Ja minusta.", of = "83c2c8" },
+    { text = "Elä myy sillon ku kaekki hätäelee. Sillon ostetaan.", of = "31a743" },
+    { text = "Ne suolaproomut on taas myöhässä. Minä ostin sen viivästyksen, sillä lailla.", of = "dab485" },
+    { text = "Faktori antaa meijän pittee nurkkapöytee. Hyvä ihminen se, ainakii tähän asti.", of = "288f75" },
+    { text = "Pijä silimällä sitä hunajakauppoo, kumppani. Siinä ois rahhoo, jos ois.", of = "d74fcb" },
+]
+
+[ascmearc.partner_halfling.partner]
+worth = { text = "Sinun osuutes on tällä viikolla {gold:name} kultoo, suunnilleen. Tarkalleen, oekeestaan.", of = "b650e8" }
+idle = { text = "Ei sulla vielä mittään minulla oo. Ei se kulta kukkarossa kasva, vae kasvaako?", of = "c63371" }
+invested = { text = "{gold:name} kultoo, josta {fee:name} paperitöistä. Nyt se on töissä.", of = "8533f1" }
+withdrawn = { text = "{gold:name} kultoo ulos, josta {fee:name} minun vaevoista. Elä tuhlaa sitä.", of = "95d56f" }
+
+# Goblins, kobolds, and ratfolk: Rauman giäl.
+[ascmearc.partner_goblin]
+lines = [
+    { text = "No, kumppan. Villa nouse, tina lask, ja sola o auk. Fiini.", of = "698381" },
+    { text = "Mnää kävi tilkirja läp kaks kertta, kävi mnää. Ne täsmä.", of = "d68885" },
+    { text = "Ällä ikä myy ko muut o hädis. Sillo sää ost, kyl.", of = "67285d" },
+    { text = "Suolaproom o taas myähäs. Mnää ost viivästykse, ost mnää.", of = "cd04fc" },
+    { text = "Faktor anta meil nurkkapöydä. Hyvä akk se o.", of = "5c2b94" },
+    { text = "Pir silmäl hunajakauppa, kumppan. Siin o rahha.", of = "73f247" },
+]
+
+[ascmearc.partner_goblin.partner]
+worth = { text = "Su osuus o täl viikol {gold:name} kultta, o se.", of = "3757d7" }
+idle = { text = "Sul ei ol viäl mittä mnu tykön. Kult kukros ei kasva, kyl sää sen tiäd.", of = "f32df6" }
+invested = { text = "{gold:name} kultta, josta {fee:name} paperitöist. Nyy se tekke työt.", of = "0d3a05" }
+withdrawn = { text = "{gold:name} kultta ulos, josta {fee:name} mnu vaivoist. Ällä sit tuhla sitä.", of = "7771a2" }
+
+# Drow: the Old Literary Finnish of Agricola's day.
+[ascmearc.partner_drow]
+lines = [
+    { text = "Terue, Cumpani. Willa ylene ia tina alene; Sola ombi auki.", of = "2c8dd4" },
+    { text = "Caxi kertaa olen mine tilikiriat läpitze käunyt. Totisesta, ne yhteneweet.", of = "c3c7a7" },
+    { text = "Ele myy coska mwut pelkewet, waan osta, totisesta.", of = "c6ac4f" },
+    { text = "Suola-aluxet owat taas myöhes. Mine olen sen wiwytyxen ostanut.", of = "a62a5b" },
+    { text = "Factori andapi meille nurckapöydhen, ia anopi wähen.", of = "ae49fe" },
+    { text = "Merkitze sine hunajacauppa, Cumpani. Sijne ombi woitto.", of = "b69268" },
+]
+
+[ascmearc.partner_drow.partner]
+worth = { text = "Sinun osas ombi temen wiikon {gold:name} cullan arwoinen.", of = "b172d5" }
+idle = { text = "Sinulla ei wiele mitän minun tykenäni ole. Culda cuckarosa ei casua.", of = "13cc73" }
+invested = { text = "{gold:name} culda, iosta {fee:name} kirioituxesta. Nyt se töösä ombi.", of = "aa74d0" }
+withdrawn = { text = "{gold:name} culda wlos, iosta {fee:name} minun waiwastani. Culuta se wijsasti.", of = "33fb84" }
+
+# Lizardfolk: Estonian, untranslated.
+[ascmearc.partner_lizardfolk]
+lines = [
+    { text = "Tere päevast, partner. Vill tõuseb, tina langeb. Kuru on lahti.", of = "71bb33" },
+    { text = "Ma vaatasin raamatud kaks korda üle. Need klapivad.", of = "e440aa" },
+    { text = "Ära müü kunagi paanikas. Siis tuleb hoopis osta.", of = "aae8df" },
+    { text = "Soolapraamid on jälle hiljaks jäänud. Ma ostsin viivituse ära.", of = "42b790" },
+    { text = "Faktor annab meile nurgalaua. Mõistlik üür.", of = "877375" },
+    { text = "Jälgi meekaubandust, partner. Seal on raha.", of = "a89258" },
+]
+
+[ascmearc.partner_lizardfolk.partner]
+worth = { text = "Teie osa on sel nädalal {gold:name} kulla väärt.", of = "884228" }
+idle = { text = "Teil pole veel minu juures midagi. Kukrus olev kuld ei kasva.", of = "614b93" }
+invested = { text = "{gold:name} kulda, millest {fee:name} paberitöö eest. Nüüd see töötab.", of = "4add47" }
+withdrawn = { text = "{gold:name} kulda välja, millest {fee:name} vaeva eest. Kulutage hästi.", of = "dace1d" }

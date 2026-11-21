@@ -1,0 +1,93 @@
+# The equipment screen (`crates/ascmearc/src/ui/equipment_screen.rs`).
+
+[barred]
+of = "d398b7"
+text = "— ({mark:bare})"
+
+[both_hands]
+of = "75c032"
+text = "{name:bare} (molemmat kädet)"
+
+[carrying]
+of = "e2cd23"
+text = "Kannat {weight:bare}"
+
+[choose_slot]
+of = "352226"
+text = "a-{last:bare} valitse paikka"
+
+[defence]
+of = "b11fbf"
+text = "Torjunta (Tj) {n:bare}"
+
+[empty_choice]
+of = "80b2e9"
+text = "Sinulla ei ole mitään, mikä sopisi tähän."
+
+[empty_slots]
+of = "7520ef"
+text = "Tähän ei voi pukea mitään."
+
+[esc_back]
+of = "03caaf"
+text = "Esc takaisin"
+
+[esc_close]
+of = "12c352"
+text = "Esc sulje"
+
+[hint_put_away]
+of = "38956f"
+text = "Valitse paikalla oleva pannaksesi sen pois."
+
+[hint_take_off]
+of = "e1542d"
+text = "Valitse paikalla oleva riisuaksesi sen."
+
+[look]
+of = "023a85"
+text = "A-{last:bare} katso"
+
+[name_marked]
+of = "df6e6a"
+text = "{name:bare} ({mark:bare})"
+
+[protection]
+of = "8abe3d"
+text = "Suojaus (Sj) {n:bare}"
+
+[title_choice]
+of = "7dc28a"
+text = "Varusteet: {slot:Bare}"
+
+[title_equipment]
+of = "b68a3d"
+text = "Varusteet"
+
+[use_a]
+of = "35a5fe"
+text = "a tai {confirm:bare} {verb:bare}"
+
+[use_letters]
+of = "3440cc"
+text = "a-{last:bare} tai {confirm:bare} {verb:bare}"
+
+[use_none]
+of = "057fae"
+text = "{confirm:bare} {verb:bare}"
+
+[verb_put_on]
+of = "c18faf"
+text = "pue"
+
+[verb_ready]
+of = "365d22"
+text = "varusta"
+
+[verb_wield]
+of = "d237ed"
+text = "tartu"
+
+[your_weight]
+of = "87b24c"
+text = "Painosi {total:bare} (itse {base:bare})"

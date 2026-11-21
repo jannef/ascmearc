@@ -328,7 +328,7 @@ fn lexicon() -> MapLexicon {
         )
         .with(
             "part:pommel",
-            LexWord::new("ponsi/27").form("adjective", "ponsinen/38"),
+            LexWord::new("ponsi/28").form("adjective", "ponsinen/38"),
         )
         .with("word:flames", LexWord::new("liekki/5*A").many(true))
         .with("object:scissors", LexWord::new("saksi/7").plural_only(true))

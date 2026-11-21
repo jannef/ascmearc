@@ -1,0 +1,42 @@
+# Targeting (`crates/ascmearc/src/ui/target.rs`). `ready` is text in the nominative (the
+# imperative's object: "Ammu nuoli").
+
+[blocked]
+of = "90406d"
+text = "Tie on tukossa."
+
+[no_corpse]
+of = "07aadb"
+text = "Siellä ei ole ruumista."
+
+[out_of_range]
+of = "d8ccc8"
+text = "Kantaman ulkopuolella."
+
+[prompt_ability]
+of = "a11c6c"
+text = "{ready:bare}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} käyttää, Esc peruu."
+
+[prompt_exploit]
+of = "b13a85"
+text = "Iske aukkoon, heitä {ready:bare}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} heittää, Esc peruu."
+
+[prompt_fire]
+of = "d3b20a"
+text = "Ammu {ready:bare}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} ampuu, Esc peruu."
+
+[prompt_read]
+of = "db75b1"
+text = "Lue {ready:bare}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} lukee, Esc peruu."
+
+[prompt_throw]
+of = "bdc617"
+text = "Heitä {ready:bare}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} heittää, Esc peruu."
+
+[prompt_zap]
+of = "49cbf2"
+text = "Laukaise {ready:bare}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} laukaisee, Esc peruu."
+
+[unseen]
+of = "0c4d69"
+text = "Et näe sinne."
