@@ -2,6 +2,10 @@
 
 Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/05-interface.md. Keep it current with the code, as CLAUDE.md says.
+The settings and controls screens' words, the commands' names and the contexts' titles, why a
+key cannot be bound, and what a keymap's export and import report are UI text
+(`assets/lang/en/ui/settings_screen.toml`, `controls_screen.toml`, `settings.toml`;
+`docs/dev/localization.md` "UI text"); the settings file's ids and key names are not words.
 
 Settings (`crates/ascmearc/src/settings/`): `settings.toml` in the config dir, schema in the `settings/mod.rs` module docs (the config dir also keeps `graveyard.toml`, the dead, append-only and unpinned: `docs/dev/saves.md` "The graveyard"). Changes
 apply live and are written at once; a bad file means defaults plus a warning, per value. A file

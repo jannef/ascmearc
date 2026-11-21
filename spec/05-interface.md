@@ -73,3 +73,14 @@ The game is played from the keyboard, ADOM-style. Every screen tells the player 
 - The same message repeated folds into one with a count.
 - When a turn's messages overflow, `--more--` pages them; what was only noted during a long action, without stopping it (chatter, footsteps), is passed over, kept in the log. It is presentation only: the rules, replays, and dumps never see pages.
 - Long actions (rest, dig, run, a meal, a long search) stop for whatever would stop a rest.
+
+## Language
+
+- The game is shown in the language the player chooses in Settings, English by default, never guessed from the system. Switching takes effect at once, mid-run included: what was already said reads in the new language too.
+- Every word the player reads is the language's data, never English written in code. What the player typed (a name), made-up words (a scroll's label), and notation (dice, signed numbers) read alike in every language.
+- The log holds what was said, not its wording: a word changed in a language never changes a run, a save, or a replay.
+- The narrator uses the language's full grammar. Creatures' speech uses none: it is whole lines, chosen by gender and number, written in the speaker's register (a dialect inside the language, by race or by the speaker's own).
+- A line a language lacks is read in English. English is complete; Finnish is being translated.
+- A language is data, so a mod can add one.
+- The wiki is English only.
+- How it is built: `docs/dev/localization.md`; the design and what is still to come: `docs/design/localization.md`.

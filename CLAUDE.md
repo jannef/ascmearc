@@ -69,6 +69,9 @@ Hard rules:
 - Rendering, UI, and dumps read the per-turn **perception snapshot** only — never ground truth —
   so hidden information cannot leak. The only exception is an explicit dev "reveal" mode.
 - Gameplay outcomes never depend on frame rate, animation, or visual randomness.
+- Player text lives in `assets/lang/` (messages, UI text, lines of data), never as English in
+  code; text no language translates carries a `// lang: <kind>` mark, which `cargo xtask lang
+  --check` enforces (`docs/dev/localization.md` "Language-neutral text").
 - Only play-context (gameplay) commands are rebindable: a `KeyCommand` in `input::Context::Play`,
   rebindable in Controls and listed by `?`. The keys of menus, menu lists (rows named by letters
   and digits, paging, confirm and cancel inside lists), screens, info pages, prompts, dialogs,
