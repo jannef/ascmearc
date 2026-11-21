@@ -1536,6 +1536,8 @@ Nothing here is guessed against the oracle; these are the choices the oracle can
 
 ## Next
 
-The L4 slices ("Literal lines", "Lines of data"), the other L6 parts ("UI text"), the
-Finnish lexicon (L11) on `fi`:
-`docs/design/localization.md` §17.
+English is complete: every line and screen reads from `assets/lang/en/`. Still to come, per
+`docs/design/localization.md` §17: text mods (L9), the Finnish lexicon on `fi` (L11), the Finnish
+templates and UI text (L12), Finnish dialogue and registers (L13), and with Finnish the
+font-subset case and `cargo xtask web-smoke --lang fi` (L14). The rules this builds are
+`spec/05-interface.md` "Language".

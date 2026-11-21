@@ -28,7 +28,6 @@ These are deliberately not in the game, and are not to be built without a decisi
 - Mouse input (hover-to-inspect would come first).
 - Infravision.
 - Audio.
-- Localization.
 - Measuring the frame budget on a real integrated GPU.
 
 Smaller ideas the owner has set aside are listed on the deferred-ideas issue, each with the reason it waits.

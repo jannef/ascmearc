@@ -8,6 +8,9 @@ points here. Keep it current with the code, as CLAUDE.md says: a new flag, `--sc
 scenario, dump layer, or action is added here in the same PR, by its group, never at the end
 (an action's rules belong in its own topic file; here its syntax and a short gloss).
 
+The flags, layers, verbs, and dump fields are ids and stay English; the words the game and the
+dumps show the player come from `assets/lang/` (`docs/dev/localization.md`).
+
 Where the lists come from: `--scenario` names are the files of `assets/campaigns/*/scenarios/`,
 `--screen` names are `ui/screens.rs::ScreenName` (clap lists them: `cargo dev --help`), dump
 layers are `dump/layer.rs::Layer`, and action verbs are `action/text.rs`'s `VERBS` table (read by
@@ -438,7 +441,9 @@ and are **dev-only**.
   Bookhold hostile, Master Brasswright turned]`.
 - `messages`: the last ten messages of the log, oldest first, a line each with its repeats
   (`You open the door. (×2)`), keys written as their command (`{key:help}`); in `--lang`'s
-  language.
+  language. The log holds entries, so the words are the language's data under `assets/lang/`
+  (`docs/dev/localization.md` "The log"): a wording change there moves no state hash, only these
+  lines and their snapshots.
 - `story`: the player's background story, a paragraph a line as the story screen tells it, `no
   story` without one.
 - `companion`: the player's animal companion as they know it, `Snel, a hound (grade 12) at (12,
