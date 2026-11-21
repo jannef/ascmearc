@@ -89,6 +89,17 @@ impl Choice {
         }
     }
 
+    /// The form a list of a talent's choices (the level-up screen's) says one in, its phrase
+    /// [`Content::choice_phrase`]: a weapon skill and a skill as their data writes them,
+    /// `label` ("Long Blades", "Open lock"); an element, a school, and a kind of creature as a
+    /// sentence says them, `bare` ("fire", "evocation", "goblin").
+    pub const fn listed_form(self) -> &'static str {
+        match self {
+            Choice::WeaponSkill | Choice::Style | Choice::Skill => crate::lang::LABEL_FORM,
+            Choice::Element | Choice::Tag | Choice::School => "bare",
+        }
+    }
+
     /// What is chosen, as the player reads it in a refusal (`character.choice_*`): "a weapon
     /// skill". [`Choice::words`] is the same in English, for the content's own errors.
     pub fn message(self) -> crate::lang::MessageId {
@@ -919,8 +930,8 @@ impl Need {
 
     /// The prerequisite in words, as a refusal and the Talents page say it, a
     /// `character.talent_needs_*` message: "Toughness 14", "Hardy", "Stealth 25", "to be a
-    /// dwarf". A weapon skill is said as its label (#2000); a birth sign's animal and element, a
-    /// vision's name, and an `any_weapon_skill`'s words are the data's text inside it.
+    /// dwarf". A weapon skill is said as its label (#2000); an `any_weapon_skill`'s words are the
+    /// data's text inside it.
     pub fn message(&self, content: &Content) -> Msg {
         use crate::msg;
         let number = |n: u32| Arg::Number(i64::from(n));
@@ -967,23 +978,17 @@ impl Need {
             }
             Need::Eyes(ids) => {
                 let names = (ids.iter())
-                    .map(|id| content.vision(id).map_or(id.as_str(), |v| v.name.as_str()))
-                    .map(|name| Arg::Text(name.to_lowercase()))
+                    .map(|id| match content.vision(id) {
+                        Some(_) => content.vision_phrase(id).into(),
+                        None => Arg::Text(id.to_lowercase()),
+                    })
                     .collect();
                 Msg::new(msg::character::TALENT_NEEDS_EYES).role("eyes", Arg::List(names))
             }
-            Need::Animal(id) => {
-                let name = (content.horoscope())
-                    .and_then(|h| h.animals.iter().find(|a| &a.id == id))
-                    .map_or(id.as_str(), |a| a.name.as_str());
-                Msg::new(msg::character::TALENT_NEEDS_ANIMAL).role("animal", name)
-            }
-            Need::Element(id) => {
-                let name = (content.horoscope())
-                    .and_then(|h| h.elements.iter().find(|e| &e.id == id))
-                    .map_or(id.as_str(), |e| e.name.as_str());
-                Msg::new(msg::character::TALENT_NEEDS_ELEMENT).role("element", name)
-            }
+            Need::Animal(id) => Msg::new(msg::character::TALENT_NEEDS_ANIMAL)
+                .role("animal", content.sign_animal_arg(id)),
+            Need::Element(id) => Msg::new(msg::character::TALENT_NEEDS_ELEMENT)
+                .role("element", content.sign_element_arg(id)),
             Need::Lucky => msg::character::TALENT_NEEDS_LUCKY.into(),
             Need::Creation => msg::character::TALENT_NEEDS_CREATION.into(),
             Need::Eaten(n) => Msg::new(msg::character::TALENT_NEEDS_EATEN).role("n", number(*n)),

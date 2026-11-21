@@ -37,7 +37,8 @@ use ascmearc_core::time::GameTime;
 const NAME_W: i32 = 14;
 
 /// The player's resistances as rows: one per word, in the order
-/// immune, resistant, vulnerable, each listing its kinds in damage type order; none at 0.
+/// immune, resistant, vulnerable, each listing its kinds in damage type order ("fire, cold":
+/// `damage_type:<id>`, joined by `resistance_kinds`); none at 0.
 fn resistance_rows(view: &PerceptionView<'_>) -> Vec<(ResistanceWord, String)> {
     let content = view.content();
     let own = view.own_resistances();
@@ -47,12 +48,15 @@ fn resistance_rows(view: &PerceptionView<'_>) -> Vec<(ResistanceWord, String)> {
         ResistanceWord::Vulnerable,
     ]
     .into_iter()
-    .filter_map(|word| {
-        let kinds: Vec<&str> = (own.iter())
-            .filter(|(_, w)| *w == word)
-            .map(|(k, _)| content.damage_type(*k).name.as_str())
+    .filter_map(|resistance| {
+        let kinds: Vec<Arg> = (own.iter())
+            .filter(|(_, w)| *w == resistance)
+            .map(|(k, _)| content.damage_type_phrase(*k).into())
             .collect();
-        (!kinds.is_empty()).then(|| (word, kinds.join(", ")))
+        let listed = kinds.into_iter().rev().reduce(|rest, first| {
+            ui_with(T::RESISTANCE_KINDS, &[("first", first), ("rest", rest)]).into()
+        })?;
+        Some((resistance, word(listed, "bare")))
     })
     .collect()
 }

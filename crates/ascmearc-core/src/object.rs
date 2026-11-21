@@ -636,7 +636,7 @@ impl Stack {
         let (word, count, magic) = (self.worked_word(), self.count, self.magic());
         let phrase = name::phrase(made, word, count, magic, (known, cursed), content);
         match self.light.word() {
-            Some(mode) => phrase.note(mode),
+            Some(mode) => phrase.note(name::tag(mode)),
             None => phrase,
         }
     }

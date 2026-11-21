@@ -49,7 +49,7 @@ fn plain_phrase() -> impl Strategy<Value = Phrase> {
             Just(Gender::Other),
             Just(Gender::Neuter)
         ],
-        prop::collection::vec(any::<String>(), 0..2),
+        prop::collection::vec(word(), 0..2),
         any::<u32>(),
     )
         .prop_map(

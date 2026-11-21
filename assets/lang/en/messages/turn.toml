@@ -64,7 +64,7 @@ trap_in_the_way = "A trap lies in the way."
 # `who`: the creature.
 vanishes = "{who:The} vanish{who:es}!"
 # A dev action's: `name` the vision profile's.
-vision_dev = "Vision: {name:bare}."
+vision_dev = "Vision: {name:label}."
 wall_collapses = "The wall collapses!"
 walls_collapse = "The walls collapse!"
 # A dev action's: `weather` lower case, `time` how long it holds.

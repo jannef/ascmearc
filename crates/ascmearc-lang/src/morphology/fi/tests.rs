@@ -281,6 +281,7 @@ fn lexicon() -> MapLexicon {
     MapLexicon::default()
         .with("object:long_sword", LexWord::new("pitkä|miekka/9*A"))
         .with("object:arrow", LexWord::new("nuoli/26"))
+        .with("item_tag:magic", LexWord::new("taika/9*D"))
         .with("object:shield", LexWord::new("kilpi/7*E"))
         .with("object:potion", LexWord::new("juoma/10"))
         .with("object:scroll", LexWord::new("kirja|käärö/1"))
@@ -363,7 +364,7 @@ fn the_designs_item_phrases() {
         form(&magic, "pl_ade"),
         "karhun liekehtivillä smaragdiponsisilla pitkämiekoilla"
     );
-    let unknown = Phrase::id("object:long_sword").note("taika");
+    let unknown = Phrase::id("object:long_sword").note(Word::literal("taika"));
     assert_eq!(form(&unknown, "nom"), "pitkämiekka (taika)");
     assert_eq!(form(&unknown, "ill"), "pitkämiekkaan (taika)");
     let arrows = Phrase::id("object:arrow").count(13);
@@ -561,9 +562,10 @@ fn made_and_parts() {
 #[test]
 fn notes_and_plural_only_words() {
     let sword = Phrase::id("object:long_sword");
-    let tagged = sword
-        .clone()
-        .with_note(Note::Tags(vec!["taika".into(), "kirottu".into()]));
+    let tagged = sword.clone().with_note(Note::Tags(vec![
+        Word::id("item_tag:magic"),
+        Word::literal("kirottu"),
+    ]));
     assert_eq!(form(&tagged, "nom"), "pitkämiekka (taika, kirottu)");
     let wand = Phrase::id("object:wand");
     let charged = |n| form(&wand.clone().with_note(Note::Charges(n)), "nom");
