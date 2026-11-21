@@ -29,6 +29,7 @@ use crate::content::{
 use crate::equipment::Equipment;
 use crate::geom::Pos;
 use crate::hunger::Hunger;
+use crate::lang::Arg;
 use crate::object::{Stack, Weight};
 use crate::skills::{self, SkillId};
 use crate::stats::PerStat;
@@ -127,16 +128,17 @@ impl<'a> PerceptionView<'a> {
         Some(self.level.effects_at(self.content, p).light())
     }
 
-    /// Where the stairs or location at `p` lead, by name — only for cells the player sees or
-    /// remembers (the staircase itself is known; its destination is public knowledge).
-    pub fn leads_to(&self, p: Pos) -> Option<String> {
+    /// Where the stairs or location at `p` lead, by name (keys of data, `Content::level_name_arg`)
+    /// — only for cells the player sees or remembers (the staircase itself is known; its
+    /// destination is public knowledge).
+    pub fn leads_to(&self, p: Pos) -> Option<Arg> {
         if matches!(self.cell(p), CellView::Unknown) {
             return None;
         }
         let link = self.level.stairs_at(p)?;
         // A named location (a legend's `name`, a revealed hidden location's) goes by its own
         // name, even while it leads nowhere yet.
-        (link.name.clone()).or_else(|| self.content.level_display_name(link.to.as_deref()?))
+        (link.name.clone()).or_else(|| self.content.level_name_arg(link.to.as_deref()?))
     }
 
     /// The named place at `p` (a legend's `name`: a location, a landmark), if the player sees
@@ -151,11 +153,11 @@ impl<'a> PerceptionView<'a> {
     /// The locations the player knows on the overworld, by position, each with its name: the
     /// ways into other places on cells they see or remember (a hidden location only once
     /// revealed, when it is one of them). Empty on any other level.
-    pub fn known_locations(&self) -> Vec<(Pos, String)> {
+    pub fn known_locations(&self) -> Vec<(Pos, Arg)> {
         if self.level.kind() != LevelKind::Overworld {
             return Vec::new();
         }
-        let mut known: Vec<(Pos, String)> = (self.level.stairs.iter())
+        let mut known: Vec<(Pos, Arg)> = (self.level.stairs.iter())
             .filter_map(|s| Some((s.pos, self.leads_to(s.pos)?)))
             .collect();
         known.sort_by_key(|(p, _)| (p.y, p.x));

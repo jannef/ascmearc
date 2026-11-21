@@ -100,7 +100,7 @@ fn the_tower_is_hidden_in_the_holly_wood_until_revealed() {
     assert_eq!(w.perception().leads_to(TOWER_CELL), None);
     act(&mut w, "reveal:drytorr");
     assert_eq!(
-        w.perception().leads_to(TOWER_CELL).as_deref(),
+        crate::test_support::leads_to(&w, TOWER_CELL).as_deref(),
         Some("Drȳtorr")
     );
     put_player(&mut w, TOWER_CELL);

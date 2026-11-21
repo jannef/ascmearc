@@ -339,7 +339,7 @@ cast path shares.
     records `WorldState::pits[S] = Pit { from: the level, sealed: false }`, turns the first plain
     free cell within `[pit] mouth_reach` (`data/rules/tuning.toml`, 3) of the caster (walkable; no one on it; no stairs,
     door, chest, statue, grave, light, trap, hidden location, place, or flow) into `stairs_down`
-    (`set_terrain`) and pushes a `StairsLink` down to `hellegeat@S:1` named "the Pit", as
+    (`set_terrain`) and pushes a `StairsLink` down to `hellegeat@S:1` named "the Pit" (`levels.the_pit`), as
     `open_lair` opens a lair; then the gate comes to the first free cell around the caster but
     the mouth (`miscast_summon`'s `besides`). **Refused** (`World::pit_refused`) on the
     overworld, on a Pit's own floor (`is_portal_floor`), and with no plain cell: no draw, no

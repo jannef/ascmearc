@@ -184,7 +184,10 @@ fn the_mound_is_hidden_in_the_wood_until_revealed() {
     assert!(!json.contains("lfhām"), "the mound in the JSON dump");
     // The dev reveal marks it (as the quest will), and it leads down into the branch.
     act(&mut w, "reveal:aelfham");
-    assert_eq!(w.perception().leads_to(MOUND).as_deref(), Some("Ælfhām"));
+    assert_eq!(
+        crate::test_support::leads_to(&w, MOUND).as_deref(),
+        Some("Ælfhām")
+    );
     put_player(&mut w, MOUND);
     act(&mut w, "descend");
     assert_eq!(w.perception().level_id(), "aelfham:1");

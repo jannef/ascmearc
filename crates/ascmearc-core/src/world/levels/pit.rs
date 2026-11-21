@@ -210,7 +210,7 @@ impl World {
                 pos: at,
                 dir: StairsDir::Down,
                 to: Some(to),
-                name: Some("the Pit".into()),
+                name: Some(msg::levels::THE_PIT.into()),
             });
         }
         self.miscast_summon(caster, here, gate, mouth);

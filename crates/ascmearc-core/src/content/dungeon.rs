@@ -827,15 +827,36 @@ impl DungeonDef {
     /// ground floor, the clearing, so its depth 1 is `Drȳtorr 2`; the one floor of a branch of
     /// one is called by the branch's name alone (`Skeul Hir`).
     pub fn level_name(&self, depth: u32) -> String {
+        match self.floor(depth) {
+            None => self.name.clone(),
+            Some(floor) => format!("{} {floor}", self.name),
+        }
+    }
+
+    /// [`Self::level_name`] as the game says it: the branch's name, a line of data, alone or
+    /// with the floor (`levels.branch_level`).
+    pub fn level_name_arg(&self, depth: u32) -> crate::lang::Arg {
+        let name = crate::lang::Arg::said(super::data_line::dungeon_name(&self.id));
+        match self.floor(depth) {
+            None => name,
+            Some(floor) => (crate::lang::Msg::new(crate::msg::levels::BRANCH_LEVEL))
+                .role("branch", name)
+                .role("floor", i64::from(floor))
+                .into(),
+        }
+    }
+
+    /// The number a level of this branch is called by, a tower's counting its ground floor;
+    /// `None` for the one level of a branch of one level (no endless, portal, or tower).
+    fn floor(&self, depth: u32) -> Option<u32> {
         if self.depth == 1
             && self.endless.is_none()
             && self.portal.is_none()
             && self.tower.is_none()
         {
-            return self.name.clone();
+            return None;
         }
-        let floor = depth + u32::from(self.tower.is_some());
-        format!("{} {floor}", self.name)
+        Some(depth + u32::from(self.tower.is_some()))
     }
 
     /// Sets every level's size: a tower's, its clearing's (`Content::fit_tower`).

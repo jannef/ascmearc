@@ -87,7 +87,8 @@ dev views (`dump/truth.rs::truth_rows`, the F2 overlay in `ui/dev.rs`) read `hid
 `World::branch_open`, when it leads to the branch's first floor); on each of its levels that is
 instantiated, `reveal_on` takes the entry out of `hidden`, sets the terrain and the
 player's memory of the cell (the map is marked wherever they are), and pushes a `StairsLink`
-(up or down as the terrain's `stairs` is) with the location's `name` (`StairsLink::name`,
+(up or down as the terrain's `stairs` is) with the location's `name` by its key
+(`StairsLink::name`, `data_line::hidden_name`;
 preferred by `PerceptionView::leads_to` and the "The way into … is here." and "You enter …"
 messages); otherwise `instantiate_level` applies every revealed id as the level is made
 (`reveal::apply_revealed`). No stream is drawn.
@@ -126,7 +127,8 @@ Grundlēas nothing is revealed).
 
 Named places (#332): a legend's `name` (and `note`, a sentence for look mode) on any cell of a
 hand-made level goes into `LevelTemplate::places` (`content/level.rs::parse_place`; the author
-keeps it off a `hidden` one, which it would give away). A way in on that cell carries the name as
+keeps it off a `hidden` one, which it would give away), keyed by its legend entry (`Place::key`,
+lines of data: `docs/dev/localization.md`). A way in on that cell carries the name's key as
 `StairsLink::name`, so look mode, "The way into … is here." (`world/levels/travel.rs`), and the
 `locations` layer name it even while it leads nowhere yet; `PerceptionView::place` gives the
 place on a cell the player sees or remembers, and `ui/look.rs` names it after the terrain and
