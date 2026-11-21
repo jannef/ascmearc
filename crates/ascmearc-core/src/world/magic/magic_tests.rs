@@ -626,8 +626,8 @@ fn creatures_drop_loot_deterministically() {
 }
 
 /// A drop's item level is the dropping creature's, at least the floor's
-/// (docs/design/affixes-systems.md §3): a kobold (level 1) drops at the level's 3, a deeper
-/// creature on the same floor at its own level.
+/// (docs/design/affixes-systems.md §3): a kobold (level 1) drops at the level's 3, a
+/// higher-level creature on the same floor at its own level.
 #[test]
 fn a_drop_rolls_at_the_creatures_level_at_least_the_floors() {
     let w = world();

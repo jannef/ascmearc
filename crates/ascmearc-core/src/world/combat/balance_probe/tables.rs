@@ -21,15 +21,16 @@ pub(super) fn players(p: &Probe, out: &mut String) {
     .unwrap();
     writeln!(
         out,
-        "| L | Warrior plain | Warrior magic | Thief plain | Thief magic | Wizard plain | Priest plain | Priest magic |"
+        "| L | Warrior plain | Warrior magic | Warrior best | Thief plain | Thief magic | Wizard plain | Priest plain | Priest magic |"
     )
     .unwrap();
-    writeln!(out, "|---|---|---|---|---|---|---|---|").unwrap();
+    writeln!(out, "|---|---|---|---|---|---|---|---|---|").unwrap();
     for &level in &LEVELS {
         let mut row = format!("| {level} |");
         for (class, gear) in [
             ("warrior", Gear::Plain),
             ("warrior", Gear::Magic),
+            ("warrior", Gear::Best),
             ("thief", Gear::Plain),
             ("thief", Gear::Magic),
             ("wizard", Gear::Plain),
@@ -200,6 +201,30 @@ pub(super) fn fights(p: &Probe, rng: &mut Rng, out: &mut String) {
         for (_, class, gear) in columns {
             let f = fight(&p.of(class, level, gear, true), &w, None, rng);
             write!(row, " {} |", fight_cell(&f)).unwrap();
+        }
+        writeln!(out, "{row}").unwrap();
+    }
+    best(p, &mut Rng::stream(2049, "best"), out);
+}
+
+/// The warrior's magic (the flat roll's expected gear) against their best (every affix at its
+/// top tier), in blows: the item level 40 design's §12 gate (#2049).
+fn best(p: &Probe, rng: &mut Rng, out: &mut String) {
+    writeln!(
+        out,
+        "\nThe warrior's magic gear (rolled: the expected) against the best (the same pieces, every affix at the top tier its item level reaches). Each cell as above, then the blows to kill (rounds to kill × blows a round).\n"
+    )
+    .unwrap();
+    writeln!(out, "| L | Warrior magic | Warrior best |").unwrap();
+    writeln!(out, "|---|---|---|").unwrap();
+    for &level in &LEVELS {
+        let w = p.window(level, -2, 2);
+        let mut row = format!("| {level} |");
+        for gear in [Gear::Magic, Gear::Best] {
+            let s = p.of("warrior", level, gear, true);
+            let f = fight(&s, &w, None, rng);
+            let blows = avg(s.iter().map(|s| s.side.blows));
+            write!(row, " {} · {} blows |", fight_cell(&f), r(f.kill * blows)).unwrap();
         }
         writeln!(out, "{row}").unwrap();
     }

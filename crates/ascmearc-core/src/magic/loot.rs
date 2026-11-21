@@ -391,7 +391,7 @@ fn make_from(
         Some(magic) => Stack::with_magic(object, count, magic),
         None => Stack::new(object, count),
     };
-    // Deeper loot is set with a gem more often, and better made (#1436).
+    // Loot of a higher item level is set with a gem more often, and better made (#1436).
     let loot = source == Some(Source::Loot);
     let more = if loot {
         content.gear_condition().at_item_level(level).ornament

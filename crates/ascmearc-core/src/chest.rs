@@ -4,7 +4,7 @@
 //! it holds. Its lock lies in the level's `locks`, as a door's does, so keys, Pick lock, and
 //! Knock work on it as on a door.
 //!
-//! A chest's **level** is its floor's (a branch floor's depth, a hand-made level's
+//! A chest's **level** is its floor's item level (a branch floor's danger, a hand-made level's
 //! `item_level`) unless a legend gives one; its **band** (`data/chests.toml`,
 //! [`crate::content::ChestRules::band_of`]) follows from the level and is never saved, so the
 //! bands can be renamed or re-cut without breaking a save. What a shut chest holds is ground
