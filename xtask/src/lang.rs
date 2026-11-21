@@ -28,6 +28,7 @@ mod registers;
 
 use crate::workspace_root;
 use ascmearc_lang::en::Plurals;
+use ascmearc_lang::render::{FORM_FEATURE, SLOT_ROLE};
 use ascmearc_lang::template::{Segment, Template};
 use ascmearc_lang::{Language, Lexicon, Line, MapLexicon, Morphology, Templates};
 use std::collections::{BTreeMap, BTreeSet};
@@ -415,8 +416,14 @@ fn slots(template: &Template) -> Vec<(String, String)> {
 
 /// What is wrong with a template's variants, at any depth: a feature no argument has, a key the
 /// feature never takes (a typo there would only ever render `else`), and, for a translation
-/// (`english_roles`, the roles its English entry names), a role English does not pass.
-fn shape_problems(template: &Template, english_roles: Option<&[String]>) -> Vec<String> {
+/// (`english_roles`, the roles its English entry names), a role English does not pass. Variants
+/// on the slot's form (`by = "slot.form"`, any entry: the slot it is said in) take the
+/// language's `forms`.
+fn shape_problems(
+    template: &Template,
+    english_roles: Option<&[String]>,
+    forms: &BTreeSet<String>,
+) -> Vec<String> {
     let mut out = Vec::new();
     let Template::Variants {
         role,
@@ -427,7 +434,18 @@ fn shape_problems(template: &Template, english_roles: Option<&[String]>) -> Vec<
     else {
         return out;
     };
+    let slot = role == SLOT_ROLE;
     match FEATURES.iter().find(|(f, _)| f == feature) {
+        _ if slot && feature != FORM_FEATURE => out.push(format!(
+            "`by = \"{role}.{feature}\"`: the slot has only `{FORM_FEATURE}`"
+        )),
+        _ if slot => {
+            for key in variants.keys().filter(|k| !forms.contains(*k)) {
+                out.push(format!(
+                    "`by = \"{role}.{feature}\"`: `{key}` is no form of the language"
+                ));
+            }
+        }
         None => out.push(format!(
             "`by = \"{role}.{feature}\"`: no feature `{feature}` (only gender, number, person)"
         )),
@@ -440,14 +458,14 @@ fn shape_problems(template: &Template, english_roles: Option<&[String]>) -> Vec<
             }
         }
     }
-    if role != KEY_ROLE && english_roles.is_some_and(|roles| !roles.contains(role)) {
+    if role != KEY_ROLE && !slot && english_roles.is_some_and(|roles| !roles.contains(role)) {
         out.push(format!(
             "unknown role `{role}` in `by` (English passes {:?})",
             english_roles.unwrap_or_default()
         ));
     }
     for variant in variants.values().chain(otherwise.iter().map(AsRef::as_ref)) {
-        out.extend(shape_problems(variant, english_roles));
+        out.extend(shape_problems(variant, english_roles, forms));
     }
     out
 }
@@ -607,7 +625,7 @@ fn check_entries(
                 }
             }
             let english_roles = (source.filter(|_| !is_english)).map(|s| s.template.roles());
-            for problem in shape_problems(&entry.template, english_roles.as_deref()) {
+            for problem in shape_problems(&entry.template, english_roles.as_deref(), forms) {
                 report.errors.push(format!("{code}: {id}: {problem}"));
             }
             if let Some(src) = source.filter(|_| !is_english) {

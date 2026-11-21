@@ -33,7 +33,7 @@ use crate::content::{
     Content, DialogueId, Goal, KillTarget, Pick, QuestDef, QuestId, QuestKind, RevealWhen, Reward,
     Roll, Rolled, SkillReward,
 };
-use crate::content::{ObjectId, data_line};
+use crate::content::{ObjectId, data_line, place_word};
 use crate::lang::{Arg, Msg, Phrase};
 use crate::msg;
 use crate::object::{self, Stack};
@@ -390,13 +390,13 @@ fn speaker(content: &Content, id: DialogueId) -> Phrase {
     content.speaker_phrase(id)
 }
 
-/// The level or branch `id` as its name is said, by its key: a level's (a hand-made level's line
-/// of data, a branch level's `levels.branch_level`; `Content::level_name_arg`), else a branch's
-/// `dungeon:<id>.name`, else the id as text. A name with its own article writes it in lower case
+/// The level or branch `id` as its name is said: a level's (a hand-made level's lexicon
+/// word, a branch level's `levels.branch_level`; `Content::level_name_arg`), else a branch's
+/// `place:dungeon.<id>`, else the id as text. A name with its own article writes it in lower case
 /// in the data ("the Arena"), as a hidden location's does (`people.marks_on_map`).
 fn place_of(content: &Content, id: &str) -> Arg {
     (content.level_name_arg(id))
-        .or_else(|| (content.dungeon(id)).map(|d| Arg::said(data_line::dungeon_name(&d.id))))
+        .or_else(|| (content.dungeon(id)).map(|d| Arg::from(place_word::dungeon(&d.id))))
         .unwrap_or_else(|| Arg::id(id))
 }
 
@@ -867,7 +867,7 @@ impl World {
         }
         // Its name by its key, as the data writes it: one with its own article writes it in
         // lower case ("the Skeul Hir"), as a unique's name does (`en::own_article`).
-        let place = Arg::said(data_line::hidden_name(level, &location.id));
+        let place = Arg::from(place_word::hidden(level, &location.id));
         let who = self.called_phrase(&self.state.actors[&id]);
         self.say(
             Msg::new(msg::people::MARKS_ON_MAP)

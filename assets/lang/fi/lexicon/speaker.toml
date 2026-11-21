@@ -1,0 +1,18 @@
+# Who speaks a dialogue, by its proper name with any title (`speaker:<scope>`, the scope of the
+# dialogue's keys). A name inflects as Finnish inflects a foreign name, on its last word, so a
+# title goes before it in lower case ("sisar Hild", "sisar Hildille"; a capital at the start of a
+# line is the line's), and an old one's by-name after it ("Tregear-vaari", "Tregear-vaarille").
+# A plain name ("Godgifu", "Alberich") is English's, which inflects the same.
+"ascmearc.dudda" = { word = "Dudda-vaari", proper = true }
+"ascmearc.hild" = { word = "sisar Hild", proper = true }
+"ascmearc.leofric" = { word = "vouti Leofric", proper = true }
+"ascmearc.ordgar" = { word = "mestari Ordgar", proper = true }
+"ascmearc.peran" = { word = "kylänvanhin Peran", proper = true }
+"ascmearc.senara" = { word = "äiti Senara", proper = true }
+"ascmearc.sigeric" = { word = "mestari Sigeric", proper = true }
+"ascmearc.tregear" = { word = "Tregear-vaari", proper = true }
+"ascmearc.wat" = { word = "Wat Yksisilmä", proper = true }
+"ascmearc.wulfrun" = { word = "faktori Wulfrun", proper = true }
+"ascmearc.wynflaed" = { word = "Wynflæd-mummo", proper = true }
+"ascmearc.ysella" = { word = "Ysella Sitoja", proper = true }
+"ascmearc.aelfswith" = { word = "rouva Ælfswīð", proper = true }

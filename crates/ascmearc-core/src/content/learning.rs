@@ -139,16 +139,17 @@ impl StudyRules {
         }
     }
 
-    /// The chance of `ways` of 144 in words, as the game tells it.
-    pub fn words(&self, ways: u32) -> &'static str {
+    /// The chance of `ways` of 144 in words, as the game tells it: a message id
+    /// (`messages/words.toml`, "certain", "easy", "a struggle", "far beyond you").
+    pub fn words(&self, ways: u32) -> crate::lang::MessageId {
         if ways >= 144 {
-            "certain"
+            crate::msg::words::CHANCE_CERTAIN
         } else if ways >= self.easy {
-            "easy"
+            crate::msg::words::CHANCE_EASY
         } else if ways >= self.struggle {
-            "a struggle"
+            crate::msg::words::CHANCE_STRUGGLE
         } else {
-            "far beyond you"
+            crate::msg::words::CHANCE_BEYOND
         }
     }
 }
@@ -608,10 +609,10 @@ mod tests {
         assert_eq!(r.band(6), Band::Bad);
         assert_eq!(r.band(14), Band::Bad);
         assert_eq!(r.band(15), Band::Terrible);
-        assert_eq!(r.words(144), "certain");
-        assert_eq!(r.words(96), "easy");
-        assert_eq!(r.words(40), "a struggle");
-        assert_eq!(r.words(35), "far beyond you");
+        assert_eq!(r.words(144), crate::msg::words::CHANCE_CERTAIN);
+        assert_eq!(r.words(96), crate::msg::words::CHANCE_EASY);
+        assert_eq!(r.words(40), crate::msg::words::CHANCE_STRUGGLE);
+        assert_eq!(r.words(35), crate::msg::words::CHANCE_BEYOND);
         assert_eq!(r.crumble, 25);
     }
 

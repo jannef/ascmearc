@@ -2,7 +2,7 @@
 //! each condition, and determinism.
 
 use super::*;
-use crate::character::{CharacterSpec, Start};
+use crate::character::{CharacterSpec, Gender, Start};
 use crate::content::{ContentFiles, StoryTier, When};
 use crate::test_support::CONTENT;
 use std::collections::BTreeMap;
@@ -241,13 +241,29 @@ fn texts_fill_their_slots() {
     c.story = story(&["parents/foundling", "birth/quiet_birth"]);
     assert!(retell(&CONTENT, "ascmearc", &c)[0].contains("which the sisters counted"));
     // The name and the gender's pronouns.
-    let words = BTreeMap::new();
+    let text = "{They} told {them} {their} name, {name}, at {Home}.";
+    let template = crate::content::story_template(text);
     assert_eq!(
-        fill("{They} told {them} {their} name, {name}.", &c, &words),
-        "She told her her name, Brakka."
+        template,
+        "{who:They} told {who:them} {who:their} name, {who:name}, at {home:Bare}."
     );
+    let fill = |c: &Character| {
+        let who = crate::lang::Phrase::literal(&c.name).gender(c.spec.gender.spoken());
+        let args = BTreeMap::from([
+            ("who".into(), crate::lang::Arg::from(who)),
+            (
+                "home".into(),
+                crate::lang::Phrase::id("word:the farm").into(),
+            ),
+        ]);
+        let line = crate::lang::Template::Line(crate::lang::Line::parse(&template));
+        (CONTENT.english())
+            .try_line(&line, &args, CONTENT.lexicon(), &crate::lang::written_key)
+            .expect("renders")
+    };
+    assert_eq!(fill(&c), "She told her her name, Brakka, at The farm.");
     c.spec.gender = Gender::Other;
-    assert_eq!(fill("{They} and {them}", &c, &words), "They and them");
+    assert!(fill(&c).starts_with("They told them their name"));
     // A line the content does not have is skipped, and named (a save holding it is refused).
     c.story = story(&[
         "parents/plain_folk",

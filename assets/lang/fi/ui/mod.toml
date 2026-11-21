@@ -2,7 +2,7 @@
 
 [aim_wand]
 of = "21e86c"
-text = "{item:bare} ({does:bare})"
+text = "{item:nom} ({does:bare})"
 
 # Status bar: eyes kept from a gaze.
 [averted]

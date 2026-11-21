@@ -339,7 +339,10 @@ fn the_player_perceives_their_story_as_paragraphs() {
     let view = kitted.perception();
     let c = view.character().expect("a character");
     let told = crate::background::retell(kitted.content(), kitted.campaign(), c);
-    assert_eq!(view.story(), told);
+    assert_eq!(
+        view.story(),
+        crate::background::retold(kitted.content(), kitted.campaign(), c)
+    );
     assert!((1..=4).contains(&told.len()), "{told:?}");
     assert!(told.iter().all(|p| !p.is_empty() && !p.contains('{')));
     let plain = World::new(BUILTIN.clone(), "showcase", None).expect("world");

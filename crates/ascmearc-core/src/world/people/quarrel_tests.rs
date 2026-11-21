@@ -154,7 +154,7 @@ fn a_rival_offers_her_side_on_the_first_arrival_only() {
     // Chatting again shows the topics again; closing the screen leaves them.
     let dir = beside(&mut w, "stormcaller");
     let topics = w.topics(wizard(&w, "stormcaller").expect("her"));
-    let her = crate::lang::Phrase::literal("Mistress Stormwell");
+    let her = crate::lang::Phrase::id("speaker:showcase.stormcaller").proper(true);
     assert!(
         topics
             .iter()
@@ -321,7 +321,10 @@ fn the_owners_full_path_ends_with_the_last_ally() {
         "gold, one rare item, one grimoire: {hoard:?}"
     );
     let view = w.perception().parting().expect("the parting");
-    assert_eq!(view.who, crate::lang::Phrase::literal("Master Brasswright"));
+    assert_eq!(
+        view.who,
+        crate::lang::Phrase::id("speaker:showcase.maker").proper(true)
+    );
     assert_eq!(view.choices, [PartingChoice::Leave, PartingChoice::Betray]);
 }
 

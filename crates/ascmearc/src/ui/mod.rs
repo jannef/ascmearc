@@ -109,7 +109,7 @@ use ascmearc_core::Pos;
 use ascmearc_core::ability::Ability;
 use ascmearc_core::burden::Burden;
 use ascmearc_core::color::Rgb;
-use ascmearc_core::content::{Content, ObjectId};
+use ascmearc_core::content::{Content, ObjectId, data_line};
 use ascmearc_core::hunger::Hunger;
 use ascmearc_core::lang::{Arg, Entry};
 use ascmearc_core::perception::{BelowView, CellView, PerceptionView};
@@ -646,25 +646,27 @@ fn draw_messages(
             AimKind::Ability(_) => None,
         };
         let content = view.content();
+        // What is aimed, as a phrase the prompt says in its own form (#2062): an ability by its
+        // name, an item as the player knows its type.
         let ready = match aim.kind {
-            AimKind::Ability(ability) => ability.name(content).to_string(),
-            _ => (missile.and_then(|i| view.inventory().get(i))).map_or_else(String::new, |s| {
-                let named = view.lore().describe_object(s.object, 1);
+            AimKind::Ability(ability) => content.ability_phrase(ability).into(),
+            _ => (missile.and_then(|i| view.inventory().get(i))).map_or_else(Arg::empty, |s| {
+                let named = view.lore().object_phrase(s.object);
                 // A wand the player knows says what it does in their hands (its rung).
                 match view
                     .wand_does(s)
                     .filter(|_| matches!(aim.kind, AimKind::Zap(_)))
                 {
-                    Some(does) => ui_with(
+                    Some(does) => Arg::text(ui_with(
                         T::AIM_WAND,
-                        &[("item", Arg::text(named)), ("does", does.into())],
-                    ),
-                    None => named,
+                        &[("item", named.into()), ("does", does.into())],
+                    )),
+                    None => named.into(),
                 }
             }),
         };
         let confirm = (bindings.key_name(aim.kind.confirm())).unwrap_or_else(|| "?".to_string());
-        let prompt = aim.prompt(&ready, &confirm);
+        let prompt = aim.prompt(ready, &confirm);
         console.print(1, 1, &prompt, ACCENT);
         return;
     }
@@ -821,7 +823,7 @@ fn status_segments(view: &PerceptionView, clock: Clock, dev: bool) -> Vec<Segmen
     let resources = (view.own_resources().into_iter()).map(|r| {
         let def = content.resource(r.resource);
         let (name, value) = (
-            ("name", Arg::text(def.short.clone())),
+            ("name", Arg::said(data_line::resource_short(&def.id))),
             ("value", number(r.value)),
         );
         let text = match def.show_max {

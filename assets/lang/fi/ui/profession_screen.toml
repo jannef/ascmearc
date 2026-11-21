@@ -26,4 +26,4 @@ text = "{profession:bare}: ohjeet"
 
 [takes]
 of = "0b6ad3"
-text = "Vaatii {takes:bare}."
+text = "Vaatii: {takes:bare}."

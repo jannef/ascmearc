@@ -387,9 +387,10 @@ impl Aim {
         (me.dist2(center) <= radius2(radius)).then_some(noun)
     }
 
-    /// The prompt in the message line: what is aimed, and how. `ready` names the missile ("an
-    /// arrow"); `confirm` is the key of [`AimKind::confirm`] as bound, Enter and Tab are fixed.
-    pub fn prompt(&self, ready: &str, confirm: &str) -> String {
+    /// The prompt in the message line: what is aimed, and how. `ready` names the missile (a
+    /// phrase, "an arrow" said `counted`) or the ability; `confirm` is the key of
+    /// [`AimKind::confirm`] as bound, Enter and Tab are fixed.
+    pub fn prompt(&self, ready: Arg, confirm: &str) -> String {
         let text = match self.kind {
             AimKind::Fire => T::PROMPT_FIRE,
             AimKind::Throw(_) => T::PROMPT_THROW,
@@ -400,7 +401,7 @@ impl Aim {
             AimKind::Ability(_) => T::PROMPT_ABILITY,
         };
         let args = [
-            ("ready", Arg::text(ready)),
+            ("ready", ready),
             ("next", Arg::text(fixed::NEXT_TARGET)),
             ("loose", Arg::text(fixed::LOOSE)),
             ("confirm", Arg::text(confirm)),
@@ -803,7 +804,7 @@ mod tests {
         };
         assert_eq!(bolt.range(&view), Some(8));
         assert_eq!(bolt.catches_reader(&view), None);
-        let text = bolt.prompt("a scroll of lightning", "r");
+        let text = bolt.prompt(Arg::text("a scroll of lightning"), "r");
         assert!(text.starts_with("Read a scroll of lightning:"), "{text}");
         assert!(text.contains("Enter or r reads"), "{text}");
     }
@@ -925,7 +926,7 @@ mod tests {
             kind: AimKind::Fire,
             at: Pos::new(1, 1),
         };
-        let text = aim.prompt("a flaming arrow", "f");
+        let text = aim.prompt(Arg::text("a flaming arrow"), "f");
         assert_eq!(
             text,
             "Fire a flaming arrow: Tab or direction keys aim, Enter or f fires, Esc cancels."
@@ -946,7 +947,7 @@ mod tests {
             kind: AimKind::Throw(0),
             ..aim
         };
-        let text = throw.prompt("a dagger", "t");
+        let text = throw.prompt(Arg::text("a dagger"), "t");
         assert!(text.starts_with("Throw a dagger:"), "{text}");
         assert!(text.contains("Enter or t throws"), "{text}");
         let content = ascmearc_assets::content().expect("content");

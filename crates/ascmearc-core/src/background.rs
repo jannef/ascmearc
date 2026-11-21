@@ -17,8 +17,11 @@
 //! and a line removed from the content is skipped.
 
 use crate::alignment::Band;
-use crate::character::{Character, Gender};
-use crate::content::{Content, CreatureId, Keep, Marks, StoryEffect, StoryLine, WeaponSkillId};
+use crate::character::Character;
+use crate::content::{
+    Content, CreatureId, Keep, Marks, SET_SLOTS, StoryEffect, StoryLine, WeaponSkillId,
+};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::magic::loot;
 use crate::object::Stack;
 use crate::rng::Rng;
@@ -26,7 +29,7 @@ use crate::skills::SkillId;
 use crate::skills::Skills;
 use crate::stats::Stat;
 use crate::talent::Talents;
-use crate::text::capitalized;
+
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -227,43 +230,66 @@ fn roll(content: &Content, rng: &mut Rng, effect: &StoryEffect, witness: &Witnes
 
 /// The paragraphs of `character`'s story in a run of `campaign`, told again from the content
 /// with the slots filled: empty without a story. A line the content no longer has is skipped
-/// (its `set` with it), and the paragraph closes up.
-pub fn retell(content: &Content, campaign: &str, character: &Character) -> Vec<String> {
-    let mut paragraphs: BTreeMap<u8, Vec<String>> = BTreeMap::new();
-    for (_, paragraph, text) in lines(content, campaign, character) {
-        paragraphs.entry(paragraph).or_default().push(text);
+/// (its `set` with it), and the paragraph closes up. Each paragraph is its lines said as one
+/// (`world.lines`), each a line of data in the language shown (#2062).
+pub fn retold(content: &Content, campaign: &str, character: &Character) -> Vec<Msg> {
+    let mut paragraphs: BTreeMap<u8, Vec<Arg>> = BTreeMap::new();
+    for (_, paragraph, line) in lines(content, campaign, character) {
+        paragraphs.entry(paragraph).or_default().push(line.into());
     }
-    paragraphs
-        .into_values()
-        .map(|lines| lines.join(" "))
+    (paragraphs.into_values())
+        .map(|lines| Msg::new(crate::msg::world::LINES).role("lines", Arg::List(lines)))
+        .collect()
+}
+
+/// [`retold`] in English: the dumps' and the tests'.
+pub fn retell(content: &Content, campaign: &str, character: &Character) -> Vec<String> {
+    (retold(content, campaign, character).iter())
+        .map(|p| crate::messages::english_msg(content, p))
         .collect()
 }
 
 /// Each line of `character`'s story the content (in a run of `campaign`) has, in order: its ids,
-/// its paragraph, and its text with the slots filled.
+/// its paragraph, and the line, said by its key (`story:<scope>.<line>`) with the character
+/// (`who`) and the slot words (`story_word:` lexicon ids: the chapters' defaults and what earlier
+/// lines set; a slot nothing filled is empty).
 pub fn lines<'c>(
     content: &Content,
     campaign: &str,
     character: &'c Character,
-) -> Vec<(&'c Told, u8, String)> {
+) -> Vec<(&'c Told, u8, Msg)> {
     let Some(background) = content.background() else {
         return Vec::new();
     };
+    let who = Phrase::literal(&character.name).gender(character.spec.gender.spoken());
     let mut out = Vec::new();
-    let mut slots: BTreeMap<String, String> = BTreeMap::new();
+    // Each slot word by its lexicon id: the latest chapter's default, unless a line set it.
+    let mut defaults: BTreeMap<String, String> = BTreeMap::new();
     let mut set: BTreeMap<String, String> = BTreeMap::new();
     for chapter in background.chapters_for(campaign) {
-        slots.extend(chapter.defaults.clone());
+        for slot in chapter.defaults.keys() {
+            defaults.insert(slot.clone(), chapter.word_id(None, slot));
+        }
         let Some(told) = character.story.iter().find(|t| t.chapter == chapter.id) else {
             continue;
         };
         let Some(line) = chapter.line(&told.line) else {
             continue;
         };
-        let mut words = slots.clone();
-        words.extend(set.clone());
-        out.push((told, chapter.paragraph, fill(&line.text, character, &words)));
-        set.extend(line.set.clone());
+        let mut said = Arg::said(chapter.line_key(&line.id)).with("who", who.clone());
+        for slot in SET_SLOTS {
+            said = said.with(
+                slot,
+                match set.get(slot).or(defaults.get(slot)) {
+                    Some(id) => Phrase::id(id).into(),
+                    None => Arg::empty(),
+                },
+            );
+        }
+        out.push((told, chapter.paragraph, Msg::data_line(said)));
+        for slot in line.set.keys() {
+            set.insert(slot.clone(), chapter.word_id(Some(&line.id), slot));
+        }
     }
     out
 }
@@ -304,46 +330,6 @@ pub fn unknown_line(content: &Content, campaign: &str, character: &Character) ->
             .is_some_and(|c| c.line(&t.line).is_some())
     };
     (character.story.iter()).find(|t| !known(t)).map(Told::id)
-}
-
-/// The pronouns of `gender`: they, them, their.
-fn pronouns(gender: Gender) -> [&'static str; 3] {
-    match gender {
-        Gender::Male => ["he", "him", "his"],
-        Gender::Female => ["she", "her", "her"],
-        Gender::Other => ["they", "them", "their"],
-    }
-}
-
-/// `text` with its slots filled: the name, the pronouns, and `words` (the chapter defaults and
-/// what earlier lines set); a capitalised slot capitalised.
-fn fill(text: &str, character: &Character, words: &BTreeMap<String, String>) -> String {
-    let [they, them, their] = pronouns(character.spec.gender);
-    let mut out = String::new();
-    let mut rest = text;
-    while let Some(open) = rest.find('{') {
-        out.push_str(&rest[..open]);
-        let after = &rest[open + 1..];
-        let Some(close) = after.find('}') else {
-            break;
-        };
-        let slot = &after[..close];
-        let word = match slot.to_lowercase().as_str() {
-            "name" => character.name.clone(),
-            "they" => they.to_string(),
-            "them" => them.to_string(),
-            "their" => their.to_string(),
-            other => words.get(other).cloned().unwrap_or_default(),
-        };
-        let capital = slot.starts_with(|c: char| c.is_uppercase());
-        out.push_str(&match capital {
-            true => capitalized(&word),
-            false => word,
-        });
-        rest = &after[close + 1..];
-    }
-    out.push_str(rest);
-    out
 }
 
 /// The built-in content without background stories (tests of what a story would add to: the

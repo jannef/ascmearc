@@ -337,7 +337,7 @@ fn allied_she_pays_with_spellcraft_and_concentration_and_parts_in_her_words() {
     let parting = w.perception().parting().expect("the parting pends");
     assert_eq!(
         parting.who,
-        crate::lang::Phrase::literal("Mistress Ælfswīð")
+        crate::lang::Phrase::id("speaker:ascmearc.aelfswith").proper(true)
     );
     assert_eq!(
         parting.text,

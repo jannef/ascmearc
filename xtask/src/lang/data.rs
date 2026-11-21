@@ -67,7 +67,7 @@ pub fn check_data(
                 match Template::from_value(&by_gender(&key, value)) {
                     Ok(t) => {
                         check_slots(&at, kind, &t, en, language.morphology(), &mut report);
-                        check_shape(&at, kind, &t, en, &mut report);
+                        check_shape(&at, kind, &t, en, language.morphology(), &mut report);
                     }
                     Err(e) => report.errors.push(format!("{at}: {e}")),
                 }
@@ -286,12 +286,22 @@ fn by_gender(key: &str, value: &toml::Value) -> toml::Value {
 /// A translated line's variants and alternatives, as a message's: a `by` on a role the English
 /// line does not pass, a feature no argument has, or a value the feature never takes, and more
 /// flavour alternatives than English has (core draws by English's count).
-fn check_shape(at: &str, kind: &str, line: &Template, english: &Template, report: &mut Report) {
+fn check_shape(
+    at: &str,
+    kind: &str,
+    line: &Template,
+    english: &Template,
+    morphology: &dyn Morphology,
+    report: &mut Report,
+) {
     let mut roles = english.roles();
     if kind == DIALOGUE {
         roles.push(PLAYER.to_string());
     }
-    for problem in shape_problems(line, Some(&roles)) {
+    let forms: BTreeSet<String> = (morphology.forms().into_iter())
+        .chain(LIST_FORMS.iter().map(|f| f.to_string()))
+        .collect();
+    for problem in shape_problems(line, Some(&roles), &forms) {
         report.errors.push(format!("{at}: {problem}"));
     }
     let (most, ours) = (alternatives(english), alternatives(line));

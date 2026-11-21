@@ -87,6 +87,15 @@ impl Gender {
     /// Every gender, in the order offered.
     pub const ALL: [Gender; 3] = [Gender::Male, Gender::Female, Gender::Other];
 
+    /// The gender as the languages know it (a phrase's, for its pronouns and agreement).
+    pub fn spoken(self) -> crate::lang::Gender {
+        match self {
+            Gender::Male => crate::lang::Gender::Male,
+            Gender::Female => crate::lang::Gender::Female,
+            Gender::Other => crate::lang::Gender::Other,
+        }
+    }
+
     /// The id on the command line and in saves: `female`.
     pub const fn id(self) -> &'static str {
         match self {

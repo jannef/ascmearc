@@ -29,6 +29,9 @@ pub struct TradeOffer {
     pub id: String,
     /// What the player picks: "Your wares" (the screen adds the price).
     pub name: String,
+    /// The key of `name`'s line of data, `dialogue:<scope>.offer_name`, given as the lines are
+    /// keyed (`dialogue_line.rs`), so a translation names the offer.
+    pub name_key: String,
     /// What the speaker says when the item is bought.
     pub reply: super::DialogueLine,
     /// What the speaker says when asked again after the sale.
@@ -135,6 +138,7 @@ pub(super) fn resolve(
     Ok(TradeOffer {
         id: spec.id,
         name: spec.name,
+        name_key: String::new(),
         reply: spec.reply,
         sold: spec.sold,
         level_bonus: spec.level.bonus,

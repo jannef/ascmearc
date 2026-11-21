@@ -575,8 +575,8 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> Arg {
 /// The proper name a seen creature goes by, if any: a unique character's or a named monster's.
 fn proper_name(content: &Content, actor: &SeenActor) -> Option<Phrase> {
     let name = &content.creature(actor.creature).name;
-    match (actor.dialogue).and_then(|d| content.dialogue(d).name.as_deref()) {
-        Some(name) => Some(Phrase::literal(name)),
+    match (actor.dialogue).and_then(|d| content.proper_name_phrase(d)) {
+        Some(name) => Some(name),
         None => ascmearc_core::content::is_proper(name).then(|| kind(content, actor)),
     }
 }
