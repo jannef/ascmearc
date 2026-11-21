@@ -149,7 +149,7 @@
 #              gloves, boots, shield, ring, amulet, tool (a digging tool), or pipe (a
 #              halfling's pipe: it rolls armour's affixes, affixes/README.toml): the affixes it
 #              may roll
-#   level      the lowest item level (dungeon depth) loot holds it at; default 1
+#   level      the lowest item level (a floor's danger) loot holds it at; default 1
 #   frequency  how often loot holds it, relative to the rest; default 100, 0 never
 # Things without a kind are never magic, and never loot but for scrolls (below).
 #

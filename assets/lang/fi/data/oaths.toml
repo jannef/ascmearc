@@ -1,0 +1,32 @@
+# Lines of data: a dwarf's oath band reached (`oaths:band.<talent>.message`), named by the talent
+# it gives. "Them" are the creatures sworn against: "ne", "niistä".
+
+[band.oath_bane_eyed]
+message = { text = "Tunnet niiden ruumiit paremmin kuin ne itse: mistä ne murtuvat, mistä ne vuotavat.", of = "688e1b" }
+
+[band.oath_blooded]
+message = { text = "Kymmenen niistä makaa kuolleena valasi tähden. Velkaa on alettu maksaa.", of = "58b3a6" }
+
+[band.oath_deathward]
+message = { text = "Kuolema on kulkenut rinnallasi niin kauan, ettei se enää juuri tunne sinua.", of = "e39dc9" }
+
+[band.oath_doom]
+message = { text = "Valasi on pidetty. Nimeäsi lauletaan syvyyksien saleissa niin kauan kuin on kääpiöitä sitä laulamaan.", of = "d342f8" }
+
+[band.oath_grim]
+message = { text = "Kaunasi on kovettunut sinuun kuin vanha rauta.", of = "5ee379" }
+
+[band.oath_grudge_hewer]
+message = { text = "Viisisataa. Iskuissasi painaa jokainen vääryys, joka kansallesi on tehty.", of = "dce977" }
+
+[band.oath_iron_armed]
+message = { text = "Valasi työ on karaissut käsivartesi.", of = "121527" }
+
+[band.oath_mountain_hearted]
+message = { text = "Sinua on yhtä vaikea liikuttaa kuin vuoren juuria.", of = "835588" }
+
+[band.oath_stone_skinned]
+message = { text = "Niiden iskut tuskin enää löytävät sinua.", of = "159ceb" }
+
+[band.oath_unyielding]
+message = { text = "Sataviisikymmentä niistä. Seisot pystympänä jokaisen jälkeen.", of = "4e7c3c" }

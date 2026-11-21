@@ -2,14 +2,24 @@
 # its `compound` the noun a part's compound adjective is built on ("rautakärkinen"). A
 # material said "of" (a block of stone, a bolt of cloth) takes its noun's genitive (`gen`).
 # Gems are nouns: a loose gem is named by its material ("suuri rubiini").
-amber = { word = "meripihkainen/38", forms = { compound = "meripihka" } }
+adamantium = { word = "adamanttinen/38", forms = { compound = "adamantti" } }
+aluminium = { word = "alumiininen/38", forms = { compound = "alumiini" } }
+amber = { word = "meripihkainen/38", forms = { compound = "meripihka", gen = "meripihkan" } }
 amethyst = "ametisti/5"
+bendalloy = { word = "taipumetallinen/38", forms = { compound = "taipumetalli" } }
 bone = { word = "luinen/38", forms = { compound = "luu" } }
 brass = { word = "messinkinen/38", forms = { compound = "messinki" } }
 bronze = { word = "pronssinen/38", forms = { compound = "pronssi" } }
+cadmium = { word = "kadmiuminen/38", forms = { compound = "kadmium" } }
 chitin = { word = "kitiininen/38", forms = { compound = "kitiini" } }
+chromium = { word = "krominen/38", forms = { compound = "kromi" } }
 cloth = { word = "kankainen/38", forms = { compound = "kangas", gen = "kankaan" } }
 copper = { word = "kuparinen/38", forms = { compound = "kupari" } }
+diamond = "timantti/5*C"
+dragonbone = { word = "lohikäärmeen|luinen/38", forms = { compound = "lohikäärmeenluu" } }
+dragonscale = { word = "lohikäärmeen|suomuinen/38", forms = { compound = "lohikäärmeensuomu" } }
+duralumin = { word = "duralumiininen/38", forms = { compound = "duralumiini" } }
+electrum = { word = "elektruminen/38", forms = { compound = "elektrum" } }
 emerald = "smaragdi/5"
 flesh = { word = "lihainen/38", forms = { compound = "liha" } }
 flint = { word = "piikivinen/38", forms = { compound = "piikivi", gen = "piikiven" } }
@@ -19,21 +29,32 @@ glass = { word = "lasinen/38", forms = { compound = "lasi", gen = "lasin" } }
 gold = { word = "kultainen/38", forms = { compound = "kulta" } }
 hardened_leather = { word = "kova|nahkainen/38", forms = { compound = "kovanahka" } }
 hardwood = { word = "kova|puinen/38", forms = { compound = "kovapuu" } }
+heliodor = "heliodori/5"
 horn = { word = "sarvinen/38", forms = { compound = "sarvi" } }
 iron = { word = "rautainen/38", forms = { compound = "rauta" } }
+ironwood = { word = "rauta|puinen/38", forms = { compound = "rautapuu" } }
+ivory = { word = "norsun|luinen/38", forms = { compound = "norsunluu" } }
+jade = { word = "jadeinen/38", forms = { compound = "jade", gen = "jaden" } }
 lead = { word = "lyijyinen/38", forms = { compound = "lyijy" } }
 leather = { word = "nahkainen/38", forms = { compound = "nahka" } }
+mithril = { word = "mithrilinen/38", forms = { compound = "mithril" } }
+nicrosil = { word = "nikrosiilinen/38", forms = { compound = "nikrosiili" } }
+obsidian = { word = "obsidiaaninen/38", forms = { compound = "obsidiaani", gen = "obsidiaanin" } }
 paper = { word = "paperinen/38", forms = { compound = "paperi" } }
+pewter = { word = "tina|seoksinen/38", forms = { compound = "tinaseos" } }
 plant = { word = "kasvi|peräinen/38", forms = { compound = "kasvi" } }
 ruby = "rubiini/6"
 sapphire = "safiiri/6"
-silk = { word = "silkkinen/38", forms = { compound = "silkki" } }
+silk = { word = "silkkinen/38", forms = { compound = "silkki", gen = "silkin" } }
 silver = { word = "hopeinen/38", forms = { compound = "hopea" } }
 sinew = { word = "jänteinen/38", forms = { compound = "jänne", gen = "jänteen" } }
+smokestone = "savu|kivi/7"
 steel = { word = "teräksinen/38", forms = { compound = "teräs" } }
 stone = { word = "kivinen/38", forms = { compound = "kivi", gen = "kiven" } }
 tin = { word = "tinainen/38", forms = { compound = "tina" } }
 topaz = "topaasi/6"
 wax = { word = "vahainen/38", forms = { compound = "vaha" } }
 wood = { word = "puinen/38", forms = { compound = "puu" } }
-wool = { word = "villainen/38", forms = { compound = "villa" } }
+wool = { word = "villainen/38", forms = { compound = "villa", gen = "villan" } }
+zinc = { word = "sinkkinen/38", forms = { compound = "sinkki" } }
+zircon = "zirkoni/5"

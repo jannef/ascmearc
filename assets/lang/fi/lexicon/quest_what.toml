@@ -1,0 +1,3 @@
+# What a kill quest calls its quarry (`quest_what:<quest>`, its `what`), one or many alike.
+quarrel = { word = "velho/1", many = true }
+the_wizards_quarrel = { word = "velho/1", many = true }

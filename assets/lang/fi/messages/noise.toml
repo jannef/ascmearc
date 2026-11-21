@@ -1,6 +1,6 @@
 # Sounds heard (`noise.rs`); the roles as in `en/messages/noise.toml`. A `heard_*` word is the
-# object of "Kuulet" (`you_hear`), so it is written in its object case. `dir` is a compass word in
-# the nominative, said in parentheses.
+# object of "Kuulet" (`you_hear`), so it is written in its object case. `dir` is a compass word,
+# said in the elative ("idästä", `words.dir_*`).
 
 heard = { text = "{hear:bare}.", of = "476693" }
 heard_banging = { text = "jyskettä", of = "310a7d" }
@@ -14,7 +14,7 @@ heard_door_opened = { text = "oven aukeavan", of = "8ecd82" }
 heard_explosion = { text = "räjähdyksen", of = "47d77d" }
 heard_fighting = { text = "taistelun ääniä", of = "531afa" }
 heard_footsteps = { text = "askelia", of = "5c1866" }
-heard_from = { text = "{hear:bare} ({dir:bare}).", of = "cfe6ba" }
+heard_from = { text = "{hear:bare} {dir:ela}.", of = "cfe6ba" }
 heard_giggle = { text = "kikatusta", of = "7c47ee" }
 heard_heartbeat = { text = "sydämen lyönnin", of = "8b044e" }
 heard_hiss = { text = "sihahduksen", of = "bfea3e" }

@@ -3,9 +3,9 @@
 # that move the player or reshape a level.
 #
 # Roles: `who` is the creature a line is about; `pack` the player's allies, a list; `what` a thing
-# or a terrain; `fire` the burning terrain. `place` a place by its name and `party` an encounter's
-# party are lines of data (or a nested message) that render as written, in no case: the lines
-# say them in the nominative ("paikkaan {place:bare}", "Vastaasi tulee {party:bare}."). `verb` is
+# or a terrain; `fire` the burning terrain. `place` a place by its name, a word in any case
+# (`lexicon/place.toml`, or `branch_level`: "Saavut {place:ill}."); `party` an encounter's party,
+# a line of data said as written ("Vastaasi tulee {party:bare}."). `verb` is
 # a damage type's verb (third person, takes a partitive object) and `seen` how a status looks.
 # `error` is a refusal's reason, English for developers; `id` a level, location, or encounter id
 # as typed; `x`, `y`, `cells`, `laid`, and `price` are numbers.
@@ -14,8 +14,6 @@
 already_on_dev = { text = "Olet jo kohteessa `{id:bare}`.", of = "fadd88" }
 answer_first = { text = "Sinun on vastattava ensin.", of = "87c356" }
 break_through_ice = { text = "Jää pettää altasi.", of = "00517d" }
-# A level of a dungeon branch by its name: `branch`, the branch's name; `floor`, its number.
-branch_level = { text = "{branch:bare} {floor:bare}", of = "39e637" }
 cannot_go = { text = "Et voi mennä sinne ({error:bare}).", of = "18b48b" }
 cannot_go_dev = { text = "Et voi mennä sinne: {error:bare}.", of = "d0f250" }
 cannot_go_that_way = { text = "Siihen suuntaan ei pääse.", of = "fa6e76" }
@@ -23,13 +21,13 @@ cannot_leave = { text = "Et voi lähteä tätä kautta ({error:bare}).", of = "1
 cannot_swim = { text = "Et osaa uida.", of = "bc339f" }
 climb_out_onto_ice = { text = "Kiipeät jään päälle.", of = "e6c56a" }
 # `place`: the level's name.
-climb_out_to = { text = "Kiipeät ylös paikkaan {place:bare}.", of = "7d0529" }
-climb_to = { text = "Nouset portaita ylös paikkaan {place:bare}.", of = "d4b382" }
+climb_out_to = { text = "Kiipeät ulos {place:ill}.", of = "7d0529" }
+climb_to = { text = "Nouset portaita ylös {place:ill}.", of = "d4b382" }
 come_upon = { text = "Vastaasi tulee {party:bare}.", of = "6027d0" }
-descend_to = { text = "Laskeudut portaita alas paikkaan {place:bare}.", of = "a67381" }
+descend_to = { text = "Laskeudut portaita alas {place:ill}.", of = "a67381" }
 dive_in = { text = "Sukellat syvään veteen.", of = "4f6166" }
 enemies_about = { text = "Et voi livahtaa pois, kun vihollisia on lähellä.", of = "5e0276" }
-enter_place = { text = "Saavut paikkaan {place:bare}.", of = "069d3d" }
+enter_place = { text = "Saavut {place:ill}.", of = "069d3d" }
 # `what`: the terrain of the overworld cell ("metsä").
 explore = { text = "Tutkit {what:par}.", of = "c0ddea" }
 # `fire`: the burning terrain; `who`: the creature it burns; `verb`: how the damage type says it.
@@ -55,9 +53,9 @@ lose_them_hills = { text = "Karistat heidät kannoiltasi kukkuloilla.", of = "9c
 lose_them_marsh = { text = "Karistat heidät kannoiltasi suolla.", of = "f34f20" }
 lose_them_woods = { text = "Karistat heidät kannoiltasi metsässä.", of = "bbc6f9" }
 # `place`: the hidden location found on the way out.
-mark_found = { text = "Merkitset karttaasi paikan {place:bare}.", of = "d75c81" }
+mark_found = { text = "Merkitset karttaasi {place:gen}.", of = "d75c81" }
 # A dev action's: `place`, the hidden location.
-marked_dev = { text = "{place:Bare} on merkitty karttaasi (dev).", of = "e1afeb" }
+marked_dev = { text = "{place:Nom} on merkitty karttaasi (dev).", of = "e1afeb" }
 meet_on_way = { text = "Matkalla vastaasi tulee {party:bare}.", of = "795d4b" }
 no_encounter_dev = { text = "Kohtaamista `{id:bare}` ei ole (dev).", of = "658a19" }
 no_encounter_rules_dev = { text = "Kukaan ei kohtaa ketään: ei kohtaamissääntöjä (dev).", of = "8dd589" }
@@ -66,7 +64,7 @@ no_headway_choke = { text = "Et pääse eteenpäin, vajoat pinnan alle ja tukehd
 no_hidden_location_dev = { text = "Kätkettyä paikkaa `{id:bare}` ei ole.", of = "1027ca" }
 no_local_area_dev = { text = "Täällä ei kohdata ketään: ei paikallista aluetta (dev).", of = "e8724f" }
 # A dev action's: `place`, the hidden location already known.
-no_secret_dev = { text = "{place:Bare} ei ole enää salaisuus.", of = "21eeef" }
+no_secret_dev = { text = "{place:Nom} ei ole enää salaisuus.", of = "21eeef" }
 no_way_down = { text = "Täältä ei näy tietä alas.", of = "80b1d3" }
 no_way_up = { text = "Täältä ei näy tietä ylös.", of = "e6bc67" }
 not_a_choice = { text = "Se ei ole nyt vaihtoehto.", of = "e6207b" }
@@ -74,13 +72,13 @@ not_fooled = { text = "He eivät mene lankaan.", of = "ed40a1" }
 nothing_to_decide = { text = "Ei ole mitään päätettävää.", of = "50e887" }
 nothing_to_explore = { text = "Täällä ei ole mitään tutkittavaa.", of = "f9478c" }
 # A dev action's: `place`, the level arrived on.
-on_dev = { text = "Olet paikassa {place:bare} (dev).", of = "f7a5ab" }
+on_dev = { text = "Olet {place:ine} (dev).", of = "f7a5ab" }
 onto_you = { text = "He ovat huomanneet sinut.", of = "cfc7d6" }
 pending_refused = { text = "Sinun on päätettävä, mitä teet heidän suhteensa.", of = "3cdfba" }
 pit_shudders = { text = "Kuilu vavahtaa. Kaukana ylhäällä kivi hankaa kiveä.", of = "ee910a" }
 plunge = { text = "Jää murtuu altasi, ja syöksyt jäätävään veteen!", of = "cf6a59" }
 # `place`: the overworld the player walked back onto.
-return_to = { text = "Palaat paikkaan {place:bare}.", of = "8d5352" }
+return_to = { text = "Palaat {place:ill}.", of = "8d5352" }
 run_you_down = { text = "He saavat sinut kiinni.", of = "00ba39" }
 see_each_other = { text = "Sinä ja {party:bare} huomaatte toisenne samalla hetkellä.", of = "bd5389" }
 # `what`: what lies on the cell the player entered, one stack; `price` its price, for sale.
@@ -125,7 +123,7 @@ wake_upon_you = { text = "Heräät, ja kimpussasi on {party:bare}!", of = "a86e8
 # `what`: the terrain in the way.
 way_blocked = { text = "{what:Nom} on tielläsi.", of = "8ca62d" }
 # `place`: the overworld location a way down leads into, by its name.
-way_into_here = { text = "Tästä pääsee paikkaan {place:bare}.", of = "a7e48a" }
+way_into_here = { text = "Tästä pääsee {place:ill}.", of = "a7e48a" }
 # `who`: the one a web caught; `seen`: how the web's status looks.
 web_caught = { by = "who.person", you = "Olet {seen:bare}.", other = "{who:Nom} on {seen:bare}.", of = "714dc4" }
 web_caught_plain = { by = "who.person", you = "Olet juuttunut seittiin.", other = "{who:Nom} on juuttunut seittiin.", of = "93a0ac" }
@@ -137,6 +135,22 @@ would_sink = { text = "Uppoaisit.", of = "899ec0" }
 # `who`: the one in the way, as the player calls it, or "something".
 wriggle_past = { text = "Pujottelet {who:gen} ohi.", of = "2d3561" }
 wriggle_stuck = { text = "Yrität pujotella {who:gen} ohi, mutta se on tiellä.", of = "ad784b" }
+
+# A level of a dungeon branch by its name: `branch`, the branch's name; `floor`, its number. Said
+# in the case of the slot it stands in (`by = "slot.form"`): "Fyrdelfin kerrokseen 2"; a label
+# and the nominative "Fyrdelf 2".
+[branch_level]
+of = "39e637"
+by = "slot.form"
+gen = "{branch:gen} kerroksen {floor:bare}"
+par = "{branch:gen} kerrosta {floor:bare}"
+ine = "{branch:gen} kerroksessa {floor:bare}"
+ela = "{branch:gen} kerroksesta {floor:bare}"
+ill = "{branch:gen} kerrokseen {floor:bare}"
+ade = "{branch:gen} kerroksella {floor:bare}"
+abl = "{branch:gen} kerrokselta {floor:bare}"
+all = "{branch:gen} kerrokselle {floor:bare}"
+else = "{branch:nom} {floor:bare}"
 
 # `who`: the creatures that followed, all of one type ("koboltti", "kolme koboltia"; a numeral
 # subject takes a singular verb).

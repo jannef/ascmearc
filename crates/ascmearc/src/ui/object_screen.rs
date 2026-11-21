@@ -383,7 +383,7 @@ struct Entry {
     /// A grimoire whose spell may be learned or deepened: what it is ("grimoire of frost"), the
     /// spell it teaches (`spell:<id>`), the rank a reading would bring (`None`: it would teach
     /// the spell), and the chance in words, for the dialog.
-    study: Option<(String, Phrase, Option<u8>, &'static str)>,
+    study: Option<(String, Phrase, Option<u8>, ascmearc_core::lang::MessageId)>,
 }
 
 #[derive(Debug)]
@@ -485,7 +485,12 @@ impl ObjectScreen {
                     (ObjectList::Read, Item::Pack(i)) => {
                         (studies.iter()).find(|s| s.item == i).and_then(|study| {
                             let spell = content.spell_phrase(content.spell_of(study.spell)?);
-                            Some((view.lore().title(s), spell, study.rank, study.chance))
+                            Some((
+                                view.lore().title(s),
+                                spell,
+                                study.rank,
+                                study.chance.clone(),
+                            ))
                         })
                     }
                     _ => None,
@@ -496,10 +501,10 @@ impl ObjectScreen {
                         &[
                             ("rank", Arg::Number(i64::from(*rank))),
                             ("max", Arg::Number(i64::from(MAX_SPELL_RANK))),
-                            ("chance", Arg::text(*chance)),
+                            ("chance", Arg::from(chance.clone())),
                         ],
                     ),
-                    None => ui_with(T::MARK_LEARNING, &[("chance", Arg::text(*chance))]),
+                    None => ui_with(T::MARK_LEARNING, &[("chance", Arg::from(chance.clone()))]),
                 });
                 let marks: Vec<String> = (teaches.into_iter())
                     .chain(mark)
@@ -620,7 +625,7 @@ impl ObjectScreen {
                     &[
                         ("grimoire", Arg::text(grimoire)),
                         ("what", Arg::text(what)),
-                        ("chance", Arg::text(chance)),
+                        ("chance", Arg::from(chance)),
                     ],
                 );
                 ScreenAction::Dialog(Box::new(

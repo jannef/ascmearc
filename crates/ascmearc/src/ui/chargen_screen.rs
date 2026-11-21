@@ -26,7 +26,7 @@ use super::text::{UiText, chargen_screen as T, label, ui, ui_with, word};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::character::{CharacterSpec, Gender, NAMELESS, Start, check_name, random_name};
-use ascmearc_core::content::data_line::scenario_name;
+use ascmearc_core::content::place_word;
 use ascmearc_core::content::{ClassDef, Content, pace_words};
 use ascmearc_core::dice::Dice;
 use ascmearc_core::kit;
@@ -105,7 +105,7 @@ impl Step {
 /// The scenario and seed chosen on the New run screen.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ScenarioPick {
-    /// The scenario's id: its name is said by its key (`data_line::scenario_name`).
+    /// The scenario's id: its name is a lexicon word (`place_word::scenario`).
     pub id: String,
     /// The seed the run will have: in developer builds the typed one, else the scenario's; in
     /// release builds one no one chose.
@@ -803,12 +803,12 @@ impl SummaryScreen {
         let scenario = self.scenario.as_ref().map_or(String::new(), |s| {
             if s.shows_seed {
                 let args = [
-                    ("scenario", Arg::said(scenario_name(&s.id))),
+                    ("scenario", Arg::from(place_word::scenario(&s.id))),
                     ("seed", Arg::text(s.seed.to_string())),
                 ];
                 ui_with(T::SCENARIO_SEED, &args)
             } else {
-                label(Arg::said(scenario_name(&s.id)))
+                label(Arg::from(place_word::scenario(&s.id)))
             }
         });
         let rows = [

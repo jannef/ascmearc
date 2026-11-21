@@ -32,14 +32,14 @@ pub struct OwnResource {
 /// they do not know, or one of a spell they know below its last rank (a deepening, "Ranks"),
 /// with the chance in words ("easy", "a struggle", "far beyond you", or "certain"). Never the
 /// number.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct OwnStudy {
     /// The inventory stack, by position.
     pub item: usize,
     pub spell: crate::content::SpellId,
     /// The rank reading it would bring the spell to; `None` for a spell to learn.
     pub rank: Option<u8>,
-    pub chance: &'static str,
+    pub chance: crate::lang::MessageId,
 }
 
 /// A spell the player could write a scroll of (the wizard's Scribe), as the

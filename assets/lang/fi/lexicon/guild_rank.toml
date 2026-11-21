@@ -1,0 +1,8 @@
+# A guild's ranks (`guild_rank:<guild>.<n>`, from 0, the lowest): the Gilde's are its metals.
+"weyfarers.0" = "tina/9"
+"weyfarers.1" = "kannu|tina/9"
+"weyfarers.2" = "rauta/9*F"
+"weyfarers.3" = "teräs/39"
+"weyfarers.4" = "duralumiini/5"
+"weyfarers.5" = "elektrumi/5"
+"weyfarers.6" = "kulta/9*I"

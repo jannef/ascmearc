@@ -1,0 +1,6 @@
+# Blood on the ground or a wall by amount (`blood:<word>`, English's word after "blood-"), an
+# agreeing adjective before its name ("veritahrainen kivilattia", "veren tahrima kiviseinä").
+spattered = "veri|roiskeinen/38"
+stained = "veri|tahrainen/38"
+soaked = "veren kyllästämä/10"
+smeared = "veren tahrima/10"

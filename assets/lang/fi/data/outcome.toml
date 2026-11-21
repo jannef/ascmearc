@@ -1,0 +1,255 @@
+# Lines of data: an altar's, a spring's, or a potion's outcome
+# (`outcome:<table>.outcome.<id>.message`, `.messages.<n>`, `.otherwise`): its one line, line `n`
+# of several, or what it says when it found nothing to do. A stat keeps the screens' word
+# (`messages/words.toml`: voima, ketteryys, sitkeys, äly, tahto, karisma).
+
+[brewers_blunder.outcome.drained_dexterity]
+message = { text = "Tunnet ketteryytesi valuvan pois!", of = "682a6b" }
+otherwise = { text = "Kylmä väre käy lävitsesi ja katoaa.", of = "225ba3" }
+
+[brewers_blunder.outcome.drained_intelligence]
+message = { text = "Tunnet älysi valuvan pois!", of = "7434cf" }
+otherwise = { text = "Kylmä väre käy lävitsesi ja katoaa.", of = "225ba3" }
+
+[brewers_blunder.outcome.drained_presence]
+message = { text = "Tunnet karismasi valuvan pois!", of = "409110" }
+otherwise = { text = "Kylmä väre käy lävitsesi ja katoaa.", of = "225ba3" }
+
+[brewers_blunder.outcome.drained_strength]
+message = { text = "Tunnet voimasi valuvan pois!", of = "8c2bcc" }
+otherwise = { text = "Kylmä väre käy lävitsesi ja katoaa.", of = "225ba3" }
+
+[brewers_blunder.outcome.drained_toughness]
+message = { text = "Tunnet sitkeytesi valuvan pois!", of = "85f06f" }
+otherwise = { text = "Kylmä väre käy lävitsesi ja katoaa.", of = "225ba3" }
+
+[brewers_blunder.outcome.drained_willpower]
+message = { text = "Tunnet tahtosi valuvan pois!", of = "53e83b" }
+otherwise = { text = "Kylmä väre käy lävitsesi ja katoaa.", of = "225ba3" }
+
+[brewers_blunder.outcome.flat]
+message = { text = "Se maistuu laimealta ja väljähtyneeltä.", of = "c158c4" }
+
+[brewers_blunder.outcome.greatly_fortified]
+message = { text = "Voima tulvii raajoihisi.", of = "c578fd" }
+
+[brewers_blunder.outcome.greatly_hale]
+message = { text = "Olet terve kuin pukki.", of = "354dab" }
+
+[brewers_blunder.outcome.greatly_imposing]
+message = { text = "Tunnet voivasi komentaa kokonaista salia.", of = "598c6a" }
+
+[brewers_blunder.outcome.greatly_keen]
+message = { text = "Ajatuksesi kiitävät terävinä ja kirkkaina.", of = "2b8ff4" }
+
+[brewers_blunder.outcome.greatly_nimble]
+message = { text = "Raajasi tuntuvat kevyiltä ja nopeilta.", of = "91711e" }
+
+[brewers_blunder.outcome.greatly_steadfast]
+message = { text = "Tahtosi kovettuu kuin rauta.", of = "b3a8a6" }
+
+[draught_of_chance.outcome.clear_headed]
+message = { text = "Pääsi selkenee, ja sisälläsi kumpuaa voimaa.", of = "4acb4b" }
+
+[draught_of_chance.outcome.drowsy]
+message = { text = "Raskas uneliaisuus valtaa sinut.", of = "7dca1a" }
+
+[draught_of_chance.outcome.fortified]
+message = { text = "Tunnet olevasi vahvempi.", of = "1a3e4f" }
+
+[draught_of_chance.outcome.hale]
+message = { text = "Olosi on terhakka.", of = "91c3f9" }
+
+[draught_of_chance.outcome.imposing]
+message = { text = "Tunnet olevasi vaikuttava.", of = "28f1f7" }
+
+[draught_of_chance.outcome.keen]
+message = { text = "Ajatuksesi kulkevat terävinä ja selkeinä.", of = "999c63" }
+
+[draught_of_chance.outcome.mended]
+message = { text = "Lämpö leviää sinuun, ja haavasi sulkeutuvat.", of = "aabd57" }
+
+[draught_of_chance.outcome.nimble]
+message = { text = "Tunnet olevasi notkea.", of = "0d319f" }
+
+[draught_of_chance.outcome.nothing_much]
+message = { text = "Se ei maistu juuri miltään.", of = "9f062c" }
+
+[draught_of_chance.outcome.sickened]
+message = { text = "Se maistuu pahalta, ja vatsasi kääntyy.", of = "338601" }
+
+[draught_of_chance.outcome.steadfast]
+message = { text = "Tahtosi tuntuu lujalta.", of = "f72233" }
+
+[draught_of_chance.outcome.weakened]
+message = { text = "Tunnet itsesi heikoksi.", of = "8847d1" }
+
+[forgotten_altar.outcome.answered]
+message = { text = "Jokin vastaa rukoukseesi.", of = "90c253" }
+
+[forgotten_altar.outcome.blessed]
+message = { text = "Tunnet, että sinua varjellaan.", of = "1bd23e" }
+
+[forgotten_altar.outcome.breath]
+message = { text = "Kylmä henkäys hipaisee niskaasi ja katoaa.", of = "fcc694" }
+
+[forgotten_altar.outcome.burst]
+message = { text = "Alttari repeää kappaleiksi tulessa!", of = "01b750" }
+
+[forgotten_altar.outcome.chosen]
+message = { text = "Sinut on valittu.", of = "337a4c" }
+otherwise = { text = "Jokin katsoo sinua eikä löydä enää mitään annettavaa.", of = "161477" }
+
+[forgotten_altar.outcome.cleansed]
+message = { text = "Tauti jättää sinut.", of = "a5625a" }
+otherwise = { text = "Tunnet olevasi puhdas.", of = "911ead" }
+
+[forgotten_altar.outcome.coins]
+message = { text = "Alttarin juurella on kolikoita.", of = "50bc74" }
+
+[forgotten_altar.outcome.damned]
+message = { text = "Pimeys täyttyy äänistä, jotka vastaavat.", of = "ad5162" }
+
+[forgotten_altar.outcome.displaced]
+message = { text = "Maailma heilahtaa ympärilläsi.", of = "f1c7b5" }
+
+[forgotten_altar.outcome.drawn]
+message = { text = "Kuulet jonkin liikahtavan.", of = "789de9" }
+
+[forgotten_altar.outcome.dust]
+message = { text = "Katosta sataa pölyä.", of = "ec97cd" }
+
+[forgotten_altar.outcome.echo]
+message = { text = "Sanasi kaikuvat ja hiipuvat.", of = "faadd5" }
+
+[forgotten_altar.outcome.elixir]
+message = { text = "Alttarin juurella seisoo pullo.", of = "81a876" }
+
+[forgotten_altar.outcome.exalted]
+message = { text = "Voima tulvii sinuun.", of = "888555" }
+otherwise = { text = "Voima huuhtoo ylitsesi eikä löydä enää minne mennä.", of = "e6d5e9" }
+
+[forgotten_altar.outcome.favour]
+message = { text = "Tunnet olevasi viisaampi.", of = "749192" }
+
+[forgotten_altar.outcome.flicker]
+message = { text = "Alttarin hehku lepattaa ja tasaantuu.", of = "4a0fe8" }
+
+[forgotten_altar.outcome.forsaken]
+message = { text = "Sinut on merkitty.", of = "4558c1" }
+otherwise = { text = "Jokin merkitsee sinut ja huomaa merkin jo tehdyksi.", of = "6a7604" }
+
+[forgotten_altar.outcome.gift]
+message = { text = "Tunnet muuttuneesi.", of = "967db0" }
+
+[forgotten_altar.outcome.glimpse]
+message = { text = "Jokin kantamasi esine selkenee sinulle.", of = "7fe9a4" }
+otherwise = { text = "Tunnet ymmärtäväsi hiukan.", of = "d433dd" }
+
+[forgotten_altar.outcome.hexed]
+message = { text = "Tunnet pahansuovan katseen päälläsi.", of = "054dd7" }
+
+[forgotten_altar.outcome.hungry]
+message = { text = "Vatsasi kurnii.", of = "60c69e" }
+
+[forgotten_altar.outcome.ill_wished]
+message = { text = "Tunnet vieraan pahan tahdon.", of = "cdc264" }
+
+[forgotten_altar.outcome.lightened]
+message = { text = "Kukkarosi tuntuu kevyemmältä.", of = "920557" }
+
+[forgotten_altar.outcome.mended]
+message = { text = "Lämpö kulkee lävitsesi, ja haavasi sulkeutuvat.", of = "e2d182" }
+
+[forgotten_altar.outcome.muddled]
+message = { text = "Jokin kantamasi esine tuntuu sinusta oudolta.", of = "d721c6" }
+otherwise = { text = "Olet hetken hämmentynyt.", of = "b3e345" }
+
+[forgotten_altar.outcome.offering]
+message = { text = "Alttarin juurella on jotakin, mitä siinä ei ollut ennen.", of = "ff92c2" }
+
+[forgotten_altar.outcome.omen]
+messages = [
+    { text = "Hengityksesi huuru kaartuu kohti portaita.", of = "7e4327" },
+    { text = "Hetken ajan haistat sateen.", of = "095652" },
+    { text = "Jossain kaukana alhaalla kello lyö kerran.", of = "d56212" },
+    { text = "Kaiverrukset tuntuvat liikkuvan silmiesi edessä, ja sitten ne ovat taas paikoillaan.", of = "6419a4" },
+]
+
+[forgotten_altar.outcome.relic]
+message = { text = "Jokin kimaltaa alttarin juurella.", of = "719b8b" }
+
+[forgotten_altar.outcome.replenished]
+message = { text = "Mielesi tuntuu kirkkaalta ja täydeltä.", of = "bd46d2" }
+
+[forgotten_altar.outcome.restored]
+message = { text = "Tunnet olevasi taas ehjä.", of = "8e9bce" }
+
+[forgotten_altar.outcome.sapped]
+message = { text = "Mielesi himmenee hiukan.", of = "30975c" }
+
+[forgotten_altar.outcome.sated]
+message = { text = "Olet kylläinen.", of = "e09e62" }
+
+[forgotten_altar.outcome.scorched]
+message = { text = "Alttarin hehku leimahtaa ja polttaa sinua.", of = "daf92b" }
+
+[forgotten_altar.outcome.sickened]
+message = { text = "Kylmyys asettuu luihisi.", of = "e665bd" }
+
+[forgotten_altar.outcome.silence]
+message = { text = "Hiljaisuus vastaa sinulle.", of = "f12351" }
+
+[forgotten_altar.outcome.sluggish]
+message = { text = "Olosi on raskas ja hidas.", of = "09180c" }
+
+[forgotten_altar.outcome.smitten]
+message = { text = "Alttari vastaa tulella ylhäältä!", of = "257614" }
+
+[forgotten_altar.outcome.snuffed]
+message = { text = "Kylmä tuulenpuuska käy ohitsesi.", of = "625ab5" }
+
+[forgotten_altar.outcome.soothed]
+message = { text = "Hiukan lämpöä kulkee lävitsesi.", of = "820ae6" }
+
+[forgotten_altar.outcome.tithe]
+message = { text = "Jotakin arvokasta on poissa.", of = "bbe433" }
+otherwise = { text = "Tuntuu kuin käsi kulkisi reppusi yli löytämättä mitään.", of = "7a2642" }
+
+[forgotten_altar.outcome.trickle]
+message = { text = "Mielesi virkoaa.", of = "bb1c25" }
+
+[forgotten_altar.outcome.trinket]
+message = { text = "Alttarin juurella on jotakin.", of = "64d109" }
+
+[forgotten_altar.outcome.unmade]
+message = { text = "Menneisyytesi liukuu sinulta pois.", of = "4c5489" }
+otherwise = { text = "Jokin hapuilee menneisyyttäsi eikä löydä sitä.", of = "0480c2" }
+
+[forgotten_altar.outcome.uplifted]
+message = { text = "Sydämesi keventyy.", of = "c6925c" }
+
+[forgotten_altar.outcome.wary]
+message = { text = "Aistit, miten lattia kulkee ympärilläsi.", of = "46a4ea" }
+
+[forgotten_altar.outcome.withered]
+message = { text = "Sinulta viedään jotakin.", of = "77c68b" }
+
+[forgotten_altar.outcome.wrath]
+message = { text = "Tunnet itsesi vähäisemmäksi, iäksi.", of = "ec9cea" }
+otherwise = { text = "Jokin kurottaa sinua kohti eikä löydä tarpeeksi otettavaa.", of = "14c81f" }
+
+[spring.outcome.clear_headed]
+message = { text = "Pääsi selkenee.", of = "4426be" }
+
+[spring.outcome.fouled]
+message = { text = "Vesi maistuu pahalta.", of = "095be2" }
+
+[spring.outcome.refreshed]
+message = { text = "Vesi on kylmää ja hyvää.", of = "e48a4e" }
+
+[spring.outcome.stone]
+message = { text = "Se maistuu kiveltä.", of = "11efed" }
+
+[trolls_blood.outcome.troll_blooded]
+message = { text = "Lihasi alkaa kasvaa umpeen, mutta veri kääntää vatsaasi.", of = "f6e04f" }

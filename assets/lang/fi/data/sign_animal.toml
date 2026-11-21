@@ -1,0 +1,40 @@
+# Lines of data: a birth sign's animal as the sign reveal and the character screen tell it
+# (`sign_animal:<id>.description`): its part in the Great Race, then what those born under it are
+# like. The racers keep their sign names (`lexicon/sign_animal.toml`), capitalized; the Glass
+# Waste is Lasierämaa, the Mistwood Usvametsä.
+
+[barghest]
+description = { text = "Musta koira, joka juoksi tahallaan viimeisenä nähdäkseen jokaisen kilpailijan perille ja sai siitä viimeisen vuoden: uskollinen ja luja, ja synkkää seuraa.", of = "c5c487" }
+
+[basilisk]
+description = { text = "Ratsasti Rokkilinnun kynnen ympärille kiertyneenä ja liukui portilla sen edelle: kärsivällinen ja räpäyttämättä tuijottava, eikä kukaan luota siihen.", of = "4e1296" }
+
+[griffin]
+description = { text = "Laskeutui matkalla jokaiselle kukkulalle vahtimaan kultaansa: jalo ja valpas, ja jäykkä tavoiltaan.", of = "ead370" }
+
+[hydra]
+description = { text = "Vahvin uimari, joka kantoi Salamanterin joen yli ja hävisi sille portilla: väsymätön ja vaikea tappaa, mutta monen mielen vallassa.", of = "1ec463" }
+
+[kraken]
+description = { text = "Ei voinut jättää vettä, joten ui pitkän kierroksen meritse ja saapui illan nousuveden mukana: vahva ja syvä, ja kömpelö maalla.", of = "e9ec7a" }
+
+[manticore]
+description = { text = "Juoksi koko matkan levähtämättä, ja jokainen muu kilpailija pakeni sen tieltä: hurja ja hellittämätön, eikä kovin rakastettu.", of = "42d69d" }
+
+[phoenix]
+description = { text = "Paloi tuhkaksi Lasierämaan keskipäivässä ja nousi uudestaan illan hämärissä päästäkseen perille: vaikea pitää maassa ja kirkas katsella, mutta hauras tulien välillä.", of = "a9ca8e" }
+
+[roc]
+description = { text = "Lentäjistä mahtavin, joka kohosi niin korkealle, että kadotti portin näkyvistään: voimakas ja ylpeä, eikä pikkuasioiden ystävä.", of = "cd49e5" }
+
+[salamander]
+description = { text = "Pienin kilpailija, joka ratsasti Hydran selässä joen yli ja loikkasi ensimmäisenä portista: nopea ja nokkela, joskin hento.", of = "5e4e4a" }
+
+[sphinx]
+description = { text = "Pysähtyi esittämään arvoituksen jokaiselle kilpailijalle, jonka kohtasi, ja menetti aamunsa niille, jotka osasivat vastata: viisas ja ovela, ja hidas liikkeelle.", of = "afaabb" }
+
+[unicorn]
+description = { text = "Ylitti joen loikkien kiveltä kivelle kastelematta ainuttakaan kaviota: sulokas ja kaunis, ja helposti haavoitettu.", of = "364917" }
+
+[wyvern]
+description = { text = "Olisi voinut lentää perille ensimmäisenä, mutta pysähtyi polttamaan polun Usvametsän läpi jäljessä tuleville: rohkea ja antelias, ja kömpelö maassa.", of = "a5e33f" }

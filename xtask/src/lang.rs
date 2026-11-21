@@ -25,9 +25,11 @@ mod fi_tools;
 mod mods;
 mod neutral;
 mod registers;
+mod words;
 
 use crate::workspace_root;
 use ascmearc_lang::en::Plurals;
+use ascmearc_lang::render::{FORM_FEATURE, SLOT_ROLE};
 use ascmearc_lang::template::{Segment, Template};
 use ascmearc_lang::{Language, Lexicon, Line, MapLexicon, Morphology, Templates};
 use std::collections::{BTreeMap, BTreeSet};
@@ -142,9 +144,23 @@ pub fn run(options: Options) -> Result<(), String> {
             // The lines of data: English is the content's data itself.
             let content =
                 ascmearc_assets::content().map_err(|e| format!("cannot load content: {e}"))?;
-            let data = data::check_data(&langs, content.english().data_lines(), &strict);
+            // The test world (`campaigns/showcase/`, dev builds only) stays English: what only it
+            // has is not asked of a translation.
+            let mut files = ascmearc_assets::files();
+            files.remove("campaigns/showcase");
+            let shipped = ascmearc_core::content::Content::load(&files)
+                .map_err(|e| format!("cannot load the content without the test world: {e}"))?;
+            let dev_only = data::dev_only_lines(&content, &shipped);
+            let data = data::check_data(&langs, content.english().data_lines(), &dev_only, &strict);
             report.errors.extend(data.errors);
             report.warnings.extend(data.warnings);
+            let shipped_words = words::word_ids(&shipped);
+            let dev_words = (words::word_ids(&content).into_iter())
+                .filter(|id| !shipped_words.contains(id))
+                .collect();
+            let lacking = words::check_words(&langs, &content, &dev_words, &strict);
+            report.errors.extend(lacking.errors);
+            report.warnings.extend(lacking.warnings);
             let (races, spoken) = content_voices(&content);
             let voices = registers::check_registers(&langs, &races, &spoken);
             report.errors.extend(voices.errors);
@@ -156,7 +172,7 @@ pub fn run(options: Options) -> Result<(), String> {
                     true => mods::repo_mods()?,
                     false => options.mods.clone(),
                 };
-                let found = mods::check_mods(&langs, &report, &dirs, &strict);
+                let found = mods::check_mods(&langs, &report, &dev_only, &dirs, &strict);
                 report.errors.extend(found.errors);
                 report.warnings.extend(found.warnings);
                 report.warnings.extend(unused_ids(&langs));
@@ -415,8 +431,14 @@ fn slots(template: &Template) -> Vec<(String, String)> {
 
 /// What is wrong with a template's variants, at any depth: a feature no argument has, a key the
 /// feature never takes (a typo there would only ever render `else`), and, for a translation
-/// (`english_roles`, the roles its English entry names), a role English does not pass.
-fn shape_problems(template: &Template, english_roles: Option<&[String]>) -> Vec<String> {
+/// (`english_roles`, the roles its English entry names), a role English does not pass. Variants
+/// on the slot's form (`by = "slot.form"`, any entry: the slot it is said in) take the
+/// language's `forms`.
+fn shape_problems(
+    template: &Template,
+    english_roles: Option<&[String]>,
+    forms: &BTreeSet<String>,
+) -> Vec<String> {
     let mut out = Vec::new();
     let Template::Variants {
         role,
@@ -427,7 +449,18 @@ fn shape_problems(template: &Template, english_roles: Option<&[String]>) -> Vec<
     else {
         return out;
     };
+    let slot = role == SLOT_ROLE;
     match FEATURES.iter().find(|(f, _)| f == feature) {
+        _ if slot && feature != FORM_FEATURE => out.push(format!(
+            "`by = \"{role}.{feature}\"`: the slot has only `{FORM_FEATURE}`"
+        )),
+        _ if slot => {
+            for key in variants.keys().filter(|k| !forms.contains(*k)) {
+                out.push(format!(
+                    "`by = \"{role}.{feature}\"`: `{key}` is no form of the language"
+                ));
+            }
+        }
         None => out.push(format!(
             "`by = \"{role}.{feature}\"`: no feature `{feature}` (only gender, number, person)"
         )),
@@ -440,14 +473,14 @@ fn shape_problems(template: &Template, english_roles: Option<&[String]>) -> Vec<
             }
         }
     }
-    if role != KEY_ROLE && english_roles.is_some_and(|roles| !roles.contains(role)) {
+    if role != KEY_ROLE && !slot && english_roles.is_some_and(|roles| !roles.contains(role)) {
         out.push(format!(
             "unknown role `{role}` in `by` (English passes {:?})",
             english_roles.unwrap_or_default()
         ));
     }
     for variant in variants.values().chain(otherwise.iter().map(AsRef::as_ref)) {
-        out.extend(shape_problems(variant, english_roles));
+        out.extend(shape_problems(variant, english_roles, forms));
     }
     out
 }
@@ -607,7 +640,7 @@ fn check_entries(
                 }
             }
             let english_roles = (source.filter(|_| !is_english)).map(|s| s.template.roles());
-            for problem in shape_problems(&entry.template, english_roles.as_deref()) {
+            for problem in shape_problems(&entry.template, english_roles.as_deref(), forms) {
                 report.errors.push(format!("{code}: {id}: {problem}"));
             }
             if let Some(src) = source.filter(|_| !is_english) {
@@ -682,6 +715,10 @@ fn check_lexicon(code: &str, files: &LangFiles, morphology: &dyn Morphology, rep
                     let Some(word) = lexicon.word(id) else {
                         continue;
                     };
+                    // A name without a class (`proper = true`) inflects as a name.
+                    if word.proper && !word.base.contains('/') {
+                        continue;
+                    }
                     if let Err(e) = morphology.parse_word(&word.base) {
                         report
                             .errors
@@ -1157,6 +1194,28 @@ mod tests {
         )]));
         assert!(e.iter().any(|m| m.contains("goblin")), "{e:?}");
         assert!(!e.iter().any(|m| m.contains("`rat`")), "{e:?}");
+    }
+
+    #[test]
+    fn a_proper_name_without_a_class_is_no_error() {
+        let mut langs = world(&[]);
+        langs.insert(
+            "xx".to_string(),
+            lang(&[
+                (
+                    "lang.toml",
+                    "name = \"xx\"\ncode = \"xx\"\nmorphology = \"fi\"\nfallback = \"en\"\n",
+                ),
+                (
+                    "lexicon/creature.toml",
+                    "gnaegan = { word = \"Rottakuningas Gnægan\", proper = true }\n\
+                     rat = \"rotta\"\n",
+                ),
+            ]),
+        );
+        let e = errors(&langs);
+        assert!(!e.iter().any(|m| m.contains("gnaegan")), "{e:?}");
+        assert!(e.iter().any(|m| m.contains("`creature:rat`")), "{e:?}");
     }
 
     #[test]

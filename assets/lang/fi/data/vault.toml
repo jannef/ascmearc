@@ -1,0 +1,33 @@
+# Lines of data: vaults' named places (`vault:<id>.legend.<char>.note`), their notes; their
+# names are `lexicon/place.toml`'s. An inscription in the old tongue or the deep's Cornish stays
+# as written; the deep gnomes' own joke is in their Karelian (`dialogue/gimmwic.toml`).
+
+[alberichs_delving.legend."$"]
+note = { text = "Kultapölyä ja pieniä hippuja, lakaistu lattian kuoppaan ja taputeltu tasaiseksi. Joku on laskenut ne pikkuruisiksi kasoiksi, ja laskenut kasat uudelleen.", of = "aa0359" }
+
+[crystal_hollow.legend.G]
+note = { text = "Irtokivien ja kristallinsirujen vuode, joka helisee hiljaa, kuin jokin suuri olisi juuri noussut siitä.", of = "e329d1" }
+
+[four_fonts.legend.A]
+note = { text = "Tuuli laulaa sen halkeamissa.", of = "e80980" }
+
+[four_fonts.legend.E]
+note = { text = "Sen alta varisee soraa.", of = "017fbc" }
+
+[four_fonts.legend.F]
+note = { text = "Siitä huokuu kuumuutta.", of = "fe742f" }
+
+[four_fonts.legend.W]
+note = { text = "Vesi helmeilee sen pinnalla ja valuu.", of = "ae5549" }
+
+[hoar_stone.legend.O]
+note = { text = "Rajakivi, vanhempi kuin yksikään raja, jota se on merkinnyt.", of = "07bbf5" }
+
+[hunters_statue.legend.S]
+note = { text = "Sen tyhjät kädet ovat koholla kuin kahvan ympärillä, jota ei ole. Jalustaan on hakattu syvään kirjaimia vanhalla kielellä: LĪF ǢR DĒAÞE. Alla myöhemmällä käsialalla: 'Elämä ennen kuolemaa. Niin metsästäjät vannoivat sille, joka odotti heitä tiellä; ja tie antoi kullekin heistä terän.'", of = "e87901" }
+
+[moss_bower.legend.M]
+note = { text = "Sammalta, syvää ja pehmeää ja painunut kerälle käpertyneen nukkujan muotoon, kuin joku olisi maannut tässä kauan.", of = "0f9323" }
+
+[powesva_an_skeul.legend.J]
+note = { text = "Kivinen syvägnomi, lasta tuskin pitempi, hiontasauva toisessa kädessä ja toinen käsi lattanaan askelmalla. Jalustaan on hakattu: POWES, HA KERDH YN-RAG. Lepää, ja kulje eteenpäin. Sen alla pienemmällä kivenhiojan vitsi: MIT MYÖ PIETÄÄ, SEN MYÖ PIETÄÄ SEINÄS.", of = "009708" }

@@ -10,7 +10,10 @@ pub(super) fn story_json(world: &World) -> Vec<Value> {
         return Vec::new();
     };
     (crate::background::lines(world.content(), world.campaign(), c).into_iter())
-        .map(|(t, _, text)| json!({ "chapter": t.chapter, "line": t.line, "text": text }))
+        .map(|(t, _, line)| {
+            let text = crate::messages::english_msg(world.content(), &line);
+            json!({ "chapter": t.chapter, "line": t.line, "text": text })
+        })
         .collect()
 }
 
@@ -26,7 +29,7 @@ pub(super) fn story_rows(world: &World) -> Vec<String> {
         if i > 0 {
             rows.push(String::new());
         }
-        rows.push(p);
+        rows.push(crate::messages::english_msg(world.content(), &p));
     }
     rows
 }

@@ -1,5 +1,8 @@
 # Ascmearc — Localization: English and Finnish
 
+**Built; this file is history.** Current behaviour is in spec §5 "Language" (`spec/05-interface.md`)
+and `docs/dev/localization.md`.
+
 **Draft** design document (2026-11-20) for #1882. Written against `origin/main` at 0055f2af5
 (version 0.22.0). Nothing here is implemented; §17 cuts it into slices, one PR each. Merging this
 PR approves the design and takes Localization off the "Not built" list in `spec/01-vision.md`.

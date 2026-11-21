@@ -16,26 +16,26 @@ text = "There is no corpse there."
 [out_of_range]
 text = "Out of range."
 
-# The prompts, one per way of aiming: `ready`, what is aimed ("a flaming arrow"; an ability's
+# The prompts, one per way of aiming: `ready`, what is aimed (a phrase: "a flaming arrow"; an ability's
 # name); `next`, the key that cycles targets; `loose`, the fixed key that looses; `confirm`, the
 # key that started the aim, as bound.
 [prompt_ability]
 text = "{ready:bare}: {next:bare} or direction keys aim, {loose:bare} or {confirm:bare} uses it, Esc cancels."
 
 [prompt_exploit]
-text = "Exploit an opening with {ready:bare}: {next:bare} or direction keys aim, {loose:bare} or {confirm:bare} throws, Esc cancels."
+text = "Exploit an opening with {ready:counted}: {next:bare} or direction keys aim, {loose:bare} or {confirm:bare} throws, Esc cancels."
 
 [prompt_fire]
-text = "Fire {ready:bare}: {next:bare} or direction keys aim, {loose:bare} or {confirm:bare} fires, Esc cancels."
+text = "Fire {ready:counted}: {next:bare} or direction keys aim, {loose:bare} or {confirm:bare} fires, Esc cancels."
 
 [prompt_read]
-text = "Read {ready:bare}: {next:bare} or direction keys aim, {loose:bare} or {confirm:bare} reads, Esc cancels."
+text = "Read {ready:counted}: {next:bare} or direction keys aim, {loose:bare} or {confirm:bare} reads, Esc cancels."
 
 [prompt_throw]
-text = "Throw {ready:bare}: {next:bare} or direction keys aim, {loose:bare} or {confirm:bare} throws, Esc cancels."
+text = "Throw {ready:counted}: {next:bare} or direction keys aim, {loose:bare} or {confirm:bare} throws, Esc cancels."
 
 [prompt_zap]
-text = "Zap {ready:bare}: {next:bare} or direction keys aim, {loose:bare} or {confirm:bare} zaps, Esc cancels."
+text = "Zap {ready:counted}: {next:bare} or direction keys aim, {loose:bare} or {confirm:bare} zaps, Esc cancels."
 
 [unseen]
 text = "You do not see there."

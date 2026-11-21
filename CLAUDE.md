@@ -71,7 +71,9 @@ Hard rules:
 - Gameplay outcomes never depend on frame rate, animation, or visual randomness.
 - Player text lives in `assets/lang/` (messages, UI text, lines of data), never as English in
   code; text no language translates carries a `// lang: <kind>` mark, which `cargo xtask lang
-  --check` enforces (`docs/dev/localization.md` "Language-neutral text").
+  --check` enforces (`docs/dev/localization.md` "Language-neutral text"). Finnish is complete:
+  English a PR adds or rewords is translated into `assets/lang/fi/` in the same PR (CI runs
+  `cargo xtask lang --check --strict fi`; the showcase stays English).
 - Only play-context (gameplay) commands are rebindable: a `KeyCommand` in `input::Context::Play`,
   rebindable in Controls and listed by `?`. The keys of menus, menu lists (rows named by letters
   and digits, paging, confirm and cancel inside lists), screens, info pages, prompts, dialogs,

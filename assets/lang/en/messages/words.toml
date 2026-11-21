@@ -1,10 +1,10 @@
 # The fixed words core picks from a few (#1996): a stat's name, abbreviation, and comparative, a
 # burden's and a hunger's name, how hurt a creature looks, a span of time, a resistance, an item's
 # rarity, what a status keeps one from doing, a gender, an alignment band, the weather, a compass
-# direction, the weapon skills screen's sections, and the abilities menu's sources. Core passes
+# direction, the weapon skills screen's sections, the abilities menu's sources, and the chance of a study. Core passes
 # them as message ids (`Stat::name`, `Burden::name`, `Hunger::name`, `Health::word`,
 # `Duration::spoken`, `ResistanceWord::word`, `Rarity::word`, `ActionKind::doing`, `Gender::name`,
-# `Band::name`, `Weather::name`, `Dir::compass_word`, `Section::name`, `Source::name`), nested in the line or the screen entry
+# `Band::name`, `Weather::name`, `Dir::compass_word`, `Section::name`, `Source::name`, `StudyRules::words`), nested in the line or the screen entry
 # that says them (`docs/dev/localization.md` "Nested messages"). A word is lower case, as it stands
 # in a sentence; a label asks `Bare` for its capital ("Strength", "Not hungry"). Ids alphabetical
 # (`docs/dev/localization.md` "Literal lines").
@@ -25,6 +25,11 @@ burden_over = "{burden:bare} over {weight:bare}"
 burden_overloaded = "overloaded"
 burden_strained = "strained"
 burden_unburdened = "unburdened"
+# The chance of learning from a grimoire, in words (`StudyRules::words`; the read list's marks).
+chance_beyond = "far beyond you"
+chance_certain = "certain"
+chance_easy = "easy"
+chance_struggle = "a struggle"
 dir_east = "east"
 dir_north = "north"
 dir_north_east = "north-east"

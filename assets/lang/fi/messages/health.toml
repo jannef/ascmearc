@@ -102,7 +102,7 @@ struggle_held = { text = "Rimpuilet, mutta {who:nom} pitää sinusta tiukasti ki
 struggle_still = { text = "Rimpuilet, mutta olet yhä {status:nom}.", of = "e84876" }
 tastes_foul = { text = "Se maistuu kamalalta!", of = "c0bb56" }
 treat_ally = { text = "{ailment:Nom}", of = "b4cb32" }
-treat_ally_way = { text = "{ailment:Nom} ({way:bare})", of = "3d9070" }
+treat_ally_way = { text = "{ailment:Nom} ({way:ine})", of = "3d9070" }
 treat_own = { text = "{ailment:Nom}", of = "b8fa86" }
 throw_flask = { text = "Heität {what:gen}.", of = "af00e3" }
 ugh_rotten = { text = "Yäk! {what:Nom} oli pilaantunut.", of = "60220a" }

@@ -1,0 +1,540 @@
+# Lines of data: spells (`spell:<id>.<field>`). `description` is the item's and the grimoire's
+# rules text. `cast.verb` is what the spell's blows do, the third person singular with the
+# spell's noun (`lexicon/spell_noun.toml`) its subject ("Tulipallo polttaa peikkoa"); `cast.you`
+# the same said of the player's own spell ("Poltat peikkoa"), the second person; both take a
+# partitive object. A spell with no verb in the data says its damage type's (or "lyö"). A charm's
+# `message` and `ends` follow the charmed one's name ("Peikko pitää sinua ystävänään.").
+
+[acid_arrow]
+description = { text = "Happotikka kohti paikkaa, johon tähtäät: se iskee ensimmäiseen olentoon tiellään, jos osuu, ja jatkaa syövyttämistä.", of = "20d429" }
+
+[acid_arrow.cast]
+verb = { text = "syövyttää", of = "10e9fe" }
+you = { text = "syövytät", of = "f6839d" }
+
+[acid_splash]
+description = { text = "Happoryöppy purkautuu sinne, minne tähtäät: se syövyttää jokaista, johon se ulottuu, jatkaa syövyttämistä ja syö heidän varusteitaan.", of = "59dd02" }
+
+[acid_splash.cast]
+verb = { text = "syövyttää", of = "15a107" }
+you = { text = "syövytät", of = "f910c9" }
+
+[arcane_bolt]
+description = { text = "Puhtaan voiman salama kädestäsi kohti paikkaa, johon tähtäät, jokaisen linjalla olevan läpi.", of = "6dbd8f" }
+
+[arcane_bolt.cast]
+verb = { text = "lyö", of = "6fdbe3" }
+you = { text = "lyöt", of = "b4af6a" }
+
+[balefire]
+description = { text = "Tulivana edestäsi kohti paikkaa, johon tähtäät: se palaa jonkin aikaa ja polttaa kaikki, jotka seisovat siinä tai kulkevat sen yli.", of = "3023ac" }
+
+[balefire.cast]
+message = { text = "Tuli leimahtaa maata pitkin!", of = "d36bc9" }
+verb = { text = "polttaa", of = "15a107" }
+you = { text = "poltat", of = "f910c9" }
+
+[barkskin]
+description = { text = "Ihosi kovettuu jonkin aikaa kuin kaarna: iskut osuvat sinuun harvemmin.", of = "8f21a2" }
+
+[barkskin.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[beguile]
+description = { text = "Lähellä näkemäsi olento pitää sinua jonkin aikaa ystävänään: se taistelee rinnallasi ja lähtee omille teilleen, kun lumous raukeaa.", of = "2c659b" }
+
+[beguile.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[beguile.effect.charm]
+ends = { text = "karistaa lumouksen", of = "8716ab" }
+message = { text = "pitää sinua ystävänään", of = "aba51b" }
+
+[benison]
+description = { text = "Siunaus, joka lausutaan kaikkien vierelläsi olevien ylle: osumapisteitä takaisin sinulle ja jokaiselle ulottuvillasi olevalle liittolaiselle. Sen lausuminen vie aikaa.", of = "84259d" }
+
+[benison.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[bind]
+description = { text = "Sido lähellä näkemäsi vihollinen paikoilleen: se ei pääse askeltamaan muutamaan toimeen, vaikka voi yhä iskeä.", of = "0db033" }
+
+[bind.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[blessing]
+description = { text = "Pyydä jumalasi suosiota: siunattuna jonkin aikaa iskusi osuvat varmemmin ja tahtosi on lujempi.", of = "6d071f" }
+
+[blessing.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[blight]
+description = { text = "Rutto purkautuu sinne, minne tähtäät: se kuihduttaa lihaa ja myrkyttää jokaisen, johon se ulottuu.", of = "efbe3b" }
+
+[blight.cast]
+message = { text = "Sairas pilvi purkautuu käsistäsi!", of = "861f87" }
+verb = { text = "kuihduttaa", of = "a1cf49" }
+you = { text = "kuihdutat", of = "eb701f" }
+
+[blink]
+description = { text = "Olet muualla: muutaman ruudun päässä suuntaan, jota et itse valitse, vapaana siitä, mikä sinua piteli.", of = "694567" }
+
+[blink.cast]
+message = { text = "Olet silmänräpäyksessä muualla.", of = "c9355a" }
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[bramble]
+description = { text = "Missä jokin kasvaa, sen sinä kutsut esiin: jokainen, joka seisoo elävällä maalla siellä, minne tähtäät, takertuu joksikin aikaa piikkeihin ja juuriin.", of = "9fbc65" }
+
+[bramble.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[brand]
+description = { text = "Kädessäsi oleva ase palaa jonkin aikaa: iskusi polttavat lisäksi tulella, ja terä valaisee hieman tietäsi.", of = "ec6464" }
+
+[brand.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[burning_hands]
+description = { text = "Liekkiviuhka käsistäsi kohti paikkaa, johon tähtäät: jokainen sen sisällä palaa.", of = "5ed725" }
+
+[burning_hands.cast]
+message = { text = "Liekit leviävät viuhkana käsistäsi!", of = "aaa39d" }
+verb = { text = "polttaa", of = "15a107" }
+you = { text = "poltat", of = "f910c9" }
+
+[call_lightning]
+description = { text = "Kutsu taivaan tuli alas: taivasalla salama iskee jokaiseen linjalla olevaan kohti paikkaa, johon tähtäät.", of = "3d9674" }
+
+[call_lightning.cast]
+message = { text = "Salama vastaa kutsuusi!", of = "a2b5af" }
+verb = { text = "kärventää", of = "6fdbe3" }
+you = { text = "kärvennät", of = "b4af6a" }
+
+[call_of_the_forest]
+description = { text = "Kutsu syvät metsät rinnallesi: karhu lönkyttelee esiin varjoista ja taistelee vierelläsi muutaman minuutin.", of = "9b5ebb" }
+
+[call_of_the_forest.cast]
+message = { text = "Kutsut, ja metsä vastaa.", of = "31a7af" }
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[call_of_the_wild]
+description = { text = "Kutsu erämaa rinnallesi: susi tulee esiin pimeästä ja taistelee vierelläsi muutaman minuutin.", of = "e1a11f" }
+
+[call_of_the_wild.cast]
+message = { text = "Kutsut, ja erämaa vastaa.", of = "3d3548" }
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[call_the_elements]
+description = { text = "Kutsu alkuvoimat rinnallesi: maa, vesi, ilma tai tuli, sen mukaan kuin erämaa valitsee, nousee suureksi elementaaliksi ja taistelee vierelläsi muutaman minuutin.", of = "f86cf4" }
+
+[call_the_elements.cast]
+message = { text = "Kutsut, ja alkuvoimat vastaavat.", of = "3e8881" }
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[cause_wounds]
+description = { text = "Kosketus, joka avaa haavoja vieressäsi olevaan olentoon, jos se osuu.", of = "30d6fe" }
+
+[cause_wounds.cast]
+verb = { text = "haavoittaa", of = "9fb31a" }
+you = { text = "haavoitat", of = "c03cde" }
+
+[chain_lightning]
+description = { text = "Salama kohti paikkaa, johon tähtäät: se iskee ensimmäiseen olentoon tiellään, loikkaa sitten seuraavaan ja taas seuraavaan.", of = "db522a" }
+
+[chain_lightning.cast]
+message = { text = "Salama loikkaa käsistäsi, ja loikkaa uudelleen!", of = "6d136b" }
+verb = { text = "kärventää", of = "6fdbe3" }
+you = { text = "kärvennät", of = "b4af6a" }
+
+[charnel_burst]
+description = { text = "Räjäytä näkemäsi ruumis: sen mätä ja luut repivät jokaista sen vieressä olevaa.", of = "ed4fe1" }
+
+[charnel_burst.cast]
+verb = { text = "repii", of = "44c14a" }
+you = { text = "revit", of = "fda1f8" }
+
+[cloudburst]
+description = { text = "Taivasalla kutsut sateen: se sataa tunnin, sammuttaa tulet ja huuhtoo palavat puhtaiksi.", of = "e8f72a" }
+
+[cloudburst.cast]
+message = { text = "Taivas tummuu, ja sade tulee.", of = "8641c5" }
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[cure_wounds]
+description = { text = "Rukous ja kosketus, jotka sulkevat haavoja: osumapisteitä takaisin sinulle tai toiselle vieressäsi. Sen lausuminen vie aikaa.", of = "873f3e" }
+
+[cure_wounds.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[curse_of_sloth]
+description = { text = "Kiroa lähellä näkemäsi vihollinen: se on jonkin aikaa veltto, ja kaikki, mitä se tekee, vie puolitoista kertaa niin kauan.", of = "65e8c1" }
+
+[curse_of_sloth.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[evil_eye]
+description = { text = "Luo paha silmä lähellä näkemääsi viholliseen: noiduttuna jonkin aikaa sen iskut osuvat huonommin.", of = "e8489f" }
+
+[evil_eye.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[fear]
+description = { text = "Kauhu purkautuu sinne, minne tähtäät: jokainen, johon se ulottuu, pakenee sinua jonkin aikaa ja taistelee vain ahtaalle ajettuna.", of = "fb4d67" }
+
+[fear.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[fire_cloak]
+description = { text = "Liekit kietoutuvat ympärillesi jonkin aikaa polttamatta sinua: jokainen, joka iskee sinua lähitaistelussa, palaa, ja luot ympärillesi hieman valoa.", of = "1b8ee2" }
+
+[fire_cloak.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[fireball]
+description = { text = "Tulipallo, joka räjähtää sinne, minne tähtäät: se murtaa seiniä ja sulattaa jäätä.", of = "d0f4ec" }
+
+[fireball.cast]
+message = { text = "Tulipallo syöksyy käsistäsi ja räjähtää!", of = "a7f1be" }
+verb = { text = "polttaa", of = "15a107" }
+you = { text = "poltat", of = "f910c9" }
+
+[flame]
+description = { text = "Liekkipallo, joka räjähtää sinne, minne tähtäät: se murtaa seiniä ja sulattaa jäätä.", of = "64ad17" }
+
+[flame.cast]
+message = { text = "Liekkipallo loikkaa käsistäsi!", of = "96d902" }
+verb = { text = "polttaa", of = "15a107" }
+you = { text = "poltat", of = "f910c9" }
+
+[flare]
+description = { text = "Sokaiseva välähdys sinne, minne tähtäät: jokainen, jolla on silmät ja johon se ulottuu, on hetken pökerryksissä.", of = "b85902" }
+
+[flare.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[flay]
+description = { text = "Avaa lähellä näkemäsi vihollinen: sen iho halkeaa ja se vuotaa verta.", of = "42e826" }
+
+[flay.cast]
+verb = { text = "nylkee", of = "7691ea" }
+you = { text = "nyljet", of = "eab28a" }
+
+[frost]
+description = { text = "Purevan kylmän purkaus sinne, minne tähtäät: vesi, johon se ulottuu, jäätyy.", of = "d39536" }
+
+[frost.cast]
+message = { text = "Pureva pakkanen purkautuu käsistäsi!", of = "57b1b6" }
+verb = { text = "puree", of = "bd3846" }
+you = { text = "pureet", of = "624b7b" }
+
+[fume]
+description = { text = "Sakea savu purkautuu sinne, minne tähtäät, ja viipyy siinä jonkin aikaa: mikään silmä ei näe sen sisään eikä läpi, ja sen sisällä olevat näkevät vain käsivarren mitan päähän.", of = "044a8a" }
+
+[fume.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[gale]
+description = { text = "Tuulenpuuska sinusta kohti paikkaa, johon tähtäät: jokainen sen linjalla ajetaan ruudun verran taaksepäin, sen tiellä olevat tulet sammuvat, ja pilvet ja savu repeytyvät pois.", of = "edfa51" }
+
+[gale.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[glamour]
+description = { text = "Harhakuva lepää yllääsi jonkin aikaa: näytät olevan hieman sivussa siitä, missä seisot, ja sinuun tähdätyt iskut menevät useammin ohi.", of = "5a9844" }
+
+[glamour.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[grave_breath]
+description = { text = "Avoimen haudan henkäys kohti paikkaa, johon tähtäät: jokainen sen viuhkassa kuihtuu.", of = "5d3ed2" }
+
+[grave_breath.cast]
+message = { text = "Haudan henkäys vyöryy huuliltasi!", of = "029684" }
+verb = { text = "kuihduttaa", of = "a1cf49" }
+you = { text = "kuihdutat", of = "eb701f" }
+
+[grave_feast]
+description = { text = "Ime vieressäsi olevasta ruumiista se elämä, mitä siinä on jäljellä: osumapisteitä ja manaa takaisin.", of = "0800e2" }
+
+[grave_feast.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[grave_spear]
+description = { text = "Hautakylmä luukeihäs kädestäsi kohti paikkaa, johon tähtäät, jokaisen linjalla olevan läpi.", of = "004ee5" }
+
+[grave_spear.cast]
+verb = { text = "lävistää", of = "05c42a" }
+you = { text = "lävistät", of = "accce3" }
+
+[haste]
+description = { text = "Maailma hidastuu ympärilläsi jonkin aikaa: kaikki, mitä teet, vie neljänneksen vähemmän aikaa.", of = "3a9368" }
+
+[haste.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[hex_of_weakness]
+description = { text = "Noidu lähellä näkemäsi vihollinen: heikennettynä jonkin aikaa se on heikompi ja kömpelömpi.", of = "1b9de3" }
+
+[hex_of_weakness.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[identify]
+description = { text = "Saa selville totuus yhdestä kantamastasi esineestä: mikä se on ja mitä taikaa siinä on.", of = "1fd1fe" }
+
+[identify.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[leech]
+description = { text = "Nälän säde kohti paikkaa, johon tähtäät: se iskee ensimmäiseen olentoon tiellään, jos osuu, ja mitä se vie, se parantaa sinua.", of = "b3d27e" }
+
+[leech.cast]
+verb = { text = "näännyttää", of = "7f96df" }
+you = { text = "näännytät", of = "9b50a8" }
+
+[light]
+description = { text = "Kalpea, tasainen valo kerääntyy ympärillesi joksikin aikaa ja kulkee mukanasi.", of = "ccbd08" }
+
+[light.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[lightning_bolt]
+description = { text = "Salama sinusta kohti paikkaa, johon tähtäät, ja sen ohi: se iskee jokaiseen linjallaan.", of = "507cbf" }
+
+[lightning_bolt.cast]
+message = { text = "Salama loikkaa käsistäsi!", of = "7169b4" }
+verb = { text = "kärventää", of = "6fdbe3" }
+you = { text = "kärvennät", of = "b4af6a" }
+
+[magic_missile]
+description = { text = "Voiman tikka, joka kiertää jokaisen tiellään olevan ja iskee olentoon, johon tähtäät, eikä koskaan osu ohi.", of = "11db98" }
+
+[magic_missile.cast]
+verb = { text = "lyö", of = "6fdbe3" }
+you = { text = "lyöt", of = "b4af6a" }
+
+[mend]
+description = { text = "Kosketus, joka sulkee naarmun: muutama osumapiste takaisin sinulle tai toiselle vieressäsi.", of = "3ffe07" }
+
+[mend.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[mesmerise]
+description = { text = "Vangitse lähellä näkemäsi vihollisen katse: lumottuna jonkin aikaa kaikki, mitä se tekee, vie kaksi kertaa niin kauan.", of = "dd068c" }
+
+[mesmerise.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[mirk]
+description = { text = "Pimeyden verho purkautuu sinne, minne tähtäät, ja lepää siinä jonkin aikaa: mikään valo ei ulotu sen sisään, ja valoa tarvitsevat silmät eivät näe siinä mitään.", of = "eccf08" }
+
+[mirk.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[nightsight]
+description = { text = "Silmäsi aukeavat pimeälle joksikin aikaa: näet kuin kissa.", of = "c551bc" }
+
+[nightsight.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[pitch_fire]
+description = { text = "Palava piki, joka räjähtää sinne, minne tähtäät: se jättää tulilammikon, joka palaa jonkin aikaa ja polttaa kaikki, jotka seisovat siinä tai kulkevat sen yli.", of = "00104b" }
+
+[pitch_fire.cast]
+message = { text = "Palava piki räjähtää ja leviää maahan!", of = "1fdfdc" }
+verb = { text = "polttaa", of = "15a107" }
+you = { text = "poltat", of = "f910c9" }
+
+[ray_of_frost]
+description = { text = "Ohut kylmän säde kohti paikkaa, johon tähtäät: se iskee ensimmäiseen olentoon tiellään, jos osuu.", of = "3b52fa" }
+
+[ray_of_frost.cast]
+verb = { text = "hyytää", of = "ff071a" }
+you = { text = "hyydät", of = "a01318" }
+
+[rebuke]
+description = { text = "Kohota uskosi kuolleita vastaan, ja se polttaa heitä: jokainen epäkuollut siellä, minne tähtäät, kärventyy ja pakenee sinua jonkin aikaa.", of = "fce6be" }
+
+[rebuke.cast]
+message = { text = "Kohotat uskosi kuolleita vastaan!", of = "76f433" }
+verb = { text = "kärventää", of = "c269e2" }
+you = { text = "kärvennät", of = "5085ac" }
+
+[reek]
+description = { text = "Iljettävä huurupilvi purkautuu sinne, minne tähtäät, ja leijuu siinä jonkin aikaa: jokainen sen sisällä myrkyttyy, ja yhä uudelleen niin kauan kuin pysyy siinä.", of = "7a29bc" }
+
+[reek.cast]
+message = { text = "Löyhkäävä pilvi purkautuu käsistäsi!", of = "a9b7ad" }
+verb = { text = "tukahduttaa", of = "53bb84" }
+you = { text = "tukahdutat", of = "3a0384" }
+
+[remove_disease]
+description = { text = "Puhdistuksen meno: jokainen kantamasi tauti ja kaikki myrkky sinussa katoavat.", of = "bd6da4" }
+
+[remove_disease.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[renewal]
+description = { text = "Lihasi kasvaa nopeasti umpeen jonkin aikaa: haavat sulkeutuvat nelinkertaista vauhtia, valveilla tai unessa.", of = "d43ba8" }
+
+[renewal.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[rime]
+description = { text = "Tappavan pakkasen henkäys käsistäsi kohti paikkaa, johon tähtäät: jokainen sen sisällä hyytyy ja hidastuu, ja vesi siinä jäätyy.", of = "faf4d3" }
+
+[rime.cast]
+message = { text = "Kuuraa tulvii käsistäsi!", of = "ec6f38" }
+verb = { text = "puree", of = "bd3846" }
+you = { text = "pureet", of = "624b7b" }
+
+[rouse_the_dead]
+description = { text = "Näkemäsi ruumis nousee siksi, mikä se oli, ja taistelee rinnallasi, kunnes kaatuu uudelleen tai kymmenen minuuttia kuluu. Silloin tällöin se nousee kaikkia vastaan, sinuakin.", of = "8aa54a" }
+
+[rouse_the_dead.cast]
+message = { text = "Kuollut liikahtaa ja nousee seisomaan.", of = "a32c64" }
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[rouse_the_dead.effect.rise]
+berserk_message = { text = "Kuollut nousee seisomaan, eikä se tunne ketään.", of = "b25e87" }
+
+[scorching_ray]
+description = { text = "Tulen säde kohti paikkaa, johon tähtäät: se iskee ensimmäiseen olentoon tiellään, jos osuu, sitä kuumempana, mitä suuremmaksi voimasi kasvaa.", of = "1a86bc" }
+
+[scorching_ray.cast]
+verb = { text = "polttaa", of = "15a107" }
+you = { text = "poltat", of = "f910c9" }
+
+[see_invisible]
+description = { text = "Jonkin aikaa silmäsi löytävät sen, mikä niiltä piiloutuu: näkymättömät ja varjot pimeässä.", of = "dcdaae" }
+
+[see_invisible.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[sense_the_quick]
+description = { text = "Jonkin aikaa tunnet elävät ympärilläsi: niiden sydämenlyönnit, karkeasti paikannettuina, niin kuin kuulet askeleen.", of = "5164b7" }
+
+[sense_the_quick.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[shatter]
+description = { text = "Voiman paukahdus, joka räjähtää sinne, minne tähtäät: se murtaa seiniä, jäätä, suljettuja ovia ja suljettuja arkkuja ja runtelee jokaista, johon se ulottuu.", of = "d5a0d4" }
+
+[shatter.cast]
+message = { text = "Ilma rusahtaa!", of = "90c5a1" }
+verb = { text = "runtelee", of = "69fc23" }
+you = { text = "runtelet", of = "135124" }
+
+[silence]
+description = { text = "Hiljaisuus laskeutuu sinne, minne tähtäät: kukaan, johon se ulottuu, ei hetkeen voi loitsia, lukea eikä laulaa.", of = "cad866" }
+
+[silence.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[sleep]
+description = { text = "Unen henkäys sinne, minne tähtäät: jokainen, johon se ulottuu, raukeaa ja on jonkin aikaa hidas kaikessa, mitä tekee.", of = "689c9b" }
+
+[sleep.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[slick]
+description = { text = "Maa siellä, minne tähtäät, muuttuu jonkin aikaa liukkaaksi kuin jää: sille astuva voi liukastua ja menettää jalansijansa.", of = "dcc772" }
+
+[slick.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[slumber]
+description = { text = "Lähellä näkemäsi vihollinen nukahtaa paikoilleen, kunnes ääni, isku tai huuto herättää sen.", of = "b578d2" }
+
+[slumber.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[soulglass]
+description = { text = "Hautakylmän säde kohti paikkaa, johon tähtäät: se iskee ensimmäiseen olentoon tiellään, jos osuu, ja minkä se tappaa, se ei jätä ruumista vaan kristallin luonnostaan.", of = "1173d3" }
+
+[soulglass.cast]
+verb = { text = "kuihduttaa", of = "a1cf49" }
+you = { text = "kuihdutat", of = "eb701f" }
+
+[spark]
+description = { text = "Rätisevä salama sormistasi kohti paikkaa, johon tähtäät: se iskee ensimmäiseen olentoon tiellään.", of = "539540" }
+
+[spark.cast]
+verb = { text = "näpäyttää", of = "8a7083" }
+you = { text = "näpäytät", of = "f7739b" }
+
+[sunfire]
+description = { text = "Palanen aurinkoa räjähtää sinne, minne tähtäät: kaikki sen sisällä palaa, pimeys karkkoutuu, ja valoa karttavat silmät häikäistyvät.", of = "7df075" }
+
+[sunfire.cast]
+message = { text = "Itse aurinko purkautuu käsistäsi!", of = "74caf6" }
+verb = { text = "polttaa", of = "15a107" }
+you = { text = "poltat", of = "f910c9" }
+
+[thunderclap]
+description = { text = "Ukkosen jyrähdys ympärilläsi: jokainen vieressäsi runneltuu ja horjuu, sinäkin, ja koko taso kuulee sen.", of = "d1ece9" }
+
+[thunderclap.cast]
+message = { text = "Ukkonen jyrähtää ympärilläsi!", of = "38432a" }
+verb = { text = "runtelee", of = "69fc23" }
+you = { text = "runtelet", of = "135124" }
+
+[unbinding]
+description = { text = "Sana, joka murtaa sinuun langetetut noitumiset: paha silmä, heikkous, laiskuus, uneliaisuus, seitit ja pelko katoavat.", of = "7d6053" }
+
+[unbinding.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[water_walking]
+description = { text = "Vesi kantaa sinua jonkin aikaa: kahlaaminen ei vie sinulta enempää kuin askel kuivalla maalla, eikä jää koskaan petä altasi.", of = "75c28f" }
+
+[water_walking.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }
+
+[web]
+description = { text = "Tahmeat säikeet purkautuvat sinne, minne tähtäät, ja jäävät maahan tarrautuneina: siinä seisova tai siihen astuva voi juuttua kiinni. Tuli polttaa ne pois.", of = "8cf594" }
+
+[web.cast]
+verb = { text = "lyö", of = "b8fdd1" }
+you = { text = "lyöt", of = "d2b8a8" }

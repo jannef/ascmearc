@@ -1,0 +1,20 @@
+# Lines of data: the calendar's months (`calendar:months.<n>`, from Frostmere). The month is
+# said only in a birth date ("12. pakkaskuuta 1402", `messages/character.toml` `birth_date`), so
+# each is written in the partitive and in lower case, as Finnish writes a date. The lemmas
+# (pakkaskuu, sulakuu, kylvökuu, sadekuu, lehtikuu, suvikuu, hehkukuu, korjuukuu, ruskakuu,
+# usvakuu, hämäräkuu, talvikuu) are the ones `data/talent.toml` uses for the seasons.
+
+months = [
+    { text = "pakkaskuuta", of = "bfd8f6" },
+    { text = "sulakuuta", of = "21eb1d" },
+    { text = "kylvökuuta", of = "9a8a6e" },
+    { text = "sadekuuta", of = "3decde" },
+    { text = "lehtikuuta", of = "266a22" },
+    { text = "suvikuuta", of = "c6ab17" },
+    { text = "hehkukuuta", of = "280a13" },
+    { text = "korjuukuuta", of = "de7c87" },
+    { text = "ruskakuuta", of = "b0e995" },
+    { text = "usvakuuta", of = "f28176" },
+    { text = "hämäräkuuta", of = "dced0f" },
+    { text = "talvikuuta", of = "668c67" },
+]

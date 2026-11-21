@@ -1,0 +1,8 @@
+# Lexicon: a birth sign's element (`sign_element:<id>`), capitalized as a sign's name ("syntynyt
+# Tulen merkissä", `messages/character.toml`); the seasons of `data/talent.toml` name the element
+# itself, in lower case ("tulen kaudella").
+earth = "Maa/18"
+fire = "Tuli/23"
+metal = "Metalli/6"
+water = "Vesi/27"
+wood = "Puu/18"

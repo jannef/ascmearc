@@ -2,69 +2,45 @@
 
 [aelfham]
 arrival = { text = "Kummun pimeys avautuu hämärään, sinervään paikkaan. Jossain kaukana soittavat huilut.", of = "5d11a5" }
-name = { text = "Ælfhām", of = "ea80b3" }
 
 [banfeld]
 arrival = { text = "Tuoretta multaa vanhoilla haudoilla. Joku on kaivanut.", of = "5ec243" }
-name = { text = "Bānfeld", of = "f7f06a" }
 
 [brocenburg]
 arrival = { text = "Hiisien merkkejä vanhan linnakkeen kivissä, ja niiden seassa sotilaan saappaanjälkiä.", of = "0becdf" }
-name = { text = "Brocenburg", of = "7c9057" }
 
 [cealdhlaw]
 arrival = { text = "Kummusta hönkii kylmää ilmaa.", of = "3e819a" }
-name = { text = "Cealdhlāw", of = "d947ba" }
 
 [deopgang]
 arrival = { text = "Hakatut, kuopalle kuluneet portaat vievät alas tyyneen, kylmään ilmaan. Kaukana alhaalla kilkattaa vasara.", of = "9ae5bb" }
-name = { text = "Dēopgang", of = "1bab3b" }
-
-[drytorr_tower]
-name = { text = "Drȳtorr", of = "d52d6a" }
 
 [fennmynster]
 arrival = { text = "Vesi ulottuu kolmannelle askelmalle.", of = "9b1173" }
-name = { text = "Fennmynster", of = "0254ad" }
 
 [fyrdelf]
 arrival = { text = "Käytävät haisevat rikiltä.", of = "163834" }
-name = { text = "Fyrdelf", of = "e5c369" }
 
 [grundleas]
 arrival = { text = "Portaiden yläpuolelle on hakattu sanoja: mitkään portaat eivät vie kahdesti samaan paikkaan.", of = "5dcb1e" }
-name = { text = "Grundlēas", of = "74576e" }
 
 [hellegeat]
 arrival = { text = "Kuumuus iskee kuin ovi. Ilma löyhkää tulikiveltä.", of = "192056" }
-name = { text = "Hellegeat", of = "a23ced" }
 
 [lytelscraef]
 arrival = { text = "Luola haisee märältä kiveltä ja rotilta.", of = "316973" }
-name = { text = "Lytelscræf", of = "e64cbf" }
 
 [meynbew]
 arrival = { text = "Ilma humisee. Jokainen seinä täällä on kristallia, ja jokainen kristalli kuuntelee.", of = "dc300a" }
-name = { text = "Meyn Bew", of = "c80078" }
 
 [skeul_hir]
 arrival = { text = "Pienille jaloille hakatut portaat kiipeävät pimeyteen, askelmat keskeltä kuopalle kuluneina.", of = "25ea3b" }
-name = { text = "Skeul Hir", of = "ba3d41" }
-
-[steorratorr_tower]
-name = { text = "Steorratorr", of = "ac3ae8" }
 
 [utgang]
 arrival = { text = "Kuilua pitkin nousee lämmintä ilmaa kaukaa alhaalta.", of = "d578b7" }
-name = { text = "Ūtgang", of = "f0f4c0" }
-
-[wedertorr_tower]
-name = { text = "Wedertorr", of = "d4e0af" }
 
 [wulfeshol]
 arrival = { text = "Joku on lakaissut luolan suun. Joku pitää vahtia.", of = "58420a" }
-name = { text = "Wulfeshol", of = "254c3a" }
 
 [wyrtholm]
 arrival = { text = "Ilma luodon alla on sakeanaan mätää, ja jotakin makeampaa.", of = "64c9b9" }
-name = { text = "Wyrtholm", of = "e63089" }

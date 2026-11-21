@@ -8,7 +8,8 @@ text = "lämpötila {degrees:bare}"
 of = "617375"
 text = "{sky:bare}, {degrees:bare}"
 
-# Day as digits with a dot, the month's name as the data gives it.
+# Day as digits with a dot, the month's name its line of data (`data/calendar.toml`, in the
+# partitive: "11. hämäräkuuta").
 [date]
 of = "b08634"
 text = "{day:bare}. {month:bare} {year:bare}"

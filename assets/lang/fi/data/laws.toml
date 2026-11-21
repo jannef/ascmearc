@@ -1,0 +1,7 @@
+# Lines of data: a law broken the first time (`laws:<law>.first`).
+
+[eat]
+first = { text = "Tuntuu kuin olisit rikkonut jotakin perimmäistä vastaan.", of = "541d61" }
+
+[summon]
+first = { text = "Rikoksesi on nähty.", of = "714772" }

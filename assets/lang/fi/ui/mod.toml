@@ -1,8 +1,8 @@
 # The UI core (`crates/ascmearc/src/ui/mod.rs`): the message line's prompts and the status bar.
 
 [aim_wand]
-of = "21e86c"
-text = "{item:bare} ({does:bare})"
+of = "a213a8"
+text = "{item:nom} ({does:bare})"
 
 # Status bar: eyes kept from a gaze.
 [averted]

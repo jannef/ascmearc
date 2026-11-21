@@ -705,14 +705,23 @@ impl Content {
     /// Whoever speaks dialogue `id` as a phrase, what [`Content::speaker_called`] says, said
     /// `the`: its proper name ("Sister Hild"), else its creature type ("the old hermit").
     pub fn speaker_phrase(&self, id: DialogueId) -> Phrase {
-        if let Some(name) = &self.dialogue(id).name {
-            return Phrase::literal(name);
+        if let Some(name) = self.proper_name_phrase(id) {
+            return name;
         }
         match self.speaker_creature(id) {
             Some(c) => Phrase::id(format!("creature:{}", self.creature(c).id)),
             // lang: id an npc no level places, by its id
             None => Phrase::id(format!("word:{}", self.speaker_name(id))),
         }
+    }
+
+    /// Whoever speaks dialogue `id` by its proper name, if it has one ("Headman Peran"): the
+    /// lexicon word `speaker:<scope>` (`content/lexicon.rs`), so a translation names them with
+    /// their title in its own words and cases (#2062).
+    pub fn proper_name_phrase(&self, id: DialogueId) -> Option<Phrase> {
+        let d = self.dialogue(id);
+        d.name.as_ref()?;
+        Some(Phrase::id(format!("speaker:{}", d.scope)).proper(true))
     }
 
     /// Whoever speaks dialogue `id`'s register and race, for a line of data they say

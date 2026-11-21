@@ -29,7 +29,7 @@ impl Almanac {
     pub fn of(view: &PerceptionView<'_>) -> Self {
         let time = view.time();
         Self {
-            date: date(view.content().calendar().month_name(time), time),
+            date: date(time),
             moon: moon(view.content().moons(), time),
             sky: view.weather(),
             temperature: view.temperature(),
@@ -73,11 +73,13 @@ impl Almanac {
     }
 }
 
-/// `The 11th of Darkening, 1444`: the language gives the day's ordinal.
-fn date(month: &str, time: GameTime) -> String {
+/// `The 11th of Darkening, 1444`: the language gives the day's ordinal, and the month's name
+/// is its line of data (`calendar:months.<n>`, Finnish's in the partitive: "11. hämäräkuuta").
+fn date(time: GameTime) -> String {
+    let month = ascmearc_core::content::data_line::month(time.month());
     let args = [
         ("day", Arg::Number(i64::from(time.day()))),
-        ("month", Arg::text(month)),
+        ("month", Arg::said(month)),
         ("year", Arg::Number(time.year() as i64)),
     ];
     ui_with(T::DATE, &args)
@@ -139,7 +141,7 @@ mod tests {
         let at = |day| GameTime::from_calendar(1444, 11, day, 0, 0).expect("valid");
         let said: Vec<String> = [1, 2, 3, 4, 11, 12, 13, 21, 22, 23, 30]
             .into_iter()
-            .map(|d| date("Darkening", at(d)))
+            .map(|d| date(at(d)))
             .collect();
         let days: Vec<&str> = said.iter().map(|s| s.split(' ').nth(1).unwrap()).collect();
         assert_eq!(
@@ -148,7 +150,7 @@ mod tests {
                 "1st", "2nd", "3rd", "4th", "11th", "12th", "13th", "21st", "22nd", "23rd", "30th"
             ]
         );
-        assert_eq!(date("Darkening", at(11)), "The 11th of Darkening, 1444");
+        assert_eq!(date(at(11)), "The 11th of Darkening, 1444");
     }
 
     #[test]

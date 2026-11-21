@@ -35,6 +35,9 @@
 //! | `label:scroll`, `label:wand`, `label:rod`, `label:potion` | an unidentified type's `name` and `plural`, with its `{label}` and `{colour}` slots (`data/scroll_labels.toml`, …) |
 //! | `colour:<colour>` | a potion's colour, as its type writes it ("red") |
 //! | `item_tag:<tag>` | what an item's name says after it in parentheses (`magic/name.rs::tag`): an unidentified item's rarity (`magic`, `rare`, `unique`), `cursed`, and a carried light's `lit` or `hooded`; its English is the tag |
+//! | `speaker:<scope>` | a dialogue's `name`, its speaker's proper name with any title ("Headman Peran"), by the scope of its keys (`ascmearc.peran`; [`Content::proper_name_phrase`], #2062) |
+//! | `story_word:<scope>.<line>.<slot>`, `story_word:<scope>.defaults.<slot>` | a background story's slot word as a line `set` it or its chapter's default ("the minster"; [`super::Chapter::word_id`], #2062) |
+//! | `place:<key>` | a place's name as written, proper: a level's, a branch's, a named place's, a hidden location's, a scenario's ([`super::place_word`], #2062) |
 //! | `trap:<id>`, `chest:<band>`, `status_seen:<id>`, `grade:<creature>.<n>`, ... | the data's words beside a name ([`super::data_word`], #1995) |
 //! | `word:<text>` | a word data names without an id of its own (a natural attack's "bite", a thrown "stone", "something"), keyed by its English, which is the word; with no data to say its number, a plural noun (`many`) as its spelling suggests ([`crate::lang::en::is_plural`]: "claws", "flames", "stakes") |
 //!
@@ -152,6 +155,12 @@ impl Lexicon for Content {
             // Magic and gear data names (#1994).
             "spell" | "school" | "damage_type" | "recipe" | "slot" | "item_class" | "guild"
             | "sign_noun" => super::magic_word::word(self, kind, key),
+            "place" => super::place_word::word(self, key),
+            "story_word" => self.background()?.word(key).map(LexWord::new),
+            "speaker" => (self.dialogues.iter())
+                .find(|d| d.scope == key)
+                .and_then(|d| d.name.as_deref())
+                .map(|name| LexWord::new(name).proper(true)),
             "colour" | "item_tag" => Some(LexWord::new(key)),
             "word" => Some(LexWord::new(key).many(is_plural(key))),
             // The data's words beside a name (#1995): `trap:`, `chest:`, `status_seen:`, ...

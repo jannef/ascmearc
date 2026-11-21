@@ -362,7 +362,9 @@ fn a_ranger_begins_with_a_named_beast_and_its_story_and_a_warrior_with_neither()
         "{}",
         told.line
     );
-    let paragraphs = w.perception().story();
+    let paragraphs: Vec<String> = (w.perception().story().iter())
+        .map(|p| crate::test_support::english_of(w.content(), p))
+        .collect();
     assert!(
         paragraphs.iter().any(|p| p.contains(&line.text)),
         "{paragraphs:?}"

@@ -102,8 +102,8 @@
 #   ores       the only ores (metal ids, each with an ore row in data/mining.toml) its walls give
 #              a miner; `[]` none; stone and gems are found anyway (default:
 #              every ore of the table)
-#   loot       [fewest, most] items of loot on the floor of each level, rolled at the depth as
-#              item level (default none)
+#   loot       [fewest, most] items of loot on the floor of each level, rolled at the floor's
+#              item level (its danger) (default none)
 #   chests     `{ chance, count }`: percent of its floors with chests and how many such
 #              a floor gets, `[least, most]`, each of the floor's level, locked,
 #              trapped, and filled by its band in data/chests.toml (default

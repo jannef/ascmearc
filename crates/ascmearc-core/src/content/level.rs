@@ -583,19 +583,14 @@ pub struct Place {
 }
 
 impl Place {
-    /// The key of its name, a line of data.
-    pub fn name_key(&self) -> String {
-        format!("{}.name", self.key)
-    }
-
     /// The key of its note, a line of data.
     pub fn note_key(&self) -> String {
         format!("{}.note", self.key)
     }
 
-    /// Its name, said by its key.
+    /// Its name, a lexicon word (`place:<key>`, [`super::place_word`]).
     pub fn name_arg(&self) -> Arg {
-        Arg::said(self.name_key())
+        super::place_word::of_place(self).into()
     }
 
     /// Its note, said by its key, if it has one.

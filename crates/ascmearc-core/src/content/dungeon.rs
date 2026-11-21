@@ -837,7 +837,7 @@ impl DungeonDef {
     /// [`Self::level_name`] as the game says it: the branch's name, a line of data, alone or
     /// with the floor (`levels.branch_level`).
     pub fn level_name_arg(&self, depth: u32) -> crate::lang::Arg {
-        let name = crate::lang::Arg::said(super::data_line::dungeon_name(&self.id));
+        let name = crate::lang::Arg::from(super::place_word::dungeon(&self.id));
         match self.floor(depth) {
             None => name,
             Some(floor) => (crate::lang::Msg::new(crate::msg::levels::BRANCH_LEVEL))

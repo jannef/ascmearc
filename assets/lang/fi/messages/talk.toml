@@ -1,5 +1,5 @@
-# Talk (`world/people/talk.rs`); the roles as in `en/messages/talk.toml`. `dir` is a compass word
-# in the nominative, said in parentheses.
+# Talk (`world/people/talk.rs`); the roles as in `en/messages/talk.toml`. `dir` is a compass word,
+# said in the elative ("idästä", `words.dir_*`).
 
 does_not_answer = { text = "{who:Nom} ei vastaa.", of = "7cdb04" }
 does_not_budge = { text = "{who:Nom} ei hievahdakaan.", of = "adecd9" }
@@ -11,7 +11,7 @@ swap_places = { text = "Vaihdat paikkaa {who:gen} kanssa.", of = "b53f27" }
 swap_places_unseen = { text = "Vaihdat paikkaa jonkin kanssa.", of = "29ffee" }
 verb_mutters = { text = "mutisee", of = "4e7347" }
 voice_faint = { text = "Kuulet heikosti äänen.", of = "da80ef" }
-voice_faint_from = { text = "Kuulet heikosti äänen ({dir:bare}).", of = "14ed5d" }
+voice_faint_from = { text = "Kuulet heikosti äänen {dir:ela}.", of = "14ed5d" }
 will_not_go_into_water = { text = "{who:Nom} ei mene veteen.", of = "c8e09b" }
 
 [mutters]
@@ -28,4 +28,4 @@ text = "Kuulet äänen: \"{line:bare}\""
 
 [voice_from]
 of = "9feb71"
-text = "Kuulet äänen ({dir:bare}): \"{line:bare}\""
+text = "Kuulet äänen {dir:ela}: \"{line:bare}\""

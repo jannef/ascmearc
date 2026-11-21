@@ -4,7 +4,9 @@
 //! itself (no file). Like a message id: a key English lacks, a stale `of` (the six-hex FNV-1a of
 //! the English line as written, [`Template::written`]), a role the English line does not pass, a
 //! form the language lacks (a dialogue line: the base form only, `DIALOGUE_FORMS`) are errors; a
-//! line not translated is a warning (an error for `--strict`).
+//! line not translated is a warning (an error for `--strict`). A line only the test world has
+//! (`campaigns/showcase/`, a dev-only world that stays English) is not asked for: the caller
+//! passes those keys as `dev_only`.
 
 use super::{
     KEY_ROLE, LIST_FORMS, LangFiles, Report, alternatives, fnv6, language_of, lower, shape_problems,
@@ -23,6 +25,7 @@ const PLAYER: &str = "player";
 pub fn check_data(
     langs: &std::collections::BTreeMap<String, LangFiles>,
     english: &Templates,
+    dev_only: &BTreeSet<String>,
     strict: &[String],
 ) -> Report {
     let mut report = Report::default();
@@ -67,7 +70,7 @@ pub fn check_data(
                 match Template::from_value(&by_gender(&key, value)) {
                     Ok(t) => {
                         check_slots(&at, kind, &t, en, language.morphology(), &mut report);
-                        check_shape(&at, kind, &t, en, &mut report);
+                        check_shape(&at, kind, &t, en, language.morphology(), &mut report);
                     }
                     Err(e) => report.errors.push(format!("{at}: {e}")),
                 }
@@ -75,7 +78,8 @@ pub fn check_data(
         }
         for key in english.ids() {
             let kind = key.split(':').next().unwrap_or_default();
-            if present.contains(key) || !(strict || kinds.contains(kind)) {
+            if present.contains(key) || dev_only.contains(key) || !(strict || kinds.contains(kind))
+            {
                 continue;
             }
             let missing = format!("{code}: line of data `{key}` is not translated");
@@ -86,6 +90,20 @@ pub fn check_data(
         }
     }
     report
+}
+
+/// The lines of data only the test world has (`campaigns/showcase/`, a dev-only world that
+/// stays English, `docs/dev/localization.md`): the keys of `content`, which holds it, that
+/// `shipped`, the content without it, lacks.
+pub fn dev_only_lines(
+    content: &ascmearc_core::content::Content,
+    shipped: &ascmearc_core::content::Content,
+) -> BTreeSet<String> {
+    let shipped = shipped.english().data_lines();
+    (content.english().data_lines().ids())
+        .filter(|key| shipped.get(key).is_none())
+        .map(str::to_string)
+        .collect()
 }
 
 /// The data files of `lang` with `of` written (every line lacking one; with `restamp`, the stale
@@ -186,7 +204,10 @@ fn stamp_data_text(
             && !trimmed.starts_with("[[")
             && let Some(name) = trimmed[1..].split(']').next()
         {
-            table = name.trim().to_string();
+            // A quoted part (`[vault.legend."$"]`) is its text, as the key names it.
+            table = (name.split('.').map(|part| part.trim().trim_matches('"')))
+                .collect::<Vec<_>>()
+                .join(".");
             replacing = None;
             out.push(line.to_string());
             if let Some(hash) = wanted.get(&key_of("", &table)) {
@@ -211,7 +232,7 @@ fn stamp_data_text(
             && let Some((name, value)) = trimmed.split_once('=')
         {
             let (name, value) = (name.trim(), value.trim());
-            let key = key_of(&table, name);
+            let key = key_of(&table, name.trim_matches('"'));
             let opens = value.starts_with('[');
             let closed = value.matches('[').count() == value.matches(']').count();
             if opens && !closed {
@@ -286,12 +307,22 @@ fn by_gender(key: &str, value: &toml::Value) -> toml::Value {
 /// A translated line's variants and alternatives, as a message's: a `by` on a role the English
 /// line does not pass, a feature no argument has, or a value the feature never takes, and more
 /// flavour alternatives than English has (core draws by English's count).
-fn check_shape(at: &str, kind: &str, line: &Template, english: &Template, report: &mut Report) {
+fn check_shape(
+    at: &str,
+    kind: &str,
+    line: &Template,
+    english: &Template,
+    morphology: &dyn Morphology,
+    report: &mut Report,
+) {
     let mut roles = english.roles();
     if kind == DIALOGUE {
         roles.push(PLAYER.to_string());
     }
-    for problem in shape_problems(line, Some(&roles)) {
+    let forms: BTreeSet<String> = (morphology.forms().into_iter())
+        .chain(LIST_FORMS.iter().map(|f| f.to_string()))
+        .collect();
+    for problem in shape_problems(line, Some(&roles), &forms) {
         report.errors.push(format!("{at}: {problem}"));
     }
     let (most, ours) = (alternatives(english), alternatives(line));
@@ -365,7 +396,20 @@ mod tests {
     }
 
     fn checked(files: &[(&str, &str)], strict: &[String]) -> Report {
-        check_data(&world(files), &english(), strict)
+        check_data(&world(files), &english(), &BTreeSet::new(), strict)
+    }
+
+    /// A quoted table name (a legend glyph, `"$"`) is stamped as the key names it.
+    #[test]
+    fn stamping_reads_a_quoted_table_name() {
+        let mut en = english();
+        let line = Template::Line(ascmearc_lang::Line::parse("Gold dust."));
+        en.insert("vault:delving.legend.$.note", line);
+        let vault = "[delving.legend.\"$\"]\nnote = \"Kultapölyä.\"\n";
+        let langs = world(&[("data/vault.toml", vault)]);
+        let changed = stamp_data(&en, &langs["xx"], false).expect("stamps");
+        assert_eq!(changed.len(), 1, "{changed:?}");
+        assert!(changed[0].1.contains(&fnv6("Gold dust.")), "{changed:?}");
     }
 
     #[test]

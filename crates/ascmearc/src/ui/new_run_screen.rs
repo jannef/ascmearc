@@ -78,7 +78,10 @@ impl NewRunScreen {
                 rows.push(Row::Scenario(scenarios.len()));
                 scenarios.push(ScenarioInfo {
                     id: s.id.clone(),
-                    name: label_in(content, Arg::said(data_line::scenario_name(&s.id))),
+                    name: label_in(
+                        content,
+                        Arg::from(ascmearc_core::content::place_word::scenario(&s.id)),
+                    ),
                     description: crate::ui::text::data_line(data_line::description(
                         "scenario", &s.id,
                     )),

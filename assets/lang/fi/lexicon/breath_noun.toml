@@ -1,0 +1,5 @@
+# What hits from a creature type's breath (`breath_noun:<creature>`).
+fire_drake = "tuli/23"
+gorgon = "höyry/1"
+hrimwyrm = "huurre/48*K"
+nithdraca = "tuli/23"

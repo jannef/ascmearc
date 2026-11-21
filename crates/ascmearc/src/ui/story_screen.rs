@@ -67,7 +67,12 @@ impl StoryScreen {
         };
         Self {
             title,
-            paragraphs: view.map(PerceptionView::story).unwrap_or_default(),
+            paragraphs: (view
+                .map(PerceptionView::story)
+                .unwrap_or_default()
+                .into_iter())
+            .map(super::text::ui_msg)
+            .collect(),
             opening,
             first: 0,
             console: AtomicU64::new(u64::MAX),
@@ -230,7 +235,11 @@ mod tests {
         assert!(text.contains("Enter continue"), "{text}");
         assert!(!text.contains("scroll"), "it fits: {text}");
         // Every word of the story is on the screen, in order, inside the 72-wide panel.
-        let story = view.story();
+        let story: Vec<String> = view
+            .story()
+            .into_iter()
+            .map(super::super::text::ui_msg)
+            .collect();
         let words: Vec<&str> = story.iter().flat_map(|p| p.split(' ')).collect();
         let on_screen: Vec<&str> = (rows.iter())
             .map(|r| r.trim_matches(|c: char| c == ' ' || c == '│'))

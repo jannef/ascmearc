@@ -170,10 +170,11 @@ fn the_dev_reveal_marks_it_and_it_leads_on() {
     .filter_map(|l| l["name"].as_str())
     .collect();
     assert!(names.contains(&"the Old Barrow"), "{names:?}");
-    // The link keeps the name's key, not its English, and reads the same after a save and load.
+    // The link keeps the name's lexicon word, not its English, and reads the same after a save
+    // and load.
     let link = (w.state().current().stairs_at(BARROW)).expect("the revealed way in");
-    let key = "level:overworld.hidden.old_barrow.name";
-    assert_eq!(link.name, Some(crate::lang::Arg::said(key)));
+    let name = crate::content::place_word::hidden("overworld", "old_barrow");
+    assert_eq!(link.name, Some(name.into()));
     let loaded = crate::save::decode(&crate::save::encode(&w), w.content().clone()).expect("loads");
     assert_eq!(
         crate::test_support::leads_to(&loaded, BARROW).as_deref(),

@@ -134,8 +134,7 @@ impl World {
         }
         let keeper = (self.state.levels.get(&actor.level))
             .and_then(|level| level.shops.iter().find(|s| s.keeper == actor.id));
-        let proper =
-            (self.dialogue_of(actor)).and_then(|d| self.content.dialogue(d).name.as_deref());
+        let proper = (self.dialogue_of(actor)).and_then(|d| self.content.proper_name_phrase(d));
         let servant = (self.dialogue_of(actor)).is_some_and(|d| {
             let d = self.content.dialogue(d);
             d.stipend.is_some() || d.partner.is_some() || d.patron.is_some()
@@ -143,7 +142,7 @@ impl World {
         let creature = fight::creature(self.content.creature(actor.creature));
         match (keeper, proper) {
             (Some(shop), _) => Phrase::literal(&shop.name),
-            (None, Some(name)) => Phrase::literal(name),
+            (None, Some(name)) => name,
             (None, None) if servant => creature.owned_by(self.you()),
             (None, None) => creature,
         }

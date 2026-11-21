@@ -9,7 +9,7 @@
 //! dev action `reveal:ID` ([`crate::action::Action::Reveal`]) at once. `world/mod.rs` has only
 //! the dispatch line.
 
-use crate::content::{Content, StairsDir, StairsLink, data_line};
+use crate::content::{Content, StairsDir, StairsLink, place_word};
 use crate::geom::Pos;
 use crate::lang::{Arg, Msg};
 use crate::msg;
@@ -55,7 +55,7 @@ impl World {
         let location = (overworld.hidden.values())
             .find(|h| h.to.as_deref() == Some(from) && !self.state.revealed.contains(&h.id))?;
         let id = location.id.clone();
-        let name = Arg::said(data_line::hidden_name(&overworld.id, &id));
+        let name = Arg::from(place_word::hidden(&overworld.id, &id));
         self.reveal_location(&id).then_some(name)
     }
 
@@ -69,7 +69,7 @@ impl World {
             self.say(Msg::new(msg::levels::NO_HIDDEN_LOCATION_DEV).role("id", Arg::id(id)));
             return Spent::Nothing;
         };
-        let place = Arg::said(data_line::hidden_name(level, id));
+        let place = Arg::from(place_word::hidden(level, id));
         if !self.reveal_location(id) {
             self.say(Msg::new(msg::levels::NO_SECRET_DEV).role("place", place));
             return Spent::Nothing;
@@ -105,7 +105,7 @@ fn reveal_on(state: &mut WorldState, content: &Content, level_id: &str, id: &str
         pos: at,
         dir: (content.terrain(location.terrain).stairs).unwrap_or(StairsDir::Down),
         to: location.to,
-        name: (!two_ends).then(|| Arg::said(data_line::hidden_name(level_id, id))),
+        name: (!two_ends).then(|| Arg::from(place_word::hidden(level_id, id))),
     });
     Some(at)
 }

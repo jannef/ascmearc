@@ -1,0 +1,31 @@
+# Lines of data: chests by band (`chest:<band>.description`), what the look line shows of one.
+
+[ark]
+description = { text = "Suuri arkku tammea ja rautaa, jollaisissa vanhat kirkot säilyttivät aarteitaan.", of = "9c18e9" }
+
+[banded_chest]
+description = { text = "Raskas arkku mustin rautavantein, kansi nauloilla nastoitettu.", of = "5d3024" }
+
+[chest]
+description = { text = "Tukeva puuarkku, sidottu rautavanteilla.", of = "96d019" }
+
+[coffer]
+description = { text = "Pieni puulipas, jossa on rautainen haka.", of = "debbff" }
+
+[forcer]
+description = { text = "Vahva lipas rautalevyistä, kolmesti lukittu.", of = "aadc4d" }
+
+[gilded_ark]
+description = { text = "Suuri arkku, jonka rautaa peittää lehtikulta: kuninkaan lunnaiden arvoinen.", of = "27a88e" }
+
+[hutch]
+description = { text = "Lukittava kirstu tummaa veistettyä puuta, jollaisissa vanhat salit säilyttivät liinavaatteensa ja hopeansa.", of = "101677" }
+
+[kist]
+description = { text = "Suuri pohjoinen tammiarkku, kulmat raudoitetut.", of = "aeee33" }
+
+[silvered_ark]
+description = { text = "Suuri arkku tummuneen hopean peitossa, kannessa solmuisia petoja.", of = "65bfe9" }
+
+[strongbox]
+description = { text = "Tanakka lipas niitattua rautalevyä, tehty suojaamaan herran kolikoita varkailta.", of = "10f15c" }

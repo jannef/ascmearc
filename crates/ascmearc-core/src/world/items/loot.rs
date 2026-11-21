@@ -10,7 +10,7 @@
 //! it dies, besides what it carried, or now and then a loose gem instead (by the gems' `chance`).
 //! The roll draws from the stream `drop/<actor id>`, never the gameplay stream, so a kill changes
 //! no later roll of a fight; its item level is the creature's level, at least the level's item
-//! level ([`drop_level`]: an out-of-depth creature drops a deeper item). What it drops is its gear:
+//! level ([`drop_level`]: an out-of-depth creature drops an item of its own, higher level). What it drops is its gear:
 //! its material is drawn by the materials'
 //! `gear` at the creature's level (#193: primitive for kobolds, steel only for tougher
 //! creatures).

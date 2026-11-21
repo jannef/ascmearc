@@ -120,7 +120,7 @@ impl Content {
     /// data, or a branch level's ([`DungeonDef::level_name_arg`]).
     pub fn level_name_arg(&self, id: &str) -> Option<crate::lang::Arg> {
         if self.levels.contains_key(id) {
-            return Some(crate::lang::Arg::said(super::data_line::level_name(id)));
+            return Some(super::place_word::level(id).into());
         }
         self.branch_level(id)
             .map(|(def, depth)| def.level_name_arg(depth))

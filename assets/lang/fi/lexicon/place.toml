@@ -1,0 +1,98 @@
+# The names of places (`place:<key>`, `content/place_word.rs`): a hand-made level's
+# (`level.<id>`), a branch's (`dungeon.<id>`), a legend's named place's
+# (`level.<id>.legend.<char>`), a hidden location's (`level.<id>.hidden.<location>`), and a
+# scenario's (`scenario.<id>`). Old English names are names (`proper = true`): they inflect as
+# Finnish inflects a foreign name ("Cēaptūniin").
+"dungeon.aelfham" = { word = "Ælfhām", proper = true }
+"dungeon.banfeld" = { word = "Bānfeld", proper = true }
+"dungeon.brocenburg" = { word = "Brocenburg", proper = true }
+"dungeon.cealdhlaw" = { word = "Cealdhlāw", proper = true }
+"dungeon.deopgang" = { word = "Dēopgang", proper = true }
+"dungeon.drytorr_tower" = { word = "Drȳtorr", proper = true }
+"dungeon.fennmynster" = { word = "Fennmynster", proper = true }
+"dungeon.fyrdelf" = { word = "Fyrdelf", proper = true }
+"dungeon.grundleas" = { word = "Grundlēas", proper = true }
+"dungeon.hellegeat" = { word = "Hellegeat", proper = true }
+"dungeon.lytelscraef" = { word = "Lytelscræf", proper = true }
+"dungeon.meynbew" = { word = "Meyn Bew", proper = true }
+"dungeon.skeul_hir" = { word = "Skeul Hir", proper = true }
+"dungeon.steorratorr_tower" = { word = "Steorratorr", proper = true }
+"dungeon.utgang" = { word = "Ūtgang", proper = true }
+"dungeon.wedertorr_tower" = { word = "Wedertorr", proper = true }
+"dungeon.wulfeshol" = { word = "Wulfeshol", proper = true }
+"dungeon.wyrtholm" = { word = "Wyrtholm", proper = true }
+"level.ascmearc" = { word = "Ascmearc", proper = true }
+"level.ascmearc.hidden.aelfham" = { word = "Ælfhām", proper = true }
+"level.ascmearc.hidden.banfeld" = { word = "Bānfeld", proper = true }
+"level.ascmearc.hidden.brocenburg" = { word = "Brocenburg", proper = true }
+"level.ascmearc.hidden.drytorr" = { word = "Drȳtorr", proper = true }
+"level.ascmearc.hidden.fennmynster" = { word = "Fennmynster", proper = true }
+"level.ascmearc.hidden.fyrdelf" = { word = "Fyrdelf", proper = true }
+"level.ascmearc.hidden.steorratorr" = { word = "Steorratorr", proper = true }
+"level.ascmearc.hidden.utgang" = { word = "Ūtgang", proper = true }
+"level.ascmearc.hidden.wedertorr" = { word = "Wedertorr", proper = true }
+"level.ascmearc.hidden.wulfeshol" = { word = "Wulfeshol", proper = true }
+"level.ascmearc.hidden.wyrtholm" = { word = "Wyrtholm", proper = true }
+"level.ascmearc.legend.1" = { word = "Cealdhlāw", proper = true }
+"level.ascmearc.legend.8" = { word = "Lytelscræf", proper = true }
+"level.ascmearc.legend.9" = { word = "Grundlēas", proper = true }
+"level.ascmearc.legend.D" = { word = "Dēopgang", proper = true }
+"level.ascmearc.legend.P" = { word = "Beorggeat", proper = true }
+"level.ascmearc.legend.T" = { word = "Cēaptūn", proper = true }
+"level.ascmearc.legend.V" = { word = "Holtwīc", proper = true }
+"level.ascmearc.legend.^" = { word = "Fyrbeorg", proper = true }
+"level.ascmearc.legend.g" = { word = "Līctūn", proper = true }
+"level.ceaptun" = { word = "Cēaptūn", proper = true }
+"level.ceaptun.legend.N" = "palkkio|taulu/1"
+"level.drakes_lair" = "Lohikäärmeen pesä/10"
+"level.drytorr" = { word = "Drȳtorr", proper = true }
+"level.drytorr.legend.Q" = "messinki|laatta/9*C"
+"level.drytorr_top" = "Drȳtorrin huippu/1*B"
+"level.gimmwic" = { word = "Gimmwīc", proper = true }
+"level.gimmwic.hidden.meyn_bew" = { word = "Meyn Bew", proper = true }
+"level.gimmwic.hidden.skeul_hir" = { word = "Skeul Hir", proper = true }
+"level.holtwic" = { word = "Holtwīc", proper = true }
+"level.holtwic.legend.O" = "harmaa/17 kivi/7"
+"level.lictun" = { word = "Līctūn", proper = true }
+"level.lictun_crypt_01" = "Līctūnin krypta/9 1"
+"level.lictun_crypt_01.legend.1" = "Webben suvun holvi/5"
+"level.lictun_crypt_01.legend.2" = "voutien holvi/5"
+"level.lictun_crypt_01.legend.3" = "Smythin suvun holvi/5"
+"level.lictun_crypt_01.legend.4" = "Baceren suvun holvi/5"
+"level.lictun_crypt_01.legend.5" = "Huntan suvun holvi/5"
+"level.lictun_crypt_01.legend.6" = "Fisceren suvun holvi/5"
+"level.lictun_crypt_02" = "Līctūnin krypta/9 2"
+"level.lictun_crypt_03" = "Līctūnin krypta/9 3"
+"level.lictun_crypt_04" = "Līctūnin krypta/9 4"
+"level.lictun_crypt_05" = "Līctūnin krypta/9 5"
+"level.lictun_crypt_06" = "Līctūnin krypta/9 6"
+"level.lictun_crypt_07" = "Līctūnin krypta/9 7"
+"level.lictun_crypt_08" = "Līctūnin krypta/9 8"
+"level.lictun_crypt_09" = "Līctūnin krypta/9 9"
+"level.lictun_crypt_10" = "Līctūnin krypta/9 10"
+"level.lictun_crypt_11" = "Līctūnin krypta/9 11"
+"level.lictun_crypt_12" = "Līctūnin krypta/9 12"
+"level.lictun_crypt_13" = "Līctūnin krypta/9 13"
+"level.lictun_crypt_14" = "Līctūnin krypta/9 14"
+"level.lictun_crypt_15" = "Līctūnin krypta/9 15"
+"level.lictun_crypt_16" = "Līctūnin krypta/9 16"
+"level.lictun_crypt_17" = "Līctūnin krypta/9 17"
+"level.lictun_crypt_18" = "Līctūnin krypta/9 18"
+"level.lictun_crypt_19" = "Līctūnin krypta/9 19"
+"level.lictun_crypt_20" = "Līctūnin krypta/9 20"
+"level.steorratorr" = { word = "Steorratorr", proper = true }
+"level.steorratorr.legend.Q" = "messinki|laatta/9*C"
+"level.steorratorr.legend.S" = "mestari Sigericin patsas/41"
+"level.steorratorr.legend.U" = "mestari Sigericin patsas/41"
+"level.steorratorr.legend.V" = "mestari Sigericin patsas/41"
+"level.steorratorr.legend.Y" = "jalusta/13"
+"level.steorratorr_top" = "Steorratorrin huippu/1*B"
+"level.steorratorr_top.legend.G" = "messinki|kauko|putki/7"
+"level.steorratorr_top.legend.O" = "planetaario/3"
+"level.wedertorr" = { word = "Wedertorr", proper = true }
+"level.wedertorr.legend.Q" = "messinki|laatta/9*C"
+"level.wedertorr_top" = "Wedertorrin huippu/1*B"
+"level.wedertorr_top.legend.G" = "myrsky|lasi/5"
+"scenario.ascmearc" = { word = "Ascmearc", proper = true }
+"scenario.ceaptun" = { word = "Cēaptūn", proper = true }
+"scenario.lytelscraef" = { word = "Lytelscræf", proper = true }

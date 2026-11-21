@@ -1,0 +1,10 @@
+# Diseases (`disease:<id>`), as the character screen names one once it is known and as the
+# health lines say it ("Lievität {disease:par} hieman"). `many` where the Finnish name is plural.
+brain_fever = "aivo|kuume/48"
+burrowing_worms = { word = "kaivautuva/10 mato/1*F", many = true }
+filth_fever = "saasta|kuume/48"
+grave_rot = "hauta|mätä/10*F"
+marsh_ague = "suo|kuume/48"
+mummy_rot = "muumio|mätä/10*F"
+red_ache = "puna|kolotus/39"
+the_shakes = "vapina/13"

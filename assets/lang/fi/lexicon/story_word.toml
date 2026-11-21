@@ -1,0 +1,37 @@
+# A background story's slot words (`story_word:<scope>.<line>.<slot>`, the words a line sets, and
+# `story_word:<scope>.defaults.<slot>`, a chapter's defaults): who raised the character
+# (`guardian`), where (`home`), and at what (`trade`). Said in the story's lines in any case;
+# "your" is left to the line ("isä", not "isäsi"). A guardian is one ("sisarkunta", not "sisaret"):
+# the lines agree their verbs with one.
+"data.parents.defaults.guardian" = "perhe/48"
+"data.parents.defaults.home" = "koti/5*F"
+"data.parents.defaults.trade" = "ammatti/5*C"
+"data.parents.apothecarys_child.guardian" = "isä/10"
+"data.parents.apothecarys_child.trade" = "puoti/5*F"
+"data.parents.comfortable.home" = "talo/1"
+"data.parents.deep_halls.home" = "syvä/10 sali/5"
+"data.parents.farm_folk.home" = "maa|tila/9"
+"data.parents.foundling.guardian" = "sisar|kunta/9*J"
+"data.parents.foundling.home" = "luostari/6"
+"data.parents.jewellers_child.guardian" = "isä/10"
+"data.parents.jewellers_child.trade" = "hioma|pöytä/10*F"
+"data.parents.low_house.home" = "talo/1"
+"data.parents.market_stall.guardian" = "äiti/5*F"
+"data.parents.market_stall.trade" = "koju/1"
+"data.parents.miners_child.guardian" = "äiti/5*F"
+"data.parents.miners_child.trade" = "kaivos/39"
+"data.parents.nobodys_child.guardian" = "sinut ottanut nainen/38"
+"data.parents.old_money.home" = "talo/1"
+"data.parents.scholars_child.guardian" = "äiti/5*F"
+"data.parents.scholars_child.trade" = { word = "kirja/9", plural_only = true }
+"data.parents.smiths_child.guardian" = "isä/10"
+"data.parents.smiths_child.trade" = "paja/9"
+"data.parents.the_burrow.home" = "maa|kolo/1"
+"data.parents.the_clutch.guardian" = "pesueen vanhimmisto/2"
+"data.parents.the_clutch.home" = "suo/19"
+"data.parents.the_inn.home" = "maja|talo/1"
+"data.parents.the_inn.trade" = "maja|talo/1"
+"data.parents.the_warren.home" = "kolo/1"
+"data.parents.tinkers.trade" = "kattilanpaikkaajan kärry/1"
+"data.parents.wise_woman.guardian" = "iso|äiti/5*F"
+"data.parents.woods_edge.home" = "metsän|reuna/9"
