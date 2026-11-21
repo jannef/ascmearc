@@ -1,0 +1,4 @@
+# A trap the player rigs (`rig:<id>`, `data/rigs.toml`), a noun ("viritä kompastuslanka").
+pitfall = "kuoppa-ansa/9"
+stakes = { word = "seiväs/41*E", many = true }
+tripwire = "kompastus|lanka/9*G"
