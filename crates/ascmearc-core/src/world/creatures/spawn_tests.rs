@@ -486,7 +486,8 @@ fn a_generated_floor_is_laid_down_full_and_nothing_else_moves() {
         assert_eq!(with.traps, without.traps, "seed {seed}");
         assert_eq!(with.secrets, without.secrets, "seed {seed}");
         // A tempting hoard's items and a den's hoard come with a danger (`mapgen/hoard.rs`,
-        // `den::fill`): the rest is the same.
+        // `den::fill`), and so does a shop's stock (its base items by the floor's item level,
+        // #2048): the rest is the same.
         let hoards: Vec<_> = (with.rooms.iter())
             .filter(|r| {
                 let e = content.room_effect(r.effect);
@@ -495,7 +496,9 @@ fn a_generated_floor_is_laid_down_full_and_nothing_else_moves() {
             .collect();
         let loose = |objects: &BTreeMap<Pos, Vec<crate::object::Stack>>| {
             let mut objects = objects.clone();
-            objects.retain(|p, _| !hoards.iter().any(|r| r.contains(*p)));
+            objects.retain(|p, _| {
+                !hoards.iter().any(|r| r.contains(*p)) && !with.shops.iter().any(|s| s.contains(*p))
+            });
             objects
         };
         assert_eq!(loose(&with.objects), loose(&without.objects), "seed {seed}");

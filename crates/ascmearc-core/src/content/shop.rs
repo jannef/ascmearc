@@ -224,14 +224,20 @@ impl Shops {
             && !self.get(kind).never.contains(&object)
     }
 
-    /// What a shop of kind `kind` draws its goods from ([`Shops::stocks`]), each weighed by its
-    /// loot `frequency` (100 for what is never loot: a low tier's spell scroll lies there more
-    /// often), by object id (the string): the same draw lays out the same goods however the
-    /// object files are ordered (docs/dev/content.md).
-    pub fn goods(&self, content: &Content, kind: ShopId) -> Vec<(ObjectId, u32)> {
+    /// What a shop of kind `kind` draws its goods made at item level `level` from
+    /// ([`Shops::stocks`]; a base item, one with a `kind`, only once `level` reaches its own
+    /// `level`, as loot's: #2048), each weighed by its loot `frequency` (100 for what is never
+    /// loot: a low tier's spell scroll lies there more often), by object id (the string): the
+    /// same draw lays out the same goods however the object files are ordered
+    /// (docs/dev/content.md).
+    pub fn goods(&self, content: &Content, kind: ShopId, level: u8) -> Vec<(ObjectId, u32)> {
         let mut goods: Vec<ObjectId> = (0..content.object_defs().len())
             .map(|o| ObjectId(o as u16))
             .filter(|&o| self.stocks(content, kind, o))
+            .filter(|&o| {
+                let def = content.object(o);
+                def.kind.is_none() || def.level <= level.max(1)
+            })
             .collect();
         goods.sort_by(|a, b| content.object(*a).id.cmp(&content.object(*b).id));
         (goods.into_iter())
@@ -485,6 +491,35 @@ mod tests {
                     "{name}"
                 );
                 assert!(!shops.stocks(&c, ShopId(k as u8), id(name)), "{name}");
+            }
+        }
+    }
+
+    #[test]
+    fn a_base_item_is_stocked_only_from_its_own_item_level() {
+        // As loot: plate armour (item level 7) and full plate (20) wait for a shop of theirs
+        // (#2048); what is no base item (a potion) does not.
+        let c = content();
+        let shops = c.shops().expect("shops");
+        let armourer = shops.id("armourer").expect("an armourer");
+        let has = |level: u8, name: &str| {
+            let o = c.object_id(name).expect(name);
+            (shops.goods(&c, armourer, level).iter()).any(|&(g, _)| g == o)
+        };
+        let (plate, full) = ("plate_armour", "full_plate");
+        assert_eq!(c.object(c.object_id(plate).expect(plate)).level, 7);
+        assert_eq!(c.object(c.object_id(full).expect(full)).level, 20);
+        assert!(has(1, "leather_jerkin") && !has(1, plate) && !has(1, full));
+        assert!(!has(6, plate) && has(7, plate) && !has(19, full) && has(20, full));
+        let alchemist = shops.id("alchemist").expect("an alchemist");
+        let potion = c.object_id("potion_of_full_healing").expect("a potion");
+        assert!(c.object(potion).level > 1 && c.object(potion).kind.is_none());
+        assert!((shops.goods(&c, alchemist, 1).iter()).any(|&(g, _)| g == potion));
+        // Every base laid out at a level is one of that level or below.
+        for level in [1, 4, 12, 40] {
+            for (o, _) in shops.goods(&c, armourer, level) {
+                let def = c.object(o);
+                assert!(def.kind.is_none() || def.level <= level, "{}", def.id);
             }
         }
     }

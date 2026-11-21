@@ -313,7 +313,7 @@ Its affixes may go past what loot ever rolls: a value above an affix's highest
 damage). The table below marks such an affix "set" where the others name their tier.
 
 It is found unidentified like any magic item, but its rarity shows ("a stiletto (unique)"). Its
-affixes work as a rare item's do, and it is worth what a rare item would be. Once identified, it shows its
+affixes work as a rare item's do. A [shop](shops.md#magic-items) prices it as a rare item, but by its own item level instead of its affixes' tiers. Once identified, it shows its
 name, its affixes, its power in words, and a line of lore. Each one lies in one place in the
 world, so a character finds each at most once, and loot never makes one. Most are carried by
 those who own them. Three are only ever offered, very rarely, by a

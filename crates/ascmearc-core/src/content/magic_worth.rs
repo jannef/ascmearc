@@ -1,6 +1,7 @@
 //! What magic adds to an item's worth (`assets/data/rules/magic_worth.toml`;
 //! #1709): a percent of the item as made by its rarity, and gold for each identified affix by
-//! the item level of its tier. Read by `Stack::worth` (`object.rs`), which shops and the
+//! the item level of its tier, a unique's by its own item level (#2048: its values are set by
+//! hand, so a regrade of the tiers never moves its price). Read by `Stack::worth` (`object.rs`), which shops and the
 //! craftsperson's patron price by.
 //!
 //! The file is optional: without it magic adds nothing.
@@ -37,7 +38,8 @@ pub struct AffixWorth {
 
 impl MagicWorth {
     /// `worth` (one item as made) with its magic added, as the player knows it: the rarity's
-    /// percent (rounded down) always, and each affix's gold once `magic` is identified. A
+    /// percent (rounded down) always, and each affix's gold once `magic` is identified, by its
+    /// tier's item level, or by the item's own for a unique. A
     /// curse the player knows of (#1754) makes the magic worth nothing: the item as made.
     pub fn add(&self, content: &Content, worth: u64, magic: &Magic) -> u64 {
         if (magic.identified || magic.curse_known) && magic.cursed(content) {
@@ -54,9 +56,12 @@ impl MagicWorth {
         }
         let affixes: u64 = (magic.affixes.iter())
             .map(|a| {
-                let level = (content.affixes().get(&a.id))
-                    .and_then(|d| d.tier(a.tier))
-                    .map_or(0, |t| t.level);
+                let level = match magic.unique {
+                    Some(_) => magic.level,
+                    None => (content.affixes().get(&a.id))
+                        .and_then(|d| d.tier(a.tier))
+                        .map_or(0, |t| t.level),
+                };
                 self.affix_worth(level)
             })
             .sum();
@@ -88,8 +93,9 @@ mod tests {
         let content = crate::test_support::builtin();
         let worth = content.magic_worth().expect("magic is worth something");
         assert_eq!((worth.rarity.magic, worth.rarity.rare), (50, 100));
-        assert_eq!(worth.affix_worth(1), 75);
-        assert_eq!(worth.affix_worth(12), 350);
+        assert_eq!(worth.affix_worth(1), 60);
+        assert_eq!(worth.affix_worth(12), 170);
+        assert_eq!(worth.affix_worth(40), 450);
     }
 
     #[test]

@@ -272,18 +272,11 @@ pub(super) fn restock(content: &Content) -> String {
         hundredths(scale.most)
     );
     out.push_str("\nThe item level of a town shop's new goods with no bonus, rounded down:\n\n");
-    let levels = [1u8, 5, 10, 20, 30, 40, 50];
-    out.push_str("| Your level |");
-    for level in levels {
-        let _ = write!(out, " {level} |");
+    out.push_str("| Your level | Item level |\n|---:|---:|\n");
+    for level in [1u8, 5, 10, 20, 30, 40, 50, 60] {
+        let _ = writeln!(out, "| {level} | {} |", rules.item_level(level, 0, 0));
     }
-    out.push_str("\n|---|");
-    out.push_str(&"---:|".repeat(levels.len()));
-    out.push_str("\n| Item level |");
-    for level in levels {
-        let _ = write!(out, " {} |", rules.item_level(level, 0, 0));
-    }
-    out.push_str("\n\nWhat raises a town's restocking, in item levels:\n\n");
+    out.push_str("\nWhat raises a town's restocking, in item levels:\n\n");
     out.push_str("| Town | What | Item levels |\n|---|---|---|\n");
     for town in content.towns() {
         let Some(restock) = &town.restock else {
@@ -319,7 +312,7 @@ pub(super) fn restock(content: &Content) -> String {
 }
 
 /// What magic adds to an item's worth (`data/rules/magic_worth.toml`): by rarity, then by each
-/// identified affix's tier level (the affixes' tiers run to item level 12).
+/// identified affix's tier level (a unique's by its own), through item level 40.
 pub(super) fn magic_worth(content: &Content) -> String {
     let mut out = String::from("| Rarity | Worth added |\n|---|---:|\n");
     let Some(rules) = content.magic_worth() else {
@@ -327,18 +320,10 @@ pub(super) fn magic_worth(content: &Content) -> String {
     };
     let _ = writeln!(out, "| Magic | {}% |", rules.rarity.magic);
     let _ = writeln!(out, "| Rare or unique | {}% |", rules.rarity.rare);
-    out.push_str("\n| Tier's item level |");
-    let levels = 1..=12u8;
-    for level in levels.clone() {
-        let _ = write!(out, " {level} |");
+    out.push_str("\n| Item level | Gold per affix |\n|---:|---:|\n");
+    for level in [1u8, 2, 4, 6, 8, 10, 12, 16, 20, 24, 28, 32, 36, 40] {
+        let _ = writeln!(out, "| {level} | {} |", rules.affix_worth(level));
     }
-    out.push_str("\n|---|");
-    out.push_str(&"---:|".repeat(levels.clone().count()));
-    out.push_str("\n| Gold per affix |");
-    for level in levels {
-        let _ = write!(out, " {} |", rules.affix_worth(level));
-    }
-    out.push('\n');
     out
 }
 

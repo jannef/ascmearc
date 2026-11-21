@@ -68,7 +68,8 @@ new. Keepers are NPCs: `budge = "off_post"` (no swapping at the post), one-liner
 `Worked::made`, an anvil's grade), then `MagicWorth::add` (`content/magic_worth.rs`,
 `data/rules/magic_worth.toml`, optional: without it magic adds nothing): the rarity's percent
 always (the rarity shows at once), plus, once identified, each affix's `each` + `per_level` × its
-tier's item level (a curse the player knows of, #1754, makes the magic add nothing: docs/dev/magic-items.md
+tier's item level, a unique's by its own item level (`Magic::level`, its file's `level`: its
+values are set by hand, so a regrade of the tiers never moves its price, #2048) (a curse the player knows of, #1754, makes the magic add nothing: docs/dev/magic-items.md
 "Curses"); then `Worked::with_mark` (a maker's mark on top of it all), times the count. It
 reads only what the player knows, so a price leaks nothing; `Stack::value` stays the make alone
 (what a trader's offer, `wares.rs`, adds its own affix price to, and the tithe's choice).
@@ -100,7 +101,11 @@ The item level is `RestockRules::item_level(player level, danger, bonus)`: `dang
 derived from the quest records and `WorldState::fund` (never saved): the town file's
 `[town.restock]` (`content/town.rs`, `TownRestock`: `quests` in hundredths, `invest = { share,
 after }`), and a town's level is `TownDef::levels` (`Content::town_at`). Every id is checked at
-load; the Rust names no town or quest. Goods are made by `Shops::lay_out` (`magic::loot::make`:
-magic and an ornament, never another material, spec/06-content.md). The townsfolk's talk of it
+load; the Rust names no town or quest. Goods are drawn by `Shops::goods` at that item level: a
+base item (an object with a `kind`) only once the item level reaches its own `level`, as loot's
+(#2048; what is no base item, a potion or a scroll, is drawn at any level), so a town's first goods
+hold no plate; the same holds for a generated shop's first stock. They are made by
+`Shops::lay_out` (`magic::loot::make`: magic and an ornament, never another material,
+spec/06-content.md). The townsfolk's talk of it
 is `[dialogue.economy]` (docs/dev/npcs.md). The wiki's table is `xtask/src/wiki/objects.rs::restock`.
 Tests: `world/people/restock_tests.rs`, `content/restock.rs`.

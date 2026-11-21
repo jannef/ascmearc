@@ -155,7 +155,40 @@ fn a_town_bonus_makes_better_goods() {
     done(&mut w, &["fire_deep", "gnome_letter"]);
     w.state.fund.cents = 1_000_000 * 100;
     let better = rules.item_level(20, 0, bonus(&w, "ceaptun"));
-    assert_eq!((plain, better), (8, 14));
+    assert_eq!((plain, better), (12, 18));
+}
+
+#[test]
+fn a_town_restocks_no_base_item_above_its_item_level() {
+    // As loot (#2048): Cēaptūn's armourer and smiths lay out no plate for a level-8 character
+    // (item level 5), whatever their goods' classes hold.
+    let mut w = town();
+    let shops_here = w.state.levels["ceaptun"].shops.len();
+    assert!(shops_here > 0, "Cēaptūn has shops");
+    let before: Vec<Floor> = (0..shops_here).map(|i| floor(&w, "ceaptun", i)).collect();
+    to_level(&mut w, 8);
+    let rules = w.content().restock().cloned().expect("shops restock");
+    let top = rules.item_level(8, 0, bonus(&w, "ceaptun"));
+    assert_eq!(top, 5);
+    let mut came = 0;
+    for (i, was) in before.iter().enumerate() {
+        for stack in floor(&w, "ceaptun", i) {
+            if was.contains(&stack) {
+                continue;
+            }
+            came += 1;
+            let def = w
+                .content()
+                .object(w.content().object_id(&stack.1).expect("an object"));
+            assert!(
+                def.kind.is_none() || def.level <= top,
+                "{} (item level {}) at {top}",
+                def.id,
+                def.level
+            );
+        }
+    }
+    assert!(came > 0, "new goods came");
 }
 
 #[test]
