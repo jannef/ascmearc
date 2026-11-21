@@ -38,8 +38,11 @@ may move a hidden trap (a trap may lie under a loot cell). A vault's `monsters` 
 (`content/monster_pool.rs`, `VaultMonsters`; `Canvas::monsters`) are drawn with the population,
 just before it, from their own stream `vault_monsters/<level id>`, through the same
 `danger::draw`; the population keeps off every marked cell, so a floor with such a vault moves its
-population (not its map, traps, secrets, or loot), and only that floor; `hide_traps` is untouched, so
-a hidden trap may take a marked cell, which then stays empty (`mapgen/vault_monsters_tests.rs`).
+population (not its map, traps, secrets, or loot), and only that floor. A hidden trap may take a
+marked cell, which then stays empty (`mapgen/vault_monsters_tests.rs`), but never a cell of a
+`route` the vault's map writes for the pool, walked from any marked cell (`mapgen::patrolled`, the
+cells `hide_traps` keeps off: the draws come after the traps and walk a written route as written,
+#2070).
 A hand-made level with no danger draws nothing (every branch floor has one, #2067). On a
 branch with a danger the initial population follows (`mapgen/population.rs`, stream
 `population/<level id>`; `docs/dev/creatures.md`: its own folk, now and then a stray from every

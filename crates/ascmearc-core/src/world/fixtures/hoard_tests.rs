@@ -95,23 +95,19 @@ fn the_tempting_hoard_is_data() {
             numbers.loot_level,
             numbers.guardians,
             numbers.danger,
-            hoard.needs_danger,
             hoard.weight
         ),
-        ("tempting hoard", 'T', 3, 3, [2, 4], 1, true, 5)
+        ("tempting hoard", 'T', 3, 3, [2, 4], 1, 5)
     );
     assert!(!hoard.can_pervade(), "never a whole level");
 }
 
 #[test]
-fn a_hoard_needs_a_danger_and_a_range_of_guardians() {
+fn a_hoard_needs_a_range_of_guardians() {
     let shipped = ContentFiles::builtin().table_text("room_effects");
     let line = "hoard = { items = 3, loot_level = 3, guardians = [2, 4], danger = 1 }";
     assert!(shipped.contains(line));
-    let without_danger = shipped.replace(&format!("needs_danger = true\n{line}"), line);
-    assert_ne!(without_danger, shipped);
     for (what, text) in [
-        ("no needs_danger", without_danger),
         (
             "least above most",
             shipped.replace(line, &line.replace("[2, 4]", "[5, 4]")),

@@ -103,8 +103,6 @@ struct RoomEffectSpec {
     level_chance: u8,
     pervade: Option<String>,
     #[serde(default)]
-    needs_danger: bool,
-    #[serde(default)]
     needs_below: bool,
     #[serde(default)]
     min_cells: u16,
@@ -406,8 +404,6 @@ pub struct RoomEffectDef {
     pub level_chance: u8,
     /// Said each time the player arrives on a level it covers whole.
     pub pervade: Option<String>,
-    /// Drawn only on a level with a danger.
-    pub needs_danger: bool,
     /// Drawn only on a branch level with another below it.
     pub needs_below: bool,
     /// Drawn only for a room of at least this many floor cells.
@@ -503,11 +499,10 @@ impl RoomEffectDef {
         light.percent(self.light)
     }
 
-    /// Whether a room of `cells` floor cells may get it, on a level with a danger (`danger`) and
-    /// with another level below it (`below`).
-    pub fn eligible(&self, cells: usize, danger: bool, below: bool) -> bool {
-        (danger || !self.needs_danger)
-            && (below || !self.needs_below)
+    /// Whether a room of `cells` floor cells may get it, on a level with another level below it
+    /// (`below`). Every generated floor has a danger (#2067), which what a room draws reads.
+    pub fn eligible(&self, cells: usize, below: bool) -> bool {
+        (below || !self.needs_below)
             && cells >= usize::from(self.min_cells)
             && self.max_cells.is_none_or(|most| cells <= usize::from(most))
     }
@@ -902,9 +897,6 @@ impl RoomEffects {
             let rise = match &spec.rise {
                 Some(r) => {
                     let after: Duration = r.after.parse().map_err(|e: String| bad(e))?;
-                    if !spec.needs_danger {
-                        return Err(bad("a `rise` needs `needs_danger`".into()));
-                    }
                     Some(Rise {
                         faction: r.faction.clone(),
                         after,
@@ -913,7 +905,7 @@ impl RoomEffects {
                 None => None,
             };
             let haunt = (spec.haunt.as_ref())
-                .map(|h| h.resolve(spec.needs_danger))
+                .map(|h| h.resolve())
                 .transpose()
                 .map_err(bad)?;
             let feature = match &spec.feature {
@@ -966,16 +958,10 @@ impl RoomEffects {
             }
             if let Some(swarm) = &spec.swarm {
                 swarm.check().map_err(bad)?;
-                if !spec.needs_danger {
-                    return Err(bad("a `swarm` needs `needs_danger`".into()));
-                }
             }
             let lore = LoreNames::check(spec.loot, spec.train).map_err(bad)?;
             if let Some(hoard) = &spec.hoard {
                 hoard.check().map_err(bad)?;
-                if !spec.needs_danger {
-                    return Err(bad("a `hoard` needs `needs_danger`".into()));
-                }
             }
             let def = RoomEffectDef {
                 id: spec.id,
@@ -986,7 +972,6 @@ impl RoomEffects {
                 near: spec.near,
                 level_chance: spec.level_chance,
                 pervade: spec.pervade,
-                needs_danger: spec.needs_danger,
                 needs_below: spec.needs_below,
                 min_cells: spec.min_cells,
                 max_cells: spec.max_cells,
@@ -1238,11 +1223,11 @@ mod tests {
         let e = plain.get(RoomEffectId(0));
         assert_eq!((e.weight, e.level_chance, e.min_cells), (10, 0, 0));
         assert_eq!((&e.near, &e.pervade, e.max_cells), (&None, &None, None));
-        assert!(!e.needs_danger && !e.needs_below && !e.can_pervade());
-        assert!(e.eligible(1, false, false));
+        assert!(!e.needs_below && !e.can_pervade());
+        assert!(e.eligible(1, false));
         let text = format!(
             "{SHADOWED}weight = 6\nnear = \"Near.\"\nlevel_chance = 5\npervade = \"All.\"\n\
-             needs_danger = true\nneeds_below = true\nmin_cells = 16\nmax_cells = 40\n"
+             needs_below = true\nmin_cells = 16\nmax_cells = 40\n"
         );
         let full = RoomEffects::parse("e.toml", &text, |_| None).expect("valid");
         let e = full.get(RoomEffectId(0));
@@ -1250,9 +1235,9 @@ mod tests {
         assert_eq!(e.near.as_deref(), Some("Near."));
         assert_eq!(e.pervade.as_deref(), Some("All."));
         assert!(e.can_pervade());
-        assert!(e.eligible(16, true, true) && e.eligible(40, true, true));
-        assert!(!e.eligible(15, true, true) && !e.eligible(41, true, true));
-        assert!(!e.eligible(20, false, true) && !e.eligible(20, true, false));
+        assert!(e.eligible(16, true) && e.eligible(40, true));
+        assert!(!e.eligible(15, true) && !e.eligible(41, true));
+        assert!(!e.eligible(20, false));
     }
 
     #[test]

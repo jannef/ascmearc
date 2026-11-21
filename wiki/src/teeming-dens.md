@@ -3,10 +3,9 @@
 A teeming den is a [special room](special-rooms.md) full of sleeping creatures lying among their
 hoard. Creep past and they sleep on. Wake one and the whole den may be up.
 
-A den comes only on a level with a danger (see [Dungeons and danger](dungeons.md)), in a room of
-16 floor cells or more. Its sleepers are the level's own kind of creatures. Each is drawn just as
-the level's other creatures are: by the level's danger and how rare each kind is, with now and
-then a weaker stray or one from deeper down. They are always [hostile](creatures.md#factions) to
+A den comes only in a room of 16 floor cells or more. Its sleepers are the level's own kind of
+creatures. Each is drawn just as the level's other creatures are: by the level's
+[danger](dungeons.md) and how rare each kind is, with now and then a weaker stray or one from deeper down. They are always [hostile](creatures.md#factions) to
 you and never unique. Sometimes the whole den is of one kind (a *warren*, such as a nest of rats)
 or of one [faction](creatures.md#factions) (a *tribe*, such as a goblin camp). Their hoard is a few
 [items](objects.md) a little better than the level's own.

@@ -169,9 +169,6 @@ fn features_are_drawn_only_where_they_are_eligible() {
             })
             .count()
     };
-    // Every branch floor has a danger (#2067), so a feature that needs one may come on any.
-    // (The fen keeps 80 % of its draws for its own and a room special one time in four.)
-    assert!(only("needs_danger = true\n", "ascmearc", "fennmynster:1") > 0);
     // The Depths' bottom, 8, has no level below.
     assert_eq!(only("needs_below = true\n", "showcase", "depths:8"), 0);
     assert!(only("needs_below = true\n", "showcase", "depths:7") > 10);

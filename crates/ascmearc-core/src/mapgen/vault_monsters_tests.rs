@@ -382,6 +382,41 @@ fn a_pool_s_route_is_walked_by_every_draw_and_turns_with_the_vault() {
 }
 
 #[test]
+fn no_hidden_trap_lies_on_a_route_a_pool_s_map_writes() {
+    // Every cell drawn (no `count`), walking a written route, on a floor thick with traps: the
+    // draws come after the traps, so `hide_traps` keeps off the route from every marked cell
+    // (#2070).
+    let vault = "name = \"Hall\"\nmap = '''\n########\n#mmmmmm#\n#......#\n###+####\n'''\n\
+         [legend]\n\"m\" = { terrain = \"floor\", monsters = { pool = \"goblin\" }, \
+         route = \"S1 N1\" }\n";
+    let levels = "traps = [\"pit\"]\ntraps_per_level = [400, 400]\n\
+                  [[dungeon.levels]]\nfrom = 1\nvaults = [\"crowd\"]\n";
+    let content = content_in(vault, 5, levels).expect("content");
+    let mut seen = 0;
+    for seed in 1..=20 {
+        let level = floor(&content, seed);
+        let spawns = drawn(&level);
+        if spawns.is_empty() {
+            continue;
+        }
+        seen += 1;
+        assert!(
+            level.traps.len() > 100,
+            "seed {seed}: a floor thick with traps"
+        );
+        assert_eq!(spawns.len(), 6, "seed {seed}: no trap on a marked cell");
+        for spawn in spawns {
+            let mut p = spawn.pos;
+            for dir in &spawn.route {
+                p = p.step(*dir);
+                assert!(!level.traps.contains_key(&p), "seed {seed}: a trap at {p}");
+            }
+        }
+    }
+    assert!(seen > 5, "the hall stands on {seen} floors");
+}
+
+#[test]
 fn a_pool_s_status_carry_and_route_are_checked_as_a_placed_creature_s() {
     for (legend, says) in [
         // From the cells of the far row the walk leaves the floor; from any it must come back.

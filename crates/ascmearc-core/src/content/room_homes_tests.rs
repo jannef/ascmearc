@@ -8,10 +8,7 @@ use crate::test_support::CONTENT;
 const DEN: &str = "swarm = { per_cells = 4, min = 1, max = 4, wake = 200, cry = 0, loot_level = 0";
 
 fn effect(extra: &str) -> String {
-    format!(
-        "[[effect]]\nid = \"home\"\nname = \"home\"\nmark = \"H\"\nenter = \"In.\"\n\
-         needs_danger = true\n{extra}\n"
-    )
+    format!("[[effect]]\nid = \"home\"\nname = \"home\"\nmark = \"H\"\nenter = \"In.\"\n{extra}\n")
 }
 
 fn parse(extra: &str) -> Result<RoomEffects, String> {

@@ -86,7 +86,7 @@ fn the_unstable_room_is_data() {
     assert_eq!(unstable.enter, "The floor shimmers under your feet.");
     // Only the warp: never the whole level, and only for small rooms.
     assert!(unstable.level_chance == 0 && unstable.status.is_none() && !unstable.shunned);
-    assert!(unstable.eligible(60, false, false) && !unstable.eligible(61, false, false));
+    assert!(unstable.eligible(60, false) && !unstable.eligible(61, false));
     // No other effect warps.
     for e in effects.defs().iter().filter(|e| e.id != "unstable") {
         assert_eq!(e.warp, 0, "{}", e.id);
