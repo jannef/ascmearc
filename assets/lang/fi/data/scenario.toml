@@ -3,12 +3,51 @@
 [ascmearc]
 arrival = { text = "Sola avautuu Ascmearciin. Kaukana idässä Fyrbeorg savuaa.", of = "a9f341" }
 description = { text = "Laskeudu Beorggeatin kautta Ascmearciin; Cēaptūnin markkinakaupunki on lyhyen matkan päässä itään tietä pitkin.", of = "8367d2" }
-name = { text = "Ascmearc", of = "8245b2" }
 
 [ceaptun]
 description = { text = "Ascmearcin markkinakaupunki: sen kaupat, Mynster ja sisar Hild, Gæsthūs ja kaupungin väki.", of = "aaff63" }
-name = { text = "Cēaptūn", of = "5d84f5" }
 
 [lytelscraef]
 description = { text = "Suoraan Lytelscræfiin, pieneen luolaan: kolme lyhyttä kerrosta syöpäläisiä ja koboldeja.", of = "11d9d9" }
-name = { text = "Lytelscræf", of = "e64cbf" }
+
+[aelfham]
+description = { text = "Suoraan Ælfhāmiin, pimeän keijuhovin saliin kummun alla: kolme kerrosta keijujen omaa maata.", of = "c3fde9" }
+
+[cealdhlaw]
+description = { text = "Suoraan Cealdhlāwiin, kylmään hautakumpuun Hlāwdūnin alla: kuusi kerrosta käytäviä ja onkaloita.", of = "72c751" }
+
+[deopgang]
+description = { text = "Suoraan Dēopgangiin, Syvätielle: yksitoista kerrosta gnomien hakkaamia käytäviä ja villiä syvyyttä, syvägnomien kaupunkiin asti.", of = "5f111f" }
+
+[drake]
+description = { text = "Tulilentolisko laavasalissa yhdentoista ruudun päässä: se syöksee tulta aina kun voi, ja välillä se taistelee kynsin ja hampain.", of = "963d38" }
+
+[drytorr]
+description = { text = "Aukio paatsamametsässä, jossa mestari Ordgarin torni seisoo: sen ansasalit, ylemmät kerrokset ja velho huipulla.", of = "8a8ad6" }
+
+[fennmynster]
+description = { text = "Suoraan Fennmynsteriin, suohon hukkuneeseen kirkkoon: kahdeksan kerrosta tulvineita kellareita ja kryptoja.", of = "5a07db" }
+
+[fyrdelf]
+description = { text = "Suoraan Fyrdelfiin, tulikaivokseen Ascdūnin alla: kaksitoista kerrosta käytäviä ja syviä louhoksia.", of = "014fa2" }
+
+[gimmwic]
+description = { text = "Syvägnomien kaupunki Dēopgangin pohjalla: jalokivikauppias, varustajat, Hohde, hiomolattia ja Tregear-vaari sekä kylänvanhin Peran.", of = "9abf6d" }
+
+[grundleas]
+description = { text = "Suoraan Grundlēasiin, pohjattomaan: kerroksia loputtomiin, eikä yksikään niistä ole siellä kahdesti.", of = "5e8167" }
+
+[holtwic]
+description = { text = "Kylä pohjoisen tien päässä paatsamametsän laidalla: mökkiläiset ja tietäjänainen Wynflæd-mummo.", of = "ebb732" }
+
+[rat_king]
+description = { text = "Grundlēasin kymmenes kerros, jota Rottakuningas Gnægan pitää tunkiollaan: alas ei pääse ennen kuin hän kuolee.", of = "b7dbb5" }
+
+[steorratorr]
+description = { text = "Tasanko harmaan meren rannalla, jossa mestari Sigericin torni seisoo: sen ansasalit, ylemmät kerrokset ja velho huipulla.", of = "54f092" }
+
+[utgang]
+description = { text = "Suoraan Ūtgangiin, tielle ulos: kolme kerrosta tulilentoliskon syvyyksistä ylös tulivuoren kyljelle.", of = "9a992e" }
+
+[wedertorr]
+description = { text = "Nummi Hlāwdūnilla, jossa rouva Ælfswīðin torni seisoo: sen ansasalit, ylemmät kerrokset ja velho huipulla.", of = "13c818" }

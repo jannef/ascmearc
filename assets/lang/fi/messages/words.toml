@@ -5,7 +5,9 @@
 # - a stat's `_more` (and `describe.stat_*`): the translative ("vahvemmaksi"), for "Tunnet itsesi
 #   …", "Tekee sinut pysyvästi …", "voisit kasvaa vielä …";
 # - a stat's `_gift`: the partitive ("notkeutta"), for "Sinuun siirtyy hiukan sen …";
-# - a direction: the elative ("idästä"), for a voice or a sound heard from there;
+# - a direction: by the slot it is said in (`by = "slot.form"`, #2062): `ela` "idästä" (a voice
+#   or a sound heard from there), `ill` "itään", `ine` "idässä" (the way to an ally), else the
+#   nominative;
 # - a `doing_*`: the first infinitive, after "Et voi …".
 #
 # Roles: `burden` a burden's name, `weight` a weight in words; `hours` and `minutes` spans of time;
@@ -24,14 +26,19 @@ burden_over = { text = "{burden:bare} yli {weight:bare}", of = "8319a6" }
 burden_overloaded = { text = "ylikuormittunut", of = "7d6bc0" }
 burden_strained = { text = "raskaasti kuormittunut", of = "277d36" }
 burden_unburdened = { text = "kuormaton", of = "cdd618" }
-dir_east = { text = "idästä", of = "53723c" }
-dir_north = { text = "pohjoisesta", of = "ef93de" }
-dir_north_east = { text = "koillisesta", of = "ae934d" }
-dir_north_west = { text = "luoteesta", of = "c4765e" }
-dir_south = { text = "etelästä", of = "272d74" }
-dir_south_east = { text = "kaakosta", of = "81be2c" }
-dir_south_west = { text = "lounaasta", of = "5aa4ce" }
-dir_west = { text = "lännestä", of = "e94944" }
+# The chance of learning from a grimoire: the partitive, a predicate ("{what} on helppoa").
+chance_beyond = { text = "kykyjesi ulottumattomissa", of = "07c7f0" }
+chance_certain = { text = "varmaa", of = "55c856" }
+chance_easy = { text = "helppoa", of = "537a1e" }
+chance_struggle = { text = "työlästä", of = "cdb52b" }
+dir_east = { by = "slot.form", ela = "idästä", ill = "itään", ine = "idässä", else = "itä", of = "53723c" }
+dir_north = { by = "slot.form", ela = "pohjoisesta", ill = "pohjoiseen", ine = "pohjoisessa", else = "pohjoinen", of = "ef93de" }
+dir_north_east = { by = "slot.form", ela = "koillisesta", ill = "koilliseen", ine = "koillisessa", else = "koillinen", of = "ae934d" }
+dir_north_west = { by = "slot.form", ela = "luoteesta", ill = "luoteeseen", ine = "luoteessa", else = "luode", of = "c4765e" }
+dir_south = { by = "slot.form", ela = "etelästä", ill = "etelään", ine = "etelässä", else = "etelä", of = "272d74" }
+dir_south_east = { by = "slot.form", ela = "kaakosta", ill = "kaakkoon", ine = "kaakossa", else = "kaakko", of = "81be2c" }
+dir_south_west = { by = "slot.form", ela = "lounaasta", ill = "lounaaseen", ine = "lounaassa", else = "lounas", of = "5aa4ce" }
+dir_west = { by = "slot.form", ela = "lännestä", ill = "länteen", ine = "lännessä", else = "länsi", of = "e94944" }
 doing_body_armor = { text = "vaihtaa haarniskaa", of = "20088c" }
 doing_call_familiar = { text = "kutsua apuhenkeä", of = "629d33" }
 doing_cast = { text = "loitsia", of = "188d87" }

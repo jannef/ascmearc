@@ -113,9 +113,10 @@ jobs:
       # Every code path CLAUDE.md, spec/, and docs/dev/ name must exist (#1667).
       - name: The docs name code that exists
         run: cargo xtask docs-check
-      # The language files agree with English: ids, roles, forms, hashes (docs/dev/localization.md).
+      # The language files agree with English: ids, roles, forms, hashes; Finnish lacks nothing
+      # (`--strict fi`; docs/dev/localization.md "The checker").
       - name: The language files are sound
-        run: cargo xtask lang --check
+        run: cargo xtask lang --check --strict fi
       # The player wiki (wiki/, mdBook): its tables are generated here from the game data (they are
       # not committed), the book must build, and every link in it must lead to a page and anchor.
       - name: Install mdBook

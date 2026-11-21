@@ -55,7 +55,7 @@ text = "Valitse ensin esine."
 
 [empty_family]
 of = "a11280"
-text = "Ei mitään kristallin luonteista sinetöitävää."
+text = "Ei mitään kiteen luonteista sinetöitävää."
 
 [empty_head]
 of = "c8cfa8"
@@ -99,7 +99,7 @@ text = "Ei mitään valittavaa."
 
 [state_crystal]
 of = "1a8c10"
-text = "kristalli lisää"
+text = "kide lisää"
 
 [state_kept]
 of = "3b7002"

@@ -5,6 +5,7 @@
 # The pedlar.
 [ascmearc.pedlar]
 greet = { text = "Neuloi, nuppineuloi, nauhoi, kynttilöit! Mitäs saa olla, kulkija?", of = "046644" }
+offer_name = { text = "Tavarasi", of = "5c54fb" }
 greet_evil = [
     { text = "Pidä tassut siel mis mä nään ne, jos sopii.", of = "fd7e14" },
     { text = "Ei mitään myytävää sun sorttisille. Liikettä.", of = "a34202" },

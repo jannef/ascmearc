@@ -1,0 +1,6 @@
+# A weapon skill's role as a talent's need says it (`weapon_role:<role>`): the kind of weapon,
+# in "asetaito (asekäden ase tai ampuma-ase)". The hands are the slots' (`slot.toml`).
+launcher = "ampuma-ase/48"
+main_hand = "asekäden ase/48"
+off_hand = "kilpikäden ase/48"
+two_hand = "kahden käden ase/48"

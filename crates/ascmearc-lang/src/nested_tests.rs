@@ -216,3 +216,47 @@ fn a_nested_message_is_saved_in_its_entry_and_folds_on_its_args() {
     assert!(!entry.repeats(&other));
     assert_eq!(Arg::from(id("levels.stairs")).feature("number"), None);
 }
+
+/// A nested message reads the form of the slot it is said in (`by = "slot.form"`): a branch's
+/// level ("Fyrdelf 2") inflects in `fi` and reads as one form in `en`, and a message said alone,
+/// in no slot, says its `else`.
+#[test]
+fn a_nested_message_reads_its_slots_form() {
+    let place = || {
+        Msg::new(id("levels.branch_level"))
+            .role("branch", Phrase::id("place:dungeon.fyrdelf"))
+            .role("floor", 2)
+    };
+    let into = |place: Msg| Msg::new(id("levels.descend_to")).role("place", place);
+    let en = language(
+        EN,
+        "branch_level = \"{branch:bare} {floor:bare}\"\n\
+         descend_to = \"You descend the stairs to {place:bare}.\"\n",
+    );
+    let lex = MapLexicon::default().with(
+        "place:dungeon.fyrdelf",
+        LexWord::new("Fyrdelf").proper(true),
+    );
+    assert_eq!(
+        render(&en, into(place()), &lex),
+        "You descend the stairs to Fyrdelf 2."
+    );
+    let fi = language(
+        FI,
+        "descend_to = \"Laskeudut portaita alas {place:ill}.\"\n\
+         [branch_level]\n\
+         by = \"slot.form\"\n\
+         ill = \"{branch:gen} kerrokseen {floor:num}\"\n\
+         else = \"{branch:nom} {floor:num}\"\n",
+    );
+    let fi_lex = MapLexicon::parse(
+        "place:",
+        "\"dungeon.fyrdelf\" = { word = \"Fyrdelf\", proper = true }\n",
+    )
+    .expect("parses");
+    assert_eq!(
+        render(&fi, into(place()), &fi_lex),
+        "Laskeudut portaita alas Fyrdelfin kerrokseen kaksi."
+    );
+    assert_eq!(render(&fi, place(), &fi_lex), "Fyrdelf kaksi");
+}

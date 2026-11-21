@@ -508,9 +508,10 @@ mod tests {
     }
 
     /// The web build's subset draws exactly what the whole font draws, pixel for pixel: every
-    /// character of the glyph set with the built-in content's glyphs, and a line of Finnish with
-    /// its loan-word letters (`docs/design/localization.md` §13). It checks something with
-    /// the feature on, `cargo test -p ascmearc --features font-subset the_subset`; without it the
+    /// character of the glyph set with the built-in content's glyphs, every character of every
+    /// language's files under `assets/lang/` (the Finnish text), and a line of Finnish with its
+    /// loan-word letters (`docs/design/localization.md` §13). It checks something with the
+    /// feature on, `cargo test -p ascmearc --features font-subset the_subset`; without it the
     /// two fonts are one.
     #[test]
     fn the_subset_draws_what_the_full_font_draws() {
@@ -527,9 +528,25 @@ mod tests {
         for c in finnish.chars().filter(|c| !c.is_whitespace()) {
             assert_ne!(full.lookup_glyph_index(c), 0, "{c:?} is in the font");
         }
+        fn lang_chars(dir: &std::path::Path, chars: &mut std::collections::BTreeSet<char>) {
+            for entry in std::fs::read_dir(dir).unwrap() {
+                let path = entry.unwrap().path();
+                if path.is_dir() {
+                    lang_chars(&path, chars);
+                } else if path.extension().is_some_and(|e| e == "toml") {
+                    let text = std::fs::read_to_string(&path).unwrap();
+                    chars.extend(text.chars().filter(|c| !c.is_control()));
+                }
+            }
+        }
+        let mut languages = std::collections::BTreeSet::new();
+        let lang = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../assets/lang");
+        lang_chars(&lang, &mut languages);
+        assert!(languages.contains(&'ä'), "read the Finnish files");
         for c in glyph_set(content.glyphs())
             .into_iter()
             .chain(finnish.chars())
+            .chain(languages)
         {
             let has = |font: &fontdue::Font| font.lookup_glyph_index(c) != 0;
             assert_eq!(has(&full), has(&subset), "{c:?} (U+{:04X})", c as u32);

@@ -142,6 +142,7 @@ pub(crate) mod part;
 mod particles;
 mod patron;
 mod pipe;
+pub mod place_word;
 mod plural;
 mod potion;
 mod prayer;
@@ -267,7 +268,7 @@ pub use animated::{Animated, AnimatedDef, Body, ID_PREFIX, Line, Numbers, Ramp, 
 pub use aura::{Aura, CRY_TURN, Cry, TOUCH_SOURCE, touch_key};
 pub use background::{
     AgeRange, Background, Chapter, ChapterWhen, Effect as StoryEffect, Line as StoryLine, Marks,
-    Points, Tier as StoryTier, Tiers, When,
+    Points, SET_SLOTS, Tier as StoryTier, Tiers, When, story_template,
 };
 pub use breath::Breath;
 pub use burial::{Burial, BurialStairs, EPITAPH_ROLES};

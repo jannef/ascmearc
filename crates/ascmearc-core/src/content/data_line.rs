@@ -357,9 +357,12 @@ fn describe_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
 /// The data's words the screens and the look line show as written: a race's, a class's, a
 /// talent's, a skill's, a scenario's, and a birth sign animal's and element's `description`, a
 /// lucky day's, a terrain's and a chest band's `description` (the look
-/// line and a feature underfoot), an animated body's `moves`, and a status's `death` (the death
-/// and graveyard screens: "Bled to death").
+/// line and a feature underfoot), an animated body's `moves`, a status's `death` (the death
+/// and graveyard screens: "Bled to death"), and a resource's `short` (the status bar).
 fn shown_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for def in content.resources() {
+        add(resource_short(&def.id), &def.short);
+    }
     for def in &content.races().list {
         add(description("race", &def.id), &def.description);
     }
@@ -532,6 +535,11 @@ pub fn resource_ended(id: &str) -> String {
     format!("resources:resource.{id}.ended")
 }
 
+/// Resource `id`'s `short`, its status bar label ("Rage", "Sta"; #2062).
+pub fn resource_short(id: &str) -> String {
+    format!("resources:resource.{id}.short")
+}
+
 /// The turn's lines: the traps' messages, the diseases' onsets and symptoms, and the resources'
 /// `ended`.
 fn turn_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
@@ -638,7 +646,7 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
     describe_lines(content, &mut add);
     shown_lines(content, &mut add);
     people_lines(content, &mut add);
-    place_names(content, &mut add);
+    place_notes(content, &mut add);
     super::data_word::lines(content, &mut add);
     for (key, text) in lines {
         let line = Line::parse(&text);
@@ -944,61 +952,33 @@ pub fn burial_epitaph(level: &str) -> String {
     format!("level:{level}.burial.epitaph")
 }
 
-// ----- The names of places (#1998): a level's, a branch's, a legend's named place and its
-// note, a hidden location's, and a scenario's, said by their keys so where stairs lead, the look
-// line, and the welcome render in any language. -----
-
-/// Hand-made level `id`'s name.
-pub fn level_name(id: &str) -> String {
-    format!("level:{id}.name")
-}
-
-/// Branch `id`'s name (a level of it is its name and floor, `levels.branch_level`).
-pub fn dungeon_name(id: &str) -> String {
-    format!("dungeon:{id}.name")
-}
-
-/// Hidden location `id`'s `name`, the location on hand-made level `level`.
-pub fn hidden_name(level: &str, id: &str) -> String {
-    format!("level:{level}.hidden.{id}.name")
-}
+// ----- What is said of places (#1998): a legend's named place's note, said by its key so the
+// look line renders it in any language. The names of places are lexicon words
+// (`super::place_word`, #2062). -----
 
 /// Scenario `id`'s `arrival` line, said after the welcome.
 pub fn scenario_arrival(id: &str) -> String {
     format!("scenario:{id}.arrival")
 }
 
-/// Scenario `id`'s name (the welcome's place).
-pub fn scenario_name(id: &str) -> String {
-    format!("scenario:{id}.name")
-}
-
-/// The names of places, which name no role: every hand-made level's and branch's, every legend's
-/// named place and its note ([`super::Place::key`]), every hand-made level's hidden location's,
-/// and every scenario's.
-fn place_names(content: &Content, add: &mut impl FnMut(String, &str)) {
-    for (id, level) in &content.levels {
-        add(level_name(id), &level.name);
-        for hidden in level.hidden.values() {
-            add(hidden_name(id, &hidden.id), &hidden.name);
-        }
-    }
+/// The notes of places, which name no role: every legend's named place's note
+/// ([`super::Place::key`]).
+fn place_notes(content: &Content, add: &mut impl FnMut(String, &str)) {
     let templates = (content.levels.values()).chain(content.vaults.iter().map(|v| &v.template));
     for place in templates.flat_map(|t| t.places.values()) {
-        add(place.name_key(), &place.name);
         if let Some(note) = &place.note {
             add(place.note_key(), note);
         }
     }
-    for def in content.dungeons.values() {
-        add(dungeon_name(&def.id), &def.name);
-    }
-    for def in content.scenarios.values() {
-        add(scenario_name(&def.id), &def.name);
-    }
 }
 
-/// Adds the names above to English by their keys, each naming only the roles it is given.
+/// The roles a background story's line is given (`story:<scope>.<line>`,
+/// `crate::background::lines`): `who`, the character (a phrase of their name and gender), and the
+/// slot words, `guardian`, `home`, `trade` (`story_word:` lexicon ids).
+pub const STORY_ROLES: [&str; 4] = ["who", "guardian", "home", "trade"];
+
+/// Adds the names above and the background story's lines to English by their keys, each naming
+/// only the roles it is given.
 fn saved_names(content: &mut Content) -> Result<(), ContentError> {
     let mut lines: Vec<(String, String, &[&str])> = Vec::new();
     for def in content.shops().map_or(&[][..], |s| s.defs()) {
@@ -1012,6 +992,12 @@ fn saved_names(content: &mut Content) -> Result<(), ContentError> {
     }
     for n in 1..=12 {
         lines.push((month(n), content.calendar().month(n).to_string(), &[]));
+    }
+    // A background story's lines (#2062): the character and the slot words.
+    if let Some(background) = content.background() {
+        for (key, text) in background.lines() {
+            lines.push((key, text, &STORY_ROLES));
+        }
     }
     for (id, level) in &content.levels {
         let Some(burial) = &level.burial else {

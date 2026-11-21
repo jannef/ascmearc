@@ -32,18 +32,21 @@ metadata`'s `target_directory`) for the build output it reads and the files it w
 - **Release configuration**, `cargo build -p ascmearc -p ascmearc-cli`: the plain build, no
   `showcase` feature, the test world left out, as in a release; `cargo test -p ascmearc-assets
   --test release_content` checks it; CI's `release-config` job; docs/dev/campaign.md.
-- **Web smoke test**, `cargo xtask web-smoke <chrome>`: serves `target/web`, drives headless
+- **Web smoke test**, `cargo xtask web-smoke [--lang CODE] <chrome>`: serves `target/web`, drives headless
   Chromium through menu → New run (skipped: the web build lists one scenario, the Ascmearc's
   start, so it opens on the race) → race, the stars, gender, class (preselected) → talents
   (Random) → name (empty: a random one) → summary → the story (opened once as the run begins;
   Enter) → the run on Beorggeat, checks the new character's save `ascmearc/saves/<id>.sav`, waits
   five turns, reloads, Continue, and checks the run resumed at turn 5; writes
-  `target/xtask/web-smoke.png`; fails on logged errors; not run in CI.
+  `target/xtask/web-smoke.png`; fails on logged errors; not run in CI. `--lang fi` (before the
+  browser) writes `language = "fi"` to the browser's settings first and reloads, so the same run
+  is shown in Finnish: read the screenshot for English left over and for letters drawn as `?`
+  (the web build's font is the subset, docs/dev/rendering.md "The font").
 - **Regenerate the vast level**, `cargo xtask gen-vast`: writes
   `assets/campaigns/showcase/levels/vast.toml`; deterministic, never hand-edit. `--check` fails
   if the file differs from the generator output; run it after touching `xtask/src/vast.rs` (CI runs it).
 - **Check the language files**, `cargo xtask lang [--check] [--strict CODE] [--stamp CODE
-  [--restamp]] [--dir PATH] [--mod DIR]...` (`xtask/src/lang.rs`, #1890; CI runs `--check`;
+  [--restamp]] [--dir PATH] [--mod DIR]...` (`xtask/src/lang.rs`, #1890; CI runs `--check --strict fi`;
   `docs/dev/localization.md` "The checker"): checks `assets/lang/<code>/` against English with
   the `ascmearc-lang` parsers, then each mod's `lang/` laid over it (every folder in `mods/`, or
   the `--mod` folders; `xtask/src/lang/mods.rs`, #1892), reporting what each mod adds under

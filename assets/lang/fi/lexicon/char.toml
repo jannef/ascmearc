@@ -1,0 +1,5 @@
+# Char on the ground by amount (`char:<word>`), an agreeing adjective before the ground's name
+# ("hiiltynyt kivilattia"), from the least to the most.
+scorched = "kärventynyt/47"
+blackened = "mustunut/47"
+charred = "hiiltynyt/47"

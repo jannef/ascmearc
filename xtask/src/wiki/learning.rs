@@ -63,7 +63,11 @@ pub(super) fn chances(content: &Content) -> String {
         for b in BONUSES {
             let ways = check::ways(b, difficulty);
             let percent = f64::from(ways) * 100.0 / 144.0;
-            let _ = write!(out, " {percent:.0} % ({}) |", rules.words(ways));
+            let _ = write!(
+                out,
+                " {percent:.0} % ({}) |",
+                content.english_word(rules.words(ways), "bare")
+            );
         }
         out.push('\n');
     }

@@ -124,8 +124,10 @@ mod tests {
         files.insert("lang/zz/lexicon/creature.toml", "rat = \"rotta/10\"\n");
         files.insert(
             "lang/zz/data/level.toml",
-            "[ceaptun]\nname = \"Kauppala\"\n",
+            "[ceaptun]\narrival = \"Tori.\"\n",
         );
+        let place = "\"level.ceaptun\" = { word = \"Kauppala\", proper = true }\n";
+        files.insert("lang/zz/lexicon/place.toml", place);
         let greet = "[ascmearc.hild]\ngreet = \"Terve, {player:address}.\"\n";
         files.insert("lang/zz/dialogue/ceaptun.toml", greet);
         let content = Content::load(&files).expect("loads");
@@ -138,18 +140,30 @@ mod tests {
             content.english().phrase(&rat, "bare", content.lexicon()),
             "giant rat"
         );
+        // A place is a word in a case (#2062); one the language lacks is English's name, which
+        // inflects as a name.
+        let place = crate::content::place_word::level("ceaptun");
+        assert_eq!(zz.phrase(&place, "ill", content.lexicon()), "Kauppalaan");
+        let lacked = crate::content::place_word::dungeon("lytelscraef");
+        assert_eq!(
+            zz.phrase(&lacked, "ill", content.lexicon()),
+            "Lytelscræfiin"
+        );
         let said = |key: &str| {
             let entry = Entry::new(0, Msg::data_line(crate::lang::Arg::said(key)));
             render_chain(&chain, &entry, content.lexicon(), &written_key)
         };
-        assert_eq!(said("level:ceaptun.name"), "Kauppala");
+        assert_eq!(said("level:ceaptun.arrival"), "Tori.");
         assert!(
             zz.data_lines()
                 .get("dialogue:ascmearc.hild.greet")
                 .is_some()
         );
         // A line the language lacks reads in English.
-        assert_eq!(said("dungeon:lytelscraef.name"), "Lytelscræf");
+        assert_eq!(
+            said("dungeon:lytelscraef.arrival"),
+            "The cave smells of wet stone and rats."
+        );
     }
 
     #[test]

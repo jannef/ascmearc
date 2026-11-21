@@ -8,7 +8,7 @@
 # The aimed wand, when the player knows what it does in their hands: `item`, the wand; `does`,
 # what it does.
 [aim_wand]
-text = "{item:bare} ({does:bare})"
+text = "{item:counted} ({does:bare})"
 
 # A condition in the status bar: eyes kept from a gaze.
 [averted]

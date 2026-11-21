@@ -39,6 +39,15 @@ const ADDRESS_FORM: &str = "address";
 /// The key under a dialogue's scope that holds its `address` line.
 const ADDRESS_KEY: &str = "address";
 
+/// The pseudo-role a nested message's variants select on to read the form of the slot it is said
+/// in: `by = "slot.form"`, a variant per form (`ill = "…"`, `else = "…"`), so a language can
+/// inflect a name its words compose ("Fyrdelf 2") or a word core picks (a compass word). A
+/// message said alone is in no slot, and says its `else`.
+pub const SLOT_ROLE: &str = "slot";
+
+/// The feature of [`SLOT_ROLE`]: the slot's form, in lower case.
+pub const FORM_FEATURE: &str = "form";
+
 /// The list form that says its items one after another, each `bare`: sentences of one speech.
 pub const LINES_FORM: &str = "lines";
 
@@ -315,6 +324,7 @@ impl Language {
             keys,
             args,
             said: None,
+            form: None,
         }
     }
 
@@ -383,6 +393,8 @@ struct Ctx<'a> {
     args: &'a BTreeMap<Role, Arg>,
     /// The key of the dialogue line being rendered, if it is one: where its `address` is found.
     said: Option<&'a str>,
+    /// The form of the slot this message is said in, if it is nested in one ([`SLOT_ROLE`]).
+    form: Option<&'a str>,
 }
 
 impl<'a> Ctx<'a> {
@@ -435,6 +447,7 @@ impl<'a> Ctx<'a> {
                 otherwise,
             } => {
                 let value = match self.args.get(role.as_str()) {
+                    None if role == SLOT_ROLE && feature == FORM_FEATURE => self.form,
                     Some(arg) => arg.feature(feature),
                     None if otherwise.is_some() => None,
                     None => return Err(RenderError::MissingRole(role.clone())),
@@ -576,9 +589,18 @@ impl<'a> Ctx<'a> {
                 args,
                 register,
                 race,
-            } => self.said(key, args, register.as_deref(), race.as_deref())?,
-            // A message inside the line, in its own words: its template picks its forms.
-            Arg::Msg { id, args } => self.message(id, args)?,
+            } => Ctx {
+                form: Some(form),
+                ..*self
+            }
+            .said(key, args, register.as_deref(), race.as_deref())?,
+            // A message inside the line, in its own words: its template picks its forms, and
+            // may read the slot's (`by = "slot.form"`).
+            Arg::Msg { id, args } => Ctx {
+                form: Some(form),
+                ..*self
+            }
+            .message(id, args)?,
         })
     }
 

@@ -2,7 +2,6 @@
 //! "Phrases"): the player ([`World::you`]) and any actor ([`World::phrase_of`]), built at the
 //! `say` site by value, so a line reads the same after the actor is gone.
 
-use crate::character::Gender as CharacterGender;
 use crate::lang::{Gender, Person, Phrase};
 use crate::world::{ActorId, World};
 
@@ -10,7 +9,7 @@ impl World {
     /// The player: their name, said "you" (`Person::You`), with their gender.
     pub fn you(&self) -> Phrase {
         let (name, gender) = match self.character() {
-            Some(c) => (c.name.as_str(), gender(c.spec.gender)),
+            Some(c) => (c.name.as_str(), c.spec.gender.spoken()),
             None => ("", Gender::Other),
         };
         Phrase::literal(name).person(Person::You).gender(gender)
@@ -45,15 +44,6 @@ impl World {
 /// What the player cannot see: "something", said without an article.
 pub(in crate::world) fn something() -> Phrase {
     Phrase::id("word:something").proper(true)
-}
-
-/// A character's gender as the languages know it.
-fn gender(gender: CharacterGender) -> Gender {
-    match gender {
-        CharacterGender::Male => Gender::Male,
-        CharacterGender::Female => Gender::Female,
-        CharacterGender::Other => Gender::Other,
-    }
 }
 
 #[cfg(test)]

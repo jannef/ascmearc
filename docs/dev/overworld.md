@@ -87,8 +87,8 @@ dev views (`dump/truth.rs::truth_rows`, the F2 overlay in `ui/dev.rs`) read `hid
 `World::branch_open`, when it leads to the branch's first floor); on each of its levels that is
 instantiated, `reveal_on` takes the entry out of `hidden`, sets the terrain and the
 player's memory of the cell (the map is marked wherever they are), and pushes a `StairsLink`
-(up or down as the terrain's `stairs` is) with the location's `name` by its key
-(`StairsLink::name`, `data_line::hidden_name`;
+(up or down as the terrain's `stairs` is) with the location's `name` as its lexicon word
+(`StairsLink::name`, `place_word::hidden`;
 preferred by `PerceptionView::leads_to` and the "The way into … is here." and "You enter …"
 messages); otherwise `instantiate_level` applies every revealed id as the level is made
 (`reveal::apply_revealed`). No stream is drawn.

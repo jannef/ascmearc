@@ -1,6 +1,14 @@
 # Lines of data: statuses (`status:<id>.<field>`). `dies` follows a name ("Rotta vuotaa
 # kuoliaaksi."); `death` is a grave's cause of death.
 
+[ashen]
+end = { text = "Viimeinenkin tuhka varisee yltäsi.", of = "a93e10" }
+start = { text = "Olet tuhkanharmaa ja heikko.", of = "bb5fa6" }
+
+[barkskin]
+end = { text = "Ihosi pehmenee taas.", of = "b902fd" }
+start = { text = "Ihosi kovettuu kuin kaarna.", of = "543f81" }
+
 [bleeding]
 death = { text = "Vuoti kuoliaaksi", of = "f654e1" }
 dies = { text = "vuotaa kuoliaaksi", of = "00d5c4" }
@@ -15,27 +23,91 @@ made = { text = "Sidot haavan.", of = "3d4496" }
 end = { text = "Siunauksesi hiipuu.", of = "846668" }
 start = { text = "Tunnet olevasi siunattu.", of = "45b480" }
 
+[branded]
+end = { text = "Pyhä valo ympärilläsi hiipuu.", of = "0b9926" }
+start = { text = "Pyhä valo takertuu sinuun.", of = "1b045d" }
+
+[branded_blade]
+end = { text = "Tuli aseellasi sammuu.", of = "fd13b6" }
+start = { text = "Tuli juoksee pitkin asettasi.", of = "49704a" }
+
 [burning]
 death = { text = "Paloi kuoliaaksi", of = "6b14e2" }
 dies = { text = "palaa kuoliaaksi", of = "b8bcf7" }
 end = { text = "Liekit sammuvat.", of = "9d26f3" }
 start = { text = "Olet tulessa!", of = "e49a77" }
 
+[burnt_out]
+end = { text = "Tuli sisälläsi leimahtaa taas.", of = "86e2f4" }
+start = { text = "Tuli sisälläsi palaa hiillokselle.", of = "7093a4" }
+
+[cat_eyed]
+end = { text = "Hämärä on taas hämärää.", of = "d3e3b0" }
+start = { text = "Pimeä ei ole sinulle enää yhtä pimeää.", of = "1e5112" }
+
+[chill_proof]
+end = { text = "Kylmältä suojaava hehku hiipuu.", of = "bbfa6d" }
+start = { text = "Hehku leviää sinuun kylmää vastaan.", of = "656443" }
+
+[corroded]
+death = { text = "Syöpyi hapossa", of = "32d24a" }
+dies = { text = "syöpyy olemattomiin", of = "65a9eb" }
+end = { text = "Hapon voima ehtyy.", of = "ddbb73" }
+start = { text = "Happo syövyttää yhä.", of = "e12e3f" }
+
 [diseased]
 death = { text = "Kuoli tautiin", of = "851fe7" }
 dies = { text = "menehtyy tautiin", of = "2d58e8" }
+
+[drained]
+end = { text = "Henkesi voima palaa.", of = "44171c" }
+start = { text = "Olosi on tyhjä ja voimaton.", of = "bdb14e" }
 
 [drowsy]
 end = { text = "Karistat unisuuden.", of = "5567c3" }
 start = { text = "Sinua nukuttaa hirveästi.", of = "43ebd7" }
 
+[earthed]
+end = { text = "Olosi kevenee, et ole enää yhtä maassa kiinni.", of = "dd099e" }
+start = { text = "Olosi on raskas ja maahan sidottu.", of = "0f5924" }
+
+[ebbing]
+end = { text = "Voimasi lakkaa hiipumasta.", of = "e5a5d5" }
+start = { text = "Voimasi hiipuu pois.", of = "93add9" }
+
+[engulfed]
+death = { text = "Tukehtui", of = "2a29ae" }
+dies = { text = "murskautuu kuoliaaksi", of = "a98f48" }
+end = { text = "Riuhtaiset itsesi irti.", of = "c5dc47" }
+start = { text = "Se sulkeutuu ympärillesi.", of = "766110" }
+
 [exhausted]
 end = { text = "Olet taas levännyt.", of = "ec3971" }
 start = { text = "Olet uupunut.", of = "50d17b" }
 
+[fire_cloaked]
+end = { text = "Liekit ympäriltäsi sammuvat.", of = "2da46f" }
+start = { text = "Liekit kietoutuvat ympärillesi polttamatta.", of = "7469c7" }
+
+[fortified]
+end = { text = "Voimasi laskee entiselleen.", of = "f95808" }
+start = { text = "Tunnet olevasi vahvempi.", of = "1a3e4f" }
+
 [frightened]
 end = { text = "Saat pelkosi hallintaan.", of = "b8cfef" }
 start = { text = "Olet peloissasi.", of = "7b86c1" }
+
+[glamoured]
+end = { text = "Harhakuvasi hälvenee.", of = "52d4bc" }
+start = { text = "Tunnut seisovan hiukan sivussa itsestäsi.", of = "23433e" }
+
+[graceless]
+end = { text = "Sarvesi armo palaa.", of = "e6200e" }
+start = { text = "Sarvesi armo on käytetty.", of = "5f04cc" }
+
+[hale]
+end = { text = "Elinvoima hiipuu sinusta.", of = "b3b0c6" }
+start = { text = "Tunnet olosi elinvoimaiseksi.", of = "91c3f9" }
 
 [hasted]
 end = { text = "Maailma nopeutuu taas.", of = "3cc6b6" }
@@ -45,6 +117,18 @@ start = { text = "Maailma hidastuu ympärilläsi.", of = "3e1a0b" }
 end = { text = "Pääset taas liikkumaan.", of = "a263d7" }
 start = { text = "Olet lujasti kiinni.", of = "89d177" }
 
+[hoarse]
+end = { text = "Äänesi on taas omasi.", of = "55b0b7" }
+start = { text = "Ulvonta on raastanut kurkkusi.", of = "e35809" }
+
+[ill_wished]
+end = { text = "Noituus raukeaa.", of = "181186" }
+start = { text = "Tunnet olevasi noiduttu.", of = "6b8c6a" }
+
+[imposing]
+end = { text = "Et tunne olevasi enää yhtä vaikuttava.", of = "40c4a9" }
+start = { text = "Tunnet olevasi vaikuttava.", of = "28f1f7" }
+
 [inspired]
 end = { text = "Laulu hiipuu sydämestäsi.", of = "a1c6ee" }
 start = { text = "Laulusi nostattaa mielesi.", of = "26557d" }
@@ -53,6 +137,23 @@ start = { text = "Laulusi nostattaa mielesi.", of = "26557d" }
 end = { text = "Laulu hiipuu sydämestäsi.", of = "a1c6ee" }
 start = { text = "Laulusi kohoaa, ja sydämesi sen mukana.", of = "1d1fc8" }
 
+[invisibility]
+end = { text = "Voit taas kadota näkyvistä.", of = "6ca89b" }
+
+[invisible]
+end = { text = "Näet taas itsesi.", of = "c2d5a1" }
+start = { text = "Katoat näkyvistä.", of = "94e280" }
+
+[keen]
+end = { text = "Ajatuksesi hidastuvat entiseen tahtiinsa.", of = "2b5ed6" }
+start = { text = "Ajatuksesi kulkevat terävinä ja kirkkaina.", of = "999c63" }
+
+[latched]
+death = { text = "Imettiin kuiviin", of = "82c754" }
+dies = { text = "imetään kuiviin", of = "49989e" }
+end = { text = "Revit sen irti.", of = "1840a7" }
+start = { text = "Jokin tarttuu sinuun kiinni.", of = "41b9c7" }
+
 [lit]
 end = { text = "Valo ympärilläsi hiipuu.", of = "084e4a" }
 start = { text = "Kalpea valo kerääntyy ympärillesi.", of = "e35040" }
@@ -60,9 +161,25 @@ start = { text = "Kalpea valo kerääntyy ympärillesi.", of = "e35040" }
 [lurking]
 start = { text = "Odotat väijyksissä.", of = "5b194b" }
 
+[moth_eyed]
+end = { text = "Oudot värit haalistuvat näkökentästäsi.", of = "7d8fb5" }
+start = { text = "Oudot värit puhkeavat kukkaan näkökenttäsi laidalla.", of = "720fc5" }
+
+[nimble]
+end = { text = "Raajasi tuntuvat taas tavallisilta.", of = "d45e86" }
+start = { text = "Tunnet olosi ketteräksi.", of = "0d319f" }
+
+[owl_eyed]
+end = { text = "Silmäsi menettävät otteensa pimeästä.", of = "67735c" }
+start = { text = "Silmäsi avautuvat selälleen pimeälle.", of = "0e0ed2" }
+
 [pinned]
 end = { text = "Pystyt taas liikkumaan.", of = "7a94bb" }
 start = { text = "Olet naulittu paikoillesi.", of = "3dd03f" }
+
+[poison_proof]
+end = { text = "Veresi tuntuu taas tavalliselta.", of = "6afeda" }
+start = { text = "Veresi tuntuu sakealta ja varmalta.", of = "5bae02" }
 
 [poisoned]
 death = { text = "Kuoli myrkkyyn", of = "fa403c" }
@@ -74,17 +191,63 @@ start = { text = "Voit pahoin.", of = "83bad3" }
 failed = { text = "Myrkky ei lähde.", of = "183467" }
 made = { text = "Saat osan myrkystä pois.", of = "289666" }
 
+[quick_sensed]
+end = { text = "Elävien läheisyys hälvenee.", of = "9f7de3" }
+start = { text = "Aistit elävät ympärilläsi.", of = "047aca" }
+
+[radiant]
+end = { text = "Valosi hiipuu.", of = "da185a" }
+start = { text = "Pehmeä valo loistaa ympärilläsi.", of = "da38f8" }
+
 [raging]
 end = { text = "Raivosi laantuu.", of = "355e86" }
 start = { text = "Raivo valtaa sinut!", of = "92ba93" }
+
+[renewing]
+end = { text = "Lihasi kasvaa taas umpeen omaa tahtiaan.", of = "dbd745" }
+start = { text = "Lihasi alkaa kasvaa umpeen.", of = "b6d29b" }
+
+[seeing]
+end = { text = "Silmäsi menettävät terävyytensä.", of = "452dab" }
+start = { text = "Silmäsi terästyvät näkemään sen, mikä niiltä piiloutuu.", of = "c492d1" }
+
+[silenced]
+end = { text = "Äänet palaavat.", of = "e7adbb" }
+start = { text = "Hiljaisuus sulkeutuu ympärillesi.", of = "625d7e" }
 
 [sluggish]
 end = { text = "Liikkeesi nopeutuvat taas.", of = "da3730" }
 start = { text = "Olosi on raskas ja hidas.", of = "09180c" }
 
+[spell_ward]
+end = { text = "Suojauksesi hiipuu.", of = "1b0f5f" }
+start = { text = "Suoja asettuu ympärillesi.", of = "d964a9" }
+
+[spent_eyed]
+end = { text = "Katseesi on taas terävä.", of = "918520" }
+start = { text = "Silmiäsi kivistää tuijottamisesta.", of = "c8d620" }
+
 [staggered]
 end = { text = "Saat taas tasapainosi.", of = "fac88d" }
 start = { text = "Horjahdat.", of = "bb7927" }
+
+[steadfast]
+end = { text = "Tahtosi on taas omasi.", of = "1e6c8c" }
+start = { text = "Tahtosi tuntuu vankkumattomalta.", of = "f72233" }
+
+[stiffening]
+death = { text = "Muuttui kiveksi", of = "4b3bd3" }
+dies = { text = "muuttuu kiveksi", of = "2ed7ea" }
+end = { text = "Raajasi liikkuvat taas vapaasti.", of = "13554b" }
+stages = [
+    { text = "Raajasi jäykistyvät.", of = "205c65" },
+    { text = "Ihosi harmaantuu ja kovettuu.", of = "ea636d" },
+    { text = "Pystyt tuskin liikkumaan.", of = "fa7ccf" },
+]
+
+[stiffening.treat]
+failed = { text = "Liha pysyy kivikovana.", of = "53f439" }
+made = { text = "Hierot jäykkyyttä osittain pois.", of = "44bee7" }
 
 [stunned]
 end = { text = "Pääsi selkenee.", of = "4426be" }
@@ -93,6 +256,32 @@ start = { text = "Olet pökerryksissä.", of = "38dc33" }
 [surprised]
 end = { text = "Kokoat ajatuksesi.", of = "1f5f7c" }
 start = { text = "Sinut yllätetään!", of = "d07a87" }
+
+[swallowed]
+death = { text = "Nielaistiin kokonaan", of = "0b18ab" }
+dies = { text = "sulatetaan", of = "91e3a0" }
+end = { text = "Leikkaat tiesi ulos.", of = "10acf9" }
+start = { text = "Se nielaisee sinut kokonaan.", of = "f76f5b" }
+
+[transfixed]
+end = { text = "Karistat tuijotuksen.", of = "16b005" }
+start = { text = "Olet lamaantunut.", of = "c2a8a9" }
+
+[unwelcome]
+end = { text = "Et tunne olevasi enää ei-toivottu.", of = "634f2b" }
+start = { text = "Tunnet olevasi ei-toivottu.", of = "582ddb" }
+
+[walled]
+end = { text = "Lasket kilpesi.", of = "a49bf1" }
+start = { text = "Asetat kilpesi eteesi ja asetut sen taakse.", of = "08560a" }
+
+[warmed]
+end = { text = "Lämpö lähtee luistasi.", of = "5047de" }
+start = { text = "Lämpö asettuu syvälle luihisi.", of = "c3fe4c" }
+
+[water_borne]
+end = { text = "Vesi on taas pelkkää vettä.", of = "175170" }
+start = { text = "Vesi tuntuu yhtä lujalta kuin tie altasi.", of = "831b0a" }
 
 [weakened]
 end = { text = "Voimasi palaavat.", of = "27d235" }
@@ -105,3 +294,7 @@ start = { text = "Tahmeat säikeet pitävät sinut kiinni.", of = "9e2c43" }
 [winded]
 end = { text = "Hengityksesi tasaantuu.", of = "d5223b" }
 start = { text = "Olet hengästynyt.", of = "f9efc9" }
+
+[worn_thin]
+end = { text = "Tunnet olevasi taas ehjä.", of = "8e9bce" }
+start = { text = "Tunnet olevasi loppuun kulunut.", of = "bab068" }

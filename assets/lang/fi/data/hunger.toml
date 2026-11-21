@@ -1,0 +1,10 @@
+# Lines of data: eating corpses (`hunger:<path>`). `corpses.skills.<skill>` a corpse teaching
+# a skill: `learn` the first time, `rise` each time after.
+
+[corpses.skills.decipher_script]
+learn = { text = "Oudot kirjaimet uivat silmiesi edessä ja asettuvat merkitykseksi.", of = "136005" }
+rise = { text = "Kirjaimet selkenevät.", of = "49bc9e" }
+
+[corpses.skills.spellcraft]
+learn = { text = "Jokin liikahtaa silmiesi takana, ja loitsun muoto käy järkeen.", of = "e39c24" }
+rise = { text = "Loitsujen muodot selkenevät.", of = "0a5dab" }

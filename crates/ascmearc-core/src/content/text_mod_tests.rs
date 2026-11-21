@@ -166,7 +166,7 @@ fn a_text_mod_lays_over_the_shipped_finnish() {
             ),
             (
                 "lang/fi/data/level.toml",
-                "[ceaptun]\nname = \"Kauppala\"\n",
+                "[ceaptun]\narrival = \"Tori.\"\n",
             ),
         ]),
     )]);
@@ -189,10 +189,10 @@ fn a_text_mod_lays_over_the_shipped_finnish() {
         written(base_fi, "doors.locked")
     );
     let line = |l: &crate::lang::Language, key: &str| l.data_lines().get(key).map(|t| t.written());
-    assert_eq!(line(fi, "level:ceaptun.name").as_deref(), Some("Kauppala"));
+    assert_eq!(line(fi, "level:ceaptun.arrival").as_deref(), Some("Tori."));
     assert_eq!(
-        line(fi, "level:ceaptun.arrival"),
-        line(base_fi, "level:ceaptun.arrival")
+        line(fi, "dungeon:lytelscraef.arrival"),
+        line(base_fi, "dungeon:lytelscraef.arrival")
     );
     assert!(modded.content_mods().is_empty());
 }

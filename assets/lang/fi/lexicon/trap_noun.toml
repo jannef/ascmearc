@@ -1,3 +1,12 @@
 # What hits from a trap (`trap_noun:<id>`): the arrow trap's arrow, the pit's fall.
 arrow = "nuoli/26"
 pit = "putoaminen/38"
+alarm = "kello/2"
+fireball = "tuli|pallo/1"
+frost = "pakkanen/38"
+lightning_bolt = "salama/10"
+rigged_arrows = "nuoli/26"
+rigged_pit = "putoaminen/38"
+rigged_stakes = "seiväs/41*E"
+spear = "keihäs/41"
+teleport = "taika/9*D"

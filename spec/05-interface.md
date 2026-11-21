@@ -80,7 +80,7 @@ The game is played from the keyboard, ADOM-style. Every screen tells the player 
 - Every word the player reads is the language's data, never English written in code. What the player typed (a name), made-up words (a scroll's label), and notation (dice, signed numbers) read alike in every language.
 - The log holds what was said, not its wording: a word changed in a language never changes a run, a save, or a replay.
 - The narrator uses the language's full grammar. Creatures' speech uses none: it is whole lines, chosen by gender and number, written in the speaker's register (a dialect inside the language, by race or by the speaker's own).
-- A line a language lacks is read in English. English is complete; Finnish is being translated.
+- A line a language lacks is read in English. English and Finnish are complete: every screen, message, word, and line of the game and of the Ascmearc campaign. The showcase, the test world of dev builds, stays English.
 - A language is data, so a mod can add one.
 - The wiki is English only.
 - How it is built: `docs/dev/localization.md`; the design and what is still to come: `docs/design/localization.md`.

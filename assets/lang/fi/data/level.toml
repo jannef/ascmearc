@@ -3,167 +3,81 @@
 
 [ceaptun]
 arrival = { text = "Cēaptūnissa on markkinapäivä, ja torilla käy kova häly.", of = "c1bfe8" }
-name = { text = "Cēaptūn", of = "5d84f5" }
 
 [ceaptun.legend.N]
-name = { text = "palkkiotaulu", of = "875b05" }
 note = { text = "Ilmoituksia on naulattu kolmeen kerrokseen, ja useimmat niistä ovat vuosia vanhoja.", of = "cd27a7" }
 
 # Gimmwīc.
 [gimmwic]
-name = { text = "Gimmwīc", of = "3d50bf" }
 arrival = { text = "Lampunvaloa ja pienten alasinten kalke: Gimmwīc, syvägnomien kaupunki.", of = "8cdb93" }
 
 [gimmwic.hidden.skeul_hir]
-name = { text = "Skeul Hir", of = "793524" }
 opens = { text = "Peran koputtaa pitkää pöytää kolmesti. Taempana, luolassa josta tulit, kivi narskuu kiveä vasten, ja laatta kääntyy ylös jyrkän pimeyteen nousevan portaikon edestä: Skeul Hir.", of = "09a363" }
 
 [gimmwic.hidden.meyn_bew]
-name = { text = "Meyn Bew", of = "c80078" }
 opens = { text = "Ysella laulaa yhden pitkän sävelen. Kallio hänen vierellään soi ja aukeaa kristallinvalon kehäksi.", of = "412b6c" }
 
-# The Ascmearc, the overworld: its places' names and notes, and the locations a quest reveals.
-[ascmearc]
-name = { text = "Ascmearc", of = "8245b2" }
-
-[ascmearc.legend.1]
-name = { text = "Cealdhlāw", of = "d947ba" }
-
-[ascmearc.legend.8]
-name = { text = "Lytelscræf", of = "e64cbf" }
+# The Ascmearc, the overworld: its places' notes (their names are `lexicon/place.toml`'s).
 
 [ascmearc.legend.9]
-name = { text = "Grundlēas", of = "74576e" }
 note = { text = "Paljaaseen kallioon hakatut portaat vievät alas. Kulunutta tekstiä ovenpalkissa: mitkään portaat eivät vie kahdesti samaan paikkaan.", of = "5c8ed4" }
 
 [ascmearc.legend.D]
-name = { text = "Dēopgang", of = "1bab3b" }
 note = { text = "Vuoren juureen hakatut pienet, siistit portaat vievät alas. Ovenpalkkiin on upotettu jalokivi, liian korkealle ulottuville.", of = "c8c50e" }
 
 [ascmearc.legend.P]
-name = { text = "Beorggeat", of = "354951" }
 note = { text = "Tie, jota tulit; lumi on sulkenut sen takanasi.", of = "8a352d" }
-
-[ascmearc.legend.T]
-name = { text = "Cēaptūn", of = "5d84f5" }
-
-[ascmearc.legend.V]
-name = { text = "Holtwīc", of = "76e6fe" }
-
-[ascmearc.legend.g]
-name = { text = "Līctūn", of = "214fe4" }
-
-[ascmearc.legend."^"]
-name = { text = "Fyrbeorg", of = "063502" }
-
-[ascmearc.hidden.aelfham]
-name = { text = "Ælfhām", of = "ea80b3" }
-
-[ascmearc.hidden.banfeld]
-name = { text = "Bānfeld", of = "f7f06a" }
-
-[ascmearc.hidden.brocenburg]
-name = { text = "Brocenburg", of = "7c9057" }
-
-[ascmearc.hidden.drytorr]
-name = { text = "Drȳtorr", of = "d52d6a" }
-
-[ascmearc.hidden.fennmynster]
-name = { text = "Fennmynster", of = "0254ad" }
-
-[ascmearc.hidden.fyrdelf]
-name = { text = "Fyrdelf", of = "e5c369" }
-
-[ascmearc.hidden.steorratorr]
-name = { text = "Steorratorr", of = "ac3ae8" }
-
-[ascmearc.hidden.utgang]
-name = { text = "Ūtgang", of = "f0f4c0" }
-
-[ascmearc.hidden.wedertorr]
-name = { text = "Wedertorr", of = "d4e0af" }
-
-[ascmearc.hidden.wulfeshol]
-name = { text = "Wulfeshol", of = "254c3a" }
-
-[ascmearc.hidden.wyrtholm]
-name = { text = "Wyrtholm", of = "e63089" }
 
 # Holtwīc.
 [holtwic]
-name = { text = "Holtwīc", of = "76e6fe" }
 arrival = { text = "Holtwīc: olkikattoja, puunsavua, ja paatsamametsä tummana viimeisen pellon takana.", of = "5140fd" }
 
 [holtwic.legend.O]
-name = { text = "harmaa kivi", of = "dd91cc" }
 note = { text = "Vanha harmaa kivi siinä, missä pellot loppuvat ja metsä alkaa. Siihen on sidottu pihlajanoksa punaisella langalla, ja pihlaja on tuore.", of = "ac8f47" }
 
 # The wizards' towers.
 [drytorr]
-name = { text = "Drȳtorr", of = "d52d6a" }
 arrival = { text = "Aukio paatsamametsässä, ja siinä torni harmaasta hakatusta kivestä, puita korkeampi.", of = "365b4a" }
 
 [drytorr.legend.Q]
-name = { text = "messinkilaatta", of = "e37d93" }
 note = { text = "Kiillotettua messinkiä: DRYTORR. M. ORDGAR. VIERAITA PYYDETÄÄN KÄYTTÄMÄÄN PORTAITA. Alla, pienemmällä: Varokaa kolmatta kivilaattaa.", of = "20e097" }
 
-[drytorr_top]
-name = { text = "Drȳtorrin huippu", of = "5b61b9" }
-
 [wedertorr]
-name = { text = "Wedertorr", of = "d4e0af" }
 arrival = { text = "Nummen paljas laki, tuuli aina kimpussaan, ja sillä yksinään torni harmaasta kivestä.", of = "c9bf27" }
 
 [wedertorr.legend.Q]
-name = { text = "messinkilaatta", of = "e37d93" }
 note = { text = "Säiden vihertämää messinkiä: WEDERTORR. Æ. Alla, syvään raaputettuna: SULJE OVI.", of = "a20e4b" }
 
-[wedertorr_top]
-name = { text = "Wedertorrin huippu", of = "64600d" }
-
 [wedertorr_top.legend.G]
-name = { text = "myrskylasi", of = "193838" }
 note = { text = "Korkea lasi kirkasta nestettä messinkijalustalla, ja siinä leijuu valkoisten kiteiden pilvi. Kiteet nousevat.", of = "13ab2a" }
 
 [steorratorr]
-name = { text = "Steorratorr", of = "ac3ae8" }
 arrival = { text = "Vihreä tasanko viettää harmaaseen mereen, ja sillä kohoaa torni valkoisesta kivestä, korkeampana kuin mikään peninkulmien alalla.", of = "8dc06b" }
 
 [steorratorr.legend.Q]
-name = { text = "messinkilaatta", of = "e37d93" }
 note = { text = "Kiillotettua, hyvin kirkasta messinkiä: STEORRATORR. MESTARI SIGERICIN, LUOJAN, TALO. Alla, pienemmällä: Vieraiden odotetaan vaikuttuvan.", of = "5d95a8" }
 
 [steorratorr.legend.S]
-name = { text = "mestari Sigericin patsas", of = "749c99" }
 note = { text = "Nuori mies oppineen kaavussa, kirja kainalossaan. Jalustassa lukee: SIGERIC OPINTOJENSA ÄÄRESSÄ.", of = "5eee79" }
 
 [steorratorr.legend.U]
-name = { text = "mestari Sigericin patsas", of = "749c99" }
 note = { text = "Mies parhaassa iässään, toinen käsi kohotettuna, kultattu tähti kämmenellä. Jalustassa lukee: SIGERIC ENSIMMÄISEN IHMEENSÄ ÄÄRELLÄ.", of = "e1fda1" }
 
 [steorratorr.legend.V]
-name = { text = "mestari Sigericin patsas", of = "749c99" }
 note = { text = "Mies tähdin kirjaillussa kaavussa katse ylöspäin. Jalustassa lukee: SIGERIC NOSTAA TORNIAAN.", of = "e83349" }
 
 [steorratorr.legend.Y]
-name = { text = "jalusta", of = "d6d1c9" }
 note = { text = "Kiillotettu, ja odottaa patsastaan. Jalustassa lukee: SIGERIC VOITTOISANA.", of = "821640" }
 
-[steorratorr_top]
-name = { text = "Steorratorrin huippu", of = "7087ca" }
-
 [steorratorr_top.legend.O]
-name = { text = "planetaario", of = "cf154b" }
 note = { text = "Messinkirenkaita renkaiden sisällä, kultattu aurinko keskellä, kuu ja vaeltavat tähdet varsillaan. Se kääntyy itsestään, hyvin hitaasti. Yhteen tähteen, muita suurempaan, on kaiverrettu SIGERIC.", of = "9e1682" }
 
 [steorratorr_top.legend.G]
-name = { text = "messinkikaukoputki", of = "eca718" }
 note = { text = "Pitkä messinkiputki jalustalla, suunnattuna taivaalle meren ylle. Okulaari on kulunut kirkkaaksi.", of = "1cf9ed" }
 
 # Līctūn, the churchyard, and its crypts. A `burial` epitaph is given `name`, who the dead
 # was, and `death`, how they died (as `fixtures.epitaph`).
 [lictun]
-name = { text = "Līctūn", of = "214fe4" }
 arrival = { text = "Līctūn, Cēaptūnin kirkkomaa: hautarivejä nurmessa ja pieni kappeli.", of = "fdfc27" }
 
 [lictun.burial]
@@ -200,7 +114,6 @@ epitaph = { text = "Tässä lepää Dunstan Swān, tämän pihan haudankaivaja, 
 epitaph = { text = "Hereward Langin, sotilaan, muistolle, 1395–1439. Mennyt kukkulan alle.", of = "bc6eeb" }
 
 [lictun_crypt_01]
-name = { text = "Līctūnin krypta 1", of = "26f97a" }
 arrival = { text = "Holvikellari Līctūnin kappelin alla: pölyinen keskilaiva, ja sen sivuilla sukuholveja.", of = "277e37" }
 
 [lictun_crypt_01.burial]
@@ -209,26 +122,7 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu holvikel
 [lictun_crypt_01.legend.F]
 epitaph = { text = "Tässä lepää Æthelwine Cēapmann, joka rakennutti yllä olevan kappelin, 1281–1340. Hän rakensi kivestä, kestämään.", of = "d5ae32" }
 
-[lictun_crypt_01.legend.1]
-name = { text = "Webben suvun holvi", of = "b5ba88" }
-
-[lictun_crypt_01.legend.2]
-name = { text = "voutien holvi", of = "8c2910" }
-
-[lictun_crypt_01.legend.3]
-name = { text = "Smythin suvun holvi", of = "acc71c" }
-
-[lictun_crypt_01.legend.4]
-name = { text = "Baceren suvun holvi", of = "616c7f" }
-
-[lictun_crypt_01.legend.5]
-name = { text = "Huntan suvun holvi", of = "ff614f" }
-
-[lictun_crypt_01.legend.6]
-name = { text = "Fisceren suvun holvi", of = "0543c0" }
-
 [lictun_crypt_02]
-name = { text = "Līctūnin krypta 2", of = "26f798" }
 arrival = { text = "Līctūnin krypta 2, luuhuone: vanhoista luista tehtyjä seiniä, ja niiden takana rivittäin kiviarkkuja.", of = "54cbbb" }
 
 [lictun_crypt_02.burial]
@@ -238,7 +132,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu vanhojen
 epitaph = { text = "Tässä lepäävät vanhan pihan luut, tuotuina alas, kun heidän hautojaan tarvittiin. Heidän nimensä tuntee Jumala.", of = "7c0a5f" }
 
 [lictun_crypt_03]
-name = { text = "Līctūnin krypta 3", of = "26f62a" }
 arrival = { text = "Līctūnin krypta 3, pappien krypta: keskilaiva ja sen sakarat ristin muotoon, alttari sen päässä.", of = "a65518" }
 
 [lictun_crypt_03.burial]
@@ -248,7 +141,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu pappien 
 epitaph = { text = "Tässä lepää Ēadric, Cēaptūnin pappi, 1192–1260, joka luki ensimmäisen messun tässä paikassa. Hän lauloi sen hitaasti, eikä kukaan lähtenyt kotiin ilman synninpäästöä.", of = "378449" }
 
 [lictun_crypt_04]
-name = { text = "Līctūnin krypta 4", of = "26f4bc" }
 arrival = { text = "Līctūnin krypta 4, kauppiaiden holvi: pyöreä sali, sen kiviarkut asetettuina kehään.", of = "21ee6f" }
 
 [lictun_crypt_04.burial]
@@ -258,7 +150,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu kauppiai
 epitaph = { text = "Tässä lepää Ōswold Cēapmann, kauppiaskillan ensimmäinen oltermanni, 1148–1209. Hänen punnuksensa olivat oikeat ja hänen sanansa vielä paremmat.", of = "6b4800" }
 
 [lictun_crypt_05]
-name = { text = "Līctūnin krypta 5", of = "26f2c2" }
 arrival = { text = "Līctūnin krypta 5, haudankaivajan varasto: hyllyjä, työpenkki, ja arkkuja syrjään pantuina.", of = "167365" }
 
 [lictun_crypt_05.burial]
@@ -268,7 +159,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Pantu syrjään h
 epitaph = { text = "Tässä lepää Tīdhelm, Līctūnin haudankaivaja, 1101–1170. Viisikymmentä vuotta hän kaivoi pihaa; kaivakoon toinen hänen hautansa.", of = "428ceb" }
 
 [lictun_crypt_06]
-name = { text = "Līctūnin krypta 6", of = "26f150" }
 arrival = { text = "Līctūnin krypta 6, tulvahuone: seisovaa vettä lattian päällä, ja arkkuja seisomassa siinä.", of = "b3609f" }
 
 [lictun_crypt_06.burial]
@@ -278,7 +168,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu veden yl
 epitaph = { text = "Tässä lepää Ēadweard Wætermann, 1032–1077, joka vannoi kuivattavansa tämän kryptan. Vesi sai viimeisen sanan.", of = "f2404a" }
 
 [lictun_crypt_07]
-name = { text = "Līctūnin krypta 7", of = "26efe2" }
 arrival = { text = "Līctūnin krypta 7, lasten talo: pieniä huoneita pienen salin ympärillä, ja lyhyitä syvennyksiä.", of = "300c3e" }
 
 [lictun_crypt_07.burial]
@@ -288,7 +177,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu pienten 
 epitaph = { text = "Tässä lepäävät Cēaptūnin lapset, jotka pilkkukuume vei talvella 1009, neljäkymmentäyksi heistä. Sallikaa heidän tulla.", of = "797d1e" }
 
 [lictun_crypt_08]
-name = { text = "Līctūnin krypta 8", of = "27072c" }
 arrival = { text = "Līctūnin krypta 8, sortuma: pylvässali, jonka keskiosa on hautautunut romahtaneen katon alle.", of = "4e7114" }
 
 [lictun_crypt_08.burial]
@@ -298,7 +186,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu sinne, m
 epitaph = { text = "Tässä lepää Hūna muurari, joka nosti tämän katon, 948–1003. Se pysyi pystyssä niin kauan kuin hän eli.", of = "a1301b" }
 
 [lictun_crypt_09]
-name = { text = "Līctūnin krypta 9", of = "27059a" }
 arrival = { text = "Līctūnin krypta 9, kuolonkuoppa: paljaaseen maahan kaivettu pyöreä kuoppa, ja keskellä kasa luita.", of = "b0c1d4" }
 
 [lictun_crypt_09.burial]
@@ -308,7 +195,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu maahan r
 epitaph = { text = "Tässä lepäävät vuoden 664 suuren kuoleman uhrit, joita ei voitu laskea. Herra, armahda.", of = "2d320f" }
 
 [lictun_crypt_10]
-name = { text = "Līctūnin krypta 10", of = "5aaea1" }
 arrival = { text = "Līctūnin krypta 10, munkkien sellit: kallioon hakattu ristikäytävä, sen sydämessä pyhimyksen pyhäkkö.", of = "cb57c7" }
 
 [lictun_crypt_10.burial]
@@ -318,7 +204,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu veljien 
 epitaph = { text = "Tässä lepää Cynebald, apotti ja pyhimys, joka toi veljet kukkuloiden yli Cēapdenuun, ja uskon heidän mukanaan. Rukoile puolestamme.", of = "ef0251" }
 
 [lictun_crypt_11]
-name = { text = "Līctūnin krypta 11", of = "5ab0d1" }
 arrival = { text = "Līctūnin krypta 11, jättiläisten työ: pitkä pylväiden varaan rakennettu sali, tehty ennen kuin englantilaiset tulivat.", of = "74c91f" }
 
 [lictun_crypt_11.burial]
@@ -328,7 +213,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu jättil�
 epitaph = { text = "Syvään hakattuja kirjaimia kielellä, jota kukaan täällä ei osaa lukea: D·M·AVRELIO·VICTORI·VIX·AN·XLII.", of = "abb6dc" }
 
 [lictun_crypt_12]
-name = { text = "Līctūnin krypta 12", of = "5aab85" }
 arrival = { text = "Līctūnin krypta 12, uurnien talo: seinissä rivittäin pieniä syvennyksiä kuin kyyhkyslakassa.", of = "7c278c" }
 
 [lictun_crypt_12.burial]
@@ -338,7 +222,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu sinne, m
 epitaph = { text = "Kirjaimia kaiverretun uurnan ympärillä: D·M·IVLIAE·SEVERAE·CONIVGI·CARISSIMAE·AVRELIVS·VICTOR·FECIT.", of = "2734e0" }
 
 [lictun_crypt_13]
-name = { text = "Līctūnin krypta 13", of = "5aac35" }
 arrival = { text = "Līctūnin krypta 13, kätketty temppeli: pitkä matala keskilaiva, arkkuja molemmin puolin, alttari sen päässä.", of = "a2af61" }
 
 [lictun_crypt_13.burial]
@@ -348,7 +231,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu unohdetu
 epitaph = { text = "Kaiverretun härän alla: HIC·IACET·PATER. Jumalan nimi sen yläpuolella on taltattu pois.", of = "7eb8c8" }
 
 [lictun_crypt_14]
-name = { text = "Līctūnin krypta 14", of = "5ab419" }
 arrival = { text = "Līctūnin krypta 14, kaivohuone: pyöreä kammio lähteen ympärillä, sen vesi valuu pois seinän alta.", of = "25ff8a" }
 
 [lictun_crypt_14.burial]
@@ -358,7 +240,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu lähteen
 epitaph = { text = "Ei kirjaimia: kiveen hakattu pyörä, ja sen vieressä halkeamaan työnnetty pronssineula.", of = "01b7d8" }
 
 [lictun_crypt_15]
-name = { text = "Līctūnin krypta 15", of = "5ab689" }
 arrival = { text = "Līctūnin krypta 15, maatalo: pitkä matala savimaahan kaivettu käytävä, kaartuva kuin jousi.", of = "056736" }
 
 [lictun_crypt_15.burial]
@@ -368,7 +249,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu maataloo
 epitaph = { text = "Kivilaatikko pikkukivikasan alla. Ei sanoja; sen kannella on gagaattihelmi.", of = "4f6d5b" }
 
 [lictun_crypt_16]
-name = { text = "Līctūnin krypta 16", of = "5ab145" }
 arrival = { text = "Līctūnin krypta 16, hautakumpu: suuren kummun sisus, kiviarkkuja kehässä kivikehän ympärillä.", of = "dbda6c" }
 
 [lictun_crypt_16.burial]
@@ -378,7 +258,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu kumpuun,
 epitaph = { text = "Suuri kivikirstu kansikivensä alla. Kiveen hakattuna: kuppeja ja renkaita, eikä mitään muuta.", of = "9597b0" }
 
 [lictun_crypt_17]
-name = { text = "Līctūnin krypta 17", of = "5ab3f5" }
 arrival = { text = "Līctūnin krypta 17, pitkä hautakumpu: suurista kivistä tehty etupiha, ja niillä vuorattu käytävä, kammioita molemmin puolin.", of = "0594d9" }
 
 [lictun_crypt_17.burial]
@@ -391,7 +270,6 @@ epitaph = { text = "Laatta kyljelleen asetetun miehen yllä, vihreästä kivest�
 epitaph = { text = "Laatta naisen yllä, lapsi käpertyneenä häntä vasten kuin nukkuen.", of = "5e4aa3" }
 
 [lictun_crypt_18]
-name = { text = "Līctūnin krypta 18", of = "5abbd1" }
 arrival = { text = "Līctūnin krypta 18, luuluola: kahden onkalon luola, kuolleet sen rakoihin ja eläinten luita sen lattialla.", of = "2691e8" }
 
 [lictun_crypt_18.burial]
@@ -401,7 +279,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu kallion 
 epitaph = { text = "Ei sanoja: punaista multaa sivottuna kiven yli, ja simpukankuorinauha ripustettuna sen poikki.", of = "5acc09" }
 
 [lictun_crypt_19]
-name = { text = "Līctūnin krypta 19", of = "5abc41" }
 arrival = { text = "Līctūnin krypta 19, jokiluola: musta joki halkaisee luolan, ja kuolleet lepäävät sen kummallakin rannalla.", of = "b89e40" }
 
 [lictun_crypt_19.burial]
@@ -411,7 +288,6 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu joen vie
 epitaph = { text = "Suljettu jokikivillä. Niiden väliseen saveen painettuna rivi peukalonjälkiä.", of = "db20f6" }
 
 [lictun_crypt_20]
-name = { text = "Līctūnin krypta 20", of = "57cf3c" }
 arrival = { text = "Līctūnin krypta 20, ensimmäinen hauta: luola syvemmällä kuin mikään valo, ja kivikehä pimeydessä.", of = "7b6d1b" }
 
 [lictun_crypt_20.burial]
@@ -421,5 +297,3 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu ensimmä
 epitaph = { text = "Ei kirjaimia: kiveen painettu punainen käsi, ja sen vieressä pienempi.", of = "ae929a" }
 
 # The bottom of Fyrdelf.
-[drakes_lair]
-name = { text = "Lohikäärmeen pesä", of = "423e87" }

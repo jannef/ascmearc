@@ -163,12 +163,13 @@ impl<'a> PerceptionView<'a> {
         self.character
     }
 
-    /// The player's background story, which they know: its
-    /// paragraphs, told again from the content with the slots filled; empty for a character
-    /// without one (a scenario's own, an old save) or a run without a character.
-    pub fn story(&self) -> Vec<String> {
+    /// The player's background story, which they know: its paragraphs, told again from the
+    /// content with the slots filled, each a message the screen says in the language shown
+    /// (#2062); empty for a character without one (a scenario's own, an old save) or a run
+    /// without a character.
+    pub fn story(&self) -> Vec<crate::lang::Msg> {
         (self.character)
-            .map(|c| crate::background::retell(self.content, self.campaign, c))
+            .map(|c| crate::background::retold(self.content, self.campaign, c))
             .unwrap_or_default()
     }
 

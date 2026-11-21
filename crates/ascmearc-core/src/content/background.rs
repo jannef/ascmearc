@@ -432,6 +432,71 @@ impl Chapter {
     pub fn line(&self, id: &str) -> Option<&Line> {
         self.lines.iter().find(|l| l.id == id)
     }
+
+    /// Where its keys start (#2062): its campaign and its id, `data` for a shared chapter's
+    /// campaign (`data.parents`, `ascmearc.road`), as a dialogue's scope.
+    pub fn scope(&self) -> String {
+        format!("{}.{}", self.campaign.as_deref().unwrap_or("data"), self.id)
+    }
+
+    /// The key of line `line`'s text, a line of data: `story:<scope>.<line>`.
+    pub fn line_key(&self, line: &str) -> String {
+        format!("story:{}.{line}", self.scope())
+    }
+
+    /// The lexicon id of the word slot `slot` reads when line `line` set it, or with `None` the
+    /// chapter's default: `story_word:<scope>.<line>.<slot>`, `story_word:<scope>.defaults.<slot>`.
+    pub fn word_id(&self, line: Option<&str>, slot: &str) -> String {
+        format!(
+            "story_word:{}.{}.{slot}",
+            self.scope(),
+            line.unwrap_or(DEFAULTS)
+        )
+    }
+}
+
+/// The part of a chapter's slot words' ids that names its defaults ([`Chapter::word_id`]).
+const DEFAULTS: &str = "defaults";
+
+impl Background {
+    /// The word at lexicon id `story_word:<key>` ([`Chapter::word_id`]): a slot word as the data
+    /// writes it ("the minster").
+    pub fn word(&self, key: &str) -> Option<&str> {
+        let (rest, slot) = key.rsplit_once('.')?;
+        let (scope, line) = rest.rsplit_once('.')?;
+        let chapter = self.chapters.iter().find(|c| c.scope() == scope)?;
+        match line {
+            DEFAULTS => chapter.defaults.get(slot),
+            line => chapter.line(line)?.set.get(slot),
+        }
+        .map(String::as_str)
+    }
+
+    /// The text of the line at key `story:<key>`'s data, as the data writes it, with its slots
+    /// made the line's roles ([`story_template`]).
+    pub fn lines(&self) -> impl Iterator<Item = (String, String)> + '_ {
+        (self.chapters.iter()).flat_map(|c| {
+            (c.lines.iter()).map(move |l| (c.line_key(&l.id), story_template(&l.text)))
+        })
+    }
+}
+
+/// A story line's text as a template (#2062): its slots made roles, `{name}` and the pronouns the
+/// character's (`who`: `{who:name}`, `{who:they}`, `{who:Their}`), the slot words their own
+/// (`{guardian:bare}`, `{Home}` → `{home:Bare}`).
+pub fn story_template(text: &str) -> String {
+    let mut out = text.to_string();
+    for slot in ["name", "they", "them", "their"] {
+        out = out.replace(&format!("{{{slot}}}"), &format!("{{who:{slot}}}"));
+        let capital = crate::text::capitalized(slot);
+        out = out.replace(&format!("{{{capital}}}"), &format!("{{who:{capital}}}"));
+    }
+    for slot in SET_SLOTS {
+        out = out.replace(&format!("{{{slot}}}"), &format!("{{{slot}:bare}}"));
+        let capital = crate::text::capitalized(slot);
+        out = out.replace(&format!("{{{capital}}}"), &format!("{{{slot}:Bare}}"));
+    }
+    out
 }
 
 /// The background stories' data.

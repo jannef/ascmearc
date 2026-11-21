@@ -10,7 +10,7 @@ use crate::action::{AttackKind, Event};
 use crate::burden;
 use crate::content::{
     ActionKind, CombatStance, Content, CreatureSpawn, EdgeExit, LevelKind, LevelTemplate,
-    StairsDir, Stance, TerrainId, data_line, local_area_id,
+    StairsDir, Stance, TerrainId, local_area_id, place_word,
 };
 use crate::equipment::Equipment;
 use crate::geom::{Dir, Pos};
@@ -248,11 +248,11 @@ impl World {
         Spent::Turn(step + climb)
     }
 
-    /// What a level is called in messages; a dungeon branch goes by the branch's name (lines of
-    /// data, `data_line::dungeon_name`, `level_name`).
+    /// What a level is called in messages; a dungeon branch goes by the branch's name (lexicon
+    /// words, `place_word::dungeon`, `level_name`).
     pub(super) fn place_name(&self, id: &str) -> Arg {
         if let Some((branch, _)) = self.content.branch_level(id) {
-            return Arg::said(data_line::dungeon_name(&branch.id));
+            return place_word::dungeon(&branch.id).into();
         }
         self.level_name(id)
     }

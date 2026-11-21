@@ -85,8 +85,8 @@ impl DialogueScreen {
         let toward = Dir::from_delta(actor.pos.x - me.x, actor.pos.y - me.y);
         // A unique character by its proper name ("Sister Hild"), anyone else by its type.
         let content = view.content();
-        let who = match (actor.dialogue).and_then(|d| content.dialogue(d).name.as_deref()) {
-            Some(proper) => Phrase::literal(proper),
+        let who = match (actor.dialogue).and_then(|d| content.proper_name_phrase(d)) {
+            Some(proper) => proper,
             None => Phrase::id(format!("creature:{}", content.creature(actor.creature).id)),
         };
         let topics: Vec<(String, String)> = (talk.topics.iter())

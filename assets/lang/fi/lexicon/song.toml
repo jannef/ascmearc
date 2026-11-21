@@ -1,0 +1,3 @@
+# Songs (`song:<talent id>`): the bard's songs, said as what is sung ("Laulat kehtolaulun.").
+inspire = "innoituksen laulu/1"
+lullaby = "kehto|laulu/1"

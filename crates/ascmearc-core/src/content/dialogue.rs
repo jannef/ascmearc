@@ -355,6 +355,9 @@ pub struct Dialogue {
     /// The campaign whose `data/dialogue/` it is in; `None` for shared ones (the shopkeeper's)
     /// and those outside every campaign.
     pub campaign: Option<String>,
+    /// The scope of its keys ([`scope`]: `ascmearc.peran`), given as its lines are keyed: its
+    /// `name` is the lexicon word `speaker:<scope>` ([`Content::speaker_phrase`]).
+    pub scope: String,
 }
 
 impl Dialogue {
@@ -461,6 +464,7 @@ pub(super) fn parse<'a>(
         parse_file(file, text, content, &mut dialogues, &mut files)?;
         for d in &mut dialogues[scopes.len()..] {
             let scope = scope(d, content);
+            d.scope = scope.clone();
             if scopes.contains(&scope) {
                 let m = format!("two dialogues are keyed `{scope}`: an npc and a creature type");
                 return Err(ContentError::new(file, m));
@@ -632,6 +636,7 @@ fn parse_file<'a>(
             partner: spec.partner,
             patron: spec.patron,
             campaign: campaign.clone(),
+            scope: String::new(),
         });
         files.push(file);
     }

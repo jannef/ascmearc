@@ -1,0 +1,28 @@
+# Lines of data: the player's hidden alignment rising or falling into a band
+# (`alignment:band.<band>.rise`, `.fall`). Felt, never named: no band's name is said.
+
+[band.callous]
+fall = { text = "Tunnet sydämesi kovettuvan.", of = "d6cde5" }
+rise = { text = "Tunnet sydämesi pehmenevän hiukan.", of = "fc4dfa" }
+
+[band.evil]
+fall = { text = "Tunnet pahuuden juurtuvan sinuun.", of = "648df6" }
+rise = { text = "Tunnet sisäisen pimeytesi pahimman otteen hellittävän.", of = "259ba6" }
+
+[band.good]
+fall = { text = "Tunnet sisäisen pyhän valosi himmenevän.", of = "5a4c42" }
+rise = { text = "Tunnet olevasi oikeamielinen.", of = "738c2b" }
+
+[band.kind]
+fall = { text = "Tunnet oikeamielisyytesi horjuvan.", of = "71349e" }
+rise = { text = "Tunnet sydämesi lämpenevän maailmaa kohtaan.", of = "717c1a" }
+
+[band.neutral]
+fall = { text = "Tunnet hyväntahtoisuutesi viilenevän.", of = "1aebfa" }
+rise = { text = "Tunnet sisäisen pimeytesi väistyvän.", of = "f7cfa3" }
+
+[band.saintly]
+rise = { text = "Tunnet sisälläsi pyhän valon: sinusta on tullut pyhimys.", of = "5be087" }
+
+[band.wicked]
+fall = { text = "Tunnet olevasi läpikotaisin paha.", of = "24d89e" }

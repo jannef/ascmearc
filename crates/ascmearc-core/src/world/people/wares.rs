@@ -112,7 +112,7 @@ impl World {
         let item = wares.and_then(|w| w.item.as_ref());
         Some(crate::world::TopicView {
             id: offer.id.clone(),
-            name: offer.name.clone().into(),
+            name: crate::world::TopicName::Line(offer.name_key.clone()),
             price: item.and(wares.map(|w| w.price)),
             items: None,
             ware: item.map(|s| self.ware_text(s).into()),

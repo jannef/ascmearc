@@ -487,7 +487,7 @@ fn the_read_list_tells_the_chance_of_each_grimoire_to_learn() {
     let items: Vec<usize> = studies.iter().map(|s| s.item).collect();
     assert_eq!(items, vec![0, 1, 2]);
     assert!(studies.iter().all(|s| s.rank.is_none()));
-    assert_eq!(studies[2].chance, "a struggle");
+    assert_eq!(studies[2].chance, crate::msg::words::CHANCE_STRUGGLE);
     // Known below it, identify's grimoire is listed for its next rank.
     w.player_mut().spells.insert(sp("identify"), 3);
     let studies = w.perception().studies();

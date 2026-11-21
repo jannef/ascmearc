@@ -468,78 +468,150 @@ scale_mail = { word = "suomu|haarniska/13", forms = { material = "rautainen" } }
 scimitar = { word = "käyrä|miekka/9*A", forms = { material = "teräksinen" } }
 scrap = "romu/1"
 scroll_of_acid_arrow = { word = "happonuolen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_acid_arrow = { word = "happonuolen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_acid_splash = { word = "happoroiskeen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_acid_splash = { word = "happoroiskeen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_arcane_bolt = { word = "mahtinuolen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_arcane_bolt = { word = "mahtinuolen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_balefire = { word = "tuhontulen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_balefire = { word = "tuhontulen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_barkskin = { word = "kaarnaihon käärö/1", forms = { material = "paperinen" } }
+grimoire_of_barkskin = { word = "kaarnaihon loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_beguile = { word = "lumouksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_beguile = { word = "lumouksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_benison = { word = "armon käärö/1", forms = { material = "paperinen" } }
+grimoire_of_benison = { word = "armon loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_bind = { word = "sidonnan käärö/1", forms = { material = "paperinen" } }
+grimoire_of_bind = { word = "sidonnan loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_blessing = { word = "siunauksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_blessing = { word = "siunauksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_blight = { word = "ruton käärö/1", forms = { material = "paperinen" } }
+grimoire_of_blight = { word = "ruton loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_blink = { word = "loikan käärö/1", forms = { material = "paperinen" } }
+grimoire_of_blink = { word = "loikan loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_bramble = { word = "piikkipensaan käärö/1", forms = { material = "paperinen" } }
+grimoire_of_bramble = { word = "piikkipensaan loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_brand = { word = "tuliterän käärö/1", forms = { material = "paperinen" } }
+grimoire_of_brand = { word = "tuliterän loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_burning_hands = { word = "palavien käsien käärö/1", forms = { material = "paperinen" } }
+grimoire_of_burning_hands = { word = "palavien käsien loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_call_lightning = { word = "taivaan tulen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_call_lightning = { word = "taivaan tulen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_call_of_the_forest = { word = "metsän kutsun käärö/1", forms = { material = "paperinen" } }
+grimoire_of_call_of_the_forest = { word = "metsän kutsun loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_call_of_the_wild = { word = "erämaan kutsun käärö/1", forms = { material = "paperinen" } }
+grimoire_of_call_of_the_wild = { word = "erämaan kutsun loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_call_the_elements = { word = "alkuvoimien kutsun käärö/1", forms = { material = "paperinen" } }
+grimoire_of_call_the_elements = { word = "alkuvoimien kutsun loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_cause_wounds = { word = "haavoituksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_cause_wounds = { word = "haavoituksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_chain_lightning = { word = "ketjusalaman käärö/1", forms = { material = "paperinen" } }
+grimoire_of_chain_lightning = { word = "ketjusalaman loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_charnel_burst = { word = "raatoräjähdyksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_charnel_burst = { word = "raatoräjähdyksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_cloudburst = { word = "kaatosateen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_cloudburst = { word = "kaatosateen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_cure_wounds = { word = "haavojen parannuksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_cure_wounds = { word = "haavojen parannuksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_curse_of_sloth = { word = "laiskuuden kirouksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_curse_of_sloth = { word = "laiskuuden kirouksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_evil_eye = { word = "pahan silmän käärö/1", forms = { material = "paperinen" } }
+grimoire_of_evil_eye = { word = "pahan silmän loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_fear = { word = "pelon käärö/1", forms = { material = "paperinen" } }
+grimoire_of_fear = { word = "pelon loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_fire_cloak = { word = "tuliviitan käärö/1", forms = { material = "paperinen" } }
+grimoire_of_fire_cloak = { word = "tuliviitan loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_fireball = "tulipallon käärö/1"
+grimoire_of_fireball = { word = "tulipallon loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_flame = { word = "liekin käärö/1", forms = { material = "paperinen" } }
+grimoire_of_flame = { word = "liekin loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_flare = { word = "leimahduksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_flare = { word = "leimahduksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_flay = { word = "nylkemisen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_flay = { word = "nylkemisen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_frost = "pakkasen käärö/1"
+grimoire_of_frost = { word = "pakkasen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_fume = { word = "savuverhon käärö/1", forms = { material = "paperinen" } }
+grimoire_of_fume = { word = "savuverhon loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_gale = { word = "myrskytuulen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_gale = { word = "myrskytuulen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_glamour = { word = "harhakuvan käärö/1", forms = { material = "paperinen" } }
+grimoire_of_glamour = { word = "harhakuvan loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_grave_breath = { word = "haudan henkäyksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_grave_breath = { word = "haudan henkäyksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_grave_feast = { word = "haudan aterian käärö/1", forms = { material = "paperinen" } }
+grimoire_of_grave_feast = { word = "haudan aterian loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_grave_spear = { word = "hautakeihään käärö/1", forms = { material = "paperinen" } }
+grimoire_of_grave_spear = { word = "hautakeihään loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_haste = { word = "kiidon käärö/1", forms = { material = "paperinen" } }
+grimoire_of_haste = { word = "kiidon loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_hex_of_weakness = { word = "heikkouden kirouksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_hex_of_weakness = { word = "heikkouden kirouksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_identify = "tunnistuksen käärö/1"
+grimoire_of_identify = { word = "tunnistuksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_leech = { word = "juotikkaan käärö/1", forms = { material = "paperinen" } }
+grimoire_of_leech = { word = "juotikkaan loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_light = "valon käärö/1"
+grimoire_of_light = { word = "valon loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_lightning = "salaman käärö/1"
+grimoire_of_lightning = { word = "salaman loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_magic_missile = { word = "taikanuolen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_magic_missile = { word = "taikanuolen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_mend = { word = "lievityksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_mend = { word = "lievityksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_mesmerise = { word = "lumokatseen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_mesmerise = { word = "lumokatseen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_mirk = { word = "pimeyden käärö/1", forms = { material = "paperinen" } }
+grimoire_of_mirk = { word = "pimeyden loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_nightsight = { word = "yönäön käärö/1", forms = { material = "paperinen" } }
+grimoire_of_nightsight = { word = "yönäön loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_pitch_fire = { word = "pikitulen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_pitch_fire = { word = "pikitulen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_ray_of_frost = { word = "pakkassäteen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_ray_of_frost = { word = "pakkassäteen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_rebuke = { word = "karkotuksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_rebuke = { word = "karkotuksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_reek = { word = "löyhkän käärö/1", forms = { material = "paperinen" } }
+grimoire_of_reek = { word = "löyhkän loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_remove_disease = { word = "puhdistuksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_remove_disease = { word = "puhdistuksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_renewal = { word = "elpymisen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_renewal = { word = "elpymisen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_restoration = { word = "ennallistuksen käärö/1", forms = { material = "paperinen" } }
 scroll_of_rime = { word = "kuuran käärö/1", forms = { material = "paperinen" } }
+grimoire_of_rime = { word = "kuuran loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_rouse_the_dead = { word = "kuolleiden herätyksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_rouse_the_dead = { word = "kuolleiden herätyksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_scorching_ray = { word = "kärventävän säteen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_scorching_ray = { word = "kärventävän säteen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_see_invisible = { word = "näkymättömän näkemisen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_see_invisible = { word = "näkymättömän näkemisen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_sense_the_quick = { word = "elävien tunnon käärö/1", forms = { material = "paperinen" } }
+grimoire_of_sense_the_quick = { word = "elävien tunnon loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_shatter = { word = "rusahduksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_shatter = { word = "rusahduksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_silence = { word = "hiljaisuuden käärö/1", forms = { material = "paperinen" } }
+grimoire_of_silence = { word = "hiljaisuuden loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_sleep = { word = "raukeuden käärö/1", forms = { material = "paperinen" } }
+grimoire_of_sleep = { word = "raukeuden loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_slick = { word = "liukkauden käärö/1", forms = { material = "paperinen" } }
+grimoire_of_slick = { word = "liukkauden loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_slumber = { word = "unen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_slumber = { word = "unen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_soulglass = { word = "sielulasin käärö/1", forms = { material = "paperinen" } }
+grimoire_of_soulglass = { word = "sielulasin loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_spark = { word = "kipinän käärö/1", forms = { material = "paperinen" } }
+grimoire_of_spark = { word = "kipinän loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_sunfire = { word = "auringon tulen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_sunfire = { word = "auringon tulen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_thunderclap = { word = "jyrähdyksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_thunderclap = { word = "jyrähdyksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_unbinding = { word = "vapautuksen käärö/1", forms = { material = "paperinen" } }
+grimoire_of_unbinding = { word = "vapautuksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_water_walking = { word = "vetten käynnin käärö/1", forms = { material = "paperinen" } }
+grimoire_of_water_walking = { word = "vetten käynnin loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_web = { word = "seitin käärö/1", forms = { material = "paperinen" } }
+grimoire_of_web = { word = "seitin loitsu|kirja/9", forms = { material = "paperinen" } }
 sea_hag_corpse = { word = "merinoita-akan ruumis/41", forms = { material = "lihainen" } }
 sealed_letter = { word = "sinetöity/1*F kirje/48", forms = { material = "paperinen" } }
 servant_corpse = { word = "palvelijan ruumis/41", forms = { material = "lihainen" } }

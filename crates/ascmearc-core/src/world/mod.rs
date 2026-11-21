@@ -952,7 +952,7 @@ impl World {
         }
         instantiate_level(&mut state, &content, &start);
         drop(start); // It may borrow `content`, which `assemble` takes.
-        let name = crate::lang::Arg::said(crate::content::data_line::scenario_name(&def.id));
+        let name = crate::lang::Arg::from(crate::content::place_word::scenario(&def.id));
         let welcome = Msg::new(crate::msg::world::WELCOME).role("place", name);
         state.messages.push(0, welcome);
         if def.arrival.is_some() {

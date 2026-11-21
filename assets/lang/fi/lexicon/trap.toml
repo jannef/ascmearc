@@ -1,3 +1,12 @@
 # Traps by name (`trap:<id>`).
 arrow = "nuoli|ansa/9"
 pit = "kuoppa/9*B"
+alarm = "hälytys|ansa/9"
+fireball = "tuli|pallo|ansa/9"
+frost = "pakkas|ansa/9"
+lightning_bolt = "salama-ansa/9"
+rigged_arrows = "kompastus|lanka/9*G"
+rigged_pit = "kuoppa-ansa/9"
+rigged_stakes = "seiväs|ansa/9"
+spear = "keihäs|ansa/9"
+teleport = "siirto|ansa/9"
