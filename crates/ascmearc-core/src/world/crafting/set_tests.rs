@@ -244,7 +244,7 @@ fn the_steps_offer_unset_items_and_cut_gems_only() {
 
     let plan = w
         .perception()
-        .craft_plan(recipe(&w, "set"), &[Some(5), Some(2)])
+        .craft_plan_en(recipe(&w, "set"), &[Some(5), Some(2)])
         .expect("a plan");
     assert_eq!(plan.verb, "Set");
     assert_eq!(plan.name, "a silver and garnet ring");
@@ -372,11 +372,11 @@ fn each_ring_and_amulet_is_made_of_its_own_material_and_never_graded() {
     stock(&mut w, "iron", 1);
     let plan = w
         .perception()
-        .craft_plan(recipe(&w, "gold_ring"), &[Some(0)]);
+        .craft_plan_en(recipe(&w, "gold_ring"), &[Some(0)]);
     assert_eq!(plan, Err("That will not do for the metal.".into()));
     let plan = w
         .perception()
-        .craft_plan(recipe(&w, "iron_ring"), &[Some(0)])
+        .craft_plan_en(recipe(&w, "iron_ring"), &[Some(0)])
         .expect("a plan");
     assert_eq!(
         (plan.verb.as_str(), plan.uses.as_str()),

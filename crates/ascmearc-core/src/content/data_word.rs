@@ -26,6 +26,7 @@
 //! | `trap:<id>.sign` | what gives a trap away, with its article ("a tripwire") |
 //! | `damage_type:<id>.verb`, `.you` | a blow of the kind, and the same in the player's person ("slashes", "slash") |
 //! | `creature:<id>.breath.verb`, `.burst.verb`, `.summon.verb` | a type's breath, burst, and summoning ("breathes fire at") |
+//! | `spells:types.<damage type>.words` | a spell type's rule after a spell's roll ("burns one in four", #2028) |
 
 use super::{Content, CreatureDef, DamageTypeId, ObjectId, StatusId, TrapId};
 use crate::lang::en::is_plural;
@@ -166,8 +167,19 @@ pub fn creature_verb(id: &str, what: &str) -> String {
     format!("creature:{id}.{what}.verb")
 }
 
+/// A spell type's `words` line (`data/spells.toml`'s `[types]`), by its damage type's id.
+pub fn spell_type_words(id: &str) -> String {
+    format!("spells:types.{id}.words")
+}
+
 /// Every line of data above, by its key.
 pub(super) fn lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    let types = content.spell_rules().into_iter().flat_map(|r| &r.types);
+    for (&kind, def) in types {
+        if let Some(words) = &def.words {
+            add(spell_type_words(&content.damage_type(kind).id), words);
+        }
+    }
     for def in content.status_defs() {
         if let Some(dies) = &def.dies {
             add(status_dies(&def.id), dies);
@@ -235,6 +247,11 @@ mod tests {
             "trap:arrow.sign",
             "damage_type:fire.verb",
             "damage_type:fire.you",
+            "spells:types.fire.words",
+            "recipe:gold_ring.verb",
+            "recipes:profession.alchemy.verb",
+            "stock:group.metal.verb",
+            "stock:gems.verb",
         ] {
             assert!(lines.get(key).is_some(), "{key}");
         }

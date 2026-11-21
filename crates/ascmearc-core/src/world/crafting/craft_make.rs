@@ -81,10 +81,10 @@ use crate::combat;
 use crate::content::data_line;
 use crate::content::{
     Content, InputKind, MaterialId, ObjectId, PartSource, RecipeCount, RecipeDef, RecipeId,
-    RecipeInput, RecipeSettings, RecipeUse, counted,
+    RecipeInput, RecipeSettings, RecipeUse,
 };
 use crate::item_parts::{self, ItemPart};
-use crate::lang::{Entry, Msg, Phrase, written_key};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::magic::Worked;
 use crate::magic::worked::{ammunition_make, aspects};
 use crate::msg;
@@ -162,20 +162,77 @@ impl CraftStep {
     }
 }
 
-/// What a recipe with the picks chosen would make and use, in words (the dialog's).
+/// What a recipe with the picks chosen would make and use, in words (the dialog's): messages
+/// and phrases the screen renders in its language (`messages/crafting.toml`'s `plan_*` and
+/// `work_*`; docs/dev/localization.md "Reasons core composes").
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CraftPlan {
-    /// The profession's verb: "Forge".
-    pub verb: String,
+    /// The profession's verb, "Forge": a line of data (the recipe's, its profession row's, or
+    /// its stock's `verb`), the recipe's name (Set's, an enchanting's), or `crafting.plan_make`.
+    pub verb: Arg,
     /// The item, as it would be named: "a ruby-pommelled long sword", or a counted recipe's in
-    /// the plural, "flint arrows".
-    pub name: String,
-    /// What it uses: "3 steel ingots and the ruby".
-    pub uses: String,
+    /// the plural, "flint arrows"; a message that says it in its form.
+    pub name: Msg,
+    /// What it uses: "3 steel ingots and the ruby"; `None` for nothing (Unbind).
+    pub uses: Option<Msg>,
     /// The station, as a phrase (`terrain:anvil`): the dialog asks for its form ("the anvil").
     pub station: Option<Phrase>,
     /// How long it takes: "about 1 hour".
+    pub time: Msg,
+}
+
+/// "about 1 hour": `seconds` of work, said `work_about` (the plan's time, a recipe row's last
+/// part).
+pub(super) fn about(seconds: u32) -> Msg {
+    let time = Duration::seconds(u64::from(seconds)).spoken();
+    Msg::new(msg::crafting::WORK_ABOUT).role("time", time)
+}
+
+/// `what` with its count, said `work_counted` ("3 steel ingots", "a red crystal").
+pub(super) fn counted_msg(what: Phrase) -> Msg {
+    Msg::new(msg::crafting::WORK_COUNTED).role("what", what)
+}
+
+/// `what` by its title, said `work_the` ("the ruby", "the long sword").
+pub(super) fn the_msg(what: Phrase) -> Msg {
+    Msg::new(msg::crafting::WORK_THE).role("what", what)
+}
+
+/// What the work uses, `items` said with "and" (`plan_uses`); `None` for nothing.
+pub(super) fn uses_msg(items: Vec<Msg>) -> Option<Msg> {
+    (!items.is_empty()).then(|| Msg::new(msg::crafting::PLAN_USES).role("items", list(items)))
+}
+
+/// `items` as a list argument.
+pub(super) fn list(items: Vec<Msg>) -> Arg {
+    Arg::List(items.into_iter().map(Arg::from).collect())
+}
+
+#[cfg(test)]
+/// A plan in English (the built-in content's words), for the tests to compare.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct PlanEn {
+    pub verb: String,
+    pub name: String,
+    /// Empty for nothing.
+    pub uses: String,
+    pub station: Option<Phrase>,
     pub time: String,
+}
+
+#[cfg(test)]
+impl CraftPlan {
+    /// The plan in English by `content`.
+    pub(crate) fn en(&self, content: &Content) -> PlanEn {
+        let msg = |m: &Msg| crate::messages::english_msg(content, m);
+        PlanEn {
+            verb: crate::messages::english_arg(content, &self.verb, "bare"),
+            name: msg(&self.name),
+            uses: self.uses.as_ref().map(msg).unwrap_or_default(),
+            station: self.station.clone(),
+            time: msg(&self.time),
+        }
+    }
 }
 
 /// How well a made item came out: the margin's band ([`grade`]).
@@ -323,12 +380,28 @@ fn profession_stat(content: &Content, recipe: &RecipeDef, main: Option<MaterialI
 }
 
 /// The dialog's verb for `recipe`: its own (`verb`: a ring is made, not cut), else its
-/// profession row's ("Brew"), else [`profession`]'s, else "Make".
-fn profession_verb(content: &Content, recipe: &RecipeDef, main: Option<MaterialId>) -> String {
-    (recipe.verb.clone())
-        .or_else(|| (content.recipes().profession(recipe.skill)).and_then(|row| row.verb.clone()))
-        .or_else(|| profession(content, recipe, main).map(|p| p.verb.clone()))
-        .unwrap_or_else(|| "Make".to_string())
+/// profession row's ("Brew"), else [`profession`]'s, each its line of data; else
+/// `crafting.plan_make`, "Make".
+fn profession_verb(content: &Content, recipe: &RecipeDef, main: Option<MaterialId>) -> Arg {
+    let row = (content.recipes().profession(recipe.skill)).filter(|row| row.verb.is_some());
+    let key = match (&recipe.verb, row) {
+        (Some(_), _) => Some(data_line::recipe_verb(&recipe.id)),
+        (None, Some(row)) => Some(data_line::profession_verb(&content.skill(row.skill).id)),
+        (None, None) => profession(content, recipe, main).map(|p| p.verb_key.clone()),
+    };
+    match key {
+        Some(key) => Arg::said(key),
+        None => Msg::from(msg::crafting::PLAN_MAKE).into(),
+    }
+}
+
+/// The verb of a recipe that names no profession's (Set's, an enchanting's): its own `verb`'s
+/// line of data, else its name (`recipe:<id>`, as written: "Kindle").
+pub(super) fn own_verb(content: &Content, recipe: &RecipeDef) -> Arg {
+    match recipe.verb {
+        Some(_) => Arg::said(data_line::recipe_verb(&recipe.id)),
+        None => content.recipe_phrase(&recipe.id).into(),
+    }
 }
 
 /// A step of a recipe: which of its parts or inputs, or the ornament.
@@ -949,17 +1022,15 @@ fn taken(
 
 /// What `made` is called before it is made: truly, though its type (a potion's) is unknown, for
 /// the recipe names it; else as the player would know it.
-fn made_name(content: &Content, lore: Lore<'_>, made: &Stack, article: bool) -> String {
-    match (lore.label(made.object).is_some(), article) {
-        (true, true) => made.describe(content),
-        (true, false) => made.title(content),
-        (false, true) => lore.describe(made),
-        (false, false) => lore.title(made),
+fn made_name(content: &Content, lore: Lore<'_>, made: &Stack) -> Phrase {
+    match lore.label(made.object).is_some() {
+        true => made.phrase(content),
+        false => lore.phrase(made),
     }
 }
 
-/// [`made_name`] without an article as a phrase, for the line that begins the work; a batch's
-/// (`batch`) is its names' plural.
+/// [`made_name`] without an article, for the line that begins the work; a batch's (`batch`) is
+/// its names' plural.
 fn made_phrase(content: &Content, lore: Lore<'_>, made: &Stack, batch: bool) -> Phrase {
     match (batch, lore.label(made.object).is_some()) {
         (true, _) => lore.names_phrase(made).count(2),
@@ -968,13 +1039,8 @@ fn made_phrase(content: &Content, lore: Lore<'_>, made: &Stack, batch: bool) -> 
     }
 }
 
-/// `msg` in English, keys written: the plan's reason why not, which the dialog shows (English
-/// whatever the language until core's words move to the app, #1949).
-pub(super) fn english(content: &Content, msg: Msg) -> String {
-    crate::messages::english(content, &Entry::new(0, msg), &written_key)
-}
-
-/// What `recipe` with `picks` would make and use, in words (the module docs), or why not.
+/// What `recipe` with `picks` would make and use, in words (the module docs), or why not (the
+/// rules' refusal).
 pub(crate) fn craft_plan(
     content: &Content,
     lore: Lore<'_>,
@@ -982,7 +1048,7 @@ pub(crate) fn craft_plan(
     player: &Actor,
     recipe: RecipeId,
     picks: &[Option<usize>],
-) -> Result<CraftPlan, String> {
+) -> Result<CraftPlan, Msg> {
     let def = content.recipe(recipe);
     if def.uses == Some(RecipeUse::Set) {
         return super::set::plan(content, lore, player, def, picks);
@@ -990,48 +1056,46 @@ pub(crate) fn craft_plan(
     if let Some(RecipeUse::Enchant(_)) = def.uses {
         return super::enchant::plan(content, lore, player, def, picks);
     }
-    let resolved =
-        resolve(content, lore, level, player, def, picks).map_err(|why| english(content, why))?;
+    let resolved = resolve(content, lore, level, player, def, picks)?;
     let pack = &player.inventory;
     // Stacks of one thing taken together (a brew's herbs from two stacks) are told as one; what
     // goes for each made, then the gem (the ornament, the last step), after them.
-    let mut counts: Vec<(String, String, u32)> = Vec::new();
-    let mut each: Vec<String> = Vec::new();
-    let mut gems: Vec<String> = Vec::new();
+    let mut counts: Vec<(Phrase, u32)> = Vec::new();
+    let mut each: Vec<Msg> = Vec::new();
+    let mut gems: Vec<Msg> = Vec::new();
     for spend in &resolved.spends {
         let stack = &pack[spend.at];
-        let (one, many) = lore.names(stack);
+        let one = lore.names_phrase(stack);
         match (cut_gem(content, stack), spend.per) {
-            (Some(_), _) => gems.push(format!("the {}", lore.title(stack))),
+            (Some(_), _) => gems.push(the_msg(lore.title_phrase(stack))),
             (None, Per::Made(n)) => {
-                each.push(format!("{} for each made", counted(&one, &many, n)));
+                each.push(Msg::new(msg::crafting::WORK_EACH).role("what", one.count(n)));
             }
-            (None, _) => match counts.iter_mut().find(|(o, _, _)| *o == one) {
-                Some(seen) => seen.2 += spend.count,
-                None => counts.push((one, many, spend.count)),
+            (None, _) => match counts.iter_mut().find(|(o, _)| *o == one) {
+                Some(seen) => seen.1 += spend.count,
+                None => counts.push((one, spend.count)),
             },
         }
     }
-    let mut uses: Vec<String> = (counts.iter())
-        .map(|(one, many, n)| counted(one, many, *n))
+    let mut uses: Vec<Msg> = (counts.into_iter())
+        .map(|(one, n)| counted_msg(one.count(n)))
         .collect();
     uses.extend(each);
     uses.extend(gems);
     let verb = profession_verb(content, def, resolved.main);
     let name = match resolved.batch {
-        Some(_) => lore.names(&resolved.made).1,
-        None => made_name(content, lore, &resolved.made, true),
+        Some(_) => {
+            Msg::new(msg::crafting::PLAN_PLURAL).role("what", lore.names_phrase(&resolved.made))
+        }
+        None => counted_msg(made_name(content, lore, &resolved.made)),
     };
     let seconds = fletch::fletcher_seconds(content, player, def);
     Ok(CraftPlan {
         verb,
         name,
-        uses: crate::text::and_list(&uses),
+        uses: uses_msg(uses),
         station: def.station.map(|t| terrain(content, t)),
-        time: format!(
-            "about {}",
-            content.english_word(Duration::seconds(u64::from(seconds)).spoken(), "bare")
-        ),
+        time: about(seconds),
     })
 }
 
