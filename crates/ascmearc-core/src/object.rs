@@ -266,9 +266,14 @@ impl Stack {
         Some(attack)
     }
 
-    /// Normal, magic, or rare: this the player sees at once.
+    /// Normal, magic, rare, or unique: this the player sees at once.
     pub fn rarity(&self) -> Rarity {
         self.magic.as_ref().map_or(Rarity::Normal, |m| m.rarity)
+    }
+
+    /// Whether it is a unique item (#1975): never harmed, never crafted, never spent.
+    pub fn is_unique(&self) -> bool {
+        self.rarity() == Rarity::Unique
     }
 
     /// Whether the player knows what it does: a normal item always, a magic or rare one once
@@ -631,7 +636,7 @@ impl Stack {
         let (word, count, magic) = (self.worked_word(), self.count, self.magic());
         let phrase = name::phrase(made, word, count, magic, (known, cursed), content);
         match self.light.word() {
-            Some(mode) => phrase.note(mode),
+            Some(mode) => phrase.note(name::tag(mode)),
             None => phrase,
         }
     }

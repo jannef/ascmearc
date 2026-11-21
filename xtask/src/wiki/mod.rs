@@ -1047,7 +1047,7 @@ mod tests {
             "{picking}"
         );
         assert!(
-            picking.contains("| Usual, on The Depths 8 | 21 |"),
+            picking.contains("| Usual, on the Depths 8 | 21 |"),
             "{picking}"
         );
         assert!(
@@ -1529,11 +1529,11 @@ mod tests {
         );
         let depths = text("search-depths.md");
         assert!(
-            depths.contains("| The Depths 3 | none (these floors have no doors) |"),
+            depths.contains("| the Depths 3 | none (these floors have no doors) |"),
             "{depths}"
         );
         assert!(
-            depths.contains("| The Depths 8 | 1 to 2 | 6.9% | 51% | 0.69% |"),
+            depths.contains("| the Depths 8 | 1 to 2 | 6.9% | 51% | 0.69% |"),
             "{depths}"
         );
         let races = text("search-races.md");
@@ -1677,8 +1677,13 @@ mod tests {
         assert!(text("magic-rarity.md").contains("has the creature's level as its item level"));
         // Unique items: the campaigns', exactly, never the test world's.
         let uniques = text("uniques.md");
-        assert!(uniques.contains("| Widowmaker | Stiletto | 12 | Venomous (4: adds 1d4 poison"));
-        assert!(uniques.contains("every hit that leaves its target alive: 1 degree of Poisoned"));
+        assert!(uniques.contains("| Widowmaker | Stiletto | 12 | of Celerity (11: attacks"));
+        assert!(uniques.contains(
+            "every hit adds 2d6 poison damage; every hit that leaves its target alive: 1 degree \
+             of Poisoned"
+        ));
+        // A value set by hand (#2001) is marked so in place of a tier.
+        assert!(uniques.contains("Mystic (set: +30 to maximum mana, value 30)"));
         assert!(uniques.contains("| its wearer is never Frightened |"));
         assert!(
             uniques.contains("| Mother Sallow |"),

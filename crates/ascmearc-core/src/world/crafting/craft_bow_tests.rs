@@ -74,13 +74,19 @@ fn row(w: &World, id: &str) -> (String, Option<RecipeLack>) {
     let def = w.content.recipe(recipe(w, id));
     let rows = w.perception().recipes(def.skill);
     let row = rows.iter().find(|r| r.id == recipe(w, id)).expect("listed");
-    (row.takes.clone(), row.unavailable)
+    let takes = crate::test_support::english_of(&w.content, &row.takes);
+    (takes, row.unavailable)
 }
 
 /// Each step's label and the positions it offers.
 fn shown(w: &World, id: &str) -> Vec<(String, Vec<usize>)> {
     (w.perception().craft_steps(recipe(w, id)).iter())
-        .map(|s| (s.label.clone(), s.options.iter().map(|o| o.at).collect()))
+        .map(|s| {
+            (
+                s.label_en().to_string(),
+                s.options.iter().map(|o| o.at).collect(),
+            )
+        })
         .collect()
 }
 
@@ -151,9 +157,15 @@ fn without_sinew_or_metal_the_rows_grey_and_the_work_is_refused_with_no_time() {
     carry(&mut w, "knife");
     stock(&mut w, "wood", 20);
     let (_, lack) = row(&w, "short_bow");
-    assert_eq!(lack.expect("greyed").reason(&w.content), "no sinew to hand");
+    assert_eq!(
+        crate::test_support::english_of(&w.content, &lack.expect("greyed").reason(&w.content)),
+        "no sinew to hand"
+    );
     let (_, lack) = row(&w, "crossbow");
-    assert_eq!(lack.expect("greyed").reason(&w.content), "no metal to hand");
+    assert_eq!(
+        crate::test_support::english_of(&w.content, &lack.expect("greyed").reason(&w.content)),
+        "no metal to hand"
+    );
     let start = w.state.time;
     apply(&mut w, "craft:short_bow:b");
     assert_eq!(said(&w), "You must choose the sinew.");
@@ -163,7 +175,10 @@ fn without_sinew_or_metal_the_rows_grey_and_the_work_is_refused_with_no_time() {
     // One length will not string a composite bow.
     stock(&mut w, "sinew", 1);
     let (_, lack) = row(&w, "composite_bow");
-    assert_eq!(lack.expect("greyed").reason(&w.content), "no sinew to hand");
+    assert_eq!(
+        crate::test_support::english_of(&w.content, &lack.expect("greyed").reason(&w.content)),
+        "no sinew to hand"
+    );
     apply(&mut w, "craft:composite_bow:b,c");
     assert_eq!(said(&w), "You have too few of those.");
     assert_eq!(w.state.time, start);
@@ -176,7 +191,7 @@ fn a_long_bow_is_made_of_the_wood_its_sinew_spent_and_no_part_of_it() {
     stock(&mut w, "wood", 7);
     stock(&mut w, "sinew", 2);
     let plan = (w.perception())
-        .craft_plan(recipe(&w, "long_bow"), &[Some(1), Some(2)])
+        .craft_plan_en(recipe(&w, "long_bow"), &[Some(1), Some(2)])
         .expect("a plan");
     assert_eq!(plan.verb, "Make");
     assert_eq!(plan.uses, "7 wood billets and a length of sinew");
@@ -223,7 +238,7 @@ fn a_composite_bow_of_wood_is_a_variant_named_from_its_parts() {
     stock(&mut w, "sinew", 2);
     let name = |w: &World, at: usize| {
         (w.perception())
-            .craft_plan(recipe(w, "composite_bow"), &[Some(at), Some(3)])
+            .craft_plan_en(recipe(w, "composite_bow"), &[Some(at), Some(3)])
             .expect("a plan")
             .name
     };

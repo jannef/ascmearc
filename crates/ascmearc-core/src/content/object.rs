@@ -145,6 +145,12 @@ pub fn weapon_noun(def: &ObjectDef, content: &Content) -> Option<String> {
     Some(category_name(&skill.id).map_or_else(|| skill.name.to_lowercase(), str::to_string))
 }
 
+/// [`weapon_noun`] as a phrase: `weapon_noun:<weapon skill>` (`content/data_word.rs`).
+pub fn weapon_noun_phrase(def: &ObjectDef, content: &Content) -> Option<crate::lang::Phrase> {
+    let skill = content.weapon_skills().skill(def.skill?);
+    Some(crate::lang::Phrase::id(format!("weapon_noun:{}", skill.id)))
+}
+
 /// An object type as written in content files.
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -450,7 +456,7 @@ pub struct AddedSpec {
 
 impl AddedSpec {
     /// The rider it names: a damage type, with dice that never roll below 0.
-    fn resolve(&self, content: &Content) -> Result<Rider, String> {
+    pub(super) fn resolve(&self, content: &Content) -> Result<Rider, String> {
         let kind = (content.damage_type_id(&self.kind))
             .ok_or_else(|| format!("`added`: unknown damage type `{}`", self.kind))?;
         if self.damage.min() < 0 {

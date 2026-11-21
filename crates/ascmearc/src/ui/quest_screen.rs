@@ -10,11 +10,13 @@
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{ScreenAction, ScreenName};
+use super::text::{quest_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
 use ascmearc_core::content::Content;
-use ascmearc_core::messages::{english_arg, english_msg, english_speech};
+use ascmearc_core::lang::Arg;
+use ascmearc_core::messages::{arg_in, msg_in, speech_in};
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::world::QuestView;
 
@@ -30,7 +32,7 @@ pub struct QuestScreen {
     selected: usize,
 }
 
-/// A quest of the log, its words rendered (in English until a language can be chosen, L8).
+/// A quest of the log, its words rendered in the language shown (`text::language_code`).
 #[derive(Clone, Debug)]
 struct Logged {
     name: String,
@@ -44,15 +46,16 @@ struct Logged {
 
 impl Logged {
     fn of(content: &Content, quest: &QuestView) -> Self {
-        let giver = english_arg(content, &quest.giver, "The");
-        let offer = english_speech(content, &quest.offer);
+        let code = super::text::language_code();
+        let offer = speech_in(content, &code, &quest.offer);
+        let said = [("giver", quest.giver.clone()), ("offer", Arg::text(offer))];
         Self {
-            name: quest.name.clone(),
+            name: arg_in(content, &code, &quest.name, "bare"),
             active: quest.active,
             failed: quest.failed,
-            objective: english_msg(content, &quest.objective),
-            status: english_msg(content, &quest.status),
-            words: format!("{giver}: \"{offer}\""),
+            objective: msg_in(content, &code, &quest.objective),
+            status: msg_in(content, &code, &quest.status),
+            words: ui_with(T::SAID, &said),
         }
     }
 }
@@ -95,12 +98,12 @@ impl QuestScreen {
         for (i, quest) in self.quests.iter().enumerate() {
             if heading != Some(quest.active) {
                 heading = Some(quest.active);
-                let text = if quest.active { "Active" } else { "Done" };
-                lines.push((None, text.to_string()));
+                let text = if quest.active { T::ACTIVE } else { T::DONE };
+                lines.push((None, ui(text)));
             }
             // A failed quest (an escort's death) is among the finished ones, marked so.
             let name = if quest.failed {
-                format!("{} (failed)", quest.name)
+                ui_with(T::FAILED, &[("name", Arg::text(quest.name.as_str()))])
             } else {
                 quest.name.clone()
             };
@@ -138,13 +141,13 @@ impl QuestScreen {
         // Rows: margin, the list (or a line saying there is none), a gap, the details, a gap,
         // the footer, the frame.
         let body = list.len().max(1) as i32 + 1 + details.len() as i32;
-        let panel = Panel::new(console, " Quests ", width, body + 5);
+        let panel = Panel::new(console, &format!(" {} ", ui(T::TITLE)), width, body + 5);
         info_tabs_line(console, &panel);
         let x = panel.inner_x();
         let fits = |y: i32| y < panel.y + panel.h - 2;
         let mut y = panel.y + 2;
         if list.is_empty() && fits(y) {
-            console.print(x, y, "You have taken up no quests.", TEXT_DIM);
+            console.print_in(x, y, &ui(T::NONE), TEXT_DIM, inner);
             y += 1;
         }
         // A list taller than the panel scrolls to keep the selection in view.
@@ -180,10 +183,11 @@ impl QuestScreen {
     /// The footer: the keys.
     fn footer(&self, bindings: &Bindings) -> String {
         let close = match (bindings.keys_of(KeyCommand::Quests).first()).map(|k| k.display()) {
-            Some(own) => format!("{own} or Esc close"),
-            None => "Esc close".to_string(),
+            Some(own) => ui_with(T::CLOSE_OWN, &[("own", Arg::text(own))]),
+            None => ui(T::CLOSE),
         };
-        format!("{} choose   {close}", HINTS.up_down())
+        let choose = ui_with(T::CHOOSE, &[("keys", Arg::text(HINTS.up_down()))]);
+        format!("{choose}   {close}")
     }
 }
 

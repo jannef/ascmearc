@@ -74,7 +74,8 @@ the anvil only tells you so. If you are, walking into the anvil opens your
 Then pick something of metal you carry: a weapon, a missile weapon, armour, or a shield whose main part is metal, as its
 [description](objects.md#what-an-object-is) says. Leather, wood, and bone will not do, and neither
 will rings, amulets, or [ammunition](ammunition.md#fine-marvellous-and-masterwork-ammunition),
-whose make is set when it is found or fletched.
+whose make is set when it is found or fletched. A [unique item](magic-items.md#unique-items) is
+never worked, at an anvil or with a knife.
 
 An attempt is ten minutes of work. Anything that would stop a
 [rest](resting.md#how-resting-works) stops it. The item is then untouched and the attempt does not

@@ -48,6 +48,9 @@ pub struct Mods {
     pools: Vec<(Effect, ResourceId, i32)>,
     /// What its hits cause, from a unique item's Inflict power (local: the weapon that hits).
     on_hit: Vec<OnHit>,
+    /// The damage its hits add, from a unique item's Inflict power's `added` (local, as
+    /// `on_hit`).
+    added: Vec<Rider>,
     /// What bane affixes add against creatures of each tag, in the order first met.
     banes: Vec<(String, i32)>,
 }
@@ -62,6 +65,7 @@ impl Default for Mods {
             resistances: Vec::new(),
             pools: Vec::new(),
             on_hit: Vec::new(),
+            added: Vec::new(),
             banes: Vec::new(),
         }
     }
@@ -217,8 +221,9 @@ impl Mods {
             mods.add_magic(magic, true, stack, content);
             // A unique weapon's Inflict power rides on the attacks made with it.
             let unique = (magic.unique.as_deref()).and_then(|id| content.unique(id));
-            if let Some(Power::Inflict(hit)) = unique.and_then(|u| u.power.as_ref()) {
+            if let Some(Power::Inflict { hit, added }) = unique.and_then(|u| u.power.as_ref()) {
                 mods.on_hit.push(*hit);
+                mods.added.extend(*added);
             }
         }
         if stack.own_parts().is_some() {
@@ -288,7 +293,7 @@ impl Mods {
     /// Changes an attack by these effects: to-hit, damage (added to every roll), extra damage
     /// dice, a wider critical threat range, a larger critical multiplier, and the damage of
     /// other kinds elemental affixes add (one rider per kind, after those the attack has); and
-    /// what a unique weapon's Inflict power makes its hits cause (`Profile::on_hit`); and its
+    /// what a unique weapon's Inflict power makes its hits cause (`Profile::on_hit`) and add; and its
     /// banes (`Profile::banes`), which count only against their creatures.
     pub fn sharpen(&self, profile: &mut Profile) {
         profile.to_hit += self.get(Effect::ToHit);
@@ -306,6 +311,9 @@ impl Mods {
             });
         }
         for rider in self.elemental() {
+            profile.add_rider(rider);
+        }
+        for &rider in &self.added {
             profile.add_rider(rider);
         }
         profile.on_hit.extend_from_slice(&self.on_hit);

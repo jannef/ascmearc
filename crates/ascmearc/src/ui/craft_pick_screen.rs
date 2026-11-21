@@ -27,7 +27,7 @@ use super::dialog_screen::Dialog;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{craft_pick_screen as T, ui, ui_with};
+use super::text::{craft_pick_screen as T, label, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
@@ -55,19 +55,20 @@ pub fn craft_dialog(
     let plan = match view.craft_plan(recipe, &picks) {
         Ok(plan) => plan,
         Err(why) => {
-            return Dialog::new(ui(T::DIALOG_TITLE), why)
+            return Dialog::new(ui(T::DIALOG_TITLE), ui_msg(why))
                 .cancel(ui(T::DIALOG_BACK), ScreenAction::Close);
         }
     };
+    let verb = super::text::word(plan.verb.clone(), "bare");
     let mut args = vec![
-        ("verb", Arg::from(plan.verb.clone())),
+        ("verb", plan.verb),
         ("name", plan.name.into()),
         ("time", plan.time.into()),
     ];
     // A work that uses nothing up and needs no station (Enchanting's Unbind) says only its time.
-    let uses = !plan.uses.is_empty();
-    if uses {
-        args.push(("uses", plan.uses.into()));
+    let uses = plan.uses.is_some();
+    if let Some(what) = plan.uses {
+        args.push(("uses", what.into()));
     }
     let at = plan.station.is_some();
     if let Some(station) = plan.station {
@@ -84,7 +85,7 @@ pub fn craft_dialog(
         recipe: view.content().recipe(recipe).id.clone(),
         picks,
     };
-    Dialog::yes_no(&plan.verb, text, &plan.verb, action, ui(T::DIALOG_NOT_NOW))
+    Dialog::yes_no(&verb, text, &verb, action, ui(T::DIALOG_NOT_NOW))
 }
 
 #[derive(Debug)]
@@ -143,7 +144,7 @@ impl CraftPickScreen {
             return;
         };
         self.recipe = Some(recipe);
-        self.name = content.recipe(recipe).name.clone();
+        self.name = label(content.recipe_phrase(&content.recipe(recipe).id));
         self.steps = view.craft_steps(recipe);
         self.base = self.steps.clone();
         self.stale = false;
@@ -388,7 +389,7 @@ impl CraftPickScreen {
             panel.footer(console, &ui(T::ESC_BACK));
             return;
         };
-        let name = || ("name", Arg::from(self.name.clone()));
+        let name = || ("name", Arg::text(self.name.clone()));
         let label = ("label", Arg::from(step.label.clone()));
         let title = format!(" {} ", ui_with(T::TITLE_STEP, &[name(), label]));
         let panel = Panel::new(console, &title, WIDTH, count + 9);
@@ -402,7 +403,7 @@ impl CraftPickScreen {
             .map(|(s, pick)| {
                 let what = (pick.and_then(|at| s.options.iter().find(|o| o.at == at)))
                     .map_or("—".to_string(), |o| o.short.clone());
-                let args = [("label", s.label.clone().into()), ("what", what.into())];
+                let args = [("label", s.label.clone().into()), ("what", Arg::text(what))];
                 ui_with(T::CHOSEN_STEP, &args)
             })
             .collect();
@@ -410,7 +411,7 @@ impl CraftPickScreen {
             true => self.name.clone(),
             false => ui_with(
                 T::HEADER_CHOSEN,
-                &[name(), ("chosen", chosen.join(", ").into())],
+                &[name(), ("chosen", Arg::text(chosen.join(", ")))],
             ),
         };
         let header: String = header
@@ -471,7 +472,7 @@ impl CraftPickScreen {
             };
             let state_x = right - state.chars().count() as i32;
             let room = (state_x - x - 3).max(0) as usize;
-            let name: String = format!("{letter} - {}", option.name)
+            let name: String = format!("{letter} - {}", ui_msg(option.name.clone()))
                 .chars()
                 .take(room)
                 .collect();
@@ -479,12 +480,12 @@ impl CraftPickScreen {
             console.print(state_x, y, &state, TEXT_DIM);
         }
         let keys = HINTS;
-        let confirm = ("confirm", Arg::from(keys.confirm));
+        let confirm = ("confirm", Arg::text(keys.confirm));
         let mut hints = Vec::new();
         match self.list().last_letter() {
             Some('a') => hints.push(ui_with(T::CHOOSE_A, &[confirm])),
             Some(last) => {
-                let last = ("last", last.to_string().into());
+                let last = ("last", Arg::text(last.to_string()));
                 hints.push(ui_with(T::CHOOSE_LETTERS, &[last, confirm]));
             }
             None if step.optional => hints.push(ui_with(T::CHOOSE_NONE, &[confirm])),
@@ -664,7 +665,8 @@ mod tests {
         let kindle = view.content().recipes().id("kindle").expect("kindle");
         let mut screen = CraftPickScreen::new(Some(&view), Some(kindle));
         screen.fit(100, 60);
-        let labels: Vec<&str> = screen.steps.iter().map(|s| s.label.as_str()).collect();
+        let english = |s: &CraftStep| view.content().english_of(&s.label, "bare");
+        let labels: Vec<String> = screen.steps.iter().map(english).collect();
         assert_eq!(
             labels,
             ["item", "crystal", "seal", "second seal", "third seal"]
@@ -673,7 +675,7 @@ mod tests {
         choose_short(&mut screen, &view, "red crystal");
         assert_eq!(screen.step, 2);
         assert_eq!(screen.steps[2].kind, CraftStepKind::Family);
-        let words: Vec<String> = screen.list().iter().map(|o| o.name.clone()).collect();
+        let words: Vec<String> = screen.list().iter().map(|o| o.short.clone()).collect();
         assert!(
             !words.is_empty() && !words.iter().any(|w| w == "mana"),
             "{words:?}"
@@ -682,7 +684,7 @@ mod tests {
         let first = words[0].clone();
         choose_short(&mut screen, &view, &first);
         assert_eq!(screen.step, 3);
-        assert!(!screen.list().iter().any(|o| o.name == first));
+        assert!(!screen.list().iter().any(|o| o.short == first));
         let keys = Bindings::default();
         assert_eq!(
             screen.handle(&Press::typed('-'), &keys),

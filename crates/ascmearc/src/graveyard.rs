@@ -105,9 +105,11 @@ impl Fallen {
             .map(|t| content.talents().get(t.id).id.clone())
             .collect();
         let campaign = (content.campaign(world.campaign())).map(|c| c.name.clone());
+        // The level's name as the game shows it now: the record keeps it as text.
+        let level = crate::ui::text::label_in(content, death.place.clone());
         let place = match campaign {
-            Some(campaign) => format!("{}, {campaign}", death.place),
-            None => death.place.clone(),
+            Some(campaign) => format!("{level}, {campaign}"),
+            None => level,
         };
         Some(Self {
             name: character.name.clone(),

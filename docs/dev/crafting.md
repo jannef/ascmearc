@@ -198,7 +198,7 @@ so a hand knife may also be of ivory or dragonbone (both `bone`); jade is no wea
 - **The row's words** (`craft::stock_words`) price a part once per material group it may be of,
   the base material's group first, each other group by its cheapest material (`value`: a bow
   "or 4 horn shards", never dragonbone). It names the material only where the part takes some
-  of its group (#1767, `piece::any_names`): the whole group is the form word alone, "3 ingots",
+  of its group (#1767, `piece::any_arg`): the whole group is the form word alone, "3 ingots",
   "7 billets or 7 shards", "a block of stone" (an `of` form takes the group's name), "a hide or
   pelt"; some of it names them, the priced one first, "an iron or brass ingot", "4 horn or
   dragonbone shards", "a block of flint or obsidian"; one names it, "a gold ingot". A stock
@@ -442,7 +442,7 @@ the cells beside the player, and the skills: presentation never decides availabi
 
 - `takes`: what a built-in works on ("a metal weapon or armour", "a wooden weapon"), each stock
   part priced in pieces (`piece::count_for` of the part's share of the result's weight, named by
-  `piece::any_names`: "3 ingots" of any metal, "an iron or brass ingot"; "Routes and the
+  `piece::any_arg`: "3 ingots" of any metal, "an iron or brass ingot"; "Routes and the
   recipe's profession"), inputs ("20 arrowheads", "an arrowhead for each made"), the station
   ("an anvil"), "a knife", "a bow ready" (`data/fletch.toml`'s word for what shoots the result),
   then the time in `Duration::spoken` ("about 10 minutes": Temper's and Whittle's
@@ -527,7 +527,8 @@ below). Its turns are `ActionKind::Craft` (`data/actions.toml` `craft = 1000`;
   `data/recipes.toml` row's where it names one, else `stock.toml`'s for the directory's skill, so
   a steel-headed arrow is Woodcraft's "Make"), the name `Lore::describe` of the made item ("a
   ruby-pommelled mithril long sword"; a counted recipe's plural, "flint arrows"), `uses` the
-  pieces counted, "an arrowhead for each made", and "the ruby".
+  pieces counted, "an arrowhead for each made", and "the ruby": messages the dialog renders
+  (docs/dev/localization.md "Reasons core composes").
 - **Start** (`World::start_making`): refused with no time by the row's `lack` (beyond skill: "That
   is beyond your skill."; no station: "There is no anvil here."; no knife; no launcher: "You
   have no bow ready."), then by the plan's reason. Then "You set to work on the long sword at the anvil." and the work driver's
@@ -844,10 +845,11 @@ dispatched from `World::start_craft` by one arm to `World::start_set`; its turns
 - **What can be set** (`settable`, `ornament_part`): an item whose object names its `ornament`
   part, else whose class has an `[[ornament]]` row in `data/gems.toml`, with no part of a gem's
   material (`MaterialDef::gem`) in that place: a gold amulet's base ruby setting counts as set. A
-  loose gem, a piece, and a spirit weapon are not.
+  loose gem, a piece, a spirit weapon, and a unique (#1975) are not.
 - **Refused, no time**, in order: below `from` ("That is beyond your skill."), no item pick ("You
   must choose the item."), no gem pick ("You must choose the gem."), more than two ("That is more
-  than the work takes."), no such stack ("You carry no such thing."), an item with no ornament
+  than the work takes."), no such stack ("You carry no such thing."), a unique ("It is unique:
+  no craft of yours will change it.", `no_craft` of `assets/lang/en/messages/uniques.toml`), an item with no ornament
   part ("No gem can be set in that."), one set already ("It is set already."), worn or wielded
   ("Take it off first."), the gem not a cut loose gem ("Only a cut gem can be set."), either
   protected ("You dare not work on it."), unpaid shop goods (`may_loose`).
@@ -906,7 +908,9 @@ is not listed): `seconds = 600`, `difficulty = 12`, `yield = 50`.
   `Aim::Item` opens `ScreenName::Salvage` (`ObjectList::Salvage`: `world::salvageable` stacks
   not worn or wielded). `Action::Salvage { item }`, text `salvage:LETTER`; `ActionKind::Salvage`
   (`salvage = 1000`).
-- **Refused, no time** (in this order): no such stack; nothing a profession works, or a spirit
+- **Refused, no time** (in this order): no such stack; a unique (`no_craft` of `assets/lang/en/messages/uniques.toml`, "It
+  is unique: no craft of yours will change it.", #1975; `world::salvageable` keeps it off the
+  list); nothing a profession works, or a spirit
   weapon, or the currency (gold coins are never melted down), or stock (a piece, a loose gem:
   it would only come back as itself less the yield; scrap is the exception, #1777) ("There is
   nothing in it worth saving.", and `world::salvageable` keeps them off the list); worn or wielded ("Take it off first.");

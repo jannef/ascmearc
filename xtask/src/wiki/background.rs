@@ -3,6 +3,7 @@
 //! story in words only).
 
 use super::kits::line_text;
+use super::util::word;
 use super::util::{Term, link, percent, signed, signed_or_zero, stat_link, table_text};
 use ascmearc_core::content::{Content, Marks, StoryEffect, StoryLine, StoryTier};
 use ascmearc_core::text::or_list;
@@ -168,7 +169,7 @@ fn when_text(content: &Content, line: &StoryLine) -> String {
     if !classes.is_empty() {
         parts.push(format!("a {}", or_list(&classes)));
     }
-    let genders: Vec<String> = w.gender.iter().map(|g| g.name().to_lowercase()).collect();
+    let genders: Vec<String> = w.gender.iter().map(|g| word(g.name(), "bare")).collect();
     if !genders.is_empty() {
         parts.push(or_list(&genders));
     }
@@ -195,9 +196,13 @@ fn when_text(content: &Content, line: &StoryLine) -> String {
     }
     if let Some(band) = w.band {
         parts.push(match (band.min, band.max) {
-            (Some(min), Some(max)) => format!("starting {} to {}", min.name(), max.name()),
-            (Some(min), None) => format!("starting {} or better", min.name()),
-            (None, Some(max)) => format!("starting {} or worse", max.name()),
+            (Some(min), Some(max)) => format!(
+                "starting {} to {}",
+                word(min.name(), "Bare"),
+                word(max.name(), "Bare")
+            ),
+            (Some(min), None) => format!("starting {} or better", word(min.name(), "Bare")),
+            (None, Some(max)) => format!("starting {} or worse", word(max.name(), "Bare")),
             (None, None) => String::new(),
         });
     }

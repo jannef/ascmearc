@@ -254,10 +254,13 @@ fn messages_say_what_came_of_an_attack_without_numbers() {
         None
     );
     assert_eq!(
-        text(Some(death_message(&rat(), "dies"))),
+        text(Some(death_message(&rat(), crate::msg::combat::VERB_DIES))),
         "The giant rat dies."
     );
-    assert_eq!(text(Some(death_message(&you(), ""))), "You die...");
+    assert_eq!(
+        text(Some(death_message(&you(), crate::msg::combat::VERB_DIES))),
+        "You die..."
+    );
 }
 
 fn you() -> End {
@@ -265,11 +268,11 @@ fn you() -> End {
 }
 
 fn seen(name: &str) -> End {
-    End::Seen(word(name))
+    End::Seen(crate::lang::Phrase::id(format!("word:{name}")))
 }
 
 fn trap(name: &str) -> End {
-    End::Trap(word(name))
+    End::Trap(crate::lang::Phrase::id(format!("word:{name}")))
 }
 
 /// A message in English, or nothing.
@@ -829,7 +832,7 @@ fn the_players_death_ends_the_run() {
         }
     }
     let death = w.death().expect("the brute killed the player").clone();
-    assert_eq!(death.place, "The Pit");
+    assert_eq!(crate::test_support::place_text(&w, &death.place), "The Pit");
     assert_eq!(death.turn, w.turn());
     assert_eq!(death.time, w.time());
     let brute = w.content().creature_id("brute");

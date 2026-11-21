@@ -10,7 +10,7 @@
 use crate::action::{AttackKind, Event};
 use crate::content::{ActionKind, ClassActive};
 use crate::geom::Pos;
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::world::combat::shoot::Loose;
 use crate::world::{Spent, World};
@@ -25,7 +25,7 @@ impl World {
         events: &mut Vec<Event>,
     ) -> Spent {
         if !active.aims_cell() {
-            self.say(Msg::new(msg::classes::AIMS_AT_NO_PLACE).role("id", active.id()));
+            self.say(Msg::new(msg::classes::AIMS_AT_NO_PLACE).role("id", Arg::id(active.id())));
             return Spent::Nothing;
         }
         if !self.may_use_class(active) {
@@ -63,7 +63,7 @@ impl World {
                 return Spent::Nothing;
             }
         }
-        if !self.within_reach(at, range, "shoot") {
+        if !self.within_reach(at, range, crate::msg::combat::AIM_SHOOT) {
             return Spent::Nothing;
         }
         // Priced as the first shot begins; the rest come free. Its focus goes now.

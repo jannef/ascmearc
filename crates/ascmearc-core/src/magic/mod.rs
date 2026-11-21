@@ -141,26 +141,52 @@ impl Magic {
     }
 
     /// Whether it is a valid item of `def` for `content` (a guard for saves and level files):
-    /// magic or rare, with a name exactly when rare, known affixes that may roll on it (each
-    /// tier one the affix has, each value within the tier's range, no two of one category),
-    /// and no more prefixes or suffixes than its rarity allows (at least one affix).
+    /// magic, rare, or unique, with a name exactly when rare or unique, a unique's id exactly
+    /// when unique (of its base), known affixes that may roll on it (each tier one the affix
+    /// has, each value within the tier's range, no two of one category), and no more prefixes
+    /// or suffixes than its rarity allows (at least one affix).
+    /// A unique item's affixes as its table sets them pass whatever their values and bases
+    /// ([`Magic::check_set`]).
     pub fn check(&self, def: &ObjectDef, content: &Content) -> Result<(), String> {
+        let unique = (self.unique.as_deref()).and_then(|id| content.unique(id));
+        let set = unique.map_or(&[][..], |u| &u.magic().affixes[..]);
+        self.check_set(def, content, set)
+    }
+
+    /// [`Magic::check`], but the affixes in `set` (a unique item's set by hand, `"mystic=30"`,
+    /// #2001, checked where its table is read) are not held to their tier's range or the affix's
+    /// bases.
+    pub(crate) fn check_set(
+        &self,
+        def: &ObjectDef,
+        content: &Content,
+        set: &[Affix],
+    ) -> Result<(), String> {
         let Some(kind) = def.kind else {
             return Err(format!("`{}` cannot be magic: it has no `kind`", def.id));
         };
         match (self.rarity, &self.name) {
             (Rarity::Normal, _) => return Err("a normal item has no magic".into()),
-            (Rarity::Rare, None) => return Err("a rare item has a name".into()),
-            (Rarity::Magic, Some(_)) => return Err("only rare items have names".into()),
+            (Rarity::Rare | Rarity::Unique, None) => {
+                let rarity = content.english_word(self.rarity.word(), "bare");
+                return Err(format!("a {rarity} item has a name"));
+            }
+            (Rarity::Magic, Some(_)) => return Err("only rare and unique items have names".into()),
             _ => {}
         }
-        if let Some(id) = &self.unique {
-            let unique =
-                (content.unique(id)).ok_or_else(|| format!("unknown unique item `{id}`"))?;
-            let base = &content.object(unique.object).id;
-            if self.rarity != Rarity::Rare || *base != def.id {
-                return Err(format!("unique item `{id}` is a rare `{base}`"));
+        match &self.unique {
+            Some(id) => {
+                let unique =
+                    (content.unique(id)).ok_or_else(|| format!("unknown unique item `{id}`"))?;
+                let base = &content.object(unique.object).id;
+                if self.rarity != Rarity::Unique || *base != def.id {
+                    return Err(format!("unique item `{id}` is a unique `{base}`"));
+                }
             }
+            None if self.rarity == Rarity::Unique => {
+                return Err("a unique item names its unique".into());
+            }
+            None => {}
         }
         if self.affixes.is_empty() {
             return Err("a magic or rare item has an affix at least".into());
@@ -175,13 +201,14 @@ impl Magic {
                 .affixes()
                 .get(&affix.id)
                 .ok_or_else(|| format!("unknown affix `{}`", affix.id))?;
-            if !may_roll(a, kind, def) {
+            let hand_set = set.contains(affix);
+            if !hand_set && !may_roll(a, kind, def) {
                 return Err(format!("`{}` does not roll on {}", a.id, def.plural));
             }
             let tier = a
                 .tier(affix.tier)
                 .ok_or_else(|| format!("`{}` has no tier {}", a.id, affix.tier))?;
-            if !(tier.min..=tier.max).contains(&affix.value) {
+            if !hand_set && !(tier.min..=tier.max).contains(&affix.value) {
                 return Err(format!(
                     "`{}` tier {} rolls {} to {}, not {}",
                     a.id, affix.tier, tier.min, tier.max, affix.value
@@ -196,9 +223,9 @@ impl Magic {
         }
         let most = self.rarity.most_per_kind();
         if per_kind.iter().any(|&n| n > most) {
+            let rarity = content.english_word(self.rarity.word(), "bare");
             return Err(format!(
-                "a {} item has at most {most} prefixes and {most} suffixes",
-                self.rarity.word()
+                "a {rarity} item has at most {most} prefixes and {most} suffixes"
             ));
         }
         Ok(())
@@ -231,7 +258,7 @@ pub fn may_roll(a: &AffixDef, kind: ItemKind, def: &ObjectDef) -> bool {
 }
 
 /// Whether `def` has what affix `a`'s effect changes ([`may_roll`]).
-fn may_roll_on(a: &AffixDef, def: &ObjectDef) -> bool {
+pub(crate) fn may_roll_on(a: &AffixDef, def: &ObjectDef) -> bool {
     match a.effect {
         Effect::Range => def.range.is_some(),
         Effect::Draw => def.attack.is_some_and(|at| at.strength.is_some()),

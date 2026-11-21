@@ -1,0 +1,73 @@
+# The pause menu's line on the world (`crates/ascmearc/src/ui/almanac.rs`): one sentence, the
+# date, the moon, the weather, and the temperature. Ids alphabetical.
+#
+# The menu wraps the sentence to two lines, leaving out the moon, then the weather, before a
+# third would be needed (docs/dev/localization.md "UI text").
+
+# The air's temperature where the player does not know the weather: `degrees` ("10 °C").
+[air]
+text = "the air at {degrees:bare}"
+
+# The weather and the temperature: `sky`, one of the `sky_` entries; `degrees` ("-2 °C").
+[air_sky]
+text = "{sky:bare} at {degrees:bare}"
+
+# The date: `day`, the day of the month (an ordinal, "11th"); `month`, its name; `year`.
+[date]
+text = "The {day:ord} of {month:bare}, {year:bare}"
+
+# The moon, when the world has one: `phase`, one of the `phase_` entries. It starts with its own
+# comma (`sentence`).
+[moon]
+text = ", under a {phase:bare} moon"
+
+# One of several moons: `name`, its name; `phase`, one of the `phase_` entries.
+[moon_named]
+text = "{name:bare} {phase:bare}"
+
+# Several moons: `moons`, the list of `moon_named`.
+[moons]
+text = ", under {moons:and}"
+
+# A moon's phase, as it stands before "moon".
+[phase_first_quarter]
+text = "waxing half"
+
+[phase_full]
+text = "full"
+
+[phase_last_quarter]
+text = "waning half"
+
+[phase_new]
+text = "new"
+
+[phase_waning_crescent]
+text = "waning crescent"
+
+[phase_waning_gibbous]
+text = "waning gibbous"
+
+[phase_waxing_crescent]
+text = "waxing crescent"
+
+[phase_waxing_gibbous]
+text = "waxing gibbous"
+
+# The sentence: `date`; `moon`, the `moon` or `moons` entry, or empty when it gives way; `air`,
+# the `air` or `air_sky` entry.
+[sentence]
+text = "{date:bare}{moon:bare}, {air:bare}, the world waits."
+
+# The weather as the sentence says it.
+[sky_clear]
+text = "clear skies"
+
+[sky_heavy_rain]
+text = "heavy rain"
+
+[sky_overcast]
+text = "grey skies"
+
+[sky_rain]
+text = "rain"

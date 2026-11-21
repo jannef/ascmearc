@@ -229,8 +229,11 @@ pub struct ServiceTraining {
 pub struct Mutter {
     /// The chance, in percent per action, that it mutters while the player is near.
     pub chance: u8,
-    /// How it says them: "mutters", "hums".
-    pub verb: String,
+    /// How it says them, if its data says: "hums" (else "mutters", `talk.verb_mutters`).
+    pub verb: Option<String>,
+    /// The key of `verb`'s line of data, `dialogue:<scope>.mutter_verb`, given as the lines are
+    /// keyed (`dialogue_line.rs`).
+    pub verb_key: Option<String>,
     pub lines: Vec<DialogueLine>,
 }
 
@@ -594,7 +597,8 @@ fn parse_file<'a>(
                 }
                 Some(Mutter {
                     chance: m.chance,
-                    verb: m.verb.unwrap_or_else(|| "mutters".into()),
+                    verb: m.verb,
+                    verb_key: None,
                     lines: m.lines,
                 })
             }

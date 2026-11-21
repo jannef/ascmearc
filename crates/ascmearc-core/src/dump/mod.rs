@@ -40,7 +40,7 @@ mod story;
 mod truth;
 mod weapons;
 
-pub use json::json;
+pub use json::{json, json_in};
 pub use layer::{Layer, parse_layers};
 pub use map::{blood_digit, ice_char, light_digit, sound_char};
 
@@ -59,8 +59,14 @@ use story::*;
 use truth::*;
 use weapons::*;
 
-/// Renders one layer as rows of text with trailing spaces trimmed.
+/// Renders one layer as rows of text with trailing spaces trimmed, the logged words in English.
 pub fn layer_rows(world: &World, layer: Layer) -> Vec<String> {
+    layer_rows_in(world, layer, "en")
+}
+
+/// [`layer_rows`] with the words core logs said in the language `code` (`--lang`; English for
+/// what it lacks): the quest log's objectives and status.
+pub fn layer_rows_in(world: &World, layer: Layer, code: &str) -> Vec<String> {
     match layer {
         Layer::Truth => [
             spawn_header(world),
@@ -92,7 +98,10 @@ pub fn layer_rows(world: &World, layer: Layer) -> Vec<String> {
         Layer::Spells => spell_rows(&world.perception()),
         Layer::Traps => trap_rows(&world.perception()),
         Layer::Locations => location_rows(&world.perception()),
-        Layer::Quests => quest_rows(&world.perception()),
+        Layer::Quests => quest_rows(&world.perception(), code),
+        Layer::Messages => (recent_messages(world, code).iter())
+            .map(crate::messages::Message::display)
+            .collect(),
         Layer::Story => story_rows(world),
         Layer::Companion => kept_rows(&world.perception(), Kept::Companion),
         Layer::Familiar => kept_rows(&world.perception(), Kept::Familiar),
@@ -143,7 +152,8 @@ fn summary(world: &World) -> String {
     // An overworld encounter to answer.
     let encounter = view.encounter().map_or(String::new(), |e| {
         let choices: Vec<&str> = e.choices.iter().map(|c| c.id()).collect();
-        format!(" encounter pending: {} ({})", e.name, choices.join(", "))
+        let name = crate::messages::english_arg(world.content(), &e.name, "bare");
+        format!(" encounter pending: {name} ({})", choices.join(", "))
     });
     format!(
         "turn {} time {} level {} viewer {} hp {hp}/{max} mp {mp}/{max_mp}{resources}{dead}{hunger}{dazzled}{averted}{allies}{encounter}{weather} \
@@ -159,6 +169,11 @@ fn summary(world: &World) -> String {
 /// Plain-text dump: a header line, then each requested layer under a `== name ==` heading.
 /// Dev-only layers are headed like `== truth (DEV ONLY: ground truth) ==`.
 pub fn ascii(world: &World, layers: &[Layer]) -> String {
+    ascii_in(world, layers, "en")
+}
+
+/// [`ascii`] with the logged words in the language `code` ([`layer_rows_in`]).
+pub fn ascii_in(world: &World, layers: &[Layer], code: &str) -> String {
     let mut out = String::new();
     let _ = writeln!(out, "{}", summary(world));
     for &layer in layers {
@@ -168,7 +183,7 @@ pub fn ascii(world: &World, layers: &[Layer]) -> String {
             ""
         };
         let _ = writeln!(out, "== {}{note} ==", layer.name());
-        for row in layer_rows(world, layer) {
+        for row in layer_rows_in(world, layer, code) {
             let _ = writeln!(out, "{row}");
         }
     }
@@ -348,9 +363,9 @@ mod tests {
         // Other names the stat it raised.
         let content = crate::test_support::builtin();
         let other = "gnome,other,bard".parse().expect("a character");
-        let gnome =
-            World::with_character(content, "showcase", Some(3), Some(&other)).expect("world");
-        let raised = crate::character::other_stat(3).name();
+        let gnome = World::with_character(content.clone(), "showcase", Some(3), Some(&other))
+            .expect("world");
+        let raised = content.english_word(crate::character::other_stat(3).name(), "Bare");
         assert!(
             layer_rows(&gnome, Layer::Stats).contains(&format!("Gender Other ({raised} +1)")),
             "{:?}",

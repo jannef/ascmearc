@@ -124,7 +124,7 @@ impl Game {
         match store.resume(id, content) {
             Resume::Loaded(mut world) => {
                 info!("resumed {id} at turn {}", world.turn());
-                world.notice("Welcome back.");
+                world.notice(crate::ui::text::save::WELCOME_BACK);
                 Resume::Loaded(world)
             }
             other => other,
@@ -356,6 +356,7 @@ pub fn apply_queued<'a>(actions: impl Iterator<Item = &'a PlayerAction>, game: &
 #[cfg(test)]
 mod tests {
     use super::*;
+    use ascmearc_core::lang::Msg;
     use ascmearc_core::messages::CAPACITY;
     use ascmearc_core::{Dir, Event};
     use clap::Parser;
@@ -373,7 +374,7 @@ mod tests {
     fn unread_is_what_was_logged_since_the_mark() {
         let mut read = MessageLog::default();
         let mut log = MessageLog::default();
-        log.push(1, "A");
+        log.push(1, Msg::literal("A"));
         let news = |read: &MessageLog, log: &MessageLog| {
             let all: Vec<&Entry> = log.iter().collect();
             texts(&all[unread_from(read, &all)..])
@@ -382,13 +383,13 @@ mod tests {
         assert_eq!(news(&read, &log), ["A"]);
         read = log.clone();
         assert!(news(&read, &log).is_empty());
-        log.push(2, "B");
-        log.push(2, "C");
+        log.push(2, Msg::literal("B"));
+        log.push(2, Msg::literal("C"));
         assert_eq!(news(&read, &log), ["B", "C"]);
         // The last one read, logged again, is news again with its count.
         read = log.clone();
-        log.push(3, "C");
-        log.push(3, "D");
+        log.push(3, Msg::literal("C"));
+        log.push(3, Msg::literal("D"));
         assert_eq!(news(&read, &log), ["C (×2)", "D"]);
     }
 
@@ -396,11 +397,11 @@ mod tests {
     fn unread_lines_up_after_the_full_log_drops_its_oldest() {
         let mut log = MessageLog::default();
         for i in 0..CAPACITY {
-            log.push(i as u64, format!("m{i}"));
+            log.push(i as u64, Msg::literal(format!("m{i}")));
         }
         let read = log.clone();
         for i in 0..5 {
-            log.push(1000, format!("n{i}"));
+            log.push(1000, Msg::literal(format!("n{i}")));
         }
         let all: Vec<&Entry> = log.iter().collect();
         assert_eq!(all.len(), CAPACITY);
@@ -410,7 +411,7 @@ mod tests {
         );
         // More news than the log keeps: all of it is news.
         for i in 0..CAPACITY {
-            log.push(2000, format!("o{i}"));
+            log.push(2000, Msg::literal(format!("o{i}")));
         }
         let all: Vec<&Entry> = log.iter().collect();
         assert_eq!(unread_from(&read, &all), 0);

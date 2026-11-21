@@ -55,7 +55,7 @@ Some(&spec))` as another, `World::with_character_named(.., name)` named, and
 `PerceptionView::time` for their age). `Character::prestige` (the prestige class once called,
 `docs/dev/experience.md` "Prestige classes"; left out of the JSON while none) is the one field
 set after creation, by `World::call` alone; `Character::class_of`, `class_levels`, `level_cap`,
-`class_text` (the Class row: `Bard 30, Hunter 4`), and `class_phrase` (the epitaph's "a bard and
+`class_arg` (the Class row, a label: `Bard 30, Hunter 4`), and `class_phrase` (the epitaph's "a bard and
 hunter") read it. Replays record the spec, the name (`Replay::name`), and
 whether the run started with the kit (`Replay::kit`). A run with the kit also takes its creation talents
 (`CharacterSpec::talents`, else the Random picks; the Talents step after the class,

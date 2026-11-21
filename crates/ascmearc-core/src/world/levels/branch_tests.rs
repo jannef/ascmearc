@@ -100,7 +100,7 @@ fn the_vast_level_leads_into_the_depths_and_back() {
     let mut log = Vec::new();
     take(&mut world, StairsDir::Down, &mut log);
     assert_eq!(world.perception().level_id(), "depths:1");
-    assert_eq!(world.perception().level_name(), "The Depths 1");
+    assert_eq!(crate::test_support::level_name(&world), "The Depths 1");
     let up = stairs(&world, StairsDir::Up).clone();
     assert_eq!(
         up.to.as_deref(),

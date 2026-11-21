@@ -146,7 +146,11 @@ fn protected_items_are_untouched() {
     use crate::magic::{Affix, Magic, Rarity};
     let sword = CONTENT.object_id("long_sword").expect("sword");
     let magic = |unique: Option<&str>, affixes: &[&str]| Magic {
-        rarity: Rarity::Rare,
+        rarity: if unique.is_some() {
+            Rarity::Unique
+        } else {
+            Rarity::Rare
+        },
         level: 6,
         affixes: (affixes.iter())
             .map(|id| Affix {

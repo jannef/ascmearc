@@ -727,7 +727,8 @@ fn skill_affixes_raise_what_skills_give() {
     let item = me(&w).inventory.len() - 1;
     let text = crate::magic::describe::lines(&me(&w).inventory[item], w.content());
     assert!(
-        text.iter().any(|l| l.text == "of Shadows: +30 to Stealth"),
+        text.iter()
+            .any(|l| l.english(w.content()) == "of Shadows: +30 to Stealth"),
         "{text:?}"
     );
 }

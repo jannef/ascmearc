@@ -2,6 +2,7 @@
 //! spell list by spell level, each spell's ranks, the classes' guaranteed spells, the armour
 //! that makes casting dearer, and the wands.
 
+use super::util::ladder_words;
 use super::util::{Term, anchored, damage_link, link};
 use ascmearc_core::content::{
     BurstIce, Content, MAX_SPELL_RANK, Resolution, RodDoes, RodShape, RuinOf, Shape, SpellData,
@@ -390,10 +391,10 @@ pub(super) fn class_spells(content: &Content) -> String {
 pub(super) fn grows_with(spell: &SpellData) -> String {
     let text: Vec<String> = (spell.grows.named().into_iter())
         .map(|(dim, ladder)| match dim {
-            "damage" | "heal" => ladder.words(),
+            "damage" | "heal" => ladder_words(ladder),
             // Whole numbers of jumps, not a bonus's "+4".
-            "jumps" => format!("jumps {}", ladder.words().replace('+', "")),
-            other => format!("{other} {}", ladder.words()),
+            "jumps" => format!("jumps {}", ladder_words(ladder).replace('+', "")),
+            other => format!("{other} {}", ladder_words(ladder)),
         })
         .collect();
     if text.is_empty() {
@@ -696,7 +697,7 @@ pub(super) fn rods(content: &Content) -> String {
         };
         let reach = match &effect.grows {
             None => effect.range.to_string(),
-            Some(ladder) => format!("{}; {}", effect.range, ladder.words()),
+            Some(ladder) => format!("{}; {}", effect.range, ladder_words(ladder)),
         };
         let does = match effect.does {
             RodDoes::Dig { power } => {

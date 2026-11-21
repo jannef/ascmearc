@@ -1,14 +1,14 @@
 //! The settings screen: font size, reduced effects and its per-effect switches, blood, color
-//! palette, the clock, and the temperature unit (°C or °F). Changes apply
+//! palette, the clock, the temperature unit (°C or °F), and the language. Changes apply
 //! live, because the screen edits the [`Settings`] resource that rendering reads.
 
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{UiText, settings_screen as T, ui, ui_with};
+use super::text::{self, UiText, settings_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
-use crate::settings::{EffectSwitches, MAX_FONT_PX, MIN_FONT_PX, Settings};
+use crate::settings::{DEFAULT_LANGUAGE, EffectSwitches, MAX_FONT_PX, MIN_FONT_PX, Settings};
 use ascmearc_core::lang::Arg;
 
 /// One per-effect switch, listed under the reduced-effects preset.
@@ -92,6 +92,7 @@ enum Row {
     Palette,
     Clock,
     Temperature,
+    Language,
     Files,
     Reset,
     Back,
@@ -115,13 +116,14 @@ const ROWS: &[Row] = &[
     Row::Palette,
     Row::Clock,
     Row::Temperature,
+    Row::Language,
     Row::Files,
     Row::Reset,
     Row::Back,
 ];
 
 /// Index of the first action row (Files); a gap is drawn before it.
-const FIRST_ACTION: usize = 16;
+const FIRST_ACTION: usize = 17;
 
 /// Selection state of the settings screen.
 #[derive(Debug, Default)]
@@ -155,6 +157,7 @@ impl SettingsScreen {
                 Row::Palette => settings.palette = settings.palette.cycle(step < 0),
                 Row::Clock => settings.clock = settings.clock.toggle(),
                 Row::Temperature => settings.temperature = settings.temperature.toggled(),
+                Row::Language => settings.language = next_language(&settings.language, step < 0),
                 Row::Files | Row::Reset | Row::Back => {}
             },
             Nav::Enter if !press.repeat => match row {
@@ -167,6 +170,7 @@ impl SettingsScreen {
                 Row::Palette => settings.palette = settings.palette.cycle(false),
                 Row::Clock => settings.clock = settings.clock.toggle(),
                 Row::Temperature => settings.temperature = settings.temperature.toggled(),
+                Row::Language => settings.language = next_language(&settings.language, false),
                 Row::Files => return ScreenAction::Open(ScreenName::Files),
                 Row::Reset => *settings = Settings::default(),
                 Row::Back => return ScreenAction::Close,
@@ -180,10 +184,12 @@ impl SettingsScreen {
         let panel = Panel::new(console, &format!(" {} ", ui(T::TITLE)), 60, 28);
         let label_w = 18;
         let mut switches = settings.effects;
-        // The rows start 2 down. A gap before the actions separates them from the options, when
-        // there is room for it and the help line below; a panel cut short loses it first.
+        // The rows start 2 down, or 1 when the panel is cut too short for the help line below
+        // them. A gap before the actions separates them from the options, when there is room for
+        // it and the help line; a panel cut short loses it first.
         let footer_y = panel.y + panel.h - 2;
-        let rows_end = panel.y + 2 + ROWS.len() as i32;
+        let top = 2 - i32::from(panel.y + 2 + ROWS.len() as i32 + 1 > footer_y);
+        let rows_end = panel.y + top + ROWS.len() as i32;
         let gap = i32::from(rows_end + 2 <= footer_y);
         for (i, row) in ROWS.iter().enumerate() {
             let on_off = |on: bool| ui(if on { T::ON } else { T::OFF });
@@ -206,14 +212,15 @@ impl SettingsScreen {
                     let indent = if e.in_preset() { "  " } else { "" };
                     (format!("{indent}{}", ui(e.label())), value)
                 }
-                Row::Palette => (ui(T::COLOR_PALETTE), settings.palette.label().to_string()),
-                Row::Clock => (ui(T::CLOCK), settings.clock.label().to_string()),
-                Row::Temperature => (ui(T::TEMPERATURE), settings.temperature.label().to_string()),
+                Row::Palette => (ui(T::COLOR_PALETTE), ui(settings.palette.label())),
+                Row::Clock => (ui(T::CLOCK), ui(settings.clock.label())),
+                Row::Temperature => (ui(T::TEMPERATURE), ui(settings.temperature.label())),
+                Row::Language => (ui(T::LANGUAGE), language_name(&settings.language)),
                 Row::Files => (ui(T::FILES), String::new()),
                 Row::Reset => (ui(T::RESET), String::new()),
                 Row::Back => (ui(T::BACK), String::new()),
             };
-            let y = panel.y + 2 + i as i32 + gap * i32::from(i >= FIRST_ACTION);
+            let y = panel.y + top + i as i32 + gap * i32::from(i >= FIRST_ACTION);
             panel.row_with(
                 console,
                 y,
@@ -231,6 +238,7 @@ impl SettingsScreen {
             Row::Palette => ui(T::PALETTE_HELP),
             Row::Clock => ui(T::CLOCK_HELP),
             Row::Temperature => ui(T::TEMPERATURE_HELP),
+            Row::Language => ui(T::LANGUAGE_HELP),
             Row::Files => ui(T::FILES_HELP),
             Row::Reset => ui(T::RESET_HELP),
             Row::Back => ui(T::BACK_HELP),
@@ -258,12 +266,44 @@ impl SettingsScreen {
         let footer = ui_with(
             T::FOOTER,
             &[
-                ("up_down", keys.up_down().into()),
-                ("left_right", keys.left_right().into()),
+                ("up_down", Arg::text(keys.up_down())),
+                ("left_right", Arg::text(keys.left_right())),
             ],
         );
         panel.footer(console, &footer);
     }
+}
+
+/// The language after `code` among the content's (before it, `back`), wrapping; the first
+/// when `code` is none of them.
+fn next_language(code: &str, back: bool) -> String {
+    let codes: Vec<String> = text::languages().into_iter().map(|(c, _)| c).collect();
+    cycle(&codes, code, back)
+}
+
+/// The code after `code` in `codes` (before it, `back`), wrapping; the first when `code` is
+/// none of them.
+fn cycle(codes: &[String], code: &str, back: bool) -> String {
+    let n = codes.len();
+    let next = match codes.iter().position(|c| c == code) {
+        Some(i) if back => (i + n - 1) % n,
+        Some(i) => (i + 1) % n,
+        None => 0,
+    };
+    codes.get(next).cloned().unwrap_or_else(|| code.to_string())
+}
+
+/// The language `code`'s own name for itself ("English", "suomi"), else English's: the game shows
+/// English for a code the content lacks.
+fn language_name(code: &str) -> String {
+    let languages = text::languages();
+    let named = |c: &str| {
+        languages
+            .iter()
+            .find(|(l, _)| l == c)
+            .map(|(_, n)| n.clone())
+    };
+    (named(code).or_else(|| named(DEFAULT_LANGUAGE))).unwrap_or_default()
 }
 
 #[cfg(test)]
@@ -344,6 +384,10 @@ mod tests {
         press(&mut screen, &mut s, Nav::Left);
         assert_eq!(s.temperature, TemperatureUnit::Celsius);
         press(&mut screen, &mut s, Nav::Right);
+        // The language: with English alone, it stays English.
+        press(&mut screen, &mut s, Nav::Down);
+        press(&mut screen, &mut s, Nav::Right);
+        assert_eq!(s.language, "en");
         press(&mut screen, &mut s, Nav::Down);
         assert_eq!(
             screen.handle(&Press::nav(Nav::Enter), &mut s),
@@ -355,6 +399,19 @@ mod tests {
         press(&mut screen, &mut s, Nav::Down);
         assert!(press(&mut screen, &mut s, Nav::Enter));
         assert!(press(&mut screen, &mut s, Nav::Back));
+    }
+
+    /// The language row steps through the content's languages both ways, wrapping, and a code
+    /// the content lacks (a settings file's) steps to the first; it shows the language's name.
+    #[test]
+    fn the_language_row_cycles_through_the_languages() {
+        let codes = ["en".to_string(), "fi".to_string(), "xx".to_string()];
+        assert_eq!(cycle(&codes, "en", false), "fi");
+        assert_eq!(cycle(&codes, "xx", false), "en");
+        assert_eq!(cycle(&codes, "en", true), "xx");
+        assert_eq!(cycle(&codes, "zz", false), "en");
+        assert_eq!(language_name("en"), "English");
+        assert_eq!(language_name("zz"), "English");
     }
 
     #[test]

@@ -223,6 +223,11 @@ The test world (`assets/campaigns/showcase/`, the `showcase` feature):
   instantly.
 - `--config-dir DIR` keeps `settings.toml` in DIR; captures and replays otherwise use default
   settings and never write the file.
+- `--lang CODE`: show the game in the language `CODE` (a folder under `assets/lang/` with a
+  `lang.toml`; `en`, the default) for this launch, as if chosen in the settings
+  (`settings::load_for`; written to the file only if a setting is then changed); a code the
+  content lacks stops the game. A capture is English without it (`docs/dev/localization.md`
+  "The language setting").
 
 ### Screens: `--screen NAME` (dev)
 
@@ -330,6 +335,9 @@ mods/pride_month ...`; `replay --create` records the mods, and `replay --verify`
   dead, the most recent first, `NAME:RACE[:CLASS][:stone]`, `:stone` the petrified: statues are
   named from the petrified, the rest laid in Līctūn's graves and crypts; out of the state hash;
   docs/dev/saves.md "The graveyard", docs/dev/graves.md).
+- `dump --lang CODE` says the logged words (the `messages` layer, the `quests` layer, and the
+  JSON's `messages`, `quests`, and `parting`'s `who`) in that language, English for what it
+  lacks; English by default, so the snapshots are English. A code the content lacks is an error.
 - `gen` prints ground truth: `*` = light placed on floor, `&` = locked door, `S` = secret door;
   `^` = a trap, hidden ones too; a layer boss's lair and a hidden way's far end print a `hidden stairs` line; `⊟` = a
   chest, locked or trapped or not; `V` = an ore vein, hidden in the rock too; a special room's
@@ -430,6 +438,9 @@ and are **dev-only**.
   arena (active, from the old hermit): Kill 3 giant rats in the Arena. 0 / 3 killed.`; a
   quarrel's wizards met and where each stands after it, `[Mistress Stormwell allied, Master
   Bookhold hostile, Master Brasswright turned]`.
+- `messages`: the last ten messages of the log, oldest first, a line each with its repeats
+  (`You open the door. (×2)`), keys written as their command (`{key:help}`); in `--lang`'s
+  language.
 - `story`: the player's background story, a paragraph a line as the story screen tells it, `no
   story` without one.
 - `companion`: the player's animal companion as they know it, `Snel, a hound (grade 12) at (12,

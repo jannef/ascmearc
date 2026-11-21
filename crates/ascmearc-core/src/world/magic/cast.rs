@@ -76,7 +76,7 @@ use crate::content::{Effect as ItemEffect, ObjectId, SpellId};
 use crate::damage::{Damage, Kinds};
 use crate::dice::Roll;
 use crate::geom::Pos;
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::magic::Mods;
 use crate::msg;
 use crate::rng::draw;
@@ -184,9 +184,8 @@ impl World {
         if let Some(why) = ability.unavailable(me, &content) {
             self.say(match why {
                 Unavailable::While(status) => Msg::new(msg::magic::CANNOT_CAST_WHILE)
-                    .role("status", content.status(status).name.to_lowercase()),
-                other => Msg::new(msg::magic::CANNOT_REASON)
-                    .role("reason", other.reason(&content).into_owned()),
+                    .role("status", content.status_phrase(status)),
+                other => Msg::new(msg::magic::CANNOT_REASON).role("reason", other.reason(&content)),
             });
             return Spent::Nothing;
         }
@@ -235,12 +234,12 @@ impl World {
         match (def.aims_item(), def.aimed(), target) {
             (true, _, Some(ReadTarget::Item(on))) => Some(Some(ReadTarget::Item(on))),
             (true, _, _) => {
-                self.say(Msg::new(msg::magic::CAST_IT_ON_WHAT).role("usage", usage));
+                self.say(Msg::new(msg::magic::CAST_IT_ON_WHAT).role("usage", Arg::id(usage)));
                 None
             }
             (false, true, Some(ReadTarget::Cell(at))) => Some(Some(ReadTarget::Cell(at))),
             (false, true, _) => {
-                self.say(Msg::new(msg::magic::CAST_IT_WHERE).role("usage", usage));
+                self.say(Msg::new(msg::magic::CAST_IT_WHERE).role("usage", Arg::id(usage)));
                 None
             }
             (false, false, _) => Some(None),
@@ -663,7 +662,7 @@ impl World {
         events: &mut Vec<Event>,
     ) -> bool {
         let range = cast.reach.range.unwrap_or(1);
-        if !self.can_loose_here() || !self.within_reach(at, range, "cast") {
+        if !self.can_loose_here() || !self.within_reach(at, range, crate::msg::combat::AIM_CAST) {
             return false;
         }
         let player = self.state.player;
@@ -711,8 +710,7 @@ impl World {
     /// `who` is now under hex `status`, as the player is told it: "The kobold is asleep." (its
     /// `seen` word, else "hexed").
     fn hexed(&self, who: crate::lang::Phrase, status: StatusId) -> Msg {
-        let seen = self.content.status(status).seen.as_deref();
-        let word = fight::word(seen.unwrap_or("hexed"));
+        let word = (self.content.seen_phrase(status)).unwrap_or_else(|| fight::word("hexed"));
         Msg::new(msg::magic::IS_STATUS)
             .role("who", who)
             .role("status", word)
@@ -726,7 +724,7 @@ impl World {
     /// The creature a hex at `at` within `range` falls on: one the player sees there, that is
     /// not friendly to them. `None` (said) otherwise.
     pub(in crate::world) fn hex_target(&mut self, at: Pos, range: i32) -> Option<ActorId> {
-        if !self.within_reach(at, range, "hex") {
+        if !self.within_reach(at, range, crate::msg::combat::AIM_HEX) {
             return None;
         }
         let level = self.state.current().id.clone();
@@ -776,7 +774,7 @@ impl World {
             }
         } else if !def.about_caster()
             && !(def.aims_corpse() && at == self.player_pos())
-            && !self.within_reach(at, range, "cast")
+            && !self.within_reach(at, range, crate::msg::combat::AIM_CAST)
         {
             return false;
         }
@@ -917,7 +915,7 @@ impl World {
                 _ => None,
             })
             .collect();
-        self.say_spell((&def.look.noun, &def.look.verb), made, events);
+        self.say_spell(fight::Words::of_spell(def, &self.content), made, events);
         // Its own status at the cast's degrees (its ladder's, Flay's), else its base.
         let degrees = |base: u16| cast.and_then(|c| c.degrees).unwrap_or(base);
         let mut laid: Vec<(StatusId, u16)> = (def.effect.status.into_iter())

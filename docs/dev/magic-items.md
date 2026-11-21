@@ -38,11 +38,12 @@ damage with its material and local affixes through the very `Mods::sharpen` a st
 `Profile::bare`, a launcher's or thrower's range, ammunition's additions, a worn thing's global
 to-hit and damage (`Mods::global`, one stack's global effects), Dv as armour + shield + parry +
 the local Armour/Shield/Parry + the global Dodge/Deflection/Natural, Pv as `Stack::protection`),
-figured on `Stack::as_known` so an unidentified affix moves no number; `text` is the item lists'
-form (`Lore::listed` = `Lore::describe` + ` (numbers)`, which the object screens, the equipment
-screen and its choice, look mode's piles, and the `inventory` dump layer use; messages keep
-`describe`), `lines` the description's (`describe::lines` adds them after the base stats);
-`dice_text` is the one damage-dice form, which `OwnAttack::damage_text` uses too).
+figured on `Stack::as_known` so an unidentified affix moves no number; `words` is the item lists'
+form, a message of parts (`items.numbers_*`; `Lore::listed` is `items.listed`, the phrase counted
+and ` (numbers)`, which the object screens, the equipment screen and its choice, the crafting
+choices, and the `inventory` dump layer render; look mode's piles tag the phrase with `words`;
+messages keep the phrase), `lines` the description's (`describe::lines` adds them after the
+base stats); `dice_text` is the one damage-dice form, which `OwnAttack::damage_text` uses too).
 `loot::roll` first lets a find of grade `any` be a loose gem (`gem::find`), then sets an item
 of a class with an `[[ornament]]` with a gem (`gem::ornament`), and last draws its material
 (`variant::draw`, step 8: by the materials' `rarity` at the item level; `loot::roll_from` takes
@@ -101,10 +102,10 @@ unidentified armour's base numbers and its affixes once identified, a shield, a 
 range, ammunition, a worn thing's to-hit). A new effect is a
 variant of `Effect` (id, local/global, `allowed_on`; `index()` and `all()` insert
 it by group, never at the end), its reader in one rule, a
-phrase in `describe.rs`, and a wiki word and tier form in `xtask/src/wiki/magic.rs`
-(`effect_words`, `tier_value`). Affixes are saved by id, so
+`describe.does_*` message (`messages/describe.toml`) in `describe.rs::phrase`, and a wiki word
+and tier form in `xtask/src/wiki/magic.rs` (`effect_words`, `tier_value`). Affixes are saved by id, so
 adding affixes keeps saves; their values and tiers are checked on load, strictly
-(`Magic::check`: each tier one the affix has, each value within its tier's range). The lenient
+(`Magic::check`: each tier one the affix has, each value within its tier's range, but a unique's values set by hand, "Unique items"). The lenient
 read of #637 (re-tiering a save's affixes after a ladder was
 regraded) is gone with #840: saves are pinned to the version that wrote them
 (docs/dev/saves.md), so a regraded ladder needs nothing for saves.
@@ -286,11 +287,55 @@ Unique items (#423, docs/design/adventurers-guild.md §9) are data in
 `content/unique.rs` (`data/uniques/` and each campaign's `data/uniques/`, one file per item,
 read through `ContentFiles::table("uniques")` after objects, affixes, and gems and before
 everything that places objects): `UniqueDef` with its `name`, base `object`, the template
-`stack` (one, rare, unidentified, made by `level::magic_of` and `item_part`, the code an
-`[[item]]` uses), its `power` (`Power`), `phrase`, `lore`, and `campaign`. `Magic::unique` is
-the item's id (saved, hashed; `skip_serializing_if` none, so other items' saves are unchanged);
-`Magic::check` refuses an unknown id, another base, or another rarity than rare.
+`stack` (one, unidentified, made by `level::magic_of` and `item_part`, the code an
+`[[item]]` uses, then given `Rarity::Unique`), its `power` (`Power`), `phrase`, `lore`, and
+`campaign`. `Magic::unique` is the item's id (saved, hashed; `skip_serializing_if` none, so
+other items' saves are unchanged); `Magic::check` refuses an unknown id, another base, a unique
+id on another rarity than unique, and a unique without its id.
 
+- **The rarity** (#1975): `Rarity::Unique`, after `Rare` (so `>= Magic` and `!= Normal` tests
+  count it), is a rarity of its own: `Stack::is_unique` is the one test the rules read.
+  `Rarity::ROLLED` (normal, magic, rare) is what loot rolls; `Affixes::rarity_weight` is 0 for a
+  unique. As a rare: its name (`Rarity::named`, `magic/name.rs`: "Widowmaker, a stiletto"),
+  `most_per_kind` (three of each), its worth (`MagicWorth::add` takes `rare`'s percent; the
+  wiki's worth table says "Rare or unique"). Unidentified it reads "a stiletto (unique)" and
+  the description's first line "Unique stiletto" (`Rarity::word`, a `words.rarity_*` id); its name is the UI's
+  `UNIQUE` golden orange (`ui::rarity_color`; `ui/mod.rs`'s test keeps it 70 apart from the
+  other rarities', the curse's, and the accent in every palette). The `Rarity::Rare` sites left
+  as they are only ever see rolled or enchanted items: loot (`loot.rs`), Enchanting (which
+  refuses a unique first), salvage's rare-material draw (`crystal.rs`; a unique is never
+  salvaged), `level::magic_of` (a named `[[item]]` is a rare).
+- **Never harmed**: `magic::worked::protected` (every item-damage source, floor ruin, gear
+  condition, swimming's soaked paper; `world/combat/item_damage.rs`)
+  keys on `Stack::is_unique`; a chest broken by a kick or a blast never rolls one
+  (`chest::destroyed`), and a unique missile never breaks (`shoot::break_chance`).
+- **Never crafted**: Temper, Whittle, Set, and Salvage refuse a unique first, taking no time,
+  with `no_craft` of `assets/lang/en/messages/uniques.toml` ("It is unique: no craft of yours
+  will change it."), and their lists leave it out (`temper.rs::craftable`, `set::settable`,
+  `salvage::salvageable`); Enchanting's `refusal` says "It will not take your will." as before;
+  a recipe never takes one as an object input (`craft::known_object`). Make do and mend never
+  sees one: a unique is never damaged. Eye for the make says "It would not come apart." of a
+  unique before it is identified too (`item_damage::protected_in`: its rarity shows).
+- **Tests**: `world/creatures/unique_tests.rs` (every unique of the rarity, `check`, "(unique)",
+  a breaking chest), `corrode_tests.rs::acid_and_rust_never_harm_a_unique` (acid, an acid spell,
+  rust both ways), `item_damage_tests.rs` (every `ItemHarm`, fire too), `ruin_tests.rs` (floor
+  ruin), `gear/condition_tests.rs` (never found worn), `temper_tests.rs::a_unique_is_never_worked`, the unique case of
+  `salvage_tests.rs` and `set_tests.rs`'s refusals, and `ui/mod.rs`'s colour test.
+
+- **Affixes set by hand** (#2001): a unique's `affixes` may write an affix with its value
+  instead of a tier, `"mystic=30"`, where no tier reaches the value or the affix's bases leave
+  out the base (High Toby's `"sharp=2"`: no flat-damage affix rolls on a launcher). Only a
+  unique may (`magic_of`'s `hand_set`; an `[[item]]` that tries is a content error).
+  `level::hand_set_affix` checks it at load: a whole number of the sign of the affix's tiers,
+  and an effect that works on the base (`Effect::allowed_on`, `magic::may_roll_on`); the
+  category and per-kind limits hold as ever. It takes the affix's top tier (its level counts
+  toward the item level when `level` is unset, and prices it as any affix of that tier,
+  `MagicWorth::add`); the description and `Numbers` read its value as any other.
+  `Magic::check_set` leaves such affixes out of the tier-range and bases checks: the load passes
+  the hand-set ones, and `Magic::check` (saves) passes those of the unique's own table (an
+  affix equal to one there), so a value set by hand is valid on that unique alone. The wiki
+  table marks them `set` in place of a tier. Use it for the owner's exact numbers; a value a
+  tier tops is still written with its tier.
 - **Placement**: `parse_stacks` (`content/object.rs`) makes `unique:ID` through
   `Content::place_unique` (`Uniques::place`). Content places each unique once (the data
   author's promise, not counted at load, #1205). `level::equip_ids` takes `unique:ID` in
@@ -305,16 +350,20 @@ the item's id (saved, hashed; `skip_serializing_if` none, so other items' saves 
   placed only by Master Sigeric's pay in the wizards' quarrel (`docs/dev/towers.md`
   "Steorratorr").
 - **The pedlar's three** (#808): the Brosinga Mene (gold amulet), the Eorcanstān (gold ring),
-  and Grendles Grāpe (gauntlets), `campaigns/ascmearc/data/uniques/`, each item level 12 with six
+  and Grendles Grāpe (gauntlets), `campaigns/ascmearc/data/uniques/`, each item level 12 with five or six
   affixes and a `ward`, after ADOM's black torc (resistances, speed, Defence and Protection; the
   caster's and the fighter's counterparts). They are placed only at run time, through a trader's
   offer (`docs/dev/npcs.md` "A trader's offer"; no other content places them), and the run's
   `WorldState::uniques_offered` keeps each to one offer a run. The wiki's
   "Carried by" names the offer with its chance (`offered_by`).
-- **Powers**, a variant each, read in one place each: `Power::Inflict(OnHit)` rides
+- **Powers**, a variant each, read in one place each: `Power::Inflict { hit, added }` rides
   `Mods::local` of the weapon into `Profile::on_hit` (`sharpen`), which `World::resolve` hands
   to `after_blow` after the natural attack's `on_hit` (`Mods::worn` never carries it: it is the
-  weapon's that hit; a kick and a bash build no local mods, so none). `Power::Vision(index)`:
+  weapon's that hit; a kick and a bash build no local mods, so none). Its optional `added`
+  (`added = { type = "poison", damage = "2d6" }`, an object's `added` syntax, #2001) is damage
+  no affix can give (an elemental affix adds one die): a `Rider` the same `Mods::local` carries
+  and `sharpen` adds to `Profile::riders` (resisted, never soaked; `Numbers` shows it as
+  `+2d6 poison`). Widowmaker's 2d6 poison is one. `Power::Vision(index)`:
   `Actor::eyes` betters a base profile part by part (`worn_vision`); `WorldState::eyes` uses it
   for the player unless `WorldState::vision_dev` (set by the dev `vision:` action) and the AI's
   and ambush's sight checks for creatures. `Power::Ward { status, message }`: `World::afflict`
@@ -329,8 +378,9 @@ the item's id (saved, hashed; `skip_serializing_if` none, so other items' saves 
   `(spirit)`.
 - **Adding a power**: a `Power` variant, its parse in `unique::power`, its one read, and its
   words in `xtask/src/wiki/uniques.rs` (`power_text`); the item's own words are its `phrase`.
-- **Tests**: `world/creatures/unique_tests.rs` (the table, hiding until identified, placement,
-  Widowmaker's poison on every hit, High Toby's fear by its chance on its keyed stream, the
+- **Tests**: `world/creatures/unique_tests.rs` (the table and the values set by hand, hiding
+  until identified, placement, Widowmaker's poison and its 2d6 on every hit, High Toby's
+  Bleeding by its chance on its keyed stream, the
   Bedes' darkvision on and off and under the dev override, the Turncoat's ward, a save); the
   item description's text snapshots `unique-description` and `unique-description-unidentified`
   (the quarry's Stonebiter, the test world's unique). Tests that strip statuses or skills

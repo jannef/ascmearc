@@ -28,6 +28,7 @@ use crate::content::{
 };
 use crate::geom::{Dir, Pos};
 use crate::item_list::ItemList;
+use crate::lang::{Arg, Msg};
 use crate::skills::{Effect, SkillId};
 use crate::talent::SongCost;
 use crate::talent::{MagicEffect, StealthEffect, VigourEffect};
@@ -230,20 +231,21 @@ impl Source {
         Source::Ally,
     ];
 
-    /// Its group's heading in the abilities menu.
-    pub const fn name(self) -> &'static str {
+    /// Its group's heading in the abilities menu, a message id (`messages/words.toml`): `racial`
+    /// (a heading asks `Bare`, "Racial").
+    pub const fn name(self) -> crate::lang::MessageId {
         match self {
-            Source::Race => "Racial",
-            Source::Sign => "Birth sign",
-            Source::Profane => "Profane",
-            Source::Class => "Class",
-            Source::Spell => "Spells",
-            Source::Talent => "Talents",
-            Source::Skill => "Skills",
-            Source::WeaponSkill => "Weapon skills",
-            Source::Item => "Items",
-            Source::Place => "Here",
-            Source::Ally => "Allies",
+            Source::Race => crate::msg::words::SOURCE_RACE,
+            Source::Sign => crate::msg::words::SOURCE_SIGN,
+            Source::Profane => crate::msg::words::SOURCE_PROFANE,
+            Source::Class => crate::msg::words::SOURCE_CLASS,
+            Source::Spell => crate::msg::words::SOURCE_SPELL,
+            Source::Talent => crate::msg::words::SOURCE_TALENT,
+            Source::Skill => crate::msg::words::SOURCE_SKILL,
+            Source::WeaponSkill => crate::msg::words::SOURCE_WEAPON_SKILL,
+            Source::Item => crate::msg::words::SOURCE_ITEM,
+            Source::Place => crate::msg::words::SOURCE_PLACE,
+            Source::Ally => crate::msg::words::SOURCE_ALLY,
         }
     }
 
@@ -358,39 +360,46 @@ pub enum Unavailable {
 }
 
 impl Unavailable {
-    /// The reason, as the menu says it: "you are winded".
-    pub fn reason(self, content: &Content) -> Cow<'static, str> {
+    /// The reason, as the menu says it ("you are winded"): a clause, said in a line as its
+    /// `reason` (`messages/ability.toml`).
+    pub fn reason(self, content: &Content) -> Msg {
+        use crate::msg;
         match self {
-            Unavailable::NoShield => "you hold no shield".into(),
-            Unavailable::NoKnife => "you have no knife".into(),
-            Unavailable::NotYet => "not usable yet".into(),
-            Unavailable::NoUnknownScroll => "no unknown scroll".into(),
-            Unavailable::NoMana => "you have too little mana".into(),
-            Unavailable::NotHere => "not usable here".into(),
+            Unavailable::NoShield => msg::ability::NO_SHIELD.into(),
+            Unavailable::NoKnife => msg::ability::NO_KNIFE.into(),
+            Unavailable::NotYet => msg::ability::NOT_YET.into(),
+            Unavailable::NoUnknownScroll => msg::ability::NO_UNKNOWN_SCROLL.into(),
+            Unavailable::NoMana => msg::ability::NO_MANA.into(),
+            Unavailable::NotHere => msg::ability::NOT_HERE.into(),
             Unavailable::Untrained(skill) => {
-                format!("you are untrained in {}", content.skill(skill).name).into()
+                Msg::new(msg::ability::UNTRAINED).role("skill", content.skill_phrase(skill))
             }
-            Unavailable::NothingToTreat => "nothing to treat".into(),
-            Unavailable::NothingToMend => "nothing to mend".into(),
-            Unavailable::FiresByItself => "fires by itself".into(),
+            Unavailable::NothingToTreat => msg::ability::NOTHING_TO_TREAT.into(),
+            Unavailable::NothingToMend => msg::ability::NOTHING_TO_MEND.into(),
+            Unavailable::FiresByItself => msg::ability::FIRES_BY_ITSELF.into(),
             Unavailable::While(status) => {
-                format!("you are {}", content.status(status).name.to_lowercase()).into()
+                Msg::new(msg::ability::WHILE_STATUS).role("status", content.status_phrase(status))
             }
+            // A pool with words of its own says them (Rage's "you have not the rage for it").
             Unavailable::Short(resource) => {
                 let def = content.resource(resource);
                 match &def.lacking {
-                    Some(words) => words.clone().into(),
-                    None => format!("not enough {}", def.name.to_lowercase()).into(),
+                    Some(_) => Msg::new(msg::ability::LACKING).role(
+                        "words",
+                        Arg::said(crate::content::data_line::lacking(&def.id)),
+                    ),
+                    None => Msg::new(msg::ability::SHORT)
+                        .role("name", content.resource_phrase(resource)),
                 }
             }
-            Unavailable::NotSoHeld => "your hands are not so held".into(),
-            Unavailable::NoAllies => "no allies here".into(),
-            Unavailable::NotBeside => "not beside you".into(),
-            Unavailable::NoCompanion => "no companion here".into(),
-            Unavailable::Still => "your mind is already still".into(),
-            Unavailable::FamiliarLives => "your familiar lives".into(),
-            Unavailable::Watched => "something is watching".into(),
-            Unavailable::HaveCompanion => "you already have a companion".into(),
+            Unavailable::NotSoHeld => msg::ability::NOT_SO_HELD.into(),
+            Unavailable::NoAllies => msg::ability::NO_ALLIES.into(),
+            Unavailable::NotBeside => msg::ability::NOT_BESIDE.into(),
+            Unavailable::NoCompanion => msg::ability::NO_COMPANION.into(),
+            Unavailable::Still => msg::ability::STILL.into(),
+            Unavailable::FamiliarLives => msg::ability::FAMILIAR_LIVES.into(),
+            Unavailable::Watched => msg::ability::WATCHED.into(),
+            Unavailable::HaveCompanion => msg::ability::HAVE_COMPANION.into(),
             Unavailable::NoTarget(target) => target.reason().into(),
         }
     }
@@ -1454,7 +1463,10 @@ mod tests {
         let mut sorted = Source::ALL.to_vec();
         sorted.sort();
         assert_eq!(sorted, Source::ALL, "the menu's order is the enum's");
-        let names: Vec<&str> = Source::ALL.iter().map(|s| s.name()).collect();
+        let content = crate::test_support::builtin();
+        let names: Vec<String> = (Source::ALL.iter())
+            .map(|s| content.english_word(s.name(), "Bare"))
+            .collect();
         assert_eq!(
             names,
             [

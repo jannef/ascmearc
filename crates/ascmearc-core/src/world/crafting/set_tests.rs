@@ -237,17 +237,14 @@ fn the_steps_offer_unset_items_and_cut_gems_only() {
     let steps = w.perception().craft_steps(recipe(&w, "set"));
     let at = |n: usize| -> Vec<usize> { steps[n].options.iter().map(|o| o.at).collect() };
     assert_eq!(steps.len(), 2);
-    assert_eq!(
-        (steps[0].label.as_str(), steps[1].label.as_str()),
-        ("item", "gem")
-    );
+    assert_eq!((steps[0].label_en(), steps[1].label_en()), ("item", "gem"));
     assert_eq!(at(0), [0, 5], "the sword and the plain silver ring");
     assert_eq!(at(1), [2], "the cut garnet, never the uncut ruby");
     assert_eq!(steps[1].options[0].short, "garnet");
 
     let plan = w
         .perception()
-        .craft_plan(recipe(&w, "set"), &[Some(5), Some(2)])
+        .craft_plan_en(recipe(&w, "set"), &[Some(5), Some(2)])
         .expect("a plan");
     assert_eq!(plan.verb, "Set");
     assert_eq!(plan.name, "a silver and garnet ring");
@@ -264,7 +261,15 @@ fn every_refusal_takes_no_time() {
     item(&mut w, "gold_amulet");
     item(&mut w, "iron_ring");
     apply(&mut w, "equip:left_ring:e");
+    // A unique (#1975), whose base, a stiletto, has a pommel to set.
+    let unique = (w.content.unique("widowmaker").expect("Widowmaker").stack).clone();
+    let mut plain = unique.clone();
+    plain.set_magic(None);
+    assert!(settable(&w.content, &plain) && !settable(&w.content, &unique));
+    w.player_mut().inventory.push(unique);
     let before = w.state.time;
+    apply(&mut w, "craft:set:f,c");
+    assert_eq!(last(&w), "It is unique: no craft of yours will change it.");
     for (picks, line) in [
         ("craft:set", "You must choose the item."),
         ("craft:set:a", "You must choose the gem."),
@@ -367,11 +372,11 @@ fn each_ring_and_amulet_is_made_of_its_own_material_and_never_graded() {
     stock(&mut w, "iron", 1);
     let plan = w
         .perception()
-        .craft_plan(recipe(&w, "gold_ring"), &[Some(0)]);
+        .craft_plan_en(recipe(&w, "gold_ring"), &[Some(0)]);
     assert_eq!(plan, Err("That will not do for the metal.".into()));
     let plan = w
         .perception()
-        .craft_plan(recipe(&w, "iron_ring"), &[Some(0)])
+        .craft_plan_en(recipe(&w, "iron_ring"), &[Some(0)])
         .expect("a plan");
     assert_eq!(
         (plan.verb.as_str(), plan.uses.as_str()),
@@ -389,7 +394,7 @@ fn the_gold_amulet_must_have_a_cut_gem() {
         let rows = w.perception().recipes(jewel);
         let row = rows.iter().find(|r| r.id == recipe(w, "gold_amulet"));
         row.and_then(|r| r.unavailable)
-            .map(|u| u.reason(&w.content))
+            .map(|u| crate::test_support::english_of(&w.content, &u.reason(&w.content)))
     };
     assert_eq!(row(&w).as_deref(), Some("no gem to hand"));
     let before = w.state.time;
@@ -400,9 +405,7 @@ fn the_gold_amulet_must_have_a_cut_gem() {
     gem(&mut w, "sapphire", "small", "fine");
     assert_eq!(row(&w), None);
     let steps = w.perception().craft_steps(recipe(&w, "gold_amulet"));
-    let labels: Vec<(&str, bool)> = (steps.iter())
-        .map(|s| (s.label.as_str(), s.optional))
-        .collect();
+    let labels: Vec<(&str, bool)> = (steps.iter()).map(|s| (s.label_en(), s.optional)).collect();
     assert_eq!(labels, [("chain", false), ("setting", false)]);
     assert_eq!(
         (steps[1].options.iter()).map(|o| o.at).collect::<Vec<_>>(),

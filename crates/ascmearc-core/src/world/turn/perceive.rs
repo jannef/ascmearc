@@ -79,7 +79,7 @@ impl World {
         *self.perception = Perception::compute(&self.state, &self.content, &mut self.lights);
         // An unseen shadow come near (`unseen.rs`).
         if !draught && self.perception.draught() {
-            self.say(crate::world::creatures::unseen::DRAUGHT_LINE);
+            self.say(msg::creatures::COLD_DRAUGHT);
         }
         self.mark_noticed();
         self.glare_news(dazzled);
@@ -133,7 +133,7 @@ impl World {
         &mut self,
         events: &mut Vec<Event>,
     ) -> Vec<(Msg, bool)> {
-        use fight::{End, Guard, Words, attack_message, death_message, word};
+        use fight::{End, Guard, Words, attack_message, death_message};
         let player = self.state.player;
         let content = self.content.clone();
         let mut reports: Vec<(Msg, bool)> = Vec::new();
@@ -272,17 +272,18 @@ impl World {
                     let (a, t) = (end(attacker, sees_attacker), end(target, sees_target));
                     // A creature's throw is said by what flies (`hurl.rs`).
                     if let Some(throw) = hurl::thrown_by(&content, me, kind, with) {
+                        let by = (me.creature, throw);
                         let said =
-                            hurl::throw_messages(&content, throw, (&a, &t), strike, damage, &guard);
+                            hurl::throw_messages(&content, by, (&a, &t), strike, damage, &guard);
                         reports.extend(said.into_iter().map(|text| (text, stops)));
                     } else {
                         // A natural attack after the first is said by its own words (`claws`).
                         let def = content.creature(me.creature);
-                        let words =
-                            match natural.and_then(|i| def.natural_attacks().nth(usize::from(i))) {
-                                Some(attack) => Words::named(&attack.name, &attack.verb, &content),
-                                None => Words::of(me, kind, with, damage, &content),
-                            };
+                        let n = natural.map(usize::from);
+                        let words = match n.filter(|&n| def.natural_attacks().nth(n).is_some()) {
+                            Some(n) => Words::natural(def, n, &content),
+                            None => Words::of(me, kind, with, damage, &content),
+                        };
                         let said = attack_message(&a, &t, &words, kind, strike, &guard);
                         reports.extend(said.map(|text| (text, stops)));
                     }
@@ -367,13 +368,22 @@ impl World {
                 of: Some(status),
             } => {
                 if actor == player {
-                    reports.push((death_message(&End::You(self.you()), ""), true));
+                    reports.push((
+                        death_message(&End::You(self.you()), crate::msg::combat::VERB_DIES),
+                        true,
+                    ));
                     return true;
                 }
                 let seen = perception.sees_actors_at(at);
                 if let (true, Some(dead)) = (seen, self.actor_or_fallen(actor)) {
                     let who = fight::creature(content.creature(dead.creature));
-                    let dies = content.status(status).dies.as_deref().unwrap_or("dies");
+                    let def = content.status(status);
+                    let dies = match def.dies {
+                        Some(_) => {
+                            crate::lang::Arg::said(crate::content::data_word::status_dies(&def.id))
+                        }
+                        None => crate::lang::Arg::from(crate::msg::combat::VERB_DIES),
+                    };
                     let said = Msg::new(msg::turn::DIES_OF_STATUS)
                         .role("who", who)
                         .role("dies", dies);
@@ -385,12 +395,18 @@ impl World {
                 None => actor == player,
                 Some(Last::Attack(_, _, _, by)) if actor == player => {
                     killer_seen = Some(by);
-                    reports.push((death_message(&End::You(self.you()), ""), true));
+                    reports.push((
+                        death_message(&End::You(self.you()), crate::msg::combat::VERB_DIES),
+                        true,
+                    ));
                     true
                 }
                 // A trap's victim: the death records the trap, not who was seen.
                 Some(Last::Trap(..)) if actor == player => {
-                    reports.push((death_message(&End::You(self.you()), ""), true));
+                    reports.push((
+                        death_message(&End::You(self.you()), crate::msg::combat::VERB_DIES),
+                        true,
+                    ));
                     true
                 }
                 // A death by the player's hand was said with their blow, and recorded only if
@@ -399,8 +415,10 @@ impl World {
                 Some(Last::Attack(_, target, seen, _) | Last::Trap(target, seen)) => {
                     let seen = seen && target == actor;
                     if seen {
-                        let dies = (self.actor_or_fallen(actor))
-                            .map_or("dies", |a| content.creature(a.creature).death_verb());
+                        let dies = (self.actor_or_fallen(actor)).map_or_else(
+                            || crate::msg::combat::VERB_DIES.into(),
+                            |a| content.creature(a.creature).dies_arg(),
+                        );
                         reports.push((death_message(&end(actor, true), dies), close(at)));
                     }
                     seen
@@ -449,10 +467,15 @@ impl World {
                 let def = content.trap(trap);
                 // A fall is said with the trap ("You fall into a pit.").
                 if seen && !matches!(def.effect, TrapEffect::Pit { .. }) {
-                    let words = Words::named(&def.noun, &def.verb, &content);
+                    let noun = content.trap_noun_phrase(trap);
+                    let verbs = (
+                        content.trap_verb(trap, false),
+                        content.trap_verb(trap, true),
+                    );
+                    let words = Words::said(noun.clone(), verbs, &content);
                     let guard = Guard::of(self.actor_or_fallen(target), &content, &self.state);
                     let said = attack_message(
-                        &End::Trap(word(&def.noun)),
+                        &End::Trap(noun),
                         &end(target, true),
                         &words,
                         AttackKind::Melee,
@@ -489,7 +512,7 @@ impl World {
             turn,
         );
         let viewer = self.player_pos();
-        let mut said: Vec<String> = Vec::new();
+        let mut said: Vec<Msg> = Vec::new();
         // Listening at a door, everything heard is told, news or not, and so is a silence.
         let listening = self.state.listening.is_some();
         let told = if listening {

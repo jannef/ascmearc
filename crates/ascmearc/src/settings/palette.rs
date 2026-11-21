@@ -1,6 +1,7 @@
 //! Color palettes: a transform applied to colors when they are written to the
 //! console, so content colors (terrain, creatures, UI constants) stay untouched.
 
+use crate::ui::text::{UiText, settings as T};
 use ascmearc_core::color::Rgb;
 
 /// Whether a color is a glyph color or a cell background; high contrast pushes them apart.
@@ -39,11 +40,11 @@ impl Palette {
     }
 
     /// Name shown in the settings screen.
-    pub fn label(self) -> &'static str {
+    pub fn label(self) -> UiText {
         match self {
-            Palette::Default => "Default",
-            Palette::HighContrast => "High contrast",
-            Palette::Colorblind => "Colorblind (red-green)",
+            Palette::Default => T::PALETTE_DEFAULT,
+            Palette::HighContrast => T::PALETTE_HIGH_CONTRAST,
+            Palette::Colorblind => T::PALETTE_COLORBLIND,
         }
     }
 

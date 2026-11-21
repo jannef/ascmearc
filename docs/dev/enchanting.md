@@ -98,7 +98,7 @@ gives the item that many improvements in its aspects in turn (the first first, r
 one attempt, with no draw; refused at load for an item with no aspect (a ring). The shipped
 changes (design §4.1): the Brosinga Mene (a mithril chain, a flawless ruby setting), the
 Eorcanstān (a mithril band, a flawless sapphire setting), Grendles Grāpe (Masterwork mithril),
-High Toby (Fine, an amethyst inlay), the Turncoat (Masterwork), the Unhalwed Bedes (a flawless
+High Toby (Fine, a flawless amethyst inlay), the Turncoat (Masterwork), the Unhalwed Bedes (a flawless
 smokestone setting), Widowmaker (Marvellous); in the test world Rune Song (Masterwork, a topaz tip), Ash Coat (Masterwork), the hub's Dread
 Visage (Masterwork) and Storm Song (Marvellous). Father's sword's heirloom is Masterwork
 (`quality = "masterwork"` in `data/talents/fathers_sword.toml`: capacity 4 on every race's

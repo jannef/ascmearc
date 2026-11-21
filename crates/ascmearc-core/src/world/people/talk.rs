@@ -85,7 +85,7 @@ pub struct TopicView {
     /// For a trader's offer while it is for sale (`wares.rs`): the item in words, as the one
     /// dialog shows it before the player buys or leaves it; none for anything else.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub ware: Option<String>,
+    pub ware: Option<crate::lang::Arg>,
 }
 
 /// A topic's name. The data's own words, or a topic the rules make, which the dialogue screen
@@ -143,12 +143,6 @@ impl From<Arg> for Speech {
     }
 }
 
-impl From<String> for Speech {
-    fn from(text: String) -> Self {
-        Self(vec![Arg::Text(text)])
-    }
-}
-
 impl From<Vec<Arg>> for Speech {
     fn from(lines: Vec<Arg>) -> Self {
         Self(lines)
@@ -175,7 +169,7 @@ pub struct Conversation {
 pub(in crate::world) struct Mutter {
     actor: ActorId,
     at: Pos,
-    verb: String,
+    verb: Arg,
     line: Arg,
 }
 
@@ -232,6 +226,7 @@ impl World {
     /// ("Grimbold"), a unique character by its proper name ("Sister Hild"), or
     /// a kept beast (a companion, a familiar) by its own ("Snel"): [`World::called_phrase`] in
     /// English.
+    #[cfg(test)]
     pub(in crate::world) fn called(&self, actor: &Actor) -> String {
         self.content.english_of(&self.called_phrase(actor), "the")
     }
@@ -540,7 +535,11 @@ impl World {
         let key = self.rotation_key(id, b"mutters");
         let line = &mutter.lines[rotation(key, actor.talk.muttered, mutter.lines.len())];
         let line = self.said(id, line);
-        let (at, verb) = (actor.pos, mutter.verb.clone());
+        let verb = match &mutter.verb_key {
+            Some(key) => Arg::said(key.clone()),
+            None => msg::talk::VERB_MUTTERS.into(),
+        };
+        let at = actor.pos;
         if let Some(actor) = self.state.actors.get_mut(&id) {
             actor.talk.muttered += 1;
         }
@@ -585,13 +584,14 @@ impl World {
                     let dir = Dir::toward(viewer, place);
                     match (volume, dir) {
                         (Volume::Faint, None) => Msg::new(msg::talk::VOICE_FAINT),
-                        (Volume::Faint, Some(d)) => Msg::new(msg::talk::VOICE_FAINT_FROM)
-                            .role("dir", Phrase::id(format!("word:{}", d.compass_name()))),
+                        (Volume::Faint, Some(d)) => {
+                            Msg::new(msg::talk::VOICE_FAINT_FROM).role("dir", d.compass_word())
+                        }
                         (Volume::Clear | Volume::Loud, None) => {
                             Msg::new(msg::talk::VOICE).role("line", m.line)
                         }
                         (Volume::Clear | Volume::Loud, Some(d)) => Msg::new(msg::talk::VOICE_FROM)
-                            .role("dir", Phrase::id(format!("word:{}", d.compass_name())))
+                            .role("dir", d.compass_word())
                             .role("line", m.line),
                     }
                 }

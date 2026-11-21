@@ -24,7 +24,10 @@
 //! [`Effect::Craft`]: crate::skills::Effect::Craft
 
 use super::craft::RecipeLack;
-use super::craft_make::{CraftOption, CraftPlan, CraftStep, CraftStepKind, cut_gem};
+use super::craft_make::{
+    CraftOption, CraftPlan, CraftStep, CraftStepKind, about, counted_msg, cut_gem, own_verb,
+    the_msg, uses_msg,
+};
 use super::work::{Job, Task};
 use crate::action::Event;
 use crate::combat;
@@ -38,7 +41,6 @@ use crate::rng::draw;
 use crate::scroll_label::Lore;
 use crate::skills::Use;
 use crate::stats::Stat;
-use crate::time::Duration;
 use crate::world::{Actor, Spent, World};
 
 /// What the check comes to.
@@ -69,9 +71,10 @@ fn is_set(content: &Content, stack: &Stack, part: PartId) -> bool {
 }
 
 /// Whether `stack` is an item the Set step offers: one with an ornament part, unset, not a loose
-/// gem, a piece of stock, or a spirit weapon (worn or wielded ones are left out by the caller).
+/// gem, a piece of stock, a spirit weapon, or a unique (worn or wielded ones are left out by the
+/// caller).
 pub fn settable(content: &Content, stack: &Stack) -> bool {
-    refusal(content, stack).is_none()
+    !stack.is_unique() && refusal(content, stack).is_none()
 }
 
 /// Why a gem cannot be set in `stack`, if it cannot.
@@ -114,6 +117,9 @@ fn resolve(
     };
     let pack = &player.inventory;
     let stack = pack.get(item).ok_or(msg::crafting::CARRY_NO_SUCH_THING)?;
+    if stack.is_unique() {
+        return Err(msg::uniques::NO_CRAFT);
+    }
     if let Some(text) = refusal(content, stack) {
         return Err(text);
     }
@@ -165,13 +171,13 @@ pub(super) fn steps(content: &Content, lore: Lore<'_>, player: &Actor) -> Vec<Cr
     vec![
         CraftStep {
             kind: CraftStepKind::Item,
-            label: "item".into(),
+            label: super::craft_make::step_word("item"),
             optional: false,
             options: items,
         },
         CraftStep {
             kind: CraftStepKind::Gem,
-            label: "gem".into(),
+            label: super::craft_make::step_word("gem"),
             optional: false,
             options: gems,
         },
@@ -185,23 +191,15 @@ pub(super) fn plan(
     player: &Actor,
     def: &RecipeDef,
     picks: &[Option<usize>],
-) -> Result<CraftPlan, String> {
-    let (_, gem, _, _, made) = resolve(content, player, picks)
-        .map_err(|why| super::craft_make::english(content, why.into()))?;
+) -> Result<CraftPlan, Msg> {
+    let (_, gem, _, _, made) = resolve(content, player, picks).map_err(Msg::from)?;
+    let gem = the_msg(lore.title_phrase(&player.inventory[gem]));
     Ok(CraftPlan {
-        verb: def.verb.clone().unwrap_or_else(|| def.name.clone()),
-        name: lore.describe(&made),
-        uses: format!("the {}", lore.title(&player.inventory[gem])),
+        verb: own_verb(content, def),
+        name: counted_msg(lore.phrase(&made)),
+        uses: uses_msg(vec![gem]),
         station: None,
-        time: format!(
-            "about {}",
-            Duration::seconds(u64::from(super::mastery::craft_seconds(
-                content,
-                player,
-                def.seconds
-            )))
-            .spoken()
-        ),
+        time: about(super::mastery::craft_seconds(content, player, def.seconds)),
     })
 }
 

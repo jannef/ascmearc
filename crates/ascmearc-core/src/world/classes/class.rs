@@ -135,7 +135,8 @@ impl World {
         if news {
             for id in given {
                 let def = content.talents().get(id);
-                let gain = Msg::new(msg::classes::GAIN_TALENT).role("talent", def.name.clone());
+                let gain =
+                    Msg::new(msg::classes::GAIN_TALENT).role("talent", content.talent_phrase(id));
                 self.news.push(gain);
                 let handed = data_line::handed_news(def).map(|(key, _)| data_line::said(key));
                 self.news.extend(handed);

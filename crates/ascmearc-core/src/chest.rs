@@ -14,7 +14,8 @@
 //!
 //! **Smashing** (a kick that breaks it) destroys each stack inside with `[smash] destroyed`
 //! percent, one gameplay draw a stack, sparing coins and loose gems; **blowing up** (a blast
-//! that beats its band's hardness) rolls every stack at the same percent and spares nothing
+//! that beats its band's hardness) rolls every stack at the same percent and spares nothing but
+//! a unique, which no breaking harms and which is never rolled (#1975)
 //! ([`destroyed`]).
 //!
 //! What a **generated** chest holds is rolled by [`roll_contents`] from its band's loot table, on
@@ -74,21 +75,26 @@ pub struct ChestLook {
 }
 
 impl ChestLook {
-    /// What the player calls it, by its band (`rules`; the terrain's `fallback` name without
-    /// one): "coffer", "open coffer", "smashed coffer"; with Chest-wise "locked coffer" or
-    /// "unlocked coffer".
-    pub fn name(&self, rules: &crate::content::ChestRules, fallback: &str) -> String {
-        let Some(band) = rules.bands.get(self.band) else {
-            return fallback.to_string();
+    /// What the player calls it, by its band (`rules`; `None` without one): the band's name
+    /// (`chest:<band>`, "coffer"), and the state said before it (`chest_state:<state>`): "open
+    /// coffer", "smashed coffer"; with Chest-wise "locked coffer" or "unlocked coffer"
+    /// (`content/data_word.rs`).
+    pub fn phrase(
+        &self,
+        rules: &crate::content::ChestRules,
+    ) -> Option<(crate::lang::Phrase, Option<crate::lang::Word>)> {
+        let band = rules.bands.get(self.band)?;
+        let state = match (self.state, self.locked) {
+            (ChestState::Shut, Some(true)) => Some("locked"),
+            (ChestState::Shut, Some(false)) => Some("unlocked"),
+            (ChestState::Shut, None) => None,
+            (ChestState::Open, _) => Some("open"),
+            (ChestState::Smashed, _) => Some("smashed"),
         };
-        let name = &band.name;
-        match (self.state, self.locked) {
-            (ChestState::Shut, Some(true)) => format!("locked {name}"),
-            (ChestState::Shut, Some(false)) => format!("unlocked {name}"),
-            (ChestState::Shut, None) => name.clone(),
-            (ChestState::Open, _) => format!("open {name}"),
-            (ChestState::Smashed, _) => format!("smashed {name}"),
-        }
+        Some((
+            band.phrase(),
+            state.map(crate::content::data_word::chest_state),
+        ))
     }
 }
 
@@ -104,7 +110,7 @@ pub enum Breaking {
 /// Splits `holds` into what survives and what is destroyed as a chest breaks `how`: each stack
 /// in order is destroyed with `percent`, one draw of `rng` per stack rolled; on a smash, the
 /// stacks `spared` says are coins or gems are never rolled. Returns (kept, destroyed), each in
-/// the order they were held.
+/// the order they were held. A unique is always kept, never rolled (#1975).
 pub fn destroyed(
     holds: Vec<Stack>,
     how: Breaking,
@@ -115,7 +121,7 @@ pub fn destroyed(
     let mut kept = Vec::new();
     let mut lost = Vec::new();
     for stack in holds {
-        if how == Breaking::Smashed && spared(&stack) {
+        if stack.is_unique() || (how == Breaking::Smashed && spared(&stack)) {
             kept.push(stack);
         } else if rng.chance(percent) {
             lost.push(stack);

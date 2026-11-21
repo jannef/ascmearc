@@ -64,12 +64,12 @@ pub(in crate::world) struct Dish {
 /// What a corpse's training marks of `stat` say, when they are many ([`LOUD_MARKS`]).
 fn gift_news(stat: Stat) -> Msg {
     let what = match stat {
-        Stat::Strength => "strength",
-        Stat::Dexterity => "nimbleness",
-        Stat::Toughness => "hardiness",
-        Stat::Intelligence => "cunning",
-        Stat::Willpower => "resolve",
-        Stat::Presence => "bearing",
+        Stat::Strength => msg::words::STAT_STRENGTH_GIFT,
+        Stat::Dexterity => msg::words::STAT_DEXTERITY_GIFT,
+        Stat::Toughness => msg::words::STAT_TOUGHNESS_GIFT,
+        Stat::Intelligence => msg::words::STAT_INTELLIGENCE_GIFT,
+        Stat::Willpower => msg::words::STAT_WILLPOWER_GIFT,
+        Stat::Presence => msg::words::STAT_PRESENCE_GIFT,
     };
     Msg::new(msg::health::GIFT_PASSES).role("what", what)
 }

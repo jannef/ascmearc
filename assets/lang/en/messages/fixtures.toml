@@ -9,8 +9,9 @@
 # Roles: `chest` is a chest by its band ("coffer") or its terrain; `what` a thing, or a
 # feature's terrain; `who` a creature a line is about, as the player calls it; `trap` a trap by
 # its name ("arrow trap"); `came` the clause that says what stopped a long action ("A kobold
-# comes into view"). `talent` is a talent's name and `verb` a damage type's verb ("burns"),
-# text until those words are converted. `level` is a number.
+# comes into view"). `talent` is a talent by its name (`talent:<id>`, with what was chosen for it
+# `character.talent_chosen`); `verb` a damage type's verb ("burns"), text until those words are
+# converted. `level` is a number.
 
 # The forgotten altar's fire, harming the player (`outcome.rs`).
 altar_fire_harmless = "The altar's fire washes over you harmlessly."
@@ -39,6 +40,11 @@ corpse_twitches = "{dead:Poss} corpse twitches."
 doors_slam = "The doors slam shut!"
 drink = "You cup your hands and drink from the spring."
 drink_broken_by = "{came:bare}; you stop drinking."
+# What a burial ground without an `epitaph` of its own cuts in one of the run's dead's grave
+# (`graves.rs`): `name`, who they were ("Brakka the dwarf warrior"), and `death`, how they died
+# ("killed by a kobold in Fyrdelf 3, The Ascmearc"; `untold_death` when unknown), as the app
+# rendered it in the language shown (the graveyard file keeps a record, not a message).
+epitaph = "Here lies {name:bare}, {death:bare}."
 # `place`: the level the player fell to, by its name.
 fall_to = "You fall to {place:bare}."
 # `what`: the feature's terrain, an entry per way its name counts (the terrain's `noun`: one, a
@@ -51,6 +57,11 @@ floor_gives_way = "The floor gives way beneath you!"
 find_inside = "Inside you find {what:a}."
 # `talent`: the talent the altar gave.
 gain_talent = "You gain {talent:bare}."
+# A grave's `name` (`Fallen::grave_name`): `name`, as typed; `race` and `class`, a `race:` and a
+# `class:` phrase (said in lower case, "dwarf", "warrior"), or an id this content lacks.
+grave_name = "{name:bare} the {race:bare} {class:bare}"
+grave_name_class = "{name:bare} the {class:bare}"
+grave_name_race = "{name:bare} the {race:bare}"
 # `level`: the level the player is at once more.
 level_again = "You are level {level:bare} again."
 lock_springs = "The lock springs open with a click."
@@ -65,6 +76,8 @@ prayer_unheard = "Your prayer goes unheard."
 step_lightly_off = "You step lightly off {trap:a}."
 stop_drinking = "You stop drinking."
 too_little_mana = "You have too little mana."
+# A grave's `death` for one of the dead whose death the graveyard does not tell (`graves.rs`).
+untold_death = "taken before their time"
 # `who`: the creature an unstable floor took away.
 vanishes = "{who:The} vanishes!"
 wrenched_elsewhere = "You are wrenched elsewhere."

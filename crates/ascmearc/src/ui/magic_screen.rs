@@ -14,12 +14,12 @@
 //! snapshot when it opens; no game time passes while it is open, so it cannot go stale.
 //!
 //! Its words are `assets/lang/en/ui/magic_screen.toml` (`T::…`, [`super::text`]); the styles'
-//! and spells' names are the data's.
+//! and spells' names are their lexicon ids as labels (`text::label`).
 
 use super::abilities_screen::{needs, spell_head};
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::screens::ScreenAction;
-use super::text::{magic_screen as T, ui, ui_with};
+use super::text::{label, magic_screen as T, ui, ui_with};
 use super::weapon_skills_screen::{BAR, IN_USE, draw_bar};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
@@ -28,7 +28,8 @@ use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::PerceptionView;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-/// Width of the name column (a skill's, a spell's).
+/// Width of the name column (a skill's, a spell's), where the panel has room for it: in a
+/// narrower one it gives way to the spells' details, down to the longest name ([`name_width`]).
 const NAME_W: i32 = 24;
 /// Width of a spell's rank column (`rank 10`, a space).
 const RANK_W: i32 = 8;
@@ -116,8 +117,10 @@ impl MagicScreen {
         let first = self.top.min(most);
         let top = panel.y + if compact { 1 } else { 2 };
         let x = panel.inner_x();
+        let inner = panel.inner_w();
+        let name_w = name_width(&self.rows, inner);
         for (y, row) in (top..).zip(rows.iter().skip(first).take(room as usize)) {
-            draw_row(console, x, y, row, panel.inner_w());
+            draw_row(console, (x, y), row, inner, name_w);
         }
         // Arrows on the frame where rows are hidden above or below.
         let edge = panel.x + panel.w - 1;
@@ -129,7 +132,7 @@ impl MagicScreen {
         }
         let close = ui(T::CLOSE);
         let footer = if most > 0 {
-            let scroll = ui_with(T::SCROLL, &[("keys", HINTS.up_down().into())]);
+            let scroll = ui_with(T::SCROLL, &[("keys", Arg::text(HINTS.up_down()))]);
             format!("{scroll}   {close}")
         } else {
             close
@@ -145,7 +148,7 @@ fn rows(view: &PerceptionView<'_>) -> Vec<Row> {
     let own = view.own_weapon_skills();
     let in_use = view.own_styles_in_use();
     let skill = |id| Row::Skill {
-        name: table.skill(id).name.clone(),
+        name: label(content.weapon_skill_phrase(id)),
         rank: own.rank(id),
         filled: (own.progress(table, id)).map(|(marks, need)| marks * BAR / need.max(1)),
         in_use: in_use.contains(&id),
@@ -157,10 +160,11 @@ fn rows(view: &PerceptionView<'_>) -> Vec<Row> {
                 let detail = if needs(a.aim(content)).is_empty() {
                     head
                 } else {
-                    ui_with(T::AIMED, &[("cost", head.into())])
+                    ui_with(T::AIMED, &[("cost", Arg::text(head))])
                 };
                 Some(Row::Spell {
-                    name: a.name(content).to_string(),
+                    name: (content.spell_of(spell))
+                        .map_or_else(String::new, |s| label(content.spell_phrase(s))),
                     rank: view.own_spell_rank(spell).unwrap_or(1),
                     detail,
                 })
@@ -206,8 +210,30 @@ fn rows(view: &PerceptionView<'_>) -> Vec<Row> {
     rows
 }
 
-/// One row at (`x`, `y`), in a panel `inner` columns wide inside.
-fn draw_row(console: &mut Console, x: i32, y: i32, row: &Row, inner: i32) {
+/// Width of the name column in a panel `inner` columns wide inside: [`NAME_W`] where the
+/// longest spell's detail fits after it, else as narrow as that detail needs, but never
+/// narrower than the longest name and a space (#1910). Every row has the same, so the ranks stay
+/// in one column; a detail too long even then is cut by [`Console::print_in`].
+fn name_width(rows: &[Row], inner: i32) -> i32 {
+    let width = |text: &str| text.chars().count() as i32;
+    let (mut name, mut detail) = (0, 0);
+    for row in rows {
+        match row {
+            Row::Skill { name: n, .. } => name = name.max(width(n)),
+            Row::Spell {
+                name: n, detail: d, ..
+            } => {
+                name = name.max(width(n));
+                detail = detail.max(width(d));
+            }
+            _ => {}
+        }
+    }
+    (inner - 2 - RANK_W - detail).clamp(name + 1, NAME_W.max(name + 1))
+}
+
+/// One row at `(x, y)`, in a panel `inner` columns wide inside, its names `name_w` wide.
+fn draw_row(console: &mut Console, (x, y): (i32, i32), row: &Row, inner: i32, name_w: i32) {
     match row {
         Row::Mana(text) => {
             console.print_in(x, y, text, TEXT, inner);
@@ -232,17 +258,17 @@ fn draw_row(console: &mut Console, x: i32, y: i32, row: &Row, inner: i32) {
             if *in_use {
                 console.print(x, y, &IN_USE.to_string(), ACCENT);
             }
-            console.print_in(x + 2, y, name, fg, NAME_W - 1);
-            console.print(x + 2 + NAME_W, y, &format!("{rank:>2}"), fg);
+            console.print_in(x + 2, y, name, fg, name_w - 1);
+            console.print(x + 2 + name_w, y, &format!("{rank:>2}"), fg);
             if let Some(filled) = filled {
-                draw_bar(console, x + NAME_W + 6, y, *filled);
+                draw_bar(console, x + name_w + 6, y, *filled);
             }
         }
         Row::Spell { name, rank, detail } => {
-            console.print_in(x + 2, y, name, TEXT, NAME_W - 1);
+            console.print_in(x + 2, y, name, TEXT, name_w - 1);
             let rank = ui_with(T::RANK, &[("rank", Arg::Number(i64::from(*rank)))]);
-            console.print_in(x + 2 + NAME_W, y, &rank, TEXT_DIM, RANK_W - 1);
-            let at = 2 + NAME_W + RANK_W;
+            console.print_in(x + 2 + name_w, y, &rank, TEXT_DIM, RANK_W - 1);
+            let at = 2 + name_w + RANK_W;
             console.print_in(x + at, y, detail, TEXT_DIM, inner - at);
         }
         Row::Note(text) => {
@@ -343,6 +369,27 @@ mod tests {
         for hidden in ["+", "%", "to-hit", "marks"] {
             assert!(!text.join("\n").contains(hidden), "{hidden:?}");
         }
+    }
+
+    #[test]
+    fn at_80_columns_the_names_give_way_to_a_long_detail() {
+        // #1910: Arcane bolt's detail was cut after a 24-column name column at 80 columns.
+        let world = world("showcase", "human,female,wizard", LEVELLED);
+        let screen = MagicScreen::new(Some(&world.perception()));
+        let bolt = "6d6 force, shoves on a big hit, 9 mana, aimed";
+        let wide = drawn(&screen, 120, 50);
+        let row = find(&wide, "Arcane bolt");
+        assert!(
+            row.contains(&format!("Arcane bolt             rank 1  {bolt}")),
+            "{row}"
+        );
+        let narrow = drawn(&screen, 80, 50);
+        let row = find(&narrow, "Arcane bolt");
+        assert!(row.contains(bolt) && !row.contains('…'), "{row}");
+        // The styles' ranks stay in the spells' rank column.
+        let rank = row.find("rank 1").expect("a rank") + 1;
+        let sniper = find(&narrow, "Sniper").as_bytes();
+        assert!(sniper[rank].is_ascii_digit() && sniper[rank - 1] == b' ');
     }
 
     #[test]

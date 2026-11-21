@@ -139,7 +139,7 @@ impl World {
         events: &mut Vec<Event>,
     ) -> bool {
         let range = cast.reach.range.unwrap_or(1);
-        if !self.can_loose_here() || !self.within_reach(at, range, "cast") {
+        if !self.can_loose_here() || !self.within_reach(at, range, crate::msg::combat::AIM_CAST) {
             return false;
         }
         let here = self.player_pos();

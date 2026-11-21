@@ -171,6 +171,8 @@ pub use combat::free_blow::FreeBlows;
 pub(crate) use combat::item_damage::protected_in;
 pub(crate) use crafting::craft::recipe_rows;
 pub use crafting::craft::{RecipeLack, RecipeRow};
+#[cfg(test)]
+pub(crate) use crafting::craft_make::PlanEn;
 pub use crafting::craft_make::{CraftOption, CraftPlan, CraftStep, CraftStepKind, Grade, grade};
 pub(crate) use crafting::craft_make::{craft_plan, craft_steps};
 pub use crafting::cut::{CutBand, cut_band, cut_outcome, cuttable};
@@ -194,11 +196,11 @@ pub use fixtures::mirrors::Image;
 pub(crate) use health::heal::allies_beside;
 pub(crate) use items::body_slots::has_slot;
 pub use items::loot::Identified;
-pub(crate) use levels::encounter::view as encounter_view;
 pub use levels::encounter::{
     Choice as EncounterChoice, EncounterView, Forced as EncounterForced,
     Outcome as EncounterOutcome, Party, Pending,
 };
+pub(crate) use levels::encounter::{party_name, view as encounter_view};
 pub use levels::fire::Blaze;
 pub use levels::pit::Pit;
 pub(crate) use levels::swim::shore_refusal;
@@ -950,10 +952,14 @@ impl World {
         }
         instantiate_level(&mut state, &content, &start);
         drop(start); // It may borrow `content`, which `assemble` takes.
-        let welcome = Msg::new(crate::msg::world::WELCOME).role("place", def.name.as_str());
+        let name = crate::lang::Arg::said(crate::content::data_line::scenario_name(&def.id));
+        let welcome = Msg::new(crate::msg::world::WELCOME).role("place", name);
         state.messages.push(0, welcome);
-        if let Some(line) = &def.arrival {
-            state.messages.push(0, line.clone());
+        if def.arrival.is_some() {
+            let line = crate::content::data_line::scenario_arrival(&def.id);
+            state
+                .messages
+                .push(0, crate::content::data_line::said(line));
         }
         if let Some(text) = fixtures::rooms::pervade_line(&state, &content) {
             state.messages.push(0, text);
@@ -1522,7 +1528,8 @@ impl World {
             // Waiting is searching (#1326): a turn of it looks around, one code path. Afloat, the
             // turn passes without the checks (`search_turn`); searching for a while is refused.
             Action::Search(turns)
-                if *turns > 1 && self.refused_afloat("You cannot search in deep water.") =>
+                if *turns > 1
+                    && self.refused_afloat(crate::msg::turn::CANNOT_SEARCH_IN_DEEP_WATER) =>
             {
                 return Spent::Nothing;
             }

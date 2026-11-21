@@ -1,6 +1,6 @@
 name = "Brakka"
-race = "Dwarf"
-class = "Warrior"
+race = "dwarf"
+class = "warrior"
 level = 4
 place = "The Depths 2"
 campaign = "The Showcase"

@@ -6,6 +6,40 @@ use ascmearc_core::content::{Content, DamageTypeId, NORMAL_SPEED};
 use ascmearc_core::dice::Roll;
 use ascmearc_core::stats::Stat;
 use ascmearc_core::time::Duration;
+use std::sync::LazyLock;
+
+/// The built-in content, whose English the wiki says core's words in.
+fn builtin() -> &'static Content {
+    static CONTENT: LazyLock<Content> =
+        LazyLock::new(|| ascmearc_assets::content().expect("content loads"));
+    &CONTENT
+}
+
+/// A stat's name as a label: `Strength`.
+pub(super) fn stat_name(stat: impl std::borrow::Borrow<Stat>) -> String {
+    builtin().english_word(stat.borrow().name(), "Bare")
+}
+
+/// A stat's abbreviation: `St`.
+pub(super) fn stat_abbrev(stat: impl std::borrow::Borrow<Stat>) -> String {
+    builtin().english_word(stat.borrow().abbrev(), "bare")
+}
+
+/// A span of time in words: `2 hours and 30 minutes`.
+pub(super) fn time_words(duration: Duration) -> String {
+    builtin().english_word(duration.spoken(), "bare")
+}
+
+/// A word core picks (a message id: a hunger's name, how hurt a creature looks) in English in
+/// `form`.
+pub(super) fn word(id: ascmearc_core::lang::MessageId, form: &str) -> String {
+    builtin().english_word(id, form)
+}
+
+/// A spell ladder in words: `Intelligence 13: 3d6, 16: 4d6`.
+pub(super) fn ladder_words(ladder: &ascmearc_core::content::SpellLadder) -> String {
+    ladder.words(builtin())
+}
 
 pub(super) fn glyph(c: char) -> String {
     if c == ' ' {
@@ -154,7 +188,7 @@ pub(super) fn at_speed(price: i64, speed: u32) -> String {
         return format!("{}.{} seconds", tenths / 10, tenths % 10);
     }
     let seconds = u64::try_from(price.div_euclid(speed)).unwrap_or(0);
-    Duration::seconds(seconds).spoken()
+    time_words(Duration::seconds(seconds))
 }
 
 /// A kind of term a generated table defines, one row each: the page the table is on and the
@@ -270,14 +304,14 @@ pub(super) fn damage_link(content: &Content, kind: DamageTypeId) -> String {
 
 /// A stat's name linked to its row: `[Toughness](stats.md#stat-toughness)`.
 pub(super) fn stat_link(stat: Stat) -> String {
-    link(Term::Stat, stat.name(), stat.name())
+    link(Term::Stat, &stat_name(stat), &stat_name(stat))
 }
 
 /// The line above a table whose columns are the stats' abbreviations (#1574), so a reader meets
 /// "To" and "Pr" spelled out: "**St** Strength, **Dx** Dexterity, …", and a blank line.
 pub(super) fn stat_key() -> String {
     let names: Vec<String> = (Stat::ALL.iter())
-        .map(|&s| format!("**{}** {}", s.abbrev(), stat_link(s)))
+        .map(|&s| format!("**{}** {}", stat_abbrev(s), stat_link(s)))
         .collect();
     format!("Stats: {}.\n\n", names.join(", "))
 }

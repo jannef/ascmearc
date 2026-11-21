@@ -22,6 +22,7 @@ use super::text::{dialog_screen as T, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use crate::settings::fixed::{self, Answer};
+use ascmearc_core::lang::Arg;
 
 /// What an option means, for its shortcut keys and the first selection.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -207,7 +208,7 @@ impl DialogScreen {
             .map(|(i, o)| match self.dialog.keys_of(i).join(", ") {
                 keys if keys.is_empty() => o.label.clone(),
                 keys => {
-                    let keys = ui_with(T::KEYS, &[("keys", keys.into())]);
+                    let keys = ui_with(T::KEYS, &[("keys", Arg::text(keys))]);
                     format!("{}  {keys}", o.label)
                 }
             })
@@ -220,11 +221,11 @@ impl DialogScreen {
         let lines = wrap(&self.dialog.text, TEXT_W as i32);
         let rows = self.rows();
         let keys = HINTS;
-        let select = ui_with(T::SELECT, &[("confirm", keys.confirm.into())]);
+        let select = ui_with(T::SELECT, &[("confirm", Arg::text(keys.confirm))]);
         let footer = match rows.len() {
             0 | 1 => select,
             _ => {
-                let arrows = [("up", keys.up.into()), ("down", keys.down.into())];
+                let arrows = [("up", Arg::text(keys.up)), ("down", Arg::text(keys.down))];
                 format!("{}  {select}", ui_with(T::CHOOSE, &arrows))
             }
         };

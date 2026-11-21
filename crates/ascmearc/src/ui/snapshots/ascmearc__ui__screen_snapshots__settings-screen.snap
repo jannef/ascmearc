@@ -1,6 +1,6 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: "render(case, content.clone())"
+expression: shown
 ---
  Welcome to Showcase. Press ? for controls.
                     ┌─ Settings ───────────────────────────────────────────────┐
@@ -21,11 +21,11 @@ expression: "render(case, content.clone())"
                     │   Color palette         Default                          │
                     │   Clock                 24-hour                          │
                     │   Temperature           °C (Celsius)                     │
+                    │   Language              English                          │
                     │                                                          │
                     │   Where are my files?                                    │
                     │   Reset to defaults                                      │
                     │   Back                                                   │
-                    │                                                          │
                     │ Size of the glyphs, in logical pixels.                   │
                     │ Sample: legible text, then  [ marked ]  and  * flagged * │
                     │ Sample accent text                                       │

@@ -1,6 +1,7 @@
 //! What the craft talents do, in the wiki's words (`ascmearc_core::talent::CraftEffect`, #1495): one
 //! arm a variant, beside the area's enum and sum in `ascmearc-core/src/talent/craft.rs`.
 
+use super::super::util::time_words;
 use crate::wiki::util::signed;
 use ascmearc_core::content::Content;
 use ascmearc_core::talent::CraftEffect;
@@ -103,7 +104,7 @@ pub(super) fn text(content: &Content, effect: &CraftEffect) -> String {
              It never destroys anything. Refused, with no time spent, for something worn or \
              wielded, [protected](materials.md#protected-items), unpaid, or of a material no \
              craft works (cloth, glass)",
-            ascmearc_core::time::Duration::seconds(u64::from(seconds)).spoken()
+            time_words(ascmearc_core::time::Duration::seconds(u64::from(seconds)))
         ),
         CraftEffect::Rigs => "active (a rig from the rig list, then a direction): a trap is \
             rigged on the cell beside you, from arrows, a billet of wood, or a pit dug with the \

@@ -78,7 +78,9 @@ fn the_pick_asks_a_hundred_sapients_and_another_race() {
     let mut w = human();
     set_eaten(&mut w, 99);
     assert_eq!(refusal(&w), Err(Refusal::Unmet(vec![Need::Eaten(100)])));
-    let words = Refusal::Unmet(vec![Need::Eaten(100)]).words(w.content(), "Surrender to hunger");
+    let words = Refusal::Unmet(vec![Need::Eaten(100)])
+        .words(w.content(), crate::lang::Arg::text("Surrender to hunger"));
+    let words = crate::test_support::english_of(w.content(), &words);
     assert_eq!(
         words,
         "You cannot take Surrender to hunger: you need to have eaten 100 sapients."

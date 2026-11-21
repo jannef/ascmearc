@@ -64,6 +64,7 @@ use super::skills_screen::SkillsScreen;
 use super::story_screen::StoryScreen;
 use super::talents_screen::TalentsScreen;
 use super::target::AimKind;
+use super::text::{screens as T, ui, ui_msg};
 use super::weapon_skills_screen::WeaponSkillsScreen;
 use crate::cli::Args;
 use crate::game::{Game, GameContent, PlayerAction};
@@ -453,7 +454,8 @@ impl Screen {
                 let campaigns = content.campaigns().len() > 1;
                 let characters = launch.characters.clone();
                 let died = launch.fallen.len();
-                Screen::Characters(CharactersScreen::new(characters, campaigns).died(died))
+                let screen = CharactersScreen::new(content, characters, campaigns);
+                Screen::Characters(screen.died(died))
             }
             ScreenName::Graveyard => {
                 Screen::Graveyard(GraveyardScreen::new(&launch.fallen, content))
@@ -999,9 +1001,14 @@ impl Screens<'_> {
 
 /// Shows the screens that stay open while the run changes (the equipment screen beneath a
 /// choice that was just done, an object list or the dialogue beneath a dialog that acted) the
-/// run as it is now: a screen that becomes the top again never shows it as it was.
-pub(super) fn refresh(game: Res<Game>, mut stack: ResMut<ScreenStack>) {
-    if game.is_changed() && !stack.is_empty() {
+/// run as it is now: a screen that becomes the top again never shows it as it was. A change of
+/// the settings rebuilds them too, so what a screen built when it opened (what was said in a
+/// conversation) reads in the language chosen.
+pub(super) fn refresh(game: Res<Game>, settings: Res<Settings>, mut stack: ResMut<ScreenStack>) {
+    if settings.is_changed() {
+        super::text::use_language(&settings.language);
+    }
+    if (game.is_changed() || settings.is_changed()) && !stack.is_empty() {
         stack.refresh(&game.world.perception(), last_talk(&game.last_outcome));
     }
 }
@@ -1198,7 +1205,7 @@ pub(super) fn apply_choice(
                 match screens.store.save_run(&game.save_id, &game.world) {
                     Ok(()) => {
                         leave_run(&mut commands, &mut grid, &mut mode);
-                        screens.back_to_main(Some("Game saved.".into()), false);
+                        screens.back_to_main(Some(ui(T::GAME_SAVED)), false);
                     }
                     Err(e) => screens.stack.fail(e),
                 }
@@ -1210,7 +1217,7 @@ pub(super) fn apply_choice(
             }
             MenuChoice::Continue => match screens.store.last_played() {
                 Some(last) => resume(&mut commands, &mut screens, &last.id),
-                None => screens.back_to_main(Some("There is no saved character.".into()), false),
+                None => screens.back_to_main(Some(ui(T::NO_SAVED_CHARACTER)), false),
             },
             MenuChoice::Resume(id) => resume(&mut commands, &mut screens, id),
             // Applied by `crate::mods::apply`.
@@ -1250,8 +1257,8 @@ fn resume(commands: &mut Commands, screens: &mut Screens, id: &str) {
             commands.insert_resource(Game::from_world(*world, id.to_string()));
             screens.stack.clear();
         }
-        Resume::Failed(message) => screens.back_to_main(Some(message), false),
-        Resume::NoSave => screens.back_to_main(Some("That save is gone.".into()), false),
+        Resume::Failed(message) => screens.back_to_main(Some(ui_msg(message)), false),
+        Resume::NoSave => screens.back_to_main(Some(ui(T::SAVE_GONE)), false),
     }
 }
 
@@ -3036,7 +3043,7 @@ mod tests {
             name: "Your wares".into(),
             price: Some(340),
             items: None,
-            ware: Some("A ring".into()),
+            ware: Some(ascmearc_core::lang::Arg::text("A ring")),
         });
         let screen = Screen::Dialogue(DialogueScreen::new(
             Some(&stale),

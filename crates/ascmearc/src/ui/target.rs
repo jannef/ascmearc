@@ -25,6 +25,7 @@
 //! blocked target, "You do not see there.". Everything here reads the perception snapshot only.
 
 use super::look;
+use super::text::{target as T, ui, ui_with};
 use crate::game::Game;
 use crate::input::{InputMode, KeyCommand};
 use crate::render::console::Console;
@@ -36,6 +37,7 @@ use ascmearc_core::ability::Ability;
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::{ClassActive, Shape, SpellData, SpellId, SpellPurpose, Stance};
 use ascmearc_core::fov::radius2;
+use ascmearc_core::lang::{Arg, Phrase};
 use ascmearc_core::perception::{CellView, PerceptionView};
 use ascmearc_core::world::{ActorId, cone_cells};
 use ascmearc_core::{Action, Dir, Pos, ReadTarget};
@@ -322,9 +324,10 @@ impl Aim {
     /// as far as they know (the rules': it flies along the line of fire and
     /// goes off on the first creature they see in its way, before the first cell they know is
     /// solid, or on the cursor; the player within its radius of that, walls between not
-    /// counted). Returns what would catch them ("fireball"); `None` for anything else, and for
-    /// a player their own bursts spare (Scroll savant).
-    pub fn catches_reader(&self, view: &PerceptionView<'_>) -> Option<String> {
+    /// counted). Returns what would catch them, the spell's noun (`spell_noun:<id>`,
+    /// "fireball"); `None` for anything else, and for a player their own bursts spare (Scroll
+    /// savant).
+    pub fn catches_reader(&self, view: &PerceptionView<'_>) -> Option<Phrase> {
         if view.bursts_spare_me() {
             return None;
         }
@@ -334,7 +337,11 @@ impl Aim {
                 let id = spell_of(view, self.kind)?;
                 let spell = cast_spell(view, self.kind).filter(|s| s.shape == Shape::Burst)?;
                 let reach = view.own_spell_reach(id)?;
-                (reach.radius?, reach.range?, spell.look.noun.clone())
+                (
+                    reach.radius?,
+                    reach.range?,
+                    view.content().spell_noun_phrase(spell),
+                )
             }
             // A flask whose type the player knows, of a burst that harms (a hex's spares its
             // thrower): its splash at its own rung, as far as they throw it.
@@ -348,7 +355,11 @@ impl Aim {
                     return None;
                 }
                 let radius = flask.splash(content).radius?;
-                (radius, view.throw_range(item)?, spell.look.noun.clone())
+                (
+                    radius,
+                    view.throw_range(item)?,
+                    content.spell_noun_phrase(spell),
+                )
             }
             _ => return None,
         };
@@ -379,24 +390,22 @@ impl Aim {
     /// The prompt in the message line: what is aimed, and how. `ready` names the missile ("an
     /// arrow"); `confirm` is the key of [`AimKind::confirm`] as bound, Enter and Tab are fixed.
     pub fn prompt(&self, ready: &str, confirm: &str) -> String {
-        let (loose, next) = (fixed::LOOSE, fixed::NEXT_TARGET);
-        let (verb, does) = match self.kind {
-            AimKind::Fire => ("Fire", "fires"),
-            AimKind::Throw(_) => ("Throw", "throws"),
-            AimKind::ThrownExploit(_) => ("Exploit an opening with", "throws"),
-            AimKind::Read(_) => ("Read", "reads"),
-            AimKind::Zap(_) => ("Zap", "zaps"),
+        let text = match self.kind {
+            AimKind::Fire => T::PROMPT_FIRE,
+            AimKind::Throw(_) => T::PROMPT_THROW,
+            AimKind::ThrownExploit(_) => T::PROMPT_EXPLOIT,
+            AimKind::Read(_) => T::PROMPT_READ,
+            AimKind::Zap(_) => T::PROMPT_ZAP,
             // `ready` names the ability ("Throw your voice").
-            AimKind::Ability(_) => {
-                return format!(
-                    "{ready}: {next} or direction keys aim, {loose} or {confirm} uses it, Esc \
-                     cancels."
-                );
-            }
+            AimKind::Ability(_) => T::PROMPT_ABILITY,
         };
-        format!(
-            "{verb} {ready}: {next} or direction keys aim, {loose} or {confirm} {does}, Esc cancels."
-        )
+        let args = [
+            ("ready", Arg::text(ready)),
+            ("next", Arg::text(fixed::NEXT_TARGET)),
+            ("loose", Arg::text(fixed::LOOSE)),
+            ("confirm", Arg::text(confirm)),
+        ];
+        ui_with(text, &args)
     }
 }
 
@@ -404,18 +413,19 @@ impl Line {
     /// Why a missile loosed along it would not reach the cursor, said after the target's
     /// description: "Out of range.", "The way is blocked.", "You do not see there."; nothing
     /// when it would.
-    pub fn status(&self) -> Option<&'static str> {
-        if self.out_of_range {
-            Some("Out of range.")
+    pub fn status(&self) -> Option<String> {
+        let text = if self.out_of_range {
+            T::OUT_OF_RANGE
         } else if self.unseen {
-            Some("You do not see there.")
+            T::UNSEEN
         } else if self.no_corpse {
-            Some("There is no corpse there.")
+            T::NO_CORPSE
         } else if self.blocked {
-            Some("The way is blocked.")
+            T::BLOCKED
         } else {
-            None
-        }
+            return None;
+        };
+        Some(ui(text))
     }
 }
 
@@ -777,7 +787,9 @@ mod tests {
             })
         );
         // Next to the reader: it may catch them; far off it does not.
-        assert_eq!(fireball.catches_reader(&view).as_deref(), Some("fireball"));
+        let noun =
+            |aim: &Aim| (aim.catches_reader(&view)).map(|p| view.content().english_of(&p, "bare"));
+        assert_eq!(noun(&fireball).as_deref(), Some("fireball"));
         let far = Aim {
             at: Pos::new(me.x, me.y - 8),
             ..fireball
@@ -824,7 +836,11 @@ mod tests {
             assert_eq!(aim.cycle(&view, true).at, view.viewer(), "{id}");
             let line = aim.line(&view);
             assert!(line.cells.is_empty(), "{id}: it flies nowhere");
-            assert_eq!(line.status(), Some("There is no corpse there."), "{id}");
+            assert_eq!(
+                line.status().as_deref(),
+                Some("There is no corpse there."),
+                "{id}"
+            );
             assert_eq!(
                 aim.action(view.content()),
                 Some(Action::Cast(id.into(), Some(aim.at)))
@@ -846,7 +862,10 @@ mod tests {
         };
         let reach = view.own_spell_reach(spell("flame")).expect("cast");
         assert_eq!(burst.range(&view), reach.range);
-        assert_eq!(burst.catches_reader(&view).as_deref(), Some("flame"));
+        let noun = burst
+            .catches_reader(&view)
+            .map(|p| view.content().english_of(&p, "bare"));
+        assert_eq!(noun.as_deref(), Some("flame"));
         assert_eq!(
             burst.action(&content),
             Some(Action::Cast("flame".into(), Some(burst.at)))
@@ -917,12 +936,12 @@ mod tests {
             blocked: true,
             ..Line::default()
         };
-        assert_eq!(far.status(), Some("Out of range."));
+        assert_eq!(far.status().as_deref(), Some("Out of range."));
         let walled = Line {
             blocked: true,
             ..Line::default()
         };
-        assert_eq!(walled.status(), Some("The way is blocked."));
+        assert_eq!(walled.status().as_deref(), Some("The way is blocked."));
         let throw = Aim {
             kind: AimKind::Throw(0),
             ..aim

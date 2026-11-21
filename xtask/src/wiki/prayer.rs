@@ -3,6 +3,7 @@
 //! priest's levels with its titles, and the priest's rites beside it (Consecrate, Communion with
 //! the dark, Sanctuary). Every number here is hidden in the game.
 
+use super::util::time_words;
 use super::util::{Term, anchored, capital, link, ordinal};
 use ascmearc_core::content::{Content, PrayerRules, PrayerUse, TalentDef, TalentEffect};
 use ascmearc_core::talent::FaithEffect;
@@ -31,7 +32,7 @@ pub(super) fn prayer_strain(content: &Content) -> String {
         out,
         "| Strain that passes | 1 point every {}: one prayer's is gone after {} |",
         every(rules.decay),
-        whole.spoken()
+        time_words(whole)
     );
     let _ = writeln!(
         out,
@@ -62,7 +63,7 @@ pub(super) fn prayer_fizzle(content: &Content) -> String {
     out.push_str(&":---:|".repeat(NTH.len()));
     out.push('\n');
     for gap in gaps {
-        let _ = write!(out, "| {} |", Duration::seconds(gap).spoken());
+        let _ = write!(out, "| {} |", time_words(Duration::seconds(gap)));
         for n in NTH {
             let _ = write!(out, " {} % |", rules.fizzle_chance(found(rules, gap, n)));
         }
@@ -331,7 +332,7 @@ pub(super) fn prayer_rites(content: &Content) -> String {
                 };
                 let works = def
                     .alignment
-                    .map_or_else(|| "any".to_string(), |a| a.words());
+                    .map_or_else(|| "any".to_string(), |a| a.words(content));
                 if out.is_empty() {
                     out.push_str(
                         "| Level | Ability | Works for | What it does |\n|---:|---|---|---|\n",
@@ -349,7 +350,7 @@ pub(super) fn prayer_rites(content: &Content) -> String {
 
 /// `minute` for a minute, else its words: `10 minutes`.
 fn every(d: Duration) -> String {
-    let words = d.spoken();
+    let words = time_words(d);
     match words.strip_prefix("1 ") {
         Some(unit) if !unit.contains(' ') => unit.to_string(),
         _ => words,
@@ -359,5 +360,5 @@ fn every(d: Duration) -> String {
 /// A duration of the data in words: `1m` → `1 minute`.
 fn spoken(text: &str) -> String {
     text.parse::<Duration>()
-        .map_or_else(|_| text.to_string(), Duration::spoken)
+        .map_or_else(|_| text.to_string(), time_words)
 }

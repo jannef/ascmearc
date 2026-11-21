@@ -3,7 +3,7 @@
 //! places without walking it (Steorratorr's replay goes from its top to Drȳtorr's and
 //! Wedertorr's and back, #1787). No time passes and nothing on the way is met.
 
-use crate::lang::{Msg, Phrase};
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::world::{Spent, World};
 
@@ -13,17 +13,17 @@ impl World {
     /// level that cannot be entered so (unknown, or with nowhere to arrive).
     pub(in crate::world) fn travel_dev(&mut self, id: &str) -> Spent {
         if id == self.state.current_level {
-            self.say(Msg::new(msg::levels::ALREADY_ON_DEV).role("id", id));
+            self.say(Msg::new(msg::levels::ALREADY_ON_DEV).role("id", Arg::id(id)));
             return Spent::Nothing;
         }
         match self.travel(id, None) {
             Ok(()) => {
-                let place = Phrase::literal(&self.state.current().name);
+                let place = self.level_name(id);
                 self.say(Msg::new(msg::levels::ON_DEV).role("place", place));
                 Spent::NoTime
             }
             Err(e) => {
-                self.say(Msg::new(msg::levels::CANNOT_GO_DEV).role("error", e.to_string()));
+                self.say(Msg::new(msg::levels::CANNOT_GO_DEV).role("error", Arg::text(e.to_string())) /* lang: error */);
                 Spent::Nothing
             }
         }

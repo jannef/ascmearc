@@ -58,9 +58,9 @@ text = "{name:bare} ({mark:bare})"
 [protection]
 text = "Protection (Pv) {n:bare}"
 
-# The choice's title: `slot`, the slot's name.
+# The choice's title: `slot`, the slot by its name (`slot:<id>`, said `Bare`: "Main hand").
 [title_choice]
-text = "Equipment: {slot:bare}"
+text = "Equipment: {slot:Bare}"
 
 [title_equipment]
 text = "Equipment"

@@ -48,7 +48,7 @@ use super::goodwill::discounted;
 use super::shop::{count_of, haggling};
 use crate::action::Event;
 use crate::content::{ActionKind, DialogueId, MAX_FAVOUR, Service, ServiceKind};
-use crate::lang::{Arg, Msg};
+use crate::lang::Msg;
 use crate::msg;
 use crate::skills::SkillId;
 use crate::skills::Use;
@@ -57,9 +57,6 @@ use crate::world::{ActorId, Spent, World};
 
 /// The means a temple's cure names in `cured_by`.
 pub const PRAYER: &str = "prayer";
-
-/// What it says to a mending asked for while a disease shows.
-const CURE_FIRST: &str = "Be cured first.";
 
 impl World {
     /// What `service`, sold by whoever speaks `dialogue`, costs the player now, per stack for an
@@ -155,7 +152,7 @@ impl World {
             ServiceKind::Mend if !actor.damage.is_damaged() && undrained(&actor.drained) => {
                 nothing()
             }
-            ServiceKind::Mend if actor.diseases.shows() => Some(Arg::Text(CURE_FIRST.into())),
+            ServiceKind::Mend if actor.diseases.shows() => Some(msg::people::BE_CURED_FIRST.into()),
             ServiceKind::Identify if self.unidentified().is_empty() => nothing(),
             ServiceKind::Decurse if self.cursed_worn() == 0 => nothing(),
             ServiceKind::TrainSkill if !self.service_offered(&service) => nothing(),
@@ -221,7 +218,7 @@ impl World {
             return;
         };
         self.player_mut().skills.add(skill, i32::from(train.value));
-        let name = self.content.skill(skill).name.to_lowercase();
+        let name = self.content.skill_phrase(skill);
         let who = self.called_phrase(&self.state.actors[&teacher]);
         self.say(
             Msg::new(msg::people::TRAINS_YOU)

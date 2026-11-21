@@ -131,7 +131,7 @@ fn a_masters_sword_bears_the_mark_and_is_worth_half_again() {
         // Its name is unchanged; its description says whose mark it is.
         assert_eq!(w.lore().describe(&sword), w.lore().describe(&plain));
         let lines: Vec<String> = (w.perception().describe_item(&sword).into_iter())
-            .map(|l| l.text)
+            .map(|l| l.english(w.content()))
             .collect();
         assert!(
             lines.iter().any(|l| l == "It bears Brakka's mark."),
@@ -139,7 +139,7 @@ fn a_masters_sword_bears_the_mark_and_is_worth_half_again() {
         );
         let nameless = crate::magic::describe::lines(&sword, &w.content);
         assert!(
-            (nameless.iter()).any(|l| l.text == "It bears its maker's mark."),
+            (nameless.iter()).any(|l| l.english(w.content()) == "It bears its maker's mark."),
             "{nameless:?}"
         );
         // One enchantment more.

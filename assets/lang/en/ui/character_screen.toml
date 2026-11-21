@@ -69,14 +69,15 @@ text = "Gender"
 
 # The gender "other" and the stat it raised: `stat`, the stat's name.
 [gender_other]
-text = "Other ({stat:bare} +1)"
+text = "Other ({stat:Bare} +1)"
 
 [guild]
 text = "Guild"
 
-# A guild row: `title`, the rank's title (shown in its metal's colour); `guild`, the guild's name.
+# A guild row: `title`, the rank's title (shown in its metal's colour); `guild`, the guild by its name
+# (`guild:<id>`, said `the`: "the Weyfarers' Gilde").
 [guild_rank]
-text = "{title:bare} of {guild:bare}"
+text = "{title:bare} of {guild:the}"
 
 [hit_points]
 text = "Hit points"
@@ -100,6 +101,11 @@ text = "Protection"
 [race]
 text = "Race"
 
+# A resistance row's damage types ("fire, cold"): `first`, a damage type; `rest`, the others (a
+# damage type, or this again).
+[resistance_kinds]
+text = "{first:bare}, {rest:bare}"
+
 # A resource that is held in the guard of the player's mark: `mark`, the creature.
 [resource_marked]
 text = "{value:bare}/{max:bare}, in {mark:poss} guard"
@@ -111,7 +117,7 @@ text = "{value:bare}/{max:bare}, in an unseen foe's guard"
 [skills]
 text = "{own:bare} skills"
 
-# A birth sign's gift used up: `talent`, its name.
+# A birth sign's gift used up: `talent`, its name (`talent:<id>`).
 [spent]
 text = "{talent:bare} (spent)"
 
@@ -152,7 +158,7 @@ text = "Weight {total:bare}, carrying nothing"
 [with]
 text = "With"
 
-# The birth sign: `sign`, its name ("Fire Manticore").
+# The birth sign: `sign`, its name (`sign:<element>.<animal>`, "Fire Manticore").
 [year_of]
 text = "year of the {sign:bare}"
 

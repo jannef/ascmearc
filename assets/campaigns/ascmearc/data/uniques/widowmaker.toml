@@ -1,16 +1,18 @@
 # Mother Sallow's stiletto (docs/design/adventurers-guild.md §9.2): many quick, light strikes,
-# then step back and let the poison work. Weak against the poison-immune, which is its price.
+# then step back and let the poison work: 2d6 poison and a degree of Poisoned with every cut (its
+# power, #2001: no affix adds two dice). Weak against the poison-immune, which is its price.
 #
 # A unique item: a rare with a set name, set affixes (`[[item]]`
-# syntax: an id with its tier, the value the top of the tier's range), an item level, a power,
+# syntax: an id with its tier, the value the top of the tier's range; or, a unique's alone, an id
+# with its value, `"mystic=30"`: docs/dev/magic-items.md "Unique items"), an item level, a power,
 # and a line of lore. Placed once in all content as `unique:widowmaker`.
 [[unique]]
 id = "widowmaker"
 name = "Widowmaker"
 object = "stiletto"
-affixes = ["venomous:4", "of_celerity:11", "of_the_lynx:2"]
+affixes = ["of_celerity:11", "of_the_lynx:2", "of_precision:3"]
 level = 12
 # Three enchantments need its make (docs/dev/enchanting.md): Marvellous.
 quality = "marvellous"
-power = { inflict = "poisoned", chance = 100, severity = 1, phrase = "Its every cut poisons." }
+power = { inflict = "poisoned", chance = 100, severity = 1, added = { type = "poison", damage = "2d6" }, phrase = "Its every cut poisons." }
 lore = "Thin as a hatpin, and never quite clean."

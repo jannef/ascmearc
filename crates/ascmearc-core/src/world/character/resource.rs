@@ -28,7 +28,7 @@
 use crate::action::Event;
 use crate::content::Effect as ItemEffect;
 use crate::content::{Build, Content, ResourceId};
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::resource::Pace;
 use crate::status::Effect;
@@ -310,12 +310,12 @@ impl World {
         events: &mut Vec<Event>,
     ) -> Spent {
         let Some(resource) = self.content.resource_id(id) else {
-            self.say(Msg::new(msg::character::NO_RESOURCE).role("id", id));
+            self.say(Msg::new(msg::character::NO_RESOURCE).role("id", Arg::id(id)));
             return Spent::Nothing;
         };
         let player = self.state.player;
         self.grant_resource_with_status(player, resource, None, events);
-        let name = self.content.resource(resource).name.clone();
+        let name = self.content.resource_phrase(resource);
         let value = (self.state.player().resources.get(resource)).map_or(0, |p| p.value);
         self.say(
             Msg::new(msg::character::GAIN_RESOURCE_DEV)

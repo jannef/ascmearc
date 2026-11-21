@@ -162,7 +162,10 @@ impl Generic {
         }
         for note in &phrase.notes {
             match note {
-                Note::Tags(tags) => after.push(format!("({})", tags.join(", "))),
+                Note::Tags(tags) => {
+                    let tags: Vec<String> = tags.iter().map(|w| self.word(w, lex).base).collect();
+                    after.push(format!("({})", tags.join(", ")));
+                }
                 Note::Charges(n) => after.push(format!("({n})")),
                 Note::Base(base) => after.push(self.word(&base.head, lex).base),
             }
@@ -415,7 +418,7 @@ wystan = { word = "Wystan el Negro", proper = true, gender = "m" }
             .with(Modifier::Adjective(Word::id("black")))
             .with(Modifier::Of(Word::id("of_the_bear")))
             .with(Modifier::Label(Word::literal("ZUNBAR")))
-            .note("magic");
+            .note(Word::literal("magic"));
         assert_eq!(
             form(&sword, "the"),
             "la espada negro del oso con la etiqueta ZUNBAR (magic)",

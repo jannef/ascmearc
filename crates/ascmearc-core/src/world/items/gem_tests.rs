@@ -268,8 +268,12 @@ fn loose_gems_are_named_by_their_gem_size_and_cut() {
     rubies.count = 2;
     assert_eq!(rubies.describe(&content), "2 rubies");
     // The description says the size and cut always, and what it weighs.
-    let text =
-        |s: &Stack| -> Vec<String> { lines(s, &content).into_iter().map(|l| l.text).collect() };
+    let text = |s: &Stack| -> Vec<String> {
+        lines(s, &content)
+            .into_iter()
+            .map(|l| l.english(&content))
+            .collect()
+    };
     assert_eq!(
         text(&gem(&content, "garnet", "tiny", "uncut")),
         [
@@ -291,8 +295,12 @@ fn ornaments_go_in_the_naming_order_and_the_description() {
         sword().describe(&content),
         "an emerald-pommelled long sword"
     );
-    let lines_of =
-        |s: &Stack| -> Vec<String> { lines(s, &content).into_iter().map(|l| l.text).collect() };
+    let lines_of = |s: &Stack| -> Vec<String> {
+        lines(s, &content)
+            .into_iter()
+            .map(|l| l.english(&content))
+            .collect()
+    };
     let text = lines_of(&sword());
     assert_eq!(
         text[..2],

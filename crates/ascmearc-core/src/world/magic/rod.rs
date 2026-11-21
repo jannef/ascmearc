@@ -97,12 +97,14 @@ impl World {
         }
         let effect = content.rod_effect(rod.effect);
         let reach = self.state.player().rod_reach(&content, effect);
-        if effect.shape == RodShape::Burst && !self.within_reach(at, reach, "zap") {
+        if effect.shape == RodShape::Burst
+            && !self.within_reach(at, reach, crate::msg::combat::AIM_ZAP)
+        {
             return Spent::Nothing;
         }
         let me = self.state.player();
         if let Some(status) = me.effects.blocking(&content, ActionKind::Cast) {
-            let name = content.status(status).name.to_lowercase();
+            let name = content.status_phrase(status);
             self.say(Msg::new(msg::magic::CANNOT_USE_ROD_WHILE).role("status", name));
             return Spent::Nothing;
         }
@@ -229,9 +231,8 @@ impl World {
             .map(|a| a.id)
             .collect();
         let content = self.content.clone();
-        // The status as it looks, a `word:` phrase ("asleep"; else "affected").
-        let seen = content.status(status).seen.as_deref();
-        let word = fight::word(seen.unwrap_or("affected"));
+        // The status as it looks ("asleep", `status_seen:<id>`; else "affected").
+        let word = (content.seen_phrase(status)).unwrap_or_else(|| fight::word("affected"));
         for id in caught {
             let actor = &self.state.actors[&id];
             let seen = self.perception.sees_actors_at(actor.pos);

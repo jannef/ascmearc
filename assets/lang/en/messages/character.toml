@@ -7,13 +7,24 @@
 # (`content/data_line.rs`).
 #
 # Roles: `who` is a creature a line is about, as the player calls it ("the kobold", "Grimbold").
-# `status` is a status as the player sees it, lower case ("invisible"); `talent`, `gift`,
-# `skill`, and `name` are a talent's, a profane gift's, a skill's, and a resource's names from the
-# data, and `reason` why an ability cannot be used: text until those words are converted. `id`
+# `status` is a status by its name (`status:<id>`, "invisible"), `skill` a skill's
+# (`skill:<id>`), and `name` a resource's (`resource:<id>`); `talent` and `gift` are a talent's
+# and a profane gift's names (`talent:<id>`, with what was chosen for it `talent_chosen`), and
+# `trees` and `talents` lists of them (`tree:<id>`); `reason` is why an ability cannot be used, a
+# message of its own (`messages/ability.toml`). `id`
 # is an id a dev action was given, as typed. `xp`, `level`, and `value` are numbers, said in
 # digits.
 
+# A talent's need of any of several weapon skills (`AnyWeaponSkill::words`): a skill it names,
+# `skill` (`weapon_skill:<id>`, as its label: "Maces"); two of them, `first` and `rest`, said with
+# "or" (no comma, however many); the roles it names, `roles` (`weapon_role:<role>`, "melee").
+any_weapon_skill_named = "{skill:label}"
+any_weapon_skill_or = "{first:bare} or {rest:bare}"
+any_weapon_skill_roles = "a {roles:bare} weapon skill"
 at_whom = "At whom?"
+# A birth date (`BirthDate::arg`): `day` and `year` numbers, `month` the month's name, a line of
+# data (`calendar:months.<n>`).
+birth_date = "{day:bare} {month:bare} {year:bare}"
 birthday = "It is your birthday."
 # The breaths of the birth sign's picks (`sign_picks.rs`), as each is loosed.
 breath_bile = "You hawk up a gobbet of bile and spit it!"
@@ -33,9 +44,21 @@ caught_in_grip = "{who:The} {who:is} caught in your grip."
 choose_talent_first = "You must choose a talent first."
 # `trees`: the talent trees a bonus pick may be of, a list of names.
 choose_talent_of = "You must choose a talent of {trees:or}."
+# What a talent with a choice is chosen for (`Choice::message`), said as a refusal's `choice`.
+choice_element = "an element"
+choice_school = "a school of magic or an element"
+choice_skill = "a skill you are trained in"
+choice_style = "a fighting style"
+choice_tag = "a kind of creature"
+choice_weapon_skill = "a weapon skill"
 # `talents`: the free talents the pick may be, a list of names.
 choose_your_free_first = "You must choose your free {talents:or} first."
-clean_warmth = "A clean warmth runs through your blood."
+# A character's classes as the character screen and the Characters list name them, a label
+# (`character::class_arg`): `class` and `prestige`, a class and a prestige class by name
+# (`class:<id>`, `prestige:<id>`, or a `class_level`); `level`, a number ("Bard 30, Hunter 4").
+class_level = "{class:label} {level:bare}"
+classes = "{class:label}, {prestige:label}"
+clean_warmth ="A clean warmth runs through your blood."
 # `talent`: the hunger softener the craving took.
 craving_takes = "The craving takes {talent:bare} from you."
 # `who`: the creature that struck the player.
@@ -54,8 +77,8 @@ feel_more_experienced = "You feel more experienced."
 flames_burst = "Flames burst from you!"
 flees_from_you = "{who:The} cower{who:s} and flee{who:s} from you."
 freezes_under_gaze = "{who:The} freeze{who:s} under your gaze."
-# A dev action's: `name`, the resource; `value`, how much of it the player holds now.
-gain_resource_dev = "You gain {name:bare}: {value:bare} (dev)."
+# A dev action's: `name`, the resource (said as its label, "Rage"); `value`, how much of it the player holds now.
+gain_resource_dev = "You gain {name:Bare}: {value:bare} (dev)."
 gain_xp_dev = "You gain {xp:bare} experience (dev)."
 gain_xp_for_finding = "You gain {xp:bare} experience for finding your way here."
 # A dev action's.
@@ -105,6 +128,51 @@ still_status = "You are still {status:bare}."
 # What the player is told as the Profane takes them (`profane_taken.rs`), in turn.
 taken_called_back = "The flesh that was given is called back to the one that gave it."
 taken_wakes = "Something old and hungry wakes behind your eyes, and it does not sleep again."
+# Why a talent cannot be taken (`talent.rs`, `Refusal::words`): `talent` the talent as a sentence
+# names it (`Content::talent_arg`).
+# `id`: the choice as typed; `choice`: what the talent is chosen for (a `choice_*` entry).
+talent_bad_choice = "`{id:bare}` is not {choice:bare}."
+# A talent with what was chosen for it, as a sentence names it (`Content::talent_arg`): `talent`,
+# the talent; `choice`, what was chosen, lower case ("Weapon Focus (long blades)").
+talent_chosen = "{talent:bare} ({choice:bare})"
+talent_granted = "{talent:Bare} is given, not chosen."
+talent_held = "You have {talent:bare} already."
+# One prerequisite of a talent, an item of `talent_unmet`'s `needs` and a row of the Talents page
+# (`content/talent.rs::Need::message`). `animal` and `element` are a birth sign's (the data's
+# words); `n`, `rank`, `level`, and `value` numbers.
+talent_needs_animal = "to be born in the year of the {animal:bare}"
+# `skill`: the skills ("a melee or unarmed weapon skill", `AnyWeaponSkill::words`).
+talent_needs_any_weapon_skill = "{skill:bare} {rank:bare}"
+# `choice`: what the talent is chosen for (a `choice_*` entry).
+talent_needs_choice = "{talent:Bare} needs a choice: {choice:bare}."
+talent_needs_chosen_rank = "the chosen one at {rank:bare}"
+talent_needs_class = "to be {class:a}"
+talent_needs_creation = "to be a new character"
+talent_needs_eaten = "to have eaten {n:bare} sapients"
+# Any one of several: `first` a prerequisite, `rest` the others (this entry again, or the last).
+talent_needs_either = "{first:bare} or {rest:bare}"
+talent_needs_element = "to be {element:bare}-born"
+# `eyes`: the visions' names, a list, lower case ("dark", "keen").
+talent_needs_eyes = "{eyes:or} eyes"
+talent_needs_level = "level {level:bare}"
+talent_needs_lucky = "to be born on a lucky day"
+# `races`: a list of `talent_needs_one`s, each a race.
+talent_needs_not_race = "not to be {races:or}"
+# One race of `talent_needs_race`'s list (`who`, said with its article: "a dwarf").
+talent_needs_one = "{who:a}"
+talent_needs_race = "to be {races:or}"
+talent_needs_skill = "{skill:Bare} {value:bare}"
+# `stat` the stat's name (`words.toml`), `score` the score needed ("Strength 13").
+talent_needs_stat = "{stat:Bare} {score}"
+talent_needs_talent = "{talent:bare}"
+# A talent the ratfolk craving took for good, shown as a need never met again.
+talent_needs_untaken = "not taken by the craving"
+# `skill`: the weapon skill's name, a label as the data writes it ("Twin Blades").
+talent_needs_weapon_skill = "{skill:label} {rank:bare}"
+talent_stripped = "The craving has taken this from you."
+talent_takes_no_choice = "{talent:Bare} takes no choice."
+# `needs`: the prerequisites not met, a list of `talent_needs_*` messages ("Strength 13").
+talent_unmet = "You cannot take {talent:bare}: you need {needs:and}."
 # Warnings that a stat's pile has come within reach of a drop (`stat_deeds.rs`).
 warn_dexterity = "Your hands feel less sure."
 warn_intelligence = "Your mind feels dull."

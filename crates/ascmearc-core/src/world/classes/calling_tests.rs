@@ -209,7 +209,7 @@ fn the_calling_gives_the_class_and_exactly_the_next_level() {
     assert_eq!(count.class, 4, "the bard's at a bard level");
     // The character screen's row and the dumps.
     assert_eq!(stat_row(&w, "Class"), "Class Bard 12, Warden 1");
-    assert_eq!(c.class_phrase(w.content()), "a bard and warden");
+    assert_eq!(c.prestige.as_deref(), Some("warden"));
     let rows = dump::layer_rows(&w, Layer::Progress);
     assert!(
         rows.contains(&"called warden at 12".to_string()),

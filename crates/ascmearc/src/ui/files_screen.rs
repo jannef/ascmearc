@@ -6,9 +6,11 @@
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, truncated_head, wrap};
 use super::screens::ScreenAction;
+use super::text::{files_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::paths::{Entry, Locations, Reason};
 use crate::render::console::Console;
+use ascmearc_core::lang::Arg;
 use std::path::Path;
 
 type Opener = fn(&Path) -> Result<(), String>;
@@ -62,9 +64,12 @@ impl FilesScreen {
                 None => return ScreenAction::Close,
                 Some(entry) => {
                     self.status = Some(match &entry.dir {
-                        None => format!("{} is not stored anywhere.", entry.label),
+                        None => ui_with(T::NOWHERE, &[("label", Arg::text(ui(entry.label)))]),
                         Some(dir) => match (self.opener)(dir) {
-                            Ok(()) => format!("Opened {}.", dir.display()),
+                            Ok(()) => {
+                                let folder = dir.display().to_string();
+                                ui_with(T::OPENED, &[("folder", Arg::text(folder))])
+                            }
                             Err(e) => e,
                         },
                     });
@@ -76,7 +81,7 @@ impl FilesScreen {
     }
 
     pub fn draw(&self, console: &mut Console) {
-        let panel = Panel::new(console, " Where are my files? ", 80, 31);
+        let panel = Panel::new(console, &format!(" {} ", ui(T::TITLE)), 80, 31);
         let (x, w) = (panel.inner_x(), panel.inner_w());
         let mut y = panel.y + 2;
         let text = |console: &mut Console, y: &mut i32, s: &str, color| {
@@ -88,25 +93,18 @@ impl FilesScreen {
         text(console, &mut y, &self.mode, TEXT);
         if self.browser {
             y += 1;
-            text(
-                console,
-                &mut y,
-                "Settings and the saved run are kept under ascmearc/ keys in local storage. \
-                 They survive reloads; clearing this site's data erases them. There are no \
-                 folders to open.",
-                TEXT_DIM,
-            );
+            text(console, &mut y, &ui(T::BROWSER), TEXT_DIM);
         }
         y += 1;
         for (i, e) in self.entries.iter().enumerate() {
             let selected = i == self.selected;
             let color = if selected { ACCENT } else { TEXT };
             console.print(x, y, if selected { ">" } else { " " }, ACCENT);
-            console.print(x + 2, y, e.label, color);
-            console.print(x + 14, y, e.what, TEXT_DIM);
+            console.print(x + 2, y, &ui(e.label), color);
+            console.print(x + 14, y, &ui(e.what), TEXT_DIM);
             let place = match &e.dir {
                 Some(dir) => truncated_head(&dir.display().to_string(), (w - 4).max(0) as usize),
-                None => "(not stored)".into(),
+                None => ui(T::NOT_STORED),
             };
             console.print(x + 2, y + 1, &place, color);
             console.print(x + 2, y + 2, &e.reason.describe(), TEXT_DIM);
@@ -115,7 +113,7 @@ impl FilesScreen {
         let back = self.entries.len();
         let color = if self.selected == back { ACCENT } else { TEXT };
         console.print(x, y, if self.selected == back { ">" } else { " " }, ACCENT);
-        console.print(x + 2, y, "Back", color);
+        console.print(x + 2, y, &ui(T::BACK), color);
         y += 2;
         if let Some(status) = &self.status {
             text(console, &mut y, status, ACCENT);
@@ -124,11 +122,17 @@ impl FilesScreen {
             text(console, &mut y, warning, ACCENT);
         }
         let footer = if self.entries.is_empty() {
-            "Esc back".to_string()
+            ui(T::FOOTER_BACK)
         } else {
             let keys = HINTS;
             let (up_down, confirm) = (keys.up_down(), keys.confirm);
-            format!("{up_down} select   {confirm} open folder   Esc back")
+            ui_with(
+                T::FOOTER,
+                &[
+                    ("up_down", Arg::text(up_down)),
+                    ("confirm", Arg::text(confirm)),
+                ],
+            )
         };
         panel.footer(console, &footer);
     }

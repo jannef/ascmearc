@@ -5,11 +5,12 @@
 #
 # Roles: `what` is an item as the player knows it (a phrase built where it is said; "your long
 # sword" when the line names it as the player's), `other` another such. `slot` is a slot as
-# typed or its name in lower case, text until those words are converted. `name` is a
+# typed (text), or by its name (`slot:<id>`, lower case: "main hand"). `name` is a
 # shopkeeper's name, `price` and `owed` numbers of gold.
 
 # `what`: what is already in the slot.
 already_there = "You already have {what:a} there."
+burdened = "You are burdened."
 # `what`: the burning thing that cannot be picked up.
 cannot_pick_up_burning = "You cannot pick up {what:a} while it burns."
 carry_no_such_thing = "You carry no such thing."
@@ -29,18 +30,45 @@ it_is_cursed = "It is cursed! It will not come off."
 it_would_sink = "It would sink."
 # `what`: the light, the player's.
 light = "You light {what:the}."
+# A stack as the item lists name it (`Lore::listed`): `what`, the stack; `numbers`,
+# `listed_numbers` or empty; `spirit`, `listed_spirit` or empty.
+listed = "{what:counted}{numbers:bare}{spirit:bare}"
+# What the stack gives in numbers, after its name: `numbers`, the parts (`numbers_listed`).
+listed_numbers = " ({numbers:bare})"
+# A spirit weapon's mark, after its numbers.
+listed_spirit = " (spirit)"
 # `what`: the light, the player's.
 lower_hood = "You lower the hood of {what:the}."
 no_light_ready = "You have no light ready to use."
+no_longer_burdened = "You are no longer burdened."
 # `slot`: the slot as typed.
 no_slot = "There is no slot `{slot:bare}`."
 no_longer_fits = "{what:The} no longer fits, and falls to the floor."
 no_such_thing_here = "There is no such thing here."
 not_carrying_anything = "You are not carrying anything."
-# `slot`: the slot's name, lower case.
+# `slot`: the slot by its name.
 nothing_there = "You have nothing there ({slot:bare})."
 nothing_to_identify_dev = "There is nothing to identify (dev)."
 nothing_to_pick_up = "There is nothing here to pick up."
+# What an item gives in numbers, a part each (`magic/numbers.rs`; a signed number and dice are
+# written as notation, text): `dice`, what ammunition or a worn thing adds ("+1d4+2", "+2").
+numbers_damage = "{dice:bare} damage"
+# `dv`, what it adds to Defence, signed ("+1").
+numbers_dv = "Dv {dv:bare}"
+# `dv` as `numbers_dv`; `pv`, its Protection.
+numbers_dv_pv = "Dv {dv:bare}, Pv {pv:bare}"
+# `n`: its to-hit, signed ("+0").
+numbers_hit = "{n:bare} hit"
+# The parts listed: `first`, a part; `rest`, the others (this entry again, or the last part).
+numbers_listed = "{first:bare}, {rest:bare}"
+# `n`: how far it shoots or is thrown.
+numbers_range = "range {n:bare}"
+# Damage of another kind on every hit: `dice`, signed ("+1d4"); `kind`, the damage type
+# (`damage_type:<id>`, "fire").
+numbers_rider = "{dice:bare} {kind:bare}"
+# A weapon's damage with a rider after it: `damage`, its dice (or this entry again); `rider`,
+# a `numbers_rider`.
+numbers_with_rider = "{damage:bare} {rider:bare}"
 # `what`: what the player picked up: a stack, a list of two or three (each an item, or an
 # `unpaid` one), or a count.
 pick_up = "You pick up {what:a}."
@@ -54,9 +82,13 @@ ready_both_hands = "You ready {what:a} in both hands."
 ready_in_quiver = "You ready {what:a} in your quiver."
 # `what`: a worn ring, the player's.
 slips_from_finger = "{what:The} slips from a finger that is no longer there."
+strain_under_load = "You strain under your load."
 take_off = "You take off {what:a}."
 # `what`: the item just identified.
 this_is = "This is {what:a}!"
+# A heavy hall the player would be overloaded in.
+too_much_to_go_in = "You carry too much to go in there."
+too_much_to_move = "You carry too much to move."
 # `what`: the cursed weapon thrown.
 twists_in_grip = "{what:The} twists in your grip and will not leave your hand."
 # An item of `pick_up`'s list: `what` goods for sale picked up, `price` what they cost.

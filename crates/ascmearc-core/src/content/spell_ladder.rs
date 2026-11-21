@@ -158,11 +158,15 @@ impl Ladder {
     }
 
     /// In words, as the wiki prints it: `Intelligence 13: 3d6, 16: 4d6`.
-    pub fn words(&self) -> String {
+    pub fn words(&self, content: &crate::content::Content) -> String {
         let rungs: Vec<String> = (self.rungs.iter())
             .map(|(at, v)| format!("{at}: {v}"))
             .collect();
-        format!("{} {}", self.stat.name(), rungs.join(", "))
+        format!(
+            "{} {}",
+            content.english_word(self.stat.name(), "Bare"),
+            rungs.join(", ")
+        )
     }
 }
 
@@ -193,7 +197,7 @@ mod tests {
         assert_eq!(ladder.rungs[3], (25, roll("5d6+2")));
         assert_eq!(ladder.to_string(), text);
         assert_eq!(
-            ladder.words(),
+            ladder.words(&crate::test_support::builtin()),
             "Intelligence 13: 3d6, 16: 4d6, 19: 5d6, 25: 5d6+2"
         );
         let cells = Ladder::parse("willpower 14 11, 18 12", Unit::Cells).expect("cells");

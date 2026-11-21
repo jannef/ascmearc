@@ -14,6 +14,12 @@ your [quest log](#the-quest-log).
 There is no accepting and no declining. A quest you do not want simply waits in the log and costs
 you nothing.
 
+Some givers hand you something as they give you a quest, to help you on your way. What they hand
+over is [identified](magic-items.md#unidentified-items): you know what it is, and every other one
+of its kind, from then on. Some gifts come only once, with the first of several quests you are
+given. The Reward column of the [quest table](#who-gives-quests) says what each quest gives this
+way ("as given").
+
 Some quests are offered only once you have done another one for the same person, and some only to
 someone of the right [alignment](alignment.md). Good folk who greet an
 [Evil or Wicked](alignment.md) character coldly still offer them their quests. Helping someone is
@@ -193,6 +199,9 @@ offered one after the other.
   of the living ones.
 - **[Sister Hild](creatures.md#creature-sister)** at the Mynster wants back what the barrow and
   the drowned minster keep, and marks [Fennmynster](dungeon-guide.md#fennmynster) on your map.
+  With the first quest she gives you, she hands you a
+  [potion of healing](potions.md#potion-of-healing), so you know them from then on. She does it
+  once only.
 - **[Factor Wulfrun](creatures.md#creature-mine-factor)** marks the old mine,
   [Fyrdelf](dungeon-guide.md#fyrdelf), once you have been deep in the barrow and reached level 5.
   Ask her sooner and she tells you that you are not ready, and gives you nothing. Once the fire

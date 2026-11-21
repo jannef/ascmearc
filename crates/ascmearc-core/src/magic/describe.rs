@@ -9,10 +9,13 @@
 
 use super::{AffixKind, Effect, Rolled};
 use crate::combat::HIGHEST;
-use crate::content::{ActionKind, Content, Draught, ItemKind, ObjectDef, Rarity, weapon_noun};
+use crate::content::{
+    ActionKind, Content, Draught, ItemKind, ObjectDef, Rarity, data_line, weapon_noun_phrase,
+};
+use crate::lang::{Arg, MessageId, Msg, Phrase};
+use crate::msg;
 use crate::object::{Stack, format_weight};
 use crate::scroll_label::Lore;
-use crate::text::capitalized;
 use crate::world::{Actor, CastBy};
 
 /// What a line of a description is, for how it is shown.
@@ -32,18 +35,65 @@ pub enum LineKind {
     Lore,
 }
 
-/// One line of a description.
+/// One line of a description: a message (`messages/describe.toml`), which the screen renders
+/// in the player's language and the wiki and the tests in English ([`Line::english`]).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Line {
     pub kind: LineKind,
-    pub text: String,
+    pub msg: Msg,
 }
 
-fn line(kind: LineKind, text: impl Into<String>) -> Line {
+impl Line {
+    /// The line in English, keys left written: the tests' and the dumps'.
+    pub fn english(&self, content: &Content) -> String {
+        crate::messages::english_msg(content, &self.msg)
+    }
+}
+
+fn line(kind: LineKind, msg: impl Into<Msg>) -> Line {
     Line {
         kind,
-        text: text.into(),
+        msg: msg.into(),
     }
+}
+
+/// A count or a value as a message's number.
+fn num(n: impl TryInto<i64>) -> Arg {
+    Arg::Number(n.try_into().unwrap_or(i64::MAX))
+}
+
+/// `items` said one after another with `join` (`listed`, `and_joined`, `or_joined`): the
+/// language owns the separator. `None` for none.
+/// `parts` in words, as [`Content::describe_parts`] writes them: every part, the main one first,
+/// each its material and part ("steel blade", `describe.part_made`), an unnamed part its material
+/// ("steel"), joined with commas (`describe.comma_joined`).
+fn parts_arg(content: &Content, parts: &[crate::content::Part]) -> Arg {
+    let words: Vec<Arg> = (parts.iter())
+        .map(|p| {
+            let material = Phrase::id(format!("material:{}", content.material(p.material).id));
+            match p.part {
+                Some(part) => {
+                    let part = &content.part_defs()[usize::from(part.0)].id;
+                    (Msg::new(msg::describe::PART_MADE).role("material", material))
+                        .role("part", Phrase::id(format!("part:{part}")))
+                        .into()
+                }
+                None => material.into(),
+            }
+        })
+        .collect();
+    joined(words, msg::describe::COMMA_JOINED).unwrap_or_else(Arg::empty)
+}
+
+fn joined(items: Vec<Arg>, join: MessageId) -> Option<Arg> {
+    let mut items = items;
+    let last = items.pop()?;
+    Some(items.into_iter().rev().fold(last, |rest, first| {
+        Msg::new(join.clone())
+            .role("first", first)
+            .role("rest", rest)
+            .into()
+    }))
 }
 
 /// What a description shows of worth (Gem lore): nothing unless the player
@@ -74,7 +124,7 @@ pub(crate) fn appraised_for(
     maker: Option<&str>,
 ) -> Vec<Line> {
     let content = lore.content;
-    let mut out = lines_named(stack, content, lore.names(stack), maker);
+    let mut out = lines_named(stack, content, lore.names_phrase(stack), maker);
     if appraisal.capacity
         && let Some(said) = capacity_line(stack, content)
     {
@@ -100,7 +150,8 @@ pub(crate) fn appraised_for(
                 .map(|cutting| gem.map_or(0, |g| gems.value(g, cutting)))
         });
         for (line, worth) in out[gems_at..].iter_mut().zip(worths) {
-            line.text += &format!(" (worth {worth} gold)");
+            line.msg = (Msg::new(msg::describe::GEM_WORTH).role("line", line.msg.clone()))
+                .role("worth", num(worth));
         }
     }
     out
@@ -113,17 +164,14 @@ pub(crate) fn appraised_for(
 fn capacity_line(stack: &Stack, content: &Content) -> Option<Line> {
     content.object(stack.object).kind?;
     let room = usize::from(super::capacity(stack, content));
-    let text = match stack.known_magic().map(|m| m.affixes.len()) {
-        None => format!("It can bear {}.", enchantments(room)),
-        Some(n) if n > room => "It bears more than its make should hold.".to_string(),
-        Some(n) if n == room => "It bears all it can.".to_string(),
-        Some(n) => format!(
-            "It bears {} and could bear {} more.",
-            enchantments(n),
-            crate::text::number_word(room - n)
-        ),
+    let said = match stack.known_magic().map(|m| m.affixes.len()) {
+        None => Msg::new(msg::describe::CAPACITY_CAN).role("room", enchantments(room)),
+        Some(n) if n > room => msg::describe::CAPACITY_OVER.into(),
+        Some(n) if n == room => msg::describe::CAPACITY_ALL.into(),
+        Some(n) => (Msg::new(msg::describe::CAPACITY_MORE).role("has", enchantments(n)))
+            .role("n", num(room - n)),
     };
-    Some(line(LineKind::Stat, text))
+    Some(line(LineKind::Stat, said))
 }
 
 /// Whose mark `stack` bears (Maker's mark, the craftsperson's): "It bears Brakka's mark.", the
@@ -131,19 +179,16 @@ fn capacity_line(stack: &Stack, content: &Content) -> Option<Line> {
 /// no name is known. `None` for an unmarked item.
 fn mark_line(stack: &Stack, maker: Option<&str>) -> Option<Line> {
     stack.worked().filter(|w| w.marked())?;
-    let text = match maker {
-        Some(name) => format!("It bears {name}'s mark."),
-        None => "It bears its maker's mark.".to_string(),
+    let said = match maker {
+        Some(name) => Msg::new(msg::describe::MARK).role("maker", Phrase::literal(name)),
+        None => msg::describe::MARK_UNKNOWN.into(),
     };
-    Some(line(LineKind::Stat, text))
+    Some(line(LineKind::Stat, said))
 }
 
 /// `n` enchantments in words: "one enchantment", "two enchantments".
-fn enchantments(n: usize) -> String {
-    match n {
-        1 => "one enchantment".to_string(),
-        n => format!("{} enchantments", crate::text::number_word(n)),
-    }
+fn enchantments(n: usize) -> Msg {
+    Msg::new(msg::describe::ENCHANTMENTS).role("n", num(n))
 }
 
 /// What a grimoire teaches: its spell and level, then
@@ -156,20 +201,18 @@ fn grimoire_lines(stack: &Stack, lore: Lore<'_>, user: Option<&Actor>) -> Vec<Li
         return Vec::new();
     };
     let def = content.spell(spell);
-    let mut out = vec![line(
-        LineKind::Stat,
-        format!(
-            "Teaches {} (level {}): {}",
-            def.name, def.level, def.description
-        ),
-    )];
+    let teaches = (Msg::new(msg::describe::GRIMOIRE_TEACHES)
+        .role("spell", content.spell_phrase(def)))
+    .role("level", num(def.level))
+    .role("about", Arg::said(data_line::spell_description(&def.id)));
+    let mut out = vec![line(LineKind::Stat, teaches)];
     let most = crate::content::MAX_SPELL_RANK;
     let standing = match user.and_then(|u| u.spell_rank(content, spell)) {
         Some(rank) if rank < most => {
-            format!("You know it at rank {rank} of {most}: reading it would deepen it.")
+            (Msg::new(msg::describe::GRIMOIRE_KNOWN).role("n", num(rank))).role("most", num(most))
         }
-        Some(_) => format!("You know it at rank {most} of {most}: it has nothing more to teach."),
-        None => "You do not know it: reading it is a study.".to_string(),
+        Some(_) => Msg::new(msg::describe::GRIMOIRE_KNOWN_ALL).role("most", num(most)),
+        None => msg::describe::GRIMOIRE_UNKNOWN.into(),
     };
     out.push(line(LineKind::Note, standing));
     out
@@ -188,28 +231,26 @@ fn wand_lines(stack: &Stack, lore: Lore<'_>, user: Option<&Actor>) -> Vec<Line> 
     let mut out = Vec::new();
     if lore.is_identified(stack.object) {
         let spell = content.spell(wand.spell);
-        let text = match user.and_then(|u| wand_does(stack, lore, u)) {
-            Some(does) => format!("Holds {}: {does}", spell.name),
-            None => format!(
-                "Holds {} (level {}): {}",
-                spell.name, spell.level, spell.description
-            ),
+        let named = content.spell_phrase(spell);
+        let said = match user.and_then(|u| wand_does(stack, lore, u)) {
+            Some(does) => {
+                (Msg::new(msg::describe::WAND_HOLDS).role("spell", named)).role("does", does)
+            }
+            None => (Msg::new(msg::describe::WAND_HOLDS_SPELL).role("spell", named))
+                .role("level", num(spell.level))
+                .role("about", Arg::said(data_line::spell_description(&spell.id))),
         };
-        out.push(line(LineKind::Stat, text));
+        out.push(line(LineKind::Stat, said));
     } else {
-        out.push(line(
-            LineKind::Note,
-            "Unidentified: the spell it holds is unknown until it is used or identified.",
-        ));
+        out.push(line(LineKind::Note, msg::describe::WAND_UNKNOWN));
     }
     out.push(match stack.known_charges(content) {
-        Some(0) => line(LineKind::Stat, "Empty: it does nothing now."),
-        Some(1) => line(LineKind::Stat, "1 charge left"),
-        Some(n) => line(LineKind::Stat, format!("{n} charges left")),
-        None => line(
-            LineKind::Note,
-            "Its charges are unknown until it is identified.",
+        Some(0) => line(LineKind::Stat, msg::describe::WAND_EMPTY),
+        Some(n) => line(
+            LineKind::Stat,
+            Msg::new(msg::describe::WAND_CHARGES).role("n", num(n)),
         ),
+        None => line(LineKind::Note, msg::describe::WAND_CHARGES_UNKNOWN),
     });
     out
 }
@@ -219,17 +260,17 @@ fn wand_lines(stack: &Stack, lore: Lore<'_>, user: Option<&Actor>) -> Vec<Line> 
 /// hooks applied, with the damage type or "healed", then a burst's radius as they cast it
 /// (`4d6 fire, radius 2`), as the abilities menu shows a spell's. `None` before its type is
 /// known, for anything else, and for a wand whose spell rolls nothing.
-pub(crate) fn wand_does(stack: &Stack, lore: Lore<'_>, user: &Actor) -> Option<String> {
+pub(crate) fn wand_does(stack: &Stack, lore: Lore<'_>, user: &Actor) -> Option<Msg> {
     let content = lore.content;
     let wand = content.object(stack.object).wand?;
     let rung = stack.known_wand_rung(lore)?;
     let spell = content.spell(wand.spell);
     let roll = user.spell_roll_words(content, spell, CastBy::Wand(rung))?;
-    let mut text = roll.text;
-    if let Some(radius) = user.spell_reach(content, spell).radius {
-        text += &format!(", radius {radius}");
-    }
-    Some(text)
+    Some(match user.spell_reach(content, spell).radius {
+        Some(radius) => (Msg::new(msg::describe::WAND_DOES_RADIUS).role("roll", roll.text))
+            .role("radius", num(radius)),
+        None => roll.text,
+    })
 }
 
 /// What a rod holds, as the player knows it: its effect in words
@@ -241,25 +282,17 @@ fn rod_lines(stack: &Stack, lore: Lore<'_>) -> Vec<Line> {
         return Vec::new();
     };
     if !lore.is_identified(stack.object) {
-        return vec![line(
-            LineKind::Note,
-            "Unidentified: what it does is unknown until it is used or identified.",
-        )];
+        return vec![line(LineKind::Note, msg::describe::ROD_UNKNOWN)];
     }
     let effect = content.rod_effect(rod.effect);
-    vec![
-        line(
-            LineKind::Stat,
-            format!("Holds {}: {}", effect.name, effect.description),
-        ),
-        line(
-            LineKind::Stat,
-            format!(
-                "Costs {} mana a use, before your talents; it never runs out",
-                rod.mana
-            ),
-        ),
-    ]
+    let holds = (Msg::new(msg::describe::ROD_HOLDS)
+        .role("effect", Arg::said(data_line::rod_effect_name(&effect.id))))
+    .role(
+        "about",
+        Arg::said(data_line::rod_effect_description(&effect.id)),
+    );
+    let costs = Msg::new(msg::describe::ROD_COSTS).role("mana", num(rod.mana));
+    vec![line(LineKind::Stat, holds), line(LineKind::Stat, costs)]
 }
 
 /// What a potion does, as the player knows it: in words once its type is
@@ -271,112 +304,117 @@ fn potion_lines(stack: &Stack, lore: Lore<'_>) -> Vec<Line> {
         return Vec::new();
     };
     if !lore.is_identified(stack.object) {
-        return vec![line(
-            LineKind::Note,
-            "You do not know what this potion does.",
-        )];
+        return vec![line(LineKind::Note, msg::describe::POTION_UNKNOWN)];
     }
-    // What its cures end, by the statuses' names ("Bleeding").
-    let cured: Vec<String> = (content.status_ids())
+    // What its cures end, by the statuses' names ("bleeding").
+    let cured: Vec<Arg> = (content.status_ids())
         .filter(|(_, s)| {
             (drink.does.cure_means().iter()).any(|c| s.cured_by.iter().any(|b| b == c))
         })
-        .map(|(_, s)| s.name.to_lowercase())
+        .map(|(id, _)| content.status_phrase(id).into())
         .collect();
-    let cures = crate::text::and_list(&cured.iter().map(String::as_str).collect::<Vec<_>>());
-    let text = match &drink.does {
-        Draught::Heal { .. } if cured.is_empty() => "Heals wounds at once".to_string(),
-        Draught::Heal { .. } => format!("Heals wounds at once, and cures {cures}"),
-        Draught::Cure { diseases: true, .. } if cured.is_empty() => {
-            "Cures every disease at once".to_string()
-        }
+    let none = cured.is_empty();
+    let cures = Arg::List(cured);
+    let said = match &drink.does {
+        Draught::Heal { .. } if none => msg::describe::POTION_HEAL.into(),
+        Draught::Heal { .. } => Msg::new(msg::describe::POTION_HEAL_CURES).role("cures", cures),
+        Draught::Cure { diseases: true, .. } if none => msg::describe::POTION_CURE_DISEASES.into(),
         Draught::Cure { diseases: true, .. } => {
-            format!("Cures every disease and {cures} at once")
+            Msg::new(msg::describe::POTION_CURE_DISEASES_AND).role("cures", cures)
         }
-        Draught::Cure { .. } => format!("Cures {cures} at once"),
-        Draught::Mana { .. } => "Restores mana at once".to_string(),
-        Draught::Elixir { stat, .. } => format!("Makes you {} for good", stat.comparative()),
-        Draught::Harm { .. } => "Sickens whoever drinks it".to_string(),
+        Draught::Cure { .. } => Msg::new(msg::describe::POTION_CURE).role("cures", cures),
+        Draught::Mana { .. } => msg::describe::POTION_MANA.into(),
+        Draught::Elixir { stat, .. } => {
+            Msg::new(msg::describe::POTION_ELIXIR).role("stat", stat.comparative())
+        }
+        Draught::Harm { .. } => msg::describe::POTION_HARM.into(),
         Draught::Boost { status, severity } => {
             let def = content.status(*status);
-            let raised: Vec<&str> = (def.penalty.iter())
+            let raised: Vec<Arg> = (def.penalty.iter())
                 .flat_map(|p| p.by.iter())
                 .filter(|&(_, v)| v > 0)
-                .map(|(stat, _)| boosted(stat))
+                .map(|(stat, _)| boosted(stat).into())
                 .collect();
-            let much = if *severity > 1 { "much " } else { "" };
-            let raised = crate::text::and_list(&raised);
-            format!("Makes you {much}{raised} for a while")
+            let much = if *severity > 1 {
+                msg::describe::POTION_BOOST_MUCH
+            } else {
+                msg::describe::POTION_BOOST
+            };
+            Msg::new(much).role("raised", Arg::List(raised))
         }
         Draught::Vision { status } => {
             let def = content.status(*status);
             let eyes = (def.vision).map(|i| &content.vision_profiles()[i]);
             match eyes {
-                None if def.sees_unseen => "Shows you what hides from the eye for a while",
-                Some(e) if e.sees_uv => "Opens the eyes to light beyond violet for a while",
-                Some(e) if e.darkvision > 0 => "Lets you see in the dark for a while",
-                _ => "Sharpens the eyes in the dark for a while",
+                None if def.sees_unseen => msg::describe::POTION_UNSEEN,
+                Some(e) if e.sees_uv => msg::describe::POTION_UV,
+                Some(e) if e.darkvision > 0 => msg::describe::POTION_DARK,
+                _ => msg::describe::POTION_SHARPEN,
             }
-            .to_string()
+            .into()
         }
-        Draught::Haste { .. } => "Quickens you for a while".to_string(),
+        Draught::Haste { .. } => msg::describe::POTION_HASTE.into(),
         Draught::Resistance { status } => {
-            let kinds: Vec<&str> = (content.status(*status).resist.iter())
-                .map(|&(kind, _)| content.damage_type(kind).name.as_str())
+            let kinds: Vec<Arg> = (content.status(*status).resist.iter())
+                .map(|&(kind, _)| content.damage_type_phrase(kind).into())
                 .collect();
-            let kinds = crate::text::and_list(&kinds);
-            format!("Wards you against {kinds} for a while")
+            Msg::new(msg::describe::POTION_WARD).role("kinds", Arg::List(kinds))
         }
-        Draught::Nourish { .. } => "Fills you as a meal does".to_string(),
-        Draught::Restore => "Restores what was drained or damaged of you".to_string(),
-        Draught::Blink => "Takes you elsewhere at once".to_string(),
-        Draught::Status { status, .. } => format!("{} for a while", lent(content, *status)),
-        Draught::Gamble { .. } => "Does good, or harm, or nothing: a gamble".to_string(),
+        Draught::Nourish { .. } => msg::describe::POTION_NOURISH.into(),
+        Draught::Restore => msg::describe::POTION_RESTORE.into(),
+        Draught::Blink => msg::describe::POTION_BLINK.into(),
+        Draught::Status { status, .. } => {
+            Msg::new(msg::describe::POTION_STATUS).role("does", lent(content, *status))
+        }
+        Draught::Gamble { .. } => msg::describe::POTION_GAMBLE.into(),
     };
-    let mut lines = vec![line(LineKind::Stat, text)];
+    let mut lines = vec![line(LineKind::Stat, said)];
     // A flask: what its splash is, by its spell's name.
     if let Some(flask) = &content.object(stack.object).flask {
-        let spell = &content.spell(flask.spell).name;
-        let text = format!("Thrown, it shatters and casts {spell} where it breaks");
-        lines.push(line(LineKind::Stat, text));
+        let spell = content.spell_phrase(content.spell(flask.spell));
+        lines.push(line(
+            LineKind::Stat,
+            Msg::new(msg::describe::FLASK).role("spell", spell),
+        ));
     }
     lines
 }
 
 /// What a status draught's status does for its drinker, in words, by the first thing it does
 /// that the words know ("Makes you harder to hit"), else by its name ("Makes you barkskin").
-fn lent(content: &Content, status: crate::content::StatusId) -> String {
+fn lent(content: &Content, status: crate::content::StatusId) -> Msg {
     let def = content.status(status);
     let does = if def.unseen {
-        "Hides you from sight"
+        msg::describe::POTION_STATUS_HIDES
     } else if def.wades_free || def.ice_holds {
-        "Lets you walk on water"
+        msg::describe::POTION_STATUS_WATER
     } else if def.senses.is_some() {
-        "Lets you feel the living about you"
+        msg::describe::POTION_STATUS_FEEL
     } else if def.regen > 100 {
-        "Closes your wounds quicker"
+        msg::describe::POTION_STATUS_WOUNDS
     } else if def.combat.dodge > 0 || def.combat.parry > 0 || def.combat.shield > 0 {
-        "Makes you harder to hit"
+        msg::describe::POTION_STATUS_HARDER
     } else if def.combat.to_hit > 0 || def.combat.damage > 0 {
-        "Makes your blows surer"
+        msg::describe::POTION_STATUS_SURER
     } else if def.cost < 100 {
-        "Quickens you"
+        msg::describe::POTION_STATUS_QUICKENS
     } else {
-        return format!("Makes you {}", def.name.to_lowercase());
+        return Msg::new(msg::describe::POTION_STATUS_NAMED)
+            .role("status", content.status_phrase(status));
     };
-    does.to_string()
+    does.into()
 }
 
 /// What a boost of `stat` makes its drinker, in words: "stronger".
-fn boosted(stat: crate::stats::Stat) -> &'static str {
+fn boosted(stat: crate::stats::Stat) -> MessageId {
     use crate::stats::Stat;
     match stat {
-        Stat::Strength => "stronger",
-        Stat::Dexterity => "nimbler",
-        Stat::Toughness => "hardier",
-        Stat::Intelligence => "keener of mind",
-        Stat::Willpower => "firmer of will",
-        Stat::Presence => "more imposing",
+        Stat::Strength => msg::describe::STAT_STRENGTH,
+        Stat::Dexterity => msg::describe::STAT_DEXTERITY,
+        Stat::Toughness => msg::describe::STAT_TOUGHNESS,
+        Stat::Intelligence => msg::describe::STAT_INTELLIGENCE,
+        Stat::Willpower => msg::describe::STAT_WILLPOWER,
+        Stat::Presence => msg::describe::STAT_PRESENCE,
     }
 }
 
@@ -386,50 +424,53 @@ fn boosted(stat: crate::stats::Stat) -> &'static str {
 /// garnet, uncut`), its base stats, and its affixes if identified (`Sharp: +2 damage`) or a note
 /// that its magic is unknown.
 pub fn lines(stack: &Stack, content: &Content) -> Vec<Line> {
-    lines_named(stack, content, stack.names(content), None)
+    lines_named(stack, content, stack.made_phrase(content), None)
 }
 
-/// [`lines`] with what it is called, singular and plural (a scroll's label), and whose mark it
-/// bears, if marked.
-fn lines_named(
-    stack: &Stack,
-    content: &Content,
-    (name, plural): (String, String),
-    maker: Option<&str>,
-) -> Vec<Line> {
+/// [`lines`] with what one of it is called (a scroll's label), and whose mark it bears, if
+/// marked.
+fn lines_named(stack: &Stack, content: &Content, name: Phrase, maker: Option<&str>) -> Vec<Line> {
     let def = content.object(stack.object);
     let mut out = Vec::new();
-    let base = if stack.count == 1 {
-        match stack.worked().and_then(super::Worked::word) {
-            Some(word) => format!("{word} {name}"),
-            None => name,
-        }
+    let thing: Arg = if stack.count == 1 {
+        let word = stack.worked().and_then(super::Worked::word);
+        super::name::ahead(word, name).into()
     } else {
-        format!("{} {plural}", stack.count)
+        (Msg::new(msg::describe::BASE_COUNT).role("n", num(stack.count)))
+            .role("what", name.count(stack.count))
+            .into()
     };
-    let what = match stack.rarity() {
-        Rarity::Normal => capitalized(&base),
-        rarity => format!("{} {base}", capitalized(rarity.word())),
+    let what: Arg = match stack.rarity() {
+        Rarity::Normal => thing,
+        rarity => (Msg::new(msg::describe::BASE_RARITY).role("rarity", rarity.word()))
+            .role("what", thing)
+            .into(),
     };
     let parts = stack.parts(content);
-    let made = content.describe_parts(&parts);
     let weight = format_weight(stack.weight(content));
-    out.push(line(LineKind::Base, format!("{what} · {made} · {weight}")));
+    let base = (Msg::new(msg::describe::BASE).role("what", what))
+        .role("made", parts_arg(content, &parts))
+        .role("weight", Arg::notation(weight));
+    out.push(line(LineKind::Base, base));
     for part in parts.iter() {
         let Some(cutting) = part.gem else { continue };
-        let kind = (part.part).map_or("gem", |p| {
-            content.part_defs()[usize::from(p.0)].name.as_str()
-        });
         let gem = crate::gem::phrase(content, part.material, cutting);
-        out.push(line(
-            LineKind::Base,
-            format!("{}: {gem}", capitalized(kind)),
-        ));
+        let said = match part.part {
+            Some(p) => {
+                let kind = Phrase::id(format!("part:{}", content.part_defs()[usize::from(p.0)].id));
+                (Msg::new(msg::describe::GEM).role("part", kind)).role("gem", gem)
+            }
+            None => Msg::new(msg::describe::GEM_LOOSE).role("gem", gem),
+        };
+        out.push(line(LineKind::Base, said));
     }
     // Its own stats as it is made: another material's damage and Protection (#193), the dice an
     // anvil's work left it; a spirit weapon's with its gifts' threat and piercing.
     let gift = crate::world::spirit_gift(content).filter(|_| stack.is_spirit());
-    let spirit = gift.map(|(_, threat, pierces, _)| Spirit { threat, pierces });
+    let spirit = gift.map(|g| Spirit {
+        threat: g.threat,
+        pierces: g.pierces,
+    });
     let (_, damage) = crate::variant::weapon(def, &parts, content);
     let protection = stack.base_protection(content);
     let shield = def.shield + crate::variant::shield(def, &parts, content);
@@ -451,222 +492,210 @@ fn lines_named(
     let numbers = super::Numbers::of(stack, content).lines(content);
     out.extend(numbers.into_iter().map(|t| line(LineKind::Stat, t)));
     out.extend(mark_line(stack, maker));
-    // A spirit weapon's power, as a unique's is said.
-    if let Some((_, _, _, phrase)) = gift {
-        out.push(line(LineKind::Power, phrase));
+    // A spirit weapon's power, as a unique's is said: the data's words.
+    if let Some(gift) = gift {
+        let said = data_line::said(data_line::spirit_weapon_phrase(gift.talent));
+        out.push(line(LineKind::Power, said));
     }
     if stack.rarity() == Rarity::Normal {
         return out;
     }
     // A curse the player knows of (#1754), identified or shown by wearing or throwing it.
     if stack.known_cursed(content) {
-        out.push(line(
-            LineKind::Note,
-            "Cursed: once worn or wielded, it will not come off.",
-        ));
+        out.push(line(LineKind::Note, msg::describe::CURSED));
     }
     match stack.known_magic() {
-        None => out.push(line(
-            LineKind::Note,
-            "Unidentified: what its magic does is unknown, though it works all the same.",
-        )),
+        None => out.push(line(LineKind::Note, msg::describe::MAGIC_UNKNOWN)),
         Some(magic) => {
             let kind = def.kind.unwrap_or(ItemKind::Ring);
             for rolled in magic.rolled(content) {
-                let text = format!("{}: {}", rolled.def.name, phrase(&rolled, kind, content));
-                out.push(line(LineKind::Affix(rolled.def.kind), text));
+                let said = affix_line(&rolled, Some(kind), content);
+                out.push(line(LineKind::Affix(rolled.def.kind), said));
             }
-            // A unique item's power and lore.
+            // A unique item's power and lore: the data's words.
             if let Some(unique) = magic.unique.as_deref().and_then(|id| content.unique(id)) {
-                out.extend(
-                    unique
-                        .phrase
-                        .iter()
-                        .map(|p| line(LineKind::Power, p.as_str())),
-                );
-                out.extend(unique.lore.iter().map(|l| line(LineKind::Lore, l.as_str())));
+                if unique.phrase.is_some() {
+                    let said = data_line::said(data_line::unique_phrase(&unique.id));
+                    out.push(line(LineKind::Power, said));
+                }
+                if unique.lore.is_some() {
+                    let said = data_line::said(data_line::unique_lore(&unique.id));
+                    out.push(line(LineKind::Lore, said));
+                }
             }
         }
     }
     out
 }
 
-/// The creatures a bane affix is the bane of, in the plural: `orcs`, `undead`.
-pub fn bane_of(rolled: &Rolled<'_>, content: &Content) -> String {
-    let tag = rolled.def.tag.as_deref().unwrap_or("creature");
-    content.plural(&crate::content::spoken(tag))
+/// An affix's line: its name and what it does on an item of `kind` ([`phrase`]): "Sharp: +2
+/// damage"; with no kind, its name alone before the colon. The enchanting choice's too.
+pub fn affix_line(rolled: &Rolled<'_>, kind: Option<ItemKind>, content: &Content) -> Msg {
+    let does: Arg = kind.map_or_else(Arg::empty, |k| phrase(rolled, k, content).into());
+    (Msg::new(msg::describe::AFFIX).role("affix", Phrase::id(format!("affix:{}", rolled.def.id))))
+        .role("does", does)
 }
 
-/// What `rolled`, on an item of `kind`, does, in plain language: "+2 damage", "adds 1d4
-/// damage", "+1 to Strength", "attacks faster".
-pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> String {
+/// The creatures a bane affix is the bane of, said `plural`: `orcs`, `undead`.
+fn bane_of(rolled: &Rolled<'_>) -> Phrase {
+    let tag = rolled.def.tag.as_deref().unwrap_or("creature");
+    Phrase::id(format!("tag:{tag}"))
+}
+
+/// What `rolled`, on an item of `kind`, does, in plain language (a `describe.does_*` message):
+/// "+2 damage", "adds 1d4 damage", "+1 to Strength", "attacks faster".
+pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> Msg {
     let effect = rolled.def.effect;
     let v = rolled.value;
     if rolled.def.cursed {
         return hindrance(effect, v);
     }
     let local = effect.is_local_on(kind);
-    let every = |text: String| {
+    let every = |id: MessageId| {
+        let said = Msg::new(id).role("v", num(v));
         if local {
-            text
+            said
         } else {
-            format!("{text} with every attack")
+            Msg::new(msg::describe::DOES_WITH_EVERY_ATTACK).role("does", said)
         }
     };
+    let by = |id: MessageId| Msg::new(id).role("v", num(v));
     match effect {
-        Effect::ToHit => every(format!("+{v} to hit")),
-        Effect::Damage => every(format!("+{v} damage")),
-        Effect::ExtraDamage => format!("adds 1d{v} damage"),
-        Effect::Elemental => format!("adds 1d{v} {} damage", kind_name(rolled, content)),
-        Effect::Resistance => format!("+{v}% {} resistance", kind_name(rolled, content)),
-        Effect::Threat => every(format!("criticals threaten on {v} more {}", rolls(v))),
-        Effect::Crit => every(format!("+{v} to the critical damage multiplier")),
-        Effect::AttackSpeed if local => format!("attacks {}", faster(v)),
-        Effect::AttackSpeed => format!("all your attacks are {}", faster(v)),
-        Effect::Range => format!("+{v} {} of range", cells(v)),
-        Effect::Draw => format!("needs {v} less Strength to draw"),
-        Effect::Durability => format!("breaks {v}% less often"),
-        Effect::Bane => format!(
-            "+{v} to hit and damage against {}",
-            bane_of(rolled, content)
-        ),
-        Effect::Parry => format!("+{v} to Parry"),
-        Effect::Armour => format!("+{v} to Armour"),
-        Effect::Protection => format!("+{v} to Protection"),
-        Effect::Shield => format!("+{v} to Shield"),
-        Effect::MaxDex => format!("lets Dexterity add {v} more to Defence"),
-        Effect::Weight => format!("{v}% lighter"),
-        Effect::Proof => "nothing can damage it".into(),
-        Effect::Dodge => format!("+{v} to Dodge"),
-        Effect::Deflection => format!("+{v} to Deflection"),
-        Effect::Natural => format!("+{v} to natural armour"),
-        Effect::MaxHp => format!("+{v} to maximum hit points"),
-        Effect::Regeneration => format!("hit points come back {v}% faster"),
-        Effect::MaxMana => format!("+{v} to maximum mana"),
-        Effect::ManaRegeneration => format!("mana comes back {v}% faster"),
-        Effect::ManaCost => format!("abilities cost {v}% less mana"),
-        Effect::SpellEase => format!("hinders casting {v} {} less", points(v)),
-        Effect::SpellToHit => format!("+{v} to hit with spells"),
-        Effect::SpellThreat => format!("spells threaten a critical on {v} more {}", rolls(v)),
-        Effect::SpellRungs => format!("spells stand {v} {} higher on their ladders", rungs(v)),
-        Effect::SpellBonus => format!("+{v} on every spell's roll, harm or healing"),
-        Effect::SpellSides => format!("spell dice {v} {} bigger", sides(v)),
-        Effect::SpellDice => format!("spells roll {v} {} more", dice(v)),
-        Effect::SpellReroll => format!("spell dice showing {v} or less are rolled again, once"),
-        Effect::SpellReach => format!("spells reach {v} {} farther", cells(v)),
-        Effect::SpellDuration => format!("buffs and hexes last {v} {} longer", degrees(v)),
-        Effect::ManaOnKill => format!("+{v} mana on a kill close by"),
-        Effect::WandRungs => format!("wands cast {v} {} higher", rungs(v)),
-        Effect::ResourceMax => format!("+{v} to maximum {}", pool_name(rolled, content)),
-        Effect::ResourceRate => format!("{} comes back {v}% faster", pool_name(rolled, content)),
+        Effect::ToHit => every(msg::describe::DOES_TO_HIT),
+        Effect::Damage => every(msg::describe::DOES_DAMAGE),
+        Effect::ExtraDamage => by(msg::describe::DOES_EXTRA_DAMAGE),
+        Effect::Elemental => {
+            by(msg::describe::DOES_ELEMENTAL).role("kind", kind_name(rolled, content))
+        }
+        Effect::Resistance => {
+            by(msg::describe::DOES_RESISTANCE).role("kind", kind_name(rolled, content))
+        }
+        Effect::Threat => every(msg::describe::DOES_THREAT),
+        Effect::Crit => every(msg::describe::DOES_CRIT),
+        Effect::AttackSpeed if local => {
+            Msg::new(msg::describe::DOES_ATTACK_SPEED).role("speed", faster(v))
+        }
+        Effect::AttackSpeed => {
+            Msg::new(msg::describe::DOES_ATTACK_SPEED_ALL).role("speed", faster(v))
+        }
+        Effect::Range => by(msg::describe::DOES_RANGE),
+        Effect::Draw => by(msg::describe::DOES_DRAW),
+        Effect::Durability => by(msg::describe::DOES_DURABILITY),
+        Effect::Bane => by(msg::describe::DOES_BANE).role("bane", bane_of(rolled)),
+        Effect::Parry => by(msg::describe::DOES_PARRY),
+        Effect::Armour => by(msg::describe::DOES_ARMOUR),
+        Effect::Protection => by(msg::describe::DOES_PROTECTION),
+        Effect::Shield => by(msg::describe::DOES_SHIELD),
+        Effect::MaxDex => by(msg::describe::DOES_MAX_DEX),
+        Effect::Weight => by(msg::describe::DOES_LIGHTER),
+        Effect::Proof => msg::describe::DOES_PROOF.into(),
+        Effect::Dodge => by(msg::describe::DOES_DODGE),
+        Effect::Deflection => by(msg::describe::DOES_DEFLECTION),
+        Effect::Natural => by(msg::describe::DOES_NATURAL),
+        Effect::MaxHp => by(msg::describe::DOES_MAX_HP),
+        Effect::Regeneration => by(msg::describe::DOES_REGENERATION),
+        Effect::MaxMana => by(msg::describe::DOES_MAX_MANA),
+        Effect::ManaRegeneration => by(msg::describe::DOES_MANA_REGENERATION),
+        Effect::ManaCost => by(msg::describe::DOES_MANA_COST),
+        Effect::SpellEase => by(msg::describe::DOES_SPELL_EASE),
+        Effect::SpellToHit => by(msg::describe::DOES_SPELL_TO_HIT),
+        Effect::SpellThreat => by(msg::describe::DOES_SPELL_THREAT),
+        Effect::SpellRungs => by(msg::describe::DOES_SPELL_RUNGS),
+        Effect::SpellBonus => by(msg::describe::DOES_SPELL_BONUS),
+        Effect::SpellSides => by(msg::describe::DOES_SPELL_SIDES),
+        Effect::SpellDice => by(msg::describe::DOES_SPELL_DICE),
+        Effect::SpellReroll => by(msg::describe::DOES_SPELL_REROLL),
+        Effect::SpellReach => by(msg::describe::DOES_SPELL_REACH),
+        Effect::SpellDuration => by(msg::describe::DOES_SPELL_DURATION),
+        Effect::ManaOnKill => by(msg::describe::DOES_MANA_ON_KILL),
+        Effect::WandRungs => by(msg::describe::DOES_WAND_RUNGS),
+        Effect::ResourceMax => {
+            by(msg::describe::DOES_RESOURCE_MAX).role("pool", pool_name(rolled, content))
+        }
+        Effect::ResourceRate => {
+            by(msg::describe::DOES_RESOURCE_RATE).role("pool", pool_name(rolled, content))
+        }
         Effect::ActiveStamina => {
-            format!("weapon feats cost {v} {} less", pool_name(rolled, content))
+            by(msg::describe::DOES_STAMINA).role("pool", pool_name(rolled, content))
         }
         Effect::ResourceOnKill => {
-            format!("+{v} {} on a kill close by", pool_name(rolled, content))
+            by(msg::describe::DOES_RESOURCE_ON_KILL).role("pool", pool_name(rolled, content))
         }
-        Effect::Stat(stat) => format!("+{v} to {}", stat.name()),
-        Effect::MoveSpeed => format!("you move {}", faster(v)),
-        Effect::Carry => format!("+{v} kg carrying capacity"),
-        Effect::Stealth => format!("your footsteps are {v}% quieter"),
-        Effect::DoorKick => "your kicks break doors more easily".into(),
-        Effect::DigPercent => format!("digs {v}% faster"),
-        Effect::Hunger => format!("hunger comes {v}% slower"),
-        Effect::TrapDamage => format!("traps hurt you {v}% less"),
-        Effect::DiseaseCheck => format!("+{v} to resist disease"),
-        Effect::PotionKept => format!("a potion is not used up {v}% of the time"),
+        Effect::Stat(stat) => by(msg::describe::DOES_STAT).role("stat", stat.name()),
+        Effect::MoveSpeed => Msg::new(msg::describe::DOES_MOVE_SPEED).role("speed", faster(v)),
+        Effect::Carry => by(msg::describe::DOES_CARRY),
+        Effect::Stealth => by(msg::describe::DOES_STEALTH),
+        Effect::DoorKick => msg::describe::DOES_DOOR_KICK.into(),
+        Effect::DigPercent => by(msg::describe::DOES_DIG),
+        Effect::Hunger => by(msg::describe::DOES_HUNGER),
+        Effect::TrapDamage => by(msg::describe::DOES_TRAP_DAMAGE),
+        Effect::DiseaseCheck => by(msg::describe::DOES_DISEASE_CHECK),
+        Effect::PotionKept => by(msg::describe::DOES_POTION_KEPT),
         Effect::Light => {
             let tier = rolled.def.tier(rolled.tier);
             let radius = (tier.and_then(|t| t.light)).map_or(0, |id| content.light(id).radius);
             match radius {
-                ..=2 => "glows faintly".into(),
-                3 => "glows".into(),
-                _ => "glows brightly".into(),
+                ..=2 => msg::describe::DOES_GLOWS_FAINTLY,
+                3 => msg::describe::DOES_GLOWS,
+                _ => msg::describe::DOES_GLOWS_BRIGHTLY,
             }
+            .into()
         }
         Effect::Skill => match rolled.def.skill {
-            Some(id) => format!("+{v} to {}", content.skill(id).name),
-            None => format!("+{v} to a skill"),
+            Some(id) => by(msg::describe::DOES_SKILL).role("skill", content.skill_phrase(id)),
+            None => by(msg::describe::DOES_SKILL_ANY),
         },
     }
 }
 
 /// What a curse's effect `effect` of value `v` does (#1754): the effect the other way.
-fn hindrance(effect: Effect, v: i32) -> String {
+fn hindrance(effect: Effect, v: i32) -> Msg {
     match effect {
-        Effect::Weight => format!("{v}% heavier"),
-        Effect::MoveSpeed => format!("you move {}", slower(v)),
-        Effect::Hunger => format!("hunger comes {v}% faster"),
-        _ => format!("hinders you ({})", effect.id()),
+        Effect::Weight => Msg::new(msg::describe::DOES_HEAVIER).role("v", num(v)),
+        Effect::MoveSpeed => Msg::new(msg::describe::DOES_MOVE_SPEED).role("speed", slower(v)),
+        Effect::Hunger => Msg::new(msg::describe::DOES_HUNGER_FASTER).role("v", num(v)),
+        _ => Msg::new(msg::describe::DOES_HINDERS).role("effect", Arg::id(effect.id())),
     }
 }
 
 /// How much slower, in words: speed numbers stay hidden.
-fn slower(percent: i32) -> &'static str {
+fn slower(percent: i32) -> MessageId {
     match percent {
-        ..=7 => "a little slower",
-        8..=15 => "slower",
-        _ => "much slower",
+        ..=7 => msg::describe::SPEED_SLOWER_LITTLE,
+        8..=15 => msg::describe::SPEED_SLOWER,
+        _ => msg::describe::SPEED_SLOWER_MUCH,
     }
 }
 
 /// The damage type a typed affix names ("fire"); "some kind of" for one that names none.
-fn kind_name(rolled: &Rolled<'_>, content: &Content) -> String {
+fn kind_name(rolled: &Rolled<'_>, content: &Content) -> Arg {
     (rolled.def.damage_type).map_or_else(
-        || "some kind of".to_string(),
-        |k| content.damage_type(k).name.clone(),
+        || msg::describe::SOME_KIND.into(),
+        |k| content.damage_type_phrase(k).into(),
     )
 }
 
 /// The resource a pooled affix names, in lower case ("stamina"); "a pool" for one that names
 /// none.
-fn pool_name(rolled: &Rolled<'_>, content: &Content) -> String {
+fn pool_name(rolled: &Rolled<'_>, content: &Content) -> Arg {
     (rolled.def.resource).map_or_else(
-        || "a pool".to_string(),
-        |id| content.resource(id).name.to_lowercase(),
+        || msg::describe::A_POOL.into(),
+        |id| content.resource_phrase(id).into(),
     )
 }
 
 /// How much faster, in words: speed numbers stay hidden.
-fn faster(percent: i32) -> &'static str {
+fn faster(percent: i32) -> MessageId {
     match percent {
-        ..=7 => "a little faster",
-        8..=12 => "faster",
-        _ => "much faster",
+        ..=7 => msg::describe::SPEED_FASTER_LITTLE,
+        8..=12 => msg::describe::SPEED_FASTER,
+        _ => msg::describe::SPEED_FASTER_MUCH,
     }
-}
-
-fn rolls(n: i32) -> &'static str {
-    if n == 1 { "roll" } else { "rolls" }
-}
-
-fn cells(n: i32) -> &'static str {
-    if n == 1 { "cell" } else { "cells" }
-}
-
-fn points(n: i32) -> &'static str {
-    if n == 1 { "point" } else { "points" }
-}
-
-fn degrees(n: i32) -> &'static str {
-    if n == 1 { "degree" } else { "degrees" }
-}
-
-fn rungs(n: i32) -> &'static str {
-    if n == 1 { "rung" } else { "rungs" }
-}
-
-fn sides(n: i32) -> &'static str {
-    if n == 1 { "side" } else { "sides" }
-}
-
-fn dice(n: i32) -> &'static str {
-    if n == 1 { "die" } else { "dice" }
 }
 
 /// The base stats of `def` in words: how it is held or worn, its damage and criticals, how far it
 /// shoots or is thrown, what it needs, how quick it is, its Defence, and whether it breaks.
-pub fn base_stats(def: &ObjectDef, content: &Content) -> Vec<String> {
+pub fn base_stats(def: &ObjectDef, content: &Content) -> Vec<Msg> {
     stats(
         def,
         def.attack.as_ref(),
@@ -694,8 +723,9 @@ fn stats(
     damage: i32,
     (protection, shield): (i32, i32),
     spirit: Option<Spirit>,
-) -> Vec<String> {
+) -> Vec<Msg> {
     let mut out = Vec::new();
+    let n = |id: MessageId, n: i32| Msg::new(id).role("n", num(n));
     if let Some(held) = how_held(def, content) {
         out.push(held);
     }
@@ -707,25 +737,28 @@ fn stats(
         } else {
             format!("{threat}–{HIGHEST}")
         };
-        let shot = if def.launches.is_some() {
-            " a shot"
+        let id = if def.launches.is_some() {
+            msg::describe::DAMAGE_SHOT
         } else {
-            ""
+            msg::describe::DAMAGE
         };
-        out.push(format!(
-            "Damage {}{shot}; criticals on {critical}, ×{} damage",
-            attack.damage.plus(damage),
-            attack.crit
-        ));
+        out.push(
+            (Msg::new(id).role(
+                "dice",
+                Arg::notation(attack.damage.plus(damage).to_string()),
+            ))
+            .role("critical", Arg::notation(critical))
+            .role("crit", num(attack.crit)),
+        );
         // Its kinds of damage: "Slashing or piercing damage".
-        let kinds: Vec<&str> = (attack.kinds.iter())
-            .map(|k| content.damage_type(k).name.as_str())
+        let kinds: Vec<Arg> = (attack.kinds.iter())
+            .map(|k| content.damage_type_phrase(k).into())
             .collect();
-        if !kinds.is_empty() {
-            out.push(format!("{} damage", capitalized(&kinds.join(" or "))));
+        if let Some(kinds) = joined(kinds, msg::describe::OR_JOINED) {
+            out.push(Msg::new(msg::describe::DAMAGE_KINDS).role("kinds", kinds));
         }
         if let Some(strength) = attack.strength {
-            out.push(format!("Needs Strength {strength} to draw"));
+            out.push(n(msg::describe::NEEDS_STRENGTH, i32::from(strength)));
         }
         if def.attack_cost.is_some() || def.launches.is_some() {
             let action = if def.launches.is_some() {
@@ -736,119 +769,134 @@ fn stats(
             let normal = content.action_costs().cost(action);
             let cost = def.attack_cost.unwrap_or(normal);
             if cost < normal {
-                out.push("Quick to strike".into());
+                out.push(msg::describe::QUICK.into());
             } else if cost > normal {
-                out.push("Slow to strike".into());
+                out.push(msg::describe::SLOW.into());
             }
         }
     }
     match (def.range, def.launches.is_some()) {
-        (Some(range), true) => out.push(format!("Shoots up to {range} cells")),
-        (Some(range), false) => out.push(format!("Thrown up to {range} cells")),
+        (Some(range), true) => out.push(n(msg::describe::SHOOTS, range)),
+        (Some(range), false) => out.push(n(msg::describe::THROWN, range)),
         _ => {}
     }
     // A digging tool's power, its base stat as damage is a weapon's.
     if let Some(dig) = def.dig {
-        out.push(format!("Digs at {dig}"));
+        out.push(Msg::new(msg::describe::DIGS).role("dig", num(dig)));
     }
     if def.reloads {
-        out.push("Reloaded after every shot".into());
+        out.push(msg::describe::RELOADS.into());
     }
     if let Some(added) = &def.added {
-        let kind = &content.damage_type(added.kind).name;
-        out.push(format!("Adds {} {kind} damage", added.dice));
+        let kind = content.damage_type_phrase(added.kind);
+        out.push(
+            (Msg::new(msg::describe::ADDS).role("dice", Arg::notation(added.dice.to_string())))
+                .role("kind", kind),
+        );
     }
     // How much armour it ignores stays hidden, as the soak does: only that it does.
     if def.penetration > 0 || spirit.is_some_and(|s| s.pierces) {
-        out.push("Pierces armour".into());
+        out.push(msg::describe::PIERCES.into());
     }
     if def.parry > 0 {
-        out.push(format!("Parry +{}", def.parry));
+        out.push(n(msg::describe::PARRY, def.parry));
     }
     if def.armour > 0 {
-        out.push(format!("Armour +{}", def.armour));
+        out.push(n(msg::describe::ARMOUR, def.armour));
     }
     if protection > 0 {
-        let against: Vec<String> = (def.protects.iter())
+        let against: Vec<Arg> = (def.protects.iter())
             .map(|&(k, more)| {
-                let sign = if more < 0 { "\u{2212}" } else { "+" };
-                format!(
-                    "{sign}{} against {}",
-                    more.abs(),
-                    content.damage_type(k).name
-                )
+                let id = if more < 0 {
+                    msg::describe::PROTECTS_LESS
+                } else {
+                    msg::describe::PROTECTS_MORE
+                };
+                n(id, more.abs())
+                    .role("kind", content.damage_type_phrase(k))
+                    .into()
             })
             .collect();
-        if against.is_empty() {
-            out.push(format!("Protection {protection}"));
-        } else {
-            out.push(format!("Protection {protection} ({})", against.join(", ")));
-        }
+        out.push(match joined(against, msg::describe::LISTED) {
+            None => n(msg::describe::PROTECTION, protection),
+            Some(against) => {
+                n(msg::describe::PROTECTION_AGAINST, protection).role("against", against)
+            }
+        });
     }
-    let resists: Vec<String> = (def.resist.iter())
-        .filter(|&&(_, p)| p > 0)
-        .map(|&(k, p)| format!("{} {p}%", content.damage_type(k).name))
-        .collect();
-    if !resists.is_empty() {
-        out.push(format!("Resists {}", resists.join(", ")));
+    let resist = |weak: bool| -> Option<Arg> {
+        let kinds: Vec<Arg> = (def.resist.iter())
+            .filter(|&&(_, p)| if weak { p < 0 } else { p > 0 })
+            .map(|&(k, p)| {
+                n(msg::describe::RESIST, p.abs())
+                    .role("kind", content.damage_type_phrase(k))
+                    .into()
+            })
+            .collect();
+        joined(kinds, msg::describe::LISTED)
+    };
+    if let Some(kinds) = resist(false) {
+        out.push(Msg::new(msg::describe::RESISTS).role("kinds", kinds));
     }
-    let weak: Vec<String> = (def.resist.iter())
-        .filter(|&&(_, p)| p < 0)
-        .map(|&(k, p)| format!("{} {}%", content.damage_type(k).name, -p))
-        .collect();
-    if !weak.is_empty() {
-        out.push(format!("Vulnerable to {}", weak.join(", ")));
+    if let Some(kinds) = resist(true) {
+        out.push(Msg::new(msg::describe::VULNERABLE).role("kinds", kinds));
     }
     if shield > 0 {
-        out.push(format!("Shield +{shield}"));
+        out.push(n(msg::describe::SHIELD, shield));
     }
     if let Some(max) = def.max_dex {
-        out.push(format!(
-            "Dexterity adds at most +{max} to Defence while worn"
-        ));
+        out.push(n(msg::describe::MAX_DEX, max));
     }
     if def.breaks > 0 {
-        out.push(format!("Breaks on a hit {}% of the time", def.breaks));
+        out.push(n(msg::describe::BREAKS, i32::from(def.breaks)));
     }
     if def.attack.is_some_and(|attack| attack.finesse) {
-        out.push("Finesse: Dexterity guides its blows, not Strength".to_string());
+        out.push(msg::describe::FINESSE.into());
     }
     out
 }
 
 /// How it is held or worn: "Long blade, for the main hand", "Bow: readied as a missile weapon,
 /// shoots arrows", "Worn on the head".
-fn how_held(def: &ObjectDef, content: &Content) -> Option<String> {
+fn how_held(def: &ObjectDef, content: &Content) -> Option<Msg> {
     let slot = def.slot.as_ref()?;
     let slot = content.slots().iter().find(|s| &s.fits == slot)?;
-    let category = weapon_noun(def, content).map(|c| capitalized(&c));
-    let place = slot.name.to_lowercase();
-    Some(match (category, slot.action) {
-        (Some(c), ActionKind::Wield) if def.two_handed => format!("{c}, for both hands"),
-        (Some(c), ActionKind::Wield) => format!("{c}, for the {place}"),
+    let noun = weapon_noun_phrase(def, content);
+    let place = Phrase::id(format!("slot:{}", slot.id));
+    Some(match (noun, slot.action) {
+        (Some(c), ActionKind::Wield) if def.two_handed => {
+            Msg::new(msg::describe::HELD_BOTH_HANDS).role("noun", c)
+        }
+        (Some(c), ActionKind::Wield) => {
+            (Msg::new(msg::describe::HELD_MAIN).role("noun", c)).role("slot", place)
+        }
         (Some(c), _) if def.launches.is_some() => {
-            let ammo = (def.launches.as_deref())
+            let ammo: Arg = (def.launches.as_deref())
                 .and_then(|kind| content.ammunition(kind))
-                .map_or("ammunition".to_string(), |o| o.plural.clone());
-            format!("{c}, readied as a missile weapon; shoots {ammo}")
+                .map_or_else(
+                    || msg::describe::AMMUNITION.into(),
+                    |o| Phrase::id(format!("object:{}", o.id)).into(),
+                );
+            (Msg::new(msg::describe::AMMO_LAUNCHER).role("noun", c)).role("ammo", ammo)
         }
         (_, _) if def.ammo.is_some() => {
-            let from: Vec<String> = (content.object_defs().iter())
+            let nouns: Vec<Phrase> = (content.object_defs().iter())
                 .filter(|o| o.launches.is_some() && o.launches == def.ammo)
-                .filter_map(|o| weapon_noun(o, content))
-                .map(|c| format!("{c}s"))
+                .filter_map(|o| weapon_noun_phrase(o, content))
                 .fold(Vec::new(), |mut all, c| {
                     if !all.contains(&c) {
                         all.push(c);
                     }
                     all
                 });
-            format!("Ammunition, quivered; shot from {}", from.join(" and "))
+            let from: Vec<Arg> = (nouns.into_iter()).map(|c| c.count(2).into()).collect();
+            let from = joined(from, msg::describe::AND_JOINED).unwrap_or_else(Arg::empty);
+            Msg::new(msg::describe::AMMO_QUIVERED).role("from", from)
         }
-        (_, ActionKind::Wield) => format!("Held in the {place}"),
-        (_, ActionKind::Ready) => format!("Readied: {place}"),
-        _ if slot.fits == "ring" => "Worn on a finger".into(),
-        _ => format!("Worn: {place}"),
+        (_, ActionKind::Wield) => Msg::new(msg::describe::HELD_IN).role("slot", place),
+        (_, ActionKind::Ready) => Msg::new(msg::describe::READIED).role("slot", place),
+        _ if slot.fits == "ring" => msg::describe::WORN_FINGER.into(),
+        _ => Msg::new(msg::describe::WORN).role("slot", place),
     })
 }
 
@@ -890,56 +938,54 @@ pub fn make_lines(
             .collect(),
         false => Vec::new(),
     };
-    let apart = match () {
-        () if protected => "It would not come apart.".to_string(),
-        () if saved.is_empty() => "Nothing in it is worth saving.".to_string(),
-        () if batch == 1 => format!(
-            "Taken apart, it would give {}.",
-            crate::object::phrase(&saved, lore)
-        ),
-        () => format!(
-            "Taken apart, enough of them would give {}.",
-            crate::object::phrase(&saved, lore)
-        ),
+    let apart: Msg = match () {
+        () if protected => msg::describe::MAKE_PROTECTED.into(),
+        () if saved.is_empty() => msg::describe::MAKE_NOTHING.into(),
+        () if batch == 1 => Msg::new(msg::describe::MAKE_APART)
+            .role("what", crate::world::items::stacks_arg(&saved, lore)),
+        () => Msg::new(msg::describe::MAKE_APART_BATCH)
+            .role("what", crate::world::items::stacks_arg(&saved, lore)),
     };
     out.push(line(LineKind::Note, apart));
     let place = match () {
-        () if crate::world::temperable(content, stack) => Some("at the anvil"),
-        () if crate::world::whittleable(content, stack) => Some("with a knife"),
+        () if crate::world::temperable(content, stack) => Some(msg::describe::PLACE_ANVIL),
+        () if crate::world::whittleable(content, stack) => Some(msg::describe::PLACE_KNIFE),
         () => None,
     };
     if let Some(place) = place {
         let most = usize::from(content.temper().most);
         let worked = stack.worked();
-        let text = match worked.map_or(0, |w| w.improved.len()) {
+        let said: Msg = match worked.map_or(0, |w| w.improved.len()) {
             _ if worked.is_some_and(|w| w.damaged) => {
-                let hands = if mends { ", or your own hands" } else { "" };
-                format!("It is damaged: work {place} would make it good{hands}.")
-            }
-            done if done >= most => "It can be made no finer.".to_string(),
-            done => {
-                // `most` is at most the grades' three (`data/rules/temper.toml`).
-                let (count, what) = match most - done {
-                    1 => ("one", "improvement"),
-                    2 => ("two", "improvements"),
-                    _ => ("three", "improvements"),
+                let id = if mends {
+                    msg::describe::MAKE_DAMAGED_MEND
+                } else {
+                    msg::describe::MAKE_DAMAGED
                 };
-                format!("It will take {count} more {what} {place}.")
+                Msg::new(id).role("place", place)
             }
+            done if done >= most => msg::describe::MAKE_FINEST.into(),
+            // `most` is at most the grades' three (`data/rules/temper.toml`).
+            done => (Msg::new(msg::describe::MAKE_IMPROVEMENTS)
+                .role("n", num((most - done).min(3))))
+            .role("place", place),
         };
-        out.push(line(LineKind::Note, text));
+        out.push(line(LineKind::Note, said));
     }
     if let Some(part) = stack.parts(content).first() {
         let material = content.material(part.material);
         let hard = match material.work {
-            w if w >= 4 => Some("very hard to work"),
-            1..=3 => Some("hard to work"),
-            w if w <= -2 => Some("soft and easy to work"),
+            w if w >= 4 => Some(msg::describe::HARD_VERY),
+            1..=3 => Some(msg::describe::HARD),
+            w if w <= -2 => Some(msg::describe::HARD_SOFT),
             _ => None,
         };
         if let Some(hard) = hard {
-            let name = capitalized(&material.name);
-            out.push(line(LineKind::Note, format!("{name} is {hard}.")));
+            let name = Phrase::id(format!("material:{}", material.id));
+            out.push(line(
+                LineKind::Note,
+                (Msg::new(msg::describe::MAKE_HARD).role("material", name)).role("hard", hard),
+            ));
         }
     }
     out

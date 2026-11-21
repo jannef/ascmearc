@@ -127,16 +127,14 @@ impl World {
     }
 
     /// The free picks still due on a drafted run after `picks`, with the names of the talents
-    /// they are of (a dwarf's Sworn foe: 1, `["Sworn foe"]`; 0 and none for most).
-    pub fn creation_free_left(&self, picks: &[String]) -> (u8, Vec<String>) {
+    /// they are of (a dwarf's Sworn foe: 1 and its id; 0 and none for most).
+    pub fn creation_free_left(&self, picks: &[String]) -> (u8, Vec<TalentId>) {
         let Some(world) = self.after_picks(picks).ok() else {
             return (0, Vec::new());
         };
         let free = world.creation_due().map_or(0, |d| d.free);
-        let names = (world.free_talents_at(1).into_iter())
-            .map(|t| self.content.talents().get(t).name.clone())
-            .collect();
-        (free, if free > 0 { names } else { Vec::new() })
+        let talents = world.free_talents_at(1);
+        (free, if free > 0 { talents } else { Vec::new() })
     }
 
     /// The bonus picks of the class's creation trees still due on a drafted run after `picks`

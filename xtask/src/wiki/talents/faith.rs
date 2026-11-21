@@ -1,6 +1,7 @@
 //! What the faith talents do, in the wiki's words (`ascmearc_core::talent::FaithEffect`, #1495): one
 //! arm a variant, beside the area's enum and sum in `ascmearc-core/src/talent/faith.rs`.
 
+use super::super::util::stat_name;
 use super::{prayer_text, resource_name};
 use ascmearc_core::content::{Content, SmiteRiderKind};
 use ascmearc_core::talent::FaithEffect;
@@ -35,7 +36,7 @@ pub(super) fn text(content: &Content, effect: &FaithEffect) -> String {
             unholy,
         } => {
             let aim = aim.map_or_else(String::new, |stat| {
-                format!(", your {} modifier added to hit", stat.name())
+                format!(", your {} modifier added to hit", stat_name(stat))
             });
             let unholy = match (unholy, content.smite()) {
                 (0, _) | (_, None) => String::new(),
@@ -67,7 +68,7 @@ pub(super) fn text(content: &Content, effect: &FaithEffect) -> String {
                     "the foe checks {} (2d12 + its modifier) against {difficulty} plus your \
                      Smite's aim modifier; failed, it is {} by you for {turns} turns, fleeing \
                      you",
-                    stat.name(),
+                    stat_name(stat),
                     status(&id)
                 ),
                 _ => {

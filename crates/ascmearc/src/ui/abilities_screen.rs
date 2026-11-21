@@ -25,7 +25,7 @@ use super::character_screen::fit_joined;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
-use super::text::{abilities_screen as T, ui, ui_with};
+use super::text::{abilities_screen as T, label, ui, ui_msg, ui_with, word};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -56,6 +56,9 @@ const OUTSIDE: i32 = 2;
 struct Entry {
     ability: Ability,
     name: String,
+    /// Its name as a sentence says it: `ability:<id>`, or the name shown where the menu gives it
+    /// one of its own (the priest's prayer by its tier's title).
+    said: Arg,
     description: String,
     /// What it asks for if it can be used now ("in a direction"), else why not.
     state: String,
@@ -81,16 +84,22 @@ impl AbilitiesScreen {
                 .map(|own| {
                     let a = own.ability;
                     let state = match own.unavailable {
-                        Some(why) => why.reason(content).into_owned(),
+                        Some(why) => ui_msg(why.reason(content)),
                         None => needs(a.aim(content)),
                     };
                     // What it costs, then why it cannot be used now, or what it asks for.
                     let why = |cost: String| {
-                        let args = [("cost", cost.into()), ("why", state.as_str().into())];
+                        let args = [
+                            ("cost", Arg::text(cost)),
+                            ("why", Arg::text(state.as_str())),
+                        ];
                         ui_with(T::COST_WHY, &args)
                     };
                     let aim = |cost: String| {
-                        let args = [("cost", cost.into()), ("aim", state.as_str().into())];
+                        let args = [
+                            ("cost", Arg::text(cost)),
+                            ("aim", Arg::text(state.as_str())),
+                        ];
                         ui_with(T::COST_AIM, &args)
                     };
                     // A spell says the roll it makes now with its type, as the character
@@ -103,12 +112,12 @@ impl AbilitiesScreen {
                             match own.unavailable {
                                 Some(Unavailable::NoMana) => {
                                     let mana = Arg::Number(i64::from(view.own_mana().0));
-                                    let args = [("cost", head.into()), ("mana", mana)];
+                                    let args = [("cost", Arg::text(head)), ("mana", mana)];
                                     ui_with(T::SHORT_OF_MANA, &args)
                                 }
                                 Some(_) => why(head),
                                 None if state.is_empty() => head,
-                                None => ui_with(T::AIMED, &[("cost", head.into())]),
+                                None => ui_with(T::AIMED, &[("cost", Arg::text(head))]),
                             }
                         }
                         // An active weapon ability says what it costs the player in
@@ -137,9 +146,15 @@ impl AbilitiesScreen {
                         }
                         _ => state.clone(),
                     };
+                    let shown = view.ability_name(a);
+                    let said: Arg = match shown == a.name(content) {
+                        true => content.ability_phrase(a).into(),
+                        false => Arg::text(shown.as_ref()),
+                    };
                     let entry = Entry {
                         ability: a,
-                        name: view.ability_name(a).to_string(),
+                        name: label(said.clone()),
+                        said,
                         description: describe(view, a),
                         state,
                         available: own.unavailable.is_none(),
@@ -148,7 +163,7 @@ impl AbilitiesScreen {
                 })
                 .collect()
         });
-        let mut entries = PagedList::grouped(entries, |source| source.name().to_string());
+        let mut entries = PagedList::grouped(entries, |source| word(source.name(), "Bare"));
         let start = (entries.iter().position(|e| Some(e.ability) == last))
             .or_else(|| entries.iter().position(|e| e.available));
         if let Some(start) = start {
@@ -202,8 +217,8 @@ impl AbilitiesScreen {
             Some(entry) if entry.available => ScreenAction::UseAbility(entry.ability),
             Some(entry) => {
                 let args = [
-                    ("ability", entry.name.as_str().into()),
-                    ("why", entry.state.as_str().into()),
+                    ("ability", entry.said.clone()),
+                    ("why", Arg::text(entry.state.as_str())),
                 ];
                 self.notice = Some(ui_with(T::NOTICE, &args));
                 ScreenAction::Stay
@@ -309,10 +324,10 @@ impl AbilitiesScreen {
     fn footer(&self, bindings: &Bindings) -> String {
         let keys = HINTS;
         let page = (self.entries.hint(&keys)).map_or(String::new(), |hint| format!("{hint}   "));
-        let confirm = ("confirm", Arg::from(keys.confirm));
+        let confirm = ("confirm", Arg::text(keys.confirm));
         let close = match bindings.keys_of(KeyCommand::Abilities).first() {
             Some(key) if self.entries.is_empty() => {
-                ui_with(T::CLOSE_OWN, &[("own", key.display().into())])
+                ui_with(T::CLOSE_OWN, &[("own", Arg::text(key.display()))])
             }
             _ => ui(T::CLOSE),
         };
@@ -320,7 +335,7 @@ impl AbilitiesScreen {
             Some('a') => ui_with(T::USE_A, &[confirm]),
             Some(last) => ui_with(
                 T::USE_LETTERS,
-                &[("last", last.to_string().into()), confirm],
+                &[("last", Arg::text(last.to_string())), confirm],
             ),
             None => return close,
         };
@@ -338,13 +353,12 @@ fn describe(view: &PerceptionView<'_>, ability: Ability) -> String {
         return text;
     };
     let reach = (content.spell_of(spell).zip(view.own_spell_reach(spell)))
-        .map(|(def, reach)| reach_words(def.shape, reach).join(", "))
-        .unwrap_or_default();
-    if !reach.is_empty() {
+        .and_then(|(def, reach)| reach_words(def.shape, reach));
+    if let Some(reach) = reach {
         text += &format!(" {}", ui_with(T::REACH, &[("reach", reach.into())]));
     }
     if let Some(reroll) = reroll_words(view.own_spell_reroll(spell)) {
-        text += &format!(" {reroll}");
+        text += &format!(" {}", ui_msg(reroll));
     }
     text
 }

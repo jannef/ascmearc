@@ -634,7 +634,10 @@ fn a_trap_can_kill_and_the_death_names_it() {
         (Some(Cause::Trap(trap_id(&w, "fireball"))), None, None)
     );
     assert_eq!(
-        death.cause.map(|c| c.epitaph(w.content())).as_deref(),
+        death
+            .cause
+            .map(|c| crate::test_support::epitaph(w.content(), c))
+            .as_deref(),
         Some("Killed by a fireball trap")
     );
     assert!(texts(&w).contains(&"You die...".to_string()));

@@ -1,5 +1,6 @@
 //! Potions.
 
+use super::util::stat_name;
 use super::util::{Term, anchored, capital, damage_link, link};
 use ascmearc_core::combat::IMPROVISED_RANGE;
 use ascmearc_core::content::{Content, Draught, ObjectDef, SpellPurpose, StatusId};
@@ -52,7 +53,7 @@ pub(super) fn potions(content: &Content) -> String {
             } => format!(
                 "{} +{points} for good (a trained rise: the potential lifted to the score if \
                  below), then its potential +{} (a roll)",
-                stat.name(),
+                stat_name(stat),
                 potential.to_string().trim_start_matches('+')
             ),
             Draught::Harm { dice, status } => {
@@ -69,7 +70,7 @@ pub(super) fn potions(content: &Content) -> String {
                     .flat_map(|p| p.by.iter().filter(|&(_, v)| v > 0))
                     .map(|(stat, v)| {
                         let by = i32::from(v) * def.penalty_times(*severity);
-                        format!("+{by} {}", stat.name())
+                        format!("+{by} {}", stat_name(stat))
                     })
                     .collect();
                 format!(
@@ -142,7 +143,7 @@ pub(super) fn potions(content: &Content) -> String {
         let marks = match drink.marks.as_slice() {
             [] => "none".to_string(),
             marks => (marks.iter())
-                .map(|(stat, n)| format!("{n} {}", stat.name()))
+                .map(|(stat, n)| format!("{n} {}", stat_name(stat)))
                 .collect::<Vec<_>>()
                 .join(", "),
         };
@@ -229,7 +230,7 @@ fn thrown(content: &Content, o: &ObjectDef) -> String {
     if flask.noise.sound != SoundKind::Shatter {
         does.push(format!(
             "heard as {} at loudness {}",
-            flask.noise.sound.heard_as(),
+            super::hearing::heard_as(content, flask.noise.sound),
             flask.noise.loudness
         ));
     }

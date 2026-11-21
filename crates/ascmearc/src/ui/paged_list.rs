@@ -18,10 +18,12 @@
 
 use super::cursor;
 use super::menu::{Hints, Nav, Panel};
+use super::text::{label, paged_list as Text, ui_with};
 use super::{TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::action::{LETTERS, letter};
 use ascmearc_core::content::{Content, ItemClassId};
+use ascmearc_core::lang::Arg;
 use std::ops::Range;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
@@ -49,7 +51,7 @@ impl<T> PagedList<T> {
     /// The list of `items`, each with its class, grouped by class in class order (a stable sort:
     /// within a class they keep the order given), the cursor on the first.
     pub fn new(items: Vec<(ItemClassId, T)>, content: &Content) -> Self {
-        Self::grouped(items, |class| content.item_class(class).name.clone())
+        Self::grouped(items, |class| label(content.item_class_phrase(class)))
     }
 }
 
@@ -234,14 +236,25 @@ impl<T, K: Copy + Ord> PagedList<T, K> {
         let pages = self.pages();
         (pages.len() > 1).then(|| {
             let here = page_of(&pages, self.cursor) + 1;
-            format!("Page {here}/{}", pages.len())
+            ui_with(
+                Text::PAGE,
+                &[
+                    ("page", Arg::Number(here as i64)),
+                    ("pages", Arg::Number(pages.len() as i64)),
+                ],
+            )
         })
     }
 
     /// The paging keys for a footer, `> < page`, while there is more than one page.
     pub fn hint(&self, keys: &Hints) -> Option<String> {
-        self.page_label()
-            .map(|_| format!("{} {} page", keys.next_page, keys.prev_page))
+        self.page_label().map(|_| {
+            let (next, prev) = (keys.next_page, keys.prev_page);
+            ui_with(
+                Text::HINT,
+                &[("next", Arg::text(next)), ("prev", Arg::text(prev))],
+            )
+        })
     }
 
     /// Draws the page label on the top of `panel`'s frame, at its right end.

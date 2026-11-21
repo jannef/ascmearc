@@ -37,6 +37,7 @@ use crate::geom::{Dir, Pos};
 use crate::lang::{MessageId, Msg};
 use crate::msg;
 use crate::noise::{self, Act};
+use crate::world::combat::fight::Words;
 use crate::world::creatures::ai::Plan;
 use crate::world::magic::spell::Caster;
 use crate::world::{ActorId, Spent, World};
@@ -84,9 +85,9 @@ impl World {
         self.make_noise(player, Act::Attack(AttackKind::Spell));
         let mut made = Vec::new();
         self.cast_bolt(Caster::Actor(player), here, &path, &breath.bolt, &mut made);
-        let noun = Ability::Sign(active).name(&content).to_lowercase();
-        let verb = (breath.bolt.kind).map_or("burns", |k| content.damage_type(k).verb.as_str());
-        self.say_spell((&noun, verb), made, events);
+        let noun = content.sign_noun_phrase(active);
+        let words = Words::of_kind_or_burns(noun, breath.bolt.kind, &content);
+        self.say_spell(words, made, events);
         if self.state.death.is_none() {
             self.gift_cooldown(breath.cooldown, breath.degrees, events);
         }
@@ -173,12 +174,15 @@ impl World {
 
 /// A breath's words: what the player cannot do at themselves ("You cannot breathe fire at
 /// yourself."), and what is said as it is loosed.
-fn breath_words(active: SignActive) -> (&'static str, MessageId) {
+fn breath_words(active: SignActive) -> (MessageId, MessageId) {
     match active {
-        SignActive::FrostBreath => ("breathe frost", msg::character::BREATH_FROST),
-        SignActive::BileSpit => ("spit", msg::character::BREATH_BILE),
-        SignActive::RotBreath => ("breathe rot", msg::character::BREATH_ROT),
-        SignActive::ThunderBreath => ("breathe thunder", msg::character::BREATH_THUNDER),
-        _ => ("breathe fire", msg::character::BREATH_FIRE),
+        SignActive::FrostBreath => (msg::combat::AIM_BREATHE_FROST, msg::character::BREATH_FROST),
+        SignActive::BileSpit => (msg::combat::AIM_SPIT, msg::character::BREATH_BILE),
+        SignActive::RotBreath => (msg::combat::AIM_BREATHE_ROT, msg::character::BREATH_ROT),
+        SignActive::ThunderBreath => (
+            msg::combat::AIM_BREATHE_THUNDER,
+            msg::character::BREATH_THUNDER,
+        ),
+        _ => (msg::combat::AIM_BREATHE_FIRE, msg::character::BREATH_FIRE),
     }
 }

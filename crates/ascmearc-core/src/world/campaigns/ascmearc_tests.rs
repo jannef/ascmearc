@@ -171,7 +171,10 @@ fn a_run_starts_on_beorggeat_with_its_arrival_line() {
     );
     // The starter cave is in sight from the first turn (#792).
     assert!(w.perception().is_visible(CAVE));
-    assert_eq!(w.perception().leads_to(CAVE).as_deref(), Some("Lytelscræf"));
+    assert_eq!(
+        crate::test_support::leads_to(&w, CAVE).as_deref(),
+        Some("Lytelscræf")
+    );
 }
 
 #[test]
@@ -208,7 +211,10 @@ fn the_town_lies_five_road_cells_east_of_the_pass() {
     act(&mut w, "move:E*6");
     assert_eq!(w.player_pos(), TOWN);
     assert_eq!(texts(&w).last().unwrap(), "The way into Cēaptūn is here.");
-    assert_eq!(w.perception().leads_to(TOWN).as_deref(), Some("Cēaptūn"));
+    assert_eq!(
+        crate::test_support::leads_to(&w, TOWN).as_deref(),
+        Some("Cēaptūn")
+    );
     // It leads into the town (#336; `ceaptun_tests`).
     act(&mut w, "descend");
     assert_eq!(w.state.current_level, "ceaptun");
@@ -217,22 +223,24 @@ fn the_town_lies_five_road_cells_east_of_the_pass() {
 #[test]
 fn the_locations_are_named_and_six_cells_apart() {
     let map = overworld();
-    let named: BTreeMap<Pos, (&str, &str)> = (map.stairs.iter())
+    let named: BTreeMap<Pos, (&str, String)> = (map.stairs.iter())
         .map(|s| {
             let terrain = CONTENT.terrain(map.terrain[s.pos]).id.as_str();
-            (s.pos, (terrain, s.name.as_deref().expect("a name")))
+            let name = s.name.as_ref().expect("a name");
+            let name = crate::messages::english_arg(&CONTENT, name, "bare");
+            (s.pos, (terrain, name))
         })
         .collect();
     assert_eq!(
         named,
         BTreeMap::from([
-            (CAVE, ("cave_mouth", "Lytelscræf")),
-            (BARROW, ("barrow", "Cealdhlāw")),
-            (DEOPGANG, ("dungeon_entrance", "Dēopgang")),
-            (GROUNDLESS, ("dungeon_entrance", "Grundlēas")),
-            (TOWN, ("town", "Cēaptūn")),
-            (YARD, ("graveyard", "Līctūn")),
-            (VILLAGE, ("town", "Holtwīc"))
+            (CAVE, ("cave_mouth", "Lytelscræf".to_string())),
+            (BARROW, ("barrow", "Cealdhlāw".to_string())),
+            (DEOPGANG, ("dungeon_entrance", "Dēopgang".to_string())),
+            (GROUNDLESS, ("dungeon_entrance", "Grundlēas".to_string())),
+            (TOWN, ("town", "Cēaptūn".to_string())),
+            (YARD, ("graveyard", "Līctūn".to_string())),
+            (VILLAGE, ("town", "Holtwīc".to_string()))
         ])
     );
     assert_eq!(GROUNDLESS.chebyshev(PASS), 40, "not near the start");
@@ -362,7 +370,7 @@ fn nothing_of_the_hidden_dungeons_reaches_perception_or_the_dumps() {
     // The dev reveal marks it, and it leads down into its branch (#338).
     act(&mut w, "reveal:fennmynster");
     assert_eq!(
-        w.perception().leads_to(FENNMYNSTER).as_deref(),
+        crate::test_support::leads_to(&w, FENNMYNSTER).as_deref(),
         Some("Fennmynster")
     );
     put_player(&mut w, FENNMYNSTER);

@@ -6,6 +6,7 @@
 //! contain with the computed number in it. Editing an example, or the rules or data under it,
 //! without the other fails here.
 
+use super::util::stat_name;
 use std::sync::Arc;
 
 use ascmearc_core::burden::Burden;
@@ -142,7 +143,13 @@ fn combat_a_dwarf_warrior_against_a_kobold() {
         &format!("{} for rank {rank} in Long blades", signed(benefit.to_hit)),
     );
     says(&block, &format!("**{}**", signed(blow.to_hit)));
-    says(&block, &format!("\"{}\"", blow.summary(&content)));
+    says(
+        &block,
+        &format!(
+            "\"{}\"",
+            ascmearc_core::messages::english_msg(&content, &blow.summary(&content))
+        ),
+    );
 
     // The kobold: no gear, no armour.
     let kobold_id = content.creature_id("kobold").expect("kobold");
@@ -612,7 +619,7 @@ fn food_a_ratfolk_at_100_who_is_weak() {
     for stat in [Stat::Strength, Stat::Dexterity] {
         says(
             &block,
-            &format!("{} {}", stat.name(), 14 + mods.harm(hunger.weak[stat])),
+            &format!("{} {}", stat_name(stat), 14 + mods.harm(hunger.weak[stat])),
         );
         assert_eq!(hunger.weak[stat], -1, "a human loses 1");
     }

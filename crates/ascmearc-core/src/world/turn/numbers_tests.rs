@@ -38,7 +38,8 @@ fn plain(w: &World, object: &str) -> Stack {
 }
 
 fn text(w: &World, stack: &Stack) -> Option<String> {
-    Numbers::of(stack, w.content()).text(w.content())
+    let words = Numbers::of(stack, w.content()).words(w.content())?;
+    Some(crate::messages::english_arg(w.content(), &words, "bare"))
 }
 
 /// The player wears `stack` in `slot`, whatever was there taken off.
@@ -69,14 +70,17 @@ fn a_weapon_shows_its_to_hit_and_damage_with_its_known_affixes() {
     assert_eq!(text(&w, &sword).as_deref(), Some("+1 hit, 1d9+1"));
     let lines = describe::lines(&sword, w.content());
     assert!(
-        lines.iter().any(|l| l.text == "To hit +1, damage 1d9+1"),
+        lines
+            .iter()
+            .any(|l| l.english(w.content()) == "To hit +1, damage 1d9+1"),
         "{lines:?}"
     );
     // An elemental affix rides on the damage.
     let flaming = magic(&w, "long_sword", &[("flaming", 4)], true);
     assert_eq!(text(&w, &flaming).as_deref(), Some("+0 hit, 1d9 +1d4 fire"));
     // The listed name carries them after it.
-    let listed = w.perception().lore().listed(&sword);
+    let listed =
+        crate::test_support::english_of(w.content(), &w.perception().lore().listed(&sword));
     assert!(listed.ends_with("long sword (+1 hit, 1d9+1)"), "{listed}");
 }
 
@@ -98,7 +102,12 @@ fn an_unidentified_item_shows_its_base_numbers_until_identified() {
     let worn = view.inventory().last().expect("mail").clone();
     assert_eq!(text(&w, &worn).as_deref(), Some("Dv +2, Pv 3"));
     let lines = describe::lines(&worn, w.content());
-    assert!(lines.iter().any(|l| l.text == "Dv +2, Pv 3"), "{lines:?}");
+    assert!(
+        lines
+            .iter()
+            .any(|l| l.english(w.content()) == "Dv +2, Pv 3"),
+        "{lines:?}"
+    );
     let (dv, worn_pv) = (view.own_defence(), view.own_protection());
     assert_eq!(worn_pv, pv + 5);
     w.apply(&Action::Identify(Positions::default()));
@@ -119,7 +128,10 @@ fn a_shield_shows_its_defence_only() {
     let shield = magic(&w, "small_shield", &[("sturdy", 2)], true);
     assert_eq!(text(&w, &shield).as_deref(), Some("Dv +3"));
     let lines = describe::lines(&shield, w.content());
-    assert!(lines.iter().any(|l| l.text == "Dv +3"), "{lines:?}");
+    assert!(
+        lines.iter().any(|l| l.english(w.content()) == "Dv +3"),
+        "{lines:?}"
+    );
 }
 
 #[test]
@@ -135,7 +147,7 @@ fn a_launcher_shows_its_range_and_ammunition_what_it_adds() {
     assert!(
         lines
             .iter()
-            .any(|l| l.text == "To hit +0, damage 1d6, range 12"),
+            .any(|l| l.english(w.content()) == "To hit +0, damage 1d6, range 12"),
         "{lines:?}"
     );
     // Plain arrows add nothing; a flaming arrow its fire.
@@ -144,7 +156,9 @@ fn a_launcher_shows_its_range_and_ammunition_what_it_adds() {
     assert_eq!(text(&w, &flaming).as_deref(), Some("+1d4 fire"));
     let lines = describe::lines(&flaming, w.content());
     assert!(
-        lines.iter().any(|l| l.text == "Adds to a shot: +1d4 fire"),
+        lines
+            .iter()
+            .any(|l| l.english(w.content()) == "Adds to a shot: +1d4 fire"),
         "{lines:?}"
     );
 }
@@ -163,7 +177,7 @@ fn things_that_give_nothing_say_nothing() {
     assert!(
         lines
             .iter()
-            .any(|l| l.text == "Adds to every attack: +1 to hit"),
+            .any(|l| l.english(w.content()) == "Adds to every attack: +1 to hit"),
         "{lines:?}"
     );
     let hidden = magic(&w, "iron_ring", &[("of_evasion", 2)], false);

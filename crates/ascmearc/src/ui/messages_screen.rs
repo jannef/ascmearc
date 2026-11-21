@@ -13,11 +13,12 @@
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::more;
 use super::screens::ScreenAction;
+use super::text::{messages_screen as T, ui, ui_with};
 use super::{TEXT, TEXT_DIM, message_text};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
 use ascmearc_core::content::Content;
-use ascmearc_core::lang::Entry;
+use ascmearc_core::lang::{Arg, Entry};
 use ascmearc_core::messages::CAPACITY;
 use ascmearc_core::perception::PerceptionView;
 use std::sync::Arc;
@@ -91,8 +92,10 @@ impl MessagesScreen {
     /// message wrapped (its further lines indented), with the keys it names as bound.
     fn lines(&self, width: i32, bindings: &Bindings) -> Vec<(String, bool)> {
         let inner = (width - 4).max(INDENT as i32 + 1) as usize;
-        let note = format!("The log keeps the last {CAPACITY} messages.");
-        let mut lines = vec![(note, true)];
+        let note = ui_with(T::NOTE, &[("count", Arg::Number(CAPACITY as i64))]);
+        let mut lines: Vec<(String, bool)> = (more::lines(&note, inner).into_iter())
+            .map(|l| (l, true))
+            .collect();
         for msg in &self.messages {
             let text = message_text(&self.content, msg, bindings);
             let first = more::lines(&text, inner);
@@ -111,7 +114,12 @@ impl MessagesScreen {
         self.fit(cols as u32, rows as u32);
         let lines = self.lines(width(cols), bindings);
         let shown = visible(lines.len(), rows);
-        let panel = Panel::new(console, " Messages ", width(cols), shown as i32 + EXTRA);
+        let panel = Panel::new(
+            console,
+            &format!(" {} ", ui(T::TITLE)),
+            width(cols),
+            shown as i32 + EXTRA,
+        );
         let top = lines.len().saturating_sub(shown);
         let first = top - self.back.min(top);
         let x = panel.inner_x();
@@ -127,12 +135,17 @@ impl MessagesScreen {
         }
         let keys = HINTS;
         let close = match bindings.key_name(KeyCommand::Messages) {
-            Some(key) => format!("{key} or Esc close"),
-            None => "Esc close".to_string(),
+            Some(key) => ui_with(T::CLOSE_OWN, &[("own", Arg::text(key))]),
+            None => ui(T::CLOSE),
         };
         let footer = if top > 0 {
             let (up_down, next, prev) = (keys.up_down(), &keys.next_page, &keys.prev_page);
-            format!("{up_down} scroll   {next} {prev} page   {close}")
+            let scroll = ui_with(T::SCROLL, &[("up_down", Arg::text(up_down))]);
+            let page = ui_with(
+                T::PAGE,
+                &[("next", Arg::text(*next)), ("prev", Arg::text(*prev))],
+            );
+            format!("{scroll}   {page}   {close}")
         } else {
             close
         };
@@ -236,7 +249,10 @@ mod tests {
     fn long_messages_wrap_with_their_further_lines_indented() {
         let mut screen = MessagesScreen::new(None, &Arc::default());
         let words = "word ".repeat(40);
-        screen.messages = vec![Entry::new(1, words.trim().into())];
+        screen.messages = vec![Entry::new(
+            1,
+            ascmearc_core::lang::Msg::literal(words.trim()),
+        )];
         let rows = shown(&screen, 40, 20);
         let body: Vec<&String> = rows.iter().filter(|r| r.contains("word")).collect();
         assert!(body.len() > 2, "{rows:#?}");

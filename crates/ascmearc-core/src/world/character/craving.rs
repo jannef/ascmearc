@@ -25,7 +25,8 @@
 
 use super::alignment::Deed;
 use crate::content::{
-    CombatStance, Content, CravingRules, DamageTypeId, Effect, GiftTier, TalentDef, data_line,
+    CombatStance, Content, CravingRules, DamageTypeId, Effect, GiftTier, TalentDef, TalentId,
+    data_line,
 };
 use crate::lang::Msg;
 use crate::msg;
@@ -256,22 +257,22 @@ impl World {
     fn strip_softeners(&mut self) {
         let content = self.content.clone();
         let book = content.talents();
-        let softeners: Vec<(String, String)> = (self.state.player().talents.iter())
+        let softeners: Vec<(String, TalentId)> = (self.state.player().talents.iter())
             .filter_map(|t| book.id(&t.id))
-            .map(|id| book.get(id))
-            .filter(|def| {
-                TalentMods::of(&content, def.effects.iter().cloned())
+            .filter(|&t| {
+                TalentMods::of(&content, book.get(t).effects.iter().cloned())
                     .hunger
                     .softens()
             })
-            .map(|def| (def.id.clone(), def.name.clone()))
+            .map(|t| (book.get(t).id.clone(), t))
             .collect();
-        for (id, name) in &softeners {
+        for (id, talent) in &softeners {
             let me = self.player_mut();
             me.talents.forget(id);
             me.boons.retain(|b: &Taken| &b.id != id);
             self.state.progress.stripped.insert(id.clone());
-            self.say(Msg::new(msg::character::CRAVING_TAKES).role("talent", name.as_str()));
+            let name = content.talent_phrase(*talent);
+            self.say(Msg::new(msg::character::CRAVING_TAKES).role("talent", name));
         }
         let sustained = self.state.player().mods(&content).get(Effect::Hunger) > 0;
         if !softeners.is_empty() || sustained {

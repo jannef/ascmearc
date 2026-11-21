@@ -91,7 +91,7 @@ impl DialogueScreen {
         };
         let topics: Vec<(String, String)> = (talk.topics.iter())
             .map(|t| {
-                let topic = ("topic", topic_name(&t.name).into());
+                let topic = ("topic", Arg::text(topic_name(&t.name)));
                 let name = match (t.price, t.items) {
                     // A service (`world/people/service.rs`) with its price, per thing or once;
                     // free for a town's goodwill (`world/people/goodwill.rs`).
@@ -112,7 +112,13 @@ impl DialogueScreen {
             })
             .collect();
         let wares = (talk.topics.iter())
-            .map(|t| t.price.zip(t.ware.clone()))
+            .map(|t| {
+                t.price.zip(
+                    t.ware
+                        .clone()
+                        .map(|w| super::text::word_in(content, w, "bare")),
+                )
+            })
             .collect();
         let selected = (talk.asked.as_ref())
             .and_then(|asked| topics.iter().position(|(id, _)| id == asked))
@@ -121,7 +127,7 @@ impl DialogueScreen {
             with: Some(talk.with),
             name: ui_with(T::TITLE, &[("who", who.into())]),
             toward,
-            line: ascmearc_core::messages::english_speech(content, &talk.line),
+            line: super::text::speech(content, &talk.line),
             topics,
             per_item,
             per_cursed,
@@ -238,13 +244,16 @@ impl DialogueScreen {
             0 => ui(T::HAVE_NONE),
             n => ui_with(T::HAVE_ONLY, &[("gold", Arg::Number(n.into()))]),
         };
-        ui_with(T::HAVE, &[("asked", asked.into()), ("have", have.into())])
+        ui_with(
+            T::HAVE,
+            &[("asked", Arg::text(asked)), ("have", Arg::text(have))],
+        )
     }
 
     /// The dialog a trader's offer opens (`world/people/wares.rs`): the item in words and its fixed
     /// price, "Buy it" (`ask`) or "Leave it"; without the gold, only leaving it.
     fn offer_dialog(&self, price: u32, ware: &str, ask: Action) -> Dialog {
-        let args = [("ware", ware.into()), gold(price)];
+        let args = [("ware", Arg::text(ware)), gold(price)];
         let text = ui_with(T::WARE, &args);
         let title = &self.name;
         if self.gold >= price {
@@ -260,7 +269,7 @@ impl DialogueScreen {
     pub fn draw(&self, console: &mut Console) {
         let width = WIDTH.min(console.cols() as i32) - 4;
         let said = wrap(
-            &ui_with(T::SAID, &[("line", self.line.as_str().into())]),
+            &ui_with(T::SAID, &[("line", Arg::text(self.line.as_str()))]),
             width,
         );
         // Rows: margin, what was said, a gap, the topics (and a gap), the footer, the frame.
@@ -299,7 +308,7 @@ impl DialogueScreen {
             }
             y += 1;
         }
-        let confirm = ("confirm", Arg::from(HINTS.confirm));
+        let confirm = ("confirm", Arg::text(HINTS.confirm));
         let leave = ui(T::LEAVE);
         let footer = match self.topics.len() {
             0 => leave,
@@ -535,11 +544,10 @@ mod tests {
             name: "Your wares".into(),
             price: Some(340),
             items: None,
-            ware: Some(
+            ware: Some(Arg::text(
                 "Hex Loop, gold ring. Mystic: +9 to maximum mana. of Clarity: mana comes back \
-                 35% faster"
-                    .into(),
-            ),
+                 35% faster",
+            )),
         });
         let mut screen = DialogueScreen::new(Some(&talk), Some(&view));
         screen.gold = gold;

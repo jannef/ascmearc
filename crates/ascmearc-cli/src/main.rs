@@ -120,6 +120,10 @@ struct DumpArgs {
     /// With `--format json`, include the full world state.
     #[arg(long)]
     state: bool,
+    /// The language the messages and the quest log are said in, by code (a folder under
+    /// `assets/lang/`); English for what it lacks.
+    #[arg(long, default_value = "en")]
+    lang: String,
 }
 
 #[derive(Clone, Copy, Debug, ValueEnum)]
@@ -267,6 +271,11 @@ fn fallen(args: &RunArgs) -> Vec<Fallen> {
 
 fn dump_command(content: Arc<Content>, args: DumpArgs) -> Result<(), String> {
     let layers = dump::parse_layers(&args.layers)?;
+    if content.language(&args.lang).is_none() {
+        let known: Vec<&str> = content.languages().map(|l| l.code()).collect();
+        let known = known.join(", ");
+        return Err(format!("unknown language `{}` (known: {known})", args.lang));
+    }
     let actions = parse_run_actions(&args.run)?;
     let mut world = match &args.replay {
         // Given the dead first, so the graves' ways down are open as the run had them; the
@@ -289,9 +298,9 @@ fn dump_command(content: Arc<Content>, args: DumpArgs) -> Result<(), String> {
         world.apply(action);
     }
     match args.format {
-        Format::Ascii => print!("{}", dump::ascii(&world, &layers)),
+        Format::Ascii => print!("{}", dump::ascii_in(&world, &layers, &args.lang)),
         Format::Json => {
-            let value = dump::json(&world, &layers, args.state);
+            let value = dump::json_in(&world, &layers, args.state, &args.lang);
             let text = serde_json::to_string_pretty(&value).map_err(|e| e.to_string())?;
             println!("{text}");
         }

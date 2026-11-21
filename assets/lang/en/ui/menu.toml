@@ -1,0 +1,98 @@
+# The main menu, the pause menu, and the quit dialogs (`crates/ascmearc/src/ui/menu.rs`). Ids
+# alphabetical.
+#
+# The keys named in the footers are fixed (`Esc`): translate the words around them. The screen
+# fits each text to its panel (docs/dev/localization.md "UI text").
+
+# The main menu's footer: `up_down`, the keys that select a row; `confirm`, the key that chooses
+# it.
+[footer]
+text = "{up_down:bare} select   {confirm:bare} choose"
+
+# The pause menu's footer: as `footer`, and Esc resumes.
+[footer_pause]
+text = "{up_down:bare} select   {confirm:bare} choose   Esc resume"
+
+[item_characters]
+text = "Characters"
+
+[item_continue]
+text = "Continue"
+
+[item_controls]
+text = "Controls"
+
+[item_graveyard]
+text = "Graveyard"
+
+[item_mods]
+text = "Mods"
+
+[item_new_run]
+text = "New run"
+
+[item_quit]
+text = "Quit"
+
+[item_resume]
+text = "Resume"
+
+[item_save_to_menu]
+text = "Save and quit to menu"
+
+[item_settings]
+text = "Settings"
+
+# The main menu's bottom row, the longest that fits the window (GPL-3.0's legal notice:
+# copyright, no warranty, where the license is): `version`, the game's version.
+[legal_long]
+text = "Ascmearc {version:bare} · © 2026 Janne Lê Forsell · free software under GPL-3.0 (see LICENSE), without warranty"
+
+[legal_medium]
+text = "Ascmearc {version:bare} · © 2026 Janne Lê Forsell · GPL-3.0, no warranty"
+
+[legal_short]
+text = "© 2026 Janne Lê Forsell · GPL-3.0, no warranty"
+
+# The dialog the pause menu's Save and quit to menu asks.
+[main_text]
+text = "Save the run and return to the main menu?"
+
+[main_title]
+text = "Main menu"
+
+[main_yes]
+text = "Save and return"
+
+# The pause menu's line under its title with no run beneath.
+[pause_tagline]
+text = "the world waits"
+
+# The pause menu's title, its letters spaced out.
+[pause_title]
+text = "P A U S E D"
+
+# The dialog asked before quitting.
+[quit_text]
+text = "Quit Ascmearc?"
+
+# The dialog asked before quitting a run: it is saved first.
+[quit_text_saving]
+text = "Save the run and quit Ascmearc?"
+
+[quit_title]
+text = "Quit"
+
+[quit_yes]
+text = "Quit"
+
+[quit_yes_saving]
+text = "Save and quit"
+
+# The answer that keeps playing, in the quit and main menu dialogs.
+[stay]
+text = "Stay"
+
+# The main menu's line under its title.
+[tagline]
+text = "an ASCII roguelike"

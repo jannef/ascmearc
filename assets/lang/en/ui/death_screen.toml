@@ -3,7 +3,7 @@
 # The epitaph is lines the screen centres: each is one line of it, in the order read. The screen
 # fits each text to its panel (docs/dev/localization.md "UI text").
 
-# The cause, a status without words of its own: `status`, its name.
+# The cause, a status without words of its own: `status`, by its name (`status:<id>`).
 [died_of]
 text = "Died of {status:bare}"
 
@@ -11,13 +11,17 @@ text = "Died of {status:bare}"
 [footer]
 text = "{confirm:bare} or Esc  main menu"
 
-# The epitaph's lines: `name`, the titled name; `class`, the class words; `by`, the cause;
-# `place`; `date` and `time`; `n`, turns; `level`.
+# The epitaph's lines: `name`, the titled name; `class`, the class (`class:<id>`) and
+# `prestige`, the prestige class once called (`prestige:<id>`); `by`, the cause; `place`; `date`
+# and `time`; `n`, turns; `level`.
 [epitaph_by]
 text = "{by:bare},"
 
 [epitaph_class]
-text = "{class:bare},"
+text = "{class:a},"
+
+[epitaph_class_prestige]
+text = "{class:a} and {prestige:bare},"
 
 [epitaph_here_lies]
 text = "Here lies {name:bare},"

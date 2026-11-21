@@ -30,8 +30,8 @@
 use crate::action::{Event, Positions};
 use crate::content::StatUse;
 use crate::content::{
-    Content, DialogueId, Goal, KillTarget, Pick, QuestDef, QuestId, QuestKind, RevealWhen, Roll,
-    Rolled, SkillReward,
+    Content, DialogueId, Goal, KillTarget, Pick, QuestDef, QuestId, QuestKind, RevealWhen, Reward,
+    Roll, Rolled, SkillReward,
 };
 use crate::content::{ObjectId, data_line};
 use crate::lang::{Arg, Msg, Phrase};
@@ -123,6 +123,10 @@ pub struct Quests {
     /// a kill quest after one is met by its death.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     slain: BTreeSet<String>,
+    /// The `on_accept.once` keys already paid (#1991): a quest carrying one of them pays
+    /// nothing as it is given.
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    once: BTreeSet<String>,
 }
 
 impl Quests {
@@ -131,6 +135,23 @@ impl Quests {
             && self.kills.is_empty()
             && self.prey.is_none()
             && self.slain.is_empty()
+            && self.once.is_empty()
+    }
+
+    /// Whether quest `def`'s `on_accept` pays as it is given now, marking its `once` key paid:
+    /// none pays nothing, one without a key pays each time, one with a key only the first time
+    /// any quest carrying the key is given.
+    fn pays_on_accept(&mut self, def: &QuestDef) -> bool {
+        match def.on_accept.as_ref().map(|o| &o.once) {
+            None => false,
+            Some(None) => true,
+            Some(Some(key)) => self.once.insert(key.clone()),
+        }
+    }
+
+    /// Whether `on_accept.once` key `key` has been paid.
+    pub fn paid_once(&self, key: &str) -> bool {
+        self.once.contains(key)
     }
 
     /// The unique creature types that have died, by id.
@@ -288,7 +309,8 @@ pub(crate) fn progress(
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct QuestView {
     pub id: String,
-    pub name: String,
+    /// Its name: a quest's line of data (`QuestDef::name_arg`), a commission's message.
+    pub name: Arg,
     pub kind: QuestKind,
     /// Taken up and not yet done; else done, or failed.
     pub active: bool,
@@ -334,7 +356,7 @@ impl PerceptionView<'_> {
             let (register, race) = content.speaker_voice(def.giver);
             QuestView {
                 id: def.id.clone(),
-                name: def.name.clone(),
+                name: def.name_arg(),
                 kind: def.kind(),
                 active,
                 failed,
@@ -368,18 +390,14 @@ fn speaker(content: &Content, id: DialogueId) -> Phrase {
     content.speaker_phrase(id)
 }
 
-/// A place (a level or a branch, by its name `name`) as a phrase said `the` inside a sentence:
-/// "The Arena" reads "the Arena", a name without its article as it is ("Cealdhlāw").
-pub(super) fn place(name: &str) -> Phrase {
-    match name.strip_prefix("The ") {
-        Some(rest) => Phrase::id(format!("word:{rest}")),
-        None => Phrase::literal(name),
-    }
-}
-
-/// [`place`] of the level or branch `id`.
-fn place_of(content: &Content, id: &str) -> Phrase {
-    place(&content.place_name(id))
+/// The level or branch `id` as its name is said, by its key: a level's (a hand-made level's line
+/// of data, a branch level's `levels.branch_level`; `Content::level_name_arg`), else a branch's
+/// `dungeon:<id>.name`, else the id as text. A name with its own article writes it in lower case
+/// in the data ("the Arena"), as a hidden location's does (`people.marks_on_map`).
+fn place_of(content: &Content, id: &str) -> Arg {
+    (content.level_name_arg(id))
+        .or_else(|| (content.dungeon(id)).map(|d| Arg::said(data_line::dungeon_name(&d.id))))
+        .unwrap_or_else(|| Arg::id(id))
 }
 
 /// What kill quest `def` is after, `need` of them, as its progress counts them: its `what` if
@@ -387,9 +405,7 @@ fn place_of(content: &Content, id: &str) -> Phrase {
 fn kill_noun(content: &Content, def: &QuestDef, need: u32) -> Phrase {
     match &def.goal {
         // Called as the quest says, one or many alike.
-        Goal::Kill {
-            what: Some(what), ..
-        } => Phrase::id(format!("word:{what}")),
+        Goal::Kill { what: Some(_), .. } => content.quest_what_phrase(&def.id),
         Goal::Kill {
             target: KillTarget::Creature(c),
             ..
@@ -397,7 +413,7 @@ fn kill_noun(content: &Content, def: &QuestDef, need: u32) -> Phrase {
         Goal::Kill {
             target: KillTarget::Tag(tag),
             ..
-        } => Phrase::id(format!("word:{}", crate::content::spoken(tag))).count(need),
+        } => content.tag_phrase(tag).count(need),
         _ => Phrase::id("word:something"),
     }
 }
@@ -849,11 +865,14 @@ impl World {
             )));
             return;
         }
+        // Its name by its key, as the data writes it: one with its own article writes it in
+        // lower case ("the Skeul Hir"), as a unique's name does (`en::own_article`).
+        let place = Arg::said(data_line::hidden_name(level, &location.id));
         let who = self.called_phrase(&self.state.actors[&id]);
         self.say(
             Msg::new(msg::people::MARKS_ON_MAP)
                 .role("who", who)
-                .role("place", place(&location.name)),
+                .role("place", place),
         );
     }
 
@@ -894,9 +913,15 @@ impl World {
             }
             _ => None,
         };
+        let pays = self.state.quests.pays_on_accept(def);
+        let accepted = def.on_accept.as_ref().filter(|_| pays);
         let mut line = vec![self.voiced(id, given.said("offer"))];
         if given.texts.accept.is_some() {
             line.push(self.voiced(id, given.said("accept")));
+        }
+        if accepted.is_some_and(|o| o.says.is_some()) {
+            let says = Arg::said(data_line::quest(&def.id, "on_accept.says"));
+            line.push(self.voiced(id, says));
         }
         self.answer(id, line, Some(topic.into()), events);
         self.reveal_at(id, &given, RevealWhen::Given);
@@ -915,6 +940,14 @@ impl World {
                     .role("who", who)
                     .role("what", letter.phrase(&content)),
             );
+        }
+        if let Some(accepted) = accepted {
+            let who = self.called_phrase(&self.state.actors[&id]);
+            let taught = Taught {
+                quest: &def.id,
+                reward: "on_accept",
+            };
+            self.pay_reward(&content, who, &accepted.reward, taught, true);
         }
         self.promote(&standing);
         let progress = self.progress_of(def);
@@ -980,12 +1013,34 @@ impl World {
             }
         }
         self.reveal_at(id, def, RevealWhen::Done);
-        self.say(Msg::new(msg::people::QUEST_COMPLETE).role("quest", def.name.as_str()));
+        self.say(Msg::new(msg::people::QUEST_COMPLETE).role("quest", def.name_arg()));
         self.tell_goodwill(def.giver);
         self.train_stat(StatUse::Quest);
+        let taught = Taught {
+            quest: &def.id,
+            reward: &reward_path,
+        };
+        self.pay_reward(&content, who, &reward, taught, false);
+        self.shift_alignment(self.state.player, def.alignment, Deed::Quest);
+        self.promote(&standing);
+        self.quarrel_won(id, def);
+    }
+
+    /// `who` pays the player `reward` (a quest's, on completion or as it is given): the gold
+    /// (more of it by a talent) and the items into the pack, told; then the skills it teaches
+    /// (their lines at `taught`'s keys) and the experience. `known`: the items are identified,
+    /// and their types known from then on (what a giver hands over as they give a quest, #1991).
+    fn pay_reward(
+        &mut self,
+        content: &Content,
+        who: Phrase,
+        reward: &Reward,
+        taught: Taught<'_>,
+        known: bool,
+    ) {
         // A talent (the half-elf's Diplomat) makes a quest pay more gold.
-        let talents = self.state.player().talent_mods(&content);
-        let mut stacks = reward.stacks(&content);
+        let talents = self.state.player().talent_mods(content);
+        let mut stacks = reward.stacks(content);
         if let Some(gold) = (content.object_id(crate::content::GOLD))
             .and_then(|g| stacks.iter_mut().find(|s| s.object == g))
         {
@@ -994,7 +1049,13 @@ impl World {
             gold.count = u32::try_from(more).unwrap_or(u32::MAX).max(1);
         }
         let xp = reward.xp;
-        crate::rot::made_at(&mut stacks, &content, self.state.time);
+        crate::rot::made_at(&mut stacks, content, self.state.time);
+        if known {
+            for stack in &mut stacks {
+                stack.identify();
+                self.learn_scroll(stack.object);
+            }
+        }
         if !stacks.is_empty() {
             self.say(
                 Msg::new(msg::people::GIVES_YOU)
@@ -1003,19 +1064,12 @@ impl World {
             );
             self.give_player(&stacks);
         }
-        let taught = Taught {
-            quest: &def.id,
-            reward: &reward_path,
-        };
-        self.teach_skills(&content, who, &reward.skills, taught);
+        self.teach_skills(content, who, &reward.skills, taught);
         if xp > 0 {
             self.say(Msg::new(msg::people::GAIN_EXPERIENCE).role("xp", i64::from(xp)));
             self.grant_xp(xp);
             self.say_news();
         }
-        self.shift_alignment(self.state.player, def.alignment, Deed::Quest);
-        self.promote(&standing);
-        self.quarrel_won(id, def);
     }
 
     /// A reward's skills, taught by `who`: an untrained one trained at its `start`, rolled from
@@ -1031,7 +1085,7 @@ impl World {
     ) {
         for taught in skills {
             let skill = content.skill(taught.skill);
-            let name = skill.name.to_lowercase();
+            let name = content.skill_phrase(taught.skill);
             let own = |yes: bool| data_line::quest_skill(of.quest, of.reward, &skill.id, yes);
             if self.state.player().skills.get(taught.skill).is_some() {
                 if taught.marks == 0 {

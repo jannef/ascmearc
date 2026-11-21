@@ -35,7 +35,8 @@
 # Each [[shop]]:
 #   id        the kind's id (level files name it: `[[shop]] kind = "general_store"`)
 #   name      what it is, without an article ("general store"), for the wiki
-#   title     its sign, with the keeper's name for `{keeper}` ("{keeper}'s General Store")
+#   title     its sign, a line of data (`shop:<id>.title`) naming the keeper as `keeper`
+#             ("{keeper:poss} General Store")
 #   stock     the classes generated shops stock (each item drawn from those objects by its loot
 #             `frequency`, objects.toml, 100 for what is never loot: a spell scroll of a low spell
 #             level lies in a general store more often than one of a high level)
@@ -74,7 +75,7 @@ wear = ["chain_mail", "iron_helm"]
 [[shop]]
 id = "general_store"
 name = "general store"
-title = "{keeper}'s General Store"
+title = "{keeper:poss} General Store"
 stock = [
     "melee_weapons", "missile_weapons", "missiles", "shields", "body_armour", "helmets",
     "cloaks", "gloves", "boots", "light_sources", "tools", "materials", "food", "potions",
@@ -110,7 +111,7 @@ pays = 30
 [[shop]]
 id = "town_store"
 name = "town store"
-title = "{keeper}'s General Store"
+title = "{keeper:poss} General Store"
 stock = [
     "cloaks", "light_sources", "tools", "materials", "food", "potions", "scrolls", "wands", "rods",
 ]
@@ -137,7 +138,7 @@ generated = false
 [[shop]]
 id = "weaponsmith"
 name = "weaponsmith"
-title = "{keeper}'s Forge"
+title = "{keeper:poss} Forge"
 stock = ["melee_weapons", "missiles"]
 buys = ["melee_weapons", "missiles", "materials"]
 items = [5, 9]
@@ -147,7 +148,7 @@ pays = 40
 [[shop]]
 id = "armourer"
 name = "armourer"
-title = "{keeper}'s Armoury"
+title = "{keeper:poss} Armoury"
 stock = ["shields", "body_armour", "helmets", "cloaks", "gloves", "boots"]
 buys = ["shields", "body_armour", "helmets", "cloaks", "gloves", "boots", "materials"]
 items = [5, 9]
@@ -160,7 +161,7 @@ pays = 40
 [[shop]]
 id = "smithy"
 name = "smithy"
-title = "{keeper}'s Smithy"
+title = "{keeper:poss} Smithy"
 stock = [
     "melee_weapons", "missile_weapons", "missiles", "shields", "body_armour", "helmets", "gloves",
     "boots", "materials",
@@ -186,7 +187,7 @@ generated = false
 [[shop]]
 id = "gem_dealer"
 name = "gem dealer"
-title = "{keeper}'s Stones"
+title = "{keeper:poss} Stones"
 stock = ["gems", "rings", "amulets"]
 buys = ["gems", "rings", "amulets", "materials"]
 items = [5, 9]
@@ -200,7 +201,7 @@ generated = false
 [[shop]]
 id = "outfitter"
 name = "outfitter"
-title = "{keeper}'s Outfitters"
+title = "{keeper:poss} Outfitters"
 stock = ["materials", "tools", "light_sources", "food", "potions"]
 buys = ["materials", "tools", "light_sources", "food", "potions", "gems"]
 items = [6, 10]
@@ -213,7 +214,7 @@ generated = false
 [[shop]]
 id = "provisioner"
 name = "provisioner"
-title = "{keeper}'s Provisions"
+title = "{keeper:poss} Provisions"
 stock = ["light_sources", "tools", "food", "potions"]
 never = [
     "blasting_flask", "brewers_blunder", "draught_of_chance", "elixir_of_grace",
@@ -232,7 +233,7 @@ pays = 30
 [[shop]]
 id = "alchemist"
 name = "alchemist"
-title = "{keeper}'s Apothecary"
+title = "{keeper:poss} Apothecary"
 stock = ["potions"]
 always = ["potion_of_healing", "glowcap", "moonwort"]
 buys = ["potions", "materials"]
@@ -243,7 +244,7 @@ pays = 40
 [[shop]]
 id = "fletcher"
 name = "fletcher"
-title = "{keeper}'s Fletchery"
+title = "{keeper:poss} Fletchery"
 stock = ["missile_weapons", "missiles"]
 buys = ["missile_weapons", "missiles", "materials"]
 items = [5, 8]

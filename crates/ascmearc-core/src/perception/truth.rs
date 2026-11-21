@@ -29,6 +29,7 @@ use crate::content::{
 use crate::equipment::Equipment;
 use crate::geom::Pos;
 use crate::hunger::Hunger;
+use crate::lang::Arg;
 use crate::object::{Stack, Weight};
 use crate::skills::{self, SkillId};
 use crate::stats::PerStat;
@@ -43,7 +44,9 @@ impl<'a> PerceptionView<'a> {
         &self.level.id
     }
 
-    pub fn level_name(&self) -> &'a str {
+    /// The level's name as the game says it (a line of data by its key, a phrase): the status
+    /// bar shows it as a label (`lang::LABEL_FORM`).
+    pub fn level_name(&self) -> &'a crate::lang::Arg {
         &self.level.name
     }
 
@@ -67,10 +70,9 @@ impl<'a> PerceptionView<'a> {
         let choices = crate::world::encounter_choices(pending, entry, self.player, self.content);
         Some(crate::world::encounter_view(
             pending,
-            &entry.name,
+            crate::world::party_name(self.campaign, entry),
             area.map(|a| a.landscape),
             &choices,
-            self.content,
         ))
     }
 
@@ -128,16 +130,17 @@ impl<'a> PerceptionView<'a> {
         Some(self.level.effects_at(self.content, p).light())
     }
 
-    /// Where the stairs or location at `p` lead, by name — only for cells the player sees or
-    /// remembers (the staircase itself is known; its destination is public knowledge).
-    pub fn leads_to(&self, p: Pos) -> Option<String> {
+    /// Where the stairs or location at `p` lead, by name (keys of data, `Content::level_name_arg`)
+    /// — only for cells the player sees or remembers (the staircase itself is known; its
+    /// destination is public knowledge).
+    pub fn leads_to(&self, p: Pos) -> Option<Arg> {
         if matches!(self.cell(p), CellView::Unknown) {
             return None;
         }
         let link = self.level.stairs_at(p)?;
         // A named location (a legend's `name`, a revealed hidden location's) goes by its own
         // name, even while it leads nowhere yet.
-        (link.name.clone()).or_else(|| self.content.level_display_name(link.to.as_deref()?))
+        (link.name.clone()).or_else(|| self.content.level_name_arg(link.to.as_deref()?))
     }
 
     /// The named place at `p` (a legend's `name`: a location, a landmark), if the player sees
@@ -152,11 +155,11 @@ impl<'a> PerceptionView<'a> {
     /// The locations the player knows on the overworld, by position, each with its name: the
     /// ways into other places on cells they see or remember (a hidden location only once
     /// revealed, when it is one of them). Empty on any other level.
-    pub fn known_locations(&self) -> Vec<(Pos, String)> {
+    pub fn known_locations(&self) -> Vec<(Pos, Arg)> {
         if self.level.kind() != LevelKind::Overworld {
             return Vec::new();
         }
-        let mut known: Vec<(Pos, String)> = (self.level.stairs.iter())
+        let mut known: Vec<(Pos, Arg)> = (self.level.stairs.iter())
             .filter_map(|s| Some((s.pos, self.leads_to(s.pos)?)))
             .collect();
         known.sort_by_key(|(p, _)| (p.y, p.x));
@@ -314,7 +317,7 @@ impl<'a> PerceptionView<'a> {
     /// What is cut in the gravestone at `p` (`world/fixtures/graves.rs`), where the
     /// player sees or remembers one: "Here lies Ælfric Wudu, 1381–1427." `None` elsewhere, or
     /// on a blank stone.
-    pub fn epitaph(&self, p: Pos) -> Option<&'a str> {
+    pub fn epitaph(&self, p: Pos) -> Option<&'a crate::lang::Arg> {
         let terrain = match self.cell(p) {
             CellView::Visible(t) | CellView::Remembered(t) => t,
             CellView::Unknown => return None,
@@ -322,17 +325,17 @@ impl<'a> PerceptionView<'a> {
         self.content
             .terrain(terrain)
             .grave
-            .then(|| self.level.graves.get(&p).map(String::as_str))
+            .then(|| self.level.graves.get(&p))
             .flatten()
     }
 
     /// Whom the statue at `p` is of, where it bears a past character's name from the graveyard
-    /// (`world/fixtures/graveyard.rs`): "Brakka the dwarf". `None` where they know no statue there, or
-    /// it bears no name.
-    pub fn statue_name(&self, p: Pos) -> Option<String> {
+    /// (`world/fixtures/graveyard.rs`), whose name and race the look line says ("Brakka the
+    /// dwarf"). `None` where they know no statue there, or it bears no name.
+    pub fn statue_name(&self, p: Pos) -> Option<&'a crate::statue::Fallen> {
         self.statue_at(p)?;
         let statue = self.level.statues.get(&p)?;
-        statue.name.as_ref().map(|f| f.words(self.content))
+        statue.name.as_ref()
     }
 
     /// The chests the player sees or remembers on this level ([`PerceptionView::chest_at`]), by
@@ -433,7 +436,7 @@ impl<'a> PerceptionView<'a> {
     /// What the wand `stack` does in the player's hands once they know its type (its rung comes
     /// with the type, the spell scaling design §7.4): `4d6 fire, radius 2`; `None` before, for
     /// anything else, and for a wand whose spell rolls nothing.
-    pub fn wand_does(&self, stack: &Stack) -> Option<String> {
+    pub fn wand_does(&self, stack: &Stack) -> Option<crate::lang::Msg> {
         crate::magic::describe::wand_does(stack, self.lore, self.player)
     }
 
@@ -858,7 +861,7 @@ impl<'a> PerceptionView<'a> {
         &self,
         recipe: crate::content::RecipeId,
         picks: &[Option<usize>],
-    ) -> Result<crate::world::CraftPlan, String> {
+    ) -> Result<crate::world::CraftPlan, crate::lang::Msg> {
         crate::world::craft_plan(
             self.content,
             self.lore,
@@ -867,6 +870,18 @@ impl<'a> PerceptionView<'a> {
             recipe,
             picks,
         )
+    }
+
+    /// [`Self::craft_plan`] in English, the refusal too: for the tests to compare.
+    #[cfg(test)]
+    pub(crate) fn craft_plan_en(
+        &self,
+        recipe: crate::content::RecipeId,
+        picks: &[Option<usize>],
+    ) -> Result<crate::world::PlanEn, String> {
+        (self.craft_plan(recipe, picks))
+            .map(|plan| plan.en(self.content))
+            .map_err(|why| crate::messages::english_msg(self.content, &why))
     }
 
     /// What the player's spell `spell` costs them now, in mana (they know
@@ -1120,14 +1135,14 @@ impl<'a> PerceptionView<'a> {
                 let mut needs: Vec<NeedView> = (def.needs.iter())
                     .map(|need| NeedView {
                         met: who.meets(content, &need, def.choice, None),
-                        words: need.words(content),
+                        words: need.message(content),
                     })
                     .collect();
                 // Taken for good by the ratfolk craving: a need never met again.
                 if who.stripped.contains(&def.id) {
                     needs.push(NeedView {
                         met: false,
-                        words: "not taken by the craving".into(),
+                        words: crate::msg::character::TALENT_NEEDS_UNTAKEN.into(),
                     });
                 }
                 TalentView {
@@ -1243,17 +1258,16 @@ impl<'a> PerceptionView<'a> {
     }
 
     /// How fresh `stack`, a corpse or food the player has in front of them, looks to an eye
-    /// trained in Appraise or Survival (`world/health/freshness.rs`): `fresh`, `old`,
-    /// or `rotten` when their check passes, `None` otherwise.
-    pub fn judge(&self, stack: &Stack) -> Option<&'static str> {
-        let stage = crate::world::health::freshness::judged(
+    /// trained in Appraise or Survival (`world/health/freshness.rs`): fresh, old, or rotten
+    /// when their check passes (said by [`crate::rot::Stage::word`]), `None` otherwise.
+    pub fn judge(&self, stack: &Stack) -> Option<crate::rot::Stage> {
+        crate::world::health::freshness::judged(
             self.content,
             self.player,
             self.seed,
             stack,
             self.time,
-        )?;
-        Some(stage.id())
+        )
     }
 
     /// The open shop whose floor `p` is, if the player sees or remembers `p` (its sign and goods

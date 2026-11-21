@@ -27,6 +27,8 @@
 //! follow from scores they know): never a modifier, never a creature's load.
 
 use crate::content::{Content, Effect, RaceDef};
+use crate::lang::{Arg, MessageId, Msg};
+use crate::msg;
 use crate::object::{format_weight, weight_of};
 use crate::stats::Stat;
 use crate::talent::TalentMods;
@@ -58,13 +60,14 @@ impl Burden {
         Burden::Overloaded,
     ];
 
-    /// Its name, as the status bar shows it: `Burdened`.
-    pub const fn name(self) -> &'static str {
+    /// Its name, a message id (`messages/words.toml`): `burdened` (the status bar asks `Bare`,
+    /// "Burdened").
+    pub const fn name(self) -> MessageId {
         match self {
-            Burden::Unburdened => "Unburdened",
-            Burden::Burdened => "Burdened",
-            Burden::Strained => "Strained",
-            Burden::Overloaded => "Overloaded",
+            Burden::Unburdened => msg::words::BURDEN_UNBURDENED,
+            Burden::Burdened => msg::words::BURDEN_BURDENED,
+            Burden::Strained => msg::words::BURDEN_STRAINED,
+            Burden::Overloaded => msg::words::BURDEN_OVERLOADED,
         }
     }
 
@@ -133,20 +136,20 @@ impl Burden {
     }
 
     /// What the player is told when their burden becomes this.
-    pub const fn news(self) -> &'static str {
+    pub const fn news(self) -> MessageId {
         match self {
-            Burden::Unburdened => "You are no longer burdened.",
-            Burden::Burdened => "You are burdened.",
-            Burden::Strained => "You strain under your load.",
+            Burden::Unburdened => msg::items::NO_LONGER_BURDENED,
+            Burden::Burdened => msg::items::BURDENED,
+            Burden::Strained => msg::items::STRAIN_UNDER_LOAD,
             Burden::Overloaded => MOVE_REFUSED,
         }
     }
 }
 
 /// What an overloaded player is told when they try to move.
-pub const MOVE_REFUSED: &str = "You carry too much to move.";
+pub const MOVE_REFUSED: MessageId = msg::items::TOO_MUCH_TO_MOVE;
 /// What a player is told who could move but would be overloaded where they step (a heavy hall).
-pub const HEAVY_REFUSED: &str = "You carry too much to go in there.";
+pub const HEAVY_REFUSED: MessageId = msg::items::TOO_MUCH_TO_GO_IN;
 
 /// What an actor carries against what it can.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
@@ -199,10 +202,14 @@ impl Load {
         ]
     }
 
-    /// The thresholds in words: `burdened over 15 kg`, `strained over 30 kg`, `overloaded over
-    /// 45 kg`.
-    pub fn over(&self) -> [String; 3] {
-        (self.thresholds()).map(|(b, g)| format!("{} over {}", b.id(), format_weight(g)))
+    /// The thresholds in words, messages (`words.burden_over`): `burdened over 15 kg`, `strained
+    /// over 30 kg`, `overloaded over 45 kg`.
+    pub fn over(&self) -> [Msg; 3] {
+        (self.thresholds()).map(|(b, g)| {
+            Msg::new(msg::words::BURDEN_OVER)
+                .role("burden", b.name())
+                .role("weight", Arg::notation(format_weight(g)))
+        })
     }
 }
 
@@ -301,6 +308,7 @@ mod tests {
 
     #[test]
     fn levels_are_thirds_of_the_limit() {
+        let content = crate::test_support::builtin();
         let limit = 45_000;
         for (carried, burden) in [
             (0, Burden::Unburdened),
@@ -330,7 +338,9 @@ mod tests {
             [10_500, 21_000, 31_500]
         );
         assert_eq!(
-            halfling.over(),
+            halfling
+                .over()
+                .map(|m| crate::test_support::english_of(&content, &m)),
             [
                 "burdened over 10.5 kg",
                 "strained over 21 kg",

@@ -94,8 +94,7 @@ impl World {
         }
         let cured = self.cure(player, RESTORATION, events);
         for stat in &back {
-            let name = stat.name().to_lowercase();
-            self.say(Msg::new(msg::magic::FEEL_STAT_RETURN).role("stat", name));
+            self.say(Msg::new(msg::magic::FEEL_STAT_RETURN).role("stat", stat.name()));
         }
         cured || !back.is_empty()
     }

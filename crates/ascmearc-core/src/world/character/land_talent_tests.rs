@@ -137,7 +137,10 @@ fn dark_adaptation_is_for_darkvision_or_low_light_eyes() {
         panic!("normal eyes may not take it");
     };
     assert_eq!(
-        refusal.words(&CONTENT, &def.name),
+        crate::test_support::english_of(
+            &CONTENT,
+            &refusal.words(&CONTENT, crate::lang::Arg::text(def.name.as_str()))
+        ),
         "You cannot take Dark adaptation: you need darkvision or low-light eyes."
     );
 }

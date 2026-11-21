@@ -17,22 +17,33 @@ pub(super) fn stat_rows(view: &PerceptionView<'_>) -> Vec<String> {
             .map_or(spec.race.as_str(), |r| r.name.as_str());
         // The classes as the character screen's Class row says them: `Bard`, `Bard 30` at the cap,
         // `Bard 30, Hunter 4` once called.
-        let class = c.class_text(content, view.own_experience().level);
+        let class = c.class_arg(content, view.own_experience().level);
+        let class = crate::messages::english_arg(content, &class, crate::lang::LABEL_FORM);
         rows.push(format!("Race {race}"));
         rows.push(match spec.gender {
-            Gender::Other => format!("Gender Other ({} +1)", c.raised.name()),
-            gender => format!("Gender {}", gender.name()),
+            Gender::Other => format!(
+                "Gender Other ({} +1)",
+                content.english_word(c.raised.name(), "Bare")
+            ),
+            gender => format!("Gender {}", content.english_word(gender.name(), "Bare")),
         });
         rows.push(format!("Class {class}"));
         rows.push(format!("Age {}", c.age_on(view.time())));
-        rows.push(format!("Born {}", c.born.text(content.calendar())));
+        let born = crate::messages::english_arg(content, &c.born.arg(), "bare");
+        rows.push(format!("Born {born}"));
         if let Some(sign) = c.sign_title(content) {
             rows.push(format!("Sign {sign}"));
         }
     }
-    rows.extend((view.own_scores().iter()).map(|(stat, score)| format!("{} {score}", stat.name())));
+    rows.extend(
+        (view.own_scores().iter())
+            .map(|(stat, score)| format!("{} {score}", content.english_word(stat.name(), "Bare"))),
+    );
     if let Some(band) = view.own_alignment() {
-        rows.push(format!("Alignment {}", band.name()));
+        rows.push(format!(
+            "Alignment {}",
+            content.english_word(band.name(), "Bare")
+        ));
     }
     // The combat stance by name, when not neutral (as the status bar shows it).
     let stance = view.own_stance();
@@ -80,7 +91,10 @@ pub(super) fn resistance_rows(view: &PerceptionView<'_>) -> Vec<String> {
             .filter(|(_, w)| *w == word)
             .map(|(k, _)| content.damage_type(*k).name.as_str())
             .collect();
-        (!kinds.is_empty()).then(|| format!("{} {}", word.label(), kinds.join(", ")))
+        (!kinds.is_empty()).then(|| {
+            let label = content.english_word(word.label(), "Bare");
+            format!("{label} {}", kinds.join(", "))
+        })
     })
     .collect()
 }

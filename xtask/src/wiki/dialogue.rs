@@ -1,7 +1,8 @@
 //! Dialogue and quests: who talks and who gives quests.
 
+use super::util::word;
 use super::util::{capital, yes};
-use ascmearc_core::content::{Content, Dialogue, Reward, Speaker};
+use ascmearc_core::content::{Content, Dialogue, QuestDef, Reward, Speaker};
 use ascmearc_core::world::quest_asks;
 use std::fmt::Write as _;
 
@@ -37,7 +38,8 @@ pub(super) fn dialogue(content: &Content) -> String {
             |m| {
                 format!(
                     "{} ({} % of its actions, when you are near)",
-                    m.verb, m.chance
+                    m.verb.as_deref().unwrap_or("mutters"),
+                    m.chance
                 )
             },
         );
@@ -99,9 +101,13 @@ fn speaks_to_text(d: &Dialogue) -> String {
     d.speaks_to.map_or_else(
         || "anyone".to_string(),
         |r| match (r.min, r.max) {
-            (Some(min), Some(max)) => format!("{} to {}", min.name(), max.name()),
-            (Some(min), None) => format!("{} or better", min.name()),
-            (None, Some(max)) => format!("{} or worse", max.name()),
+            (Some(min), Some(max)) => format!(
+                "{} to {}",
+                word(min.name(), "Bare"),
+                word(max.name(), "Bare")
+            ),
+            (Some(min), None) => format!("{} or better", word(min.name(), "Bare")),
+            (None, Some(max)) => format!("{} or worse", word(max.name(), "Bare")),
             (None, None) => "anyone".to_string(),
         },
     )
@@ -258,6 +264,10 @@ pub(super) fn quests(content: &Content) -> String {
                 .collect::<Vec<_>>()
                 .join("; "),
         };
+        let pays = match on_accept(content, q) {
+            Some(given) => format!("as given: {given}; done: {pays}"),
+            None => pays,
+        };
         let _ = writeln!(
             out,
             "| {} | {} | {} | {} | {} | {after} | {level} | {reveals} | {} |",
@@ -270,6 +280,38 @@ pub(super) fn quests(content: &Content) -> String {
         );
     }
     out
+}
+
+/// What quest `q` pays as it is given (`on_accept`), in words; with a `once` key shared by other
+/// quests, the quests of which only the first given pays it.
+fn on_accept(content: &Content, q: &QuestDef) -> Option<String> {
+    let given = q.on_accept.as_ref()?;
+    let pays = reward(content, &given.reward);
+    let Some(key) = &given.once else {
+        return Some(pays);
+    };
+    let sharing: Vec<&QuestDef> = (content.quests().iter())
+        .filter(|o| {
+            o.on_accept
+                .as_ref()
+                .is_some_and(|a| a.once.as_ref() == Some(key))
+        })
+        .collect();
+    let one_giver = sharing.iter().all(|o| o.giver == q.giver);
+    Some(match sharing.as_slice() {
+        [_] => format!("{pays} (the first time only)"),
+        _ if one_giver => format!(
+            "{pays} (once: with the first of {}'s quests given)",
+            capital(&content.speaker_name(q.giver))
+        ),
+        others => {
+            let names: Vec<&str> = others.iter().map(|o| o.name.as_str()).collect();
+            format!(
+                "{pays} (once: with the first given of {})",
+                names.join(", ")
+            )
+        }
+    })
 }
 
 /// A quest's reward in words: "20 gold, 30 XP, jade amulet", "Heal skill (1d4 untrained, 100

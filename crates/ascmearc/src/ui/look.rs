@@ -6,10 +6,11 @@
 //! an empty slot for a clause that does not apply. Creatures, things, and the ground are
 //! phrases, so the language gives their articles and numbers.
 
-use super::text::{UiText, look as T, ui_with};
+use super::text::{UiText, look as T, ui_msg_in, ui_with};
 use crate::render::console::{Cell, Console};
 use ascmearc_core::Pos;
 use ascmearc_core::color::Rgb;
+use ascmearc_core::content::data_line::{animated_moves, description};
 use ascmearc_core::content::{
     ActionKind, Content, CreatureId, MaterialId, Noun, ServiceKind, Stance, TerrainId, TrapId,
     ZoneKind,
@@ -42,22 +43,24 @@ pub fn describe(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
     // The data's own words after it, as written: a place's note, a terrain's description (a
     // forgotten altar's) or a chest's band's, and a gravestone's inscription last ("A
     // gravestone. Here lies Ælfric Wudu, 1381–1427.").
-    lines.extend((view.place(p)).and_then(|place| place.note.clone().map(Arg::Text)));
+    lines.extend((view.place(p)).and_then(|place| place.note_arg()));
     let content = view.content();
     let band = (view.chest_at(p)).and_then(|c| content.chests().bands.get(c.band));
     let described = match (band, view.cell(p)) {
-        (Some(band), _) => Some(band.description.clone()),
+        (Some(band), _) => Some(description("chest", &band.id)),
         (None, CellView::Visible(t) | CellView::Remembered(t)) => {
-            content.terrain(t).description.clone()
+            let def = content.terrain(t);
+            def.description
+                .as_ref()
+                .map(|_| description("terrain", &def.id))
         }
         (None, CellView::Unknown) => None,
     };
-    lines.extend(described.map(Arg::Text));
-    lines.extend(
-        view.epitaph(p)
-            .map(|epitaph| Arg::Text(epitaph.to_string())),
-    );
-    ui_with(T::LINES, &[("lines", Arg::List(lines))])
+    lines.extend(described.map(Arg::said));
+    lines.extend(view.epitaph(p).cloned());
+    // The run's content renders it: the names nested in it are its lines of data.
+    let msg = Msg::new(MessageId::new(T::LINES.id)).role("lines", Arg::List(lines));
+    ui_msg_in(view.content(), msg)
 }
 
 /// What the player's Knowledge tells of the creature at `p`, if it tells anything: "You know the
@@ -74,10 +77,9 @@ pub fn known(view: &PerceptionView<'_>, p: Pos) -> Option<String> {
     ]
     .into_iter()
     .filter_map(|(word, text)| {
-        // A damage type's name is the data's text until core's words are converted (#1949).
         let kinds: Vec<Arg> = (known.iter())
             .filter(|(_, w)| *w == word)
-            .map(|(k, _)| Arg::Text(content.damage_type(*k).name.clone()))
+            .map(|(k, _)| Phrase::id(format!("damage_type:{}", content.damage_type(*k).id)).into())
             .collect();
         (!kinds.is_empty()).then(|| clause(text, [("kinds", Arg::List(kinds))]))
     })
@@ -106,7 +108,7 @@ fn clause<const N: usize>(text: UiText, args: [(&'static str, Arg); N]) -> Arg {
 
 /// An empty slot: a clause that does not apply.
 fn none() -> Arg {
-    Arg::Text(String::new())
+    Arg::empty()
 }
 
 /// `items` joined by `joiner` (`listed`, `tags`), a nested entry per join; none for none.
@@ -123,8 +125,9 @@ fn you() -> Phrase {
     Phrase::literal("").person(Person::You)
 }
 
-/// A `word:` phrase: a word the data names without an id of its own (core's words, #1949).
-fn word(text: &str) -> Phrase {
+/// A `word:` phrase: a fixed lexicon id, a word the screen names ("object").
+fn word(text: &'static str) -> Phrase {
+    // lang: label a fixed id, a word the screen names
     Phrase::id(format!("word:{text}"))
 }
 
@@ -143,9 +146,9 @@ fn terrain_phrase(content: &Content, t: TerrainId) -> Phrase {
     Phrase::id(format!("terrain:{}", content.terrain(t).id))
 }
 
-/// A known trap as a phrase: its name, until traps have lexicon ids.
+/// A known trap as a phrase: its name (`trap:<id>`).
 fn trap_phrase(content: &Content, trap: TrapId) -> Phrase {
-    word(&content.trap(trap).name)
+    content.trap_phrase(trap)
 }
 
 /// What look mode says of a zone on a cell (`world/magic/zone.rs`).
@@ -187,7 +190,7 @@ fn describe_cell(view: &PerceptionView<'_>, p: Pos, blood: bool) -> Arg {
         return trap_alone(view, p, trap.clone(), on);
     }
     // A sound heard there (never on a cell the player sees): "You hear footsteps here."
-    let heard = view.sound_at(p).map(|s| Arg::Text(s.you_hear()));
+    let heard = view.sound_at(p).map(|s| Arg::from(s.you_hear()));
     let things = pile(view, p);
     let here = (things.clone()).map_or_else(none, |o| clause(T::HERE, [("things", o)]));
     // What the player remembers at a cell out of sight.
@@ -314,10 +317,18 @@ fn fixture(view: &PerceptionView<'_>, p: Pos, t: TerrainId, blood: bool) -> (Phr
     let chest = view.chest_at(p);
     let chest_trap = view.trap(p).filter(|_| chest.is_some());
     let def = content.terrain(t);
+    // The chest's state, said nearest its name: "a charred open coffer".
+    let mut state = None;
     let (phrase, of) = match (chest, view.statue_at(p)) {
         (Some(chest), _) => {
-            // The band's name with its state: core's words, until they are converted (#1949).
-            let name = word(&chest.name(content.chests(), &def.name));
+            // The band's name (`chest:<band>`) with its state (`chest_state:`), else the terrain.
+            let name = match chest.phrase(content.chests()) {
+                Some((name, said)) => {
+                    state = said;
+                    name
+                }
+                None => terrain_phrase(content, t),
+            };
             let trapped = chest_trap.map_or_else(none, |trap| {
                 clause(T::TRAPPED, [("trap", trap_phrase(content, trap).into())])
             });
@@ -327,34 +338,41 @@ fn fixture(view: &PerceptionView<'_>, p: Pos, t: TerrainId, blood: bool) -> (Phr
         // by the past character the graveyard names it for: "a statue of Brakka the dwarf".
         (None, Some(was)) => {
             let of = match view.statue_name(p) {
-                Some(name) => Phrase::literal(name),
-                None => creature_phrase(content, was),
+                Some(fallen) if !fallen.race.is_empty() => clause(
+                    T::FALLEN,
+                    [
+                        ("name", Phrase::literal(&fallen.name).into()),
+                        ("race", content.race_phrase(&fallen.race).into()),
+                    ],
+                ),
+                Some(fallen) => Phrase::literal(&fallen.name).into(),
+                None => creature_phrase(content, was).into(),
             };
-            let of = clause(T::STATUE_OF, [("of", of.into())]);
+            let of = clause(T::STATUE_OF, [("of", of)]);
             (terrain_phrase(content, t), of)
         }
         (None, None) => (terrain_phrase(content, t), none()),
     };
     // Char reads before the blood: "charred blood-stained stone floor"; a wall the player found
     // sounds hollow (a sealed room's breach) says so: "a hollow stone wall".
-    let char = (view.scorch(p).filter(|_| blood)).map(|c| ascmearc_core::scorch::word(c));
-    let stain = (view.blood(p).filter(|_| blood)).map(|stain| stain.word(!def.transparent));
-    let hollow =
-        (view.hollow(p) && chest.is_none() && view.statue_at(p).is_none()).then_some("hollow");
-    let phrase = [char, stain, hollow]
+    let char = (view.scorch(p).filter(|_| blood)).map(ascmearc_core::scorch::adjective);
+    let stain = (view.blood(p).filter(|_| blood)).map(|stain| stain.adjective(!def.transparent));
+    let hollow = (view.hollow(p) && chest.is_none() && view.statue_at(p).is_none())
+        .then(|| Word::id("word:hollow"));
+    let phrase = [char, stain, hollow, state]
         .into_iter()
         .flatten()
         .fold(phrase, |phrase, adjective| {
-            phrase.with(Modifier::Adjective(Word::id(format!("word:{adjective}"))))
+            phrase.with(Modifier::Adjective(adjective))
         });
     // Stairs and locations name where they lead: "a staircase down, leading to The Depths 1";
     // a wall in sight that was dug into says so: "a stone wall, partly dug"; a named place its
     // name: "a volcano, Fyrbeorg".
     let place = match view.leads_to(p) {
-        Some(to) => clause(T::LEADING_TO, [("to", Arg::Text(to))]),
+        Some(to) => clause(T::LEADING_TO, [("to", to)]),
         None if view.is_dug(p) => clause(T::PARTLY_DUG, []),
         None => match view.place(p) {
-            Some(place) => clause(T::PLACE, [("place", Arg::Text(place.name.clone()))]),
+            Some(place) => clause(T::PLACE, [("place", place.name_arg())]),
             None => none(),
         },
     };
@@ -380,9 +398,10 @@ fn room(view: &PerceptionView<'_>, p: Pos) -> Option<Arg> {
         CellView::Visible(t) | CellView::Remembered(t) => view.content().terrain(t).walkable,
         CellView::Unknown => false,
     };
-    // The room's name with its article is core's words until they are converted (#1949).
-    let room = (view.room(p).filter(|_| walkable))
-        .map(|r| clause(T::IN_ROOM, [("room", Arg::Text(r.with_article()))]));
+    let room = (view.room(p).filter(|_| walkable)).map(|r| {
+        let room = Phrase::id(format!("room:{}", r.id));
+        clause(T::IN_ROOM, [("room", room.into())])
+    });
     let hallow = (view.hallow(p).filter(|_| walkable)).map(|dark| match dark {
         true => clause(T::DREADED, []),
         false => clause(T::HALLOWED, []),
@@ -403,7 +422,7 @@ fn trap_alone(view: &PerceptionView<'_>, p: Pos, trap: Arg, on: impl Fn(TerrainI
             let memory = clause(T::TRAP_ON, [("trap", trap), ("ground", on(t))]);
             clause(
                 T::HEARD_WHERE_REMEMBERED,
-                [("heard", Arg::Text(heard.you_hear())), ("memory", memory)],
+                [("heard", heard.you_hear().into()), ("memory", memory)],
             )
         }
         (CellView::Remembered(t), None) => {
@@ -435,11 +454,10 @@ fn pile(view: &PerceptionView<'_>, p: Pos) -> Option<Arg> {
     let seen = matches!(view.cell(p), CellView::Visible(_));
     let item = |stack: &Stack| {
         let what = Arg::from(view.lore().phrase(stack));
-        // The numbers are core's words until they are converted (#1949).
-        let numbers = Numbers::of(stack, content).text(content).map(Arg::Text);
+        let numbers = Numbers::of(stack, content).words(content);
         // A trained eye (Appraise, Survival; #1031) tells food's freshness of what it sees.
         let fresh = (seen.then(|| view.judge(stack)).flatten())
-            .map(|w| clause(T::LOOKS, [("fresh", Arg::Text(w.to_string()))]));
+            .map(|stage| clause(T::LOOKS, [("fresh", stage.word().into())]));
         let price = (view.price_tag(p, stack))
             .map(|g| clause(T::FOR_SALE, [("gold", Arg::Number(i64::from(g)))]));
         let tags = [numbers, fresh, price].into_iter().flatten().collect();
@@ -466,12 +484,12 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> Arg {
         Stance::Hostile => Some(clause(T::HOSTILE, [])),
         Stance::Neutral => None,
     };
-    // They see how hurt it is: in words, never in hit points (core's words, #1949).
-    let health = Some(Arg::Text(actor.health.word().to_string()));
-    // The status effects that show on it: ", bleeding" (the data's words, #1949).
+    // They see how hurt it is: in words, never in hit points.
+    let health = Some(Arg::from(actor.health.word()));
+    // The status effects that show on it: ", bleeding" (`status_seen:<id>`).
     let effects = (view.effects_of(actor.id))
-        .filter_map(|s| content.status(s).seen.clone())
-        .map(Arg::Text);
+        .filter_map(|s| content.seen_phrase(s))
+        .map(Arg::from);
     // Stalker's eye: it has not noticed the player (never said without it).
     let unaware = actor.unaware.then(|| clause(T::UNAWARE, []));
     // The creature the player's openings are in (`world/classes/mark.rs`).
@@ -515,7 +533,8 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> Arg {
         None if actor.companion => {
             let name = (view.kept()).find(|(a, _)| a.id == actor.id).map_or_else(
                 || clause(T::YOUR_COMPANION, []),
-                |(_, c)| Arg::Text(c.name.clone()),
+                // lang: typed a kept beast's name
+                |(_, c)| Arg::text(c.name.clone()),
             );
             let who = made_of(content, actor, kind(content, actor)).owned_by(you());
             clause(
@@ -536,8 +555,8 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> Arg {
         None => {
             let def = content.creature(actor.creature);
             let who = kind(content, actor);
-            let who = match ascmearc_core::grade::word(def, actor.grade) {
-                Some(grade) => who.with(Modifier::Adjective(Word::id(format!("word:{grade}")))),
+            let who = match Content::grade_word(def, actor.grade) {
+                Some(grade) => who.with(Modifier::Adjective(grade)),
                 None => who,
             };
             let who = made_of(content, actor, who);
@@ -627,7 +646,7 @@ fn made_of(content: &Content, actor: &SeenActor, who: Phrase) -> Phrase {
 fn moves(content: &Content, actor: &SeenActor) -> Option<Arg> {
     animated(content, actor)?;
     let body = content.animated_body(actor.creature)?;
-    body.spec.moves.clone().map(Arg::Text)
+    (body.spec.moves.as_ref()).map(|_| Arg::said(animated_moves(&body.spec.id)))
 }
 
 /// What a seen creature wields, wears, and has ready, as each reads after its name: ", wielding
@@ -699,6 +718,7 @@ pub fn draw_cursor_on(
 mod tests {
     use super::*;
     use ascmearc_core::content::Content;
+    use ascmearc_core::messages::english_arg;
     use ascmearc_core::{Action, Dir, World};
     use std::sync::Arc;
 
@@ -776,7 +796,11 @@ mod tests {
         assert_eq!(w.perception().level_id(), "lictun");
         // One of the town's own, by the chapel (a fixed grave, `docs/dev/graves.md`).
         let stone = Pos::new(21, 19);
-        let cut = w.ground_truth().0.graves()[&stone].clone();
+        let cut = ascmearc_core::messages::english_arg(
+            w.content(),
+            &w.ground_truth().0.graves()[&stone],
+            "bare",
+        );
         assert_eq!(
             describe(&w.perception(), stone, true),
             format!("A gravestone. {cut}")
@@ -1075,7 +1099,10 @@ mod tests {
         let (level, _) = w.ground_truth();
         let down = (0..level.height())
             .flat_map(|y| (0..level.width()).map(move |x| Pos::new(x, y)))
-            .find(|&p| view.leads_to(p).as_deref() == Some("The Vast Caverns"))
+            .find(|&p| {
+                let to = view.leads_to(p);
+                to.is_some_and(|to| english_arg(view.content(), &to, "bare") == "The Vast Caverns")
+            })
             .expect("the staircase to the vast level is in view");
         let text = describe(&view, down, true);
         // The stairs nook is a sanctuary, which the player knows once they have been in it.
@@ -1268,7 +1295,7 @@ mod tests {
         });
         let (health, text) = hurt.expect("someone in view was hurt");
         // The health word, then what shows of its statuses (", bleeding") if any.
-        let word = health.word();
+        let word = crate::ui::text::word(health.word(), "bare");
         let named = [format!(", {word})"), format!(", {word}, ")];
         assert!(named.iter().any(|n| text.contains(n)), "{text}");
         // Never a number of hit points.

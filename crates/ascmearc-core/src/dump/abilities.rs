@@ -10,7 +10,7 @@ pub(super) fn ability_rows(view: &PerceptionView<'_>) -> Vec<String> {
         .map(|own| {
             let a = own.ability;
             let state = match own.unavailable {
-                Some(why) => why.reason(content),
+                Some(why) => crate::messages::english_msg(content, &why.reason(content)),
                 None => aim_word(a.aim(content)).into(),
             };
             let source = own.source.id().replace('_', " ");
@@ -32,9 +32,12 @@ pub(super) fn recipe_rows(view: &PerceptionView<'_>) -> Vec<String> {
             rows.push("  none".into());
         }
         for row in recipes {
-            let why = (row.unavailable)
-                .map_or(String::new(), |why| format!(" ({})", why.reason(content)));
-            rows.push(format!("  {}: {}{why}", row.name, row.takes));
+            let why = (row.unavailable).map_or(String::new(), |why| {
+                let reason = crate::messages::english_msg(content, &why.reason(content));
+                format!(" ({reason})")
+            });
+            let takes = crate::messages::english_msg(content, &row.takes);
+            rows.push(format!("  {}: {takes}{why}", row.name));
         }
     }
     rows

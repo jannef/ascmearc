@@ -13,12 +13,17 @@
 //! `--check` then checks each mod's `lang/` laid over the game's (`lang/mods.rs`, #1892): every
 //! mod under the repository's `mods/`, or the `--mod` folders, reporting what the mod adds.
 //!
+//! `--check` also runs the guard against English in code (`lang/neutral.rs`, #2035): text said
+//! as written only with a `lang:` reason.
+//!
 //! `--forms fi [WORD...]` and `--suggest fi <KOTUS_XML> [WORD...]` are the Finnish translator's
 //! tools (`lang/fi_tools.rs`).
 
 mod data;
 mod fi_tools;
 mod mods;
+mod neutral;
+mod registers;
 
 use crate::workspace_root;
 use ascmearc_lang::en::Plurals;
@@ -38,9 +43,9 @@ const FEATURES: &[(&str, &[&str])] = &[
     ("person", &["you", "other"]),
 ];
 
-/// Forms every language's lists accept, beside its module's own (`Arg::List`'s conjunctions, and
-/// `lines`: one speech of several lines, said in turn).
-const LIST_FORMS: &[&str] = &["and", "or", "lines"];
+/// Forms every language accepts, beside its module's own: a list's (`Arg::List`'s conjunctions, and
+/// `lines`: one speech of several lines, said in turn), and `label`, a name shown alone (#2000).
+const LIST_FORMS: &[&str] = &["and", "or", "lines", "label"];
 
 /// The role the host fills with a key; its "form" is a command name, not a grammatical form.
 const KEY_ROLE: &str = "key";
@@ -139,6 +144,9 @@ pub fn run(options: Options) -> Result<(), String> {
             let data = data::check_data(&langs, content.english().data_lines(), &strict);
             report.errors.extend(data.errors);
             report.warnings.extend(data.warnings);
+            let (races, spoken) = content_voices(&content);
+            let voices = registers::check_registers(&langs, &races, &spoken);
+            report.errors.extend(voices.errors);
             // Each mod's language files, laid over these: what it adds to the report.
             if options.dir.is_none() {
                 let dirs = match options.mods.is_empty() {
@@ -149,6 +157,10 @@ pub fn run(options: Options) -> Result<(), String> {
                 report.errors.extend(found.errors);
                 report.warnings.extend(found.warnings);
                 report.warnings.extend(unused_ids(&langs));
+                let said = neutral::check_sources(&workspace_root());
+                report
+                    .errors
+                    .extend(said.into_iter().map(|s| format!("english in code: {s}")));
             }
             for w in &report.warnings {
                 eprintln!("warning: {w}");
@@ -460,6 +472,27 @@ fn lower(form: &str) -> String {
         Some(c) if c.is_uppercase() => c.to_lowercase().chain(chars).collect(),
         _ => form.to_string(),
     }
+}
+
+/// The content's race ids, and each register a dialogue names with whose dialogue it is (the
+/// first one, by the content's order): what `[race_registers]` and English's registers answer to.
+fn content_voices(
+    content: &ascmearc_core::content::Content,
+) -> (BTreeSet<String>, BTreeMap<String, String>) {
+    use ascmearc_core::content::Speaker;
+    let races = content.races().list.iter().map(|r| r.id.clone()).collect();
+    let mut spoken = BTreeMap::new();
+    for dialogue in content.dialogues() {
+        let Some(register) = &dialogue.register else {
+            continue;
+        };
+        let whose = match &dialogue.speaker {
+            Speaker::Npc(npc) => format!("npc `{npc}`"),
+            Speaker::Creature(c) => format!("creature `{}`", content.creature(*c).id),
+        };
+        spoken.entry(register.clone()).or_insert(whose);
+    }
+    (races, spoken)
 }
 
 fn language_of(code: &str, files: &LangFiles, report: &mut Report) -> Option<Language> {

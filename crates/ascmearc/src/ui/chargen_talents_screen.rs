@@ -21,11 +21,12 @@ use super::chargen_screen::{Draft, WIDTH};
 use super::menu::{HINTS, Nav, Panel, Press, truncated};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{chargen_talents_screen as T, ui, ui_with};
+use super::text::{chargen_talents_screen as T, label, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::World;
 use ascmearc_core::content::{Content, TalentId, TreeId};
+use ascmearc_core::lang::Arg;
 use ascmearc_core::world::pick_text;
 use std::sync::Arc;
 
@@ -66,9 +67,9 @@ pub struct ChargenTalentsScreen {
     /// The class's creation bonus picks still to mark (the craftsperson's trades), which the
     /// list offers first; kept by `rebuild`.
     trades: u8,
-    /// The race's free picks still to mark (a dwarf's Sworn foe), with their talents' names,
-    /// which the list offers first; kept by `rebuild`.
-    free: (u8, Vec<String>),
+    /// The race's free picks still to mark (a dwarf's Sworn foe), with their talents, which the
+    /// list offers first; kept by `rebuild`.
+    free: (u8, Vec<TalentId>),
     entries: PagedList<Entry, Group>,
     /// A talent's choices, listed in its place.
     choosing: Option<PagedList<Entry, Group>>,
@@ -180,8 +181,10 @@ impl ChargenTalentsScreen {
                     .collect();
                 let entry = Entry {
                     talent: Some(id),
-                    name: def.name.clone(),
-                    description: def.description.clone(),
+                    name: label(content.talent_phrase(id)),
+                    description: crate::ui::text::data_line(
+                        ascmearc_core::content::data_line::description("talent", &def.id),
+                    ),
                     ways,
                     done: false,
                 };
@@ -205,7 +208,7 @@ impl ChargenTalentsScreen {
             ));
         }
         self.entries = PagedList::grouped(items, |group| match group {
-            Group::Tree(tree) => book.tree(tree).name.clone(),
+            Group::Tree(tree) => label(content.tree_phrase(tree)),
             Group::Chance => ui(T::CHANCE),
         });
         let at = (self.entries.iter()).position(|e| e.talent.is_some() && e.talent == selected);
@@ -292,12 +295,7 @@ impl ChargenTalentsScreen {
                 .map(|way| {
                     let (id, choice) = split(way);
                     let name = (self.content.talents().id(id))
-                        .map(|t| {
-                            self.content
-                                .talents()
-                                .get(t)
-                                .name_for(&self.content, choice)
-                        })
+                        .map(|t| label(self.content.talent_arg(t, choice)))
                         .unwrap_or_else(|| way.clone());
                     let choice = Entry {
                         talent: entry.talent,
@@ -321,13 +319,16 @@ impl ChargenTalentsScreen {
         let Some(way) = entry.ways.first().cloned() else {
             return ScreenAction::Stay;
         };
-        self.picks.push(way);
+        self.picks.push(way.clone());
         if !self.holds() {
             self.picks.pop();
-            self.notice = Some(ui_with(
-                T::CANNOT_TAKE,
-                &[("name", entry.name.as_str().into())],
-            ));
+            // Named as its row is: with its choice in the choices' list.
+            let choice = split(&way).1.filter(|_| in_choices);
+            let name = match entry.talent {
+                Some(talent) => self.content.talent_arg(talent, choice),
+                None => Arg::text(entry.name.as_str()),
+            };
+            self.notice = Some(ui_with(T::CANNOT_TAKE, &[("name", name)]));
             return ScreenAction::Stay;
         }
         self.choosing = None;
@@ -354,12 +355,12 @@ impl ChargenTalentsScreen {
         let count = list.tallest().max(1) as i32;
         let left = |n: i64| ("left", n.into());
         let title = match (&self.free, self.trades) {
-            ((n @ 1.., names), _) => {
-                let names = ascmearc_core::text::or_list(names);
-                ui_with(
-                    T::TITLE_FREE,
-                    &[("names", names.into()), left(i64::from(*n))],
-                )
+            ((n @ 1.., talents), _) => {
+                let names = (talents.iter())
+                    .map(|&t| self.content.talent_phrase(t).into())
+                    .collect();
+                let names = Arg::List(names);
+                ui_with(T::TITLE_FREE, &[("names", names), left(i64::from(*n))])
             }
             (_, 0) => ui_with(T::TITLE_TALENTS, &[left(self.left() as i64)]),
             (_, n) => ui_with(T::TITLE_TRADE, &[left(i64::from(n))]),
@@ -417,7 +418,7 @@ impl ChargenTalentsScreen {
             }
         }
         let keys = HINTS;
-        let confirm = ("confirm", keys.confirm.to_string().into());
+        let confirm = ("confirm", Arg::text(keys.confirm.to_string()));
         let mut footer = ui_with(T::MARK, &[confirm]);
         if let Some(hint) = list.hint(&keys) {
             footer = format!("{footer}   {hint}");
@@ -451,7 +452,6 @@ mod tests {
         let mut draft = Draft {
             scenario: Some(ScenarioPick {
                 id: "showcase".into(),
-                name: showcase.name.clone(),
                 seed: 1,
                 shows_seed: false,
                 character: Some(spec.clone()),
@@ -479,9 +479,9 @@ mod tests {
             ChargenTalentsScreen::new(&content, &draft(&content, "dwarf,male,warrior"), None);
         // The two everyone picks and Old grudges' free Sworn foe, which comes first.
         assert_eq!(screen.count, 3);
-        assert_eq!(screen.free, (1, vec!["Sworn foe".to_string()]));
         let book = content.talents();
         let sworn = book.id("sworn_foe").expect("Sworn foe");
+        assert_eq!(screen.free, (1, vec![sworn]));
         assert!(
             (screen.entries.iter())
                 .filter_map(|e| e.talent)

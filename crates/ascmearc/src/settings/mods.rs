@@ -20,6 +20,8 @@
 //! ([`refusal`]).
 
 use crate::input::{Context, KeyBinding, KeyCommand};
+use crate::ui::text::{UiText, settings as T, ui_with};
+use ascmearc_core::lang::Arg;
 use bevy::input::keyboard::{Key, KeyboardInput};
 use bevy::prelude::*;
 
@@ -329,17 +331,19 @@ pub fn refusal(key: &KeyBinding, command: KeyCommand, platform: Platform) -> Opt
         return None;
     };
     if command.context() != Context::Play {
-        return Some(format!(
-            "{} takes plain keys only: Ctrl, Alt, and Super are for keys in play",
-            command.name()
-        ));
+        let name = Arg::text(command.name());
+        return Some(ui_with(T::PLAIN_KEYS_ONLY, &[("name", name)]));
     }
     let kept = reserved(*mods, base, platform)?;
-    Some(format!("{} is kept by {kept}", key.display_on(platform)))
+    Some(ui_with(
+        kept,
+        &[("shown", Arg::text(key.display_on(platform)))],
+    ))
 }
 
-/// What keeps the shortcut `mods` + `base` on `platform` (the system, the browser), if anything.
-fn reserved(mods: Mods, base: &KeyBinding, platform: Platform) -> Option<&'static str> {
+/// What keeps the shortcut `mods` + `base` on `platform` (the system, the browser), if anything:
+/// the words that say so.
+fn reserved(mods: Mods, base: &KeyBinding, platform: Platform) -> Option<UiText> {
     let ch = match base {
         KeyBinding::Char(s) => s.to_ascii_lowercase(),
         _ => String::new(),
@@ -367,21 +371,21 @@ fn reserved(mods: Mods, base: &KeyBinding, platform: Platform) -> Option<&'stati
             let keys = ["q", "w", "h", "m"];
             let cmd_key = only(cmd) && keys.contains(&ch.as_str());
             let switch = mods.sup && matches!(code, Some(KeyCode::Tab | KeyCode::Space));
-            (cmd_key || switch).then_some("macOS")
+            (cmd_key || switch).then_some(T::KEPT_BY_MACOS)
         }
         Platform::Desktop => {
             let alt_key = only(alt) && matches!(code, Some(KeyCode::F4 | KeyCode::Tab));
             let ctrl_alt_del = only(ctrl_alt) && code == Some(KeyCode::Delete);
             let win = only(cmd)
                 && (["d", "e", "l", "r"].contains(&ch.as_str()) || code == Some(KeyCode::Tab));
-            (alt_key || ctrl_alt_del || win).then_some("the system")
+            (alt_key || ctrl_alt_del || win).then_some(T::KEPT_BY_SYSTEM)
         }
         Platform::Web => {
             let browser =
                 ["n", "q", "t", "w"].contains(&ch.as_str()) && (only(Mods::CTRL) || only(cmd));
             let tab = (mods.ctrl || mods.sup) && code == Some(KeyCode::Tab);
             let alt_key = only(alt) && code == Some(KeyCode::F4);
-            (browser || tab || alt_key).then_some("the browser")
+            (browser || tab || alt_key).then_some(T::KEPT_BY_BROWSER)
         }
     }
 }

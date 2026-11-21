@@ -204,7 +204,10 @@ fn the_tower_is_five_floors_on_the_downs_footprint() {
     put_player(&mut w, STAIR);
     act(&mut w, "ascend");
     assert_eq!(
-        (w.perception().level_id(), w.perception().level_name()),
+        (
+            w.perception().level_id(),
+            crate::test_support::level_name(&w).as_str()
+        ),
         ("wedertorr_tower:1", "Wedertorr 2")
     );
     act(&mut w, "descend");

@@ -661,11 +661,11 @@ impl World {
     /// as. Takes no time.
     pub(in crate::world) fn afflict_dev(&mut self, id: &str, events: &mut Vec<Event>) -> Spent {
         let Some(status) = self.content.status_id(id) else {
-            self.say(Msg::new(msg::health::NO_STATUS).role("id", id));
+            self.say(Msg::new(msg::health::NO_STATUS).role("id", Arg::id(id)));
             return Spent::Nothing;
         };
         if self.content.disease_status() == Some(status) {
-            self.say(Msg::new(msg::health::STATUS_COMES_OF_DISEASE).role("id", id));
+            self.say(Msg::new(msg::health::STATUS_COMES_OF_DISEASE).role("id", Arg::id(id)));
             return Spent::Nothing;
         }
         // A status a resource brings lasts while that is held: Raging
@@ -674,8 +674,8 @@ impl World {
             let resource = r.id.to_string();
             self.say(
                 Msg::new(msg::health::STATUS_COMES_OF_RESOURCE)
-                    .role("id", id)
-                    .role("resource", resource),
+                    .role("id", Arg::id(id))
+                    .role("resource", Arg::id(resource)),
             );
             return Spent::Nothing;
         }

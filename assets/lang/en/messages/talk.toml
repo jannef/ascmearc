@@ -13,6 +13,8 @@ no_one_to_talk_to = "You see no one there to talk to."
 something_in_the_way = "Something is in the way."
 swap_places = "You swap places with {who:the}."
 swap_places_unseen = "You swap places with something."
+# How a creature mutters when its dialogue's `mutter` gives no `verb` (`mutters`'s `verb`).
+verb_mutters = "mutters"
 # A mutter heard faintly, from no way the player can tell.
 voice_faint = "You faintly hear a voice."
 # The same, placed: `dir`, the compass word ("north").
@@ -20,7 +22,7 @@ voice_faint_from = "You faintly hear a voice to the {dir:bare}."
 will_not_go_into_water = "{who:The} will not go into the water."
 
 # A creature the player sees mutters: `who`, the speaker; `verb`, how (its dialogue's `verb`,
-# "mutters", "hums"); `line`, the line.
+# a line of data, `dialogue:<scope>.mutter_verb`, "hums"; else `verb_mutters`); `line`, the line.
 [mutters]
 text = "{who:The} {verb:bare}: \"{line:bare}\""
 

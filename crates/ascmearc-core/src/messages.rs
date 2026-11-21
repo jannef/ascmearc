@@ -76,9 +76,40 @@ pub fn english(content: &Content, entry: &Entry, keys: Keys<'_>) -> String {
     content.english().render(entry, content.lexicon(), keys)
 }
 
-/// What a creature said ([`Speech`]) in English, its lines in turn, keys left written: what the
-/// dialogue screen shows (until a language can be chosen, L8) and a commission's offer in the
-/// quest log. A line English cannot render reads as the reason in brackets.
+/// `entry` in the language `code`, English for what it lacks (an unknown code is English), its
+/// repeats counted, each key it names by `keys`: the app's log, a dump with `--lang`.
+pub fn render_in(content: &Content, code: &str, entry: &Entry, keys: Keys<'_>) -> String {
+    let chain = content.shown_chain(code);
+    crate::lang::render_chain(&chain, entry, content.lexicon(), keys)
+}
+
+/// A message not logged (a quest log's objective) in the language `code`, keys left written.
+pub fn msg_in(content: &Content, code: &str, msg: &Msg) -> String {
+    render_in(content, code, &Entry::new(0, msg.clone()), &written_key)
+}
+
+/// An argument alone in `form` in the language `code`, keys left written: the first language
+/// of its chain that renders it, else the reason in brackets. What a creature said ([`Speech`])
+/// is its lines said in turn (the dialogue screen).
+pub fn arg_in(content: &Content, code: &str, arg: &Arg, form: &str) -> String {
+    let mut failed = None;
+    for language in content.shown_chain(code) {
+        match language.try_arg(arg, form, content.lexicon(), &written_key) {
+            Ok(text) => return text,
+            Err(e) => failed = failed.or(Some(e)),
+        }
+    }
+    failed.map_or_else(String::new, |e| format!("[{e}]"))
+}
+
+/// What a creature said in the language `code` ([`arg_in`]): the dialogue screen.
+pub fn speech_in(content: &Content, code: &str, speech: &Speech) -> String {
+    arg_in(content, code, &Arg::List(speech.0.clone()), LINES_FORM)
+}
+
+/// What a creature said ([`Speech`]) in English, its lines in turn, keys left written: a
+/// commission's offer in the quest log ([`speech_in`] in another language). A line English cannot
+/// render reads as the reason in brackets.
 pub fn english_speech(content: &Content, speech: &Speech) -> String {
     let lines = Arg::List(speech.0.clone());
     (content
@@ -124,13 +155,18 @@ fn is_one(n: &u32) -> bool {
 impl Message {
     /// `entry` rendered in English.
     pub fn english(content: &Content, entry: &Entry) -> Self {
+        Self::in_language(content, "en", entry)
+    }
+
+    /// `entry` rendered in the language `code` (a dump with `--lang`), English for what it lacks.
+    pub fn in_language(content: &Content, code: &str, entry: &Entry) -> Self {
         let once = Entry {
             count: 1,
             ..entry.clone()
         };
         Self {
             turn: entry.turn,
-            text: english(content, &once, &written_key),
+            text: render_in(content, code, &once, &written_key),
             count: entry.count,
             passing: entry.passing,
         }
@@ -160,11 +196,11 @@ mod tests {
     #[test]
     fn repeats_fold_into_one_entry() {
         let mut log = MessageLog::default();
-        log.push(1, "You open the door.");
-        log.push(2, "You open the door.");
+        log.push(1, Msg::literal("You open the door."));
+        log.push(2, Msg::literal("You open the door."));
         log.push(3, msg::doors::CLOSE);
         log.push(4, msg::doors::CLOSE);
-        log.push(5, "You open the door.");
+        log.push(5, Msg::literal("You open the door."));
         assert_eq!(
             shown(&log),
             [
@@ -179,7 +215,8 @@ mod tests {
     #[test]
     fn keys_named_in_a_message_are_filled_in_as_bound() {
         let content = crate::test_support::builtin();
-        let welcome = || Msg::new(msg::world::WELCOME).role("place", "Showcase");
+        let welcome =
+            || Msg::new(msg::world::WELCOME).role("place", crate::lang::Arg::text("Showcase"));
         let mut log = MessageLog::default();
         log.push(1, welcome());
         log.push(2, welcome());
@@ -206,7 +243,7 @@ mod tests {
     #[test]
     fn the_log_saves_entries_and_single_messages_without_a_count() {
         let mut log = MessageLog::default();
-        log.push(1, "Hello.");
+        log.push(1, Msg::literal("Hello."));
         log.push(2, msg::doors::LOCKED);
         let json = serde_json::to_string(&log).unwrap();
         assert!(!json.contains("count"), "{json}");
@@ -222,7 +259,7 @@ mod tests {
     fn drops_oldest_beyond_capacity() {
         let mut log = MessageLog::default();
         for i in 0..(CAPACITY as u64 + 5) {
-            log.push(i, format!("m{i}"));
+            log.push(i, Msg::literal(format!("m{i}")));
         }
         assert_eq!(log.len(), CAPACITY);
         assert_eq!(log.iter().next().map(|m| m.turn), Some(5));

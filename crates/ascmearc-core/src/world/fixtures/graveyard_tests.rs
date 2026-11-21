@@ -141,5 +141,6 @@ fn the_player_sees_whom_a_named_statue_is_of() {
     let w = World::from_state(content.clone(), (*w.state).clone()).expect("restored");
     let view = w.perception();
     assert!(view.statue_at(at).is_some(), "seen");
-    assert_eq!(view.statue_name(at).as_deref(), Some("Brakka the dwarf"));
+    let fallen = view.statue_name(at).expect("named");
+    assert_eq!(fallen.words(&content), "Brakka the dwarf");
 }

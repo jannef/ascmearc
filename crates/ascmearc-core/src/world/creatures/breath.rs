@@ -74,7 +74,8 @@ impl World {
         self.make_noise(id, Act::Roar);
         if self.perception.sees_actors_at(here) {
             let line = Msg::new(msg::creatures::BREATHES).role("who", fight::creature(def));
-            self.say(line.role("verb", breath.verb.as_str()));
+            let verb = crate::content::data_word::creature_verb(&def.id, "breath");
+            self.say(line.role("verb", crate::lang::Arg::said(verb)));
         }
         let mut made = Vec::new();
         let cone = (
@@ -102,8 +103,8 @@ impl World {
                 _ => None,
             })
             .collect();
-        let verb = &content.damage_type(breath.kind).verb;
-        self.say_spell((&breath.noun, verb), made, events);
+        let words = fight::Words::of_kind(content.breath_noun_phrase(def), breath.kind, &content);
+        self.say_spell(words, made, events);
         self.spell_type_lands(id, Some(breath.kind), &harmed, events);
         for target in harmed {
             for rider in breath.riders.clone() {

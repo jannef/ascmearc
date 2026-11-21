@@ -107,6 +107,13 @@ text = "Size of the glyphs, in logical pixels."
 [footer]
 text = "{up_down:bare} select   {left_right:bare} change   Esc back"
 
+# The language row: its value is the language's own name ("English", "suomi").
+[language]
+text = "Language"
+
+[language_help]
+text = "The language the game is shown in."
+
 [off]
 text = "Off"
 

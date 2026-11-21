@@ -105,9 +105,9 @@ impl Phrase {
         self
     }
 
-    /// A note of one tag: "(magic)", "(lit)".
-    pub fn note(mut self, tag: impl Into<String>) -> Self {
-        self.notes.push(Note::Tags(vec![tag.into()]));
+    /// A note of one tag, a lexicon word: "(magic)", "(lit)".
+    pub fn note(mut self, tag: Word) -> Self {
+        self.notes.push(Note::Tags(vec![tag]));
         self
     }
 
@@ -222,9 +222,10 @@ impl Gender {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Note {
-    /// Short ids said together, in parentheses in `en`: `magic` and `cursed` "(magic, cursed)",
-    /// `lit` "(lit)". Each language has its word for each (`en`: the id as written).
-    Tags(Vec<String>),
+    /// Short words said together, in parentheses in `en`: `item_tag:magic` and
+    /// `item_tag:cursed` "(magic, cursed)", `item_tag:lit` "(lit)". Each a lexicon word (or a
+    /// literal, as written) the language says in its base form.
+    Tags(Vec<Word>),
     /// A wand's charges the player knows: "(7 charges)", "(1 charge)", "(empty)".
     Charges(u32),
     /// What a named item is: a rare's base, counted (", a long sword").
@@ -259,7 +260,7 @@ mod tests {
         let dressed = Phrase::id("object:long_sword")
             .with(Modifier::Adjective(Word::id("affix:flaming")))
             .with(Modifier::Of(Word::id("affix:of_the_bear")))
-            .note("cursed")
+            .note(Word::literal("cursed"))
             .with_note(Note::Charges(3))
             .with_note(Note::Base(Box::new(Phrase::id("object:dagger"))))
             .owned_by(Phrase::literal("Hild").person(Person::You))

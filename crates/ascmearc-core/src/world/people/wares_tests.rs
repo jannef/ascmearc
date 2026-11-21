@@ -122,7 +122,9 @@ fn chatting_makes_one_favoured_identified_offer_the_same_each_run() {
     let topic = wares_topic(&w, pedlar);
     assert_eq!(topic.price, Some(wares.price));
     let ware = topic.ware.expect("the item in words");
-    assert!(ware.contains(&w.lore().listed(&item)[1..]), "{ware}");
+    let ware = crate::messages::english_arg(w.content(), &ware, "bare");
+    let listed = crate::test_support::english_of(w.content(), &w.lore().listed(&item));
+    assert!(ware.contains(&listed[1..]), "{ware}");
     // Chatting again changes nothing; the same run makes the same offer.
     act(&mut w, &format!("chat:{dir:?}"));
     assert_eq!(w.state.wares[&pedlar], wares);
@@ -236,7 +238,9 @@ fn the_three_uniques_are_a_ring_a_neck_and_hands() {
             let def = CONTENT.unique(id).expect(id);
             assert!(def.power.is_some() && def.lore.is_some(), "{id}");
             let magic = def.magic();
-            assert_eq!((magic.level, magic.affixes.len()), (12, 6), "{id}");
+            // Six affixes, but the Eorcanstān five since the owner's balance pass (#2001).
+            let affixes = if id == "eorcanstan" { 5 } else { 6 };
+            assert_eq!((magic.level, magic.affixes.len()), (12, affixes), "{id}");
             let kind = CONTENT.object(def.object).kind.expect("a kind");
             format!("{kind:?}")
         })

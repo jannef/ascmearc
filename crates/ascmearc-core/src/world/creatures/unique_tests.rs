@@ -1,4 +1,4 @@
-//! Unique items: made from their table, rare with a set
+//! Unique items: made from their table, of their own rarity (#1975) with a set
 //! name and affixes; hidden until identified, power and lore too; placed once in all content;
 //! and their powers, each read in its one place: Inflict (`World::after_blow`, through the
 //! attack's profile), Vision (the eyes), and Ward (`World::afflict`).
@@ -99,7 +99,7 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert_eq!(def.name, "Widowmaker");
     assert_eq!(content.object(def.object).id, "stiletto");
     let magic = def.stack.magic().expect("magic");
-    assert_eq!(magic.rarity, Rarity::Rare);
+    assert_eq!(magic.rarity, Rarity::Unique);
     assert_eq!(magic.name.as_deref(), Some("Widowmaker"));
     assert_eq!(magic.unique.as_deref(), Some("widowmaker"));
     assert_eq!(magic.level, 12);
@@ -116,18 +116,46 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert_eq!(
         magic.affixes,
         [
-            affixes("venomous", 4),
             affixes("of_celerity", 11),
-            affixes("of_the_lynx", 2)
+            affixes("of_the_lynx", 2),
+            affixes("of_precision", 3),
         ]
     );
     assert_eq!(def.stack.count, 1);
+    // The owner's balance pass (#2001): the values set by hand ("mystic=30") and the tiers it
+    // moved, each as the item holds it.
+    let value = |unique: &str, affix: &str| {
+        let magic = content.unique(unique).expect(unique).magic();
+        (magic.affixes.iter())
+            .find(|a| a.id == affix)
+            .map(|a| a.value)
+    };
+    assert_eq!(value("widowmaker", "of_precision"), Some(2));
+    assert_eq!(value("widowmaker", "venomous"), None);
+    assert_eq!(value("high_toby", "of_precision"), Some(4));
+    assert_eq!(value("high_toby", "sharp"), Some(2));
+    assert_eq!(value("eorcanstan", "mystic"), None);
+    assert_eq!(value("eorcanstan", "of_thrift"), Some(25));
+    assert_eq!(value("unhalwed_bedes", "of_clarity"), None);
+    assert_eq!(value("unhalwed_bedes", "mystic"), Some(30));
+    assert_eq!(value("sigerics_star", "mystic"), None);
+    assert_eq!(value("sigerics_star", "of_the_sage"), Some(6));
+    // A value set by hand keeps the affix's top tier, and passes the check a save gets.
+    let bedes = content.unique("unhalwed_bedes").expect("the Bedes");
+    let mystic = &bedes.magic().affixes[0];
+    let tiers = content.affixes().get("mystic").expect("Mystic").tiers.len();
+    assert_eq!(usize::from(mystic.tier), tiers);
+    (bedes.magic().check(content.object(bedes.object), &content)).expect("a unique as set");
+    // Anything else with that value is no item: the hand-set value is the unique's alone.
+    let mut other = bedes.magic().clone();
+    other.unique = None;
+    assert!(other.check(content.object(bedes.object), &content).is_err());
     // The criminals' four, the pedlar's three (#808), and Sigeric's (#1787), each with its power.
     let powers: Vec<(&str, &str)> = (content.uniques())
         .filter(|u| u.stack.magic().is_some_and(|m| m.level == 12))
         .map(|u| {
             let power = match u.power.as_ref().expect("a power") {
-                Power::Inflict(_) => "inflict",
+                Power::Inflict { .. } => "inflict",
                 Power::Vision(_) => "vision",
                 Power::Ward { .. } => "ward",
             };
@@ -164,13 +192,17 @@ fn unidentified_it_hides_its_name_affixes_power_and_lore() {
     let shown = |lines: &[describe::Line], kind: LineKind| {
         (lines.iter())
             .filter(|l| l.kind == kind)
-            .map(|l| l.text.clone())
+            .map(|l| l.english(&content))
             .collect::<Vec<_>>()
     };
     assert!(shown(&lines, LineKind::Power).is_empty());
     assert!(shown(&lines, LineKind::Lore).is_empty());
     assert!(!lines.iter().any(|l| matches!(l.kind, LineKind::Affix(_))));
-    assert!(lines.iter().all(|l| !l.text.contains("Widowmaker")));
+    assert!(
+        lines
+            .iter()
+            .all(|l| !l.english(&content).contains("Widowmaker"))
+    );
     // Identified: its name, affixes, power, and lore, the lore last.
     run(&mut w, "identify");
     let known = stack(&w);
@@ -182,11 +214,58 @@ fn unidentified_it_hides_its_name_affixes_power_and_lore() {
     let lines = describe::lines(&known, &content);
     assert_eq!(shown(&lines, LineKind::Power), ["Its every cut poisons."]);
     assert_eq!(
-        lines.last().map(|l| (l.kind, l.text.as_str())),
-        Some((LineKind::Lore, "Thin as a hatpin, and never quite clean."))
+        lines.last().map(|l| (l.kind, l.english(&content))),
+        Some((
+            LineKind::Lore,
+            "Thin as a hatpin, and never quite clean.".to_string()
+        ))
     );
     let affixes = (lines.iter()).filter(|l| matches!(l.kind, LineKind::Affix(_)));
     assert_eq!(affixes.count(), 3);
+}
+
+/// The form `"mystic=30"` (#2001): a unique's alone, checked at load.
+#[test]
+fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
+    let load = |object: &str, affixes: &str| {
+        let mut files = files();
+        files.insert(
+            "data/uniques/test_set.toml",
+            &format!(
+                "[[unique]]\nid = \"test_set\"\nname = \"Test Set\"\nobject = \"{object}\"\n\
+                 affixes = [{affixes}]\nlevel = 12\n"
+            ),
+        );
+        Content::load(&files)
+    };
+    let content = load("gold_ring", "\"mystic=40\"").expect("a value past the top tier");
+    let magic = content.unique("test_set").expect("loaded").magic();
+    assert_eq!(magic.affixes[0].value, 40);
+    // A bow takes flat damage set by hand, though Sharp never rolls on one.
+    load("long_bow", "\"sharp=2\"").expect("an effect a bow's shots use");
+    for (object, affixes, needle) in [
+        ("gold_ring", "\"mystic=-3\"", "sign"),
+        ("gold_ring", "\"mystic=x\"", "must be a number"),
+        ("gold_ring", "\"nothing=3\"", "unknown affix"),
+        // Range on a ring does nothing, set by hand or not.
+        ("gold_ring", "\"hunters=3\"", "does nothing"),
+        ("gold_ring", "\"mystic=30\", \"mystic=31\"", "category"),
+    ] {
+        let e = load(object, affixes).expect_err(affixes).to_string();
+        assert!(e.contains(needle), "{affixes}: {e}");
+    }
+    // A level's `[[item]]` names tiers only.
+    let mut files = files();
+    files.insert(
+        "levels/den.toml",
+        &format!(
+            "{LEVEL}[[item]]\nat = [2, 1]\nobject = \"gold_ring\"\naffixes = [\"mystic=30\"]\n"
+        ),
+    );
+    let e = Content::load(&files)
+        .expect_err("no hand-set value")
+        .to_string();
+    assert!(e.contains("only a unique item"), "{e}");
 }
 
 #[test]
@@ -240,7 +319,7 @@ fn a_unique_is_placed_by_its_id() {
 fn widowmaker_poisons_on_every_hit() {
     let mut w = world();
     let (player, foe) = (w.player_id(), foe(&w));
-    wear(&mut w, player, "main_hand", "widowmaker");
+    let item = wear(&mut w, player, "main_hand", "widowmaker");
     let content = w.content().clone();
     let profile = w.state.actors[&player].melee(&content);
     let poisoned = status(&w, "poisoned");
@@ -256,6 +335,22 @@ fn widowmaker_poisons_on_every_hit() {
         profile.on_hit,
         [poisons],
         "the stiletto's power rides its blows"
+    );
+    // And its 2d6 poison besides (#2001), a rider of every blow.
+    let poison = content.damage_type_id("poison").expect("poison");
+    let rider = crate::damage::Rider {
+        kind: poison,
+        dice: crate::dice::Dice::of(2, 6),
+    };
+    assert!(profile.riders.contains(&rider), "{:?}", profile.riders);
+    let knife = content.object_id("stiletto").expect("a stiletto");
+    let plain = Stack::new(knife, 1);
+    let actor = &w.state.actors[&player];
+    let mut bare = actor.clone();
+    bare.inventory[item] = plain;
+    assert!(
+        !bare.melee(&content).riders.contains(&rider),
+        "the power's, not the knife's"
     );
     // Its blows: every hit adds a degree, and nothing is drawn for it.
     w.state.actors.get_mut(&foe).expect("rat").hp = 10_000;
@@ -280,7 +375,7 @@ fn widowmaker_poisons_on_every_hit() {
 }
 
 #[test]
-fn high_toby_frightens_at_its_chance_from_the_fixed_stream() {
+fn high_toby_draws_blood_at_its_chance_from_the_fixed_stream() {
     let mut w = world();
     let (player, foe) = (w.player_id(), foe(&w));
     wear(&mut w, player, "missile_weapon", "high_toby");
@@ -288,33 +383,38 @@ fn high_toby_frightens_at_its_chance_from_the_fixed_stream() {
     wear_stack(&mut w, player, "missiles", arrows);
     let content = w.content().clone();
     let profile = w.state.actors[&player].ranged(&content).expect("a shot");
-    let frightened = status(&w, "frightened");
-    let frightens = OnHit {
+    let bleeding = status(&w, "bleeding");
+    let bleeds = OnHit {
         what: Affliction::Status {
-            status: frightened,
+            status: bleeding,
             severity: 1,
             check: None,
         },
         chance: 25,
     };
-    assert_eq!(profile.on_hit, [frightens]);
+    assert_eq!(profile.on_hit, [bleeds]);
+    // A blunt hit, so no wound of its own bleeds the rat (a big hit's, docs/dev/combat.md).
+    let blunt = Blow {
+        kind: content.damage_type_id("bludgeoning"),
+        ..HIT
+    };
     let landed: Vec<bool> = (0..40)
         .map(|_| {
             let label = format!("status/rider/player/{}", w.state.actors.key(foe));
             let lands = crate::test_support::peek(&w, &label).chance(25);
             let expected = draws(&w) + 1;
             let actor = w.state.actors.get_mut(&foe).expect("rat");
-            actor.effects.remove(frightened);
+            actor.effects.remove(bleeding);
             let made = profile.on_hit.clone();
             w.after_blow(
                 player,
                 foe,
                 AttackKind::Ranged,
-                (&HIT, &made),
+                (&blunt, &made),
                 &mut Vec::new(),
             );
             assert_eq!(draws(&w), expected, "one draw");
-            assert_eq!(severity(&w, foe, "frightened").is_some(), lands);
+            assert_eq!(severity(&w, foe, "bleeding").is_some(), lands);
             lands
         })
         .collect();
@@ -412,4 +512,76 @@ fn a_unique_survives_a_save() {
             .and_then(|m| m.unique.clone()),
         Some("widowmaker".into())
     );
+}
+
+/// #1975: every unique is of rarity unique, and only a unique may be, named, with its id.
+#[test]
+fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
+    let w = world();
+    let content = w.content().clone();
+    let mut ids = Vec::new();
+    for u in content.uniques() {
+        let magic = u.stack.magic().expect("magic");
+        assert_eq!(magic.rarity, Rarity::Unique, "{}", u.id);
+        assert!(u.stack.is_unique());
+        let def = content.object(u.object);
+        assert_eq!(magic.check(def, &content), Ok(()), "{}", u.id);
+        ids.push(u.id.as_str());
+    }
+    // The outlaws' four, Sigeric's Star, the pedlar's three, and the test world's Stonebiter.
+    assert_eq!(ids.len(), 9, "{ids:?}");
+    let widowmaker = unique(&w, "widowmaker");
+    let magic = widowmaker.magic().expect("magic");
+    let stiletto = content.object(widowmaker.object);
+    let mut rare = magic.clone();
+    rare.rarity = Rarity::Rare;
+    assert!(
+        rare.check(stiletto, &content).is_err(),
+        "a unique's id on a rare"
+    );
+    let mut nameless = magic.clone();
+    nameless.unique = None;
+    assert!(
+        nameless.check(stiletto, &content).is_err(),
+        "a unique without its id"
+    );
+    rare.unique = None;
+    assert_eq!(
+        rare.check(stiletto, &content),
+        Ok(()),
+        "a rare of the same roll"
+    );
+    // Unidentified it says it is unique, as a rare says it is rare.
+    assert_eq!(
+        widowmaker.describe(&content),
+        "a Marvellous stiletto (unique)"
+    );
+    let lines = describe::lines(&widowmaker, &content);
+    assert!(
+        lines[0]
+            .english(&content)
+            .starts_with("Unique Marvellous stiletto"),
+        "{}",
+        lines[0].english(&content)
+    );
+}
+
+/// #1975: a chest kicked or blown apart never destroys a unique in it, and draws nothing for it.
+#[test]
+fn a_breaking_chest_spares_a_unique() {
+    use crate::chest::{Breaking, destroyed};
+    use crate::rng::Rng;
+    let w = world();
+    let sword = Stack::one(w.content().object_id("long_sword").expect("sword"));
+    for how in [Breaking::Smashed, Breaking::BlownUp] {
+        let holds = vec![unique(&w, "widowmaker"), sword.clone()];
+        let mut rng = Rng::stream(1, "test");
+        let (kept, lost) = destroyed(holds, how, 100, |_| false, &mut rng);
+        assert_eq!(kept, [unique(&w, "widowmaker")], "{how:?}");
+        assert_eq!(lost, std::slice::from_ref(&sword), "{how:?}");
+        // One draw, the sword's: the stream goes on as if the unique were not there.
+        let mut alone = Rng::stream(1, "test");
+        destroyed(vec![sword.clone()], how, 100, |_| false, &mut alone);
+        assert_eq!(rng, alone);
+    }
 }

@@ -483,7 +483,10 @@ fn perception_and_dumps_show_talents_in_words_only() {
     let dodge = talents.iter().find(|t| t.name == "Dodge").expect("dodge");
     assert!(dodge.openings.is_empty());
     assert_eq!(dodge.needs.len(), 1);
-    assert_eq!(dodge.needs[0].words, "Dexterity 13");
+    assert_eq!(
+        crate::test_support::english_of(view.content(), &dodge.needs[0].words),
+        "Dexterity 13"
+    );
     assert!(!dodge.needs[0].met);
     let healthy = talents
         .iter()

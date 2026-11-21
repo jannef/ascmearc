@@ -128,6 +128,7 @@ struct QuestSpec {
     binding: Option<BindingSpec>,
     #[serde(default)]
     reward: RewardSpec,
+    on_accept: Option<OnAcceptSpec>,
     offer: Option<String>,
     accept: Option<String>,
     reminder: Option<String>,
@@ -309,6 +310,22 @@ pub(super) struct RewardSpec {
     skills: BTreeMap<String, SkillRewardSpec>,
 }
 
+/// A quest's `on_accept`: a reward's fields, paid as it is given, with `once` and `says`.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct OnAcceptSpec {
+    #[serde(default)]
+    gold: u32,
+    #[serde(default)]
+    xp: u32,
+    #[serde(default)]
+    items: Vec<String>,
+    #[serde(default)]
+    skills: BTreeMap<String, SkillRewardSpec>,
+    once: Option<String>,
+    says: Option<String>,
+}
+
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct SkillRewardSpec {
@@ -429,6 +446,18 @@ impl Reward {
     }
 }
 
+/// What a quest gives as it is given (`on_accept`, #1991): a reward, paid at the giving, its
+/// objects known as they are handed over.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct OnAccept {
+    pub reward: Reward,
+    /// A key shared by quests that pay once between them: only the first given of the quests
+    /// carrying it pays (`Quests::once`, saved); `None`: it pays each time the quest is given.
+    pub once: Option<String>,
+    /// What the giver says as they hand it over (`quest:<id>.on_accept.says`), if anything.
+    pub says: Option<String>,
+}
+
 /// What the people of a quest say.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct QuestTexts {
@@ -453,6 +482,8 @@ pub struct QuestDef {
     pub giver: DialogueId,
     pub goal: Goal,
     pub reward: Reward,
+    /// What it gives as it is given; `None` for most quests.
+    pub on_accept: Option<OnAccept>,
     pub texts: QuestTexts,
     /// The quests that must all be done before this one is offered.
     pub requires: Vec<QuestId>,
@@ -496,6 +527,12 @@ impl QuestDef {
         (self.words.iter()).fold(Arg::said(key), |said, (role, arg)| {
             said.with(role.clone(), arg.clone())
         })
+    }
+
+    /// Its name as the quest log and the lines that name it say it: its `name`, a line of
+    /// data by its key (`quest:<id>.name`), so a saved line renders in any language.
+    pub fn name_arg(&self) -> Arg {
+        Arg::said(super::data_line::quest(&self.id, "name"))
     }
 
     pub fn kind(&self) -> QuestKind {
@@ -673,6 +710,7 @@ impl Content {
         }
         match self.speaker_creature(id) {
             Some(c) => Phrase::id(format!("creature:{}", self.creature(c).id)),
+            // lang: id an npc no level places, by its id
             None => Phrase::id(format!("word:{}", self.speaker_name(id))),
         }
     }
@@ -942,6 +980,11 @@ fn resolve(
         QuestKind::Commission => return Err("a commission is no quest of a file".into()),
     };
     let reward = reward(&spec.reward, content)?;
+    let on_accept = spec
+        .on_accept
+        .take()
+        .map(|o| on_accept(o, content))
+        .transpose()?;
     let min_level = match (spec.min_level, &spec.early) {
         (None, None) => None,
         (Some(level), Some(early)) => Some((level, early.clone())),
@@ -973,6 +1016,7 @@ fn resolve(
         giver,
         goal,
         reward,
+        on_accept,
         texts,
         requires,
         requires_alignment: spec.requires_alignment,
@@ -986,6 +1030,29 @@ fn resolve(
         quarrel,
         variant_keys: BTreeMap::new(),
         words: BTreeMap::new(),
+    })
+}
+
+/// A quest's `on_accept`, checked against `content`: a reward that gives something, and a
+/// `once` key of the shape of an id.
+fn on_accept(spec: OnAcceptSpec, content: &Content) -> Result<OnAccept, String> {
+    let paid = RewardSpec {
+        gold: spec.gold,
+        xp: spec.xp,
+        items: spec.items,
+        skills: spec.skills,
+    };
+    if reward_is_empty(&paid) {
+        return Err("`on_accept` gives nothing".into());
+    }
+    if let Some(once) = spec.once.as_deref().filter(|k| !is_id(k)) {
+        return Err(format!("`on_accept.once` `{once}`: {ID_SHAPE}"));
+    }
+    let reward = reward(&paid, content).map_err(|e| format!("on_accept: {e}"))?;
+    Ok(OnAccept {
+        reward,
+        once: spec.once,
+        says: spec.says,
     })
 }
 

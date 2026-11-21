@@ -13,11 +13,12 @@ use super::chargen_screen::ScenarioPick;
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{MenuChoice, ScreenAction, ScreenName};
-use super::text::{new_run_screen as T, ui, ui_with};
+use super::text::{label_in, new_run_screen as T, ui, ui_with};
 use super::{TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::character::CharacterSpec;
-use ascmearc_core::content::{CampaignKind, Content};
+use ascmearc_core::content::{CampaignKind, Content, data_line};
+use ascmearc_core::lang::Arg;
 use ascmearc_core::time::GameTime;
 
 /// A scenario as listed on the screen.
@@ -77,8 +78,10 @@ impl NewRunScreen {
                 rows.push(Row::Scenario(scenarios.len()));
                 scenarios.push(ScenarioInfo {
                     id: s.id.clone(),
-                    name: s.name.clone(),
-                    description: s.description.clone(),
+                    name: label_in(content, Arg::said(data_line::scenario_name(&s.id))),
+                    description: crate::ui::text::data_line(data_line::description(
+                        "scenario", &s.id,
+                    )),
                     seed: s.seed,
                     character: s.character.clone(),
                     start: s.start,
@@ -109,7 +112,6 @@ impl NewRunScreen {
         let info = self.scenarios.get(self.selected)?;
         Some(ScenarioPick {
             id: info.id.clone(),
-            name: info.name.clone(),
             seed: self.seed(info),
             shows_seed: matches!(self.seed, Seed::Field(_)),
             character: info.character.clone(),
@@ -217,7 +219,10 @@ impl NewRunScreen {
             y += 1;
             let (seed, color) = if text.is_empty() {
                 (
-                    ui_with(T::SEED_DEFAULT, &[("seed", info.seed.to_string().into())]),
+                    ui_with(
+                        T::SEED_DEFAULT,
+                        &[("seed", Arg::text(info.seed.to_string()))],
+                    ),
                     TEXT_DIM,
                 )
             } else {
@@ -244,8 +249,8 @@ impl NewRunScreen {
         };
         let footer = format!(
             "{}   {}   {}",
-            ui_with(T::CHOOSE, &[("keys", keys.up_down().into())]),
-            ui_with(next, &[("confirm", keys.confirm.to_string().into())]),
+            ui_with(T::CHOOSE, &[("keys", Arg::text(keys.up_down()))]),
+            ui_with(next, &[("confirm", Arg::text(keys.confirm.to_string()))]),
             ui(T::BACK),
         );
         panel.footer(console, &footer);

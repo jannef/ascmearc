@@ -13,7 +13,7 @@
 use super::chargen_screen::{Draft, WIDTH, adjustments};
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{sign_screen as T, ui, ui_with};
+use super::text::{label, sign_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::content::Content;
@@ -85,26 +85,36 @@ impl SignScreen {
         let c = start.character;
         let parts = (content.horoscope())
             .zip(c.sign.as_ref())
-            .and_then(|(h, s)| {
-                let (animal, element) = h.parts(s)?;
-                Some((h, animal, element))
-            });
-        let date = ("date", Arg::from(c.born.text(content.calendar())));
+            .and_then(|(h, s)| h.parts(s));
+        let date = ("date", c.born.arg());
         let age = ("age", Arg::Number(c.age_on(draft.start()).into()));
-        let Some((h, animal, element)) = parts else {
+        let Some((animal, element)) = parts else {
             return empty(ui_with(T::BORN, &[date, age]));
         };
-        let sign = ("sign", h.name(c.sign.as_ref().expect("a sign")).into());
+        let sign = (
+            "sign",
+            content.sign_phrase(c.sign.as_ref().expect("a sign")).into(),
+        );
         let born = ui_with(T::BORN_SIGN, &[date, sign, age]);
-        let legend = format!("{} {}", animal.description, element.description);
+        let legend = format!(
+            "{} {}",
+            crate::ui::text::data_line(ascmearc_core::content::data_line::description(
+                "sign_animal",
+                &animal.id
+            )),
+            crate::ui::text::data_line(ascmearc_core::content::data_line::description(
+                "sign_element",
+                &element.id
+            ))
+        );
         let lucky = c.lucky(content);
         let book = content.talents();
         let lucky_grants: Vec<&str> = lucky.map_or(Vec::new(), |l| {
             l.grants.iter().map(String::as_str).collect()
         });
         let gifts = (c.grants(content).into_iter())
-            .filter_map(|id| book.id(id).map(|t| (id, book.get(t))))
-            .map(|(id, def)| {
+            .filter_map(|id| book.id(id).map(|t| (id, t, book.get(t))))
+            .map(|(id, talent, def)| {
                 let look = if lucky_grants.contains(&id) {
                     Look::Lucky
                 } else if def.flaw {
@@ -113,32 +123,42 @@ impl SignScreen {
                     Look::Plain
                 };
                 let name = if def.flaw {
-                    ui_with(T::FLAW, &[("name", def.name.as_str().into())])
+                    ui_with(T::FLAW, &[("name", content.talent_phrase(talent).into())])
                 } else {
-                    def.name.clone()
+                    label(content.talent_phrase(talent))
                 };
                 Gift {
                     name,
-                    words: def.description.clone(),
+                    words: crate::ui::text::data_line(
+                        ascmearc_core::content::data_line::description("talent", &def.id),
+                    ),
                     look,
                 }
             })
             .collect();
-        let adjustment = |name: &str, stats: String| {
+        let adjustment = |name: Arg, stats: String| {
             ui_with(
                 T::ADJUSTMENT,
-                &[("name", name.into()), ("stats", stats.into())],
+                &[("name", name), ("stats", Arg::text(stats))],
             )
         };
         let adjustments = format!(
             "{}   {}",
-            adjustment(&animal.name, adjustments(&animal.stats)),
-            adjustment(&element.name, adjustments(&element.stats))
+            adjustment(
+                content.sign_animal_arg(&animal.id),
+                adjustments(&animal.stats)
+            ),
+            adjustment(
+                content.sign_element_arg(&element.id),
+                adjustments(&element.stats)
+            )
         );
         Self {
             born,
             legend,
-            lucky: lucky.map(|l| l.description.clone()),
+            lucky: lucky.map(|l| {
+                crate::ui::text::data_line(ascmearc_core::content::data_line::lucky_description(l))
+            }),
             gifts,
             adjustments,
         }
@@ -210,7 +230,7 @@ impl SignScreen {
                 console.print_in(x + 1 + at, y, line, look.color(), panel.inner_w() - 1 - at);
             }
         }
-        let go_on = ui_with(T::CONTINUE, &[("confirm", HINTS.confirm.into())]);
+        let go_on = ui_with(T::CONTINUE, &[("confirm", Arg::text(HINTS.confirm))]);
         panel.footer(console, &format!("{go_on}   {}", ui(T::BACK)));
     }
 }
@@ -232,7 +252,6 @@ mod tests {
         Draft {
             scenario: Some(ScenarioPick {
                 id: "showcase".into(),
-                name: showcase.name.clone(),
                 seed,
                 shows_seed: true,
                 character: showcase.character.clone(),

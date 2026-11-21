@@ -12,7 +12,7 @@
 
 use super::alignment::Deed;
 use crate::content::{GiftDef, GiftTier, OnEat, TalentEffect, TalentId, data_line};
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::rng::draw;
 use crate::stats::DRAIN_FLOOR;
@@ -150,7 +150,7 @@ impl World {
         self.regrant();
         self.shift_stats(&book.get(gift).effects, 1);
         self.say(data_line::said(data_line::profane(&def.id, "line")));
-        let name = book.get(gift).name.as_str();
+        let name = content.talent_phrase(gift);
         self.say(Msg::new(msg::character::YOU_ARE).role("gift", name));
         // What it bars falls (Horned's helm, `body_slots.rs`).
         self.shed_unworn();
@@ -239,11 +239,11 @@ impl World {
         let content = self.content.clone();
         let gift = (content.talents().id(id)).and_then(|t| content.profane().gift(t));
         let Some(gift) = gift else {
-            self.say(Msg::new(msg::character::NO_PROFANE_GIFT).role("id", id));
+            self.say(Msg::new(msg::character::NO_PROFANE_GIFT).role("id", Arg::id(id)));
             return Spent::Nothing;
         };
         if !self.may_take_gift(gift) {
-            self.say(Msg::new(msg::character::WOULD_NOT_TAKE).role("id", id));
+            self.say(Msg::new(msg::character::WOULD_NOT_TAKE).role("id", Arg::id(id)));
             return Spent::Nothing;
         }
         self.bestow_gift(gift.talent);
@@ -258,7 +258,7 @@ impl World {
         match gift {
             Some(t) if self.rescind(t) => Spent::NoTime,
             _ => {
-                self.say(Msg::new(msg::character::HOLD_NO_PROFANE_GIFT).role("id", id));
+                self.say(Msg::new(msg::character::HOLD_NO_PROFANE_GIFT).role("id", Arg::id(id)));
                 Spent::Nothing
             }
         }

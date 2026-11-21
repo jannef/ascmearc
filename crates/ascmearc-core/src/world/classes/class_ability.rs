@@ -175,7 +175,7 @@ impl World {
         if let Some(why) = ability.unavailable(me, &content) {
             self.say(match why {
                 Unavailable::While(status) => Msg::new(msg::classes::STILL_STATUS)
-                    .role("status", content.status(status).name.to_lowercase()),
+                    .role("status", content.status_phrase(status)),
                 Unavailable::NoMana => msg::classes::TOO_LITTLE_MANA.into(),
                 // A pool with words of its own says them (Rage's "You have not the rage for
                 // it.").
@@ -185,12 +185,13 @@ impl World {
                         Some(_) => Msg::new(msg::classes::LACKING)
                             .role("words", Arg::said(data_line::lacking(&def.id))),
                         None => Msg::new(msg::classes::TOO_LITTLE_RESOURCE)
-                            .role("name", def.name.to_lowercase()),
+                            .role("name", content.resource_phrase(resource)),
                     }
                 }
                 Unavailable::Still => msg::classes::MIND_ALREADY_STILL.into(),
-                other => Msg::new(msg::classes::CANNOT_REASON)
-                    .role("reason", other.reason(&content).into_owned()),
+                other => {
+                    Msg::new(msg::classes::CANNOT_REASON).role("reason", other.reason(&content))
+                }
             });
             return false;
         }

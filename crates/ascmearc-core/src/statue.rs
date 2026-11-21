@@ -63,19 +63,44 @@ impl Fallen {
         }
     }
 
-    /// "Brakka the dwarf warrior" (race and class in lower case, as a grave names them),
-    /// either left out where unknown.
-    pub fn grave_words(&self, content: &Content) -> String {
-        let race = (content.race(&self.race)).map_or(self.race.clone(), |r| r.name.to_lowercase());
-        let class =
-            (content.class(&self.class)).map_or(self.class.clone(), |c| c.name.to_lowercase());
-        let what: Vec<&str> = [race.as_str(), class.as_str()]
-            .into_iter()
-            .filter(|s| !s.is_empty())
-            .collect();
-        match what[..] {
-            [] => self.name.clone(),
-            _ => format!("{} the {}", self.name, what.join(" ")),
-        }
+    /// "Brakka the dwarf warrior", as a grave names them (`fixtures.grave_name*`): the name as
+    /// typed, the race and the class by their lexicon ids (`race:<id>`, `class:<id>`, a sentence's
+    /// lower case; one this content lacks by its id), either left out where unknown.
+    pub fn grave_name(&self, content: &Content) -> crate::lang::Arg {
+        use crate::lang::{Arg, Msg};
+        let named = |known: bool, phrase: crate::lang::Phrase, id: &str| match known {
+            true => Arg::from(phrase),
+            // lang: id a race or class this content lacks
+            false => Arg::text(id),
+        };
+        let race = (!self.race.is_empty()).then(|| {
+            named(
+                content.race(&self.race).is_some(),
+                content.race_phrase(&self.race),
+                &self.race,
+            )
+        });
+        let class = (!self.class.is_empty()).then(|| {
+            named(
+                content.class(&self.class).is_some(),
+                content.class_phrase(&self.class),
+                &self.class,
+            )
+        });
+        // lang: typed the character's name
+        let name = Arg::text(self.name.as_str());
+        let msg = match (race, class) {
+            (None, None) => return name,
+            (Some(race), Some(class)) => Msg::new(crate::msg::fixtures::GRAVE_NAME)
+                .role("race", race)
+                .role("class", class),
+            (Some(race), None) => {
+                Msg::new(crate::msg::fixtures::GRAVE_NAME_RACE).role("race", race)
+            }
+            (None, Some(class)) => {
+                Msg::new(crate::msg::fixtures::GRAVE_NAME_CLASS).role("class", class)
+            }
+        };
+        msg.role("name", name).into()
     }
 }

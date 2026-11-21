@@ -508,7 +508,8 @@ mod tests {
     }
 
     /// The web build's subset draws exactly what the whole font draws, pixel for pixel: every
-    /// character of the glyph set with the built-in content's glyphs. It checks something with
+    /// character of the glyph set with the built-in content's glyphs, and a line of Finnish with
+    /// its loan-word letters (`docs/design/localization.md` §13). It checks something with
     /// the feature on, `cargo test -p ascmearc --features font-subset the_subset`; without it the
     /// two fonts are one.
     #[test]
@@ -522,7 +523,14 @@ mod tests {
             full.horizontal_line_metrics(px),
             subset.horizontal_line_metrics(px)
         );
-        for c in glyph_set(content.glyphs()) {
+        let finnish = "Osut karhuun. Näet kolme peikkoa. Å Ä Ö Š Ž š ž";
+        for c in finnish.chars().filter(|c| !c.is_whitespace()) {
+            assert_ne!(full.lookup_glyph_index(c), 0, "{c:?} is in the font");
+        }
+        for c in glyph_set(content.glyphs())
+            .into_iter()
+            .chain(finnish.chars())
+        {
             let has = |font: &fontdue::Font| font.lookup_glyph_index(c) != 0;
             assert_eq!(has(&full), has(&subset), "{c:?} (U+{:04X})", c as u32);
             if has(&full) {

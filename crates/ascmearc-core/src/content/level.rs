@@ -61,6 +61,7 @@ use crate::equipment::{self, Equipment};
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
 use crate::item_parts::{self, ItemPart};
+use crate::lang::Arg;
 use crate::light::Light;
 use crate::magic::{Affix, LootGrade, LootPool, Magic, Quality};
 use crate::object::{Stack, add_to_pile};
@@ -540,10 +541,10 @@ pub struct StairsLink {
     pub dir: StairsDir,
     /// Target level id; `None` for stairs that lead nowhere yet.
     pub to: Option<String>,
-    /// What the place it leads to is called, when not its level's name: a revealed hidden
-    /// location's `name`.
+    /// What the place it leads to is called, when not its level's name: a legend's named
+    /// place's, a revealed hidden location's (lines of data), the Pit's.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub name: Option<String>,
+    pub name: Option<Arg>,
 }
 
 /// A location hidden on a cell of the overworld or a hand-made level until a quest reveals it:
@@ -566,14 +567,40 @@ pub struct HiddenLocation {
 
 /// A named place on a cell of a hand-made level or a vault (a legend's `name`): a location, a
 /// landmark, an inscribed statue. Look mode names it on a cell the player sees or remembers; it
-/// is no secret.
+/// is no secret. The game says its name and note by their keys ([`Self::name_arg`],
+/// [`Self::note_arg`]), lines of data; the text is the data's English, which a quest's `waits`
+/// names it by.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Place {
+    /// Its legend entry: `level:<id>.legend.<char>` or `vault:<id>.legend.<char>`.
+    pub key: String,
     pub name: String,
     /// A sentence look mode adds about it (and the line an announced terrain's arrival says
     /// after its description, `world/fixtures/feature.rs`).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub note: Option<String>,
+}
+
+impl Place {
+    /// The key of its name, a line of data.
+    pub fn name_key(&self) -> String {
+        format!("{}.name", self.key)
+    }
+
+    /// The key of its note, a line of data.
+    pub fn note_key(&self) -> String {
+        format!("{}.note", self.key)
+    }
+
+    /// Its name, said by its key.
+    pub fn name_arg(&self) -> Arg {
+        Arg::said(self.name_key())
+    }
+
+    /// Its note, said by its key, if it has one.
+    pub fn note_arg(&self) -> Option<Arg> {
+        self.note.as_ref().map(|_| Arg::said(self.note_key()))
+    }
 }
 
 /// A parsed, validated level ready to instantiate: from a level file, or generated (see
@@ -701,8 +728,11 @@ pub(super) fn legend_char(file: &str, key: &str) -> Result<char, ContentError> {
     }
 }
 
+/// Parses level or vault `id` (`kind`: `level`, `vault`; what its named places are keyed by,
+/// [`Place::key`]) from `file`.
 pub(super) fn parse_level(
     file: &str,
+    kind: &str,
     id: &str,
     text: &str,
     content: &Content,
@@ -772,8 +802,9 @@ pub(super) fn parse_level(
             if let Some(um) = parse_ice(ch, entry, content.terrain(terrain)).map_err(err)? {
                 ice.insert(pos, um);
             }
+            let key = format!("{kind}:{id}.legend.{ch}");
             let place = detail
-                .and_then(|d| parse_place(d).transpose())
+                .and_then(|d| parse_place(key, d).transpose())
                 .transpose()
                 .map_err(|m| err(format!("legend `{ch}`: {m}")))?;
             if let Some(dir) = content.terrain(terrain).stairs {
@@ -781,7 +812,7 @@ pub(super) fn parse_level(
                     pos,
                     dir,
                     to: detail.and_then(|d| d.to.clone()),
-                    name: place.as_ref().map(|p| p.name.clone()),
+                    name: place.as_ref().map(Place::name_arg),
                 });
             } else if detail.is_some_and(|d| d.to.is_some()) {
                 return Err(err(format!(
@@ -794,7 +825,7 @@ pub(super) fn parse_level(
                 places.insert(pos, place);
             }
             if let Some(words) = &detail.epitaph {
-                marks.epitaphs.insert(pos, words.clone());
+                marks.epitaphs.insert(pos, (ch, words.clone()));
             }
             if detail.statue_place == Some(true) {
                 marks.statue_places.push(pos);
@@ -1251,8 +1282,9 @@ pub(super) fn parse_level(
     Ok(template)
 }
 
-/// A legend entry's named place (`name`, and `note` with it), if it has one.
-fn parse_place(detail: &LegendDetail) -> Result<Option<Place>, String> {
+/// A legend entry's named place (`name`, and `note` with it), if it has one; `key` is the
+/// entry's ([`Place::key`]).
+fn parse_place(key: String, detail: &LegendDetail) -> Result<Option<Place>, String> {
     let Some(name) = &detail.name else {
         return match detail.note {
             Some(_) => Err("a `note` needs a `name`".into()),
@@ -1260,6 +1292,7 @@ fn parse_place(detail: &LegendDetail) -> Result<Option<Place>, String> {
         };
     };
     Ok(Some(Place {
+        key,
         name: name.clone(),
         note: detail.note.clone(),
     }))
@@ -1532,7 +1565,14 @@ pub(super) fn hand_made(
 /// What a magic or rare `[[item]]` rolled: rare with a `name`, else magic.
 fn parse_magic(spec: &ItemSpec, content: &Content) -> Result<Magic, String> {
     let def = content.object(content.object_id(&spec.object).expect("checked"));
-    let mut magic = magic_of(def, &spec.affixes, spec.name.clone(), spec.level, content)?;
+    let mut magic = magic_of(
+        def,
+        &spec.affixes,
+        spec.name.clone(),
+        spec.level,
+        false,
+        content,
+    )?;
     magic.identified = spec.identified;
     Ok(magic)
 }
@@ -1541,16 +1581,34 @@ fn parse_magic(spec: &ItemSpec, content: &Content) -> Result<Magic, String> {
 /// optional tier, default 1, whose value is the top of the tier's range): rare with a `name`,
 /// else magic; of item level `level`, or that of its highest tier; unidentified; checked against
 /// `def` ([`Magic::check`]). An `[[item]]` and a unique item (`super::unique`) are made so.
+///
+/// With `hand_set` (a unique item's, #2001) an affix may instead be written with its value,
+/// `"mystic=30"` ([`hand_set_affix`]); [`Magic::check_set`] then leaves out its tier's range and
+/// the affix's bases.
 pub(super) fn magic_of(
     def: &super::ObjectDef,
     written: &[String],
     name: Option<String>,
     level: Option<u8>,
+    hand_set: bool,
     content: &Content,
 ) -> Result<Magic, String> {
     let mut affixes = Vec::new();
+    let mut set = Vec::new();
     let mut highest = 1;
     for text in written {
+        if let Some((id, value)) = text.split_once('=') {
+            if !hand_set {
+                return Err(format!(
+                    "`{text}`: only a unique item sets an affix's value; name a tier (`{id}:2`)"
+                ));
+            }
+            let (affix, level) = hand_set_affix(def, id, value, content)?;
+            highest = highest.max(level);
+            set.push(affix.clone());
+            affixes.push(affix);
+            continue;
+        }
         let (id, tier) = match text.split_once(':') {
             Some((id, tier)) => {
                 let tier = tier
@@ -1586,8 +1644,47 @@ pub(super) fn magic_of(
         curse_known: false,
         unique: None,
     };
-    magic.check(def, content)?;
+    magic.check_set(def, content, &set)?;
     Ok(magic)
+}
+
+/// A unique item's affix `id` set by hand to `value` (`"of_the_sage=6"`, #2001), with the level
+/// of its top tier: any value of the sign of the affix's tiers, beyond them or not, on any item of
+/// `def`'s kind its effect works on (the affix's bases say only where loot rolls it). It takes
+/// the affix's top tier, which prices it as any affix of that tier
+/// ([`crate::content::MagicWorth`]).
+fn hand_set_affix(
+    def: &super::ObjectDef,
+    id: &str,
+    value: &str,
+    content: &Content,
+) -> Result<(Affix, u8), String> {
+    let text = format!("{id}={value}");
+    let value = (value.trim().parse::<i32>())
+        .map_err(|_| format!("`{text}`: the value must be a number, e.g. `mystic=30`"))?;
+    let a = (content.affixes().get(id)).ok_or_else(|| format!("unknown affix `{id}`"))?;
+    let top = (a.tiers.last()).ok_or_else(|| format!("`{id}` has no tiers"))?;
+    let tier = u8::try_from(a.tiers.len()).map_err(|_| format!("`{id}` has too many tiers"))?;
+    if value == 0 || value.signum() != top.max.signum() {
+        return Err(format!(
+            "`{text}`: the value must have the sign of `{id}`'s tiers"
+        ));
+    }
+    let kind = def
+        .kind
+        .ok_or_else(|| format!("`{}` cannot be magic", def.id))?;
+    if !a.effect.allowed_on(kind) || !crate::magic::may_roll_on(a, def) {
+        return Err(format!(
+            "`{text}`: its effect does nothing on {}",
+            def.plural
+        ));
+    }
+    let affix = Affix {
+        id: id.to_string(),
+        tier,
+        value,
+    };
+    Ok((affix, top.level))
 }
 
 /// A part an `[[item]]` names: a gem, of the plain size and cut unless it says otherwise, or

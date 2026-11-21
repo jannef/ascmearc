@@ -95,7 +95,10 @@ fn burial(level: &str) -> &'static Burial {
 }
 
 fn graves(w: &World, level: &str) -> BTreeMap<Pos, String> {
-    w.state.levels[level].graves.clone()
+    let words = |arg| crate::messages::english_arg(w.content(), arg, "bare");
+    (w.state.levels[level].graves.iter())
+        .map(|(&p, arg)| (p, words(arg)))
+        .collect()
 }
 
 /// Whether level `level`'s way down is open in `w`.
@@ -219,7 +222,10 @@ fn the_chain_is_the_yard_then_its_crypts_each_quiet_with_room_for_statues() {
 fn ten_old_graves_and_forty_empty_plots_without_a_graveyard() {
     let w = yard(Vec::new());
     let cut = graves(&w, "lictun");
-    assert_eq!(cut, burial("lictun").epitaphs, "the town's own, as written");
+    let written: BTreeMap<Pos, String> = (burial("lictun").epitaphs.iter())
+        .map(|(&p, (_, words))| (p, words.clone()))
+        .collect();
+    assert_eq!(cut, written, "the town's own, as written");
     assert!(
         cut.values()
             .any(|t| t.starts_with("Here lies Ælfric atte Welle"))
@@ -260,6 +266,9 @@ fn the_dead_fill_the_plots_oldest_first_and_the_petrified_are_statues() {
     );
     assert!(!cut.contains_key(&places[2]), "Brakka is a statue's");
     assert_eq!(cut.len(), 12);
+    // Kept by their keys: a save's graves read the same once loaded.
+    let loaded = crate::save::decode(&crate::save::encode(&w), w.content.clone()).expect("loads");
+    assert_eq!(graves(&loaded, "lictun"), cut);
     let level = &w.state.levels["lictun"];
     let at = |p: Pos| CONTENT.terrain(level.terrain[p]).id.as_str();
     assert_eq!((at(places[0]), at(places[1])), ("gravestone", "gravestone"));
@@ -270,8 +279,12 @@ fn the_dead_fill_the_plots_oldest_first_and_the_petrified_are_statues() {
     w.state.actors.get_mut(&player).expect("player").pos = places[0].step(Dir::N);
     w.perceive(&mut Vec::new());
     assert_eq!(
-        w.perception().epitaph(places[0]),
-        Some(cut[&places[0]].as_str())
+        (w.perception().epitaph(places[0])).map(|a| crate::messages::english_arg(
+            w.content(),
+            a,
+            "bare"
+        )),
+        Some(cut[&places[0]].clone())
     );
 }
 
@@ -346,7 +359,10 @@ fn a_full_yard_opens_the_way_down_and_the_crypts_fill_in_turn() {
             here[0].starts_with(&format!("Here lies Hero{laid} ")),
             "{here:?}"
         );
-        let words = &burial(id).epitaph;
+        let words = burial(id)
+            .epitaph
+            .as_deref()
+            .unwrap_or("Here lies {name}, {death}.");
         let tail = &words[words.find("{death}").expect("{death}") + "{death}".len()..];
         assert!(here[0].ends_with(tail), "{id}: {here:?}");
         laid += places;

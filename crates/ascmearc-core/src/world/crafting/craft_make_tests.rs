@@ -269,7 +269,7 @@ fn the_wizard_steps_offer_what_fits_and_the_plan_names_the_item() {
                 .iter()
                 .map(|o| (o.at, o.takes, o.enough))
                 .collect();
-            (s.label.clone(), s.optional, options)
+            (s.label_en().to_string(), s.optional, options)
         })
         .collect();
     // The blade: the steel (too few) and the mithril, never the wood; the pommel: the cut ruby,
@@ -286,7 +286,7 @@ fn the_wizard_steps_offer_what_fits_and_the_plan_names_the_item() {
         ]
     );
     let plan = view
-        .craft_plan(recipe(&w, "long_sword"), &[Some(1), Some(2)])
+        .craft_plan_en(recipe(&w, "long_sword"), &[Some(1), Some(2)])
         .expect("a plan");
     assert_eq!(plan.verb, "Forge");
     assert_eq!(plan.name, "a ruby-pommelled mithril long sword");
@@ -294,7 +294,7 @@ fn the_wizard_steps_offer_what_fits_and_the_plan_names_the_item() {
     assert_eq!(plan.station, Some(crate::lang::Phrase::id("terrain:anvil")));
     assert_eq!(plan.time, "about 1 hour");
     // The rules' refusals, as the dialog would hear them.
-    let refused = |picks: &[Option<usize>]| view.craft_plan(recipe(&w, "long_sword"), picks);
+    let refused = |picks: &[Option<usize>]| view.craft_plan_en(recipe(&w, "long_sword"), picks);
     assert_eq!(
         refused(&[Some(0)]).err().as_deref(),
         Some("You have too few of those.")

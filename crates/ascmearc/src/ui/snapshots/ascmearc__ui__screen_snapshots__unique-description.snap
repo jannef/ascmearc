@@ -2,13 +2,13 @@
 source: crates/ascmearc/src/ui/screen_snapshots.rs
 expression: "render(case, content.clone())"
 ---
- You pick up a dagger (rare).
+ You pick up a dagger (unique).
  This is Stonebiter, a dagger!
                   ┌─ Item ───────────────────────────────────────────────────────┐
                   │                                                              │
                   │ ) Stonebiter                                                 │
                   │                                                              │
-                  │ Rare dagger · steel · 450 g                                  │
+                  │ Unique dagger · steel · 450 g                                │
                   │                                                              │
                   │ Dagger, for the main hand                                    │
                   │ Damage 1d4; criticals on 20–24, ×2 damage                    │
@@ -23,7 +23,6 @@ expression: "render(case, content.clone())"
                   │ It bears all it can.                                         │
                   │                                                              │
                   │ It would not come apart.                                     │
-                  │ It will take three more improvements at the anvil.           │
                   │ Power   Its bearer sees in the gloom.                        │
                   │                                                              │
                   │ Notched from a hundred quarry walls, and none of them won.   │

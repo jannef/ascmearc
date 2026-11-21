@@ -6,8 +6,10 @@
 //! (`hunger:corpses.skills.spellcraft.learn`, `familiars:arrives.cat`, `laws:eat.first`), a row
 //! of its arrays named by the id that tells it apart (`craving:threshold.<talent>.message`). Each
 //! function here gives one key, so the loader and the `say` site agree. None of these lines names
-//! a role: a fragment (a charm's `message`, a creature's `depart`, a familiar's arrival) is said
-//! inside a template of `messages/allies.toml`, which names the one it is about.
+//! a role but a name kept in a save ([`saved_names`]: a shop's sign names its `keeper`, a burial
+//! ground's epitaph its dead): a fragment (a charm's `message`, a creature's `depart`, a
+//! familiar's arrival) is said inside a template of `messages/allies.toml`, which names the one
+//! it is about.
 
 use super::{Content, ContentError, StatusDef, TalentDef, TalentEffect, TalentId};
 use super::{OutcomeDef, RoomEffectDef};
@@ -149,6 +151,26 @@ pub fn profession(skill: &str, fumbled: bool) -> String {
     format!("recipes:profession.{skill}.{field}")
 }
 
+/// Profession `skill`'s `verb` (`recipes.toml`'s `[[profession]]`): the craft dialog's verb
+/// where no recipe names its own ("Brew").
+pub fn profession_verb(skill: &str) -> String {
+    format!("recipes:profession.{skill}.verb")
+}
+
+/// Recipe `id`'s own `verb`, the craft dialog's (a ring is made, not cut).
+pub fn recipe_verb(id: &str) -> String {
+    format!("recipe:{id}.verb")
+}
+
+/// The verb of stock group `group`'s profession (`stock.toml`'s `[[group]]`), or with `None`
+/// the gems' (`gems`): "Forge", "Cut".
+pub fn stock_verb(group: Option<&str>) -> String {
+    match group {
+        Some(group) => format!("stock:group.{group}.verb"),
+        None => "stock:gems.verb".to_string(),
+    }
+}
+
 /// Rig `id`'s `snaps` (`snaps` true) or `made` line (`rigs.toml`'s `[[rig]]`).
 pub fn rig(id: &str, snaps: bool) -> String {
     let field = if snaps { "snaps" } else { "made" };
@@ -256,6 +278,157 @@ fn magic_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
             add(reprieve(&def.id), message);
         }
     }
+}
+
+// --- An item's description's words from the data (#2035) -------------------------------------
+
+/// Slot `id`'s `mark`, what the inventory says of a thing in it ("being worn").
+pub fn slot_mark(id: &str) -> String {
+    format!("slot:{id}.mark")
+}
+
+/// Unique `id`'s power in words (its `phrase`), a line of its description.
+pub fn unique_phrase(id: &str) -> String {
+    format!("unique:{id}.phrase")
+}
+
+/// Unique `id`'s `lore`, a line of its description.
+pub fn unique_lore(id: &str) -> String {
+    format!("unique:{id}.lore")
+}
+
+/// What talent `id`'s `spirit_weapon` effect says of a spirit weapon's power (its `phrase`).
+pub fn spirit_weapon_phrase(id: &str) -> String {
+    format!("talent:{id}.effects.spirit_weapon.phrase")
+}
+
+/// Spell `id`'s `description`, what a grimoire or a wand says it does.
+pub fn spell_description(id: &str) -> String {
+    format!("spell:{id}.description")
+}
+
+/// Rod effect `id`'s `name` (`Holds Digging`).
+pub fn rod_effect_name(id: &str) -> String {
+    format!("rod_effect:{id}.name")
+}
+
+/// Rod effect `id`'s `description`.
+pub fn rod_effect_description(id: &str) -> String {
+    format!("rod_effect:{id}.description")
+}
+
+/// The words an item's description takes from the data: a slot's mark, a unique's power and
+/// lore, a spirit weapon's power, a spell's and a rod effect's description, and a rod effect's
+/// name.
+fn describe_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for slot in content.slots() {
+        add(slot_mark(&slot.id), &slot.mark);
+    }
+    for def in content.uniques() {
+        if let Some(phrase) = &def.phrase {
+            add(unique_phrase(&def.id), phrase);
+        }
+        if let Some(lore) = &def.lore {
+            add(unique_lore(&def.id), lore);
+        }
+    }
+    for (_, def) in content.talents().iter() {
+        for effect in &def.effects {
+            if let super::TalentEffect::Martial(crate::talent::MartialEffect::SpiritWeapon {
+                phrase,
+                ..
+            }) = effect
+            {
+                add(spirit_weapon_phrase(&def.id), phrase);
+            }
+        }
+    }
+    for spell in content.spells() {
+        add(spell_description(&spell.id), &spell.description);
+    }
+    for effect in content.rod_effects() {
+        add(rod_effect_name(&effect.id), &effect.name);
+        add(rod_effect_description(&effect.id), &effect.description);
+    }
+}
+
+// --- What screens and the look line show of the data (#2035) -----------------------------------
+
+/// The data's words the screens and the look line show as written: a race's, a class's, a
+/// talent's, a skill's, a scenario's, and a birth sign animal's and element's `description`, a
+/// lucky day's, a terrain's and a chest band's `description` (the look
+/// line and a feature underfoot), an animated body's `moves`, and a status's `death` (the death
+/// and graveyard screens: "Bled to death").
+fn shown_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for def in &content.races().list {
+        add(description("race", &def.id), &def.description);
+    }
+    for def in content.classes() {
+        add(description("class", &def.id), &def.description);
+    }
+    for (_, def) in content.talents().iter() {
+        add(description("talent", &def.id), &def.description);
+    }
+    for def in content.skills() {
+        add(description("skill", &def.id), &def.description);
+    }
+    for def in content.terrain_defs() {
+        if let Some(text) = &def.description {
+            add(description("terrain", &def.id), text);
+        }
+    }
+    for band in &content.chests().bands {
+        add(description("chest", &band.id), &band.description);
+    }
+    for body in &content.animated().bodies {
+        if let Some(moves) = &body.spec.moves {
+            add(animated_moves(&body.spec.id), moves);
+        }
+    }
+    for def in content.status_defs() {
+        if let Some(death) = &def.death {
+            add(status_death(&def.id), death);
+        }
+    }
+    for def in content.scenarios.values() {
+        add(description("scenario", &def.id), &def.description);
+    }
+    if let Some(horoscope) = content.horoscope() {
+        for part in &horoscope.animals {
+            add(description("sign_animal", &part.id), &part.description);
+        }
+        for part in &horoscope.elements {
+            add(description("sign_element", &part.id), &part.description);
+        }
+        for day in &horoscope.lucky {
+            add(lucky_description(day), &day.description);
+        }
+    }
+}
+
+/// A lucky day's legend, its `description`: `lucky:<element>.<animal>.<day>.description`.
+pub fn lucky_description(day: &super::Lucky) -> String {
+    format!(
+        "lucky:{}.{}.{}.description",
+        day.element, day.animal, day.day
+    )
+}
+
+/// A `description` the screens show: `<kind>:<id>.description` (`race`, `class`, `talent`,
+/// `skill`, `terrain`, `chest`, `scenario`, `sign_animal`, `sign_element`: the kinds of their
+/// lexicon ids).
+pub fn description(kind: &str, id: &str) -> String {
+    format!("{kind}:{id}.description")
+}
+
+/// How an animated body moves, its `moves`: `animated:<body>.moves` ("rocking").
+pub fn animated_moves(body: &str) -> String {
+    format!("animated:{body}.moves")
+}
+
+/// How a status kills, its `death`: `status:<id>.death` ("Bled to death").
+pub fn status_death(id: &str) -> String {
+    format!("status:{id}.death")
 }
 
 // --- The classes' lines (L4c, #1914) -----------------------------------------------------------
@@ -457,7 +630,16 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
             add(dungeon_arrival(&def.id), line);
         }
     }
+    for def in content.scenarios.values() {
+        if let Some(line) = &def.arrival {
+            add(scenario_arrival(&def.id), line);
+        }
+    }
+    describe_lines(content, &mut add);
+    shown_lines(content, &mut add);
     people_lines(content, &mut add);
+    place_names(content, &mut add);
+    super::data_word::lines(content, &mut add);
     for (key, text) in lines {
         let line = Line::parse(&text);
         if let Some(role) = line.roles().first() {
@@ -469,6 +651,7 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
         content.english.add_data_line(key, Template::Line(line));
     }
     quest_speech(content)?;
+    saved_names(content)?;
     Ok(())
 }
 
@@ -532,8 +715,21 @@ fn character_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
 
 /// Crafting's lines: the professions' `failed` and `fumbled`, the rigs' `made` and `snaps`.
 fn crafting_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for def in &content.recipes().list {
+        if let Some(verb) = &def.verb {
+            add(recipe_verb(&def.id), verb);
+        }
+    }
+    let stock = content.stock();
+    let groups = stock.groups.iter().filter_map(|g| g.profession.as_ref());
+    for profession in groups.chain(&stock.gems) {
+        add(profession.verb_key.clone(), &profession.verb);
+    }
     for text in &content.recipes().professions {
         let skill = &content.skill(text.skill).id;
+        if let Some(verb) = &text.verb {
+            add(profession_verb(skill), verb);
+        }
         for (fumbled, line) in [(false, &text.failed), (true, &text.fumbled)] {
             if let Some(line) = line {
                 add(profession(skill, fumbled), line);
@@ -561,7 +757,8 @@ pub fn quest(quest: &str, path: &str) -> String {
 pub const QUEST_TEXTS: [&str; 5] = ["offer", "accept", "reminder", "done", "where"];
 
 /// What a reward says of the skill `skill` it teaches: `taught` (true) to one untrained, else
-/// `more`. `reward` is the reward's path in the quest: `reward`, or `taker.<npc>.reward`.
+/// `more`. `reward` is the reward's path in the quest: `reward`, `taker.<npc>.reward`, or
+/// `on_accept`.
 pub fn quest_skill(quest: &str, reward: &str, skill: &str, taught: bool) -> String {
     let field = if taught { "taught" } else { "more" };
     self::quest(quest, &format!("{reward}.skills.{skill}.{field}"))
@@ -601,7 +798,9 @@ fn people_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
         }
         let takers =
             (def.quarrel.takers.iter()).map(|t| (format!("taker.{}.reward", t.npc), &t.reward));
-        for (path, reward) in std::iter::once(("reward".to_string(), &def.reward)).chain(takers) {
+        let accept = (def.on_accept.iter()).map(|o| ("on_accept".to_string(), &o.reward));
+        let rewards = std::iter::once(("reward".to_string(), &def.reward)).chain(takers);
+        for (path, reward) in rewards.chain(accept) {
             for taught in &reward.skills {
                 let skill = &content.skill(taught.skill).id;
                 for (yes, text) in [(true, &taught.taught), (false, &taught.more)] {
@@ -714,9 +913,133 @@ fn creature_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     }
 }
 
+// ----- Names kept in saves and the quest log (#1999): a shop's sign, an encounter's party, a
+// month, and a burial ground's epitaphs, said by their keys so a saved line or a level's graves
+// render in any language. -----
+
+/// Shop kind `id`'s sign (its `title`), which names its `keeper` (`shops.toml`).
+pub fn shop_sign(id: &str) -> String {
+    format!("shop:{id}.title")
+}
+
+/// The name of encounter entry `entry` of campaign `campaign`'s tables (an entry's id is its
+/// campaign's), as the data writes it, article and all: "a band of footpads".
+pub fn encounter_name(campaign: &str, entry: &str) -> String {
+    format!("encounter:{campaign}.{entry}.name")
+}
+
+/// Month `month`'s name (1 to 12; `calendar.toml`'s `months`, numbered from 0).
+pub fn month(month: u32) -> String {
+    format!("calendar:months.{}", month.clamp(1, 12) - 1)
+}
+
+/// The words of level `level`'s fixed grave of legend character `glyph` (its `epitaph`).
+pub fn grave(level: &str, glyph: char) -> String {
+    format!("level:{level}.legend.{glyph}.epitaph")
+}
+
+/// Level `level`'s words for one of the run's dead laid there (`[burial]`'s `epitaph`), which
+/// name them (`name`) and how they died (`death`).
+pub fn burial_epitaph(level: &str) -> String {
+    format!("level:{level}.burial.epitaph")
+}
+
+// ----- The names of places (#1998): a level's, a branch's, a legend's named place and its
+// note, a hidden location's, and a scenario's, said by their keys so where stairs lead, the look
+// line, and the welcome render in any language. -----
+
+/// Hand-made level `id`'s name.
+pub fn level_name(id: &str) -> String {
+    format!("level:{id}.name")
+}
+
+/// Branch `id`'s name (a level of it is its name and floor, `levels.branch_level`).
+pub fn dungeon_name(id: &str) -> String {
+    format!("dungeon:{id}.name")
+}
+
+/// Hidden location `id`'s `name`, the location on hand-made level `level`.
+pub fn hidden_name(level: &str, id: &str) -> String {
+    format!("level:{level}.hidden.{id}.name")
+}
+
+/// Scenario `id`'s `arrival` line, said after the welcome.
+pub fn scenario_arrival(id: &str) -> String {
+    format!("scenario:{id}.arrival")
+}
+
+/// Scenario `id`'s name (the welcome's place).
+pub fn scenario_name(id: &str) -> String {
+    format!("scenario:{id}.name")
+}
+
+/// The names of places, which name no role: every hand-made level's and branch's, every legend's
+/// named place and its note ([`super::Place::key`]), every hand-made level's hidden location's,
+/// and every scenario's.
+fn place_names(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for (id, level) in &content.levels {
+        add(level_name(id), &level.name);
+        for hidden in level.hidden.values() {
+            add(hidden_name(id, &hidden.id), &hidden.name);
+        }
+    }
+    let templates = (content.levels.values()).chain(content.vaults.iter().map(|v| &v.template));
+    for place in templates.flat_map(|t| t.places.values()) {
+        add(place.name_key(), &place.name);
+        if let Some(note) = &place.note {
+            add(place.note_key(), note);
+        }
+    }
+    for def in content.dungeons.values() {
+        add(dungeon_name(&def.id), &def.name);
+    }
+    for def in content.scenarios.values() {
+        add(scenario_name(&def.id), &def.name);
+    }
+}
+
+/// Adds the names above to English by their keys, each naming only the roles it is given.
+fn saved_names(content: &mut Content) -> Result<(), ContentError> {
+    let mut lines: Vec<(String, String, &[&str])> = Vec::new();
+    for def in content.shops().map_or(&[][..], |s| s.defs()) {
+        lines.push((shop_sign(&def.id), def.title.clone(), &["keeper"]));
+    }
+    for table in &content.encounter_tables {
+        for entry in &table.entries {
+            let key = encounter_name(&table.campaign, &entry.id);
+            lines.push((key, entry.name.clone(), &[]));
+        }
+    }
+    for n in 1..=12 {
+        lines.push((month(n), content.calendar().month(n).to_string(), &[]));
+    }
+    for (id, level) in &content.levels {
+        let Some(burial) = &level.burial else {
+            continue;
+        };
+        if let Some(epitaph) = &burial.epitaph {
+            lines.push((burial_epitaph(id), epitaph.clone(), &super::EPITAPH_ROLES));
+        }
+        for (glyph, words) in burial.epitaphs.values() {
+            lines.push((grave(id, *glyph), words.clone(), &[]));
+        }
+    }
+    for (key, text, roles) in lines {
+        let line = Line::parse(&text);
+        if let Some(role) = line.roles().into_iter().find(|r| !roles.contains(r)) {
+            return Err(ContentError::new(
+                "data",
+                format!("`{key}`: \"{text}\" names `{role}`, which this line is not given"),
+            ));
+        }
+        content.english.add_data_line(key, Template::Line(line));
+    }
+    Ok(())
+}
+
 /// Adds what quests' people say to English by its key: a giver's words (and a drawn variant's),
-/// an escort's, a taker's, a side's, and the parting's betrayal. Said by a person, a line takes
-/// the base form only; a rolled quest's words may name what the roll drew
+/// an escort's, a taker's, a side's, and the parting's betrayal; and the quest's `name`. Said
+/// by a person, a line takes the base form only; a rolled quest's words may name what the roll drew
 /// (`content/quest_roll.rs`'s roles), any other quest's none.
 fn quest_speech(content: &mut Content) -> Result<(), ContentError> {
     let mut lines: Vec<(String, String, &[&str])> = Vec::new();
@@ -730,6 +1053,8 @@ fn quest_speech(content: &mut Content) -> Result<(), ContentError> {
         let mut add = |path: String, text: &str, roles: &'static [&'static str]| {
             lines.push((quest(id, &path), text.to_string(), roles));
         };
+        // Its name (`QuestDef::name_arg`), which names no role.
+        add("name".into(), &def.name, &[]);
         let own = [
             Some(&def.texts.offer),
             def.texts.accept.as_ref(),
@@ -755,6 +1080,9 @@ fn quest_speech(content: &mut Content) -> Result<(), ContentError> {
         }
         if let Some((_, early)) = &def.min_level {
             add("early".into(), early, &[]);
+        }
+        if let Some(says) = def.on_accept.as_ref().and_then(|o| o.says.as_ref()) {
+            add("on_accept.says".into(), says, &[]);
         }
         if let super::Goal::Escort { joins, thanks, .. } = &def.goal {
             add("joins".into(), joins, &[]);

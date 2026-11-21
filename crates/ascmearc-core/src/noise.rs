@@ -49,6 +49,8 @@ use crate::burden::Burden;
 use crate::content::Effect as ItemEffect;
 use crate::content::{Content, TerrainId};
 use crate::geom::{Dir, Pos};
+use crate::lang::{MessageId, Msg};
+use crate::msg;
 use crate::skills::Effect;
 use crate::talent::TalentMods;
 use crate::world::{Actor, ActorId, LevelState, WorldState, fnv1a};
@@ -172,31 +174,31 @@ impl SoundKind {
         )
     }
 
-    /// What the player hears, as in "You hear …": `footsteps`, `a door open`.
-    pub const fn heard_as(self) -> &'static str {
+    /// What the player hears, as in "You hear …" (`noise.heard_*`): "footsteps", "a door open".
+    pub const fn heard_as(self) -> MessageId {
         match self {
-            SoundKind::Footsteps => "footsteps",
-            SoundKind::DoorOpened => "a door open",
-            SoundKind::DoorClosed => "a door close",
-            SoundKind::Fighting => "fighting",
-            SoundKind::Bowstring => "a bowstring",
-            SoundKind::Chanting => "chanting",
-            SoundKind::Banging => "banging",
-            SoundKind::Digging => "digging",
-            SoundKind::Voice => "a voice",
-            SoundKind::Howl => "a howl",
-            SoundKind::Roar => "a roar",
-            SoundKind::Buzzing => "buzzing",
-            SoundKind::Giggle => "giggling",
-            SoundKind::Hiss => "a hiss",
-            SoundKind::Rattle => "a rattle",
-            SoundKind::Scream => "a scream",
-            SoundKind::Wail => "a wail",
-            SoundKind::Shatter => "a crash of glass",
-            SoundKind::Heartbeat => "a heartbeat",
-            SoundKind::Bell => "a bell ring",
-            SoundKind::Explosion => "an explosion",
-            SoundKind::Thunder => "a thunderclap",
+            SoundKind::Footsteps => msg::noise::HEARD_FOOTSTEPS,
+            SoundKind::DoorOpened => msg::noise::HEARD_DOOR_OPENED,
+            SoundKind::DoorClosed => msg::noise::HEARD_DOOR_CLOSED,
+            SoundKind::Fighting => msg::noise::HEARD_FIGHTING,
+            SoundKind::Bowstring => msg::noise::HEARD_BOWSTRING,
+            SoundKind::Chanting => msg::noise::HEARD_CHANTING,
+            SoundKind::Banging => msg::noise::HEARD_BANGING,
+            SoundKind::Digging => msg::noise::HEARD_DIGGING,
+            SoundKind::Voice => msg::noise::HEARD_VOICE,
+            SoundKind::Howl => msg::noise::HEARD_HOWL,
+            SoundKind::Roar => msg::noise::HEARD_ROAR,
+            SoundKind::Buzzing => msg::noise::HEARD_BUZZING,
+            SoundKind::Giggle => msg::noise::HEARD_GIGGLE,
+            SoundKind::Hiss => msg::noise::HEARD_HISS,
+            SoundKind::Rattle => msg::noise::HEARD_RATTLE,
+            SoundKind::Scream => msg::noise::HEARD_SCREAM,
+            SoundKind::Wail => msg::noise::HEARD_WAIL,
+            SoundKind::Shatter => msg::noise::HEARD_SHATTER,
+            SoundKind::Heartbeat => msg::noise::HEARD_HEARTBEAT,
+            SoundKind::Bell => msg::noise::HEARD_BELL,
+            SoundKind::Explosion => msg::noise::HEARD_EXPLOSION,
+            SoundKind::Thunder => msg::noise::HEARD_THUNDER,
         }
     }
 }
@@ -765,20 +767,23 @@ pub(crate) fn news(
 }
 
 impl PerceivedSound {
-    /// "You hear footsteps", or for a faint sound "You faintly hear footsteps".
-    pub fn you_hear(&self) -> String {
+    /// "You hear footsteps", or for a faint sound "You faintly hear footsteps"
+    /// (`noise.you_hear`, `noise.you_faintly_hear`): a clause a line says it in.
+    pub fn you_hear(&self) -> Msg {
         let hear = match self.volume {
-            Volume::Faint => "You faintly hear",
-            Volume::Clear | Volume::Loud => "You hear",
+            Volume::Faint => msg::noise::YOU_FAINTLY_HEAR,
+            Volume::Clear | Volume::Loud => msg::noise::YOU_HEAR,
         };
-        format!("{hear} {}", self.kind.heard_as())
+        Msg::new(hear).role("sound", self.kind.heard_as())
     }
 
     /// The message for this sound heard from `viewer`: "You hear footsteps to the north-east."
-    pub fn message(&self, viewer: Pos) -> String {
+    /// (`noise.heard_from`; `noise.heard` with no direction).
+    pub fn message(&self, viewer: Pos) -> Msg {
         match Dir::toward(viewer, self.pos) {
-            Some(dir) => format!("{} to the {}.", self.you_hear(), dir.compass_name()),
-            None => format!("{}.", self.you_hear()),
+            Some(dir) => (Msg::new(msg::noise::HEARD_FROM).role("hear", self.you_hear()))
+                .role("dir", dir.compass_word()),
+            None => Msg::new(msg::noise::HEARD).role("hear", self.you_hear()),
         }
     }
 }

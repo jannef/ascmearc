@@ -92,9 +92,9 @@ impl World {
         // Found out by searching, the player knows it in the dark too.
         if how == Reveal::Found || self.perception.in_sight(pos) {
             let def = self.content.creature(creature);
-            // The chest band's name is the data's word (`word:`, as a status's look).
+            // The chest band's name (`chest:<band>`).
             let chest = (self.content.chests().band_of(def.level))
-                .map_or_else(|| fight::word("chest"), |b| fight::word(&b.name));
+                .map_or_else(|| fight::word("chest"), |b| b.phrase());
             let line = match how {
                 Reveal::Touch | Reveal::Knocked => msg::creatures::CHEST_LURCHES,
                 Reveal::Struck => msg::creatures::CHEST_SHUDDERS,

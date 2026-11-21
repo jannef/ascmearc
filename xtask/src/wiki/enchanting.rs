@@ -7,6 +7,7 @@
 //! chances, from `data/rules/enchanting.toml` and `data/crystals.toml`.
 
 use super::util::capital;
+use super::util::time_words;
 use ascmearc_core::combat::HIGHEST;
 use ascmearc_core::content::{Content, EnchantKind, RecipeUse};
 use ascmearc_core::skills::{Effect, MAX_ENCHANT_LEVEL};
@@ -93,7 +94,7 @@ pub(super) fn recipes_enchanting(content: &Content) -> String {
             "| {} | {works} | {} | {} | {} | {} | {} |",
             r.name,
             r.crystals,
-            Duration::seconds(u64::from(r.seconds)).spoken(),
+            time_words(Duration::seconds(u64::from(r.seconds))),
             r.from,
             r.difficulty,
             odds.join(" / ")
@@ -128,7 +129,7 @@ pub(super) fn enchanting_seals(content: &Content) -> String {
         out,
         "- **A seal** costs one more crystal of the colour it seals and adds {} to the work. A \
          roll takes at most {MOST_SEALS} seals.",
-        Duration::seconds(u64::from(rules.seal_seconds)).spoken(),
+        time_words(Duration::seconds(u64::from(rules.seal_seconds))),
     );
     let _ = writeln!(
         out,

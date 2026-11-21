@@ -1,14 +1,15 @@
 # Black Wystan's long bow (docs/design/adventurers-guild.md §9.2; thieves' cant, "the high
-# toby": robbery on the highway): shoot, and the foe breaks and runs; shoot it again as it comes
-# back. Control at range, not damage.
+# toby": robbery on the highway): sure, hard shots from far off, and now and then one that leaves
+# the foe bleeding (the owner's balance pass, #2001). A long bow rolls no flat damage, so its +2
+# is set by hand (`sharp=2`, docs/dev/magic-items.md "Unique items").
 [[unique]]
 id = "high_toby"
 name = "High Toby"
 object = "long_bow"
-affixes = ["hunters:4", "steady:4", "of_precision:2"]
+affixes = ["sharp=2", "hunters:4", "steady:4", "of_precision:5"]
 level = 12
-# Three enchantments need its make (docs/dev/enchanting.md): Fine, an amethyst inlay.
+# Four enchantments need its make (docs/dev/enchanting.md): Fine, a flawless amethyst inlay.
 quality = "fine"
-parts = [{ part = "inlay", of = "amethyst" }]
-power = { inflict = "frightened", chance = 25, severity = 1, phrase = "Its arrows put fear in what they strike." }
+parts = [{ part = "inlay", of = "amethyst", cut = "flawless" }]
+power = { inflict = "bleeding", chance = 25, severity = 1, phrase = "Its arrows leave wounds that bleed." }
 lore = "Many a coach has stopped for it, and many a coachman run."

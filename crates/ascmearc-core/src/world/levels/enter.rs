@@ -16,7 +16,7 @@ use super::ice::Footing;
 use crate::action::Event;
 use crate::content::{LevelKind, StairsDir};
 use crate::geom::Pos;
-use crate::lang::{Arg, Msg, Phrase};
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::skills::Use;
 use crate::world::{ActorId, World};
@@ -108,7 +108,7 @@ impl World {
                 (stairs.name.clone()).or_else(|| Some(self.place_name(stairs.to.as_ref()?)));
             parts.push(match (level.kind, stairs.dir, named) {
                 (LevelKind::Overworld, StairsDir::Down, Some(name)) => {
-                    Msg::new(msg::levels::WAY_INTO_HERE).role("place", Phrase::literal(name))
+                    Msg::new(msg::levels::WAY_INTO_HERE).role("place", name)
                 }
                 (_, StairsDir::Down, _) => msg::levels::STAIRCASE_DOWN_HERE.into(),
                 (_, StairsDir::Up, _) => msg::levels::STAIRCASE_UP_HERE.into(),

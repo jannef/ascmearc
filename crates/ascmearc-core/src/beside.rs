@@ -67,21 +67,22 @@ pub enum Target {
 
 impl Target {
     /// Why an ability that acts on it cannot be used now, as the menu says it.
-    pub const fn reason(self) -> &'static str {
+    pub const fn reason(self) -> crate::lang::MessageId {
+        use crate::msg;
         match self {
-            Target::Openable => "nothing beside you to open",
-            Target::OpenDoor => "no open door beside you",
-            Target::ClosedDoor | Target::Unwedged => "no closed door beside you",
-            Target::Lock => "no lock beside you",
-            Target::Trap => "no known trap beside you",
-            Target::Someone => "no one beside you",
-            Target::Mark => "no one beside you to rob",
-            Target::Foe => "no foe within reach",
-            Target::Fool => "no foe beside you to fool",
-            Target::Beast => "no beast beside you to tame",
-            Target::Wall => "nothing beside you to dig",
-            Target::Fungus => "no fungus beside you",
-            Target::Ground => "no open ground beside you",
+            Target::Openable => msg::ability::NO_TARGET_OPENABLE,
+            Target::OpenDoor => msg::ability::NO_TARGET_OPEN_DOOR,
+            Target::ClosedDoor | Target::Unwedged => msg::ability::NO_TARGET_CLOSED_DOOR,
+            Target::Lock => msg::ability::NO_TARGET_LOCK,
+            Target::Trap => msg::ability::NO_TARGET_TRAP,
+            Target::Someone => msg::ability::NO_TARGET_SOMEONE,
+            Target::Mark => msg::ability::NO_TARGET_MARK,
+            Target::Foe => msg::ability::NO_TARGET_FOE,
+            Target::Fool => msg::ability::NO_TARGET_FOOL,
+            Target::Beast => msg::ability::NO_TARGET_BEAST,
+            Target::Wall => msg::ability::NO_TARGET_WALL,
+            Target::Fungus => msg::ability::NO_TARGET_FUNGUS,
+            Target::Ground => msg::ability::NO_TARGET_GROUND,
         }
     }
 

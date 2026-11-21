@@ -14,7 +14,7 @@ use crate::action::Event;
 use crate::burden::Burden;
 use crate::content::{Content, StairsDir};
 use crate::geom::{Dir, Pos};
-use crate::lang::{Msg, Phrase};
+use crate::lang::Msg;
 use crate::msg;
 use crate::rng::draw;
 use crate::world::combat::fight::Harm;
@@ -72,7 +72,7 @@ impl World {
             from,
             to: below.clone(),
         });
-        let place = Phrase::literal(self.state.current().name.clone());
+        let place = self.state.current().name.clone();
         self.say(Msg::new(msg::fixtures::FALL_TO).role("place", place));
         let id = self.state.player;
         let damage = collapse.damage.roll(&mut rng).max(0);
