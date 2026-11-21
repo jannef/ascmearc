@@ -145,3 +145,54 @@ fn a_text_mod_adds_a_language() {
         content.fingerprint_for("ascmearc")
     );
 }
+
+/// A text mod's `lang/fi/` lays over the shipped Finnish by id, as English's does: its words,
+/// messages, and lines of data replace the same ids, and the rest stay the game's.
+#[test]
+fn a_text_mod_lays_over_the_shipped_finnish() {
+    let files = |pairs: &[(&str, &str)]| {
+        (pairs.iter())
+            .map(|(p, t)| (p.to_string(), t.to_string()))
+            .collect::<Vec<_>>()
+    };
+    let base = Content::builtin().expect("base");
+    let modded = load(&[(
+        "finnish_words",
+        files(&[
+            ("lang/fi/lexicon/creature.toml", "rat = \"rotta/9*C\"\n"),
+            (
+                "lang/fi/messages/doors.toml",
+                "open = \"Avaat oven narahtaen.\"\n",
+            ),
+            (
+                "lang/fi/data/level.toml",
+                "[ceaptun]\nname = \"Kauppala\"\n",
+            ),
+        ]),
+    )]);
+    let base_fi = base.language("fi").expect("fi");
+    let fi = modded.language("fi").expect("fi");
+    let rat = crate::lang::Phrase::id("creature:rat");
+    let kobold = crate::lang::Phrase::id("creature:kobold");
+    assert_eq!(fi.phrase(&rat, "nom", modded.lexicon()), "rotta");
+    assert_eq!(
+        fi.phrase(&kobold, "nom", modded.lexicon()),
+        base_fi.phrase(&kobold, "nom", base.lexicon())
+    );
+    let written = |l: &crate::lang::Language, id: &str| l.templates().get(id).map(|t| t.written());
+    assert_eq!(
+        written(fi, "doors.open").as_deref(),
+        Some("Avaat oven narahtaen.")
+    );
+    assert_eq!(
+        written(fi, "doors.locked"),
+        written(base_fi, "doors.locked")
+    );
+    let line = |l: &crate::lang::Language, key: &str| l.data_lines().get(key).map(|t| t.written());
+    assert_eq!(line(fi, "level:ceaptun.name").as_deref(), Some("Kauppala"));
+    assert_eq!(
+        line(fi, "level:ceaptun.arrival"),
+        line(base_fi, "level:ceaptun.arrival")
+    );
+    assert!(modded.content_mods().is_empty());
+}

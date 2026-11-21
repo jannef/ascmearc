@@ -1,0 +1,30 @@
+# Statuses (`status:<id>`), said as a predicate adjective ("Olet yhä pökertynyt"); `label` where
+# the status bar's capitalized word is not the capitalized adjective.
+asleep = { word = "nukkuva/10", forms = { label = "Unessa" } }
+bleeding = { word = "verta vuotava/10", forms = { label = "Verenvuoto" } }
+blessed = "siunattu/1*C"
+burning = { word = "palava/10", forms = { label = "Liekeissä" } }
+corroded = "syöpynyt/47"
+diseased = "sairas/41"
+drowsy = "uninen/38"
+exhausted = "uupunut/47"
+frightened = "pelästynyt/47"
+hasted = "nopeutettu/1*C"
+held = "kiinni pidetty/1*C"
+inspired = "innoittunut/47"
+inspired_greatly = "innoittunut/47"
+invisible = "näkymätön/34*C"
+latched = "kiinni tarttunut/47"
+lit = "hehkuva/10"
+lurking = "väijyvä/10"
+pinned = "maahan naulittu/1*C"
+poisoned = { word = "myrkyttynyt/47", forms = { label = "Myrkytys" } }
+raging = { word = "raivoava/10", forms = { label = "Raivo" } }
+silenced = "vaiennettu/1*C"
+sluggish = "hidastunut/47"
+staggered = "horjuva/10"
+stunned = "pökertynyt/47"
+surprised = "yllättynyt/47"
+weakened = "heikentynyt/47"
+webbed = "seittiin takertunut/47"
+winded = "hengästynyt/47"

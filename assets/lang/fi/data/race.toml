@@ -1,0 +1,40 @@
+# Lines of data: races (`race:<id>.description`), as the New run screen shows them.
+
+[drow]
+description = { text = "Syvän pimeyden haltiat: siroja, teräviä ja pitkäikäisiä mutta hauraita, myrkylle sitkeitä ja kirkkaan valon häikäisemiä.", of = "7a8345" }
+
+[duergar]
+description = { text = "Kääpiöiden harmaat serkut syvimmästä pimeydestä: sitkeitä, juroja ja ilottomia; kuorma ei heitä paina, ja kivityön he tuntevat.", of = "0914a3" }
+
+[dwarf]
+description = { text = "Tanakkaa ja itsepäistä syvien salien kansaa: vaikea tappaa, vaikea hoputtaa, ja pimeässä kuin kotonaan.", of = "73cc6f" }
+
+[elf]
+description = { text = "Siroja ja pitkäikäisiä, mieleltään ja silmältään teräviä mutta hauraita; haltian silmä ei tarvitse paljon valoa.", of = "3f887c" }
+
+[gnome]
+description = { text = "Pieniä, väsymättömiä näpertelijöitä ja harhojen taitajia, uteliaita kaikesta; he näkevät hyvin vähässäkin valossa.", of = "2ef3b6" }
+
+[goblin]
+description = { text = "Pieniä, heikkoja ja lyhytikäisiä, mutta näppäräkätisiä, salakavalia ja pimeässä kuin kotonaan; he syövät vähän.", of = "328b16" }
+
+[half_elf]
+description = { text = "Kahden kansan lapsia, kummankaan luona eivät kotonaan: sopeutuvaisia ja hurmaavia, ja silmissään hieman haltioiden näköä.", of = "171f64" }
+
+[half_orc]
+description = { text = "Vahvoja, sitkeitä ja pimeässä tarkkasilmäisiä, mutta kirjaimet ovat heille vaikeita, eikä heillä ole juuri sulokkuutta.", of = "25e633" }
+
+[halfling]
+description = { text = "Pieniä, nopeita ja hätkähtämättömiä, sormet näppärät ja askeleet hiljaiset; mitään isoa vastaan heistä ei ole.", of = "095cb9" }
+
+[human]
+description = { text = "Lyhytikäisiä, kunnianhimoisia ja joka paikassa: ei erityistä lahjaa, ei erityistä vikaa.", of = "292a76" }
+
+[kobold]
+description = { text = "Pieniä, suomuisia ja kaikista heikoimpia, mutta taitavia ansoissa ja nopeita huomaamaan ne; koboldit elävät kiivaasti ja kuolevat nuorina.", of = "07e4fc" }
+
+[lizardfolk]
+description = { text = "Vahvaa ja sitkeää suokansaa, nahka suomujen peitossa: vaihtolämpöisiä, hitaita järjeltään ja kaikille muille vieraita.", of = "f793dd" }
+
+[ratfolk]
+description = { text = "Pieniä, ketteriä raadonsyöjiä viemäreistä ja raunioista: heikkoja ja karsastettuja, mutta sairastuvat harvoin ja syövät mitä tahansa, mätää tai ei.", of = "6ad6c6" }

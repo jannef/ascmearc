@@ -1,0 +1,13 @@
+# The run as a whole (`world/mod.rs`).
+
+lines = { text = "{lines:lines}", of = "9db848" }
+nobody_to_sell_to = { text = "Täällä ei ole ketään, jolle myydä.", of = "da847e" }
+
+take_stance_aggressive = { text = "Otat hyökkäävän asennon.", of = "8ba5fd" }
+take_stance_coward = { text = "Otat pelkurimaisen asennon.", of = "d29294" }
+take_stance_defensive = { text = "Otat puolustavan asennon.", of = "6b3dea" }
+take_stance_frenzy = { text = "Syöksyt taisteluhurmokseen.", of = "ebc510" }
+take_stance_neutral = { text = "Otat perusasennon.", of = "454d77" }
+
+# `place`: the scenario's name; `{key:help}` the key that shows the controls.
+welcome = { text = "{place:bare}. Tervetuloa! Paina {key:help} nähdäksesi ohjaimet.", of = "2d6d0d" }

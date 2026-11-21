@@ -1,0 +1,91 @@
+# Objects (`object:<id>`): Cēaptūn's shops and piles, the classes' starting kits, what the
+# kobolds carry. An item made of its own parts has `material`, the base text of the material
+# word its name already implies (a Finnish head names no material: "kypärä" is iron), so that
+# material is left unsaid; another one is said before it ("pronssinen kypärä"). A pair of
+# something (gloves, boots) is a word with no singular (`plural_only`).
+amber_amulet = { word = "meripihka-amuletti/5*C", forms = { material = "meripihkainen" } }
+angelica_root = "väinönputken juuri/26"
+apple = "omena/11"
+arrow = "nuoli/26"
+bat_corpse = { word = "luolalepakon raato/1*F", forms = { material = "lihainen" } }
+battle_axe = { word = "sota|kirves/41", forms = { material = "rautainen" } }
+beetle_corpse = { word = "luolakovakuoriaisen raato/1*F", forms = { material = "lihainen" } }
+bolt = { word = "varsijousen nuoli/26", forms = { material = "rautainen" } }
+bone_amulet = { word = "luu|amuletti/5*C", forms = { material = "luinen" } }
+bread = "leipä/10*E"
+buckler = { word = "nyrkki|kilpi/7*E", forms = { material = "rautainen" } }
+candle = "vaha|kynttilä/12"
+cat_corpse = { word = "kissan raato/1*F", forms = { material = "lihainen" } }
+chain_mail = { word = "rengas|paita/9*F", forms = { material = "rautainen" } }
+club = { word = "kurikka/14*A", forms = { material = "puinen" } }
+copper_coin = "kupari|raha/9"
+crossbow = { word = "varsi|jousi/26", forms = { material = "puinen" } }
+dagger = { word = "tikari/6", forms = { material = "teräksinen" } }
+doublet = { word = "nuttu/1*C", forms = { material = "villainen" } }
+dried_meat = "kuiva|liha|suikale/48"
+flask_of_oil = "öljy|pullo/1"
+frock = "mekko/1*A"
+full_plate = { word = "täys|haarniska/13", forms = { material = "teräksinen" } }
+fur_cloak = { word = "turkis|viitta/9*C", forms = { material = "turkiksinen" } }
+gauntlets = { word = "panssari|hansikas/41*A", plural_only = true, forms = { material = "rautainen" } }
+gem = "jalo|kivi/7"
+gold_coin = "kulta|raha/9"
+gold_ring = { word = "kulta|sormus/39", forms = { material = "kultainen" } }
+gown = { word = "juhla|puku/1*M", forms = { material = "villainen" } }
+grave_worm_corpse = { word = "hautamadon raato/1*F", forms = { material = "lihainen" } }
+great_axe = { word = "suuri/26 kirves/41", forms = { material = "rautainen" } }
+great_sword = { word = "kaksikätinen/38 miekka/9*A", forms = { material = "teräksinen" } }
+habit = { word = "munkin|kaapu/1*E", forms = { material = "villainen" } }
+hand_axe = { word = "käsi|kirves/41", forms = { material = "rautainen" } }
+hound_corpse = { word = "koiran raato/1*F", forms = { material = "lihainen" } }
+houppelande = { word = "kauhtana/12", forms = { material = "villainen" } }
+iron_helm = { word = "kypärä/12", forms = { material = "rautainen" } }
+iron_shod_boots = { word = "helainen/38 saapas/41*B", plural_only = true, forms = { material = "rautainen" } }
+javelin = { word = "heitto|keihäs/41", forms = { material = "rautainen" } }
+kirtle = { word = "hame/48", forms = { material = "villainen" } }
+knife = { word = "veitsi/30", forms = { material = "teräksinen" } }
+kobold_corpse = { word = "koboldin ruumis/41", forms = { material = "lihainen" } }
+lantern = { word = "lyhty/1*F", forms = { material = "rautainen" } }
+large_shield = { word = "suuri/26 kilpi/7*E", forms = { material = "puinen" } }
+leather_apron = { word = "nahka|esiliina/9", forms = { material = "nahkainen" } }
+leather_boots = { word = "nahka|saapas/41*B", plural_only = true, forms = { material = "nahkainen" } }
+leather_cap = { word = "nahka|lakki/5*A", forms = { material = "nahkainen" } }
+leather_gloves = { word = "nahka|käsine/48", plural_only = true, forms = { material = "nahkainen" } }
+leather_jerkin = { word = "nahka|liivi/5", forms = { material = "nahkainen" } }
+long_coat = { word = "pitkä/10 takki/5*A", forms = { material = "villainen" } }
+long_sword = { word = "pitkä|miekka/9*A", forms = { material = "teräksinen" } }
+lute = "luuttu/1*C"
+mace = { word = "sota|nuija/10", forms = { material = "rautainen" } }
+ore = "malmi|kimpale/48"
+padded_coat = { word = "tikki|nuttu/1*C", forms = { material = "kankainen" } }
+pick_axe = { word = "hakku/1*A", forms = { material = "rautainen" } }
+piece = "pala/9"
+potion_of_healing = "parannus|juoma/10"
+potion_of_mana = "mana|juoma/10"
+quarterstaff = { word = "taistelu|sauva/9", forms = { material = "puinen" } }
+rapier = { word = "rapiiri/6", forms = { material = "teräksinen" } }
+rat_corpse = { word = "jättirotan raato/1*F", forms = { material = "lihainen" } }
+ration = "muona-annos/39"
+robe = { word = "kaapu/1*E", forms = { material = "villainen" } }
+rock = "kivi/7"
+rope = "köysi/27"
+sandals = { word = "sandaali/6", plural_only = true }
+scimitar = { word = "käyrä|miekka/9*A", forms = { material = "teräksinen" } }
+scroll_of_fireball = "tulipallon käärö/1"
+scroll_of_frost = "pakkasen käärö/1"
+scroll_of_identify = "tunnistuksen käärö/1"
+scroll_of_light = "valon käärö/1"
+scroll_of_lightning = "salaman käärö/1"
+short_bow = { word = "lyhyt|jousi/26", forms = { material = "puinen" } }
+short_sword = { word = "lyhyt|miekka/9*A", forms = { material = "teräksinen" } }
+sling = "linko/1*G"
+sling_stone = "linko|kivi/7"
+slippers = { word = "tohveli/6", plural_only = true }
+small_shield = { word = "pieni/26 kilpi/7*E", forms = { material = "puinen" } }
+spear = { word = "keihäs/41", forms = { material = "rautainen" } }
+stiletto = { word = "stiletti/5*C", forms = { material = "teräksinen" } }
+studded_leather = { word = "niitattu/1*C nahka|liivi/5", forms = { material = "nahkainen" } }
+travelling_cloak = { word = "matka|viitta/9*C", forms = { material = "nahkainen" } }
+turnip = "nauris/41"
+war_hammer = { word = "sota|vasara/12", forms = { material = "rautainen" } }
+wool_cloak = { word = "villa|viitta/9*C", forms = { material = "villainen" } }

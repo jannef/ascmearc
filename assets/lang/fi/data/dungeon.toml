@@ -1,0 +1,9 @@
+# Lines of data: dungeons (`dungeon:<id>.<field>`).
+
+[lytelscraef]
+arrival = { text = "Luola haisee märältä kiveltä ja rotilta.", of = "316973" }
+name = { text = "Lytelscræf", of = "e64cbf" }
+
+[skeul_hir]
+arrival = { text = "Pienille jaloille hakatut portaat kiipeävät pimeyteen, askelmat keskeltä kuopalle kuluneina.", of = "25ea3b" }
+name = { text = "Skeul Hir", of = "ba3d41" }

@@ -29,7 +29,8 @@ said by its key, with role slots in the base form ("Dialogue"), on the one mecha
 whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
 the character, creatures, the fixtures, items, health, levels, people, skills (L4n, #1925), and talk say
 theirs from templates; the few `say` sites left say a literal line ("Literal lines"), each with
-its reason, which `cargo xtask lang` checks ("Language-neutral text", #2035). Nothing player-visible has
+its reason, which `cargo xtask lang` checks ("Language-neutral text", #2035). Finnish ships its first slice, the opening (#2043, "Finnish, the first slice"),
+with the loader reading a language's lexicon and lines of data. Nothing in English has
 changed: the English templates and phrases read as the strings did. The English helpers core,
 the app, and the wiki generator call have moved into the crate behind re-exports at their old
 paths.
@@ -155,7 +156,7 @@ head. **Phrase order**: [genitive qualifiers (`Modifier::Of`, genitive singular,
   nuoltasi" (a suffix the template asks, `ade_nsa`, wins).
 - **`Part { material, part }`** is a compound adjective, agreeing: the material's lemma (its
   lexicon `compound` form if it has one, `kulta` for `kultainen/38`, else its base without the
-  class) joined to the part's `adjective` form (`part:pommel = { word = "ponsi/27", forms = {
+  class) joined to the part's `adjective` form (`part:pommel = { word = "ponsi/28", forms = {
   adjective = "ponsinen/38" } }`), so "smaragdiponsinen", `ill` "smaragdiponsiseen". An adjective
   without a class is written "material-adjective" (English's words until the parts lexicon, L11).
 - **`Made(material)`** is the material's word as an agreeing adjective right before the head,
@@ -1146,13 +1147,23 @@ ids and its load warnings (the log), and the keymap file's comments, stay as wri
 
 **Languages.** Core loads every `assets/lang/<code>/` with a `lang.toml` beside English
 (`content/languages.rs`): its `lang.toml` (its `code` must be its folder's name), its
-`messages/<file>.toml`, and its `ui/<module>.toml` (ids `ui.<module>.<name>`). Its lexicon and
-dialogue files are not read yet (L11, L13), so a folder holding them is refused, as is a folder
-under `lang/` without a `lang.toml` (no loader reads its files). `Content::languages` lists them,
+`messages/<file>.toml`, its `ui/<module>.toml` (ids `ui.<module>.<name>`), its lexicon
+(`lexicon/<kind>.toml`, below), and its lines of data (`data/<kind>.toml`, `dialogue/<file>.toml`,
+"Lines of data"). A folder under `lang/` without a `lang.toml` is refused (no loader reads its
+files). `Content::languages` lists them,
 English first; `Content::language(code)` finds one; `Content::shown_chain(code)` is the chain a
 line is rendered through: the language, then English, which has every id (an unknown code is
-English alone). A phrase's words come from the content (English) until the language has a
-lexicon.
+English alone).
+
+**A language's lexicon** (#1894's first slice): `lang/<code>/lexicon/<kind>.toml`, one file per
+kind of lexicon id, in no folder, the file's stem the kind and each key the rest of the id
+(`lexicon/creature.toml`'s `rat = "rotta/10"` is `creature:rat`; `lexicon/word.toml`'s keys
+are English text, `"bite"`), read by `MapLexicon::parse` (`Language::add_lexicon`). A rendering
+in the language reads its own words over the content's (`lexicon.rs::Layered`,
+`Language::words`), so a word it lacks is English's as written, uninflected, and English never
+reads another language's words. A word the morphology refuses still loads and renders as written;
+the checker reports it, and an id the content has no word for (`check_lexicon_ids`). No `of` is
+checked on a lexicon entry yet.
 
 **The setting.** `language` in `settings.toml` (`Settings::language`, a code, `"en"` by default:
 no guess from the system's locale, design §12; `docs/dev/settings.md`), chosen in the settings
@@ -1177,8 +1188,8 @@ and a parting's speaker in that language; English by default (`dump::ascii`, `du
 the snapshots stay English. Core renders with `messages::render_in`, `msg_in`, `arg_in`,
 `speech_in` (the `english*` helpers are these for `"en"`).
 
-**Tests.** No language but English ships yet, so the tests add a small one, `xx`, to the built-in
-files: `content/languages.rs` (it loads, renders what it has, falls back for the rest, and a
+**Tests.** The tests add a small language of their own, `xx`, to the built-in files (Finnish
+ships beside English, #2043, but changes as it is translated): `content/languages.rs` (it loads, renders what it has, falls back for the rest, and a
 misnamed or bare folder is refused) and `ui::tests::the_log_reads_in_the_language_chosen_and_switches_live`
 (the welcome line already logged reads in `xx` once it is chosen, and in English again after). In
 the app's tests the shown language is the test thread's own, so a test that switches it switches no
@@ -1202,8 +1213,7 @@ so a saved log re-renders in any language and a later identification cannot reac
   `assets/lang/<code>/dialogue/<file>.toml` (kind `dialogue`, keyed by the data's path:
   `[ascmearc.servant] lines = [ … ]`, an array numbered from 0; an `address` table without `by`
   is by the player's gender): `Templates::parse_data`, `Language::add_data_file`. A key the
-  language lacks fails that language's rendering, so the chain falls back to English (a language's
-  `dialogue/` and lines of data are not loaded yet: L13, "The language setting"). A mod's data lines are keyed by its content ids and overlay the same
+  language lacks fails that language's rendering, so the chain falls back to English. A mod's data lines are keyed by its content ids and overlay the same
   way.
 - **Rendering**: the line by its key, filled with the Said's args like any template, in the
   speaker's register (`Registers::for_speaker(register, race)`; standard for a narrator's). A
@@ -1330,7 +1340,8 @@ Every line a creature says (`content/dialogue_line.rs`, `DialogueLine`) is a lin
 `dialogue`, keyed `dialogue:<scope>.<field>`: the scope is the dialogue's campaign (`data` outside
 every campaign) and its `npc` or `creature` id (two dialogues keyed alike are refused); the
 fields `greet`, `greet_evil.<n>`, `greet_good.<n>`, `lines.<n>`, `after.<quest>.<n>`,
-`economy.hard.<n>`, `economy.better.<n>`, `topic.<id>`, `service.<id>.reply`/`.nothing`,
+`economy.hard.<n>`, `economy.better.<n>`, `topic.<id>`, `topic_name.<id>` and `service_name.<id>`
+(what the player picks, the dialogue screen's `TopicName::Line`), `service.<id>.reply`/`.nothing`,
 `offer.reply`/`.sold`, `mutter.<n>`, `stipend.handover`, `partner.<field>`, `patron.<field>`, and
 `address`. A line is a string or whole-line variants (`by = "player.gender"`, design §9.1).
 
@@ -1495,8 +1506,8 @@ that lack one (`--restamp` also
 refreshes stale ones, after the translator has read the English change); it edits lines, so
 comments and layout stay: a `[table]` gets an `of` line after its header, a plain `id = "text"`
 becomes `id = { text = "text", of = "…" }`, and a plain entry whose value spans lines is refused
-(put it in a table). Not yet checked: lexicon staleness and missing words (L3 and L10, when
-lexicons exist and the English `assets/data` names are mapped to them).
+(put it in a table). A lexicon id the content has no word for is an error; not yet checked:
+lexicon staleness and missing words.
 
 
 ## Decisions L10 made where the design left them open
@@ -1537,6 +1548,22 @@ Nothing here is guessed against the oracle; these are the choices the oracle can
 - A `plural_only` word: one without a numeral ("sakset", not "yhdet sakset"); zero as "nolla
   saksia"; digits with the agreeing plural ("13 sakset").
 
+## Finnish, the first slice (#2043)
+
+`assets/lang/fi/` holds a complete opening, the town Cēaptūn and the first dungeon Lytelscræf
+(`--scenario ceaptun`, `--scenario lytelscraef`, `--lang fi`), so the owner can judge it before
+the rest is translated (L11–L13, #1894–#1896): `lang.toml` with the registers of #1896's table
+(the data's `posh` is kirjakieli, `cornish` Karelian; the race map gives commoners Stadin slangi,
+dwarves Ostrobothnian, elves Turku, halflings and gnomes Savo, goblins, kobolds, and ratfolk
+Rauma, drow Agricola's Finnish, lizardfolk Estonian), every UI file, the message files of the
+subsystems met there, the lexicon of what lives, lies, and is sold there (and every race,
+class, and starting kit), the lines of data of those places, statuses, traps, and verbs, and
+Cēaptūn's dialogue. What it lacks reads in English. Known gaps a later slice fills: a place's
+name (a line of data) takes no case, so lines say it in the nominative ("Laskeudut portaita alas
+paikkaan Cēaptūn"); words core still says as text (a resource's short name, the read dialog's
+chance, a ready weapon's name in the targeting line) stay English; an unidentified potion's label
+is a `Label` clause where Finnish wants an agreeing adjective.
+
 ## Mods (L9)
 
 A mod's files under `lang/` are its text (#1892; the mechanism and the save rules are
@@ -1553,7 +1580,9 @@ content too pins them by its content alone. **The checker** lays each mod's `lan
 game's the same way (`xtask/src/lang/mods.rs`: an English file of the mod's merges into English,
 so a translation of it is checked against the merge; a content mod's lines of data against the
 content loaded with it) and reports, under `mods/<id>:`, what the mod adds to the game's own
-report. The examples are test mods, not shipped (`tests/mods/`, `docs/dev/mods.md`):
+report. A mod rewording English leaves the game's translations of those ids stale, which it
+cannot mend: in a language the mod has no files for, that is a warning (its own translations'
+staleness stays an error). The examples are test mods, not shipped (`tests/mods/`, `docs/dev/mods.md`):
 `creaky_doors` (English: four door lines reworded) and `tiny_language` (a new language, `xx`).
 
 **Decisions L9 made where the design left them open.** The example text mod is English
@@ -1568,8 +1597,7 @@ cannot change that content mod's fingerprint. An empty mod is a text mod (it cha
 
 ## Next
 
-English is complete: every line and screen reads from `assets/lang/en/`. Still to come, per
-`docs/design/localization.md` §17: text mods (L9), the Finnish lexicon on `fi` (L11), the Finnish
-templates and UI text (L12), Finnish dialogue and registers (L13), and with Finnish the
-font-subset case and `cargo xtask web-smoke --lang fi` (L14). The rules this builds are
-`spec/05-interface.md` "Language".
+The L4 slices ("Literal lines", "Lines of data"), the other L6 parts ("UI text"), the rest of
+Finnish (L11–L13), and with Finnish the font-subset case and `cargo xtask web-smoke --lang fi`
+(L14): `docs/design/localization.md` §17. The rules this builds are `spec/05-interface.md`
+"Language".

@@ -1,0 +1,114 @@
+# The graveyard screen (`crates/ascmearc/src/ui/graveyard_screen.rs`).
+
+[and_prestige]
+of = "cd005a"
+text = "{what:bare} ja {prestige:bare}"
+
+[cause_altar]
+of = "33a1d8"
+text = "Kaatui unohdetulla alttarilla"
+
+[cause_burned]
+of = "9f1a89"
+text = "Paloi kuoliaaksi"
+
+[cause_choked]
+of = "97f16f"
+text = "Tukehtui"
+
+[cause_drowned]
+of = "0dde21"
+text = "Hukkui syvään veteen"
+
+[cause_fell]
+of = "602d01"
+text = "Putosi sortuneen lattian läpi"
+
+[cause_killed_by]
+of = "fdf802"
+text = "{who:Gen} surmaama"
+
+[cause_died_of]
+of = "090ede"
+text = "Kuoli {name:ill}"
+
+# "Oman tulipallonsa surmaama".
+[cause_own]
+of = "a68eab"
+text = "Oman {name:gen_nsa} surmaama"
+
+[cause_own_spell]
+of = "e58a87"
+text = "Oman loitsunsa surmaama"
+
+[cause_profane]
+of = "b2ea9d"
+text = "Epäpyhän viemä"
+
+[cause_starved]
+of = "fbae62"
+text = "Nääntyi nälkään"
+
+[cause_stone]
+of = "2db8c8"
+text = "Muuttui kiveksi"
+
+[cause_unknown]
+of = "5d8cc7"
+text = "Kuoli"
+
+[cause_unseen]
+of = "abda2a"
+text = "Näkymättömän surmaama"
+
+[death_place]
+of = "56fb9a"
+text = "{cause:bare} paikassa {place:bare}"
+
+[death_line]
+of = "e02341"
+text = "{death:bare}."
+
+[died_aged]
+of = "2a8f17"
+text = "Kuoli {age:bare}-vuotiaana."
+
+[died_when]
+of = "30a452"
+text = "Kuoli {when:bare}."
+
+[died_when_aged]
+of = "977261"
+text = "Kuoli {when:bare} {age:bare}-vuotiaana."
+
+[footer]
+of = "03caaf"
+text = "Esc takaisin"
+
+[footer_pages]
+of = "878458"
+text = "{up_down:bare} {next:bare} {prev:bare} sivu   Esc takaisin"
+
+[level]
+of = "e4d3bf"
+text = "taso {n:bare}"
+
+[nobody]
+of = "a9c575"
+text = "Täällä ei vielä lepää ketään."
+
+[page]
+of = "35f38a"
+text = "Sivu {page:bare}/{pages:bare}"
+
+[someone]
+of = "b7b927"
+text = "Joku"
+
+[title]
+of = "88d921"
+text = "Hautausmaa"
+
+[xp]
+of = "a0210d"
+text = "{n:bare} KP"

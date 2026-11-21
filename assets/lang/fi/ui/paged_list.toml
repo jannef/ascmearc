@@ -1,0 +1,9 @@
+# The paged list every lettered list of items uses (`crates/ascmearc/src/ui/paged_list.rs`).
+
+[hint]
+of = "8c5e65"
+text = "{next:bare} {prev:bare} sivu"
+
+[page]
+of = "35f38a"
+text = "Sivu {page:bare}/{pages:bare}"

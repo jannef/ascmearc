@@ -1,0 +1,6 @@
+# An unidentified type (`label:<kind>`): the head; its label comes after (", jossa lukee ZUNBAR")
+# and a potion's colour before ("punainen juoma").
+potion = "juoma/10"
+rod = "valtikka/14*A"
+scroll = "käärö/1"
+wand = "taika|sauva/9"

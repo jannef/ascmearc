@@ -1,0 +1,126 @@
+# The forging wizard and its dialog (`crates/ascmearc/src/ui/craft_pick_screen.rs`).
+
+[choose_a]
+of = "9ac91b"
+text = "a tai {confirm:bare} valitse"
+
+[choose_letters]
+of = "bc1475"
+text = "a-{last:bare} tai {confirm:bare} valitse"
+
+[choose_none]
+of = "3fe735"
+text = "{confirm:bare} valitse"
+
+[chosen_step]
+of = "b6b948"
+text = "{label:bare}: {what:bare}"
+
+[dialog_back]
+of = "15e766"
+text = "Takaisin"
+
+[dialog_not_now]
+of = "1d5b21"
+text = "Ei nyt"
+
+[dialog_nothing]
+of = "5c305c"
+text = "Mitään ei voi valmistaa."
+
+# `verb` a line of data (imperative, "Tao"); `name`, `uses`, `time` nested messages; `station` a phrase.
+[dialog_takes]
+of = "5a02cf"
+text = "{verb:bare} {name:bare}? Aikaa kuluu {time:bare}."
+
+[dialog_takes_at]
+of = "25a4d1"
+text = "{verb:bare} {name:bare}? Työ tehdään {station:ade}, ja aikaa kuluu {time:bare}."
+
+[dialog_title]
+of = "5e9915"
+text = "Valmista"
+
+[dialog_uses]
+of = "6f3a18"
+text = "{verb:bare} {name:bare}? Siihen kuluu {uses:bare}, ja aikaa {time:bare}."
+
+[dialog_uses_at]
+of = "7e5c12"
+text = "{verb:bare} {name:bare}? Siihen kuluu {uses:bare}, työ tehdään {station:ade}, ja aikaa kuluu {time:bare}."
+
+[empty_affix]
+of = "0f4dba"
+text = "Valitse ensin esine."
+
+[empty_family]
+of = "a11280"
+text = "Ei mitään kristallin luonteista sinetöitävää."
+
+[empty_head]
+of = "c8cfa8"
+text = "Mikään ei käy; ilman kärkeä ne ovat hauraita."
+
+[empty_ornament]
+of = "975947"
+text = "Mikään kantamasi ei käy; ilman koristetta se jää koruttomaksi."
+
+[empty_required]
+of = "33a625"
+text = "Mikään kantamasi ei käy."
+
+[esc_back]
+of = "03caaf"
+text = "Esc takaisin"
+
+[header_chosen]
+of = "47920a"
+text = "{name:bare} — {chosen:bare}"
+
+[heading_families]
+of = "5d0c6a"
+text = "Lajit"
+
+[heading_magic]
+of = "dbd745"
+text = "Sen taikuus"
+
+[none_key]
+of = "9fe0ab"
+text = "- ei mitään"
+
+[none_row]
+of = "c7e5c4"
+text = "- - Ei mitään"
+
+[nothing_to_choose]
+of = "24e485"
+text = "Ei mitään valittavaa."
+
+[state_crystal]
+of = "1a8c10"
+text = "kristalli lisää"
+
+[state_kept]
+of = "3b7002"
+text = "säilyy"
+
+[state_too_few]
+of = "299820"
+text = "liian vähän"
+
+[state_uses]
+of = "5c2279"
+text = "kuluu {n:bare}"
+
+[state_uses_each]
+of = "e57914"
+text = "kuluu {n:bare}/kpl"
+
+[title_empty]
+of = "45e5f3"
+text = "Tao"
+
+[title_step]
+of = "2971fe"
+text = "{name:bare}: {label:bare}"

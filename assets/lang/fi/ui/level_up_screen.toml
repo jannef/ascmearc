@@ -1,0 +1,135 @@
+# The level-up screen (`crates/ascmearc/src/ui/level_up_screen.rs`).
+
+[after_list]
+of = "35fb4e"
+text = "Seuraavaksi tasot {levels:bare}"
+
+[after_many]
+of = "b6ab81"
+text = "Seuraavaksi tasot {first:bare}–{last:bare}"
+
+[after_one]
+of = "4c42ed"
+text = "Seuraavaksi taso {level:bare}"
+
+[back]
+of = "03caaf"
+text = "Esc takaisin"
+
+[choose_range]
+of = "bc1475"
+text = "a-{last:bare} tai {confirm:bare} valitse"
+
+[choose_single]
+of = "9ac91b"
+text = "a tai {confirm:bare} valitse"
+
+[explain]
+of = "1e1a39"
+text = "Heitto {dice:bare}: harjoitus ({marks:bare}) antaa {practice:bare}{known:bare}{trained:bare}{halved:bare}."
+
+[explain_class]
+of = "fe9512"
+text = ", +1 luokkasi koulutuksesta"
+
+[explain_halved]
+of = "d34457"
+text = "; arvosta {cap:bare} alkaen taito nousee puolella, ylöspäin pyöristäen"
+
+[explain_own]
+of = "2d1716"
+text = ", yksi noppa enintään {die:bare} luokkasi omana taitona"
+
+[explain_race]
+of = "3b1d06"
+text = ", +1 kansasi koulutuksesta"
+
+[explain_trade]
+of = "ff94c7"
+text = ", yksi noppa enintään {die:bare} ammattisi vuoksi"
+
+[title]
+of = "5b93de"
+text = "Tason nousu"
+
+[title_bonus]
+of = "e6133b"
+text = "Lisätaipumus {n:bare}"
+
+[title_free]
+of = "5b74bc"
+text = "Ilmainen taipumus {n:bare}"
+
+[title_level]
+of = "65043e"
+text = "Taso {level:bare}"
+
+[title_rolls]
+of = "a8f56b"
+text = "Taitoheitot {n:bare}"
+
+[title_talent]
+of = "3ca68e"
+text = "Taipumus {n:bare}"
+
+[left_rolls]
+of = "1f72b1"
+by = "n.number"
+one = "Sinulla on taitoheitto käyttämättä."
+many = "Sinulla on {n:bare} taitoheittoa käyttämättä."
+
+[left_talent]
+of = "c82ab8"
+text = "Valitse ensin taipumus."
+
+[marks]
+of = "b40ff7"
+by = "n.number"
+one = "1 merkintä"
+many = "{n:bare} merkintää"
+
+[marks_none]
+of = "defa09"
+text = "ei merkintöjä"
+
+[nothing]
+of = "28fac9"
+text = "Ei mitään valittavaa."
+
+[roll_range]
+of = "e3d4a5"
+text = "a-{last:bare} tai {confirm:bare} heitä"
+
+[roll_single]
+of = "cd7d12"
+text = "a tai {confirm:bare} heitä"
+
+[skills]
+of = "ecba07"
+text = "Taidot"
+
+[sources]
+of = "108d03"
+by = "total.number"
+one = "{total:bare} taitoheitto tasoa kohden: {from:bare}"
+many = "{total:bare} taitoheittoa tasoa kohden: {from:bare}"
+
+[source]
+of = "103c7f"
+text = "{source:bare} {n:bare}"
+
+[source_class]
+of = "c658a1"
+text = "luokka"
+
+[source_intelligence]
+of = "f32a56"
+text = "Äly"
+
+[source_race]
+of = "762d0f"
+text = "kansa"
+
+[source_talents]
+of = "bf8e80"
+text = "taipumukset"

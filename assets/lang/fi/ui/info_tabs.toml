@@ -1,0 +1,77 @@
+# The info pages' tab line (`crates/ascmearc/src/ui/info_tabs.rs`). Short names for a narrow console.
+
+[character]
+of = "1f826b"
+text = "Hahmo"
+
+[character_short]
+of = "7ffbae"
+text = "Hahmo"
+
+[equipment]
+of = "b68a3d"
+text = "Varusteet"
+
+[equipment_short]
+of = "8d7653"
+text = "Var"
+
+[inventory]
+of = "b29544"
+text = "Tavarat"
+
+[inventory_short]
+of = "6656cf"
+text = "Tav"
+
+[magic]
+of = "9a78d3"
+text = "Taikuus"
+
+[magic_short]
+of = "1d6181"
+text = "Taik"
+
+[quests]
+of = "14340b"
+text = "Tehtävät"
+
+[quests_short]
+of = "8c6fab"
+text = "Teht"
+
+[skills]
+of = "ecba07"
+text = "Taidot"
+
+[skills_short]
+of = "c3f790"
+text = "Taid"
+
+[story]
+of = "4e907f"
+text = "Tarina"
+
+[story_short]
+of = "4e907f"
+text = "Tarina"
+
+[tab]
+of = "82b6f3"
+text = "{digit:bare} {page:bare}"
+
+[talents]
+of = "d7a243"
+text = "Taipumukset"
+
+[talents_short]
+of = "c9a385"
+text = "Taip"
+
+[weapons]
+of = "e95c3b"
+text = "Asetaidot"
+
+[weapons_short]
+of = "33c15a"
+text = "Aset"

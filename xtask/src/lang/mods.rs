@@ -89,6 +89,20 @@ fn check_mod(
         .collect();
     found.errors.retain(|e| !known.contains(e));
     found.warnings.retain(|w| !known.contains(w));
+    // A mod rewording English leaves the game's translations of those ids stale ("fi:
+    // messages/doors/open: stale"): the mod cannot mend them, and they still show, so in a
+    // language the mod brings no files for that is a warning. Its own translations stay errors.
+    let own: BTreeSet<&str> = (m.files.iter())
+        .filter_map(|(path, _)| path.strip_prefix("lang/")?.split_once('/'))
+        .map(|(code, _)| code)
+        .collect();
+    let (theirs, errors): (Vec<String>, Vec<String>) = found.errors.into_iter().partition(|e| {
+        e.contains(": stale")
+            && e.split_once(": ")
+                .is_some_and(|(code, _)| !own.contains(code))
+    });
+    found.errors = errors;
+    found.warnings.extend(theirs);
     found
 }
 

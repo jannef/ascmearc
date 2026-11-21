@@ -1,0 +1,127 @@
+# Health (`world/health/`); the roles as in `en/messages/health.toml`. `time`, `doing`, `stat`,
+# `feel`, `more`, `came`, and `way` are messages of their own (nominative words, or a clause),
+# so the lines phrase around them.
+
+blink_elsewhere = { text = "Silmänräpäyksessä olet muualla.", of = "581289" }
+break_free = { text = "Riuhtaiset itsesi irti.", of = "000739" }
+break_free_of = { text = "Riuhtaiset itsesi irti {who:gen} otteesta.", of = "fef706" }
+cannot_consume = { text = "Et voi nauttia {what:par}.", of = "107243" }
+cannot_smoke = { text = "Et voi polttaa sitä.", of = "93b70b" }
+cannot_while = { text = "Et voi {doing:bare}, kun olet {status:nom}.", of = "e75fdd" }
+carry_disease_already = { text = "Kannat jo tautia {name:bare} (dev).", of = "65377e" }
+carry_no_such_thing = { text = "Sinulla ei ole sellaista.", of = "b79167" }
+catch_disease = { text = "Saat taudin {name:bare} (dev).", of = "4ef535" }
+choke = { text = "Tukehdut {what:ill}...", of = "229e9e" }
+could_grow_yet = { text = "Tunnet, että voisit olla vielä {more:bare}.", of = "42d0fd" }
+crash_of_glass = { text = "Kuulet lasin särkyvän.", of = "0e632b" }
+deathly_chill = { text = "Kuolettava kylmyys kulkee lävitsesi.", of = "c8aa80" }
+die = { text = "Kuolet...", of = "d1e389" }
+drained = { text = "Tunnet, kuinka {stat:bare} valuu sinusta pois!", of = "3a2bef" }
+draught_kept = { text = "Pullossa on vielä toiseen kulaukseen.", of = "d59604" }
+drink = { text = "Juot {what:gen}.", of = "6f886e" }
+drown = { text = "Hukut...", of = "6b08da" }
+ease_somewhat = { text = "Lievität {disease:par} hieman.", of = "e8e19e" }
+eat = { text = "Syöt {what:gen}.", of = "9cbb8f" }
+eat_your_fill = { text = "Syöt itsesi kylläiseksi; loppu ei tee sinulle hyvää.", of = "f938b6" }
+elixir_no_difference = { text = "Et tunne mitään eroa.", of = "e1912f" }
+# How the death screen says a death (their own: the suffix `-nsa`).
+epitaph_altar = { text = "Kaatui unohdetulla alttarilla", of = "d6d3d3" }
+epitaph_choked = { text = "Tukehtui {what:ill}", of = "ffca36" }
+epitaph_drowned = { text = "Hukkui syvään veteen", of = "3e7667" }
+epitaph_fall = { text = "Putosi sortuneen lattian läpi", of = "d7d45a" }
+epitaph_fire = { text = "Paloi kuoliaaksi", of = "b820aa" }
+epitaph_miscast = { text = "Sai surmansa omasta väärin lausutusta {spell:ela_nsa}", of = "2ce77c" }
+epitaph_own = { text = "Sai surmansa omasta {what:ela_nsa}", of = "8a277c" }
+epitaph_own_spell = { text = "Sai surmansa omasta {noun:ela_nsa}", of = "1fcea8" }
+epitaph_profane = { text = "Epäpyhän viemä", of = "1badfe" }
+epitaph_starvation = { text = "Nääntyi nälkään", of = "2d97f4" }
+epitaph_trap = { text = "Kuoli {trap:ill}", of = "99141a" }
+elixir_rise = { text = "Olet nyt {feel:bare}.", of = "b81a95" }
+elixir_rise_yet = { text = "Olet nyt {feel:bare}, ja voisit olla vielä {feel:bare}.", of = "5e4ea9" }
+elixir_yet = { text = "Tunnet, että voisit olla vielä {feel:bare}.", of = "b0c380" }
+faint = { text = "Pyörryt nälkään.", of = "c8deba" }
+faint_from_hunger = { text = "Olet pyörtymäisilläsi nälästä. Syö nyt, tai nääntyt!", of = "f51429" }
+feel_better = { text = "Olosi on parempi.", of = "1401cc" }
+feel_bloated = { text = "Olet ähkyssä.", of = "548e47" }
+feel_cleansed = { text = "Tunnet itsesi puhdistuneeksi.", of = "df1624" }
+feel_healthy = { text = "Tunnet olosi terveeksi.", of = "26b03c" }
+feel_satiated = { text = "Olet kylläinen.", of = "12649b" }
+feel_whole = { text = "Tunnet itsesi eheäksi.", of = "f43693" }
+fills_you = { text = "Se täyttää sinut kuin kunnon ateria.", of = "20dbb6" }
+food_fresh = { text = "tuore", of = "28c582" }
+food_old = { text = "vanha", of = "2b9b6b" }
+food_rotten = { text = "mätä", of = "a77da6" }
+food_turning = { text = "pilaantumassa", of = "398a7a" }
+getting_hungry = { text = "Sinulle tulee nälkä.", of = "779ca2" }
+# `what`: the stat's word ("voima").
+gift_passes = { text = "Sinuun siirtyy jotakin sen olemuksesta: {what:bare}.", of = "a4e4da" }
+hard_time_getting_down = { text = "Saat vaivoin kaiken alas.", of = "97a5e3" }
+is_status = { text = "{who:Nom} on {status:nom}.", of = "3d7f6e" }
+it_is = { text = "Se on {what:nom}.", of = "843fc2" }
+it_was = { text = "Se oli {what:nom}.", of = "2023bb" }
+know_nothing_of_healing = { text = "Et tiedä parantamisesta mitään.", of = "b836ab" }
+land_lurches = { text = "Maa heilahtaa, mutta pysyt paikallasi.", of = "31ee76" }
+less_faint = { text = "Et ole enää yhtä heikotuksissa.", of = "3f6cf3" }
+less_weak = { text = "Et ole enää yhtä heikko.", of = "aa4025" }
+light_pipe = { text = "Sytytät piippusi ja asetut mukavasti.", of = "cda87a" }
+lurch_stay = { text = "Tunnet nykäisyn, mutta pysyt paikallasi.", of = "dcf1b1" }
+mind_clears = { text = "Mielesi kirkastuu, ja voima kumpuaa sisälläsi.", of = "7c513b" }
+mind_feels_clear = { text = "Mielesi on kirkas.", of = "0e5489" }
+no_ally_there = { text = "Siellä ei ole liittolaistasi.", of = "c75e45" }
+no_disease = { text = "Tautia `{id:bare}` ei ole.", of = "222b9f" }
+no_fuller = { text = "Et tunne oloasi yhtään täydemmäksi.", of = "2491b6" }
+no_longer_bloated = { text = "Ähky on mennyt ohi.", of = "b9d10e" }
+no_longer_hungry = { text = "Sinulla ei ole enää nälkä.", of = "79f244" }
+no_longer_satiated = { text = "Et ole enää kylläinen.", of = "e5cac2" }
+no_longer_starving = { text = "Et ole enää nääntymässä nälkään.", of = "e00d67" }
+no_more_for = { text = "Et voi enää lievittää {disease:par}.", of = "d20ac0" }
+no_need_to_eat = { text = "Et tunne tarvetta syödä.", of = "774913" }
+no_status = { text = "Tilaa `{id:bare}` ei ole.", of = "27524e" }
+no_such_thing_here = { text = "Täällä ei ole sellaista.", of = "ceb489" }
+nothing_left_to_eat = { text = "Syötävää ei ole enää jäljellä.", of = "742cd0" }
+nothing_like_that_to_treat = { text = "Sellaista ei ole hoidettavana.", of = "6fae93" }
+nothing_more_comes = { text = "Enempää ei tapahdu.", of = "f53046" }
+nothing_to_treat = { text = "Ei ole mitään hoidettavaa.", of = "2bd960" }
+# `smoker`: the race that smokes.
+pipe_not_yours = { text = "Yskit ja köhit: piippu on {smoker:gen} nautinto.", of = "49e410" }
+pipe_wants_full_belly = { text = "Piippu vaatii ensin täyden vatsan.", of = "c9d29f" }
+potion_shatters = { text = "Pullo särkyy; juoma imeytyy maahan.", of = "1a7f22" }
+profane_takes_you = { text = "Epäpyhä vie sinut, eikä sinusta jää mitään jäljelle...", of = "b3cf7d" }
+put_out_pipe = { text = "Sammutat piippusi; poltit {time:bare}.", of = "3e6807" }
+put_out_pipe_came = { text = "{came:bare}; sammutat piippusi. Poltit {time:bare}.", of = "252a47" }
+rotten_no_mind = { text = "{what:Nom} oli pilaantunut, mutta vatsasi ei välitä.", of = "765b0d" }
+smoke_done = { text = "Poltat piippusi loppuun ja tunnet olosi ihanan levolliseksi.", of = "ea4fbc" }
+starve = { text = "Nääntyt nälkään...", of = "1e60cd" }
+starving = { text = "Olet nääntymässä nälkään! Syö, tai kuolet!", of = "b211b3" }
+status_comes_of_disease = { text = "`{id:bare}` johtuu taudista: kokeile `infect:DISEASE`.", of = "f65c7b" }
+status_comes_of_resource = { text = "`{id:bare}` johtuu resurssista: kokeile `resource:{resource:bare}`.", of = "b2290f" }
+stop_eating = { text = "Lopetat syömisen.", of = "9316eb" }
+stop_eating_came = { text = "{came:bare}; lopetat syömisen.", of = "f7cd64" }
+struggle_free = { text = "Rimpuilet, mutta et pääse irti.", of = "0dd29f" }
+struggle_held = { text = "Rimpuilet, mutta {who:nom} pitää sinusta tiukasti kiinni.", of = "f28c5b" }
+struggle_still = { text = "Rimpuilet, mutta olet yhä {status:nom}.", of = "e84876" }
+tastes_foul = { text = "Se maistuu kamalalta!", of = "c0bb56" }
+treat_ally = { text = "{ailment:Nom}", of = "b4cb32" }
+treat_ally_way = { text = "{ailment:Nom} ({way:bare})", of = "3d9070" }
+treat_own = { text = "{ailment:Nom}", of = "b8fa86" }
+throw_flask = { text = "Heität {what:gen}.", of = "af00e3" }
+ugh_rotten = { text = "Yäk! {what:Nom} oli pilaantunut.", of = "60220a" }
+vomit = { text = "Oksennat!", of = "a786a1" }
+wasting_away = { text = "Riudut nälästä.", of = "588cff" }
+water_puts_it_out = { text = "Vesi vain sammuttaisi sen.", of = "a95f2d" }
+weak_from_hunger = { text = "Olet heikko nälästä. Sinun pitäisi syödä pian.", of = "de5944" }
+wounds_close = { text = "{who:Gen} haavat umpeutuvat.", of = "798aa4" }
+wounds_close_you = { text = "Tunnet haavojesi umpeutuvan.", of = "d59b79" }
+
+[no_longer]
+of = "8fb068"
+by = "who.person"
+you = "Et ole enää {status:nom}."
+else = "{who:Nom} ei ole enää {status:nom}."
+
+# `what`: the food rotted away, the player's (the suffix `-si`); `count` how many.
+[rotted_away]
+of = "76f926"
+by = "count.number"
+one = "{what:Nom_si} on mädäntynyt."
+many = "{count:Num} {what:par_si} on mädäntynyt."

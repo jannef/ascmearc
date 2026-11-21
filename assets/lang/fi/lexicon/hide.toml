@@ -1,0 +1,3 @@
+# Natural armour (`hide:race.<id>`, `hide:creature.<id>`).
+"creature.beetle" = "kuori/26"
+"race.lizardfolk" = { word = "suomu/1", many = true }

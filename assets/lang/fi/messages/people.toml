@@ -1,0 +1,161 @@
+# People (`world/people/`): quests and their log, escorts, lure quests, the wizards' quarrel,
+# guild ranks, shops, services, and traders' wares. Talk's own lines are `talk.toml`'s.
+#
+# Roles: `who` is the one a line is about (a person by what the player calls them; a shopkeeper
+# by name); `what` a thing; `gold`, `owed`, `price`, `have`, `need`, `xp`, and `times` numbers,
+# in digits. `skill` is a skill (`skill:<id>`). `place` (a place's name), `quest` (a quest's
+# name), and `shop` (a shop's sign) are lines of data that render as written, in no case: the
+# lines say them in the nominative ("paikkaan {place:bare}"). `id` and `target` in a dev action's
+# line are as typed.
+#
+# A quest's task (`task_*`, `step_*`, `target_*`) is an imperative ("tuo miekka Hildille"), its
+# object in the nominative (`counted`: "tuo kolme sudentaljaa").
+
+# What a quest asks, as the wiki's quest table says it: `task`, a `task_*` line.
+asks = { text = "{task:Bare}.", of = "1e3722" }
+# Why a healer will not mend a wound yet: the player shows a disease.
+be_cured_first = { text = "Parane ensin taudistasi.", of = "c75147" }
+cannot_afford = { text = "{who:Ade} ei ole varaa {what:ill}.", of = "4b618a" }
+# A dev action's: `quest` the quest's name, `target` as typed.
+cannot_draw_dev = { text = "{quest:bare}: ei voi arpoa kohdetta `{target:bare}`.", of = "3dc577" }
+cannot_pay = { text = "Et pysty maksamaan.", of = "369601" }
+catches_stealing = { by = "who.number", one = "{who:Nom} yllättää sinut varkaista. \"Seis, varas!\"", many = "{who:Nom} yllättävät sinut varkaista. \"Seis, varas!\"", of = "c10c0e" }
+done = { text = "Suoritettu.", of = "4e61af" }
+# A quest done more than once: `times`, how many times.
+done_times = { text = "Suoritettu ({times:bare} kertaa).", of = "aca440" }
+# A dev action's.
+drawn_by_giver_dev = { text = "{quest:bare}: antaja arpoo sen; kysy häneltä.", of = "93f8b9" }
+# A potion bought by drinking it in a shop: `what`, the potion as the player knows it.
+drink_and_buy = { text = "Joit sen, ostit sen: {price:bare} kultaa {what:ela}.", of = "223733" }
+drunk_or_not = { text = "Juotu tai ei, {what:nom} maksaa yhä {price:bare} kultaa.", of = "85cb11" }
+eat_and_buy = { text = "Söit sen, ostit sen: {price:bare} kultaa {what:ela}.", of = "763725" }
+eaten_or_not = { text = "Syöty tai ei, {what:nom} maksaa yhä {price:bare} kultaa.", of = "3951bd" }
+# An escort given something: `who` the escort, `what` what it took off for it, a total object
+# (one: the genitive; counted: the numeral and the partitive, "kolme nuolta").
+escort_drops = { by = "what.number", one = "{who:Nom} pudottaa {what:gen}.", many = "{who:Nom} pudottaa {what:nom}.", of = "a61fd2" }
+escort_follows = { text = "{who:Nom} seuraa sinua.", of = "725168" }
+escort_not_with_you = { text = "{who:Nom} ei ole mukanasi.", of = "7fe0e7" }
+escort_puts_on = { text = "{who:Nom} pukee ylleen {what:gen}.", of = "7cd33d" }
+escort_readies = { text = "{who:Nom} ottaa {what:gen} valmiiksi.", of = "90d223" }
+escort_wields = { text = "{who:Nom} tarttuu {what:ill}.", of = "bfa934" }
+# Set on given to escorts: `who`, the escorts, a list.
+escorts_refuse = { text = "{who:And} eivät lähde etsimään tappelua.", of = "5f3a02" }
+failed = { text = "Epäonnistui.", of = "af8206" }
+# A failed escort quest: `who`, the escort.
+failed_dead = { text = "Epäonnistui: {who:nom} on kuollut.", of = "ec874e" }
+gain_experience = { text = "Saat {xp:bare} kokemuspistettä.", of = "fba3c6" }
+# The player gives an escort something: `what`, one of the stack.
+give_escort = { text = "Annat {what:gen} {who:all}.", of = "2673f3" }
+# The player hands a quest's things in: `what`, what was handed in.
+give_quest_items = { by = "what.number", one = "Annat {who:all} {what:gen}.", many = "Annat {who:all} {what:counted}.", of = "90abff" }
+# A dev action's.
+given_dev = { text = "{quest:bare}: annettu.", of = "39f59c" }
+# A quest giver hands over a letter to deliver, or a reward: `what`, what it gives.
+gives_you = { by = "what.number", one = "{who:Nom} antaa sinulle {what:gen}.", many = "{who:Nom} antaa sinulle {what:counted}.", of = "348d4e" }
+# A dev action's.
+got_somewhere_dev = { text = "{quest:bare}: on jo edennyt.", of = "b80eb8" }
+have_not_paid = { text = "Et ole maksanut {what:ela}.", of = "1438dd" }
+killed = { text = "{have:bare} / {need:bare} tapettu.", of = "cf8166" }
+# A quest's reward teaches more of a skill the player knows.
+learn_more_of = { text = "Opit lisää {skill:par}.", of = "185ddd" }
+leave_without_paying = { text = "Lähdet maksamatta. \"Seis, varas!\" huutaa {who:nom}.", of = "dd53b7" }
+# A dev action's: `who` the lure quest's creature.
+lure_dev = { text = "Houkuttelet {who:gen} puolellesi (dev).", of = "bd65e9" }
+mark_the_way = { text = "Merkitset reitin karttaasi.", of = "5ebe3b" }
+# A dev action's.
+marked_done_dev = { text = "{quest:bare}: merkitty suoritetuksi.", of = "c4b590" }
+# A quest's giver marks a hidden location: `place`, its name as the data writes it.
+marks_on_map = { text = "{who:Nom} merkitsee karttaasi paikan {place:bare}.", of = "ea54d8" }
+# A guild's master names the player to a rank: `title`, the rank; `guild`, the guild by its name.
+names_you = { text = "{master:Nom} nimittää sinut {guild:gen} {title:tra}.", of = "1ebd9a" }
+# What the player does next once a quest's goal is met: `step`, a `step_*` line.
+next_step = { text = "{step:Bare}.", of = "d9d867" }
+no_longer_carry = { text = "Sinulla ei ole enää {what:par}.", of = "d21497" }
+# A dev action's: `id` as typed.
+no_lure_quest_dev = { text = "Houkuttelutehtävää `{id:bare}` ei ole.", of = "d75797" }
+# A dev action's: `id` as typed.
+no_quest_dev = { text = "Tehtävää `{id:bare}` ei ole.", of = "500168" }
+no_room_beside_you = { text = "Vierelläsi ei ole tilaa.", of = "152b5a" }
+no_use_for = { text = "{who:Ade} ei ole käyttöä {what:ill}.", of = "ad0a36" }
+nobody_to_pay = { text = "Täällä ei ole ketään, jolle maksaa.", of = "402353" }
+not_carrying_anything = { text = "Sinulla ei ole mitään mukanasi.", of = "4a88e2" }
+not_reached_yet = { text = "Ei vielä saavutettu.", of = "5e8fef" }
+# A dev action's.
+not_rolled_dev = { text = "{quest:bare}: et ole saanut tätä arvottua tehtävää.", of = "4f34b9" }
+# A dev action's.
+not_under_way_dev = { text = "{quest:bare}: ei ole käynnissä.", of = "67575d" }
+# A lure quest's creature not yet brought home: `place`, where it is to be bound.
+not_yet_bound = { text = "{who:Nom} ei ole vielä sidottu paikkaan {place:bare}.", of = "a72c48" }
+nothing_to_decide = { text = "Ei ole mitään päätettävää.", of = "50e887" }
+# A dev action's: `target` as typed.
+now_asks_dev = { text = "{quest:bare} pyytää nyt kohdetta {target:bare} (dev).", of = "58cdc3" }
+offers_gold = { text = "{who:Nom} tarjoaa {gold:bare} kultaa {what:ela}.", of = "cd6f76" }
+owe_but_none = { text = "Olet {who:all} velkaa {owed:bare} kultaa, mutta sinulla ei ole yhtään.", of = "f59a26" }
+owe_but_only = { text = "Olet {who:all} velkaa {owed:bare} kultaa, mutta sinulla on vain {gold:bare}.", of = "576b97" }
+owe_nothing = { text = "Et ole {who:all} mitään velkaa.", of = "61f97a" }
+pay_for_that = { text = "\"Tästä saat maksaa!\" huutaa {who:nom}.", of = "6345e2" }
+pay_gold = { text = "Maksat {who:all} {gold:bare} kultaa.", of = "8fb3ca" }
+pay_gold_for = { text = "Maksat {who:all} {gold:bare} kultaa {what:ela}.", of = "8a5453" }
+put_back = { by = "what.number", one = "Panet {what:gen} takaisin.", many = "Panet {what:counted} takaisin.", of = "32e574" }
+quest_complete = { text = "Tehtävä suoritettu: {quest:bare}.", of = "a6f766" }
+quest_failed = { text = "Tehtävä epäonnistui: {quest:bare}.", of = "b07eaa" }
+sell = { by = "what.number", one = "Myyt {what:gen} {who:all} hintaan {gold:bare} kultaa.", many = "Myyt {what:counted} {who:all} hintaan {gold:bare} kultaa.", of = "820c2c" }
+sniffs = { text = "{who:Nom} nuuhkaisee {what:par} ja sanoo: \"Ei mihinkään hintaan.\"", of = "6e18be" }
+# The next step of a quest whose goal is met (in `next_step`, `updated_step`): `who`, whoever
+# takes it in now.
+step_return = { text = "palaa {who:gen} luo", of = "1acc28" }
+# A delivery: `what`, the thing to deliver.
+step_take = { text = "vie {what:counted} {who:all}", of = "d67d10" }
+step_take_them = { text = "vie ne {who:all}", of = "6e1fc6" }
+steps_into_your_way = { text = "{who:Nom} astuu tiellesi: et ole maksanut.", of = "684fd6" }
+take_leave = { text = "Hyvästelet {who:gen}.", of = "46cab5" }
+# A kill quest's target counted: "jättirotta", "3 jättirottaa".
+target_counted = { text = "{who:counted}", of = "232653" }
+# A kill quest's target in its task: a unique by its name.
+target_the = { text = "{who:nom}", of = "9cef4e" }
+# What a quest asks, in `asks` and `wants`, without where: `task_*`. `who` is whoever it is
+# handed in to, `what` the thing, `target` a `target_*` line, `members` the creature types of
+# a tag, a list.
+task_bring = { text = "tuo {what:counted}", of = "df9793" }
+task_bring_to = { text = "tuo {what:counted} {who:all}", of = "5105be" }
+task_deliver = { text = "vie {what:counted} {who:all}", of = "1b1e87" }
+# `who`, the escort; `place`, where to bring them.
+task_escort = { text = "saata {who:nom} turvallisesti paikkaan {place:bare}", of = "36a9f6" }
+task_kill = { text = "tapa {target:bare}", of = "c635e4" }
+task_kill_in = { text = "tapa {target:bare} paikassa {place:bare}", of = "d25140" }
+task_kill_in_members = { text = "tapa {target:bare} paikassa {place:bare}: {members:bare}", of = "b9e836" }
+task_kill_members = { text = "tapa {target:bare}: {members:bare}", of = "bd76e2" }
+# `who`, the creature to lure; `from`, where it waits; `place`, where it is bound.
+task_lure = { text = "houkuttele {who:nom} paikasta {from:bare} paikkaan {place:bare}", of = "dd5519" }
+task_reach = { text = "saavu paikkaan {place:bare}", of = "e15791" }
+# A teacher trains the player in a skill.
+trains_you = { text = "{who:Nom} opettaa sinulle {skill:par}.", of = "b6fc72" }
+updated = { text = "Tehtävä päivittyi:", of = "114158" }
+# A quest's progress: `what`, what it counts, as many as it needs.
+updated_count = { text = "Tehtävä päivittyi: {what:bare} {have:bare} / {need:bare}.", of = "77f5a6" }
+updated_reached = { text = "Tehtävä päivittyi: olet saapunut paikkaan {place:bare}.", of = "591aae" }
+# A delivery picked up again: `step`, a `step_*` line.
+updated_step = { text = "Tehtävä päivittyi: {step:bare}.", of = "18fc70" }
+# What a quest asks, as the log's objective says it: `giver`, who gave it; `task`, a `task_*`
+# line (an imperative, after a colon).
+wants = { text = "{giver:Nom} pyytää: {task:bare}.", of = "5e491b" }
+# A trader's offered item in words (`wares.rs`), the one dialog's: `item`, the item as the lists
+# name it (`items.listed`).
+ware = { text = "{item:Bare}", of = "2cc858" }
+# What its magic does after it: `ware`, the item; `line`, a line of its description.
+ware_listed = { text = "{ware:bare}. {line:bare}", of = "f727a8" }
+# A shop's sign: `shop`, as its data writes it with the keeper's name.
+welcome_shop = { text = "{shop:Bare} toivottaa sinut tervetulleeksi!", of = "675803" }
+# A wizard of a quarrel the player takes the side of: `who`.
+with_you = { text = "{who:Nom} on nyt puolellasi.", of = "b5f0b1" }
+# The same, and `heard` the wizards it turns against the player, a list.
+with_you_heard = { text = "{who:Nom} on nyt puolellasi. {heard:And} ovat varmasti kuulleet sen.", of = "8bb71e" }
+you_carry = { text = "Mukanasi {have:bare} / {need:bare}.", of = "bc4a43" }
+you_owe = { text = "Olet {who:all} velkaa {owed:bare} kultaa.", of = "6c5096" }
+
+# A kill quest's target the quest calls by its own word (`what`), `count` of them.
+[target_called]
+of = "8dcf6f"
+by = "count.number"
+one = "{what:nom}"
+many = "{count:bare} {what:par}"

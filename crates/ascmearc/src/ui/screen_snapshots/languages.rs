@@ -6,8 +6,8 @@
 //! container's room ([`OverflowKind::Cut`]). English is checked by every snapshot itself
 //! ([`check_with`]); a translator runs `cargo test -p ascmearc screens_fit_in_every_language`.
 //!
-//! No shipped language but English has UI text yet, so a test-only one proves the check: every
-//! English UI text with its letters tripled ([`stretched`]).
+//! A test-only language proves the check as well (Finnish, the shipped one, may fit throughout):
+//! every English UI text with its letters tripled ([`stretched`]).
 
 use super::*;
 use crate::render::console::OverflowKind;

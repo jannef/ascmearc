@@ -1,0 +1,31 @@
+# Lines of data: the shops' signs (`shop:<id>.title`), the keeper a name.
+
+[alchemist]
+title = { text = "{keeper:gen} rohdoskauppa", of = "a7b682" }
+
+[armourer]
+title = { text = "{keeper:gen} haarniskapaja", of = "f036ee" }
+
+[fletcher]
+title = { text = "{keeper:gen} nuolipaja", of = "e5f2e9" }
+
+[gem_dealer]
+title = { text = "{keeper:gen} jalokivikauppa", of = "41c8ea" }
+
+[general_store]
+title = { text = "{keeper:gen} sekatavarakauppa", of = "21dad0" }
+
+[outfitter]
+title = { text = "{keeper:gen} tarvikekauppa", of = "541a5d" }
+
+[provisioner]
+title = { text = "{keeper:gen} muonakauppa", of = "d3b622" }
+
+[smithy]
+title = { text = "{keeper:gen} sepänpaja", of = "eb3fff" }
+
+[town_store]
+title = { text = "{keeper:gen} sekatavarakauppa", of = "21dad0" }
+
+[weaponsmith]
+title = { text = "{keeper:gen} asepaja", of = "3b5096" }

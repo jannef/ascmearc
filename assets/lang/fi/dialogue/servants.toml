@@ -1,0 +1,123 @@
+# An aristocrat's own servant (campaigns/ascmearc/data/dialogue/servants.toml), of the
+# aristocrat's race, each in that race's dialect (#1896). A servant is no lord: a human one is
+# a commoner (Stadin slangi), who says "te" to the master, as servants did.
+
+# Humans, half-elves, and half-orcs: Stadin slangi.
+[ascmearc.servant]
+lines = [
+    { text = "Ilo nähdä teit, {player:address}. Koko kaupunki kirkastuu, kato.", of = "1496e9" },
+    { text = "Noi saappaat, {player:address}! Kelpais kuninkaallekin.", of = "cb8d70" },
+    { text = "Kuulin et te kaadoitte kaks kertaa teit isomman pedon, {player:address}. Mähän sanoin.", of = "26dab8" },
+    { text = "Mä sanon kaikille Gæsthūsis, {player:address}: rajamaalla ei oo ketään hienompaa ku te.", of = "5b8ca0" },
+    { text = "Se ryhti, {player:address}! Veri ei valehtele. Ei sitä fyrkalla osteta.", of = "98736b" },
+    { by = "player.gender", male = "Jos saan sanoo, {player:address}, te näytätte joka kerta komeemmalta.", female = "Jos saan sanoo, {player:address}, te näytätte joka kerta kauniimmalta.", else = "Jos saan sanoo, {player:address}, te näytätte joka kerta hienommalta.", of = "7e1c90" },
+    { text = "Teijän suku ois teist ylpee, {player:address}. Ylpee ku mikä.", of = "0c82e4" },
+    { text = "Mä pidän teijän kamat valmiina, {player:address}, niinku aina. Vaan parasta teille.", of = "e478ba" },
+    { text = "Tää rahvas ei tunnista laatuu, {player:address}. Mä tunnistan.", of = "65cb5d" },
+]
+address = { male = "herra", female = "rouva", other = "pomo", of = "40c67c" }
+
+[ascmearc.servant.stipend]
+handover = { text = "Teijän suku lähetti teijän elatusrahat, {player:address}, kaikki laskettu kunnolla. Täs on, joka penni.", of = "474493" }
+
+# Dwarves and duergar: pohjalaismurre.
+[ascmearc.servant_dwarf]
+lines = [
+    { text = "No terve, {player:address}! Komialta sää näytät tänäpänä, tiärät sää. Niinku kuningas vuaren alla.", of = "c3f852" },
+    { text = "Se sun parta, {player:address}. Älä anna kenenkää väittää muuta, komia se on.", of = "c0e491" },
+    { text = "Mää sanoin kaikille kievarissa: ei oo rajamaalla kääpiötä, joka seisois pystympänä ku mun oma.", of = "a06ae0" },
+    { text = "Kyllä vaan, {player:address}, ahjoväki laulaa jo sun teoistas.", of = "36a35a" },
+    { text = "Sussa on vanhaa verta, {player:address}. Sen näköö jo siitä, miten sää kävelet.", of = "6600b9" },
+    { text = "Mää pirän sun kamppees öljyttynä ja kiiltävänä, {player:address}. Meirän suvulle vaan parasta.", of = "02489b" },
+    { text = "Ne hiidet lähtöö karkuhun ku kuuloo jotta sää tuut, {player:address}. Muista mun sanani.", of = "92e092" },
+    { text = "Sun isäs olis kauhian ylpiä, {player:address}, kyllä olis.", of = "1a5e8f" },
+]
+address = { male = "isäntä", female = "emäntä", other = "ylhäisyys", of = "2ea052" }
+
+[ascmearc.servant_dwarf.stipend]
+handover = { text = "Kotoota tuli sanaa, {player:address}: sun elatusrahas, joka ainua kolikko kahteen kertahan laskettu. Kas tässä.", of = "174478" }
+
+# Elves: Turun murre.
+[ascmearc.servant_elf]
+lines = [
+    { text = "Mitäs kuulu, {player:address}? Hyvää tietenki, sen mää nää kyl.", of = "d6f6f8" },
+    { text = "Sää kävelet niinku vanhois lauluis, {player:address}. Kevyesti ku mikäki.", of = "b0d778" },
+    { text = "Ihmiset tuijottaa sua, {player:address}. Mut ei sitä voi heit moittia, voik?", of = "7d2156" },
+    { text = "Mää sanon kaikil, {player:address}: koko rajamaal ei oo ketää sua hienompaa.", of = "789982" },
+    { text = "Tuhat vuot hyvää sukuu, {player:address}. Se näky, kyl se näky.", of = "3775da" },
+    { text = "Sun hiukses, {player:address}! Ihan ku kuunvalo puros.", of = "cbc810" },
+    { text = "Mää oon pitäny sun tavaras just niinku pitää, {player:address}. Vaa parast.", of = "dd0118" },
+    { text = "Koko kaupunki puhuu sust, {player:address}. Pelkkää hyvää, nääs.", of = "2e1879" },
+]
+address = { male = "herra", female = "rouva", other = "ylhäisyys", of = "3f60b8" }
+
+[ascmearc.servant_elf.stipend]
+handover = { text = "Sun suku lähetti jotai, {player:address}: sun elatusrahas, joka ainoo kolikko. Ol hyvä.", of = "7d6c78" }
+
+# Halflings and gnomes: savon murre.
+[ascmearc.servant_halfling]
+lines = [
+    { text = "No kahtokee, {player:address}, komiahan sitä ollaan tänäpänä. Oekeen komia.", of = "e97bcf" },
+    { text = "Ihan mieli lämpiää ku sinut nään, {player:address}. Ihan lämpiää.", of = "d3ce87" },
+    { text = "Ne isot ihmiset ei laatuva tunne, {player:address}. Minä tunnen, tiijjäkkö.", of = "534190" },
+    { text = "Sinussa on sitä jotakii, {player:address}. Eikä sitä opi, vae oppiiko?", of = "c016ec" },
+    { text = "Minä sanoin koko Gæsthūsille, {player:address}: rajamoan paras se sinä oot. Niinpä se on.", of = "1333d6" },
+    { text = "Ne housut, {player:address}! Kelepoo prinssillekkii.", of = "f479a8" },
+    { text = "Ruoka on lämpimänä ja soappaat kiillotettuna, {player:address}. Vuan parasta.", of = "e2030f" },
+    { text = "Suku olis sinusta kauhiin ylypee, {player:address}. Kauhiin ylypee.", of = "564a53" },
+]
+address = { male = "isäntä", female = "emäntä", other = "hyvä ihminen", of = "599e0f" }
+
+[ascmearc.servant_halfling.stipend]
+handover = { text = "Suku lähetti elatusrahat, {player:address}. Kaekki laskettu, luulisin. Tuossa, sinun omias.", of = "a70d5a" }
+
+# Goblins, kobolds, and ratfolk: Rauman giäl, laid on thick.
+[ascmearc.servant_goblin]
+lines = [
+    { text = "Voi, {player:address}, kyl sää ole silmil ilo, ole kyl.", of = "467e22" },
+    { text = "Herra jee, {player:address}, kok kaupunk puhu sust. Fiinei asjoi, kaik.", of = "ac855c" },
+    { text = "Kattokka nyy, {player:address}, kui fiin sää ole. Ihan ko kuningas.", of = "2a7c40" },
+    { text = "Mnu faar sanos aina, et mnää palvele viäl parast, {player:address}. Sua hän tarkott.", of = "e7e258" },
+    { text = "Mnää luule, et sää ole kok rajama viisaimp, {player:address}, eik mnää mikkä hölmö ol.", of = "159506" },
+    { text = "Se o kunnia kiillottaa su saappai, {player:address}. Perkele mikä kunnia.", of = "fe7082" },
+    { text = "Ne isot ihmise o vaa kateelissi, {player:address}. Ällä niist välit.", of = "f89d4a" },
+    { text = "Sust näkky vanh raha, {player:address}. Kauhian fiin, kerrassas.", of = "032925" },
+]
+address = { male = "herr", female = "fruu", other = "herrasväk", of = "3f60b8" }
+
+[ascmearc.servant_goblin.stipend]
+handover = { text = "Su suku lähett su elatusraha, {player:address}, eik yht kolikka puutu, sen mnää vanno. Täsä, ot.", of = "a3f94b" }
+
+# Drow: the Old Literary Finnish of Agricola's day.
+[ascmearc.servant_drow]
+lines = [
+    { text = "Terue, {player:address}. Sine olet caunimbi quin Cuu, ioca ei coscan alhalla paista.", of = "d4a7e4" },
+    { text = "Totisesta, {player:address}, ei ole tesse auringon walkeudhen Caupungis sinun wertaistas.", of = "50a8a5" },
+    { text = "Totisesta, {player:address}, sinun Hones pite pian weisaman sinun töistes.", of = "d23f60" },
+    { text = "Maan päälisen Canssa tuijottawat sinua, {player:address}, ia hyuelle syyle.", of = "9c6873" },
+    { text = "Totudhes, {player:address}, sinun muotos ilmoitta sinun ialon weres.", of = "b18703" },
+    { text = "Sinun calus mine olen puchtana pitenyt, {player:address}, quin sinun Sädhylles sopi.", of = "511c80" },
+    { text = "Sinun Äitis Hone iloitzis sinusta, {player:address}, ia mös ylpeilis.", of = "81698b" },
+    { text = "Oletco sine taas yhden wiholisen tappanut, {player:address}? Sine olet aina woittaia.", of = "482fd5" },
+]
+address = { male = "Herra", female = "Emende", other = "Waldias", of = "bcb7ff" }
+
+[ascmearc.servant_drow.stipend]
+handover = { text = "Sinun Hones on lähettenyt sinun elatus-rahas, {player:address}, iocainen penningi lukettu. Ota se, mine rucoilen sinua.", of = "18c5f4" }
+
+# Lizardfolk: Estonian, untranslated.
+[ascmearc.servant_lizardfolk]
+lines = [
+    { text = "Tere päevast, {player:address}. Teie soomused säravad täna nagu kuld.", of = "8873ea" },
+    { text = "Ükski selles linnas pole nii üllas kui teie, {player:address}.", of = "5c4733" },
+    { text = "Soojaverelised vahivad teid, {player:address}. Arusaadav.", of = "57166c" },
+    { text = "Teie suguvõsa oleks uhke, {player:address}. Väga uhke.", of = "6c60da" },
+    { text = "Ma olen teie asjad läikima poleerinud, {player:address}. Ainult parim teile.", of = "1affac" },
+    { text = "Milline rüht, {player:address}! Tõesti kõrget päritolu.", of = "780b19" },
+    { text = "Kõik võõrastemajas räägivad teie tegudest, {player:address}.", of = "85768b" },
+    { text = "Te muutute iga päevaga tugevamaks, {player:address}. Seda näen kohe.", of = "a1841b" },
+]
+address = { male = "isand", female = "emand", other = "kõrgeauline", of = "b38573" }
+
+[ascmearc.servant_lizardfolk.stipend]
+handover = { text = "Teie suguvõsa saadab teie ülalpidamisraha, {player:address}. Kõik on üle loetud. Palun.", of = "7ed16c" }

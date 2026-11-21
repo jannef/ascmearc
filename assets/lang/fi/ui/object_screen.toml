@@ -1,0 +1,280 @@
+# The object screens (`crates/ascmearc/src/ui/object_screen.rs`). The keys in the hints are
+# fixed.
+
+[carrying]
+of = "e2cd23"
+text = "Kannat {weight:bare}"
+
+[carrying_burden]
+of = "41f731"
+text = "Kannat {weight:bare} ({burden:bare})"
+
+# The read dialog over a grimoire: `grimoire`, its title (text, the passive takes it as written);
+# `what`, `deepening` or `learning`; `chance`, the chance in words.
+[dialog_cancel]
+of = "f71739"
+text = "Älä lue"
+
+[dialog_read]
+of = "fafd6d"
+text = "Lue"
+
+[dialog_text]
+of = "980463"
+text = "Luetaanko {grimoire:bare}? {what:bare} on {chance:bare}. Kun aloitat, et voi lopettaa omasta tahdostasi."
+
+[dialog_title]
+of = "ef2f72"
+text = "Lue"
+
+[deepening]
+of = "f062f7"
+text = "{spell:Gen} syventäminen asteelle {rank:bare}/{max:bare}"
+
+[learning]
+of = "a8119a"
+text = "{spell:Gen} oppiminen"
+
+[either]
+of = "7db76b"
+text = "{letters:bare} tai {confirm:bare} {verb:bare}"
+
+[either_none]
+of = "057fae"
+text = "{confirm:bare} {verb:bare}"
+
+[esc_back]
+of = "03caaf"
+text = "Esc takaisin"
+
+[esc_cancel]
+of = "9f1ca1"
+text = "Esc peru"
+
+[esc_close]
+of = "12c352"
+text = "Esc sulje"
+
+[esc_close_own]
+of = "2a7cbf"
+text = "{own:bare} tai Esc sulje"
+
+[footer_drop]
+of = "862cd8"
+text = "D pudota"
+
+[footer_look]
+of = "74a31e"
+text = "{letters:bare} katso"
+
+[footer_mark]
+of = "8aa869"
+text = "{letters:bare} merkitse"
+
+[footer_mark_all]
+of = "79517e"
+text = "{own:bare} kaikki"
+
+[empty_cut]
+of = "a996bd"
+text = "Sinulla ei ole hiottavaa jalokiveä."
+
+[empty_decipher]
+of = "dfa973"
+text = "Sinulla ei ole kääröä, jota et olisi jo tulkinnut."
+
+[empty_eat]
+of = "2f8a9c"
+text = "Sinulla ei ole mitään nautittavaa."
+
+[empty_give]
+of = "1e19eb"
+text = "Sinulla ei ole mitään eläimen kaulaan."
+
+[empty_identify]
+of = "5ca33d"
+text = "Sinulla ei ole mitään tunnistamatonta."
+
+[empty_inventory]
+of = "478365"
+text = "Et kanna mitään."
+
+[empty_make_do]
+of = "8e6d4e"
+text = "Sinulla ei ole mitään vaurioitunutta korjattavaa."
+
+[empty_pick_up]
+of = "c62a82"
+text = "Täällä ei ole mitään."
+
+[empty_read]
+of = "367f88"
+text = "Sinulla ei ole mitään luettavaa."
+
+[empty_salvage]
+of = "cf0fa8"
+text = "Sinulla ei ole mitään purkamisen arvoista."
+
+[empty_temper]
+of = "ec0a4b"
+text = "Sinulla ei ole metalliasetta tai -haarniskaa työstettäväksi."
+
+[empty_throw]
+of = "b489ac"
+text = "Sinulla ei ole mitään heitettävää."
+
+[empty_thrown_exploit]
+of = "ea29cf"
+text = "Sinulla ei ole mitään heitettävää aukkoon."
+
+[empty_whittle]
+of = "bb643a"
+text = "Sinulla ei ole puista asetta vuoltavaksi."
+
+[name_marked]
+of = "df6e6a"
+text = "{name:bare} ({mark:bare})"
+
+[mark_for_sale]
+of = "bebf62"
+text = "myynnissä, {gold:bare} kultaa"
+
+[mark_learning]
+of = "e393da"
+text = "oppiminen: {chance:bare}"
+
+[mark_looks]
+of = "0069c7"
+text = "näöltään {word:bare}"
+
+[mark_lying_here]
+of = "12e338"
+text = "maassa"
+
+[mark_rank]
+of = "17e060"
+text = "aste {rank:bare}/{max:bare}: {chance:bare}"
+
+[mark_smells]
+of = "8b1bc1"
+text = "hajultaan {word:bare}"
+
+[mark_unpaid]
+of = "848bf2"
+text = "maksamatta, {gold:bare} kultaa"
+
+[verb_choose]
+of = "396e48"
+text = "valitse"
+
+[verb_consume]
+of = "a750e6"
+text = "nauti"
+
+[verb_cut]
+of = "2e790f"
+text = "hio"
+
+[verb_decipher]
+of = "a2e2b0"
+text = "tulkitse"
+
+[verb_drop]
+of = "21b8e3"
+text = "pudota"
+
+[verb_give]
+of = "e09e99"
+text = "anna"
+
+[verb_identify]
+of = "9fc439"
+text = "tunnista"
+
+[verb_mend]
+of = "b16cd8"
+text = "korjaa"
+
+[verb_pick_up]
+of = "85d1fd"
+text = "poimi"
+
+[verb_read]
+of = "492fec"
+text = "lue"
+
+[verb_salvage]
+of = "fee3c1"
+text = "pura"
+
+[verb_temper]
+of = "ded32f"
+text = "karkaise"
+
+[verb_whittle]
+of = "1c9a82"
+text = "vuole"
+
+[your_weight]
+of = "87b24c"
+text = "Paino {total:bare} (itse {base:bare})"
+
+[title_cut]
+of = "a3e132"
+text = "Hio"
+
+[title_decipher]
+of = "89c7f1"
+text = "Tulkitse"
+
+[title_drop]
+of = "b32472"
+text = "Tavarat: pudota"
+
+[title_eat]
+of = "961a45"
+text = "Mitä nautit?"
+
+[title_give]
+of = "b45239"
+text = "Anna"
+
+[title_identify]
+of = "1b2139"
+text = "Tunnista"
+
+[title_inventory]
+of = "b29544"
+text = "Tavarat"
+
+[title_make_do]
+of = "1ddd84"
+text = "Paikkaa ja korjaa"
+
+[title_pick_up]
+of = "42aced"
+text = "Poimi"
+
+[title_read]
+of = "ef2f72"
+text = "Lue"
+
+[title_salvage]
+of = "db9ef2"
+text = "Pura osiin"
+
+[title_temper]
+of = "104c9b"
+text = "Karkaise"
+
+[title_throw]
+of = "8570ec"
+text = "Heitä"
+
+[title_thrown_exploit]
+of = "47a94a"
+text = "Heitto aukkoon"
+
+[title_whittle]
+of = "2bfb4a"
+text = "Vuole"

@@ -1,0 +1,5 @@
+# A chest's state, said before its name (`chest_state:<state>`).
+locked = "lukittu/1*C"
+open = "avoin/33"
+smashed = "rikottu/1*C"
+unlocked = "lukitsematon/34*C"

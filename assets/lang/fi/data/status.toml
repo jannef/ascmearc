@@ -1,0 +1,107 @@
+# Lines of data: statuses (`status:<id>.<field>`). `dies` follows a name ("Rotta vuotaa
+# kuoliaaksi."); `death` is a grave's cause of death.
+
+[bleeding]
+death = { text = "Vuoti kuoliaaksi", of = "f654e1" }
+dies = { text = "vuotaa kuoliaaksi", of = "00d5c4" }
+end = { text = "Verenvuoto tyrehtyy.", of = "15025c" }
+start = { text = "Vuodat verta.", of = "ad8daa" }
+
+[bleeding.treat]
+failed = { text = "Veri vuotaa yhä.", of = "d60f99" }
+made = { text = "Sidot haavan.", of = "3d4496" }
+
+[blessed]
+end = { text = "Siunauksesi hiipuu.", of = "846668" }
+start = { text = "Tunnet olevasi siunattu.", of = "45b480" }
+
+[burning]
+death = { text = "Paloi kuoliaaksi", of = "6b14e2" }
+dies = { text = "palaa kuoliaaksi", of = "b8bcf7" }
+end = { text = "Liekit sammuvat.", of = "9d26f3" }
+start = { text = "Olet tulessa!", of = "e49a77" }
+
+[diseased]
+death = { text = "Kuoli tautiin", of = "851fe7" }
+dies = { text = "menehtyy tautiin", of = "2d58e8" }
+
+[drowsy]
+end = { text = "Karistat unisuuden.", of = "5567c3" }
+start = { text = "Sinua nukuttaa hirveästi.", of = "43ebd7" }
+
+[exhausted]
+end = { text = "Olet taas levännyt.", of = "ec3971" }
+start = { text = "Olet uupunut.", of = "50d17b" }
+
+[frightened]
+end = { text = "Saat pelkosi hallintaan.", of = "b8cfef" }
+start = { text = "Olet peloissasi.", of = "7b86c1" }
+
+[hasted]
+end = { text = "Maailma nopeutuu taas.", of = "3cc6b6" }
+start = { text = "Maailma hidastuu ympärilläsi.", of = "3e1a0b" }
+
+[held]
+end = { text = "Pääset taas liikkumaan.", of = "a263d7" }
+start = { text = "Olet lujasti kiinni.", of = "89d177" }
+
+[inspired]
+end = { text = "Laulu hiipuu sydämestäsi.", of = "a1c6ee" }
+start = { text = "Laulusi nostattaa mielesi.", of = "26557d" }
+
+[inspired_greatly]
+end = { text = "Laulu hiipuu sydämestäsi.", of = "a1c6ee" }
+start = { text = "Laulusi kohoaa, ja sydämesi sen mukana.", of = "1d1fc8" }
+
+[lit]
+end = { text = "Valo ympärilläsi hiipuu.", of = "084e4a" }
+start = { text = "Kalpea valo kerääntyy ympärillesi.", of = "e35040" }
+
+[lurking]
+start = { text = "Odotat väijyksissä.", of = "5b194b" }
+
+[pinned]
+end = { text = "Pystyt taas liikkumaan.", of = "7a94bb" }
+start = { text = "Olet naulittu paikoillesi.", of = "3dd03f" }
+
+[poisoned]
+death = { text = "Kuoli myrkkyyn", of = "fa403c" }
+dies = { text = "menehtyy myrkkyyn", of = "648cfc" }
+end = { text = "Myrkyn vaikutus hellittää.", of = "29deda" }
+start = { text = "Voit pahoin.", of = "83bad3" }
+
+[poisoned.treat]
+failed = { text = "Myrkky ei lähde.", of = "183467" }
+made = { text = "Saat osan myrkystä pois.", of = "289666" }
+
+[raging]
+end = { text = "Raivosi laantuu.", of = "355e86" }
+start = { text = "Raivo valtaa sinut!", of = "92ba93" }
+
+[sluggish]
+end = { text = "Liikkeesi nopeutuvat taas.", of = "da3730" }
+start = { text = "Olosi on raskas ja hidas.", of = "09180c" }
+
+[staggered]
+end = { text = "Saat taas tasapainosi.", of = "fac88d" }
+start = { text = "Horjahdat.", of = "bb7927" }
+
+[stunned]
+end = { text = "Pääsi selkenee.", of = "4426be" }
+start = { text = "Olet pökerryksissä.", of = "38dc33" }
+
+[surprised]
+end = { text = "Kokoat ajatuksesi.", of = "1f5f7c" }
+start = { text = "Sinut yllätetään!", of = "d07a87" }
+
+[weakened]
+end = { text = "Voimasi palaavat.", of = "27d235" }
+start = { text = "Tunnet olosi heikoksi.", of = "8847d1" }
+
+[webbed]
+end = { text = "Repäiset itsesi irti seitistä.", of = "6870e7" }
+start = { text = "Tahmeat säikeet pitävät sinut kiinni.", of = "9e2c43" }
+
+[winded]
+end = { text = "Hengityksesi tasaantuu.", of = "d5223b" }
+start = { text = "Olet hengästynyt.", of = "f9efc9" }

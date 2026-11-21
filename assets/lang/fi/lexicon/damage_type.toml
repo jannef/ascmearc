@@ -1,0 +1,11 @@
+# Damage types (`damage_type:<id>`), nouns ("tulen kestävyys").
+acid = "happo/1*B"
+bludgeoning = "murskaus/39"
+cold = "kylmä/10"
+electricity = "sähkö/1"
+fire = "tuli/23"
+force = "voima/10"
+necrotic = "kalma/9"
+piercing = "pisto/1"
+poison = "myrkky/1*A"
+slashing = "viilto/1*I"

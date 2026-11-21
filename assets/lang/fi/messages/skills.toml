@@ -1,0 +1,76 @@
+# Skills: appraising, disarming traps, feinting, foraging, gathering herbs, intimidating,
+# listening at doors, picking locks, searching, sidestepping traps, stealing, wedging doors. Roles
+# as in the English file: `who` a creature; `what` an item or a list, counted; `before` and
+# `after` an item as known and as it turned out; `trap`, `chest` phrases; `came` and `time`
+# nested messages; `sign` text from the data.
+
+all_of_a_piece = { text = "Se on kauttaaltaan yhtä kappaletta.", of = "26114e" }
+avoid_trap = { text = "Väistät taitavasti {trap:gen}.", of = "0608cd" }
+caught_stealing = { text = "{who:Nom} yllättää sinut varkaista ja käy kimppuusi!", of = "63dc03" }
+chest_not_locked = { text = "{chest:Nom} ei ole lukossa.", of = "1b6c55" }
+disarm_failed = { text = "Et onnistu purkamaan {trap:par}.", of = "ae2296" }
+disarm_untrained = { text = "Et osaa purkaa ansoja.", of = "d528bf" }
+disarmed = { text = "Purat {trap:gen}.", of = "c5b0ce" }
+door_not_locked = { text = "Ovi ei ole lukossa.", of = "ab4bbc" }
+falls_for_it = { text = "{who:Nom} menee lankaan.", of = "5a903f" }
+feint_untrained = { text = "Et osaa harhauttaa.", of = "7dda8b" }
+forage_broken_by = { text = "{came:bare}; lopetat ruoan etsimisen.", of = "f0fcd2" }
+forage_start = { text = "Etsit ympäröivästä maastosta jotain syötävää.", of = "24ae6f" }
+forage_untrained = { text = "Et osaa elää luonnon antimilla.", of = "47b79a" }
+foraged = { text = "Löydät syötävää: {what:nom}.", of = "5a8fb5" }
+gather_broken_by = { text = "{came:bare}; lopetat keräämisen.", of = "18e3d9" }
+gather_start = { text = "Etsit hehkuvasta sienikasvustosta yrttejä.", of = "e13a19" }
+gather_untrained = { text = "Et tiedä, mitä näille tehdä: yrttien keruu vaatii yrttitietoutta.", of = "93629b" }
+gathered = { text = "Keräät yrttejä: {what:nom}.", of = "5a8fb5" }
+herbs_besides = { text = "Yrttisilmäsi ansiosta löytyy lisäksi {what:nom}.", of = "a9ec36" }
+hostile_to_thief = { text = "{who:Nom} on vihamielinen: se ei koskaan päästäisi sinua tarpeeksi lähelle.", of = "ce121a" }
+intimidate_untrained = { text = "Et osaa pelotella.", of = "683cf4" }
+intimidate_yourself = { text = "Et voi pelotella itseäsi.", of = "157601" }
+listen = { text = "Painat korvasi ovea vasten ja kuuntelet.", of = "b9f0a7" }
+listen_untrained = { text = "Et osaa kuunnella sillä tavoin.", of = "4010b2" }
+no_door_to_listen_at = { text = "Siellä ei ole suljettua ovea, jonka takaa kuunnella.", of = "a3c0f8" }
+no_door_to_wedge = { text = "Siellä ei ole suljettua ovea kiilattavaksi.", of = "55974a" }
+no_foe = { text = "{who:Nom} ei ole vihollisesi.", of = "ed626c" }
+no_heart = { text = "{who:Nom} ei tunne pelkoa.", of = "6f0da8" }
+no_heed = { text = "{who:Nom} ei välitä sinusta.", of = "736f57" }
+no_known_trap = { text = "Et tiedä siellä olevan ansaa.", of = "e67a0e" }
+no_lock = { text = "Siinä ei ole lukkoa.", of = "7ad431" }
+no_mind = { text = "{who:Ade} ei ole mieltä, jota harhauttaa.", of = "59e81b" }
+no_one_to_feint_at = { text = "Et näe siellä ketään harhautettavaa.", of = "846d5e" }
+no_one_to_intimidate = { text = "Et näe siellä ketään peloteltavaa.", of = "074431" }
+no_one_to_steal_from = { text = "Et näe siellä ketään, jolta varastaa.", of = "9beaaa" }
+no_pockets = { text = "Sillä ei ole taskuja.", of = "08e672" }
+not_fooled = { text = "{who:Nom} ei mene lankaan.", of = "4ce703" }
+nothing_to_eat = { text = "Et löydä mitään syömisen arvoista.", of = "33fd23" }
+nothing_to_forage = { text = "Täältä ei löydy mitään syötävää.", of = "d93141" }
+nothing_to_gather = { text = "Täällä ei ole mitään kerättävää.", of = "ac772a" }
+nothing_to_take = { text = "Et löydä {who:abl} mitään vietävää.", of = "0f206e" }
+nothing_worth_gathering = { text = "Et löydä mitään keräämisen arvoista.", of = "8f3eaa" }
+notice_chest_trapped = { text = "Huomaat, että {chest:nom} on ansoitettu: {trap:nom}.", of = "fa924b" }
+notice_door_trapped = { text = "Huomaat, että ovi on ansoitettu: {trap:nom}.", of = "ba9bd9" }
+notice_trap = { text = "Huomaat jotakin: {sign:bare}. Se on {trap:nom}.", of = "744dbb" }
+out_of_range = { text = "Se on kantaman ulkopuolella.", of = "884956" }
+pick_failed = { text = "Et onnistu tiirikoimaan lukkoa.", of = "64d57d" }
+pick_untrained = { text = "Et osaa tiirikoida lukkoja.", of = "dae27d" }
+picked_bare = { text = "Sienestä on kerätty kaikki.", of = "adaa32" }
+picked_chest = { text = "Tiirikoit lukon ja avaat {chest:gen}.", of = "30d801" }
+picked_door = { text = "Tiirikoit lukon ja avaat oven.", of = "464c3d" }
+picked_over = { text = "Tästä sienestä on jo kerätty.", of = "e346df" }
+read_magic = { text = "Luet {before:ill} sidotun taian: {after:nom}.", of = "596bde" }
+realise = { text = "Tajuat, että {before:nom} on {after:nom}.", of = "a9d193" }
+recognise = { text = "Tunnistat, mitä {before:nom} on: {after:nom}.", of = "5ec551" }
+search_broken_by = { text = "{came:bare}; lopetat etsittyäsi {time:bare}.", of = "999e41" }
+searched_nothing = { text = "Etsit {time:bare} etkä löydä mitään.", of = "d31268" }
+secret_door = { text = "Löydät salaoven!", of = "594322" }
+set_off = { text = "Laukaiset {trap:gen}!", of = "4573be" }
+sounds_hollow = { text = "Seinä kumisee tässä ontolta.", of = "33465c" }
+steal_untrained = { text = "Et osaa varastaa.", of = "70d2ea" }
+step_over = { text = "Astut kevyesti {trap:gen} yli.", of = "7d469b" }
+stole = { text = "Varastat {who:abl} saaliin: {what:nom}.", of = "b02fb4" }
+stop_foraging = { text = "Lopetat ruoan etsimisen.", of = "7876e1" }
+stop_gathering = { text = "Lopetat keräämisen.", of = "7f0957" }
+stop_searching = { text = "Lopetat etsittyäsi {time:bare}.", of = "8d7c35" }
+threaten = { text = "Uhkailet {who:par}.", of = "78c980" }
+wedge = { text = "Isket kiilan oven alle.", of = "40fb7d" }
+wedge_untrained = { text = "Et osaa kiilata ovea.", of = "442283" }
+wedged_already = { text = "Ovi on jo kiilattu.", of = "50499c" }

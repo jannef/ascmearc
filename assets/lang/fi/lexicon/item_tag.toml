@@ -1,0 +1,7 @@
+# What an item's name says after it in parentheses (`item_tag:<tag>`): "(taika, kirottu)".
+cursed = "kirottu/1*C"
+hooded = "himmennetty/1*C"
+lit = "sytytetty/1*C"
+magic = "taika/9*D"
+rare = "harvinainen/38"
+unique = "ainutlaatuinen/38"

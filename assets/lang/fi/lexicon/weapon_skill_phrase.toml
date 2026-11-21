@@ -1,0 +1,29 @@
+# How one is skilled in a weapon skill (`weapon_skill_phrase:<id>`): the activity as a noun, its
+# `bare` the inessive "combat.skill_risen" says ("Tunnet olevasi taitavampi tikareiden käytössä.").
+axes = { word = "kirveiden käyttö/1*C", forms = { bare = "kirveiden käytössä" } }
+battle_caster = { word = "loitsiminen/38 haarniskassa", forms = { bare = "loitsimisessa haarniskassa" } }
+bows = { word = "jousi|ammunta/9*J", forms = { bare = "jousiammunnassa" } }
+brawler = { word = "tappelu/2", forms = { bare = "tappelussa" } }
+crossbows = { word = "varsijousi|ammunta/9*J", forms = { bare = "varsijousiammunnassa" } }
+daggers = { word = "tikareiden ja veitsien käyttö/1*C", forms = { bare = "tikareiden ja veitsien käytössä" } }
+duelist = { word = "kaksin|taistelu/2", forms = { bare = "kaksintaistelussa" } }
+great_blades = { word = "suurten terien käyttö/1*C", forms = { bare = "suurten terien käytössä" } }
+great_weapon = { word = "raskaiden aseiden käyttö/1*C", forms = { bare = "raskaiden aseiden käytössä" } }
+long_blades = { word = "pitkien terien käyttö/1*C", forms = { bare = "pitkien terien käytössä" } }
+maces = { word = "nuijien ja kurikoiden käyttö/1*C", forms = { bare = "nuijien ja kurikoiden käytössä" } }
+marksman = { word = "tarkka-ammunta/9*J", forms = { bare = "tarkka-ammunnassa" } }
+polearms = { word = "salkoaseiden käyttö/1*C", forms = { bare = "salkoaseiden käytössä" } }
+shield_bash = { word = "kilvellä lyöminen/38", forms = { bare = "kilvellä lyömisessä" } }
+short_blades = { word = "lyhyiden terien käyttö/1*C", forms = { bare = "lyhyiden terien käytössä" } }
+skirmisher = { word = "kahakointi/5*J", forms = { bare = "kahakoinnissa" } }
+slings = { word = "lingon käyttö/1*C", forms = { bare = "lingon käytössä" } }
+sniper = { word = "loitsiminen/38 kaukaa", forms = { bare = "loitsimisessa kaukaa" } }
+spears = { word = "keihäiden käyttö/1*C", forms = { bare = "keihäiden käytössä" } }
+staff_fighter = { word = "sauva|taistelu/2", forms = { bare = "sauvataistelussa" } }
+staves = { word = "sauvojen käyttö/1*C", forms = { bare = "sauvojen käytössä" } }
+sword_and_board = { word = "taistelu/2 aseella ja kilvellä", forms = { bare = "taistelussa aseella ja kilvellä" } }
+thrown = { word = "heittäminen/38", forms = { bare = "heittämisessä" } }
+toucher = { word = "loitsiminen/38 läheltä", forms = { bare = "loitsimisessa läheltä" } }
+twin_blades = { word = "taistelu/2 kahdella aseella", forms = { bare = "taistelussa kahdella aseella" } }
+two_shields = { word = "taistelu/2 kahden kilven takaa", forms = { bare = "taistelussa kahden kilven takaa" } }
+unarmed = { word = "aseeton/34*C taistelu/2", forms = { bare = "aseettomassa taistelussa" } }

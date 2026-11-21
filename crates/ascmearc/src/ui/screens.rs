@@ -2977,7 +2977,7 @@ mod tests {
             (talk
                 .topics
                 .iter()
-                .filter_map(|t| t.name.text().map(String::from))
+                .filter_map(|t| t.name.text(game.world.content()))
                 .take(2))
             .collect::<Vec<_>>()
         };

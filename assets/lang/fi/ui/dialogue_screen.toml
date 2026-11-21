@@ -1,0 +1,109 @@
+# The dialogue screen and its dialogs (`crates/ascmearc/src/ui/dialogue_screen.rs`).
+
+[ask_many]
+of = "fae40a"
+text = "1-{last:bare} tai {confirm:bare}  kysy"
+
+[ask_one]
+of = "857e51"
+text = "1 tai {confirm:bare}  kysy"
+
+[buy_it]
+of = "f21575"
+text = "Osta"
+
+[go_back]
+of = "895553"
+text = "Palaa"
+
+[have]
+of = "89535f"
+text = "{asked:bare} {have:bare}"
+
+[have_none]
+of = "1e5bb3"
+text = "Sinulla ei ole kultaa."
+
+[have_only]
+of = "e646cb"
+text = "Sinulla on vain {gold:bare}."
+
+[invest]
+of = "10b45b"
+text = "Sijoita {gold:bare} kultaa"
+
+[invest_all]
+of = "fbe7be"
+text = "Sijoita kaikki kultasi ({gold:bare})"
+
+[leave]
+of = "6bef8b"
+text = "Esc  lähde"
+
+[leave_it]
+of = "e78262"
+text = "Jätä"
+
+[nobody]
+of = "e83fa6"
+text = "Täällä ei ole ketään, jolle puhua."
+
+[not_now]
+of = "1d5b21"
+text = "Ei nyt"
+
+[pay]
+of = "d45ce7"
+text = "Maksa {total:bare} kultaa"
+
+[per_cursed]
+of = "a27bd8"
+by = "count.number"
+one = "{price:bare} kultaa yllä pitämäsi kirotun esineen poistamisesta."
+many = "{price:bare} kultaa kustakin {count:bare} kirotusta esineestä, joita pidät yllä: yhteensä {total:bare} kultaa."
+
+[per_unknown]
+of = "0b439f"
+by = "count.number"
+one = "{price:bare} kultaa yhdestä kantamastasi tuntemattomasta esineestä: yhteensä {total:bare} kultaa."
+many = "{price:bare} kultaa kustakin {count:bare} kantamastasi tuntemattomasta esineestä: yhteensä {total:bare} kultaa."
+
+[refuse]
+of = "376db9"
+text = "Käännä selkäsi {who:all}"
+
+[said]
+of = "f9a72c"
+text = "”{line:bare}”"
+
+[side]
+of = "762782"
+text = "Asetu {who:gen} puolelle"
+
+[title]
+of = "e171c5"
+text = "{who:Nom}"
+
+[topic_each]
+of = "254861"
+text = "{topic:bare} ({price:bare} kultaa/kpl)"
+
+[topic_free]
+of = "6cd214"
+text = "{topic:bare} (ilmainen)"
+
+[topic_price]
+of = "f5ff23"
+text = "{topic:bare} ({price:bare} kultaa)"
+
+[ware]
+of = "5c771e"
+text = "{ware:bare}. {price:bare} kultaa, ota tai jätä."
+
+[withdraw]
+of = "240997"
+text = "Nosta {gold:bare} kultaa"
+
+[withdraw_all]
+of = "a927e8"
+text = "Nosta kaikki ({gold:bare} kultaa)"

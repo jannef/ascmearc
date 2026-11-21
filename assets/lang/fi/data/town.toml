@@ -1,0 +1,4 @@
+# Lines of data: towns (`town:<id>.told`).
+
+[ceaptun]
+told = { text = "Cēaptūnin väki ajattelee sinusta entistä paremmin.", of = "94dd13" }

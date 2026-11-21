@@ -1,6 +1,8 @@
 //! The languages beside English (`docs/dev/localization.md` "The language setting"): every
 //! `lang/<code>/` with a `lang.toml`, its message templates (`messages/<file>.toml`), and its UI
-//! text (`ui/<module>.toml`, ids `ui.<module>.<name>`). A folder under `lang/` without a
+//! text (`ui/<module>.toml`, ids `ui.<module>.<name>`), its own words (`lexicon/<kind>.toml`,
+//! ids `<kind>:<key>`, said over the content's), and its lines of data (`data/<kind>.toml`,
+//! `dialogue/<file>.toml`, "Lines of data"). A folder under `lang/` without a
 //! `lang.toml` is read by nothing, so the load refuses it (`ContentFiles::check_all_read`). The
 //! app shows the one the player chose (`language` in the settings, `--lang`); dumps take
 //! `--lang` and are English by default. A language renders what it has and English the rest
@@ -35,6 +37,18 @@ impl Content {
             }
             for (path, stem, text) in files.in_dir(&format!("lang/{code}/ui")) {
                 (language.add_templates(&format!("ui.{stem}"), text))
+                    .map_err(|e| ContentError::new(path, e.message))?;
+            }
+            for (path, kind, text) in files.in_dir(&format!("lang/{code}/lexicon")) {
+                (language.add_lexicon(kind, text))
+                    .map_err(|e| ContentError::new(path, e.message))?;
+            }
+            for (path, kind, text) in files.in_dir(&format!("lang/{code}/data")) {
+                (language.add_data_file(path, kind, text))
+                    .map_err(|e| ContentError::new(path, e.message))?;
+            }
+            for (path, _, text) in files.in_dir(&format!("lang/{code}/dialogue")) {
+                (language.add_data_file(path, "dialogue", text))
                     .map_err(|e| ContentError::new(path, e.message))?;
             }
             self.languages.push(language);
@@ -86,7 +100,7 @@ mod tests {
         let names: Vec<(&str, &str)> = (content.languages())
             .map(|l| (l.code(), l.name()))
             .collect();
-        assert_eq!(names, [("en", "English"), ("xx", "Testi")]);
+        assert_eq!(names, [("en", "English"), ("fi", "suomi"), ("xx", "Testi")]);
         let chain = content.shown_chain("xx");
         let line = |msg: Msg| {
             let entry = Entry::new(0, msg);
@@ -100,6 +114,42 @@ mod tests {
         // English and an unknown code show English alone.
         assert_eq!(content.shown_chain("en").len(), 1);
         assert_eq!(content.shown_chain("zz").len(), 1);
+    }
+
+    #[test]
+    fn a_language_reads_its_words_lines_of_data_and_dialogue() {
+        let mut files = ContentFiles::builtin();
+        let fi = "name = \"suomi\"\ncode = \"zz\"\nmorphology = \"fi\"\nfallback = \"en\"\n";
+        files.insert("lang/zz/lang.toml", fi);
+        files.insert("lang/zz/lexicon/creature.toml", "rat = \"rotta/10\"\n");
+        files.insert(
+            "lang/zz/data/level.toml",
+            "[ceaptun]\nname = \"Kauppala\"\n",
+        );
+        let greet = "[ascmearc.hild]\ngreet = \"Terve, {player:address}.\"\n";
+        files.insert("lang/zz/dialogue/ceaptun.toml", greet);
+        let content = Content::load(&files).expect("loads");
+        let zz = content.language("zz").expect("zz");
+        let chain = content.shown_chain("zz");
+        let rat = crate::lang::Phrase::id("creature:rat");
+        assert_eq!(zz.phrase(&rat, "ill", content.lexicon()), "rottaan");
+        // English never reads another language's words.
+        assert_eq!(
+            content.english().phrase(&rat, "bare", content.lexicon()),
+            "giant rat"
+        );
+        let said = |key: &str| {
+            let entry = Entry::new(0, Msg::data_line(crate::lang::Arg::said(key)));
+            render_chain(&chain, &entry, content.lexicon(), &written_key)
+        };
+        assert_eq!(said("level:ceaptun.name"), "Kauppala");
+        assert!(
+            zz.data_lines()
+                .get("dialogue:ascmearc.hild.greet")
+                .is_some()
+        );
+        // A line the language lacks reads in English.
+        assert_eq!(said("dungeon:lytelscraef.name"), "Lytelscræf");
     }
 
     #[test]

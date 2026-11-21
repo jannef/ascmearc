@@ -1,0 +1,81 @@
+# The Talents page (`crates/ascmearc/src/ui/talents_screen.rs`).
+
+[choose]
+of = "c8f3e3"
+text = "{keys:bare} valitse"
+
+[close]
+of = "12c352"
+text = "Esc sulje"
+
+[close_own]
+of = "2a7cbf"
+text = "{own:bare} tai Esc sulje"
+
+[from]
+of = "9a3613"
+text = "({from:bare})"
+
+[from_altar]
+of = "6f2628"
+text = "alttari"
+
+[from_birth_sign]
+of = "7b7df0"
+text = "syntymämerkki"
+
+[from_class]
+of = "c658a1"
+text = "luokka"
+
+[from_craving]
+of = "7d03ac"
+text = "himo"
+
+[from_oath]
+of = "9dac94"
+text = "vala"
+
+[from_profane]
+of = "3f468c"
+text = "epäpyhä"
+
+[from_profane_flaw]
+of = "77291e"
+text = "epäpyhä, heikkous"
+
+[from_race]
+of = "762d0f"
+text = "kansa"
+
+[from_story]
+of = "846a37"
+text = "tarina"
+
+[from_story_flaw]
+of = "48e98c"
+text = "tarina, heikkous"
+
+[needs]
+of = "f4ce29"
+text = "Vaatii:"
+
+[none_yet]
+of = "46375b"
+text = "ei vielä yhtään"
+
+[nothing]
+of = "0498f6"
+text = "ei mitään"
+
+[other_talents]
+of = "40e570"
+text = "Muut taipumukset"
+
+[title]
+of = "d7a243"
+text = "Taipumukset"
+
+[your_talents]
+of = "ad1a1c"
+text = "Taipumuksesi"

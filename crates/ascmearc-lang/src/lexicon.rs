@@ -135,6 +135,42 @@ impl MapLexicon {
     pub fn ids(&self) -> impl Iterator<Item = &str> {
         self.words.keys().map(String::as_str)
     }
+
+    /// Adds another file's words; a repeated id takes the later one.
+    pub fn extend(&mut self, other: MapLexicon) {
+        self.words.extend(other.words);
+    }
+
+    pub fn len(&self) -> usize {
+        self.words.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.words.is_empty()
+    }
+}
+
+/// A language's own words over another lexicon (the content, which is English's): the word an
+/// id has in `own`, else in `base`, so a word the translation lacks reads as English writes it
+/// (`docs/design/localization.md` §6: "goblin" in a Finnish sentence, uninflected).
+#[derive(Clone, Copy)]
+pub struct Layered<'a> {
+    pub own: &'a MapLexicon,
+    pub base: &'a dyn Lexicon,
+}
+
+impl std::fmt::Debug for Layered<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Layered")
+            .field("own", &self.own.len())
+            .finish_non_exhaustive()
+    }
+}
+
+impl Lexicon for Layered<'_> {
+    fn word(&self, id: &str) -> Option<LexWord> {
+        self.own.word(id).or_else(|| self.base.word(id))
+    }
 }
 
 fn parse_entry(id: &str, entry: &toml::Table) -> Result<LexWord, LangError> {
@@ -238,6 +274,21 @@ scissors = { word = "saksi/7", plural_only = true }
         assert!(scissors.plural_only && !scissors.many);
         assert_eq!(lexicon.word("creature:wolf"), None);
         assert_eq!(NoLexicon.word("object:arrow"), None);
+    }
+
+    #[test]
+    fn a_layered_lexicon_takes_its_own_word_first() {
+        let own = MapLexicon::default().with("object:arrow", LexWord::new("nuoli/26"));
+        let base = MapLexicon::default()
+            .with("object:arrow", LexWord::new("arrow"))
+            .with("object:bow", LexWord::new("bow"));
+        let layered = Layered {
+            own: &own,
+            base: &base,
+        };
+        assert_eq!(layered.word("object:arrow"), Some(LexWord::new("nuoli/26")));
+        assert_eq!(layered.word("object:bow"), Some(LexWord::new("bow")));
+        assert_eq!(layered.word("object:axe"), None);
     }
 
     #[test]

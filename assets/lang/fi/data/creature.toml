@@ -1,0 +1,33 @@
+# Lines of data: creatures (`creature:<id>.<field>`). An attack's `verb` is the third person
+# singular, its `you` the second, both taking a partitive object.
+
+[bat.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[bat.on_eat]
+message = { text = "Nahkeita siipiä, eivätkä ne sovi vatsallesi.", of = "de0739" }
+
+[beetle.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[beetle.on_eat]
+message = { text = "Rouskuvaa.", of = "c9e0e3" }
+
+[grave_worm.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[grave_worm.on_eat]
+message = { text = "Limaista, ja maistuu haudalta.", of = "2c149b" }
+
+[kobold.on_eat]
+message = { text = "Tämä koboldinliha maistuu kamalalta!", of = "600bb1" }
+
+[rat.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[rat.on_eat]
+message = { text = "Sitkeää ja riistanmakuista, mutta pysyy sisällä.", of = "0f21d5" }

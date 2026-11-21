@@ -281,7 +281,9 @@ speaks `standard`), and a dialogue's own `register` (`posh` for the rich, `corni
 gnomes of Gimmwīc, a tag and no playable race) wins over its race's (`docs/dev/localization.md`
 "Registers"). The rule binds speakers whose data says they are of that race (a creature's
 `race`). The authored line carries the accent; a register only swaps the few function words the
-renderer inserts into a line (`[registers.<name>]`), so a line reads as written.
+renderer inserts into a line (`[registers.<name>]`), so a line reads as written. Finnish names
+its own dialects in `assets/lang/fi/lang.toml` (the owner's table, #1896): a translator writes a
+speaker's lines in the dialect the same rule gives them there.
 
 How each register is written, the accent hinted and readability first:
 

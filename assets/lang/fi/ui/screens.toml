@@ -1,0 +1,13 @@
+# The screen stack's notices (`crates/ascmearc/src/ui/screens.rs`).
+
+[game_saved]
+of = "7c0a1c"
+text = "Peli tallennettu."
+
+[no_saved_character]
+of = "84b93c"
+text = "Tallennettua hahmoa ei ole."
+
+[save_gone]
+of = "d7ebd0"
+text = "Tallennusta ei enää ole."

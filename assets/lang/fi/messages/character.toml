@@ -1,0 +1,179 @@
+# The character (`world/character/`): experience and levels, talents and skill rolls, stats
+# trained and wasted, the birth sign's gifts and breaths, the racial actives, the ratfolk craving,
+# profane gifts, the laws, and the dev actions that grant these.
+#
+# Roles: `who` is a creature a line is about. `status` is a status by its name (`status:<id>`),
+# `skill` a skill's, and `name` a resource's; `talent` and `gift` are a talent's and a profane
+# gift's names (or the nested `talent_chosen`, which takes no case: said in the nominative,
+# "taipumuksen {talent:bare}"), and `trees` and `talents` lists of them; `reason` a message of
+# its own. `id` is an id a dev action was given, as typed. `xp`, `level`, and `value` are numbers.
+#
+# A talent's needs (`talent_needs_*`) are noun phrases, a row of the Talents page each and the
+# list after `talent_unmet`'s "vaatimukset:".
+
+# A talent's need of any of several weapon skills: `skill` (`weapon_skill:<id>`, as its label);
+# two of them, `first` and `rest`; the roles it names, `roles` (`weapon_role:<role>`).
+any_weapon_skill_named = { text = "{skill:label}", of = "004368" }
+any_weapon_skill_or = { text = "{first:bare} tai {rest:bare}", of = "269c79" }
+any_weapon_skill_roles = { text = "asetaito ({roles:bare})", of = "2edbc0" }
+at_whom = { text = "Kehen?", of = "946fe5" }
+# A birth date: `day` and `year` numbers, `month` the month's name, a line of data that takes no
+# case (written in the partitive in its data: "hallakuuta").
+birth_date = { text = "{day:bare}. {month:bare} {year:bare}", of = "b601ae" }
+birthday = { text = "Tänään on syntymäpäiväsi.", of = "d7f33a" }
+# The breaths of the birth sign's picks, as each is loosed.
+breath_bile = { text = "Kakaiset kurkustasi sappimöykyn ja syljet sen!", of = "b1e1b4" }
+breath_fire = { text = "Tuli karjuu kurkustasi!", of = "aead6b" }
+breath_frost = { text = "Kuuraa ja purevaa kylmyyttä tulvii kurkustasi!", of = "ab0cbf" }
+breath_rot = { text = "Hautakummun henkäys vyöryy kurkustasi!", of = "b084b6" }
+breath_thunder = { text = "Ukkonen jyrähtää kurkustasi!", of = "a36e13" }
+cannot_bring_yourself_to_cower = { text = "Et saa itseäsi kyyristelemään.", of = "ea2ca2" }
+cannot_bring_yourself_to_hold_back = { text = "Et saa itseäsi pidättäytymään.", of = "184487" }
+# `status`: the status that keeps the player from fading.
+cannot_fade_while = { text = "Et voi kadota näkyvistä, kun olet {status:nom}.", of = "7de23e" }
+# `reason`: why the ability cannot be used, in words.
+cannot_reason = { text = "Et voi: {reason:bare}.", of = "a58460" }
+catch_second_wind = { text = "Saat uutta puhtia.", of = "cd5bda" }
+# `who`: the creature the player's grip caught.
+caught_in_grip = { text = "{who:Nom} jää otteeseesi.", of = "1cf7a4" }
+choose_talent_first = { text = "Sinun on ensin valittava taipumus.", of = "0f436c" }
+# `trees`: the talent trees a bonus pick may be of, a list of names.
+choose_talent_of = { text = "Sinun on valittava taipumus puusta {trees:or}.", of = "5ac645" }
+# What a talent with a choice is chosen for, said as a refusal's `choice` (nominative).
+choice_element = { text = "elementti", of = "2a4a73" }
+choice_school = { text = "taikuuden koulukunta tai elementti", of = "80a95e" }
+choice_skill = { text = "taito, jota olet harjoitellut", of = "0354a7" }
+choice_style = { text = "taistelutyyli", of = "f5835d" }
+choice_tag = { text = "olentolaji", of = "bef7b0" }
+choice_weapon_skill = { text = "asetaito", of = "f06e15" }
+# `talents`: the free talents the pick may be, a list of names.
+choose_your_free_first = { text = "Sinun on ensin valittava ilmainen taipumuksesi: {talents:or}.", of = "67d1ae" }
+# A character's classes as a label: `class` and `prestige`; `level`, a number ("Bardi 30").
+class_level = { text = "{class:label} {level:bare}", of = "2a4ae0" }
+classes = { text = "{class:label}, {prestige:label}", of = "01f2a9" }
+clean_warmth = { text = "Puhdas lämpö virtaa veressäsi.", of = "b3d35c" }
+# `talent`: the hunger softener the craving took.
+craving_takes = { text = "Himo vie sinulta taipumuksen {talent:bare}.", of = "6141c6" }
+# `who`: the creature that struck the player.
+cut_by_barbs = { text = "{who:Nom} viiltyy piikkeihisi.", of = "62514d" }
+# `name`: the pool the deed emptied.
+deserts_you = { text = "{name:Nom_si} hylkää sinut.", of = "afea0a" }
+does_not_meet_gaze = { text = "{who:Nom} ei kohtaa katsettasi.", of = "a9ffad" }
+# Drops in a stat (said at a stat check).
+drop_dexterity = { text = "Tunnet itsesi kömpelömmäksi.", of = "439c12" }
+drop_intelligence = { text = "Tunnet itsesi hitaammaksi ajatuksiltasi.", of = "593835" }
+drop_presence = { text = "Tunnet itsesi epävarmemmaksi.", of = "3aee3c" }
+drop_strength = { text = "Tunnet itsesi heikommaksi.", of = "42d775" }
+drop_toughness = { text = "Tunnet itsesi hauraammaksi.", of = "3835ca" }
+drop_willpower = { text = "Päättäväisyytesi horjuu.", of = "df9b88" }
+feel_more_experienced = { text = "Tunnet itsesi kokeneemmaksi.", of = "592ebf" }
+flames_burst = { text = "Sinusta leimahtaa liekkejä!", of = "0e790b" }
+flees_from_you = { text = "{who:Nom} lyyhistyy ja pakenee luotasi.", of = "f3015e" }
+freezes_under_gaze = { text = "{who:Nom} jähmettyy katseesi alla.", of = "c85385" }
+# A dev action's: `name`, the resource (said as its label); `value`, how much the player holds now.
+gain_resource_dev = { text = "Saat voimavaraa {name:Bare}: {value:bare} (dev).", of = "afbba7" }
+gain_xp_dev = { text = "Saat {xp:bare} kokemuspistettä (dev).", of = "98350e" }
+gain_xp_for_finding = { text = "Saat {xp:bare} kokemuspistettä siitä, että löysit tiesi tänne.", of = "12974f" }
+# A dev action's.
+hold_no_profane_gift = { text = "Sinulla ei ole epäpyhää lahjaa `{id:bare}`.", of = "efbdf1" }
+howl = { text = "Heität pääsi taakse ja ulvot!", of = "a9104c" }
+# `talent`: the talent the class gives that the player knows already.
+know_already = { text = "Sinulla on jo taipumus {talent:bare}: valitse toinen sen tilalle.", of = "bdc9e7" }
+# `what`: the creature whose kind the player killed for the first time.
+learn_something_of = { text = "Opit jotakin {what:pl_ela}.", of = "7354ff" }
+# `talent`: the talent taken (its name with its choice).
+learn_talent = { text = "Opit taipumuksen {talent:bare}.", of = "94151b" }
+means_no_harm = { text = "{who:Nom} ei tarkoita sinulle pahaa.", of = "718797" }
+no_one_to_stare_at = { text = "Et näe siellä ketään, jota tuijottaa.", of = "3f9b91" }
+# A dev action's.
+no_profane_gift = { text = "Epäpyhää lahjaa `{id:bare}` ei ole.", of = "68f33a" }
+# A dev action's.
+no_resource = { text = "Voimavaraa `{id:bare}` ei ole.", of = "1d254f" }
+no_second_wind = { text = "Sinusta ei löydy enää uutta puhtia.", of = "08fc46" }
+no_skill = { text = "Taitoa `{id:bare}` ei ole.", of = "6516a8" }
+no_skill_rolls = { text = "Sinulla ei ole taitoheittoja käytettävänä.", of = "02bf52" }
+no_such_gift = { text = "Sinulla ei ole sellaista lahjaa.", of = "538d5f" }
+no_talent = { text = "Taipumusta `{id:bare}` ei ole.", of = "8257a6" }
+no_talent_to_choose = { text = "Sinulla ei ole nyt taipumusta valittavana.", of = "67b18d" }
+no_way_to_fade = { text = "Sinulla ei ole keinoa kadota näkyvistä.", of = "e14c7e" }
+# `skill`: the skill.
+not_trained_in = { text = "Et ole harjoitellut {skill:par}.", of = "5324cf" }
+# A dev action's.
+nothing_due = { text = "Mitään ei ole erääntynyt.", of = "d9cfc0" }
+nothing_more_takes = { text = "Siitä ei tartu sinuun enempää.", of = "24d8f6" }
+nothing_shields_you = { text = "Mikään ei enää suojaa sinua nälältä.", of = "046c57" }
+nothing_to_mend = { text = "Sarvesi armolla ei ole mitään korjattavaa.", of = "eff86b" }
+one_way_now = { text = "Kätesi tuntevat nyt vain yhden tavan.", of = "ce6085" }
+one_way_to_fight = { text = "Osaat nyt taistella vain yhdellä tavalla.", of = "ea0877" }
+# Rises in a stat.
+rise_dexterity = { text = "Tunnet itsesi nopeammaksi.", of = "274254" }
+rise_from_ashes = { text = "Leimahdat liekkeihin ja nouset tuhkastasi!", of = "d356c7" }
+rise_intelligence = { text = "Tunnet itsesi terävämmäksi.", of = "a41c4e" }
+rise_presence = { text = "Tunnet itsesi itsevarmemmaksi.", of = "93f7cc" }
+rise_strength = { text = "Tunnet itsesi vahvemmaksi.", of = "1a3e4f" }
+rise_toughness = { text = "Tunnet itsesi sitkeämmäksi.", of = "6f9e9b" }
+rise_willpower = { text = "Tunnet itsesi päättäväisemmäksi.", of = "7ff21d" }
+# `skill`: the skill.
+skill_improves = { text = "{skill:Nom_si} kehittyy.", of = "2007dd" }
+skill_rolls_to_spend = { text = "Sinulla on taitoheittoja käytettävänä.", of = "95cb8f" }
+# `status`: the status that still lasts.
+still_status = { text = "Olet yhä {status:nom}.", of = "931dc4" }
+# What the player is told as the Profane takes them, in turn.
+taken_called_back = { text = "Annettu liha kutsutaan takaisin sille, joka sen antoi.", of = "7291fd" }
+taken_wakes = { text = "Jokin vanha ja nälkäinen herää silmiesi takana, eikä se enää nukahda.", of = "9d1f27" }
+# Why a talent cannot be taken: `talent` the talent as a sentence names it.
+# `id`: the choice as typed; `choice`: what the talent is chosen for (a `choice_*` entry).
+talent_bad_choice = { text = "`{id:bare}` ei ole {choice:bare}.", of = "588032" }
+# A talent with what was chosen for it: `talent`, the talent; `choice`, what was chosen.
+talent_chosen = { text = "{talent:bare} ({choice:bare})", of = "a5a3c4" }
+talent_granted = { text = "{talent:Bare} annetaan, sitä ei valita.", of = "890c27" }
+talent_held = { text = "Sinulla on jo taipumus {talent:bare}.", of = "f4d30b" }
+# One prerequisite of a talent, an item of `talent_unmet`'s `needs` and a row of the Talents page.
+# `animal` and `element` are a birth sign's; `n`, `rank`, `level`, and `value` numbers.
+talent_needs_animal = { text = "syntynyt {animal:gen} vuonna", of = "0da3a5" }
+# `skill`: the skills (`any_weapon_skill_*`).
+talent_needs_any_weapon_skill = { text = "{skill:bare} {rank:bare}", of = "b834f8" }
+# `choice`: what the talent is chosen for (a `choice_*` entry).
+talent_needs_choice = { text = "{talent:Bare} vaatii valinnan: {choice:bare}.", of = "781444" }
+talent_needs_chosen_rank = { text = "valittu tasolla {rank:bare}", of = "943128" }
+talent_needs_class = { text = "luokka: {class:nom}", of = "cf02f6" }
+talent_needs_creation = { text = "uusi hahmo", of = "734bc0" }
+talent_needs_eaten = { by = "n.number", one = "{n:bare} syöty ajatteleva olento", many = "{n:bare} syötyä ajattelevaa olentoa", of = "20682b" }
+# Any one of several: `first` a prerequisite, `rest` the others.
+talent_needs_either = { text = "{first:bare} tai {rest:bare}", of = "269c79" }
+talent_needs_element = { text = "syntynyt {element:gen} merkissä", of = "369dc2" }
+# `eyes`: the visions' names, a list.
+talent_needs_eyes = { text = "näkö: {eyes:or}", of = "e66ddf" }
+talent_needs_level = { text = "taso {level:bare}", of = "b535f0" }
+talent_needs_lucky = { text = "syntynyt onnenpäivänä", of = "31d9e6" }
+# `races`: a list of `talent_needs_one`s, each a race.
+talent_needs_not_race = { text = "kansa muu kuin {races:or}", of = "af3969" }
+# One race of `talent_needs_race`'s list.
+talent_needs_one = { text = "{who:nom}", of = "18baf8" }
+talent_needs_race = { text = "kansa: {races:or}", of = "c4f14b" }
+talent_needs_skill = { text = "{skill:Bare} {value:bare}", of = "cdb839" }
+# `stat` the stat's name (`words.toml`), `score` the score needed ("Voima 13").
+talent_needs_stat = { text = "{stat:Bare} {score}", of = "29cdc7" }
+talent_needs_talent = { text = "{talent:bare}", of = "8d2575" }
+# A talent the ratfolk craving took for good, shown as a need never met again.
+talent_needs_untaken = { text = "himo ei ole vienyt sitä", of = "1c2182" }
+# `skill`: the weapon skill's name, a label.
+talent_needs_weapon_skill = { text = "{skill:label} {rank:bare}", of = "a40f45" }
+talent_stripped = { text = "Himo on vienyt tämän sinulta.", of = "5c5851" }
+talent_takes_no_choice = { text = "{talent:Bare} ei vaadi valintaa.", of = "903853" }
+# `needs`: the prerequisites not met, a list of `talent_needs_*` messages.
+talent_unmet = { text = "Et voi ottaa taipumusta {talent:bare}. Vaatimukset: {needs:and}.", of = "f86788" }
+# Warnings that a stat's pile has come within reach of a drop.
+warn_dexterity = { text = "Kätesi tuntuvat epävarmemmilta.", of = "cd2e8a" }
+warn_intelligence = { text = "Mielesi tuntuu sumealta.", of = "06d222" }
+warn_presence = { text = "Tunnet itsesi pieneksi ja huomaamattomaksi.", of = "a7922c" }
+warn_strength = { text = "Tunnet voimiesi hiipuvan.", of = "cdd969" }
+warn_toughness = { text = "Tunnet terveytesi pettävän.", of = "d4e263" }
+warn_willpower = { text = "Tahtosi tuntuu hauraalta.", of = "454f45" }
+welcome_to_level = { text = "Tervetuloa tasolle {level:bare}.", of = "5dc91c" }
+where_to = { text = "Minne?", of = "f74a2f" }
+will_not_let_you_cower = { text = "Himo ei anna sinun kyyristellä.", of = "22fe37" }
+will_not_let_you_hold_back = { text = "Himo ei anna sinun pidättäytyä.", of = "2ac7c4" }
+would_not_take = { text = "`{id:bare}` ei tarttuisi sinuun.", of = "c3f017" }
+# `gift`: the profane gift taken.
+you_are = { text = "Olet nyt {gift:bare}.", of = "f09762" }

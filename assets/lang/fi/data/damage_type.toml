@@ -1,0 +1,42 @@
+# Lines of data: damage types (`damage_type:<id>.<field>`). `verb` is the third person
+# singular, `you` the second, both taking a partitive object.
+
+[acid]
+verb = { text = "syövyttää", of = "10e9fe" }
+you = { text = "syövytät", of = "f6839d" }
+
+[bludgeoning]
+verb = { text = "lyö", of = "6fdbe3" }
+you = { text = "lyöt", of = "b4af6a" }
+
+[cold]
+verb = { text = "hyytää", of = "ff071a" }
+you = { text = "hyydät", of = "a01318" }
+
+[electricity]
+verb = { text = "kärventää", of = "8a7083" }
+you = { text = "kärvennät", of = "f7739b" }
+
+[fire]
+verb = { text = "polttaa", of = "15a107" }
+you = { text = "poltat", of = "f910c9" }
+
+[force]
+verb = { text = "runtelee", of = "69fc23" }
+you = { text = "runtelet", of = "135124" }
+
+[necrotic]
+verb = { text = "kuihduttaa", of = "a1cf49" }
+you = { text = "kuihdutat", of = "eb701f" }
+
+[piercing]
+verb = { text = "pistää", of = "53a2f4" }
+you = { text = "pistät", of = "3b4840" }
+
+[poison]
+verb = { text = "myrkyttää", of = "914a17" }
+you = { text = "myrkytät", of = "e3237f" }
+
+[slashing]
+verb = { text = "viiltää", of = "7d0821" }
+you = { text = "viillät", of = "73e821" }

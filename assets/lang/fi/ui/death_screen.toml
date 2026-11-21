@@ -1,0 +1,68 @@
+# The death screen (`crates/ascmearc/src/ui/death_screen.rs`).
+
+[died_of]
+of = "484afa"
+text = "Kuoli {status:ill}"
+
+[footer]
+of = "459d3e"
+text = "{confirm:bare} tai Esc  päävalikko"
+
+[epitaph_by]
+of = "a48923"
+text = "{by:bare},"
+
+[epitaph_class]
+of = "2b5d5e"
+text = "{class:nom},"
+
+[epitaph_class_prestige]
+of = "9dc8b5"
+text = "{class:nom} ja {prestige:nom},"
+
+[epitaph_here_lies]
+of = "14e22d"
+text = "Tässä lepää {name:bare},"
+
+[epitaph_level]
+of = "260c2c"
+text = "Olit ehtinyt tasolle {level:bare}."
+
+[epitaph_place]
+of = "eff1ae"
+text = "paikassa {place:bare},"
+
+[epitaph_turns]
+of = "e516e7"
+by = "n.number"
+one = "1 vuoron jälkeen."
+many = "{n:bare} vuoron jälkeen."
+
+[epitaph_when]
+of = "5c07d1"
+text = "{date:bare} kello {time:bare},"
+
+# "Koboldin surmaama".
+[killed_by]
+of = "fdf802"
+text = "{who:Gen} surmaama"
+
+[killed_unseen]
+of = "6e0842"
+text = "Jonkin näkemättömän surmaama"
+
+[nothing]
+of = "e9d859"
+text = "Kukaan ei ole kuollut."
+
+[remembered]
+of = "db8ef8"
+text = "Muistetaan hautausmaalla."
+
+[run_over]
+of = "681ef7"
+text = "Seikkailusi on ohi; sen tallennus on poissa."
+
+[title]
+of = "c6f7d0"
+text = "K U O L I T"

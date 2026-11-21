@@ -1,0 +1,112 @@
+# Items (`world/items/`): picking up and dropping, wearing and wielding, curses, the body's
+# slots, lights, the quiver, and identifying.
+#
+# Roles: `what` is an item as the player knows it ("miekkasi" when the player's), `other` another
+# such. `slot` is a slot as typed (text), or by its name (`slot:<id>`). `name` is a shopkeeper's
+# name, `price` and `owed` numbers of gold.
+#
+# A total object is the genitive for one thing ("Poimit miekan") and the numeral with the
+# partitive for several ("Poimit kolme nuolta"): `by = "what.number"`. `pick_up` and `drop` may
+# also be a list of two or three (`many`), or an `unpaid` message (no number, `else`): those are
+# said after a colon in the nominative ("Poimit: miekka ja kolme nuolta.").
+
+# `what`: what is already in the slot.
+already_there = { text = "Sinulla on siinä jo {what:counted}.", of = "45cc80" }
+burdened = { text = "Kuormasi painaa sinua.", of = "181c0c" }
+# `what`: the burning thing that cannot be picked up.
+cannot_pick_up_burning = { text = "Et voi poimia {what:par}, kun se palaa.", of = "921d55" }
+carry_no_such_thing = { text = "Sinulla ei ole sellaista mukanasi.", of = "b79167" }
+# `what`: a bound thing, the player's.
+curse_lets_go = { text = "Kirous hellittää otteensa {what:ela}.", of = "c4fec3" }
+# `what`: the light, the player's.
+douse = { text = "Sammutat {what:gen}.", of = "71290e" }
+# `what`: what the player dropped (a stack, a list of two or three, or a count).
+drop = { by = "what.number", one = "Pudotat {what:gen}.", many = "Pudotat: {what:counted}.", else = "Pudotat: {what:counted}.", of = "b368e1" }
+# What a temple's decurse took off.
+falls_at_feet = { text = "Se, minkä kirous piti otteessaan, putoaa jalkoihisi.", of = "141b4d" }
+# `what`: what a grown hand held, the player's.
+falls_from_grip = { text = "{what:Nom} putoaa otteesta, jota ei enää ole.", of = "4b612c" }
+# `what`: the cursed weapon thrown; `other`: the bound thing in the hand, the player's.
+holds_your_hand = { text = "{what:Nom} ei jätä sinua, mutta {other:nom} pitää kätesi otteessaan.", of = "9950bd" }
+it_is_cursed = { text = "Se on kirottu! Sitä ei saa irti.", of = "642c52" }
+it_would_sink = { text = "Se uppoaisi.", of = "74ef1b" }
+# `what`: the light, the player's.
+light = { text = "Sytytät {what:gen}.", of = "6fa933" }
+# A stack as the item lists name it (`Lore::listed`): `what`, the stack; `numbers`,
+# `listed_numbers` or empty; `spirit`, `listed_spirit` or empty.
+listed = { text = "{what:counted}{numbers:bare}{spirit:bare}", of = "983f2d" }
+# What the stack gives in numbers, after its name: `numbers`, the parts (`numbers_listed`).
+listed_numbers = { text = " ({numbers:bare})", of = "f0ae45" }
+# A spirit weapon's mark, after its numbers.
+listed_spirit = { text = " (henkiase)", of = "3f44e3" }
+# `what`: the light, the player's.
+lower_hood = { text = "Lasket {what:gen} suojuksen alas.", of = "0a7d0c" }
+no_light_ready = { text = "Sinulla ei ole valonlähdettä valmiina.", of = "ec21c1" }
+no_longer_burdened = { text = "Kuormasi ei enää paina sinua.", of = "4dc585" }
+# `slot`: the slot as typed.
+no_slot = { text = "Paikkaa `{slot:bare}` ei ole.", of = "71d9ca" }
+no_longer_fits = { text = "{what:Nom} ei enää sovi sinulle ja putoaa lattialle.", of = "b1cca4" }
+no_such_thing_here = { text = "Täällä ei ole sellaista.", of = "ceb489" }
+not_carrying_anything = { text = "Sinulla ei ole mitään mukanasi.", of = "4a88e2" }
+# `slot`: the slot by its name.
+nothing_there = { text = "Sinulla ei ole siinä mitään ({slot:bare}).", of = "f7170d" }
+nothing_to_identify_dev = { text = "Ei mitään tunnistettavaa (dev).", of = "35cb00" }
+nothing_to_pick_up = { text = "Täällä ei ole mitään poimittavaa.", of = "afed2d" }
+# What an item gives in numbers, a part each: `dice`, what ammunition or a worn thing adds.
+numbers_damage = { text = "{dice:bare} vahinkoa", of = "c2419c" }
+# `dv`, what it adds to Defence, signed ("+1").
+numbers_dv = { text = "Tj {dv:bare}", of = "932530" }
+# `dv` as `numbers_dv`; `pv`, its Protection.
+numbers_dv_pv = { text = "Tj {dv:bare}, Sj {pv:bare}", of = "6160c9" }
+# `n`: its to-hit, signed ("+0").
+numbers_hit = { text = "osuma {n:bare}", of = "320217" }
+# The parts listed: `first`, a part; `rest`, the others.
+numbers_listed = { text = "{first:bare}, {rest:bare}", of = "a51d07" }
+# `n`: how far it shoots or is thrown.
+numbers_range = { text = "kantama {n:bare}", of = "d7fa6a" }
+# Damage of another kind on every hit: `dice`, signed ("+1d4"); `kind`, the damage type ("tulta").
+numbers_rider = { text = "{dice:bare} {kind:par}", of = "57e567" }
+# A weapon's damage with a rider after it: `damage`, its dice; `rider`, a `numbers_rider`.
+numbers_with_rider = { text = "{damage:bare} {rider:bare}", of = "cff5cd" }
+# `what`: what the player picked up: a stack, a list of two or three (each an item, or an
+# `unpaid` one), or a count.
+pick_up = { by = "what.number", one = "Poimit {what:gen}.", many = "Poimit: {what:counted}.", else = "Poimit: {what:counted}.", of = "934776" }
+# `what`: the thing put away (a weapon or something readied).
+put_away = { by = "what.number", one = "Panet {what:gen} pois.", many = "Panet {what:counted} pois.", of = "537306" }
+put_on = { by = "what.number", one = "Puet ylle {what:gen}.", many = "Puet ylle {what:counted}.", of = "b12bfa" }
+put_on_both_hands = { by = "what.number", one = "Puet {what:gen} molempiin käsiin.", many = "Puet {what:counted} molempiin käsiin.", of = "e9c92f" }
+ready = { by = "what.number", one = "Otat {what:gen} valmiiksi.", many = "Otat {what:counted} valmiiksi.", of = "22ec8a" }
+ready_both_hands = { by = "what.number", one = "Otat {what:gen} valmiiksi molempiin käsiin.", many = "Otat {what:counted} valmiiksi molempiin käsiin.", of = "103192" }
+# `what`: the ammunition that went into the quiver by itself.
+ready_in_quiver = { by = "what.number", one = "Panet {what:gen} valmiiksi viiniisi.", many = "Panet {what:counted} valmiiksi viiniisi.", of = "fa0d3b" }
+# `what`: a worn ring, the player's.
+slips_from_finger = { text = "{what:Nom} luiskahtaa sormesta, jota ei enää ole.", of = "0eb329" }
+strain_under_load = { text = "Ponnistelet kuormasi alla.", of = "7ca7f8" }
+take_off = { by = "what.number", one = "Riisut {what:gen}.", many = "Riisut {what:counted}.", of = "718e47" }
+# `what`: the item just identified.
+this_is = { text = "Tämä on {what:counted}!", of = "a5ba8c" }
+# A heavy hall the player would be overloaded in.
+too_much_to_go_in = { text = "Kannat liikaa mennäksesi sinne.", of = "0dc21e" }
+too_much_to_move = { text = "Kannat liikaa voidaksesi liikkua.", of = "05e980" }
+# `what`: the cursed weapon thrown.
+twists_in_grip = { text = "{what:Nom} kiertyy otteessasi eikä irtoa kädestäsi.", of = "13283b" }
+# An item of `pick_up`'s list (or the one thing picked up): `what` goods for sale picked up,
+# `price` what they cost. In the nominative, after `pick_up`'s colon.
+unpaid = { text = "{what:counted} (maksamatta, {price:bare} kultaa)", of = "50d629" }
+water_would_put_it_out = { text = "Vesi vain sammuttaisi sen.", of = "a95f2d" }
+# `what`: the thing wielded (`tarttua` takes the illative, which counts by itself).
+wield = { text = "Tartut {what:ill}.", of = "de45bf" }
+wield_both_hands = { text = "Tartut {what:ill} molemmin käsin.", of = "624906" }
+# `what`: a bound thing, the player's.
+will_not_come_off = { text = "{what:Nom} ei irtoa.", of = "7ce6e2" }
+# `what`: the cursed weapon thrown, bound in the hand.
+will_not_leave_hand = { text = "{what:Nom} ei irtoa kädestäsi.", of = "bc2fb4" }
+# Said after `pick_up`, in the same line: `name` the shopkeeper, `owed` what the player owes.
+you_owe = { text = "Olet {name:all} velkaa {owed:bare} kultaa.", of = "2796dd" }
+
+# `what`: the thing that does not fit the slot (a numeral subject takes a singular verb).
+[does_not_go_there]
+of = "1f67c5"
+by = "what.number"
+one = "{what:Nom} ei sovi siihen."
+many = "{what:Nom} ei sovi siihen."
