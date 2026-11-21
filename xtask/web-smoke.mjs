@@ -9,7 +9,7 @@
 // and check the run resumed at turn 5; then pause, Quit and confirm: the page must reload to the
 // main menu (a web page cannot quit), where Continue resumes the run again; screenshot, and fail if
 // errors were logged. With a language code (`--lang fi`) the settings are first written to show
-// the game in it (`ascmearc/settings.toml` in localStorage, `language = "<code>"`), the page
+// the game in it (`ascmearc/settings.toml` in localStorage, `language = "<code>"` base64-encoded), the page
 // reloaded, and the same keys pressed: the screenshot shows the run in that language.
 // Usage: node xtask/web-smoke.mjs <chrome-binary> <url> <out.png> <profile-dir> [lang]
 import { spawn } from 'node:child_process';
@@ -38,7 +38,8 @@ await send('Runtime.enable'); await send('Page.enable');
 await send('Page.navigate', { url });
 await sleep(12000);
 if (lang) {
-  await send('Runtime.evaluate', { expression: `localStorage.setItem('ascmearc/settings.toml', 'language = "${lang}"\\n')` });
+  // Browser storage holds each file base64-encoded (`storage.rs`).
+  await send('Runtime.evaluate', { expression: `localStorage.setItem('ascmearc/settings.toml', btoa('language = "${lang}"\\n'))` });
   await send('Page.reload');
   await sleep(12000);
 }
