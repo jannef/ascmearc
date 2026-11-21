@@ -99,11 +99,11 @@ How it works out for what you find:
 | Item level | Rares that keep three affixes or more | Rares that keep all they rolled |
 |---:|---:|---:|
 | 1 | 10 % | 6 % |
-| 8 | 19 % | 12 % |
-| 16 | 34 % | 22 % |
-| 24 | 47 % | 31 % |
-| 32 | 54 % | 36 % |
-| 40 | 60 % | 40 % |
+| 8 | 18 % | 11 % |
+| 16 | 32 % | 20 % |
+| 24 | 45 % | 29 % |
+| 32 | 52 % | 34 % |
+| 40 | 58 % | 39 % |
 
 At a low item level, nearly nine finds in ten can bear two enchantments, so most rares keep two
 affixes. A magic item (one or two affixes) almost always fits: about nine in ten lose nothing, at
