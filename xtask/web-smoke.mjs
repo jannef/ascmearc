@@ -8,11 +8,13 @@
 // five turns, reload the page (its pagehide hook must write the run to that save), choose Continue
 // and check the run resumed at turn 5; then pause, Quit and confirm: the page must reload to the
 // main menu (a web page cannot quit), where Continue resumes the run again; screenshot, and fail if
-// errors were logged.
-// Usage: node xtask/web-smoke.mjs <chrome-binary> <url> <out.png> <profile-dir>
+// errors were logged. With a language code (`--lang fi`) the settings are first written to show
+// the game in it (`ascmearc/settings.toml` in localStorage, `language = "<code>"`), the page
+// reloaded, and the same keys pressed: the screenshot shows the run in that language.
+// Usage: node xtask/web-smoke.mjs <chrome-binary> <url> <out.png> <profile-dir> [lang]
 import { spawn } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
-const [chrome, url, out, profile] = process.argv.slice(2);
+const [chrome, url, out, profile, lang] = process.argv.slice(2);
 const proc = spawn(chrome, ['--headless=new', `--user-data-dir=${profile}`, '--enable-unsafe-webgpu',
   '--use-angle=metal', '--window-size=1280,720', '--remote-debugging-port=9333', 'about:blank'],
   { stdio: ['ignore', 'ignore', 'pipe'] });
@@ -35,6 +37,11 @@ const send = (method, params = {}) => new Promise((r) => { const i = ++id; pendi
 await send('Runtime.enable'); await send('Page.enable');
 await send('Page.navigate', { url });
 await sleep(12000);
+if (lang) {
+  await send('Runtime.evaluate', { expression: `localStorage.setItem('ascmearc/settings.toml', 'language = "${lang}"\\n')` });
+  await send('Page.reload');
+  await sleep(12000);
+}
 const key = async (k, code, vk) => {
   await send('Input.dispatchKeyEvent', { type: 'keyDown', key: k, code, windowsVirtualKeyCode: vk });
   await send('Input.dispatchKeyEvent', { type: 'keyUp', key: k, code, windowsVirtualKeyCode: vk });

@@ -1,0 +1,41 @@
+# Lines of data: the priest's prayer (`prayer:words.<face>.<field>`, `prayer:use.<id>.<face>`):
+# the prayer begun, fizzled, and refused, and each use answered, in the holy or the dark face's
+# words. The dark face's twist (a cure passed on, a hex sent back) is said as vaguely as English.
+
+[words.dark]
+fizzle = { text = "Pimeys on vaiti.", of = "cc8746" }
+nothing = { text = "Sinulla ei ole mitään pyydettävää pimeydeltä.", of = "e1a37c" }
+pray = { text = "Kuiskaat pimeydelle.", of = "56ddf8" }
+
+[words.holy]
+fizzle = { text = "Rukoilet, mutta mikään ei vastaa.", of = "b0352a" }
+nothing = { text = "Sinulla ei ole mitään, mitä rukoilla.", of = "bad2c6" }
+pray = { text = "Polvistut rukoilemaan.", of = "2934e5" }
+
+[use.disease]
+dark = { text = "Tauti jättää sinut ja löytää toisen.", of = "4b88cc" }
+holy = { text = "Tauti jättää sinut.", of = "24fb3e" }
+
+[use.hunger]
+dark = { text = "Olet ähkyyn asti täynnä.", of = "af68db" }
+holy = { text = "Olet kylläinen.", of = "e09e62" }
+
+[use.mana]
+dark = { text = "Mielesi täyttyy kylmällä selkeydellä.", of = "b4f45d" }
+holy = { text = "Mielesi täyttyy.", of = "61b9e5" }
+
+[use.poison]
+dark = { text = "Myrkky jättää sinut ja löytää toisen.", of = "3c78b1" }
+holy = { text = "Myrkky jättää sinut.", of = "8ac699" }
+
+[use.release]
+dark = { text = "Vapaudut, ja se palaa lähettäjälleen.", of = "a6d173" }
+holy = { text = "Vapaudut.", of = "9dae86" }
+
+[use.restoration]
+dark = { text = "Se, mikä vietiin, otetaan takaisin.", of = "c08f77" }
+holy = { text = "Tunnet olevasi taas ehjä.", of = "8e9bce" }
+
+[use.wounds]
+dark = { text = "Haavasi sulkeutuvat, kylminä kosketukselle.", of = "211ca4" }
+holy = { text = "Haavasi sulkeutuvat.", of = "c2be56" }

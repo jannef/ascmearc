@@ -1,0 +1,142 @@
+# Lines of data: items an area spell ruins (`ruin:<type>.<class|material|group>.<id>.says`),
+# the verb after the items' name: `.0` the third person singular, `.1` the plural. The message
+# (`magic.ruined`) says the singular for a count too, as Finnish does after a numeral ("Kolme
+# kääröä palaa poroksi."); the plural is there for a template that wants it.
+
+[acid.class.coins]
+says = [
+    { text = "liukenee", of = "304746" },
+    { text = "liukenevat", of = "a360bb" },
+]
+
+[acid.class.food]
+says = [
+    { text = "liukenee", of = "304746" },
+    { text = "liukenevat", of = "a360bb" },
+]
+
+[acid.class.scrolls]
+says = [
+    { text = "liukenee", of = "304746" },
+    { text = "liukenevat", of = "a360bb" },
+]
+
+[acid.group.bone]
+says = [
+    { text = "liukenee", of = "304746" },
+    { text = "liukenevat", of = "a360bb" },
+]
+
+[acid.group.cloth]
+says = [
+    { text = "liukenee", of = "304746" },
+    { text = "liukenevat", of = "a360bb" },
+]
+
+[acid.group.hide]
+says = [
+    { text = "liukenee", of = "304746" },
+    { text = "liukenevat", of = "a360bb" },
+]
+
+[acid.group.metal]
+says = [
+    { text = "syöpyy olemattomiin", of = "cde31b" },
+    { text = "syöpyvät olemattomiin", of = "4a0d72" },
+]
+
+[acid.group.wood]
+says = [
+    { text = "liukenee", of = "304746" },
+    { text = "liukenevat", of = "a360bb" },
+]
+
+[acid.material.paper]
+says = [
+    { text = "liukenee", of = "304746" },
+    { text = "liukenevat", of = "a360bb" },
+]
+
+[cold.class.potions]
+says = [
+    { text = "jäätyy ja särkyy", of = "100244" },
+    { text = "jäätyvät ja särkyvät", of = "4da677" },
+]
+
+[cold.group.glass]
+says = [
+    { text = "särkyy", of = "26be8e" },
+    { text = "särkyvät", of = "665e07" },
+]
+
+[electricity.class.scrolls]
+says = [
+    { text = "palaa poroksi", of = "5e6f0d" },
+    { text = "palavat poroksi", of = "7b67fb" },
+]
+
+[electricity.material.paper]
+says = [
+    { text = "palaa poroksi", of = "5e6f0d" },
+    { text = "palavat poroksi", of = "7b67fb" },
+]
+
+[fire.class.food]
+says = [
+    { text = "palaa karrelle", of = "712016" },
+    { text = "palavat karrelle", of = "05d768" },
+]
+
+[fire.class.potions]
+says = [
+    { text = "kiehuu ja halkeaa", of = "075b27" },
+    { text = "kiehuvat ja halkeavat", of = "004cf8" },
+]
+
+[fire.class.scrolls]
+says = [
+    { text = "palaa poroksi", of = "5e6f0d" },
+    { text = "palavat poroksi", of = "7b67fb" },
+]
+
+[fire.group.cloth]
+says = [
+    { text = "palaa olemattomiin", of = "7d4e5f" },
+    { text = "palavat olemattomiin", of = "d63054" },
+]
+
+[fire.group.wood]
+says = [
+    { text = "palaa tuhkaksi", of = "1f2345" },
+    { text = "palavat tuhkaksi", of = "4e984f" },
+]
+
+[fire.material.paper]
+says = [
+    { text = "palaa poroksi", of = "5e6f0d" },
+    { text = "palavat poroksi", of = "7b67fb" },
+]
+
+[fire.material.wax]
+says = [
+    { text = "sulaa pois", of = "198b8e" },
+    { text = "sulavat pois", of = "b6ee1c" },
+]
+
+[force.class.potions]
+says = [
+    { text = "särkyy", of = "26be8e" },
+    { text = "särkyvät", of = "665e07" },
+]
+
+[force.group.glass]
+says = [
+    { text = "särkyy", of = "26be8e" },
+    { text = "särkyvät", of = "665e07" },
+]
+
+[necrotic.class.food]
+says = [
+    { text = "mätänee", of = "385c94" },
+    { text = "mätänevät", of = "f1037a" },
+]

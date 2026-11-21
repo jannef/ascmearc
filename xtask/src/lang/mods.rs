@@ -30,10 +30,12 @@ fn mods_in(folder: &str) -> Vec<PathBuf> {
     dirs
 }
 
-/// What each mod in `dirs` adds to `base_report`, the report on `base` (the game's languages).
+/// What each mod in `dirs` adds to `base_report`, the report on `base` (the game's languages);
+/// `dev_only` the lines of data only the test world has (not asked for, `data::check_data`).
 pub fn check_mods(
     base: &BTreeMap<String, LangFiles>,
     base_report: &Report,
+    dev_only: &BTreeSet<String>,
     dirs: &[PathBuf],
     strict: &[String],
 ) -> Report {
@@ -44,7 +46,7 @@ pub fn check_mods(
             |n| n.to_string_lossy().into_owned(),
         );
         let found = match Mod::read(dir) {
-            Ok(m) => check_mod(base, base_report, &m, strict),
+            Ok(m) => check_mod(base, base_report, dev_only, &m, strict),
             Err(e) => Report {
                 errors: vec![e],
                 warnings: Vec::new(),
@@ -61,6 +63,7 @@ pub fn check_mods(
 fn check_mod(
     base: &BTreeMap<String, LangFiles>,
     base_report: &Report,
+    dev_only: &BTreeSet<String>,
     m: &Mod,
     strict: &[String],
 ) -> Report {
@@ -81,7 +84,7 @@ fn check_mod(
         }
     };
     let mut found = check(&langs, strict);
-    let lines = data::check_data(&langs, content.english().data_lines(), strict);
+    let lines = data::check_data(&langs, content.english().data_lines(), dev_only, strict);
     found.errors.extend(lines.errors);
     found.warnings.extend(lines.warnings);
     let known: BTreeSet<&String> = (base_report.errors.iter())
@@ -164,7 +167,7 @@ mod tests {
         let en = &langs["en"];
         let texts: Vec<_> = en.under("messages").map(|(_, t)| t).collect();
         assert_eq!(texts.len(), 2, "the game's file, then the mod's");
-        let found = check_mod(&base, &base_report, &m, &[]);
+        let found = check_mod(&base, &base_report, &BTreeSet::new(), &m, &[]);
         assert_eq!(found.errors.len(), 1, "{:?}", found.errors);
         assert!(found.errors[0].contains("unknown form `thee`"), "{found:?}");
     }
@@ -187,7 +190,7 @@ mod tests {
         dirs.extend(mods_in("tests/mods"));
         assert!(dirs.iter().any(|d| d.ends_with("creaky_doors")));
         assert!(dirs.iter().any(|d| d.ends_with("tiny_language")));
-        let found = check_mods(&base, &base_report, &dirs, &[]);
+        let found = check_mods(&base, &base_report, &BTreeSet::new(), &dirs, &[]);
         assert!(found.errors.is_empty(), "{:?}", found.errors);
     }
 
@@ -196,6 +199,7 @@ mod tests {
         let found = check_mods(
             &world(&[]),
             &Report::default(),
+            &BTreeSet::new(),
             &[Path::new("/no/such").into()],
             &[],
         );

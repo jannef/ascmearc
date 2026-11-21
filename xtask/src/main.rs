@@ -4,7 +4,8 @@
 //! - `docs-check`: every code path CLAUDE.md, `spec/`, and `docs/dev/` name exists (`docs_check.rs`).
 //! - `smoke`: run the game with `--capture` and check that something was rendered.
 //! - `web`: build the WebGPU site into `target/web` (needs `wasm-bindgen-cli`, see CLAUDE.md).
-//! - `web-smoke [CHROME]`: load `target/web` in headless Chromium, start a run, screenshot it.
+//! - `web-smoke [--lang CODE] [CHROME]`: load `target/web` in headless Chromium, start a run
+//!   (shown in language CODE), screenshot it.
 //! - `gen-vast [--check]`: regenerate `assets/campaigns/showcase/levels/vast.toml` (`--check` fails if it is stale).
 //! - `licenses [--check]`: regenerate `THIRD_PARTY_LICENSES.html` (needs `cargo-about`).
 //! - `golden [--update | --local]`: compare headless captures with `tests/golden/*.png`.
@@ -52,7 +53,7 @@ fn main() -> ExitCode {
         Some("bench-frames") => bench::frames(args.get(1).map_or("2560x1440", String::as_str)),
         _ => {
             eprintln!(
-                "usage: cargo xtask <docs-check | smoke | web | web-smoke [CHROME] | gen-vast [--check] | licenses [--check] | golden [--update | --local] | lang [--check] [--strict CODE] [--stamp CODE [--restamp]] [--forms fi [WORD...]] [--suggest fi <KOTUS_XML> [WORD...]] | wiki [--build | --check-links] | bench-turns [ROW...] | bench-frames [WxH]>"
+                "usage: cargo xtask <docs-check | smoke | web | web-smoke [--lang CODE] [CHROME] | gen-vast [--check] | licenses [--check] | golden [--update | --local] | lang [--check] [--strict CODE] [--stamp CODE [--restamp]] [--forms fi [WORD...]] [--suggest fi <KOTUS_XML> [WORD...]] | wiki [--build | --check-links] | bench-turns [ROW...] | bench-frames [WxH]>"
             );
             return ExitCode::from(2);
         }
@@ -344,8 +345,14 @@ fn optimize_wasm(wasm: &Path) -> Result<(), String> {
     }
 }
 
-/// Loads `target/web` in headless Chromium (WebGPU), starts a run and screenshots it.
+/// Loads `target/web` in headless Chromium (WebGPU), starts a run and screenshots it; with
+/// `--lang CODE` the settings show the game in that language first.
 fn web_smoke(args: &[String]) -> Result<(), String> {
+    let (lang, args) = match args {
+        [flag, code, rest @ ..] if flag == "--lang" => (Some(code.clone()), rest),
+        [flag] if flag == "--lang" => return Err("--lang needs a language code (`fi`)".into()),
+        rest => (None, rest),
+    };
     let root = workspace_root();
     let target = target_dir()?;
     let web = target.join("web");
@@ -382,6 +389,7 @@ fn web_smoke(args: &[String]) -> Result<(), String> {
         .arg(format!("http://127.0.0.1:{port}/"))
         .arg(&out)
         .arg(&profile)
+        .args(lang)
         .status()
         .map_err(|e| format!("cannot run node: {e}"));
     let _ = server.kill();

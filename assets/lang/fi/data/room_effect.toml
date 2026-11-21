@@ -1,0 +1,107 @@
+# Lines of data: special rooms (`room_effect:<id>.<field>`): `enter` a room entered, `near` one
+# glimpsed ahead, `pervade` one covering the level, `arrive` a hint on arriving on the level, and
+# a shrine's entry by how it treats the player (`shrine.welcome`, `shrine.unwelcome`).
+
+[altar]
+enter = { text = "Täällä seisoo vanha alttari, jonka jumala on aikaa sitten unohdettu.", of = "f2e863" }
+near = { text = "Edessäpäin alttarilta kajastaa heikko hehku.", of = "fd49b8" }
+
+[armoury]
+enter = { text = "Seinillä on telineittäin vanhoja aseita. Kaikki eivät kuitenkaan riipu paikoillaan.", of = "17e371" }
+
+[beast_den]
+enter = { text = "Pimeydessä ympärilläsi hengittää raskaita hahmoja.", of = "722b69" }
+near = { text = "Haistat myskiä ja vanhaa verta.", of = "541b36" }
+
+[black]
+enter = { text = "Pimeys nielee täällä valosi.", of = "3ba15e" }
+
+[cold]
+enter = { text = "Hengityksesi huuruaa purevassa pakkasessa.", of = "47c448" }
+
+[collapsed]
+enter = { text = "Lattia natisee painosi alla.", of = "e1cc7d" }
+near = { text = "Lattia edessäpäin on haljennut ja painunut.", of = "10bdea" }
+
+[cursed]
+enter = { text = "Ilma on kylmää, ja kuolleet ovat lähellä.", of = "073991" }
+near = { text = "Kylmä veto haisee haudalta.", of = "b8db6e" }
+pervade = { text = "Kuolleet eivät lepää tässä kerroksessa.", of = "da008d" }
+
+[draining]
+enter = { text = "Tunnet voimasi valuvan sinusta pois.", of = "77357c" }
+pervade = { text = "Jokin täällä juo voimaasi.", of = "5675f6" }
+
+[echoing]
+enter = { text = "Askeleesi kaikuvat kovaa.", of = "be5e3d" }
+
+[flooded]
+enter = { text = "Lattia on täällä veden vallassa.", of = "26e85d" }
+
+[forge]
+enter = { text = "Kylmä ahjo, ja alasin odottamassa.", of = "043e49" }
+near = { text = "Haistat vanhaa nokea ja kylmää rautaa.", of = "72f6db" }
+
+[great_treasury]
+arrive = { text = "Jokin kertoo sinulle, että tähän kerrokseen on muurattu kokonainen omaisuus.", of = "ec9f3f" }
+enter = { text = "Ilma on tunkkaista ja raskasta vanhan kullan hajusta.", of = "fd3770" }
+
+[haunted]
+enter = { text = "Täällä on hyvin hiljaista. Liian hiljaista nukkua.", of = "cea4c1" }
+near = { text = "Kuulet kuiskauksen, ja sitten ei mitään.", of = "230458" }
+
+[hearth]
+enter = { text = "Hiilipannut pitävät nämä huoneet lämpiminä.", of = "bc00e1" }
+
+[heavy]
+enter = { text = "Reppusi painaa, kuin kivet vetäisivät sitä alas.", of = "3a0b65" }
+
+[hoard]
+enter = { text = "Täällä lojuu aarre vartioimatta.", of = "f5402a" }
+near = { text = "Jokin kimaltelee edessäpäin.", of = "3ab6ca" }
+
+[hot]
+enter = { text = "Kuumuuden aalto lyö vastaasi.", of = "c6c928" }
+
+[hushed]
+enter = { text = "Syvä hiljaisuus täyttää tämän huoneen.", of = "bba7f5" }
+
+[mirrors]
+enter = { text = "Kuvajaisesi tuijottaa sinua joka puolelta.", of = "72153f" }
+
+[sanctuary]
+enter = { text = "Täällä mielesi on rauhassa.", of = "37aa4c" }
+
+[scriptorium]
+enter = { text = "Seinillä on hyllyittäin lahoavia kääröjä.", of = "1b66fc" }
+near = { text = "Haistat pölyä ja vanhaa pergamenttia.", of = "05a5c7" }
+
+[shadowed]
+enter = { text = "Valo tuntuu valuvan täällä pois.", of = "8d3ed5" }
+
+[shrine]
+enter = { text = "Vanha pyhättö. Se ei välitä sinusta.", of = "644a23" }
+
+[shrine.shrine]
+unwelcome = { text = "Jokin täällä haluaa sinut pois.", of = "389a7a" }
+welcome = { text = "Tunnet olevasi täällä tervetullut.", of = "cd093b" }
+
+[silent]
+enter = { text = "Askeleesi eivät päästä ääntäkään.", of = "46cf1f" }
+
+[spring]
+enter = { text = "Kirkasta vettä kumpuaa vanhaan kivialtaaseen.", of = "105d17" }
+
+[teeming]
+enter = { text = "Kuulet hidasta hengitystä kaikkialla ympärilläsi.", of = "d7b615" }
+near = { text = "Pimeydestä edessäpäin leijuu lämmin, väkevä löyhkä.", of = "e5dc70" }
+
+[treasury]
+arrive = { text = "Jokin kertoo sinulle, että tähän kerrokseen on kätketty rikkauksia.", of = "770405" }
+enter = { text = "Kultaa kiiltää pölyssä. Täällä ei ole käyty pitkään aikaan.", of = "802467" }
+
+[unstable]
+enter = { text = "Lattia väreilee jalkojesi alla.", of = "f001e6" }
+
+[workshop]
+enter = { text = "Seinien vierillä on penkkejä täynnä työkaluja ja ruukkuja. Jokin liikahtaa yhdellä niistä.", of = "bbe517" }

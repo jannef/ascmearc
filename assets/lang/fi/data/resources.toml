@@ -1,5 +1,6 @@
 # Lines of data: the class resources (`resources:resource.<id>.<field>`). `short` is the status
 # bar's label ("Rage 7"), kept as short as English's.
+# `lacking` is a class active refused for too little of it, a sentence begun in lower case (`classes.lacking`).
 
 [resource.focus]
 short = { text = "Keskitys", of = "57b10f" }
@@ -8,16 +9,21 @@ short = { text = "Keskitys", of = "57b10f" }
 short = { text = "Innoitus", of = "661fa6" }
 
 [resource.ki]
+lacking = { text = "kisi on lopussa", of = "5046a1" }
 short = { text = "Ki", of = "eed766" }
 
 [resource.openings]
+lacking = { text = "sinulla ei ole avausta", of = "3e9753" }
 short = { text = "Avaukset", of = "c3736d" }
 
 [resource.rage]
+lacking = { text = "raivosi ei riitä siihen", of = "51d5da" }
 short = { text = "Raivo", of = "defbd2" }
 
 [resource.stamina]
+lacking = { text = "olet hengästynyt", of = "29133e" }
 short = { text = "Kest", of = "d654ae" }
 
 [resource.zeal]
+lacking = { text = "intosi ei riitä", of = "105563" }
 short = { text = "Into", of = "c1091b" }

@@ -1,0 +1,17 @@
+# Lines of data: the lucky days (`lucky:<element>.<animal>.<day>.description`), the sign
+# reveal's line of legend for one born on a lucky day.
+
+[earth.barghest.30]
+description = { text = "Onnenpäivä. Kerran kuudessakymmenessä vuodessa Barghesti syntyy maasta, ja kuun viimeisenä päivänä se syntyy Portinvartijaksi.", of = "51eac2" }
+
+[fire.phoenix.10]
+description = { text = "Onnenpäivä. Kerran kuudessakymmenessä vuodessa Feeniks syntyy tulessa, ja kymmenentenä päivänä se syntyy Tulilinnuksi.", of = "7e3069" }
+
+[metal.manticore.3]
+description = { text = "Onnenpäivä. Kerran kuudessakymmenessä vuodessa Mantikora syntyy raudassa, ja kolmantena päivänä se syntyy Rautavitsaukseksi.", of = "cc1107" }
+
+[water.kraken.11]
+description = { text = "Onnenpäivä. Kerran kuudessakymmenessä vuodessa Kraken syntyy vedestä, ja yhdentenätoista päivänä se syntyy Syvyyden olennoksi.", of = "ee5b3c" }
+
+[wood.salamander.1]
+description = { text = "Onnenpäivä. Suuren kilpajuoksun omana vuonna, kuun ensimmäisenä päivänä, Salamanteri loikkasi portin läpi: synnyit Kilpajuoksijaksi.", of = "3ead33" }

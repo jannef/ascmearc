@@ -1,0 +1,17 @@
+# Lines of data: a birth sign's element as the sign reveal and the character screen tell it
+# (`sign_element:<id>.description`): what it is, then what those born under it are.
+
+[earth]
+description = { text = "Kivi ja multa, hitaat ja vakaat: kestävä.", of = "2ab045" }
+
+[fire]
+description = { text = "Lämpö, valo ja intohimo: kirkasta seuraa.", of = "86f952" }
+
+[metal]
+description = { text = "Rauta ja ahjo, kovat ja terävät: vahva.", of = "983e70" }
+
+[water]
+description = { text = "Joet ja syvä meri, jotka löytävät aina tiensä: nokkela.", of = "af71c5" }
+
+[wood]
+description = { text = "Kasvavat asiat, jotka taipuvat mutta eivät taitu: notkea.", of = "130cb6" }

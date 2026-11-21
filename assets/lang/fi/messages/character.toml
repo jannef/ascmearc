@@ -18,7 +18,7 @@ any_weapon_skill_or = { text = "{first:bare} tai {rest:bare}", of = "269c79" }
 any_weapon_skill_roles = { text = "asetaito ({roles:bare})", of = "2edbc0" }
 at_whom = { text = "Kehen?", of = "946fe5" }
 # A birth date: `day` and `year` numbers, `month` the month's name, a line of data that takes no
-# case (written in the partitive in its data: "hallakuuta").
+# case (written in the partitive in its data, `data/calendar.toml`: "pakkaskuuta").
 birth_date = { text = "{day:bare}. {month:bare} {year:bare}", of = "b601ae" }
 birthday = { text = "Tänään on syntymäpäiväsi.", of = "d7f33a" }
 # The breaths of the birth sign's picks, as each is loosed.

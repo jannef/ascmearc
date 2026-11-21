@@ -1,0 +1,35 @@
+# Lines of data: the ratfolk's ancient craving (`craving:<path>`): `first` as it wakes,
+# `again` as it gives again, `surrender.first` taken up at the pick, and `threshold.<talent>`
+# a row crossed, named by the talent it gives.
+
+first = { text = "Muinainen himo herää sinussa.", of = "8cba44" }
+
+[again]
+message = { text = "Liha antaa taas.", of = "3d5cb0" }
+
+[surrender]
+first = { text = "Lakkaat taistelemasta sitä vastaan. Muinainen himo herää sinussa.", of = "e2be5b" }
+
+[threshold.craving_consumed]
+message = { text = "Mitä ikinä olitkin, se on syöty. Jäljelle jäänyt on nälkäinen, ja se on vahva.", of = "76d7f2" }
+
+[threshold.craving_empowered]
+message = { text = "Liha voimistaa sinua.", of = "68c22d" }
+
+[threshold.craving_forgetting]
+message = { text = "Olet unohtanut kaiken muun maun. Olet unohtanut, miksi sillä oli väliä.", of = "fde558" }
+
+[threshold.craving_hollowed]
+message = { text = "Syödyt tungeksivat silmiesi takana ja kuiskivat nimeäsi. Se ei ole enää sinun nimesi. Niiden myrkyt ovat sinulle vettä.", of = "972adb" }
+
+[threshold.craving_nourished]
+message = { text = "Liha ravitsee sinua.", of = "3c43b5" }
+
+[threshold.craving_spoken_to]
+message = { text = "Himo puhuu nyt, ja sinä kuuntelet. Se tietää, mikä olet. Mikään tauti ei saa sinua ennen kuin se saa.", of = "37ed0f" }
+
+[threshold.craving_throttled]
+message = { text = "Nälkä pitää sinua nyt kurkusta, eikä mikään ole sinun ja sen välissä. Haistat heidät ennen kuin näet heidät: lämpimät, pelokkaat, vuotavat.", of = "d74bd7" }
+
+[threshold.craving_unleashed]
+message = { text = "Hampaitasi kivistää sen perään. Et pysty enää hillitsemään itseäsi.", of = "53c8bd" }

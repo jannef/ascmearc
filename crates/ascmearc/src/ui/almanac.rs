@@ -29,7 +29,7 @@ impl Almanac {
     pub fn of(view: &PerceptionView<'_>) -> Self {
         let time = view.time();
         Self {
-            date: date(view.content().calendar().month_name(time), time),
+            date: date(time),
             moon: moon(view.content().moons(), time),
             sky: view.weather(),
             temperature: view.temperature(),
@@ -73,11 +73,13 @@ impl Almanac {
     }
 }
 
-/// `The 11th of Darkening, 1444`: the language gives the day's ordinal.
-fn date(month: &str, time: GameTime) -> String {
+/// `The 11th of Darkening, 1444`: the language gives the day's ordinal, and the month's name
+/// is its line of data (`calendar:months.<n>`, Finnish's in the partitive: "11. hämäräkuuta").
+fn date(time: GameTime) -> String {
+    let month = ascmearc_core::content::data_line::month(time.month());
     let args = [
         ("day", Arg::Number(i64::from(time.day()))),
-        ("month", Arg::text(month)),
+        ("month", Arg::said(month)),
         ("year", Arg::Number(time.year() as i64)),
     ];
     ui_with(T::DATE, &args)

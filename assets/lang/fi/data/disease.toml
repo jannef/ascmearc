@@ -1,0 +1,74 @@
+# Lines of data: diseases (`disease:<id>.<field>`). `onset` as it shows, `recovered` as it is
+# shaken off, `symptoms` a progression going badly (in turn, wrapping).
+
+[brain_fever]
+onset = { text = "Päätäsi jyskyttää.", of = "4b0db1" }
+recovered = { text = "Mielesi kirkastuu.", of = "8bcafb" }
+symptoms = [
+    { text = "Ajatuksesi uivat kuumeessa.", of = "489b9f" },
+    { text = "Et saa pidettyä ajatuksesta kiinni.", of = "36bcf3" },
+    { text = "Oudot näyt välähtelevät silmiesi edessä.", of = "9abe3f" },
+]
+
+[burrowing_worms]
+onset = { text = "Jokin kiemurtelee ihosi alla.", of = "44b787" }
+recovered = { text = "Viimeinenkin mato on poissa sinusta.", of = "b6ef9a" }
+symptoms = [
+    { text = "Madot kaivautuvat syvemmälle lihaasi.", of = "935ebd" },
+    { text = "Tunnet niiden liikkuvan silmiesi takana.", of = "2edc8f" },
+    { text = "Vihreät madot kiemurtelevat haavoissasi.", of = "5c9e7f" },
+]
+
+[filth_fever]
+onset = { text = "Olosi on kuumeinen.", of = "94d1ff" }
+recovered = { text = "Kuumeesi taittuu.", of = "850d4f" }
+symptoms = [
+    { text = "Kuume riuduttaa sinua.", of = "ce8b61" },
+    { text = "Haavasi märkivät ja polttavat.", of = "670f1a" },
+    { text = "Hikoilet ja palelet vuoron perään.", of = "67b316" },
+]
+
+[grave_rot]
+onset = { text = "Ihosi muuttuu harmaaksi ja nihkeäksi.", of = "2bb0d8" }
+recovered = { text = "Mätä on poissa lihastasi.", of = "dd4b87" }
+symptoms = [
+    { text = "Lihasi mätänee.", of = "bc744d" },
+    { text = "Ihoasi irtoaa laikkuina.", of = "77a71e" },
+    { text = "Haudan löyhkä tarttuu sinuun.", of = "a9078c" },
+]
+
+[marsh_ague]
+onset = { text = "Vilu asettuu luihisi.", of = "cb5f80" }
+recovered = { text = "Horkka jättää sinut.", of = "9ed7af" }
+symptoms = [
+    { text = "Suokuume puistattaa sinua.", of = "bd4aa5" },
+    { text = "Vilu ja kuume tulevat ja menevät.", of = "8bf763" },
+    { text = "Märkä yskä korisee rinnassasi.", of = "56e71c" },
+]
+
+[mummy_rot]
+onset = { text = "Ihosi muuttuu kuivaksi ja harmaaksi kuin vanha pergamentti.", of = "04a8cb" }
+recovered = { text = "Kuivuus jättää lihasi.", of = "a44ea9" }
+symptoms = [
+    { text = "Lihasi kuihtuu.", of = "7d0664" },
+    { text = "Pölyä varisee halkeilevasta ihostasi.", of = "f590be" },
+    { text = "Tunnet kuivuvasi sisältä päin.", of = "67ca07" },
+]
+
+[red_ache]
+onset = { text = "Ihosi punehtuu, ja lihaksiasi kolottaa.", of = "4ad0c0" }
+recovered = { text = "Lihastesi kolotus hellittää.", of = "65bfae" }
+symptoms = [
+    { text = "Syvä kolotus polttaa lihaksiasi.", of = "7411a7" },
+    { text = "Ihosi on punainen ja turvonnut.", of = "80fa06" },
+    { text = "Raajasi tuntuvat heikoilta ja kipeiltä.", of = "8d9248" },
+]
+
+[the_shakes]
+onset = { text = "Kätesi alkavat vapista.", of = "bb344b" }
+recovered = { text = "Kätesi ovat taas vakaat.", of = "485576" }
+symptoms = [
+    { text = "Vapiset hallitsemattomasti.", of = "943266" },
+    { text = "Kätesi vapisevat ja nytkähtelevät.", of = "c5026c" },
+    { text = "Kouristukset kulkevat raajojesi läpi.", of = "1e744d" },
+]

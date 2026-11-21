@@ -29,7 +29,7 @@ said by its key, with role slots in the base form ("Dialogue"), on the one mecha
 whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
 the character, creatures, the fixtures, items, health, levels, people, skills (L4n, #1925), and talk say
 theirs from templates; the few `say` sites left say a literal line ("Literal lines"), each with
-its reason, which `cargo xtask lang` checks ("Language-neutral text", #2035). Finnish ships its first slice, the opening (#2043, "Finnish, the first slice"),
+its reason, which `cargo xtask lang` checks ("Language-neutral text", #2035). Finnish is complete (#2043 to #2068, "Finnish, the first slice" onward),
 with the loader reading a language's lexicon and lines of data. Nothing in English has
 changed: the English templates and phrases read as the strings did. The English helpers core,
 the app, and the wiki generator call have moved into the crate behind re-exports at their old
@@ -1511,9 +1511,19 @@ checked); a form request in `dialogue/` other than `name`/`Name`/`bare` (`{role}
 race naming an unknown register, a `[race_registers]` race the content has no race of, and a
 dialogue's `register` English does not declare (`lang/registers.rs`); a key an entry with a `text` does not know (only `text` and
 `of`: a stray `width` is reported, since widths belong to the screens and the screen snapshots
-check them per language, "UI text"); and **stale** entries. **Warnings**: a missing id (an error for
-`--strict <code>`; Finnish is strict before it ships) and an English id no source names as
-`msg::<file>::<ID>`. English is checked for forms, parsing, keys, and its variants' features only.
+check them per language, "UI text"); and **stale** entries. **Warnings**: a missing id, line of
+data, or word (an error for `--strict <code>`: CI runs `--check --strict fi`, Finnish being
+complete, so a PR that adds or rewords English translates it in the same PR) and an English id no
+source names as `msg::<file>::<ID>`. A line of data or a word is asked of a language in each kind
+it has a file for (`data/<kind>.toml`, `lexicon/<kind>.toml`; every kind with `--strict`). The
+words asked are those the content can list (`xtask/src/lang/words.rs`: its creatures, objects,
+materials, statuses, diseases, rooms, skills, terrain, resources, classes, weapon skills and
+abilities, talents, traps, spells, quests' quarry, the abilities menu, the horoscope, the
+speakers, and creature tags); a word only a message names (`word:`, `label:`) is not listed.
+**The test world stays English**: the showcase (`campaigns/showcase/`, built only into dev builds)
+is not asked for: a line or word that the content without it lacks is left out
+(`data::dev_only_lines`), so a Finnish dev build reads the showcase's dialogue, quests, and levels
+in English. English is checked for forms, parsing, keys, and its variants' features only.
 
 **The `of` hash** of a translated entry is the six-hex FNV-1a (32 bits, the top byte folded into
 the low 24) of the English entry's canonical text: a string as it is, an array's items joined by a
@@ -1524,8 +1534,8 @@ that lack one (`--restamp` also
 refreshes stale ones, after the translator has read the English change); it edits lines, so
 comments and layout stay: a `[table]` gets an `of` line after its header, a plain `id = "text"`
 becomes `id = { text = "text", of = "…" }`, and a plain entry whose value spans lines is refused
-(put it in a table). A lexicon id the content has no word for is an error; not yet checked:
-lexicon staleness and missing words.
+(put it in a table). A lexicon id the content has no word for is an error; not checked: lexicon
+staleness (a word has no `of`).
 
 
 ## Decisions L10 made where the design left them open
@@ -1633,6 +1643,21 @@ lines `story:<scope>.<chapter>.<line>` and their slot words `story_word:` ("Line
 `resources:resource.<id>.short` (`data/resources.toml`); a study's chance `words.chance_*`; and
 the ready weapon in the targeting line its phrase (`{ready:nom}`, "Ammu nuoli").
 
+**The rest (#2068)**: every kind still English is translated, so Finnish is complete for the game
+and the Ascmearc campaign and CI checks it so (`--strict fi`, "The checker (L7)"): the statuses
+(`data/status.toml`, `lexicon/status.toml`, `status_seen.toml`), diseases, hunger, cravings,
+lucky days, a resource's lack; altars', springs', and potions' outcomes, prayer, oaths, the laws,
+alignment, the horoscope (`lexicon/sign.toml`: one compound, element first, capitalised as a
+name, "Tulimantikora"; `sign_animal.toml`, `sign_element.toml`); the calendar
+(`data/calendar.toml`, each month in the partitive, "pakkaskuuta", as a date says it: the
+almanac's date too, `ui/almanac.rs`); encounters, ruin verbs, vaults' notes, chests, special
+rooms (`lexicon/room.toml`), the campaign's scenario descriptions, terrain, traps, scorch and
+blood words, the speakers' names; the abilities menu (`lexicon/ability.toml`: a spell's,
+talent's, or skill's name as its lexicon gives it, a weapon ability "<skill>: <ability>", a
+command said as a verb in its `bare` form, "Pura ansa"), weapon abilities, nouns, and roles,
+creature tags, songs, and grimoires ("tulipallon loitsukirja"). **The showcase stays English**:
+the test world of dev builds; the checker does not ask for it.
+
 ## Mods (L9)
 
 A mod's files under `lang/` are its text (#1892; the mechanism and the save rules are
@@ -1666,7 +1691,8 @@ cannot change that content mod's fingerprint. An empty mod is a text mod (it cha
 
 ## Next
 
-The L4 slices ("Literal lines", "Lines of data"), the other L6 parts ("UI text"), the rest of
-Finnish (L11–L13), and with Finnish the font-subset case and `cargo xtask web-smoke --lang fi`
-(L14): `docs/design/localization.md` §17. The rules this builds are `spec/05-interface.md`
-"Language".
+Localization is built (#1882; `docs/design/localization.md` is history). What a language says is
+in `assets/lang/<code>/`; English added or reworded is translated into Finnish in the same PR
+(CI's `--strict fi`). The words the owner, a native speaker, has yet to review are listed in
+"For the owner (a native speaker) to check" and in each slice's PR. The rules this builds are
+`spec/05-interface.md` "Language".

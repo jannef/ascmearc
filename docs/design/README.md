@@ -16,12 +16,6 @@ How far a design's slices have come is tracked in its issues, not here.
 
 ## Approved, being built
 
-- `localization.md` (#1882): messages as composition entries, the `ascmearc-lang` crate, English
-  and Finnish. Built: the crate and the model, the log of entries, phrases, every line and screen
-  in English data (`assets/lang/en/`), the checker and its guard on English in code, the language
-  setting, dialogue and the English registers, and the `fi` morphology (`docs/dev/localization.md`,
-  `spec/05-interface.md` "Language"). Still to come: the Finnish lexicon, templates, and dialogue,
-  and text mods; it stays here until Finnish ships.
 - `profane-gifts.md` (#1471): the layer bosses' corpses and the gift table.
 
 ## Built
@@ -29,7 +23,7 @@ How far a design's slices have come is tracked in its issues, not here.
 `adventurers-guild.md`, `affixes-systems.md`, `animated-objects.md`, `background-story.md`,
 `bard-jack-of-all-trades.md`, `berserker.md`, `buff-circles.md`, `campaign.md`,
 `chests-and-treasure.md`, `combat-progression.md`, `craftsperson.md`, `druid-and-summons.md`,
-`enchanting.md`, `generic-vaults.md`, `horoscope.md`, `ki-tricks.md`, `magic.md`,
+`enchanting.md`, `generic-vaults.md`, `horoscope.md`, `ki-tricks.md`, `localization.md`, `magic.md`,
 `miscasts-review.md`, `monster-dread.md`, `no-caster-level.md`, `overworld-encounters.md`,
 `paladin-smites.md`, `potions-wave-2.md`, `prestige-classes.md`, `priest.md`, `professions.md`,
 `progression.md`, `ranger-companion.md`, `recipes.md`, `skill-uses.md`, `special-rooms.md`,
