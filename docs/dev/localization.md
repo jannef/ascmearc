@@ -1489,7 +1489,8 @@ does not list; a role the English entry does not pass (in a placeholder or a `by
 feature no argument has (only `gender`, `number`, `person`) or with a key the feature never takes
 (`others` for `other`, which would only ever render `else`); more flavour alternatives than
 English has (core draws by English's count); an id English lacks; a lexicon word the module
-refuses; a form request in `dialogue/` other than `name`/`Name`/`bare` (`{role}`)/`a`/`the`/`address`; a
+refuses (a `proper` entry with no class is a name, inflected as a foreign name, and not
+checked); a form request in `dialogue/` other than `name`/`Name`/`bare` (`{role}`)/`a`/`the`/`address`; a
 race naming an unknown register, a `[race_registers]` race the content has no race of, and a
 dialogue's `register` English does not declare (`lang/registers.rs`); a key an entry with a `text` does not know (only `text` and
 `of`: a stray `width` is reported, since widths belong to the screens and the screen snapshots
@@ -1563,6 +1564,22 @@ name (a line of data) takes no case, so lines say it in the nominative ("Laskeud
 paikkaan Cēaptūn"); words core still says as text (a resource's short name, the read dialog's
 chance, a ready weapon's name in the targeting line) stay English; an unidentified potion's label
 is a `Label` clause where Finnish wants an agreeing adjective.
+
+**The second slice, creatures (#2054)**: every creature type of the game and the campaigns
+(`lexicon/creature.toml`, the generated animated and mimic tiers each by id), its grade words
+(`grade.toml`, only the types that have grades), natural attacks (`attack_name.toml`), natural
+armour (`hide.toml`), what its breath, burst, and throw hit with (`breath_noun.toml`,
+`burst_noun.toml`, `throw_noun.toml`), and its lines of data (`data/creature.toml`: attack
+verbs, eating, deaths, first sight, auras, summonings, departures; `data/familiars.toml`,
+`data/animated.toml`). A named one (a unique, a tower wizard) is `proper = true` without a class:
+its title or byname first and said as written, its name inflected as a foreign name ("Rottakuningas
+Gnæganin"). Choices: the old Finnish beings where one fits (hiisi goblin, isohiisi hobgoblin,
+peikko troll, mörkö ogre, piru imp, tursas thurse, virvatuli will-o'-wisp, etiäinen fetch, kalmanitkijä
+banshee, painajainen night mare, horna for hell), native compounds for the rest (an elemental is a
+`-henki`, a lich a `kalmanvelho`, a ghoul a `-syöjä`, a drake a `lentolisko`), and the D&D fiends'
+names as Finnish loans (`balori`, `arkanalotti`). The corpses of the types beyond Lytelscræf
+(`object:<id>_corpse`) are not in yet: they belong in `lexicon/object.toml`, the objects slice's
+file.
 
 **The other towns (#2056)**: the dialogue of Holtwīc, Līctūn, Gimmwīc, Alberich's delving,
 the three wizards' towers, the roads, and the strange spirit (`dialogue/<file>.toml`, one per

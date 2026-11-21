@@ -1,5 +1,633 @@
 # Lines of data: creatures (`creature:<id>.<field>`). An attack's `verb` is the third person
-# singular, its `you` the second, both taking a partitive object.
+# singular, its `you` the second, both taking a partitive object. `dies`, `depart`, and a
+# burst's, summoning's, throw's, and breath's `verb` are a finite verb in the third person
+# after the creature's name; `touch` and `unseen` an aura's whole line.
+
+[abyssal_gate]
+dies = { text = "värähtää ja sulkeutuu", of = "ef75f3" }
+
+[abyssal_gate.summon]
+verb = { text = "päästää läpi", of = "f3f59e" }
+
+[air_elemental.attack.0]
+verb = { text = "riepottelee", of = "c83702" }
+you = { text = "riepottelet", of = "5f256a" }
+
+[air_elemental.burst]
+verb = { text = "hajoaa ulvovaksi tuulenpuuskaksi", of = "20a068" }
+
+[animated_armour_12]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_12.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_13]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_13.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_14]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_14.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_15]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_15.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_16]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_16.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_17]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_17.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_18]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_18.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_19]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_19.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_20]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_20.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_21]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_21.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_22]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_22.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_23]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_23.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_24]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_24.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_25]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_25.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_26]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_26.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_27]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_27.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_28]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_28.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_29]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_29.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_30]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_30.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_31]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_31.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_32]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_32.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_33]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_33.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_34]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_34.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_armour_35]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_armour_35.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[animated_bellows]
+dies = { text = "hajoaa säpäleiksi", of = "6e6efb" }
+
+[animated_bellows.attack.0]
+verb = { text = "riepottelee", of = "c83702" }
+you = { text = "riepottelet", of = "5f256a" }
+
+[animated_blade_5]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_blade_6]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_blade_7]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_blade_8]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_blade_9]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_blade_10]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_blade_11]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_blade_12]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_blade_13]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_blade_14]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_blade_15]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_blade_16]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_blade_17]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_blade_18]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_blade_19]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_blade_20]
+dies = { text = "hajoaa kappaleiksi", of = "e31a2e" }
+
+[animated_book]
+dies = { text = "jähmettyy liikkumattomaksi", of = "037df8" }
+
+[animated_book.attack.0]
+verb = { text = "nappaa", of = "c64a0c" }
+you = { text = "nappaat", of = "570d8a" }
+
+[animated_broom]
+dies = { text = "hajoaa säpäleiksi", of = "6e6efb" }
+
+[animated_broom.attack.0]
+verb = { text = "läimäisee", of = "f665dd" }
+you = { text = "läimäiset", of = "ed8df2" }
+
+[animated_bucket]
+dies = { text = "hajoaa säpäleiksi", of = "6e6efb" }
+
+[animated_bucket.attack.0]
+verb = { text = "pieksee", of = "69fc23" }
+you = { text = "piekset", of = "135124" }
+
+[animated_candlestick]
+dies = { text = "kaatuu ja jää liikkumatta", of = "9937e9" }
+
+[animated_candlestick.attack.0]
+verb = { text = "nuijii", of = "48ad7a" }
+you = { text = "nuijit", of = "072ae0" }
+
+[animated_chair]
+dies = { text = "hajoaa säpäleiksi", of = "6e6efb" }
+
+[animated_chair.attack.0]
+verb = { text = "pieksee", of = "69fc23" }
+you = { text = "piekset", of = "135124" }
+
+[animated_coat_stand]
+dies = { text = "hajoaa säpäleiksi", of = "6e6efb" }
+
+[animated_coat_stand.attack.0]
+verb = { text = "tönäisee", of = "3d1f29" }
+you = { text = "tönäiset", of = "7cec42" }
+
+[animated_cooking_pot]
+dies = { text = "kolahtaa lattialle", of = "c18ff7" }
+
+[animated_cooking_pot.attack.0]
+verb = { text = "kolauttaa", of = "214917" }
+you = { text = "kolautat", of = "9a30cf" }
+
+[animated_cutlery]
+dies = { text = "romahtaa kilisten", of = "731ee5" }
+
+[animated_cutlery.attack.0]
+verb = { text = "tökkää", of = "515bad" }
+you = { text = "tökkäät", of = "edc71f" }
+
+[animated_kettle]
+dies = { text = "kolahtaa lattialle", of = "c18ff7" }
+
+[animated_kettle.attack.0]
+verb = { text = "kalttaa", of = "defefa" }
+you = { text = "kalttaat", of = "971a5f" }
+
+[animated_ladle]
+dies = { text = "kolahtaa lattialle", of = "c18ff7" }
+
+[animated_ladle.attack.0]
+verb = { text = "kopauttaa", of = "8e0041" }
+you = { text = "kopautat", of = "ff14c0" }
+
+[animated_lantern]
+dies = { text = "kolahtaa lattialle", of = "c18ff7" }
+
+[animated_lantern.attack.0]
+verb = { text = "korventaa", of = "c269e2" }
+you = { text = "korvennat", of = "5085ac" }
+
+[animated_lantern.burst]
+verb = { text = "räjähtää palavan öljyn ryöpyksi", of = "08c887" }
+
+[animated_panoply_20]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_21]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_22]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_23]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_24]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_25]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_26]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_27]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_28]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_29]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_30]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_31]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_32]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_33]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_34]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_35]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_36]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_37]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_38]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_39]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_40]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_41]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_42]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_43]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_44]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_45]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_46]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_47]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_48]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_49]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_50]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_51]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_52]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_53]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_54]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_55]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_56]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_57]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_58]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_59]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_60]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_61]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_62]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_63]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_64]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_65]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_66]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_67]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_68]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_69]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_panoply_70]
+dies = { text = "romahtaa kalahtaen", of = "dfc459" }
+
+[animated_rug]
+dies = { text = "lysähtää kasaan", of = "50c85c" }
+
+[animated_rug.attack.0]
+verb = { text = "kuristaa", of = "426cff" }
+you = { text = "kuristat", of = "dbf4da" }
+
+[animated_stool]
+dies = { text = "hajoaa säpäleiksi", of = "6e6efb" }
+
+[animated_stool.attack.0]
+verb = { text = "survaisee", of = "732826" }
+you = { text = "survaiset", of = "09d081" }
+
+[animated_teapot]
+dies = { text = "kolahtaa lattialle", of = "c18ff7" }
+
+[animated_teapot.attack.0]
+verb = { text = "kalttaa", of = "defefa" }
+you = { text = "kalttaat", of = "971a5f" }
+
+[animated_warming_pan]
+dies = { text = "kolahtaa lattialle", of = "c18ff7" }
+
+[animated_warming_pan.attack.0]
+verb = { text = "korventaa", of = "c269e2" }
+you = { text = "korvennat", of = "5085ac" }
+
+[ankou.attack.0]
+verb = { text = "niittää", of = "2cd946" }
+you = { text = "niität", of = "dfb673" }
+
+[annis_hag.attack.0]
+verb = { text = "raastaa", of = "fcd7fc" }
+you = { text = "raastat", of = "a8548e" }
+
+[annis_hag.on_eat]
+message = { text = "Rustoa kuin rautalankaa.", of = "03c8d4" }
+
+[arcanaloth.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[arch_gate]
+dies = { text = "värähtää ja sulkeutuu", of = "ef75f3" }
+
+[arch_gate.summon]
+verb = { text = "päästää läpi", of = "f3f59e" }
+
+[archlich]
+first_sight = { text = "Arkkikalmanvelho. Kuolema luopui tästä jo kauan sitten.", of = "0ad3c2" }
+touch = { text = "{subject:Ela} vyöryy hirvittävä tahto, joka painaa sinua.", of = "db2b1a" }
+
+[archlich.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[ash_wraith.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[attorcoppe.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[attorcoppe.on_eat]
+message = { text = "Sietämättömän karvasta, ja suusi turtuu.", of = "17d149" }
+
+[attorcoppe.summon]
+verb = { text = "kutsuu alas", of = "e438b6" }
+
+[badger]
+depart = { text = "laahustaa pois pimeyteen", of = "711e31" }
+
+[badger.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[badger.on_eat]
+message = { text = "Rasvaista mäyränlihaa, parempaa kuin miltä kuulostaa.", of = "ee676e" }
+
+[balefire.attack.0]
+verb = { text = "polttaa", of = "15a107" }
+you = { text = "poltat", of = "f910c9" }
+
+[balefire.burst]
+verb = { text = "hajoaa liekeiksi", of = "42fe31" }
+
+[balgura.attack.0]
+verb = { text = "raastaa", of = "fcd7fc" }
+you = { text = "raastat", of = "a8548e" }
+
+[balor]
+first_sight = { text = "Balori liekkien ympäröimänä. Harva sellaisen nähnyt elää kertomaan siitä.", of = "6d8346" }
+
+[balor.attack.0]
+verb = { text = "piiskaa", of = "4dca04" }
+you = { text = "piiskaat", of = "e20452" }
+
+[balor.burst]
+verb = { text = "räjähtää hornantulen leimahdukseksi", of = "bb5d70" }
+
+[banshee]
+first_sight = { text = "Kalmanitkijä. Hänen valituksensa on kuolinkello; älä jää kuulemaan sitä loppuun.", of = "af82f5" }
+touch = { text = "{subject:Nom} valittaa, ja sydämesi vavahtaa.", of = "452ceb" }
+unseen = { text = "Valitus kohoaa seinien läpi, ja sydämesi vavahtaa.", of = "9eab5e" }
+
+[banshee.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[barbed_devil]
+first_sight = { text = "Piikkipaholainen, pelkkiä koukkuja ja okaita. Jokainen isku sitä kohti maksaa verta.", of = "7621df" }
+
+[barbed_devil.attack.0]
+verb = { text = "raastaa", of = "fcd7fc" }
+you = { text = "raastat", of = "a8548e" }
+
+[barghest.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[barghest.on_eat]
+message = { text = "Se oli mätä jo kauan ennen kuolemaansa.", of = "1a4171" }
+
+[barrow_ghoul.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[barrow_ghoul.on_eat]
+message = { text = "Raatoa raadon päälle.", of = "60f125" }
+
+[barrow_king.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[barrow_spider.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[barrow_spider.on_eat]
+message = { text = "Karvasta, ja kielesi turtuu.", of = "0eb611" }
+
+[barrow_wight.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[basilisk]
+first_sight = { text = "Basiliski. Älä katso sitä silmiin.", of = "a898e4" }
+
+[basilisk.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[basilisk.on_eat]
+message = { text = "Kielesi turtuu.", of = "83a993" }
 
 [bat.attack.0]
 verb = { text = "puree", of = "bd3846" }
@@ -8,12 +636,922 @@ you = { text = "puret", of = "624b7b" }
 [bat.on_eat]
 message = { text = "Nahkeita siipiä, eivätkä ne sovi vatsallesi.", of = "de0739" }
 
+[bear]
+depart = { text = "lönkyttelee takaisin varjoihin", of = "79e0aa" }
+
+[bear.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[bear.on_eat]
+message = { text = "Täyteläistä, rasvaista karhunlihaa.", of = "d6cefc" }
+
+[bearded_devil.attack.0]
+verb = { text = "pistää", of = "53a2f4" }
+you = { text = "pistät", of = "3b4840" }
+
 [beetle.attack.0]
 verb = { text = "puree", of = "bd3846" }
 you = { text = "puret", of = "624b7b" }
 
 [beetle.on_eat]
 message = { text = "Rouskuvaa.", of = "c9e0e3" }
+
+[bheur_hag]
+touch = { text = "{subject:Ela} huokuu talven kylmyyttä.", of = "03c01f" }
+unseen = { text = "Vilunväre hiipii ylitsesi.", of = "2f4ff5" }
+
+[bheur_hag.attack.0]
+verb = { text = "lyö", of = "6fdbe3" }
+you = { text = "lyöt", of = "b4af6a" }
+
+[bheur_hag.on_eat]
+message = { text = "Kylmää kuin hauta talvella.", of = "2c4653" }
+
+[black_gate]
+dies = { text = "värähtää ja sulkeutuu", of = "ef75f3" }
+
+[black_gate.summon]
+verb = { text = "päästää läpi", of = "f3f59e" }
+
+[black_hound]
+depart = { text = "katoaa sumuun", of = "79d66a" }
+
+[black_hound.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[black_hound.on_eat]
+message = { text = "Koiraa. Yrität olla ajattelematta sitä.", of = "209a22" }
+
+[black_pudding]
+first_sight = { text = "Musta hyytelö. Terä vain lisää sitä.", of = "8db634" }
+
+[black_pudding.attack.0]
+verb = { text = "tukahduttaa", of = "dfc5bf" }
+you = { text = "tukahdutat", of = "1e6915" }
+
+[black_shuck.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[black_shuck.on_eat]
+message = { text = "Mustaa lihaa, ja se löyhkää haudalta.", of = "2d84b1" }
+
+[blink_dog]
+first_sight = { text = "Välkekoira. Se ei pysy siellä, mihin sen jätit.", of = "1a56b9" }
+
+[blink_dog.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[boar]
+depart = { text = "rytisee tiehensä tiheikön läpi", of = "998490" }
+
+[boar.attack.0]
+verb = { text = "puhkoo", of = "6bd394" }
+you = { text = "puhkot", of = "944765" }
+
+[boar.on_eat]
+message = { text = "Villisianlihaa! Se tekee sinulle hyvää.", of = "cf8a92" }
+
+[bodach.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[bodach.on_eat]
+message = { text = "Harmaata, kuivaa ja väärää.", of = "12aeb5" }
+
+[bog_body.attack.0]
+verb = { text = "moukaroi", of = "0f02ed" }
+you = { text = "moukaroit", of = "ac2fdb" }
+
+[bog_body.on_eat]
+message = { text = "Turpeenmustaa nahkaa, ja sen alla pahempaa.", of = "009f55" }
+
+[bog_hag.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[bog_hag.on_eat]
+message = { text = "Karvasta kuin räme.", of = "51ca6e" }
+
+[boggle.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[bone_colossus.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[bone_devil]
+touch = { text = "{subject:Ela} vyöryy kauhua.", of = "73a8c9" }
+
+[bone_devil.attack.0]
+verb = { text = "pistää", of = "9b3c26" }
+you = { text = "pistät", of = "08a413" }
+
+[bone_dragon.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[bone_drake.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[bone_wyvern.attack.0]
+verb = { text = "pistää", of = "9b3c26" }
+you = { text = "pistät", of = "08a413" }
+
+[bound_squall.attack.0]
+verb = { text = "riepottelee", of = "c83702" }
+you = { text = "riepottelet", of = "5f256a" }
+
+[bound_squall.burst]
+verb = { text = "hajoaa ulvovaksi tuulenpuuskaksi", of = "20a068" }
+
+[brass_peacock.attack.0]
+verb = { text = "nokkii", of = "352b61" }
+you = { text = "nokit", of = "198a53" }
+
+[brimwolf.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[brimwolf.burst]
+verb = { text = "murtuu pauhaavaksi aalloksi", of = "7d366e" }
+
+[burning_skull.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[burning_skull.burst]
+verb = { text = "puhkeaa liekkeihin", of = "09ce8b" }
+
+[cambion.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[cambion.on_eat]
+message = { text = "Puolet siitä oli melkein ihminen.", of = "1726ff" }
+
+[canoloth.attack.0]
+verb = { text = "piiskaa", of = "4dca04" }
+you = { text = "piiskaat", of = "e20452" }
+
+[cat]
+depart = { text = "livahtaa äänettä tiehensä", of = "a0bd53" }
+
+[cat.attack.0]
+verb = { text = "raapii", of = "43505a" }
+you = { text = "raavit", of = "62a1d1" }
+
+[cat.on_eat]
+message = { text = "Sitkeää, ja syödessäsi tunnet, että sinua tarkkaillaan.", of = "521a63" }
+
+[cave_lizard]
+depart = { text = "luikertelee takaisin kallion rakoon", of = "cbdc4b" }
+
+[cave_lizard.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[cave_lizard.on_eat]
+message = { text = "Liskoa. Melkein kuin kanaa.", of = "90b2d6" }
+
+[chain_devil.attack.0]
+verb = { text = "piiskaa", of = "4dca04" }
+you = { text = "piiskaat", of = "e20452" }
+
+[charnel_heap]
+first_sight = { text = "Ruumiskasa. Viillä sitä, niin sitä on enemmän.", of = "1610b7" }
+
+[charnel_heap.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[charnel_heap.on_eat]
+message = { text = "Monta vainajaa, ja jokainen mätä.", of = "f4db8f" }
+
+[charnel_titan.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[charred_dead.attack.0]
+verb = { text = "moukaroi", of = "0f02ed" }
+you = { text = "moukaroit", of = "ac2fdb" }
+
+[charred_dead.on_eat]
+message = { text = "Hiiltä ja mätää.", of = "1c34ee" }
+
+[chasme]
+first_sight = { text = "Kasme. Sen surina tuudittaisi sinut uneen.", of = "8f5e6e" }
+touch = { text = "{subject:Gen} surina painaa silmiäsi.", of = "a18fdd" }
+unseen = { text = "Surina painaa silmiäsi.", of = "4c4805" }
+
+[chasme.attack.0]
+verb = { text = "pistää", of = "53a2f4" }
+you = { text = "pistät", of = "3b4840" }
+
+[chicken]
+depart = { text = "juoksee kotkottaen tiehensä", of = "c3fc25" }
+
+[chicken.attack.0]
+verb = { text = "nokkii", of = "352b61" }
+you = { text = "nokit", of = "198a53" }
+
+[chicken.on_eat]
+message = { text = "Raakaa kanaa. Paistettuna se olisi ollut parempaa.", of = "8e6e2e" }
+
+[church_grim.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[church_grim.on_eat]
+message = { text = "Haudankylmää lihaa, ja harmaata.", of = "09d929" }
+
+[cinder_elemental.attack.0]
+verb = { text = "polttaa", of = "15a107" }
+you = { text = "poltat", of = "f910c9" }
+
+[cinder_elemental.burst]
+verb = { text = "hajoaa liekeiksi", of = "42fe31" }
+
+[cloud_giant.attack.0]
+verb = { text = "murskaa", of = "f6fef3" }
+you = { text = "murskaat", of = "9a1c5f" }
+
+[cloud_giant.on_eat]
+message = { text = "Kalpeaa ja oudon kevyttä.", of = "a1c9ef" }
+
+[cloud_giant.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[cockatrice]
+first_sight = { text = "Kukkokäärme. Älä anna sen nokkia sinua.", of = "8dbc42" }
+
+[cockatrice.attack.0]
+verb = { text = "nokkii", of = "352b61" }
+you = { text = "nokit", of = "198a53" }
+
+[cockatrice.on_eat]
+message = { text = "Se maistuu kanalta ja kivipölyltä.", of = "f59a0d" }
+
+[corpse_candle.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[crawling_hand.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[crocodile.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[crocodile.on_eat]
+message = { text = "Sitkeää, mutta sitä riittää.", of = "f9890f" }
+
+[crystal_guardian.attack.0]
+verb = { text = "lyö", of = "6fdbe3" }
+you = { text = "lyöt", of = "b4af6a" }
+
+[crystal_guardian.throw]
+verb = { text = "viskaa", of = "ab98be" }
+
+[cult_chymist.on_eat]
+message = { text = "Se maistuu tulikiveltä ja pahemmalta.", of = "af2156" }
+
+[cult_chymist.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[dark_wizard.summon]
+verb = { text = "kutsuu esiin", of = "163877" }
+
+[darkling]
+first_sight = { text = "Hämäräinen, puoliksi varjoa. Pysy valossa.", of = "f0cb57" }
+
+[darkling.attack.0]
+verb = { text = "pistää", of = "53a2f4" }
+you = { text = "pistät", of = "3b4840" }
+
+[death_knight.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[death_knight.on_eat]
+message = { text = "Haudankylmää lihaa mustan raudan sisällä.", of = "044af3" }
+
+[deathless_king.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[deathshade]
+first_sight = { text = "Kalmanvarjo. Itse pimeys on sinun jäljilläsi.", of = "283f54" }
+touch = { text = "{subject:Ela} tulvii kammoa.", of = "49884d" }
+
+[deathshade.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[deer.attack.0]
+verb = { text = "potkaisee", of = "32934e" }
+you = { text = "potkaiset", of = "1c13d9" }
+
+[deer.on_eat]
+message = { text = "Riistaa! Se tekee sinulle hyvää.", of = "67967f" }
+
+[demilich]
+touch = { text = "{subject:Ela} vyöryy hirvittävä tahto, joka painaa sinua.", of = "db2b1a" }
+
+[demilich.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[dire_gate]
+dies = { text = "värähtää ja sulkeutuu", of = "ef75f3" }
+
+[dire_gate.summon]
+verb = { text = "päästää läpi", of = "f3f59e" }
+
+[dire_warg.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[dire_warg.on_eat]
+message = { text = "Sitkeää, riistanmakuista sudenlihaa.", of = "1f8479" }
+
+[draugr.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[draugr.on_eat]
+message = { text = "Haudankylmää lihaa, aikaa sitten pilaantunutta.", of = "cd7230" }
+
+[draugr_lord.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[draugr_lord.on_eat]
+message = { text = "Haudankylmää lihaa, kumpuaan vanhempaa.", of = "f6318e" }
+
+[dread_lord.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[dread_lord.on_eat]
+message = { text = "Kylmää lihaa ruostuneessa kuoressa.", of = "f9bd48" }
+
+[dread_wraith]
+first_sight = { text = "Kauhuhaamu. Haudankin kylmyys kaihtaa sitä.", of = "5bb422" }
+touch = { text = "{subject:Ela} huokuu kylmyyttä.", of = "750076" }
+unseen = { text = "Vilunväre hiipii ylitsesi.", of = "2f4ff5" }
+
+[dread_wraith.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[dread_wyrm.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[dretch.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[drow_arbalester.attack.0]
+verb = { text = "viiltää", of = "a9ec69" }
+you = { text = "viillät", of = "562d35" }
+
+[drow_arbalester.on_eat]
+message = { text = "Laihaa ja karvasta, ja jälkimaussa vanhoja myrkkyjä.", of = "7f475b" }
+
+[drow_arbalester.throw]
+verb = { text = "ampuu", of = "fb2639" }
+
+[drow_archmage.attack.0]
+verb = { text = "pistää", of = "53a2f4" }
+you = { text = "pistät", of = "3b4840" }
+
+[drow_archmage.on_eat]
+message = { text = "Laihaa ja karvasta, ja jälkimaussa vanhoja myrkkyjä.", of = "7f475b" }
+
+[drow_assassin]
+first_sight = { text = "Tummahaltiasalamurhaaja. Nyt näet sen; et ehkä näe enää toiste.", of = "efc702" }
+
+[drow_assassin.attack.0]
+verb = { text = "pistää", of = "53a2f4" }
+you = { text = "pistät", of = "3b4840" }
+
+[drow_assassin.on_eat]
+message = { text = "Laihaa ja karvasta, ja jälkimaussa vanhoja myrkkyjä.", of = "7f475b" }
+
+[drow_blademaster.attack.0]
+verb = { text = "sivaltaa", of = "7d0821" }
+you = { text = "sivallat", of = "73e821" }
+
+[drow_blademaster.on_eat]
+message = { text = "Laihaa ja karvasta, ja jälkimaussa vanhoja myrkkyjä.", of = "7f475b" }
+
+[drow_captain.attack.0]
+verb = { text = "viiltää", of = "a9ec69" }
+you = { text = "viillät", of = "562d35" }
+
+[drow_captain.on_eat]
+message = { text = "Laihaa ja karvasta, ja jälkimaussa vanhoja myrkkyjä.", of = "7f475b" }
+
+[drow_crossbowman.attack.0]
+verb = { text = "viiltää", of = "a9ec69" }
+you = { text = "viillät", of = "562d35" }
+
+[drow_crossbowman.on_eat]
+message = { text = "Laihaa ja karvasta, ja jälkimaussa vanhoja myrkkyjä.", of = "7f475b" }
+
+[drow_crossbowman.throw]
+verb = { text = "ampuu", of = "fb2639" }
+
+[drow_high_priestess.attack.0]
+verb = { text = "piiskaa", of = "4dca04" }
+you = { text = "piiskaat", of = "e20452" }
+
+[drow_high_priestess.on_eat]
+message = { text = "Laihaa ja karvasta, ja jälkimaussa vanhoja myrkkyjä.", of = "7f475b" }
+
+[drow_high_priestess.summon]
+verb = { text = "kutsuu esiin", of = "163877" }
+
+[drow_mage.attack.0]
+verb = { text = "pistää", of = "53a2f4" }
+you = { text = "pistät", of = "3b4840" }
+
+[drow_mage.on_eat]
+message = { text = "Laihaa ja karvasta, ja jälkimaussa vanhoja myrkkyjä.", of = "7f475b" }
+
+[drow_matron.attack.0]
+verb = { text = "piiskaa", of = "4dca04" }
+you = { text = "piiskaat", of = "e20452" }
+
+[drow_matron.on_eat]
+message = { text = "Laihaa ja karvasta, ja jälkimaussa vanhoja myrkkyjä.", of = "7f475b" }
+
+[drow_matron.summon]
+verb = { text = "kutsuu esiin", of = "163877" }
+
+[drow_priestess.attack.0]
+verb = { text = "piiskaa", of = "4dca04" }
+you = { text = "piiskaat", of = "e20452" }
+
+[drow_priestess.on_eat]
+message = { text = "Laihaa ja karvasta, ja jälkimaussa vanhoja myrkkyjä.", of = "7f475b" }
+
+[drow_priestess.summon]
+verb = { text = "kutsuu esiin", of = "163877" }
+
+[drow_stalker.attack.0]
+verb = { text = "pistää", of = "53a2f4" }
+you = { text = "pistät", of = "3b4840" }
+
+[drow_stalker.on_eat]
+message = { text = "Laihaa ja karvasta, ja jälkimaussa vanhoja myrkkyjä.", of = "7f475b" }
+
+[drow_warrior.attack.0]
+verb = { text = "viiltää", of = "a9ec69" }
+you = { text = "viillät", of = "562d35" }
+
+[drow_warrior.on_eat]
+message = { text = "Laihaa ja karvasta, ja jälkimaussa vanhoja myrkkyjä.", of = "7f475b" }
+
+[drowned.attack.0]
+verb = { text = "moukaroi", of = "0f02ed" }
+you = { text = "moukaroit", of = "ac2fdb" }
+
+[drowned.on_eat]
+message = { text = "Vettynyttä ja mädäntynyttä.", of = "700755" }
+
+[drowned_king.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[drowned_king.on_eat]
+message = { text = "Vettynyttä, ja kaupunkia vanhempaa.", of = "fa597d" }
+
+[dryad.attack.0]
+verb = { text = "piiskaa", of = "4dca04" }
+you = { text = "piiskaat", of = "e20452" }
+
+[duergar_crossbowman.on_eat]
+message = { text = "Sitkeää ja hapanta kuin vanha nahka.", of = "2609a0" }
+
+[duergar_hulk.on_eat]
+message = { text = "Sitkeää ja hapanta, ja aivan liikaa sitä.", of = "bfb23c" }
+
+[duergar_king.on_eat]
+message = { text = "Sitkeää ja hapanta, ja se maistuu raudalta.", of = "158301" }
+
+[duergar_mindbreaker.attack.0]
+verb = { text = "piiskaa", of = "4dca04" }
+you = { text = "piiskaat", of = "e20452" }
+
+[duergar_mindbreaker.on_eat]
+message = { text = "Sitkeää ja hapanta, ja päätäsi särkee.", of = "d8092b" }
+
+[duergar_miner.attack.0]
+verb = { text = "mojauttaa", of = "cfb499" }
+you = { text = "mojautat", of = "bf702f" }
+
+[duergar_miner.on_eat]
+message = { text = "Sitkeää ja hapanta kuin vanha nahka.", of = "2609a0" }
+
+[duergar_priest.on_eat]
+message = { text = "Sitkeää ja hapanta, ja karvasta kuin vanha suitsuke.", of = "e56981" }
+
+[duergar_skeleton.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[duergar_slinger.on_eat]
+message = { text = "Sitkeää ja hapanta kuin vanha nahka.", of = "2609a0" }
+
+[duergar_smith.on_eat]
+message = { text = "Sitkeää ja hapanta, ja se haisee pajalta.", of = "6ad03f" }
+
+[duergar_spider_rider.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[duergar_spider_rider.on_eat]
+message = { text = "Sitkeää ja hapanta, ja se maistuu hämähäkiltä.", of = "c9f626" }
+
+[duergar_thane.on_eat]
+message = { text = "Sitkeää ja hapanta kuin vanha nahka.", of = "2609a0" }
+
+[duergar_veteran.on_eat]
+message = { text = "Sitkeää ja hapanta kuin vanha nahka.", of = "2609a0" }
+
+[duergar_warrior.on_eat]
+message = { text = "Sitkeää ja hapanta kuin vanha nahka.", of = "2609a0" }
+
+[dust_devil.burst]
+verb = { text = "puhkeaa", of = "034af8" }
+
+[earth_elemental.attack.0]
+verb = { text = "jyskyttää", of = "bc74c2" }
+you = { text = "jyskytät", of = "095c21" }
+
+[earth_elemental.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[elder_air_elemental.attack.0]
+verb = { text = "riepottelee", of = "c83702" }
+you = { text = "riepottelet", of = "5f256a" }
+
+[elder_air_elemental.burst]
+verb = { text = "hajoaa ulvovaksi tuulenpuuskaksi", of = "20a068" }
+
+[elder_earth_elemental.attack.0]
+verb = { text = "jyskyttää", of = "bc74c2" }
+you = { text = "jyskytät", of = "095c21" }
+
+[elder_earth_elemental.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[elder_fire_elemental.attack.0]
+verb = { text = "polttaa", of = "15a107" }
+you = { text = "poltat", of = "f910c9" }
+
+[elder_fire_elemental.burst]
+verb = { text = "hajoaa liekeiksi", of = "42fe31" }
+
+[elder_ice_elemental.attack.0]
+verb = { text = "jäädyttää", of = "514e99" }
+you = { text = "jäädytät", of = "40a7e4" }
+
+[elder_ice_elemental.burst]
+verb = { text = "särkyy huurteen ryöpyksi", of = "d11f75" }
+
+[elder_lightning_elemental.attack.0]
+verb = { text = "kärventää", of = "8a7083" }
+you = { text = "kärvennät", of = "f7739b" }
+
+[elder_lightning_elemental.burst]
+verb = { text = "hajoaa räsähtäväksi salamaksi", of = "f15159" }
+
+[elder_troll.attack.0]
+verb = { text = "raastaa", of = "fcd7fc" }
+you = { text = "raastat", of = "a8548e" }
+
+[elder_troll.on_eat]
+message = { text = "Sinua vanhempaa, ja sitkeämpää.", of = "617f81" }
+
+[elder_vampire]
+first_sight = { text = "Vanha vampyyri. Se on ravinnut itseään vuosisatoja, eikä ole kylläinen.", of = "c7bcfa" }
+
+[elder_vampire.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[elder_vampire.on_eat]
+message = { text = "Kylmää, ja täynnä vuosisatojen vierasta verta.", of = "e70ac7" }
+
+[elder_water_elemental.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[elder_water_elemental.burst]
+verb = { text = "murtuu pauhaavaksi aalloksi", of = "7d366e" }
+
+[eldest_vampire]
+first_sight = { text = "Vampyyreista vanhin. Vanhempi kuin kukkulat, ja nälkäisempi.", of = "7f763d" }
+
+[eldest_vampire.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[eldest_vampire.on_eat]
+message = { text = "Kylmää kuin ensimmäinen yö, ja sakeana kaikesta verestä, jolla se on koskaan ravinnut itseään.", of = "f8ccd3" }
+
+[ember_beetle.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[ember_beetle.on_eat]
+message = { text = "Se on sisältä vielä lämmin ja maistuu tuhkalta.", of = "0017e4" }
+
+[ember_mote.burst]
+verb = { text = "puhkeaa", of = "034af8" }
+
+[erinyes.attack.0]
+verb = { text = "viiltää", of = "a9ec69" }
+you = { text = "viillät", of = "562d35" }
+
+[fen_ghoul.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[fen_ghoul.on_eat]
+message = { text = "Rämeen vettä ja mätää.", of = "beb01d" }
+
+[fetch.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[fire_drake.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[fire_drake.attack.1]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[fire_drake.attack.2]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[fire_drake.on_eat]
+message = { text = "Lentoliskon liha polttaa kurkkua ja jättää sinut vahvemmaksi.", of = "545034" }
+
+[fire_drake.breath]
+verb = { text = "syöksee tulta", of = "4454fc" }
+
+[fire_elemental.attack.0]
+verb = { text = "polttaa", of = "15a107" }
+you = { text = "poltat", of = "f910c9" }
+
+[fire_elemental.burst]
+verb = { text = "hajoaa liekeiksi", of = "42fe31" }
+
+[fire_giant.attack.0]
+verb = { text = "sivaltaa", of = "7d0821" }
+you = { text = "sivallat", of = "73e821" }
+
+[fire_giant.on_eat]
+message = { text = "Se on vielä lämmintä ja maistuu noelta.", of = "1b5fc1" }
+
+[fire_giant.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[fire_salamander.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[fire_salamander.on_eat]
+message = { text = "Se polttaa kieltäsi ja lämmittää sinut läpikotaisin.", of = "ff80cc" }
+
+[fire_troll.attack.0]
+verb = { text = "korventaa", of = "c269e2" }
+you = { text = "korvennat", of = "5085ac" }
+
+[fire_troll.on_eat]
+message = { text = "Vielä lämmintä, ja se maistuu tuhkalta.", of = "08cd8b" }
+
+[forest_troll.attack.0]
+verb = { text = "raastaa", of = "fcd7fc" }
+you = { text = "raastat", of = "a8548e" }
+
+[forest_troll.on_eat]
+message = { text = "Sitkeää, ja vihreää luuta myöten.", of = "25f7a5" }
+
+[frost_giant.attack.0]
+verb = { text = "halkoo", of = "1c029f" }
+you = { text = "halot", of = "3c6a21" }
+
+[frost_giant.on_eat]
+message = { text = "Se on kylmää ytimiä myöten.", of = "2d1ac7" }
+
+[frost_giant.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[frost_mote.burst]
+verb = { text = "puhkeaa", of = "034af8" }
+
+[gallows_dead.attack.0]
+verb = { text = "piiskaa", of = "4dca04" }
+you = { text = "piiskaat", of = "e20452" }
+
+[gallows_dead.on_eat]
+message = { text = "Hirsipuun lihaa.", of = "7dab34" }
+
+[galvanic_homunculus.attack.0]
+verb = { text = "säväyttää", of = "c50295" }
+you = { text = "säväytät", of = "1616af" }
+
+[gargoyle.attack.0]
+verb = { text = "raastaa", of = "fcd7fc" }
+you = { text = "raastat", of = "a8548e" }
+
+[gatewarden.attack.0]
+verb = { text = "raastaa", of = "fcd7fc" }
+you = { text = "raastat", of = "a8548e" }
+
+[gatewarden.attack.1]
+verb = { text = "piiskaa", of = "4dca04" }
+you = { text = "piiskaat", of = "e20452" }
+
+[gatewarden.summon]
+verb = { text = "repäisee auki", of = "67a996" }
+
+[ghast.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[ghast.on_eat]
+message = { text = "Raatoa raadon päälle.", of = "60f125" }
+
+[ghost.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[ghost_dragon.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[ghost_lord]
+first_sight = { text = "Aaveruhtinas. Terät kulkevat sen läpi kuin savun.", of = "6dc51f" }
+
+[ghost_lord.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[ghoul_king.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[ghoul_king.on_eat]
+message = { text = "Raatoa, joka on elänyt raadolla, joka on elänyt raadolla.", of = "e562c2" }
+
+[ghoul_lord.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[ghoul_lord.on_eat]
+message = { text = "Raatoa, joka on elänyt raadolla, joka on elänyt raadolla.", of = "e562c2" }
+
+[giant_centipede.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[giant_centipede.on_eat]
+message = { text = "Rouskuvaa ja karvasta.", of = "b5e491" }
+
+[giant_frog.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[giant_frog.on_eat]
+message = { text = "Kuin kanaa, sanotaan.", of = "6d78ad" }
+
+[giant_jarl.attack.0]
+verb = { text = "halkoo", of = "1c029f" }
+you = { text = "halot", of = "3c6a21" }
+
+[giant_jarl.on_eat]
+message = { text = "Karkeaa, riistanmakuista lihaa, ja sitä on vuorellinen.", of = "59f170" }
+
+[giant_jarl.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[giant_leech.attack.0]
+verb = { text = "imee", of = "fbff66" }
+you = { text = "imet", of = "8db8ca" }
+
+[giant_leech.on_eat]
+message = { text = "Se on enimmäkseen jonkun toisen verta.", of = "2652cf" }
+
+[giant_shaman.attack.0]
+verb = { text = "lyö", of = "6fdbe3" }
+you = { text = "lyöt", of = "b4af6a" }
+
+[giant_shaman.on_eat]
+message = { text = "Se maistuu savulta ja karvailta yrteiltä.", of = "12137c" }
+
+[gibbering_shade]
+first_sight = { text = "Mölisevä varjo. Sen pälpätys hukuttaa jokaisen voiman sanan.", of = "2a5331" }
+touch = { text = "{subject:Gen} mölinä hukuttaa äänesi.", of = "127e65" }
+unseen = { text = "Mölinä hukuttaa äänesi.", of = "14731d" }
+
+[gibbering_shade.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[gilded_likeness.attack.0]
+verb = { text = "lyö", of = "6fdbe3" }
+you = { text = "lyöt", of = "b4af6a" }
+
+[glabrezu.attack.0]
+verb = { text = "rusentaa", of = "942d95" }
+you = { text = "rusennat", of = "a2a410" }
+
+[gloom_gate]
+dies = { text = "värähtää ja sulkeutuu", of = "ef75f3" }
+
+[gloom_gate.summon]
+verb = { text = "päästää läpi", of = "f3f59e" }
+
+[gnaegan.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[gnaegan.attack.1]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[gnaegan.attack.2]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[gnaegan.on_eat]
+message = { text = "Se on rottia, monta rottaa, eikä yksikään tuore.", of = "9b4047" }
+
+[gnaegan.summon]
+verb = { text = "vinkuu luokseen", of = "b11d88" }
+
+[goblin.on_eat]
+message = { text = "Tämä hiidenliha on eltaantunutta!", of = "03e1b6" }
+
+[goblin_archer.on_eat]
+message = { text = "Tämä hiidenliha on eltaantunutta!", of = "03e1b6" }
+
+[goblin_chief.on_eat]
+message = { text = "Tämä hiidenliha on eltaantunutta!", of = "03e1b6" }
+
+[goblin_firebomber.on_eat]
+message = { text = "Tämä hiidenliha on eltaantunutta ja kärventynyttä!", of = "8f6798" }
+
+[goblin_firebomber.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[goblin_wizard.on_eat]
+message = { text = "Tämä hiidenliha on eltaantunutta ja kihelmöi kielellä.", of = "35620f" }
+
+[goblin_wizard.summon]
+verb = { text = "kutsuu esiin", of = "163877" }
+
+[gorgon]
+first_sight = { text = "Gorgoni. Pidätä henkeäsi ja väisty sen tieltä.", of = "791415" }
+
+[gorgon.attack.0]
+verb = { text = "puhkoo", of = "6bd394" }
+you = { text = "puhkot", of = "944765" }
+
+[gorgon.on_eat]
+message = { text = "Rahisevaa, kuin hiekassa kieritettyä lihaa.", of = "455a35" }
+
+[gorgon.breath]
+verb = { text = "puhaltaa harmaata höyryä", of = "8eede1" }
+
+[grave_hound.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[grave_hound.on_eat]
+message = { text = "Se oli mätä jo kauan ennen kuolemaansa.", of = "1a4171" }
+
+[grave_knight.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[grave_knight.on_eat]
+message = { text = "Vanhaa lihaa, liian kauan raudassa säilytettyä.", of = "e5aa2f" }
 
 [grave_worm.attack.0]
 verb = { text = "puree", of = "bd3846" }
@@ -22,8 +1560,961 @@ you = { text = "puret", of = "624b7b" }
 [grave_worm.on_eat]
 message = { text = "Limaista, ja maistuu haudalta.", of = "2c149b" }
 
+[great_boar]
+depart = { text = "rytisee tiehensä tiheikön läpi", of = "998490" }
+
+[great_boar.attack.0]
+verb = { text = "puhkoo", of = "6bd394" }
+you = { text = "puhkot", of = "944765" }
+
+[great_boar.on_eat]
+message = { text = "Villisianlihaa, ja paljon.", of = "24975e" }
+
+[greater_air_elemental.attack.0]
+verb = { text = "riepottelee", of = "c83702" }
+you = { text = "riepottelet", of = "5f256a" }
+
+[greater_air_elemental.burst]
+verb = { text = "hajoaa ulvovaksi tuulenpuuskaksi", of = "20a068" }
+
+[greater_earth_elemental.attack.0]
+verb = { text = "jyskyttää", of = "bc74c2" }
+you = { text = "jyskytät", of = "095c21" }
+
+[greater_earth_elemental.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[greater_fire_elemental.attack.0]
+verb = { text = "polttaa", of = "15a107" }
+you = { text = "poltat", of = "f910c9" }
+
+[greater_fire_elemental.burst]
+verb = { text = "hajoaa liekeiksi", of = "42fe31" }
+
+[greater_ice_elemental.attack.0]
+verb = { text = "jäädyttää", of = "514e99" }
+you = { text = "jäädytät", of = "40a7e4" }
+
+[greater_ice_elemental.burst]
+verb = { text = "särkyy huurteen ryöpyksi", of = "d11f75" }
+
+[greater_lightning_elemental.attack.0]
+verb = { text = "kärventää", of = "8a7083" }
+you = { text = "kärvennät", of = "f7739b" }
+
+[greater_lightning_elemental.burst]
+verb = { text = "hajoaa räsähtäväksi salamaksi", of = "f15159" }
+
+[greater_shadow]
+first_sight = { text = "Suuri varjo. Sen kosketus imee sinusta voimat.", of = "251b32" }
+
+[greater_shadow.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[greater_water_elemental.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[greater_water_elemental.burst]
+verb = { text = "murtuu pauhaavaksi aalloksi", of = "7d366e" }
+
+[green_hag.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[green_hag.on_eat]
+message = { text = "Karvasta kuin suon kaisla.", of = "f307ec" }
+
+[grundwyrgen.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[grundwyrgen.attack.1]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[grundwyrgen.attack.2]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[grundwyrgen.on_eat]
+message = { text = "Eltaantunutta kuin lammen pohja.", of = "7b347c" }
+
+[hand_of_glory.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[hare]
+depart = { text = "loikkii pois pimeyteen", of = "92ed71" }
+
+[hare.attack.0]
+verb = { text = "potkaisee", of = "32934e" }
+you = { text = "potkaiset", of = "1c13d9" }
+
+[hare.on_eat]
+message = { text = "Vähärasvaista riistanlihaa. Se pysyy hyvin sisällä.", of = "fc62fd" }
+
+[headless_knight.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[headless_knight.on_eat]
+message = { text = "Kylmää lihaa, eikä päätä ollenkaan.", of = "bfe283" }
+
+[hell_hound.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[hell_hound.on_eat]
+message = { text = "Se kytee koko matkan alas.", of = "85782c" }
+
+[hellmouth]
+dies = { text = "värähtää ja sulkeutuu", of = "ef75f3" }
+
+[hellmouth.summon]
+verb = { text = "päästää läpi", of = "f3f59e" }
+
+[hezrou]
+first_sight = { text = "Hezrou. Pelkkä sen löyhkä kaataisi hevosen.", of = "b659cb" }
+touch = { text = "{subject:Gen} löyhkä kääntää vatsasi.", of = "c71ad6" }
+unseen = { text = "Löyhkä kääntää vatsasi.", of = "e25de0" }
+
+[hezrou.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[hill_giant.attack.0]
+verb = { text = "nuijii", of = "48ad7a" }
+you = { text = "nuijit", of = "072ae0" }
+
+[hill_giant.on_eat]
+message = { text = "Karkeaa, riistanmakuista lihaa, ja sitä on vuorellinen.", of = "59f170" }
+
+[hill_giant.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[hill_troll.attack.0]
+verb = { text = "raastaa", of = "fcd7fc" }
+you = { text = "raastat", of = "a8548e" }
+
+[hill_troll.on_eat]
+message = { text = "Sitkeää kuin saapasnahka, ja se haisee turpeelta.", of = "15fd21" }
+
+[hoarstone.attack.0]
+verb = { text = "jyskyttää", of = "bc74c2" }
+you = { text = "jyskytät", of = "095c21" }
+
+[hoarstone.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[hobgoblin.on_eat]
+message = { text = "Tämä isohiidenliha on eltaantunutta!", of = "d2677a" }
+
+[hobgoblin_archer.on_eat]
+message = { text = "Tämä isohiidenliha on eltaantunutta!", of = "d2677a" }
+
+[hobgoblin_captain.on_eat]
+message = { text = "Tämä isohiidenliha on eltaantunutta!", of = "d2677a" }
+
+[hobgoblin_legionnaire.on_eat]
+message = { text = "Tämä isohiidenliha on eltaantunutta!", of = "d2677a" }
+
+[hobgoblin_sergeant.on_eat]
+message = { text = "Tämä isohiidenliha on eltaantunutta!", of = "d2677a" }
+
+[hobgoblin_warcaster.on_eat]
+message = { text = "Tämä isohiidenliha on eltaantunutta ja karvasta.", of = "438a24" }
+
+[hobgoblin_warlord.on_eat]
+message = { text = "Tämä isohiidenliha on eltaantunutta!", of = "d2677a" }
+
+[horned_devil.attack.0]
+verb = { text = "puhkoo", of = "6bd394" }
+you = { text = "puhkot", of = "944765" }
+
+[hound]
+depart = { text = "hiipii pois pimeyteen", of = "c0cde5" }
+
+[hound.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[hound.on_eat]
+message = { text = "Koiraa. Yrität olla ajattelematta sitä.", of = "209a22" }
+
+[hound_of_the_hunt.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[hound_of_the_hunt.on_eat]
+message = { text = "Haudankylmää lihaa, ja villiä.", of = "7fb71b" }
+
+[hrimwyrm.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[hrimwyrm.attack.1]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[hrimwyrm.attack.2]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[hrimwyrm.on_eat]
+message = { text = "Kalpeaa, tiivistä lihaa, joka turruttaa leuat.", of = "fa5fbd" }
+
+[hrimwyrm.breath]
+verb = { text = "syöksee huurretta", of = "4ce477" }
+
+[hydra]
+first_sight = { text = "Hydra. Jokainen pää puree, eikä niistä pääse eroon sitä tappamalla.", of = "d9ddf4" }
+
+[hydra.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[hydra.attack.1]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[hydra.attack.2]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[hydra.attack.3]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[hydra.attack.4]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[hydra.on_eat]
+message = { text = "Sitkeää ja karvasta, ja se nytkähtelee.", of = "08c963" }
+
+[hydra_head.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[hydra_head.on_eat]
+message = { text = "Sitkeää ja karvasta.", of = "8624c3" }
+
+[ice_devil]
+touch = { text = "{subject:Ela} huokuu purevaa pakkasta.", of = "9f0131" }
+unseen = { text = "Pureva pakkanen hiipii ylitsesi.", of = "7470e5" }
+
+[ice_devil.attack.0]
+verb = { text = "repii", of = "6437fb" }
+you = { text = "revit", of = "003f27" }
+
+[ice_elemental.attack.0]
+verb = { text = "jäädyttää", of = "514e99" }
+you = { text = "jäädytät", of = "40a7e4" }
+
+[ice_elemental.burst]
+verb = { text = "särkyy huurteen ryöpyksi", of = "d11f75" }
+
+[ice_troll.attack.0]
+verb = { text = "raastaa", of = "fcd7fc" }
+you = { text = "raastat", of = "a8548e" }
+
+[ice_troll.on_eat]
+message = { text = "Kylmää kuin jää, josta se tuli.", of = "6e62a1" }
+
+[imp.attack.0]
+verb = { text = "pistää", of = "9b3c26" }
+you = { text = "pistät", of = "08a413" }
+
+[incubus]
+first_sight = { text = "Inkubus. Kauniit kasvot ja kauniit sanat; vartioi kukkaroasi.", of = "c46bd4" }
+
+[incubus.attack.0]
+verb = { text = "suutelee", of = "90d4fa" }
+you = { text = "suutelet", of = "f396aa" }
+
+[incubus.on_eat]
+message = { text = "Se maistuu joltakin, jolle et löydä nimeä.", of = "7faf28" }
+
+[invisible_stalker]
+first_sight = { text = "Näkymätön vaanija, kerrankin näkyvissä. Se ei pysy näkyvissä kauan.", of = "0551d3" }
+
+[invisible_stalker.attack.0]
+verb = { text = "viiltää", of = "a9ec69" }
+you = { text = "viillät", of = "562d35" }
+
+[invisible_stalker.burst]
+verb = { text = "hajoaa ulvovaksi tuulenpuuskaksi", of = "20a068" }
+
+[iron_gate]
+dies = { text = "värähtää ja sulkeutuu", of = "ef75f3" }
+
+[iron_gate.summon]
+verb = { text = "päästää läpi", of = "f3f59e" }
+
+[knocker.attack.0]
+verb = { text = "takoo", of = "a5c999" }
+you = { text = "taot", of = "ed5ab3" }
+
 [kobold.on_eat]
 message = { text = "Tämä koboldinliha maistuu kamalalta!", of = "600bb1" }
+
+[kobold_alchemist.on_eat]
+message = { text = "Tämä koboldinliha maistuu kamalalta, ja lampunöljyltä!", of = "e083d5" }
+
+[kobold_alchemist.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[kobold_archer.on_eat]
+message = { text = "Tämä koboldinliha maistuu kamalalta!", of = "600bb1" }
+
+[kobold_shaman.on_eat]
+message = { text = "Se maistuu kamalalta, ja karvailta yrteiltä.", of = "7bce80" }
+
+[kobold_zombie.attack.0]
+verb = { text = "moukaroi", of = "0f02ed" }
+you = { text = "moukaroit", of = "ac2fdb" }
+
+[kobold_zombie.on_eat]
+message = { text = "Se oli mätä jo kauan ennen kuolemaansa.", of = "1a4171" }
+
+[korred.attack.0]
+verb = { text = "moukaroi", of = "0f02ed" }
+you = { text = "moukaroit", of = "ac2fdb" }
+
+[large_spider]
+depart = { text = "vipeltää takaisin pimeyteen", of = "0a8f34" }
+
+[large_spider.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[large_spider.on_eat]
+message = { text = "Karvasta, eikä se sovi vatsallesi.", of = "e0e6dc" }
+
+[lemure.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[lesser_air_elemental.attack.0]
+verb = { text = "riepottelee", of = "c83702" }
+you = { text = "riepottelet", of = "5f256a" }
+
+[lesser_air_elemental.burst]
+verb = { text = "hajoaa ulvovaksi tuulenpuuskaksi", of = "20a068" }
+
+[lesser_earth_elemental.attack.0]
+verb = { text = "jyskyttää", of = "bc74c2" }
+you = { text = "jyskytät", of = "095c21" }
+
+[lesser_earth_elemental.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[lesser_fire_elemental.attack.0]
+verb = { text = "polttaa", of = "15a107" }
+you = { text = "poltat", of = "f910c9" }
+
+[lesser_fire_elemental.burst]
+verb = { text = "hajoaa liekeiksi", of = "42fe31" }
+
+[lesser_ice_elemental.attack.0]
+verb = { text = "jäädyttää", of = "514e99" }
+you = { text = "jäädytät", of = "40a7e4" }
+
+[lesser_ice_elemental.burst]
+verb = { text = "särkyy huurteen ryöpyksi", of = "d11f75" }
+
+[lesser_lightning_elemental.attack.0]
+verb = { text = "kärventää", of = "8a7083" }
+you = { text = "kärvennät", of = "f7739b" }
+
+[lesser_lightning_elemental.burst]
+verb = { text = "hajoaa räsähtäväksi salamaksi", of = "f15159" }
+
+[lesser_water_elemental.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[lesser_water_elemental.burst]
+verb = { text = "murtuu pauhaavaksi aalloksi", of = "7d366e" }
+
+[lich]
+first_sight = { text = "Kalmanvelho. Velho, joka ei suostunut kuolemaan, eikä ole kuollut.", of = "c3b0ac" }
+
+[lich.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[lich_drake.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[ligetdry.attack.0]
+verb = { text = "lyö", of = "6fdbe3" }
+you = { text = "lyöt", of = "b4af6a" }
+
+[ligetdry.on_eat]
+message = { text = "Se rätisee kielellä.", of = "e39a5c" }
+
+[lightning_elemental.attack.0]
+verb = { text = "kärventää", of = "8a7083" }
+you = { text = "kärvennät", of = "f7739b" }
+
+[lightning_elemental.burst]
+verb = { text = "hajoaa räsähtäväksi salamaksi", of = "f15159" }
+
+[loam_man.attack.0]
+verb = { text = "jyskyttää", of = "bc74c2" }
+you = { text = "jyskytät", of = "095c21" }
+
+[lords_gate]
+dies = { text = "värähtää ja sulkeutuu", of = "ef75f3" }
+
+[lords_gate.summon]
+verb = { text = "päästää läpi", of = "f3f59e" }
+
+[lynx]
+depart = { text = "sulautuu takaisin puiden sekaan", of = "58be81" }
+
+[lynx.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[lynx.on_eat]
+message = { text = "Laihaa kissanlihaa, hapanta ja sitkeää.", of = "bd73d8" }
+
+[magma_crawler.attack.0]
+verb = { text = "korventaa", of = "c269e2" }
+you = { text = "korvennat", of = "5085ac" }
+
+[magma_crawler.burst]
+verb = { text = "räjähtää magman ryöpyksi", of = "f769b0" }
+
+[mannikin.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[marilith.attack.0]
+verb = { text = "sivaltaa", of = "7d0821" }
+you = { text = "sivallat", of = "73e821" }
+
+[marsh_troll.attack.0]
+verb = { text = "raastaa", of = "fcd7fc" }
+you = { text = "raastat", of = "a8548e" }
+
+[marsh_troll.on_eat]
+message = { text = "Rustoa ja suovettä.", of = "4ee0f9" }
+
+[meenlock.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[mezzoloth.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[mimic_1.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_2.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_3.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_4.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_5.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_6.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_7.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_8.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_9.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_10.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_11.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_12.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_13.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_14.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_15.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_16.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_17.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_18.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_19.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_20.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_21.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_22.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_23.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_24.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_25.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_26.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_27.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_28.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_29.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_30.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_31.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_32.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_33.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_34.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_35.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_36.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_37.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_38.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_39.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_40.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_41.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_42.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_43.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_44.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_45.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_46.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_47.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_48.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_49.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_50.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_51.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_52.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_53.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_54.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_55.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_56.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_57.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_58.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_59.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mimic_60.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[mud_golem.attack.0]
+verb = { text = "jyskyttää", of = "bc74c2" }
+you = { text = "jyskytät", of = "095c21" }
+
+[mummy.attack.0]
+verb = { text = "moukaroi", of = "0f02ed" }
+you = { text = "moukaroit", of = "ac2fdb" }
+
+[mummy.on_eat]
+message = { text = "Pölyä ja pihkaa.", of = "eaecae" }
+
+[mummy_king.attack.0]
+verb = { text = "moukaroi", of = "0f02ed" }
+you = { text = "moukaroit", of = "ac2fdb" }
+
+[mummy_king.on_eat]
+message = { text = "Pölyä, pihkaa ja kadonneen kuningaskunnan kultaa.", of = "20bd68" }
+
+[mummy_lord.attack.0]
+verb = { text = "moukaroi", of = "0f02ed" }
+you = { text = "moukaroit", of = "ac2fdb" }
+
+[mummy_lord.on_eat]
+message = { text = "Pölyä, pihkaa ja lehtikultaa.", of = "443d40" }
+
+[mummy_priest.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[mummy_priest.on_eat]
+message = { text = "Pölyä ja pihkaa.", of = "eaecae" }
+
+[nalfeshnee]
+touch = { text = "{subject:Ela} vyöryy kauhua.", of = "73a8c9" }
+
+[nalfeshnee.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[necromancer.summon]
+verb = { text = "nostattaa", of = "709423" }
+
+[night_hag.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[night_hag.on_eat]
+message = { text = "Karvasta kuin paha uni.", of = "3216bf" }
+
+[night_mare]
+first_sight = { text = "Painajainen. Älä katso sitä; se katsoo takaisin.", of = "2af4bd" }
+
+[night_mare.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[nightganger.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[nightganger.on_eat]
+message = { text = "Haudankylmää lihaa, ja karvasta kuin yö.", of = "a6868c" }
+
+[nightmare.attack.0]
+verb = { text = "tallaa", of = "dfbde4" }
+you = { text = "tallaat", of = "949083" }
+
+[nightmare.on_eat]
+message = { text = "Tuhkaa ja rikkiä.", of = "fef428" }
+
+[nightwing.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[nightwing.on_eat]
+message = { text = "Kylmää ja nahkeaa, ja se haisee luolalta.", of = "cd0600" }
+
+[nightworm]
+first_sight = { text = "Yömato. Syvyys on lähettänyt ylös pahimpansa.", of = "61b806" }
+
+[nightworm.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[nightworm.on_eat]
+message = { text = "Virstan verran kylmää, mustaa lihaa.", of = "6ac45f" }
+
+[nihtscinna.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[nihtscinna.on_eat]
+message = { text = "Varjon kuori, joka ei paina juuri mitään.", of = "d39fb8" }
+
+[nithdraca.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[nithdraca.attack.1]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[nithdraca.attack.2]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[nithdraca.on_eat]
+message = { text = "Tummaa, vielä kytevää lihaa, joka nostaa kieleen rakkoja.", of = "d73a76" }
+
+[nithdraca.breath]
+verb = { text = "syöksee tulta", of = "4454fc" }
+
+[nithdraca.summon]
+verb = { text = "kutsuu syvyyksistä", of = "0d015a" }
+
+[nosferatu]
+first_sight = { text = "Nosferatu. Sen silmät tahtoisivat pidellä sinua, ja sen hampaat myös.", of = "69d840" }
+
+[nosferatu.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[nosferatu.on_eat]
+message = { text = "Kylmää, ja kuhisee ruttoa.", of = "ab41a6" }
+
+[nycaloth.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[nymph]
+first_sight = { text = "Nymfi. Suloinen ja pitkäkyntinen; pidä huolta reppusi.", of = "714550" }
+
+[nymph.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[ogre.attack.0]
+verb = { text = "jyskyttää", of = "bc74c2" }
+you = { text = "jyskytät", of = "095c21" }
+
+[ogre.on_eat]
+message = { text = "Sitkeää, ja se haisee mörölle.", of = "ecf0c9" }
+
+[ogre_mage.attack.0]
+verb = { text = "jyskyttää", of = "bc74c2" }
+you = { text = "jyskytät", of = "095c21" }
+
+[ogre_mage.on_eat]
+message = { text = "Se maistuu mörölle, ja jollekin karvaalle.", of = "9b450c" }
+
+[ogre_mauler.attack.0]
+verb = { text = "jyskyttää", of = "bc74c2" }
+you = { text = "jyskytät", of = "095c21" }
+
+[ogre_mauler.on_eat]
+message = { text = "Sitkeää, ja se haisee mörölle.", of = "ecf0c9" }
+
+[ogre_zombie.attack.0]
+verb = { text = "moukaroi", of = "0f02ed" }
+you = { text = "moukaroit", of = "ac2fdb" }
+
+[ogre_zombie.on_eat]
+message = { text = "Se oli mätä jo kauan ennen kuolemaansa.", of = "1a4171" }
+
+[orc_archer.on_eat]
+message = { text = "Tämä örkinliha on eltaantunutta!", of = "68eeeb" }
+
+[orc_berserker.on_eat]
+message = { text = "Tämä örkinliha on eltaantunutta!", of = "68eeeb" }
+
+[orc_bowman.on_eat]
+message = { text = "Tämä örkinliha on eltaantunutta!", of = "68eeeb" }
+
+[orc_high_shaman.on_eat]
+message = { text = "Se maistuu eltaantuneelta, savulta ja karvailta yrteiltä.", of = "55714b" }
+
+[orc_raider.on_eat]
+message = { text = "Tämä örkinliha on eltaantunutta!", of = "68eeeb" }
+
+[orc_runt.on_eat]
+message = { text = "Tämä örkinliha on eltaantunutta!", of = "68eeeb" }
+
+[orc_shaman.on_eat]
+message = { text = "Se maistuu eltaantuneelta, savulta ja karvailta yrteiltä.", of = "55714b" }
+
+[orc_veteran.on_eat]
+message = { text = "Tämä örkinliha on eltaantunutta!", of = "68eeeb" }
+
+[orc_war_chief.on_eat]
+message = { text = "Tämä örkinliha on eltaantunutta!", of = "68eeeb" }
+
+[orc_warlord.on_eat]
+message = { text = "Tämä örkinliha on eltaantunutta!", of = "68eeeb" }
+
+[orc_warrior.on_eat]
+message = { text = "Tämä örkinliha on eltaantunutta!", of = "68eeeb" }
+
+[pale_drinker.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[panther]
+depart = { text = "katoaa äänettä", of = "06dcc3" }
+
+[panther.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[panther.on_eat]
+message = { text = "Laihaa kissanlihaa, hapanta ja sitkeää.", of = "bd73d8" }
+
+[pit_fiend]
+first_sight = { text = "Kuilupaholainen. Kuilun ruhtinas, ja se on nähnyt sinut.", of = "c6880b" }
+touch = { text = "{subject:Ela} vyöryy kauhua.", of = "73a8c9" }
+
+[pit_fiend.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[pixie]
+first_sight = { text = "Keijukainen. Kun se nauraa, reppusi kevenee.", of = "bcb6f4" }
+
+[pixie.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[polecat]
+depart = { text = "pinkaisee olkien sekaan", of = "bc7a21" }
+
+[polecat.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[polecat.on_eat]
+message = { text = "Eltaantunutta ja sitkeää; se pysyy sisällä, juuri ja juuri.", of = "7ce387" }
+
+[poltergeist.attack.0]
+verb = { text = "riepottelee", of = "c83702" }
+you = { text = "riepottelet", of = "5f256a" }
+
+[quasit.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[quickling.attack.0]
+verb = { text = "viiltää", of = "a9ec69" }
+you = { text = "viillät", of = "562d35" }
+
+[quicksilver_hound.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[rakshasa]
+first_sight = { text = "Rakshasa. Sen kasvot eivät ole sen omat; älä katso sitä silmiin.", of = "a79af0" }
+
+[rakshasa.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[rakshasa.on_eat]
+message = { text = "Se maistuu valheelta.", of = "75b439" }
 
 [rat.attack.0]
 verb = { text = "puree", of = "bd3846" }
@@ -31,3 +2522,439 @@ you = { text = "puret", of = "624b7b" }
 
 [rat.on_eat]
 message = { text = "Sitkeää ja riistanmakuista, mutta pysyy sisällä.", of = "0f21d5" }
+
+[raven]
+depart = { text = "räpyttelee pois pimeyteen", of = "e9b4dc" }
+
+[raven.attack.0]
+verb = { text = "nokkii", of = "352b61" }
+you = { text = "nokit", of = "198a53" }
+
+[raven.on_eat]
+message = { text = "Tummaa, sitkeää lihaa, joka maistuu raadolta.", of = "ad684d" }
+
+[redcap.attack.0]
+verb = { text = "polkee", of = "216181" }
+you = { text = "poljet", of = "caff6e" }
+
+[revenant.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[revenant.on_eat]
+message = { text = "Haudan lihaa.", of = "d0e050" }
+
+[rift]
+dies = { text = "värähtää ja sulkeutuu", of = "ef75f3" }
+
+[rift.summon]
+verb = { text = "päästää läpi", of = "f3f59e" }
+
+[rimethurse.attack.0]
+verb = { text = "jäädyttää", of = "514e99" }
+you = { text = "jäädytät", of = "40a7e4" }
+
+[rimethurse.burst]
+verb = { text = "särkyy huurteen ryöpyksi", of = "d11f75" }
+
+[rotting_dragon.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[rotting_dragon.on_eat]
+message = { text = "Lohikäärmettä, ja läpimätää.", of = "b59050" }
+
+[rotting_drake.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[rotting_drake.on_eat]
+message = { text = "Lentoliskoa, ja läpimätää.", of = "d5456e" }
+
+[rotting_troll.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[rotting_troll.on_eat]
+message = { text = "Peikkoa, ja läpimätää.", of = "d3f3a7" }
+
+[rust_monster]
+first_sight = { text = "Ruostehirviö. Sen tuntosarvet värähtelevät rautaasi kohti.", of = "8af829" }
+
+[rust_monster.attack.0]
+verb = { text = "piiskaa", of = "4dca04" }
+you = { text = "piiskaat", of = "e20452" }
+
+[rust_monster.on_eat]
+message = { text = "Se maistuu vanhoilta nauloilta.", of = "0b4ca8" }
+
+[satyr]
+touch = { text = "{subject:Gen} huilu tuudittaa sinua.", of = "43b5e4" }
+unseen = { text = "Hiljainen huilunsoitto tuudittaa sinua.", of = "81448b" }
+
+[satyr.attack.0]
+verb = { text = "puskee", of = "d6a350" }
+you = { text = "pusket", of = "ff430f" }
+
+[satyr.on_eat]
+message = { text = "Se maistuu vuohelta ja viiniltä.", of = "0c7070" }
+
+[screaming_skull]
+touch = { text = "{subject:Nom} kirkuu, ja veresi hyytyy.", of = "a4c4b3" }
+unseen = { text = "Kirkuna kaikuu seinien läpi, ja veresi hyytyy.", of = "170f85" }
+
+[screaming_skull.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[sea_hag]
+first_sight = { text = "Merinoita-akka. Niin iljettävä katsoa, että sydän horjuu.", of = "15f757" }
+
+[sea_hag.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[sea_hag.on_eat]
+message = { text = "Suolaa, mätää ja pahempaa.", of = "a00441" }
+
+[shadow]
+first_sight = { text = "Varjo. Se imee sinusta voimat, ja pimeys kätkee sen.", of = "412a7e" }
+
+[shadow.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[skeletal_rat.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[skeletal_wolf.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[skeleton.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[skeleton_archer.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[skeleton_warrior.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[sluagh.attack.0]
+verb = { text = "kynsii", of = "46f960" }
+you = { text = "kynsit", of = "25052a" }
+
+[spark_mote.burst]
+verb = { text = "puhkeaa", of = "034af8" }
+
+[spectre]
+first_sight = { text = "Kummitus. Sen kylmä käsi vie sen, mitä vuodet eivät anna takaisin.", of = "374cbb" }
+
+[spectre.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[sprite.attack.0]
+verb = { text = "pistää", of = "53a2f4" }
+you = { text = "pistät", of = "3b4840" }
+
+[staneoten.attack.0]
+verb = { text = "raatelee", of = "2c406b" }
+you = { text = "raatelet", of = "8625be" }
+
+[staneoten.on_eat]
+message = { text = "Kuin pureskelisi itse mäkeä.", of = "efe840" }
+
+[staneoten.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[stone_giant.attack.0]
+verb = { text = "nuijii", of = "48ad7a" }
+you = { text = "nuijit", of = "072ae0" }
+
+[stone_giant.on_eat]
+message = { text = "Se on kuin pureskelisi soraa.", of = "614314" }
+
+[stone_giant.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[stone_haunt.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[stone_mote.burst]
+verb = { text = "puhkeaa", of = "034af8" }
+
+[stone_troll.attack.0]
+verb = { text = "jyskyttää", of = "bc74c2" }
+you = { text = "jyskytät", of = "095c21" }
+
+[stone_troll.on_eat]
+message = { text = "Rahisevaa, kuin pureskelisi soraa.", of = "a21106" }
+
+[storm_gargoyle.attack.0]
+verb = { text = "raastaa", of = "fcd7fc" }
+you = { text = "raastat", of = "a8548e" }
+
+[storm_giant.attack.0]
+verb = { text = "lyö", of = "6fdbe3" }
+you = { text = "lyöt", of = "b4af6a" }
+
+[storm_giant.on_eat]
+message = { text = "Se pistelee kielellä.", of = "04774d" }
+
+[storm_giant.throw]
+verb = { text = "sinkoaa", of = "29f535" }
+
+[strange_spirit]
+depart = { text = "haalistuu ja katoaa", of = "fb4f27" }
+
+[succubus]
+first_sight = { text = "Sukkubus. Hänen suudelmansa ottaa enemmän kuin antaa.", of = "c385f3" }
+
+[succubus.attack.0]
+verb = { text = "suutelee", of = "90d4fa" }
+you = { text = "suutelet", of = "f396aa" }
+
+[succubus.on_eat]
+message = { text = "Se maistuu joltakin, jolle et löydä nimeä.", of = "7faf28" }
+
+[thunderhead.attack.0]
+verb = { text = "kärventää", of = "8a7083" }
+you = { text = "kärvennät", of = "f7739b" }
+
+[thunderhead.burst]
+verb = { text = "hajoaa räsähtäväksi salamaksi", of = "f15159" }
+
+[toad]
+depart = { text = "ryömii kiven alle", of = "b392ba" }
+
+[toad.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[toad.on_eat]
+message = { text = "Karvasta ja inhottavaa: suusi turtuu.", of = "17107f" }
+
+[troll.attack.0]
+verb = { text = "raastaa", of = "fcd7fc" }
+you = { text = "raastat", of = "a8548e" }
+
+[troll.on_eat]
+message = { text = "Se nytkähtelee, kun pureskelet.", of = "29629b" }
+
+[troll_chieftain.attack.0]
+verb = { text = "raastaa", of = "fcd7fc" }
+you = { text = "raastat", of = "a8548e" }
+
+[troll_chieftain.on_eat]
+message = { text = "Vanhaa, sitkeää ja täynnä arpia.", of = "22c706" }
+
+[troll_shaman.attack.0]
+verb = { text = "raastaa", of = "fcd7fc" }
+you = { text = "raastat", of = "a8548e" }
+
+[troll_shaman.on_eat]
+message = { text = "Se maistuu savulta ja karvailta yrteiltä.", of = "12137c" }
+
+[two_headed_troll.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[two_headed_troll.on_eat]
+message = { text = "Kaksi kertaa peikkoa, ja kaksi kertaa sitkeämpää.", of = "6d563d" }
+
+[ultroloth]
+first_sight = { text = "Ultrolotti. Älä katso sitä silmiin.", of = "53c472" }
+
+[ultroloth.attack.0]
+verb = { text = "lyö", of = "6fdbe3" }
+you = { text = "lyöt", of = "b4af6a" }
+
+[vampire]
+first_sight = { text = "Vampyyri. Varo sen puremaa, ja varo sen silmiä.", of = "67d8fd" }
+
+[vampire.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[vampire.on_eat]
+message = { text = "Kylmää, ja täynnä vierasta verta.", of = "0848f9" }
+
+[vampire_lord]
+first_sight = { text = "Vampyyriruhtinas. Se haluaa vain verta, ja se haluaa sinun vertasi.", of = "d295a3" }
+
+[vampire_lord.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[vampire_lord.on_eat]
+message = { text = "Kylmää, ja sakeaa kuin vanha viini.", of = "10f061" }
+
+[vampire_spawn]
+first_sight = { text = "Vampyyrin sikiö. Sen herra ei voi olla kaukana.", of = "9192e6" }
+
+[vampire_spawn.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[vampire_spawn.on_eat]
+message = { text = "Kylmää, ja täynnä jonkun toisen verta.", of = "624ea5" }
+
+[vrock]
+touch = { text = "{subject:Ela} vyöryy kauhua.", of = "73a8c9" }
+
+[vrock.attack.0]
+verb = { text = "raastaa", of = "fcd7fc" }
+you = { text = "raastat", of = "a8548e" }
+
+[waelcyrge.attack.0]
+verb = { text = "lävistää", of = "6b32d0" }
+you = { text = "lävistät", of = "34890b" }
+
+[waelcyrge.attack.1]
+verb = { text = "sivaltaa", of = "7d0821" }
+you = { text = "sivallat", of = "73e821" }
+
+[waelcyrge.on_eat]
+message = { text = "Raatolinnun lihaa.", of = "2bdbfc" }
+
+[ward_stone.attack.0]
+verb = { text = "näpäyttää", of = "b5826a" }
+you = { text = "näpäytät", of = "a5f227" }
+
+[warg.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[warg.on_eat]
+message = { text = "Sitkeää, riistanmakuista sudenlihaa.", of = "1f8479" }
+
+[washer_at_the_ford]
+first_sight = { text = "Kahlaamon pesijä. Vaatteet, joita hän pesee, ovat sinun omiasi.", of = "e22106" }
+touch = { text = "Sydämesi pettää, kun näet {subject:gen}.", of = "379485" }
+
+[washer_at_the_ford.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[water_elemental.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[water_elemental.burst]
+verb = { text = "murtuu pauhaavaksi aalloksi", of = "7d366e" }
+
+[water_mote.burst]
+verb = { text = "puhkeaa", of = "034af8" }
+
+[wealaf.attack.0]
+verb = { text = "viiltää", of = "a9ec69" }
+you = { text = "viillät", of = "562d35" }
+
+[wealaf.on_eat]
+message = { text = "Haudankylmää ja kuivaa kuin kummun pöly: kauan sitten kuolleen kuninkaan lihaa.", of = "7acf03" }
+
+[wealaf.summon]
+verb = { text = "manaa esiin", of = "7e83ad" }
+
+[welkin_wind.attack.0]
+verb = { text = "riepottelee", of = "c83702" }
+you = { text = "riepottelet", of = "5f256a" }
+
+[welkin_wind.burst]
+verb = { text = "hajoaa ulvovaksi tuulenpuuskaksi", of = "20a068" }
+
+[white_lady]
+first_sight = { text = "Valkea neito. Hänen näkemisensä on enne; hänen katseensa kohtaaminen vielä pahempaa.", of = "f38f85" }
+
+[white_lady.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[wight_lord.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[wild_huntsman.attack.0]
+verb = { text = "iskee", of = "b49b97" }
+you = { text = "isket", of = "a456c7" }
+
+[wild_huntsman.on_eat]
+message = { text = "Haudankylmää lihaa, joka ei ole koskaan lakannut juoksemasta.", of = "db00a3" }
+
+[will_o_wisp]
+first_sight = { text = "Virvatuli. Älä seuraa valoa.", of = "36f4f3" }
+
+[will_o_wisp.attack.0]
+verb = { text = "kärventää", of = "8a7083" }
+you = { text = "kärvennät", of = "f7739b" }
+
+[wolf]
+depart = { text = "livahtaa takaisin pimeyteen", of = "f018f0" }
+
+[wolf.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[wolf.on_eat]
+message = { text = "Sitkeää, riistanmakuista sudenlihaa.", of = "1f8479" }
+
+[wormhost]
+first_sight = { text = "Matoisäntä. Tapa se, niin madot tulevat ulos.", of = "fb6272" }
+
+[wormhost.attack.0]
+verb = { text = "moukaroi", of = "0f02ed" }
+you = { text = "moukaroit", of = "ac2fdb" }
+
+[wormhost.on_eat]
+message = { text = "Sen sisällä liikkuu yhä jotakin.", of = "cf2c2f" }
+
+[wormlord]
+first_sight = { text = "Matojen herra. Madot ovat hänen, ja niillä on nälkä.", of = "93b6ea" }
+
+[wormlord.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[wormlord.on_eat]
+message = { text = "Sen sisällä kaikki liikkuu.", of = "8846f0" }
+
+[wormlord.summon]
+verb = { text = "karistaa yltään", of = "ce694e" }
+
+[wraith]
+first_sight = { text = "Haamu. Haudan kylmyys tulee sen mukana.", of = "122fe3" }
+touch = { text = "{subject:Ela} huokuu kylmyyttä.", of = "750076" }
+unseen = { text = "Vilunväre hiipii ylitsesi.", of = "2f4ff5" }
+
+[wraith.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[wraith_lord]
+first_sight = { text = "Haamuruhtinas. Haudan kylmyys kulkee sen rinnalla.", of = "083146" }
+touch = { text = "{subject:Ela} huokuu kylmyyttä.", of = "750076" }
+unseen = { text = "Vilunväre hiipii ylitsesi.", of = "2f4ff5" }
+
+[wraith_lord.attack.0]
+verb = { text = "koskettaa", of = "883c7f" }
+you = { text = "kosketat", of = "8989b1" }
+
+[yeth_hound]
+touch = { text = "{subject:Ela} vyöryy kauhua.", of = "73a8c9" }
+
+[yeth_hound.attack.0]
+verb = { text = "puree", of = "bd3846" }
+you = { text = "puret", of = "624b7b" }
+
+[zombie.attack.0]
+verb = { text = "moukaroi", of = "0f02ed" }
+you = { text = "moukaroit", of = "ac2fdb" }
+
+[zombie.on_eat]
+message = { text = "Se oli mätä jo kauan ennen kuolemaansa.", of = "1a4171" }
