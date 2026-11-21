@@ -6,7 +6,7 @@
 id = "high_toby"
 name = "High Toby"
 object = "long_bow"
-affixes = ["sharp=2", "hunters:4", "steady:4", "of_precision:5"]
+affixes = ["sharp=2", "hunters=4", "steady=4", "of_precision=4"]
 level = 12
 # Four enchantments need its make (docs/dev/enchanting.md): Fine, a flawless amethyst inlay.
 quality = "fine"

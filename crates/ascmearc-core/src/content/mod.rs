@@ -12,6 +12,7 @@ mod access_status;
 mod access_world;
 mod action;
 mod affix;
+mod affix_value;
 mod alignment;
 mod ally;
 mod anim;
@@ -240,6 +241,8 @@ mod town;
 mod trap;
 mod tuning;
 mod unique;
+#[cfg(test)]
+mod unique_values_tests;
 mod unseen;
 mod validate;
 mod vault;
