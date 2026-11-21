@@ -96,9 +96,11 @@ overrides the vowel rule for every word of the entry (`"oliivi|öljy/1"`, `harmo
 (`forms = { par = "hiittä", pl_gen_nsa = "…" }`). `proper = true` with no class makes the entry a
 name (below). An entry with no class at all is refused ("no class: write the Kotus class after a
 slash"), as is a class the module lacks, a letter outside A–M, a word whose last part does not fit
-its class's shape ("`karhu/9`: class 9 (kala) takes a word ending in a or ä"), or a letter whose
+its class's shape ("`karhu/9`: class 9 (kala) takes a word ending in a or ä"), a letter whose
 consonants the stem does not have ("gradation A (kk~k) needs kk before the last vowel of
-`karhu`"). `Morphology::parse_word` is that check for the loader and the xtask; a refused entry
+`karhu`"), or a `|` with nothing on one side (`|`, `miekka|`, `pitkä||miekka`: "an empty compound
+part", #2038; such a `|` is no boundary, so the word is written with it). `Morphology::parse_word`
+is that check for the loader and the xtask; a refused entry
 **renders as written in every form** (class marks stripped, compounds joined), so one bad entry
 costs one word's grammar. A word that fits its class but means nothing (`hopöööääa/10`) inflects
 mechanically (`hopöööääalla`): the module judges shape, not meaning.

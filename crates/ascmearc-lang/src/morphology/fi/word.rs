@@ -1,6 +1,7 @@
 //! A Finnish lexicon entry, parsed: `"pitkä/10 miekka/9*A"`, `"kirja|käärö/1"`, `"Musta Wystan"`
 //! (`docs/design/localization.md` §6.3). Every word with a class inflects and agrees; a `|` joins
-//! the parts of a compound, of which the last inflects and sets the harmony; a word without a
+//! the parts of a compound, of which the last inflects and sets the harmony (every part non-empty:
+//! a `|` with nothing on one side refuses the entry, which renders as written); a word without a
 //! class stays as written. A proper name without any class (a literal, or `proper = true`)
 //! inflects by the rules for foreign names: a class chosen by its last letter, no gradation, and
 //! the link vowel `i` after a consonant (`Bran` → `Branin`).
@@ -61,11 +62,28 @@ impl Entry {
     pub(super) fn base_text(entry: &str) -> String {
         entry
             .split_whitespace()
-            .map(|token| strip_class(token).replace('|', ""))
+            .map(|token| joined(strip_class(token)))
             .collect::<Vec<_>>()
             .join(" ")
     }
 }
+
+/// `word`'s compound parts joined (`kirja|käärö` → `kirjakäärö`); a word with an empty part
+/// (`|`, `a|`, `|a`, `a||b`) is no compound and stays as written, bars and all.
+fn joined(word: &str) -> String {
+    if has_empty_part(word) {
+        word.to_string()
+    } else {
+        word.replace('|', "")
+    }
+}
+
+/// Whether `word` has a `|` with nothing on one side of it.
+fn has_empty_part(word: &str) -> bool {
+    word.contains('|') && word.split('|').any(str::is_empty)
+}
+
+const EMPTY_PART: &str = "an empty compound part: `|` joins two parts, `kirja|käärö`";
 
 /// `word` without its `/class[*letter]` mark.
 fn strip_class(word: &str) -> &str {
@@ -111,9 +129,15 @@ pub(super) fn parse(entry: &str, harmony: Option<Harmony>) -> Result<Entry, Stri
 
 fn parse_token(word: &str, harmony: Option<Harmony>) -> Result<Token, String> {
     let Some(slash) = word.rfind('/') else {
+        if has_empty_part(word) {
+            return Err(EMPTY_PART.to_string());
+        }
         return Ok(Token::Fixed(word.replace('|', "")));
     };
     let (base, mark) = (&word[..slash], &word[slash + 1..]);
+    if has_empty_part(base) {
+        return Err(EMPTY_PART.to_string());
+    }
     if mark.is_empty() {
         return Err("nothing after the slash; a class is `/9` or `/9*A`".to_string());
     }
