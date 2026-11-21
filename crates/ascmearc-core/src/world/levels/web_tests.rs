@@ -281,7 +281,10 @@ fn a_burning_web_burns_the_player_who_steps_in_and_a_death_by_it_is_said() {
     run(&mut w, "move:E");
     let death = w.state.death.as_ref().expect("burned to death");
     assert_eq!(death.cause, Some(Cause::Fire));
-    assert_eq!(Cause::Fire.epitaph(w.content()), "Burned to death");
+    assert_eq!(
+        crate::test_support::epitaph(w.content(), Cause::Fire),
+        "Burned to death"
+    );
 }
 
 #[test]

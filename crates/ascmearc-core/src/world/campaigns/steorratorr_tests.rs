@@ -206,7 +206,10 @@ fn the_tower_is_seven_floors_on_the_plains_footprint() {
     put_player(&mut w, STAIR);
     act(&mut w, "ascend");
     assert_eq!(
-        (w.perception().level_id(), w.perception().level_name()),
+        (
+            w.perception().level_id(),
+            crate::test_support::level_name(&w).as_str()
+        ),
         ("steorratorr_tower:1", "Steorratorr 2")
     );
     act(&mut w, "descend");

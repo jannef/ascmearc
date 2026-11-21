@@ -450,7 +450,6 @@ mod tests {
         let mut draft = Draft {
             scenario: Some(ScenarioPick {
                 id: "showcase".into(),
-                name: showcase.name.clone(),
                 seed: 1,
                 shows_seed: false,
                 character: Some(spec.clone()),

@@ -17,6 +17,7 @@
 
 use super::craft_make::{CraftOption, CraftStep, CraftStepKind};
 use crate::content::{AffixKind, Content, EnchantKind, ObjectDef, ObjectId};
+use crate::lang::{Arg, Phrase};
 use crate::magic::Affix;
 use crate::magic::describe::phrase;
 use crate::magic::loot::rolls_within;
@@ -134,13 +135,15 @@ pub(super) fn check(
     Ok(sealed)
 }
 
-/// The words of `categories` sealed, joined: "fire and the critical".
-pub(super) fn words(content: &Content, categories: &[String]) -> String {
+/// The words of `categories` sealed, a list said `{shut:and}` ("fire and the critical"): each
+/// the crystals table's family word as a `word:` phrase (it has no id of its own).
+pub(super) fn words(content: &Content, categories: &[String]) -> Arg {
     let table = content.crystals();
-    let words: Vec<&str> = (categories.iter())
+    let words = (categories.iter())
         .map(|c| (table.and_then(|t| t.family_word(c))).unwrap_or(c.as_str()))
+        .map(|word| Phrase::id(format!("word:{word}")).into())
         .collect();
-    crate::text::and_list(&words)
+    Arg::List(words)
 }
 
 /// A seal step's label: "seal", "second seal", "third seal".

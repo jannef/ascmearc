@@ -36,7 +36,8 @@ pub(super) fn recipe_rows(view: &PerceptionView<'_>) -> Vec<String> {
                 let reason = crate::messages::english_msg(content, &why.reason(content));
                 format!(" ({reason})")
             });
-            rows.push(format!("  {}: {}{why}", row.name, row.takes));
+            let takes = crate::messages::english_msg(content, &row.takes);
+            rows.push(format!("  {}: {takes}{why}", row.name));
         }
     }
     rows

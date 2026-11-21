@@ -124,16 +124,19 @@ impl SignScreen {
                 }
             })
             .collect();
-        let adjustment = |name: &str, stats: String| {
-            ui_with(
-                T::ADJUSTMENT,
-                &[("name", name.into()), ("stats", stats.into())],
-            )
+        let adjustment = |name: Arg, stats: String| {
+            ui_with(T::ADJUSTMENT, &[("name", name), ("stats", stats.into())])
         };
         let adjustments = format!(
             "{}   {}",
-            adjustment(&animal.name, adjustments(&animal.stats)),
-            adjustment(&element.name, adjustments(&element.stats))
+            adjustment(
+                content.sign_animal_arg(&animal.id),
+                adjustments(&animal.stats)
+            ),
+            adjustment(
+                content.sign_element_arg(&element.id),
+                adjustments(&element.stats)
+            )
         );
         Self {
             born,
@@ -232,7 +235,6 @@ mod tests {
         Draft {
             scenario: Some(ScenarioPick {
                 id: "showcase".into(),
-                name: showcase.name.clone(),
                 seed,
                 shows_seed: true,
                 character: showcase.character.clone(),

@@ -527,7 +527,8 @@ below). Its turns are `ActionKind::Craft` (`data/actions.toml` `craft = 1000`;
   `data/recipes.toml` row's where it names one, else `stock.toml`'s for the directory's skill, so
   a steel-headed arrow is Woodcraft's "Make"), the name `Lore::describe` of the made item ("a
   ruby-pommelled mithril long sword"; a counted recipe's plural, "flint arrows"), `uses` the
-  pieces counted, "an arrowhead for each made", and "the ruby".
+  pieces counted, "an arrowhead for each made", and "the ruby": messages the dialog renders
+  (docs/dev/localization.md "Reasons core composes").
 - **Start** (`World::start_making`): refused with no time by the row's `lack` (beyond skill: "That
   is beyond your skill."; no station: "There is no anvil here."; no knife; no launcher: "You
   have no bow ready."), then by the plan's reason. Then "You set to work on the long sword at the anvil." and the work driver's

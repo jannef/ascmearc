@@ -18,7 +18,7 @@ use crate::lang::Msg;
 use crate::msg;
 use crate::rng::draw;
 use crate::status::Effect;
-use crate::world::combat::fight::Harm;
+use crate::world::combat::fight::{Harm, Words};
 use crate::world::{ActorId, Spent, World};
 use serde::{Deserialize, Serialize};
 
@@ -291,7 +291,7 @@ impl World {
                 true => content.status_phrase(status),
                 false => content.damage_type_phrase(rider.kind),
             };
-            self.say_spell_of(noun, &def.verb, made, events);
+            self.say_spell(Words::of_kind(noun, rider.kind, &content), made, events);
             if harmed {
                 self.spell_type_lands(target, Some(rider.kind), &[attacker], events);
             }

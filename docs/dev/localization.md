@@ -292,7 +292,8 @@ docs hold the table): `creature:<id>`, `object:<id>` (with `written`, `written_p
 `adjective`), `gem_size:<id>`, `gem_cut:<id>`, `stock:<material id>` (a piece's form word),
 `terrain:<id>`, `room:<id>` (a special room's name, #1998), `tag:<tag>` (a creature tag),
 `vision:<id>` (a vision profile's name), `label:scroll|wand|rod|potion` (an unidentified type's
-name with its `{label}` and `{colour}` slots), `colour:<colour>`, and `word:<text>`: a word the
+name with its `{label}` and `{colour}` slots), `colour:<colour>`, `item_tag:<tag>` (a tag an
+item's name says after it, #2028), and `word:<text>`: a word the
 data names without an id of its own (a natural attack's "bite", a thrown "stone", "something"),
 keyed
 by its English, which is the word; `disease:<id>` (its name as written, "the shakes"); and
@@ -329,7 +330,7 @@ of data, `damage_type:<id>.verb`), a recipe `recipe:<id>` (its name as written, 
 case), and a guild `guild:<id>`: its name without the article, a common noun when the data writes
 it with "the" and so said `{guild:the}` ("names you a Tin of the Weyfarers' Gilde", the
 character screen's rank row), else proper. A birth sign's breath and Blaze, said as a spell's
-blows (`World::say_spell_of`), are `sign_noun:<active>` (the ability's name in lower case, "fire
+blows (`World::say_spell`), are `sign_noun:<active>` (the ability's name in lower case, "fire
 breath"); a retaliating status's blow (`gifts.rs`) is its `damage_type:` or `status:` phrase. A
 caster style is a weapon skill (`weapon_skill:<id>`). Left as text: the typed slot id
 (`items.no_slot`), a dev zone's kind, composed text (#1997: a spell's roll and an attack's
@@ -351,9 +352,13 @@ talents), chargen talents, sign, weapon skills, magic, scribe (the school headin
 profession, craft pick, and equipment screens' rows and headings, `PagedList::new`'s item
 classes, and the Characters list and the graveyard's race and classes. A character's classes
 (`character::class_arg`) are a phrase or the nested `character.class_level` ("Bard 30") and
-`character.classes` ("Bard 30, Hunter 4"), said `label`; the dump says them in English. Still
-text: a talent's choice in the level-up list (`Choice::name`, as the data writes each kind), the
-horoscope's animal and element names, and the abilities menu's rows and source headings.
+`character.classes` ("Bard 30, Hunter 4"), said `label`; the dump says them in English. The
+rest (#2028): a talent's choices in the level-up list are `Content::choice_phrase` said in
+`Choice::listed_form`, `label` for a weapon skill or a skill ("Long Blades"), `bare` for the rest
+("fire"); the sign screen's animal and element `sign_animal:<id>` and `sign_element:<id>`; the
+abilities menu's rows their `ability:` phrase (or the prayer's title, text) said `label`, its
+headings `Source::name`, a `words.source_*` said `Bare`; a resistance row's damage types each a
+`damage_type:` phrase joined by the character screen's `resistance_kinds`.
 
 **The data's words beside a name** (#1995, `content/data_word.rs`, whose module docs hold both
 tables) have keys of their own, chosen by kind: a noun or an adjective a phrase is built of is a
@@ -371,9 +376,23 @@ data"). The lexicon ids: `trap:<id>` (a trap's name) and `trap_noun:<id>` (what 
 creature's `creature:<id>.breath.verb`, `.burst.verb`, `.summon.verb`, each said in a `verb`,
 `dies`, or `sign` role (`Arg::Said`, which renders whatever the role's form). A pick's label
 (`CraftStep::label`) is a phrase: `part:<id>`, `material:<id>`, `object:<id>` counted as several
-("arrowheads"), or the `word:` core picks ("item", "seal", a material group). Left for their
-slices: a trap's `verb`, a weapon's and a natural attack's verbs, a creature's `dies` verb, a
-spell's `look` noun and verb (`say_spell`, the burst dialog), and the epitaph's text (#1997).
+("arrowheads"), or the `word:` core picks ("item", "seal", a material group).
+
+**The data's verbs left by #1995** (#2028, part of #1949) are lines of data too, a verb with a
+`.you` line beside it, the verb in the player's person, which the data does not write (English
+makes it, `data_word::second_person`; a translation writes its own): a trap's `trap:<id>.verb`,
+a weapon's `object:<id>.verb` (`Content::weapon_verb`), a natural attack's
+`creature:<id>.attack.<n>.verb` (`n` from 0 in the order struck, `Words::natural`), a throw's
+`creature:<id>.throw.verb` (no `.you`), a creature's death `creature:<id>.dies`
+(`CreatureDef::dies_arg`, else "dies"), and a spell's blows `spell:<id>.cast.verb`, what hits
+from it a lexicon id, `spell_noun:<id>` (`Content::spell_noun_phrase`; `Words::of_spell` both).
+`World::say_spell` takes the `Words` (a spell's, a damage type's for a birth sign's breath and
+Blaze or a creature's breath and burst), a reflected bolt and the burst dialog
+(`Aim::catches_reader`) the noun. A heal searing the undead says words set in code
+(`SpellLook::own` false: "the light of mending sears", as written). The launcher in
+`RecipeLack::reason` and in a recipe row's `takes` is `Content::launcher_phrase`; an epitaph
+names its trap `trap:<id>` and its spell's noun `spell_noun:<id>` (below). Still text: a
+creature's breath and burst noun, and a natural attack's or throw's name (`word:`).
 
 **Number comes from data** (#1965): a phrase is plural by its count or by the lexicon's `many` (a
 noun plural though it names one thing, "flames"); a proper name or a literal is one thing ("The
@@ -416,7 +435,8 @@ wolf", "the goblin's long sword"); `Modifier::Made` (the main material) with
 `Material`/`Part` (notable materials, "ruby-pommelled") named as `en::made_names` says (moved
 from `content/part.rs::names`, which wraps it); an `Of` word said with "of" unless it says it
 ("of the Bear"); a head word's `{label}` and `{colour}` slots filled from the phrase's `Label`
-and its `colour:` adjective; `Note::Tags` ("(magic, cursed)"), `Note::Charges` ("(7 charges)"),
+and its `colour:` adjective; `Note::Tags` ("(magic, cursed)", each a lexicon word in its base
+form), `Note::Charges` ("(7 charges)"),
 `Note::Base` (", a long sword"); a proper head counted in the plural when there are several.
 `Language::phrase(&phrase, form, lex)` renders a phrase alone.
 
@@ -537,8 +557,8 @@ stops a reading or a writing is `World::came_msg` in a `came` role.
 `world/crafting/` (`messages/crafting.toml`, L4f, its first half: making a recipe, cutting,
 enchanting, crystals, digging, the field forge). A refusal a function returns for its caller to
 say (`cut.rs::refusal`, `enchant.rs::refusal`, `dig_refusal`, `field_forge.rs::forge_ground`) is
-a `MessageId`; the recipes' `resolve` returns its reason as a `Msg`, and the plan the dialog
-shows renders it in English (`craft_make.rs::english`) whatever the language, until core's words move to the app (#1949). An item being enchanted is
+a `MessageId`; the recipes' `resolve` returns its reason as a `Msg`, which the plan the dialog
+shows refuses with, rendered in the language shown (#2028). An item being enchanted is
 `enchant.rs::item_phrase` said `{item:the}` (a known rare by its name, "the Grim Bite"), several of a
 stack by `Lore::names_phrase` (what they are called as made); a salvaged affix's words ("its
 Sharp magic", "some of its magic") are nested messages in `catch_magic` and `goes_out_unread`;
@@ -562,8 +582,8 @@ converted (#1949): a rig's id as the action wrote it. The open commission keeps 
 phrase (`called_phrase`, "your patron", said `the`) and what they said as a `Speech`, both
 saved by their keys; its quest-log view (`patron.rs::commission`) is named `commission_name`
 ("Commission: {work:a}") and says its objective and status from `commission_*`. The rig list's
-"what it takes" is a message (`rig.rs::takes_words`, "Reasons core composes"); left for its own
-work: the craft dialog's plan (`CraftPlan`), screen text built in core.
+"what it takes" is a message (`rig.rs::takes_words`, "Reasons core composes"), as are the craft
+dialog's plan (`CraftPlan`) and a recipe's row's `takes` (#2028).
 
 `world/classes/`'s first half (`messages/classes.toml`, L4c: `ascetic`, `calling`, `charge`,
 `class_ability`, `class`, `consecrate`, `invest`, `mark`) says the lines its data writes as
@@ -715,8 +735,9 @@ the weather's (`Weather::name`; its `Display` is its id, developer text), the we
 screen's sections (`Section::name`), and a compass direction as a sentence says it
 (`Dir::compass_word`: the voice heard from afar, a sound's direction, the way to an ally in the
 Heal ability's list). A worn thing's mark (`equipment::mark`) is an `Arg`: the slot's `mark` as the data's text, or
-`words.in_both_hands` nesting it. A vision profile is the lexicon id `vision:<id>` (its name as
-written, "Darkvision": the dev line and character creation) and a creature tag `tag:<tag>`
+`words.in_both_hands` nesting it. A vision profile is the lexicon id `vision:<id>` (its name in
+lower case, "darkvision", a talent's need; its `label` as written, "Darkvision": the dev line
+and character creation) and a creature tag `tag:<tag>`
 (`tag::spoken`'s words, "marsh thing": a kill quest's target). What stays English: the quest
 roll's and a bane affix's descriptions, `Requirement::words` (the wiki's, which renders the bands
 in English), and a class's refusal (gender by its id, which is its English word). The files
@@ -765,12 +786,31 @@ owner by `en`), the way to it a compass word (`Dir::compass_word`). **An attack'
 `combat.attack_damage` with each kind a `damage_type:` phrase (`attack_kind_or` between two)
 and each rider the item lists' `items.numbers_with_rider`. **A spell's roll** (`roll_words`,
 `SpellRoll::text`) is a `magic.roll_*` clause, its damage type a `damage_type:` phrase, and a
-reroll (`reroll_words`) `magic.reroll` with its faces said `{faces:and}`. Text roles inside them:
-the dice, and a spell type's rule (data words with no line of data yet); and until their data has
-ids, a birth sign's animal and element, a vision's name in a talent's need (lower case there,
-where `vision:` is as written), an `any_weapon_skill`'s words, a launcher, a stock's group. Still English: `CraftPlan` (the craft dialog's plan, its `english` reason why
-not), a recipe row's `takes`, and `magic/describe.rs` (an item's description, which renders a
-wand's roll in English).
+reroll (`reroll_words`) `magic.reroll` with its faces said `{faces:and}`, its type's rule the
+line of data `spells:types.<damage type>.words` (#2028). Text roles inside them: the dice; and
+until their data has ids, an `any_weapon_skill`'s words, a launcher, a stock's group (a birth
+sign's animal and element are `sign_animal:` and `sign_element:`, a vision `vision:`, #2028).
+Still English: `magic/describe.rs` (an item's description, which renders a wand's
+roll in English; #2029).
+
+**The craft plan and a recipe's row** (#2028, its first part). The craft dialog's plan
+(`CraftPlan`, built by `craft_make.rs::craft_plan`, `set.rs::plan`, and `enchant.rs::plan`) holds
+messages the dialog renders in the language shown, and `craft_plan` refuses with the rules' own
+`Msg` (no longer rendered to English in core): its `verb` a line of data, the recipe's
+`recipe:<id>.verb`, else its profession row's `recipes:profession.<skill>.verb`, else its stock's
+`stock:group.<group>.verb` or `stock:gems.verb` (`Profession::verb_key`), else Set's and an
+enchanting's name `recipe:<id>`, else `crafting.plan_make`; its `name` a nested message that asks
+the form each plan used (`work_counted` for a made item and Set's, `work_the` for the item an
+enchanting works on, `plan_plural` for a batch); its `uses` (`None` for nothing) a
+`crafting.plan_uses` list of `work_counted`, `work_each`, and `work_the` clauses (an enchanting's
+`plan_more`, `plan_keeping`, and the seals' families as `word:` phrases said `{shut:and}`,
+`plan_uses_sealing`); its `time` `work_about`. **What a recipe takes** (`RecipeRow::takes`,
+`craft.rs::takes`) is a `Msg`: its parts chained by `crafting.takes_listed` (", ", as
+`reach_listed`), a part's choices by `takes_either` ("or"), each a `takes_*` or `work_*` clause
+(an input an `object:` phrase with its count, a station `terrain:`, a launcher `launcher:`, an
+enchanting's crystals `takes_crystals`). The profession screen renders it (`text::ui_msg`), the
+`abilities` dump in English. A text role inside: a piece of any of several materials, which
+`piece::any_names` composes in English ("an iron or brass ingot"); one material is its phrase.
 
 **The look line's and the cell's words** (#1998, its first half). **An item as the lists name
 it** (`Lore::listed`) is `items.listed`, the phrase `counted` with `listed_numbers` and
@@ -797,9 +837,37 @@ the Pit's `levels.the_pit`), so where stairs lead (`PerceptionView::leads_to`,
 `known_locations`, rendered English by the `locations` dump) and the stairs' lines
 (`World::level_name`, `place_name`) say them by key. A `Place` and a `HiddenLocation` keep the
 data's English beside the key, which a quest's `waits` and the wiki name them by; the game never
-shows it. Still text: the current level's name (`LevelState::name`: the status bar, a save's
-summary), a hidden location's name where a quest marks it (`people.marks_on_map`, whose "The"
-`quest.rs::place` lowers), and the scenario's name on the new-run and chargen screens.
+shows it.
+
+**The last place names, epitaphs, and wares** (#2028, its part). **The current level's name**
+(`LevelState::name`, `PerceptionView::level_name`) is an `Arg` made as the level is
+(`Content::said_level_name`): a hand-made or a branch level's by its key, a local area's its
+cell's `terrain:` phrase; the status bar, the death screen, and a save's summary show it as a
+label (`text::label_in`, "Road", "Grundlēas 1"), and where the player died (`Death::place`) keeps
+it too. A save's summary keeps it as the `Arg` (`Summary::place`, named by `place_name`; one
+another version wrote as text reads as text), and the graveyard's record, whose format outlives
+versions, writes it as text in the language shown. **A hidden location a quest marks**
+(`people.marks_on_map`) is said by its key as the data writes it, a name with its own article
+written in lower case ("the Skeul Hir", as a unique's, `en::own_article`); so is a level or
+branch named in a quest's task (`quest.rs::place_of`, said `{place:bare}`: a level's key, a
+branch level's `levels.branch_level`, a branch's `dungeon:<id>.name`), the showcase's "the Hub",
+"the Arena", and "the Depths" among them (a label capitalizes it). **The scenario's name** on the new-run and chargen
+screens is its `scenario:<id>.name` as a label (`ScenarioPick` keeps only the id). **An
+epitaph** (`Cause::epitaph`) is a `health.epitaph_*` message: the meal or their own scroll an
+`object:` phrase, the trap `trap:` (`Content::trap_phrase`), the spell miscast `spell:`, their
+own spell's look noun `spell_noun:<id>` (`Content::spell_noun_phrase`); the death screen renders it, the json dump in English. **A trader's ware**
+(`TopicView::ware`) is a `people.ware` message, the item `Lore::listed`, each affix and power
+line after it `people.ware_listed`; the lines are `describe::lines`' English text until
+`magic/describe.rs` is converted.
+
+**An item's tags and the last labels** (#2028). A phrase's `Note::Tags` holds lexicon words, not
+English: each morphology says each tag in its base form (`en` and `generic` the lexicon's base,
+`fi` the nominative), in parentheses as before. Core's are `item_tag:<tag>`
+(`magic/name.rs::tag`): an unidentified item's rarity (`magic`, `rare`, `unique`), `cursed`, and
+a carried light's `lit` or `hooded`; English's word is the tag. The labels #2027 left are words
+too ("A name shown alone, as a label"): a talent's choices in the level-up list, the sign
+screen's animal and element, the abilities menu's rows and headings, a resistance row's damage
+types, and a vision's name (`vision:` lower case with its `label`).
 
 ## UI text (L6)
 
@@ -1079,7 +1147,9 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `resources:resource.<id>.lacking` | a class active refused for too little of the resource (in `classes.lacking`) |
 | `resources:resource.<id>.ended` | the resource ending (L4o) |
 | `trap:<id>.message` | a trap seen going off (L4o) |
-| `status:<id>.dies`, `trap:<id>.sign`, `damage_type:<id>.verb`, `.you`, `creature:<id>.breath.verb`, `.burst.verb`, `.summon.verb` | the data's words beside a name (#1995, "Phrases"; `content/data_word.rs`), said in a role of the line they stand in |
+| `status:<id>.dies`, `trap:<id>.sign`, `damage_type:<id>.verb`, `.you`, `creature:<id>.breath.verb`, `.burst.verb`, `.summon.verb`; `trap:<id>.verb`, `object:<id>.verb`, `creature:<id>.attack.<n>.verb`, `spell:<id>.cast.verb` with their `.you`, `creature:<id>.throw.verb`, `creature:<id>.dies` (#2028) | the data's words beside a name (#1995, "Phrases"; `content/data_word.rs`), said in a role of the line they stand in |
+| `spells:types.<damage type>.words` | a spell type's rule after a spell's roll (`magic.roll_rule`'s `rule`, #2028; `content/data_word.rs`) |
+| `recipe:<id>.verb`, `recipes:profession.<skill>.verb`, `stock:group.<group>.verb`, `stock:gems.verb` | the craft dialog's verb (`CraftPlan::verb`, #2028; "Reasons core composes") |
 | `prayer:words.<face>.pray`, `.fizzle`, `.nothing`; `prayer:use.<id>.<face>` | the prayer begun, fizzled, and refused, and each use answered, in the face's words |
 | `outcome:<table>.outcome.<id>.message`, `.messages.<n>`, `.otherwise` | an altar's, a spring's, or a potion's outcome: its one line, line `n` of several, or what it says when it found nothing to do (`OutcomeDef::table` is the table) |
 | `room_effect:<id>.enter`, `.near`, `.pervade`, `.arrive`, `.shrine.welcome`, `.shrine.unwelcome` | a special room entered, glimpsed, covering the level, hinted at on arrival, and a shrine's entry by how it treats the player (`Shrine::enter_field`) |

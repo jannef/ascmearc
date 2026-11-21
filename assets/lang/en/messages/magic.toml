@@ -143,7 +143,7 @@ reroll_face = "{n:bare}s"
 # A spell's roll as the abilities menu, a wand's description, and the `spells` dump say it
 # (`spell_words.rs::roll_words`): `roll` the dice as written ("4d6+2", a fixed roll its number),
 # or, in `roll_rule` and the `roll_leech_*`, the clause so far; `kind` a damage type
-# (`damage_type:<id>`) and `rule` its type's rule (the data's words, text).
+# (`damage_type:<id>`) and `rule` its type's rule (the line of data `spells:types.<id>.words`).
 roll_called = "{roll:bare} called"
 roll_harm = "{roll:bare} {kind:bare}"
 roll_healed = "{roll:bare} healed"

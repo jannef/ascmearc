@@ -112,7 +112,13 @@ impl DialogueScreen {
             })
             .collect();
         let wares = (talk.topics.iter())
-            .map(|t| t.price.zip(t.ware.clone()))
+            .map(|t| {
+                t.price.zip(
+                    t.ware
+                        .clone()
+                        .map(|w| super::text::word_in(content, w, "bare")),
+                )
+            })
             .collect();
         let selected = (talk.asked.as_ref())
             .and_then(|asked| topics.iter().position(|(id, _)| id == asked))

@@ -408,7 +408,7 @@ fn a_fireball_aimed_close_catches_its_reader_and_may_kill_them() {
     assert_eq!(death.cause, Some(Cause::Scroll(fireball)));
     assert_eq!(death.by, None);
     assert_eq!(
-        death.cause.expect("cause").epitaph(&w.content),
+        crate::test_support::epitaph(&w.content, death.cause.expect("cause")),
         "Killed by their own scroll of fireball"
     );
     assert_eq!(texts(&w).last().map(String::as_str), Some("You die..."));

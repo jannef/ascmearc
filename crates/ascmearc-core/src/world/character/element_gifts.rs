@@ -23,6 +23,7 @@ use crate::geom::Pos;
 use crate::ice::Shock;
 use crate::msg;
 use crate::rng::draw;
+use crate::world::combat::fight::Words;
 use crate::world::magic::spell::{Caster, burst_cells};
 use crate::world::{ActorId, Spent, World};
 use std::collections::BTreeSet;
@@ -80,10 +81,8 @@ impl World {
         self.shock(here, blaze.radius, Shock::Heat, &mut made);
         self.kindle(&cells, here, blaze.fire, blaze.burns);
         let noun = content.sign_noun_phrase(SignActive::Blaze);
-        let verb = blaze
-            .kind
-            .map_or("burns", |k| content.damage_type(k).verb.as_str());
-        self.say_spell_of(noun, verb, made, events);
+        let words = Words::of_kind_or_burns(noun, blaze.kind, &content);
+        self.say_spell(words, made, events);
         if self.state.death.is_none() {
             self.gift_cooldown(blaze.cooldown, 1, events);
         }

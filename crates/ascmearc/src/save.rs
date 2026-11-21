@@ -314,7 +314,7 @@ mod web_hooks {
         let key = (
             game.save_id.clone(),
             game.world.turn(),
-            game.world.perception().level_name().to_string(),
+            game.world.perception().level_id().to_string(),
         );
         if last.as_ref() != Some(&key) {
             let summary = Summary::of(&game.world, characters::now());
@@ -381,7 +381,7 @@ fn autosave(
     let key = (
         game.save_id.clone(),
         game.world.turn() / AUTOSAVE_TURNS,
-        game.world.perception().level_name().to_string(),
+        game.world.perception().level_id().to_string(),
     );
     if last.replace(key.clone()).as_ref() == Some(&key) {
         return;

@@ -171,6 +171,8 @@ pub use combat::free_blow::FreeBlows;
 pub(crate) use combat::item_damage::protected_in;
 pub(crate) use crafting::craft::recipe_rows;
 pub use crafting::craft::{RecipeLack, RecipeRow};
+#[cfg(test)]
+pub(crate) use crafting::craft_make::PlanEn;
 pub use crafting::craft_make::{CraftOption, CraftPlan, CraftStep, CraftStepKind, Grade, grade};
 pub(crate) use crafting::craft_make::{craft_plan, craft_steps};
 pub use crafting::cut::{CutBand, cut_band, cut_outcome, cuttable};

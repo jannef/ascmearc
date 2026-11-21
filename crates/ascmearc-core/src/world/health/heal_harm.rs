@@ -37,6 +37,7 @@ pub(super) fn harm_of(def: &SpellData, content: &Content) -> SpellData {
     harm.damage_type = content.damage_type_id("fire");
     harm.look.noun = "light of mending".into();
     harm.look.verb = "sears".into();
+    harm.look.own = false;
     harm
 }
 

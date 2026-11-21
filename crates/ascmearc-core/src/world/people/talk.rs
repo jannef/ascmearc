@@ -85,7 +85,7 @@ pub struct TopicView {
     /// For a trader's offer while it is for sale (`wares.rs`): the item in words, as the one
     /// dialog shows it before the player buys or leaves it; none for anything else.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub ware: Option<String>,
+    pub ware: Option<crate::lang::Arg>,
 }
 
 /// A topic's name. The data's own words, or a topic the rules make, which the dialogue screen

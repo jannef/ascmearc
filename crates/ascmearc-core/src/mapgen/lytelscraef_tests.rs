@@ -153,7 +153,7 @@ fn the_way_in_beside_beorggeat_leads_down_and_back() {
         replay.push(&action, &w);
     }
     assert_eq!(w.perception().level_id(), "lytelscraef:1");
-    assert_eq!(w.perception().level_name(), "Lytelscræf 1");
+    assert_eq!(crate::test_support::level_name(&w), "Lytelscræf 1");
     assert_eq!(w.danger("lytelscraef:1"), 1);
     for action in parse_actions("ascend").expect("actions") {
         w.apply(&action);

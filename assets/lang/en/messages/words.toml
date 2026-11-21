@@ -1,10 +1,10 @@
 # The fixed words core picks from a few (#1996): a stat's name, abbreviation, and comparative, a
 # burden's and a hunger's name, how hurt a creature looks, a span of time, a resistance, an item's
 # rarity, what a status keeps one from doing, a gender, an alignment band, the weather, a compass
-# direction, and the weapon skills screen's sections. Core passes them as message ids
-# (`Stat::name`, `Burden::name`, `Hunger::name`, `Health::word`, `Duration::spoken`,
-# `ResistanceWord::word`, `Rarity::word`, `ActionKind::doing`, `Gender::name`, `Band::name`,
-# `Weather::name`, `Dir::compass_word`, `Section::name`), nested in the line or the screen entry
+# direction, the weapon skills screen's sections, and the abilities menu's sources. Core passes
+# them as message ids (`Stat::name`, `Burden::name`, `Hunger::name`, `Health::word`,
+# `Duration::spoken`, `ResistanceWord::word`, `Rarity::word`, `ActionKind::doing`, `Gender::name`,
+# `Band::name`, `Weather::name`, `Dir::compass_word`, `Section::name`, `Source::name`), nested in the line or the screen entry
 # that says them (`docs/dev/localization.md` "Nested messages"). A word is lower case, as it stands
 # in a sentence; a label asks `Bare` for its capital ("Strength", "Not hungry"). Ids alphabetical
 # (`docs/dev/localization.md` "Literal lines").
@@ -116,6 +116,18 @@ section_fighting_styles = "fighting styles"
 section_melee = "melee"
 section_missile = "missile and thrown"
 section_shields = "shields"
+# The abilities menu's headings, by where each ability comes from.
+source_ally = "allies"
+source_class = "class"
+source_item = "items"
+source_place = "here"
+source_profane = "profane"
+source_race = "racial"
+source_sign = "birth sign"
+source_skill = "skills"
+source_spell = "spells"
+source_talent = "talents"
+source_weapon_skill = "weapon skills"
 stat_dexterity = "dexterity"
 stat_dexterity_abbrev = "Dx"
 # What a corpse gives of the stat ("Something of its nimbleness passes into you.").

@@ -231,20 +231,21 @@ impl Source {
         Source::Ally,
     ];
 
-    /// Its group's heading in the abilities menu.
-    pub const fn name(self) -> &'static str {
+    /// Its group's heading in the abilities menu, a message id (`messages/words.toml`): `racial`
+    /// (a heading asks `Bare`, "Racial").
+    pub const fn name(self) -> crate::lang::MessageId {
         match self {
-            Source::Race => "Racial",
-            Source::Sign => "Birth sign",
-            Source::Profane => "Profane",
-            Source::Class => "Class",
-            Source::Spell => "Spells",
-            Source::Talent => "Talents",
-            Source::Skill => "Skills",
-            Source::WeaponSkill => "Weapon skills",
-            Source::Item => "Items",
-            Source::Place => "Here",
-            Source::Ally => "Allies",
+            Source::Race => crate::msg::words::SOURCE_RACE,
+            Source::Sign => crate::msg::words::SOURCE_SIGN,
+            Source::Profane => crate::msg::words::SOURCE_PROFANE,
+            Source::Class => crate::msg::words::SOURCE_CLASS,
+            Source::Spell => crate::msg::words::SOURCE_SPELL,
+            Source::Talent => crate::msg::words::SOURCE_TALENT,
+            Source::Skill => crate::msg::words::SOURCE_SKILL,
+            Source::WeaponSkill => crate::msg::words::SOURCE_WEAPON_SKILL,
+            Source::Item => crate::msg::words::SOURCE_ITEM,
+            Source::Place => crate::msg::words::SOURCE_PLACE,
+            Source::Ally => crate::msg::words::SOURCE_ALLY,
         }
     }
 
@@ -1462,7 +1463,10 @@ mod tests {
         let mut sorted = Source::ALL.to_vec();
         sorted.sort();
         assert_eq!(sorted, Source::ALL, "the menu's order is the enum's");
-        let names: Vec<&str> = Source::ALL.iter().map(|s| s.name()).collect();
+        let content = crate::test_support::builtin();
+        let names: Vec<String> = (Source::ALL.iter())
+            .map(|s| content.english_word(s.name(), "Bare"))
+            .collect();
         assert_eq!(
             names,
             [

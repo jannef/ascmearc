@@ -109,11 +109,8 @@ pub(crate) fn treat_dialog(ailments: &[ascmearc_core::heal::OwnAilment]) -> Dial
 /// [`Aim::catches_reader`]): read (cast) it anyway, aim again (back at the same cursor, the
 /// target remembered), or not.
 pub(crate) fn burst_dialog(view: &PerceptionView<'_>, aim: Aim) -> Option<Dialog> {
-    // The burst's noun as the data writes it ("fireball"), a word of the lexicon by its text.
-    let noun = (
-        "noun",
-        Phrase::id(format!("word:{}", aim.catches_reader(view)?)).into(),
-    );
+    // The burst's noun ("fireball"), `spell_noun:<id>`.
+    let noun = ("noun", aim.catches_reader(view)?.into());
     let read = aim.action(view.content())?;
     let AimKind::Read(item) = aim.kind else {
         return Some(

@@ -8,7 +8,7 @@
 
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{MenuChoice, ScreenAction};
-use super::text::{death_screen as T, ui, ui_with};
+use super::text::{death_screen as T, label_in, ui, ui_msg_in, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use crate::settings::Clock;
@@ -53,7 +53,7 @@ impl DeathScreen {
                 })
             }
             // Hunger, overeating, or a trap: "Killed by a fireball trap".
-            (None, Some(cause), _) => cause.epitaph(content),
+            (None, Some(cause), _) => ui_msg_in(content, cause.epitaph(content)),
             (None, None, Some(creature)) => {
                 let who = Phrase::id(format!("creature:{}", content.creature(creature).id));
                 ui_with(T::KILLED_BY, &[("who", who.into())])
@@ -86,7 +86,13 @@ impl DeathScreen {
         };
         lines.extend([
             ui_with(T::EPITAPH_BY, &[("by", by.into())]),
-            ui_with(T::EPITAPH_PLACE, &[("place", death.place.as_str().into())]),
+            ui_with(
+                T::EPITAPH_PLACE,
+                &[(
+                    "place",
+                    label_in(view.content(), death.place.clone()).into(),
+                )],
+            ),
             String::new(),
             turns,
             ui_with(

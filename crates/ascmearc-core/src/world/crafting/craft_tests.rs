@@ -69,10 +69,14 @@ fn rows(w: &World, id: &str) -> Vec<String> {
             Some(why) => format!(
                 "{}: {} ({})",
                 r.name,
-                r.takes,
+                crate::test_support::english_of(&w.content, &r.takes),
                 crate::test_support::english_of(&content, &why.reason(&content))
             ),
-            None => format!("{}: {}", r.name, r.takes),
+            None => format!(
+                "{}: {}",
+                r.name,
+                crate::test_support::english_of(&w.content, &r.takes)
+            ),
         })
         .collect()
 }

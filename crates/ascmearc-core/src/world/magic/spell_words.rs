@@ -9,6 +9,7 @@
 
 use super::cast::Reach;
 use super::spell_rung::CastBy;
+use crate::content::data_word::spell_type_words;
 use crate::content::{Content, DamageTypeId, Shape, SpellData};
 use crate::dice::Roll;
 use crate::lang::{Arg, Msg};
@@ -46,7 +47,8 @@ impl Actor {
 }
 
 /// `roll`, made by `spell`, in words: a `magic.roll_*` clause, its damage type a `damage_type:`
-/// phrase. Its type's rule is the data's text (`[types]`' `words`, no line of data yet).
+/// phrase, its type's rule the line of data `spells:types.<damage type>.words` (`[types]`'
+/// `words`).
 pub fn roll_words(content: &Content, spell: &SpellData, roll: Roll) -> SpellRoll {
     // A fixed roll is its number ("1 called"), never a bonus's "+1".
     let shown = if roll.is_fixed() {
@@ -66,9 +68,11 @@ pub fn roll_words(content: &Content, spell: &SpellData, roll: Roll) -> SpellRoll
     .role("roll", shown);
     // The rule every spell of its type carries (`data/spells.toml`'s `[types]`); one that never
     // shoves (`shove = false`) leaves them unsaid: force's tell only of its shove.
-    let rule = (content.spell_type(spell.damage_type))
-        .filter(|_| spell.shove)
-        .and_then(|t| t.words.as_deref());
+    let rule = (spell.damage_type)
+        .filter(|&kind| {
+            spell.shove && (content.spell_type(Some(kind))).is_some_and(|t| t.words.is_some())
+        })
+        .map(|kind| Arg::said(spell_type_words(&content.damage_type(kind).id)));
     if let Some(rule) = rule {
         text = Msg::new(msg::magic::ROLL_RULE)
             .role("roll", text)

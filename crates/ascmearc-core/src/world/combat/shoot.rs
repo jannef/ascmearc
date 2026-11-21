@@ -38,7 +38,7 @@ use crate::combat::Profile;
 use crate::content::{ActionKind, Content, Effect, LevelKind, ObjectId};
 use crate::fov::radius2;
 use crate::geom::Pos;
-use crate::lang::{Msg, Phrase};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::magic::Mods;
 use crate::magic::mods::less;
 use crate::msg;
@@ -265,7 +265,7 @@ impl World {
         );
         let mut said: Vec<Msg> = Vec::new();
         // Whether the player saw the target of the last attack, and how it reads.
-        let mut seen: Option<(End, &str)> = None;
+        let mut seen: Option<(End, Arg)> = None;
         let mut attacked = false;
         let you = End::You(self.you());
         for event in made {
@@ -291,15 +291,15 @@ impl World {
                     said.extend(attack_message(
                         &you, &struck_at, &words, kind, strike, &guard,
                     ));
-                    seen =
-                        (!end.is_unseen()).then(|| (end, def.map_or("dies", |d| d.death_verb())));
+                    seen = (!end.is_unseen())
+                        .then(|| (end, def.map_or_else(|| "dies".into(), |d| d.dies_arg())));
                     if seen.is_some() {
                         events.push(event);
                     }
                 }
                 Event::Died { .. } => {
                     if let Some((end, dies)) = &seen {
-                        said.push(death_message(end, dies));
+                        said.push(death_message(end, dies.clone()));
                         events.push(event);
                     }
                 }
