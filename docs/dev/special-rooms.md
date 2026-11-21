@@ -502,7 +502,7 @@ it has no dice of its own), and a stack of it carries a `Worked` whatever its co
 hit and +1 damage, `attempts` equal to the improvements. So two stacks of one grade are equal and
 join (`object.rs::join` lets worked ammunition join `same_goods`; every other worked item still
 joins nothing), and stacks of two grades never do. It is found (loot's make, docs/dev/enchanting.md
-"Deeper finds are better made") or fletched (docs/dev/crafting.md "Counted recipes"), never
+"Finds of a higher item level are better made") or fletched (docs/dev/crafting.md "Counted recipes"), never
 worked: `start_temper` and `start_whittle` refuse it first, taking no time, with
 `temper::AMMUNITION` ("Ammunition cannot be worked finer: its make is set when it is
 fletched."), and `arms` keeps it off both lists. The shot reads it through `Mods::local` of the

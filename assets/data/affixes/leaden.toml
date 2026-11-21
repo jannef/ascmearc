@@ -11,6 +11,6 @@ bases = ["weapon", "launcher", "body", "helmet", "cloak", "gloves", "boots", "sh
 weight = 4
 tiers = [
   { level = 1, min = 25, max = 50 },
-  { level = 6, min = 40, max = 75 },
-  { level = 12, min = 60, max = 100 },
+  { level = 16, min = 40, max = 75 },
+  { level = 32, min = 60, max = 100 },
 ]

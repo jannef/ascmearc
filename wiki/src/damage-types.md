@@ -53,7 +53,7 @@ does nothing at 75 %.
 
 ## Magic of the elements
 
-Each element has a magic [prefix](affixes.md#prefixes) and a magic [suffix](affixes.md#suffixes). The prefix adds a die of the element to every hit of
+Each element has a magic [prefix](affixes.md#prefixes) and a magic [suffix](affixes.md#suffixes). The prefix adds dice of the element to every hit of
 a weapon, a missile weapon, or [ammunition](ammunition.md). The suffix resists the element.
 
 [Force](damage-types.md#damage-force) has no prefix. It is the spells' own kind ([Magic missile](magic.md#spell-magic-missile), [Arcane bolt](magic.md#spell-arcane-bolt)), and items can only

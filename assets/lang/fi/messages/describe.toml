@@ -74,8 +74,8 @@ does_dodge = { text = "väistö +{v:bare}", of = "769b3e" }
 does_door_kick = { text = "potkusi murtavat ovia helpommin", of = "533775" }
 does_draw = { text = "jännittäminen vaatii {v:bare} vähemmän voimaa", of = "463ff1" }
 does_durability = { text = "särkyy {v:bare} % harvemmin", of = "35696d" }
-does_elemental = { text = "lisää 1d{v:bare} vahinkoa ({kind:bare})", of = "529473" }
-does_extra_damage = { text = "lisää 1d{v:bare} vahinkoa", of = "d091fc" }
+does_elemental = { text = "lisää {dice:bare} vahinkoa ({kind:bare})", of = "128edc" }
+does_extra_damage = { text = "lisää {dice:bare} vahinkoa", of = "f390ec" }
 does_glows = { text = "hehkuu", of = "66aad8" }
 does_glows_brightly = { text = "hehkuu kirkkaasti", of = "dbfae4" }
 does_glows_faintly = { text = "hehkuu himmeästi", of = "dd3d04" }

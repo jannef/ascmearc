@@ -19,9 +19,11 @@
 #   effect  what it does, one of:
 #             to_hit        + to hit
 #             damage        + to every roll of the damage dice
-#             extra_damage  adds 1dN to every roll of the damage (the value is N)
-#             elemental     adds 1dN damage of the affix's `damage_type` (an element, an id in
-#                           damage_types.toml) to every roll; never soaked by armour
+#             extra_damage  adds dN to every roll of the damage (the value is N; the tier's
+#                           `dice` how many)
+#             elemental     adds dN damage of the affix's `damage_type` (an element, an id in
+#                           damage_types.toml) to every roll, as many as the tier's `dice`;
+#                           never soaked by armour
 #             threat        widens the critical threat range by N natural rolls
 #             crit          + to the critical multiplier (at most ×5)
 #             attack_speed  attacks N% faster (less of their cost; at most 50 in all)
@@ -86,13 +88,18 @@
 #           be cursed), it shares its good twin's category, it rolls only on what is found (loot
 #           and creature gear, never a shop's goods, a starting kit, an heirloom, a trader's
 #           offer, or enchanting), and what has one will not come off once worn
-#   tiers   from the lowest item level (`level`, the dungeon depth) each is found at, the range
+#   tiers   from the lowest item level (`level`, the floor's danger) each is found at, the range
 #           its value is rolled in (`min`, `max`); a light's tiers name a `light` preset instead.
-#           Levels rise from tier to tier, and `min` is at most `max`. Shipped as a ladder of up
-#           to twelve tiers: a tier every item level or two from the first to
-#           the last (usually 12), the values stepping evenly between (#637). Loot picks evenly
-#           among the tiers found within four levels below its item level (the tier window).
-#           A saved item whose tier a regrade moved is re-tiered when it loads, its value kept.
+#           An extra_damage or elemental tier may name `dice`, how many dice of `min`–`max`
+#           sides it adds (default 1: `{ level = 36, dice = 2, min = 8, max = 8 }` is 2d8).
+#           Levels rise from tier to tier, and `min` is at most `max`. Shipped as a ladder from
+#           its first level to item level 40 (docs/design/item-level-40.md §4–§5): a tier every
+#           four levels (1, 4, 8, ... 40) where the values step every tier; every eight or ten
+#           for flat +1 to +7 ladders; three or four tiers for the system hooks and curses. The
+#           last two or three tiers of a growing ladder step further than those below them.
+#           Loot draws a tier evenly among all those its item level reaches, tier 1 to the
+#           highest (the flat roll): a find of level 40 or more may roll any tier. A save names
+#           an affix's tier by its index, so it is pinned to the version that wrote it.
 
 # Notes on the groups, in the order they were kept in:
 #

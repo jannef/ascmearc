@@ -38,9 +38,13 @@ pub struct Mods {
     pub light: Option<LightId>,
     /// What skill affixes add to each skill's value, by skill.
     skills: Vec<(SkillId, i32)>,
-    /// The sides of the die of damage elemental affixes add, by damage type, in the order
-    /// first met.
-    elemental: Vec<(DamageTypeId, i32)>,
+    /// The damage elemental affixes add, by damage type, in the order first met: the most it
+    /// can be (each affix's dice times their sides, summed) and the most dice one of them rolls
+    /// ([`summed_dice`]).
+    elemental: Vec<(DamageTypeId, i32, u32)>,
+    /// The most dice one extra-damage affix rolls (its tier's `dice`; 0 with none): the
+    /// [`Effect::ExtraDamage`] value is the most they can be, summed ([`summed_dice`]).
+    extra_dice: u32,
     /// What resistance affixes add, by damage type, in percent.
     resistances: Vec<(DamageTypeId, i32)>,
     /// What pooled affixes add ([`Effect::is_pooled`]), by effect and resource, in the order
@@ -65,6 +69,7 @@ impl Default for Mods {
             light: None,
             skills: Vec::new(),
             elemental: Vec::new(),
+            extra_dice: 0,
             resistances: Vec::new(),
             pools: Vec::new(),
             on_hit: Vec::new(),
@@ -89,6 +94,16 @@ fn add_by_kind(list: &mut Vec<(DamageTypeId, i32)>, kind: DamageTypeId, value: i
         Some((_, sum)) => *sum = sum.saturating_add(value),
         None => list.push((kind, value)),
     }
+}
+
+/// The dice of a dice family's affixes summed (docs/design/item-level-40.md §4): as many dice
+/// as the one that rolls most (`count`), their sides together as great as all the affixes' best
+/// (`most`, each one's dice times their sides): 1d8 and 1d6 are 1d14 (the sides add up, as they
+/// always have), 2d10 and 1d12 2d16. `None` below a die of two sides.
+pub(super) fn summed_dice(most: i32, count: u32) -> Option<Dice> {
+    let count = count.max(1);
+    let sides = u32::try_from(most).ok()? / count;
+    (sides >= 2).then(|| Dice::of(count, sides))
 }
 
 impl Mods {
@@ -125,14 +140,13 @@ impl Mods {
         &self.pools
     }
 
-    /// The damage elemental affixes add, one die per damage type: the sides add up, as the
-    /// plain extra die's do.
+    /// The damage elemental affixes add, one group of dice per damage type, summed as the plain
+    /// extra dice are ([`summed_dice`]).
     pub fn elemental(&self) -> impl Iterator<Item = Rider> + '_ {
-        (self.elemental.iter()).filter_map(|&(kind, sides)| {
-            let sides = u32::try_from(sides).ok().filter(|s| *s >= 2)?;
+        (self.elemental.iter()).filter_map(|&(kind, most, count)| {
             Some(Rider {
                 kind,
-                dice: Dice::of(1, sides),
+                dice: summed_dice(most, count)?,
             })
         })
     }
@@ -142,9 +156,15 @@ impl Mods {
         *self == Mods::default()
     }
 
-    /// Adds `value` of `group` (with a light's `light`): by its skill, damage type, or resource
-    /// for an effect that names one.
-    fn add(&mut self, group: Group, value: i32, light: Option<LightId>, content: &Content) {
+    /// Adds `value` of `group` (with a light's `light`, a dice family's `dice` count): by its
+    /// skill, damage type, or resource for an effect that names one.
+    fn add(
+        &mut self,
+        group: Group,
+        (value, dice): (i32, u8),
+        light: Option<LightId>,
+        content: &Content,
+    ) {
         let Group {
             effect,
             skill,
@@ -161,9 +181,19 @@ impl Mods {
                 }
             }
             Effect::Elemental => {
-                if let Some(kind) = kind {
-                    add_by_kind(&mut self.elemental, kind, value);
+                let Some(kind) = kind else { return };
+                let (most, dice) = (value.saturating_mul(i32::from(dice)), u32::from(dice));
+                match self.elemental.iter_mut().find(|(k, ..)| *k == kind) {
+                    Some((_, sum, count)) => {
+                        *sum = sum.saturating_add(most);
+                        *count = (*count).max(dice);
+                    }
+                    None => self.elemental.push((kind, most, dice)),
                 }
+            }
+            Effect::ExtraDamage => {
+                *slot = slot.saturating_add(value.saturating_mul(i32::from(dice)));
+                self.extra_dice = self.extra_dice.max(u32::from(dice));
             }
             Effect::Resistance => {
                 if let Some(kind) = kind {
@@ -208,7 +238,9 @@ impl Mods {
         };
         for rolled in magic.rolled(content) {
             if rolled.def.effect.is_local_on(kind) == local {
-                let light = (rolled.def.tier(rolled.tier)).and_then(|t| t.light);
+                let tier = rolled.def.tier(rolled.tier);
+                let light = tier.and_then(|t| t.light);
+                let dice = tier.map_or(1, |t| t.dice);
                 // A curse works its effect the other way (#1754): hunger faster, heavier, slower.
                 let value = match rolled.def.cursed {
                     true => -rolled.value,
@@ -221,7 +253,7 @@ impl Mods {
                     }
                     continue;
                 }
-                self.add(rolled.def.group(), value, light, content);
+                self.add(rolled.def.group(), (value, dice), light, content);
             }
         }
     }
@@ -326,12 +358,15 @@ impl Mods {
         profile.threat = clamp_u8(threat, *THREATS.start(), *THREATS.end());
         let crit = i32::from(profile.crit) + self.get(Effect::Crit);
         profile.crit = clamp_u8(crit, *CRITS.start(), *CRITS.end());
-        let sides = self.get(Effect::ExtraDamage);
-        if sides >= 2 {
-            let sides = u32::try_from(sides).unwrap_or(2);
+        // The attack's own extra dice sum with the affixes' as the affixes' do.
+        let most = self.get(Effect::ExtraDamage);
+        if let Some(dice) = summed_dice(most, self.extra_dice) {
             profile.extra = Some(match profile.extra {
-                Some(more) => Dice::of(1, sides + more.max().unsigned_abs()),
-                None => Dice::of(1, sides),
+                Some(more) => {
+                    let count = dice.count().max(more.count());
+                    summed_dice(most.saturating_add(more.max()), count).unwrap_or(dice)
+                }
+                None => dice,
             });
         }
         for rider in self.elemental() {

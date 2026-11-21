@@ -21,11 +21,11 @@
 //!    in the affix's `bases`, something for the effect to change, a tier at the item level, and
 //!    a `category` the item has no affix of yet; a curse, #1754, only for what is found: loot and
 //!    creature gear, never a shop's goods, a starting kit, an heirloom, a trader's offer, or
-//!    enchanting), weighted by their `weight`; one draw for the tier
-//!    among those of the window at the item level ([`tier_window`]: the tiers found there whose
-//!    level is within [`TIER_WINDOW`] of it, or the top one found alone past the last tier or
-//!    when none is that close); one draw for the value in the tier's range (none when the range
-//!    is a single value). With nothing left to roll, the item has fewer affixes; with
+//!    enchanting), weighted by their `weight`; one draw for the tier, evenly among all those the
+//!    item level reaches ([`tiers_rolled`]: tier 1 to the highest whose level is at most the
+//!    item level, so a find of level 40 or more may roll any tier of the ladder; the flat roll,
+//!    docs/design/item-level-40.md §4); one draw for the value in the tier's range (none when the
+//!    range is a single value). With nothing left to roll, the item has fewer affixes; with
 //!    none at all it is normal;
 //! 6. **a rare item's name**: one draw for its first word and one for its second, which goes
 //!    with the kind of item ("Bite" for weapons, "Loop" for rings);
@@ -36,7 +36,7 @@
 //!    creature's level for what a creature drops (one draw: [`crate::variant::draw`]); none for
 //!    one made only of its own;
 //! 9. **a wand's rung** (one draw, a wand's only), then **its make** (#1436), loot's only
-//!    (`Source::Loot`): arms and armour are Fine, Marvellous, or Masterwork by the `[[depth]]`
+//!    (`Source::Loot`): arms and armour are Fine, Marvellous, or Masterwork by the `[[item_level]]`
 //!    row of `data/gear_condition.toml` at the item level (one draw, then one per improvement;
 //!    none where the row gives nothing or for what takes no make:
 //!    [`super::make::make`]); the same row adds its `ornament` percent to step
@@ -65,10 +65,6 @@ use std::ops::{Range, RangeInclusive};
 
 /// How many arrows, bolts, or stones a stack of loot ammunition holds.
 pub const AMMO: RangeInclusive<i32> = 8..=20;
-
-/// How close below the item level a tier's level must be for loot to roll it: a level-12 find
-/// rolls the tiers of levels 9 to 12 (docs/design/affixes-systems.md §8), so depth tells.
-pub const TIER_WINDOW: u8 = 4;
 
 /// The least an item of loot may be: anything, magic or better, or rare (a vault's `loot`, what
 /// creatures drop).
@@ -274,8 +270,8 @@ fn holds(content: &Content, class: ItemClassId, level: u8, grade: LootGrade) -> 
 }
 
 /// Rolls an item of `pool` at item level `level` for a finder with `luck` (the module docs give
-/// the draws). `None` when none of its classes holds anything there yet: a shallow floor may
-/// leave a pool of deep things empty.
+/// the draws). `None` when none of its classes holds anything there yet: a low item level may
+/// leave a pool of things found only higher empty.
 pub fn roll_pool(
     content: &Content,
     rng: &mut Rng,
@@ -398,7 +394,7 @@ fn make_from(
     // Deeper loot is set with a gem more often, and better made (#1436).
     let loot = source == Some(Source::Loot);
     let more = if loot {
-        content.gear_condition().depth_at(level).ornament
+        content.gear_condition().at_item_level(level).ornament
     } else {
         0
     };
@@ -667,7 +663,7 @@ pub(crate) fn rolls_within(
 
 /// [`roll_affix`] with the candidates narrowed to the affix categories `families` holds (a
 /// crystal's colour, docs/design/enchanting.md §8; `None`: every category): the affix by weight,
-/// then its tier in the window at `level`, then its value in the tier (three draws). Never a
+/// then its tier among those `level` reaches, then its value in the tier (three draws). Never a
 /// curse: enchanting makes none (#1754).
 pub(crate) fn roll_affix_within(
     content: &Content,
@@ -692,8 +688,7 @@ fn pick(
     let affixes = content.affixes();
     let candidates = candidates(content, def, level, kind, rolled, families, curses);
     let a = &affixes.all()[*pick_weighted(rng, &candidates)?];
-    let window = tier_window(a, level);
-    let tier = window.start + rng.index(window.len());
+    let tier = rng.index(tiers_rolled(a, level).len());
     let t = &a.tiers[tier];
     Some(Affix {
         id: a.id.clone(),
@@ -702,21 +697,12 @@ fn pick(
     })
 }
 
-/// The tiers of `a` loot may roll at item level `level`, as indices into its tiers (0 the
-/// first): those found there whose level is within [`TIER_WINDOW`] below it; the top tier alone
-/// once the item level is past the last tier's, or when no tier found there is that close (a gap
-/// in the ladder). Empty when none is found there.
-pub fn tier_window(a: &AffixDef, level: u8) -> Range<usize> {
-    let found = a.tiers_at(level);
-    let Some(top) = found.checked_sub(1) else {
-        return 0..0;
-    };
-    let past = a.tiers.last().is_some_and(|t| level > t.level);
-    let close = (a.tiers[..found].iter()).position(|t| level - t.level < TIER_WINDOW);
-    match close {
-        Some(first) if !past => first..found,
-        _ => top..found,
-    }
+/// The tiers of `a` loot may roll at item level `level`, each as likely, as indices into its
+/// tiers (0 the first): every one the item level reaches, from the first to the highest whose
+/// level is at most it (the flat roll, docs/design/item-level-40.md §4). Past the last tier's
+/// level, the whole ladder. Empty when none is found there.
+pub fn tiers_rolled(a: &AffixDef, level: u8) -> Range<usize> {
+    0..a.tiers_at(level)
 }
 
 /// A rare item's two-word name: a first word, and a second for its kind of item.

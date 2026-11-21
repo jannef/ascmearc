@@ -1,10 +1,10 @@
 //! An affix written with its value (#2008, #2044): `"mystic=30"`, a dice family's die
-//! `"heavy=1d8"`, a light's light `"of_light=item_glow"`. A unique item's affixes are always
+//! `"heavy=1d8"` or dice `"heavy=2d8"`, a light's light `"of_light=item_glow"`. A unique item's affixes are always
 //! written so, never by a tier's index, so a regrade of the ladders that renumbers the tiers never
 //! moves a unique's numbers; a level's `[[item]]` may be. The affix takes the first tier whose
-//! range holds the value (a light's: the tier of that light), which prices it
+//! range holds the value (a dice family's: of as many dice; a light's: the tier of that light), which prices it
 //! ([`super::MagicWorth`]) and counts toward the item level; a unique's value may lie past its
-//! affix's last tier (`Tier::passed_by`), which it then takes, and a unique may set an affix on
+//! affix's last tier (`Tier::passed_by`; of as many dice), which it then takes, and a unique may set an affix on
 //! any base its effect works on (the affix's bases say only where loot rolls it).
 //! [`crate::magic::Magic::check`] holds the same.
 
@@ -27,15 +27,15 @@ pub(super) fn valued(
     let last = (a.tiers.last()).ok_or_else(|| format!("`{id}` has no tiers"))?;
     let found = match value {
         Value::Light(light) => (a.tiers.iter()).position(|t| t.light == Some(light)),
-        Value::Number(v) => (a.tiers.iter()).position(|t| t.holds(v)),
+        Value::Number(v, dice) => (a.tiers.iter()).position(|t| t.dice == dice && t.holds(v)),
     };
-    let value = match value {
-        Value::Light(_) => 0,
-        Value::Number(v) => v,
+    let (value, dice) = match value {
+        Value::Light(_) => (0, 1),
+        Value::Number(v, dice) => (v, dice),
     };
     let index = match found {
         Some(i) => i,
-        None if unique && last.passed_by(value) => a.tiers.len() - 1,
+        None if unique && last.dice == dice && last.passed_by(value) => a.tiers.len() - 1,
         None => {
             let first = &a.tiers[0];
             let past = if unique {
@@ -72,12 +72,13 @@ pub(super) fn valued(
 
 /// What the text after an affix's `=` names.
 enum Value {
-    Number(i32),
+    /// A number, and for a dice family how many dice (1 for the rest).
+    Number(i32, u8),
     Light(super::LightId),
 }
 
-/// Reads `text` as `a`'s value: a light's light id, a dice family's die (`1d8`: every tier rolls
-/// one die), else a whole number.
+/// Reads `text` as `a`'s value: a light's light id, a dice family's dice (`1d8`, `2d8`: the
+/// count a tier's `dice`), else a whole number.
 fn read(a: &AffixDef, text: &str, content: &Content) -> Result<Value, String> {
     if a.effect == Effect::Light {
         let light = (content.light_id(text))
@@ -86,14 +87,15 @@ fn read(a: &AffixDef, text: &str, content: &Content) -> Result<Value, String> {
     }
     if a.effect.is_dice() {
         let (count, sides) = (text.split_once('d'))
-            .and_then(|(n, m)| Some((n.parse::<u32>().ok()?, m.parse::<i32>().ok()?)))
-            .ok_or_else(|| format!("the value is a die, e.g. `{}=1d8`", a.id))?;
-        if count != 1 {
-            return Err(format!("every tier of `{}` rolls one die", a.id));
+            .and_then(|(n, m)| Some((n.parse::<u8>().ok()?, m.parse::<i32>().ok()?)))
+            .filter(|&(count, _)| count >= 1)
+            .ok_or_else(|| format!("the value is dice, e.g. `{}=1d8`", a.id))?;
+        if !a.tiers.iter().any(|t| t.dice == count) {
+            return Err(format!("no tier of `{}` rolls {count} dice", a.id));
         }
-        return Ok(Value::Number(sides));
+        return Ok(Value::Number(sides, count));
     }
     let value = (text.parse::<i32>())
         .map_err(|_| format!("the value must be a number, e.g. `{}=3`", a.id))?;
-    Ok(Value::Number(value))
+    Ok(Value::Number(value, 1))
 }

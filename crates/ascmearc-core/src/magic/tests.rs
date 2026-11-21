@@ -186,8 +186,8 @@ fn rare_items_have_three_to_six_affixes_at_most_three_of_each() {
 fn no_rolled_item_repeats_an_affix_category() {
     let c = content();
     let mut rolled_any = 0;
-    for level in [1, 4, 8, 12] {
-        for stack in roll_many(&c, 1500, level, LootGrade::Rare) {
+    for level in [1, 8, 16, 24, 32, 40] {
+        for stack in roll_many(&c, 1000, level, LootGrade::Rare) {
             let magic = stack.magic().expect("rare");
             magic.check(c.object(stack.object), &c).expect("valid");
             let rolled = magic.rolled(&c);
@@ -224,14 +224,14 @@ fn tiers_follow_the_item_level_and_values_their_range() {
             assert!(c.object(stack.object).level <= level);
         }
     }
-    // Deep items reach the top tiers; shallow ones never do.
-    let top = |level| {
+    // A higher item level reaches higher tiers; item level 1 only the first.
+    let past = |level, tier| {
         roll_many(&c, 800, level, LootGrade::Rare).iter().any(|s| {
             let m = s.magic().expect("rare");
-            m.rolled(&c).iter().any(|r| r.tier >= 4)
+            m.rolled(&c).iter().any(|r| r.tier >= tier)
         })
     };
-    assert!(top(8) && !top(1));
+    assert!(past(8, 3) && !past(1, 2));
 }
 
 #[test]
@@ -742,10 +742,10 @@ fn system_effects_sum_and_pooled_ones_by_their_resource() {
     assert!(!may_roll(a, ItemKind::Body, body("leather_jerkin")));
 }
 
-/// The tier window: evenly among the tiers within four item levels below the item's, the top
-/// one alone past the last tier (docs/design/affixes-systems.md §8).
+/// The flat roll: evenly among every tier the item level reaches, tier 1 to the highest; past
+/// the last tier the whole ladder (docs/design/item-level-40.md §4).
 #[test]
-fn tiers_roll_from_a_window_below_the_item_level() {
+fn tiers_roll_flat_over_every_tier_the_item_level_reaches() {
     use crate::content::Tier;
     let ladder = |levels: &[u8]| AffixDef {
         id: "x".into(),
@@ -763,36 +763,43 @@ fn tiers_roll_from_a_window_below_the_item_level() {
         tiers: (levels.iter())
             .map(|&level| Tier {
                 level,
+                dice: 1,
                 min: 1,
                 max: 1,
                 light: None,
             })
             .collect(),
     };
-    let twelve = ladder(&[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
-    let window = |a: &AffixDef, level| loot::tier_window(a, level);
-    assert_eq!(window(&twelve, 1), 0..1, "level 1: tier 1");
-    assert_eq!(window(&twelve, 3), 0..3, "level 3: tiers 1 to 3");
-    assert_eq!(window(&twelve, 8), 4..8, "level 8: tiers 5 to 8");
-    assert_eq!(window(&twelve, 12), 8..12, "level 12: tiers 9 to 12");
-    assert_eq!(window(&twelve, 13), 11..12, "past the last: the top alone");
-    let old = ladder(&[1, 4, 7]);
-    assert_eq!(window(&old, 1), 0..1);
-    assert_eq!(window(&old, 4), 0..2);
-    assert_eq!(window(&old, 7), 1..3);
-    assert_eq!(window(&old, 12), 2..3);
+    let a = ladder(&[1, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40]);
+    let rolled = |a: &AffixDef, level| loot::tiers_rolled(a, level);
+    assert_eq!(rolled(&a, 1), 0..1, "level 1: tier 1");
+    assert_eq!(rolled(&a, 7), 0..2, "level 7: tiers 1 and 2");
+    assert_eq!(rolled(&a, 12), 0..4, "level 12: tiers 1 to 4");
+    assert_eq!(rolled(&a, 40), 0..11, "level 40: the whole ladder");
+    assert_eq!(
+        rolled(&a, 60),
+        0..11,
+        "past the last: the whole ladder still"
+    );
     let gap = ladder(&[3, 12]);
-    assert_eq!(window(&gap, 2), 0..0, "none found");
-    assert_eq!(window(&gap, 9), 0..1, "a gap: the top found");
-    // Loot rolls within it.
+    assert_eq!(rolled(&gap, 2), 0..0, "none found");
+    assert_eq!(rolled(&gap, 9), 0..1, "a gap: the first");
+    // Loot rolls within it, the lowest tier as well as the highest.
     let c = content();
-    for stack in roll_many(&c, 600, 12, LootGrade::Rare) {
+    let (mut lowest, mut highest) = (false, false);
+    for stack in roll_many(&c, 600, 40, LootGrade::Rare) {
         for r in stack.magic().expect("rare").rolled(&c) {
-            let w = loot::tier_window(r.def, 12);
+            let reached = loot::tiers_rolled(r.def, 40);
             let tier = usize::from(r.tier - 1);
-            assert!(w.contains(&tier), "{} tier {}", r.def.id, r.tier);
+            assert!(reached.contains(&tier), "{} tier {}", r.def.id, r.tier);
+            lowest |= tier == 0 && reached.len() > 1;
+            highest |= tier + 1 == reached.len() && reached.len() > 1;
         }
     }
+    assert!(
+        lowest && highest,
+        "a level-40 find rolls the first tier and the top"
+    );
 }
 
 /// The module that reads each effect, and its source. An exhaustive match, so a new effect has
@@ -1159,4 +1166,45 @@ fn proof_rolls_in_loot_and_is_named_once_identified() {
             .map(|l| l.english(&c))
             .collect::<Vec<_>>()
     );
+}
+
+/// A tier's `dice` (docs/design/item-level-40.md §4): Heavy's top tier adds 2d10 and Flaming's
+/// 2d8 fire; dice summed come to as many as the most and sides as great as all of them at best
+/// (2d10 and 1d12: 2d16; one die each sums as ever, 1d8 and 1d6: 1d14); the description and the
+/// effect both say so.
+#[test]
+fn a_tier_of_two_dice_adds_two_dice() {
+    use crate::combat::Profile;
+    use crate::dice::Dice;
+    let c = content();
+    let top = |id: &str| {
+        let a = c.affixes().get(id).expect(id);
+        let t = a.tiers.last().expect("tiers");
+        (u8::try_from(a.tiers.len()).expect("tiers"), t.dice, t.max)
+    };
+    let (heavy, flaming) = (top("heavy"), top("flaming"));
+    assert_eq!((heavy.1, heavy.2), (2, 10), "Heavy's top: 2d10");
+    assert_eq!((flaming.1, flaming.2), (2, 8), "Flaming's top: 2d8");
+    let profile = |affixes: &[(&str, u8, i32)]| {
+        let sword = item(&c, "long_sword", affixes, Some("Test Bite"));
+        let mut p = Profile::bare(&sword.attack(&c).expect("a weapon"));
+        mods::Mods::local(&sword, &c).sharpen(&mut p);
+        p
+    };
+    let p = profile(&[("heavy", heavy.0, 10), ("flaming", flaming.0, 8)]);
+    assert_eq!(p.extra, Some(Dice::of(2, 10)));
+    assert_eq!(p.riders.last().map(|r| r.dice), Some(Dice::of(2, 8)));
+    // Dice of one family from two pieces (a bow's and its arrows'), or an attack's own and an
+    // affix's: as many dice as the most, sides as great as all of them at best.
+    assert_eq!(mods::summed_dice(20 + 12, 2), Some(Dice::of(2, 16)));
+    assert_eq!(
+        mods::summed_dice(8 + 6, 1),
+        Some(Dice::of(1, 14)),
+        "the sides add up"
+    );
+    assert_eq!(mods::summed_dice(1, 1), None, "no die of one side");
+    let sword = item(&c, "long_sword", &[("heavy", heavy.0, 10)], None);
+    let line = (sword.magic().expect("magic").rolled(&c).first())
+        .map(|r| crate::messages::english_msg(&c, &describe::phrase(r, ItemKind::Weapon, &c)));
+    assert_eq!(line.as_deref(), Some("adds 2d10 damage"));
 }

@@ -79,13 +79,13 @@ fn a_pool_s_finds_fit_the_item_level() {
             assert!(magic.is_none_or(|m| m.level == level), "{}", def.id);
             for affix in magic.into_iter().flat_map(|m| &m.affixes) {
                 let affix_def = c.affixes().get(&affix.id).expect("an affix");
-                let window = loot::tier_window(affix_def, level);
+                let window = loot::tiers_rolled(affix_def, level);
                 let tier = usize::from(affix.tier) - 1;
                 assert!(window.contains(&tier), "{} at level {level}", affix.id);
             }
         }
     }
-    // The purse is a chest's of the same level: deep floors pay more.
+    // The purse is a chest's of the same level: a higher item level pays more.
     let money = pool(&c, &["coins"], LootGrade::Any);
     let total = |level| -> u32 {
         (roll_many(&c, &money, level, 200).iter())

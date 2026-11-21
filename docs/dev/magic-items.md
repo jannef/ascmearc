@@ -8,7 +8,7 @@ is in `docs/dev/shops.md`.
 
 Affix capacity and the trim that holds every item made to it (`magic/capacity.rs`,
 `loot::finished`, `quality` on hand-made items) are in `docs/dev/enchanting.md`, and so is the
-better make, gems, and materials of deeper finds (#1436: `gear_condition.toml`'s `[[depth]]`,
+better make, gems, and materials of finds of a higher item level (#1436: `gear_condition.toml`'s `[[item_level]]`,
 `magic/make.rs::make`, loot step 9).
 
 Magic items (#149) live in `ascmearc-core`: `content/affix.rs`
@@ -128,8 +128,8 @@ and of the Bear `tool`. `magic/tests.rs`, `every_shipped_affix_effect_is_read_by
 names each effect's reading module (an exhaustive match) and fails on a shipped affix whose
 effect that module never reads (a dead effect). **The skill suffixes** (C1, #636): of Seeking,
 of the Eagle, of the Stag, of the Leech, of the Picklock, of Disarming, of Appraisal, of Haggling (#666), of the
-Scholar (Decipher script, #1270; Spellcraft has no suffix), of the Cutpurse, twelve tiers each (levels 1 to 12; 8–12 to 45–50 for the
-value skills, 4–6 to 28–32 for the five gated on `Skills::trains_effect` (of Appraisal keeps the value ladder, though Appraise is gated, #666), which help the
+Scholar (Decipher script, #1270; Spellcraft has no suffix), of the Cutpurse, eleven tiers each (levels 1 to 40; 8–12 to 60–70 for the
+value skills, 4–6 to 36–42 for the five gated on `Skills::trains_effect` (of Appraisal keeps the value ladder, though Appraise is gated, #666), which help the
 trained only), weight 60, category the skill's id. `every_shipped_skill_suffix_raises_a_read_benefit`
 holds each to a skill with benefits, every one read through `Actor::skill_effect` (so the
 items' bonus counts) in the module `skill_reader` names; the shops' bargain read
@@ -141,7 +141,7 @@ Vicious), `extra_damage` (an extra die: Heavy and the suffix of Wounding), and o
 `Actor::worn_spell_cost` (each piece less its own, never below 0: a fully eased piece leaves the
 armoured grip), `spell_to_hit` in `Actor::spell_to_hit` (`world/magic/spell_rung.rs`), the spell
 hooks' items in `Actor::spell_mods` (`world/magic/spell_mods.rs`, beside the talents': `spell_rungs`,
-`spell_bonus` (Potent, +1 / +2 / +3 at item levels 3 / 7 / 11), `spell_sides`, `spell_dice`,
+`spell_bonus` (Potent, +1 to +5 at item levels 3 to 40), `spell_sides`, `spell_dice`,
 `spell_reroll`, `wand_rungs`, `spell_reach` as cells of range or length beside School focus's,
 `spell_duration` as degrees; no tag filter on an item yet), `spell_threat` in `Actor::spell_threat` (22 less it, never below `THREATS`' floor;
 an own cast only, `reflect::Shot::threat`). **The potion and wand hooks** (E2, #633;
@@ -170,21 +170,37 @@ kind for digging tools, which the pick-axe takes in D1. **`ItemKind::Pipe`** (th
 too, rare names' `pipe = [...]`): the halfling's pipe, which rolls armour's affixes rather than
 a list of its own (`ItemKind::rolls_as_armour`; `magic::may_roll`: any affix whose `bases` name an
 armour kind, `is_armour`, but a `protection` one on a pipe of no Protection), so no affix file
-names it; `Numbers::of` shows it nothing, as a tool (docs/dev/enchanting.md "Pipes"). **Tiers**: rising by item level (`tier_window` reads them in order;
-at most 255, a rolled affix names its tier as a `u8`). Every shipped ladder (X1, #637, regraded the old affixes but Flaming,
-Freezing, and Venomous, which W1 (#638) put on the elemental ladder, 1d2 at item level 2 to 1d8
-at 12, with Shocking, Corrosive, and Withering; the two light affixes keep their three glow presets, and
-Brutal and of Ruin their one tier) runs from its first level to item level 12, a tier every level
-or two where the values can step (a flat +1 to +3 has five tiers: 1, 1–2, 2, 2–3, 3), its first
-and last values as before. The hand-made items that name tiers (the uniques, the showcase's
-`[[item]]`s) were moved to the tier of the same top value. **The balance pass**
-(`magic/shares_tests.rs`): 10 000 magic items at item levels 1, 4, 8, and 12; every affix's picks
-lie within four standard deviations and a tenth of its weight's share of the picks it could have
-been (none over, none starved), and every rolled tier is in the window (`--nocapture` prints the
-shares). **The tier window** (`loot::tier_window`, `TIER_WINDOW` = 4): loot draws a
-tier evenly among those found at the item level whose level is within 3 below it, the top one
-alone once the item level is past the last tier (or when none is that close), one draw as before
-(`magic/tests.rs`, `tiers_roll_from_a_window_below_the_item_level`). **A vault's loot pool**
+names it; `Numbers::of` shows it nothing, as a tool (docs/dev/enchanting.md "Pipes"). **Tiers**: rising by item level (`AffixDef::tiers_at` counts those an item level reaches;
+at most 255, a rolled affix names its tier as a `u8`). Every shipped ladder runs from its first
+level to item level 40 (the regrade, #2045, `docs/design/item-level-40.md` §4–§5; the two light
+affixes keep their three glow presets, Brutal, of Ruin, and of Proof their one tier) on one of
+three cadences: a tier every four levels (1, 4, 8, ... 40: eleven tiers) where the values step
+every tier (dice, hit points, mana, resistances, skills, percents, speed), every eight or ten
+(five or six tiers) for flat +1 to +7 ladders (to-hit, Defence, stats, Protection, banes), and
+three or four tiers for the system hooks and the curses. A ladder's first tier kept its level
+and range. Where the maths is saturated (to-hit, Defence, Protection, criticals) the top stayed
+and the ladder only spread; where there is room it grew, the last two or three tiers loaded
+above linear growth because the flat roll makes the top a chance, not a sure thing. **A tier's
+`dice`** (default 1): an extra-damage or elemental tier's value is its dice's sides and `dice`
+their count, so `{ level = 36, dice = 2, min = 8, max = 8 }` is 2d8 (Heavy to 2d10, the six
+elements to 2d8, of Wounding to 1d12); a rolled affix stays `(id, tier, value)`, the count read
+from the tier by `Mods` (`summed_dice`: the dice of one family sum to as many dice as the one
+that rolls most, their sides as great as all of them at best, so 1d8 and 1d6 are 1d14 as ever
+and 2d10 and 1d12 2d16), `describe::phrase` (`2d8`), and the wiki; the loader refuses `dice` on
+any other effect. The hand-made items that name tiers (the showcase's `[[item]]`s) were moved
+to the tier of about the same value; the uniques are written with values (above). **The balance
+pass** (`magic/shares_tests.rs`): 10 000 magic items at item levels 1, 8, 16, 24, 32, 40, and
+60; every affix's picks lie within four standard deviations and a tenth of its weight's share
+of the picks it could have been (none over, none starved), every rolled tier is one the item
+level reaches, and each tier reached is picked within four standard deviations of an even share
+(`--nocapture` prints the shares); the trim's shares at the same six levels (rares keeping three
+or more under a fifth at 1 and 8, over a quarter at 32 and 40, never falling). **The tier roll**
+(`loot::tiers_rolled`, the flat roll, #2045): loot draws a tier evenly among every tier the item
+level reaches, tier 1 to the highest whose level is at most the item level, one `index` draw;
+past a ladder's last tier the whole ladder, so a find of level 60 rolls as one of 40 does. The
+same draw serves everything that rolls through loot's pick: floor loot, drops, creature gear,
+shops' goods, and enchanting (`roll_affix_within`) (`magic/tests.rs`,
+`tiers_roll_flat_over_every_tier_the_item_level_reaches`). **A vault's loot pool**
 (`magic/loot.rs`: `LootPool`, `roll_pool`; the legend's syntax in `docs/dev/content.md`): a cell's
 pool is a grade and item classes. With no classes (`loot = "magic"`) it is `roll_with`, the same
 draws. With classes: one draw among those that hold something at the item level (`holds`), then
@@ -326,8 +342,8 @@ id on another rarity than unique, and a unique without its id.
 - **Affixes written with their values** (#2001, #2044): a unique's `affixes` write each affix
   with its value, never a tier, so a regrade of the ladders that renumbers the tiers leaves
   every unique's numbers as they are (docs/design/item-level-40.md §10): `"mystic=30"`, a dice
-  family's die `"heavy=1d12"` (`Effect::is_dice`: Heavy, of Wounding, the elements; every tier
-  rolls one die until L2 gives tiers a dice count), a light's light `"of_light=item_glow"`. A
+  family's dice `"heavy=1d12"`, `"heavy=2d8"` (`Effect::is_dice`: Heavy, of Wounding, the elements; the count
+  picks among the tiers of as many dice), a light's light `"of_light=item_glow"`. A
   unique written with a tier (`"mystic:2"`) is a content error. `content/affix_value.rs::valued`
   reads it at load: the affix takes the **first tier whose range holds the value** (a light's:
   the tier of that light), whose level counts toward the item level when `level` is unset (that item

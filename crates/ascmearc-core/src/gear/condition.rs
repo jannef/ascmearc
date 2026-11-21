@@ -11,7 +11,7 @@
 //!   fixed kit (a level file's placed gear, a vault's) is never rolled, so it stays as made.
 //! - **The draw**: one draw below [`PER_MILLE`] per piece, in pack order, against the odds of the
 //!   creature's tribe (the first `[[tribe]]` whose tag it has, else `[default]`) with the
-//!   `[[depth]]` row of the level's item level added ([`crate::content::Odds::deeper`]); for an improved
+//!   `[[item_level]]` row of the level's item level added ([`crate::content::Odds::with_row`]); for an improved
 //!   piece then one draw per improvement for its [`Aspect`] among those its base item has, as the
 //!   anvil draws them. The improvements are capped at `rules/temper.toml`'s `most`, and each counts
 //!   as one attempt made on it.
@@ -24,7 +24,7 @@
 //!   id, drawn in spawn order, or a placed creature's actor id): the gear's draws and everything
 //!   else on the level are the same with or without it.
 //!
-//! **Loot's make** (#1436) reads the same `[[depth]]` rows: [`crate::magic::make`].
+//! **Loot's make** (#1436) reads the same `[[item_level]]` rows: [`crate::magic::make`].
 
 use crate::content::{Content, CreatureId, ItemHarm, ObjectId, PER_MILLE};
 use crate::kit::Pack;
@@ -50,7 +50,7 @@ pub(crate) fn apply(
 ) {
     let rules = content.gear_condition();
     let tribe = rules.odds(&content.creature(creature).tags);
-    let odds = tribe.deeper(&rules.depth_at(level));
+    let odds = tribe.with_row(&rules.at_item_level(level));
     if odds == Default::default() {
         return;
     }

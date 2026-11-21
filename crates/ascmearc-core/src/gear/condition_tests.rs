@@ -1,6 +1,6 @@
 //! The condition creature gear spawns in (`gear/condition.rs`, #1193): the shares by tribe
 //! over many creatures, the kind by the material, protected items untouched, the loader's checks,
-//! and a damaged weapon in a creature's hand; deeper finds' make (#1436).
+//! and a damaged weapon in a creature's hand; the make by item level (#1436).
 
 use super::condition::{apply, conditioned, kind, quest_objects, stream};
 use crate::content::{Content, ContentFiles, CreatureId, ItemHarm, PER_MILLE};
@@ -300,10 +300,10 @@ fn without_the_file_gear_is_as_made() {
     assert_eq!((pack.items, rng), (made.items, before));
 }
 
-/// Loot's make (#1436): nothing drawn where the depth row gives nothing (item level 1) or for
-/// what takes no make (a ring); deep, a long sword is often improved and never damaged.
+/// Loot's make (#1436): nothing drawn where the item level's row gives nothing (item level 1) or
+/// for what takes no make (a ring); at a high item level, a long sword is often improved and never damaged.
 #[test]
-fn deeper_loot_is_better_made_and_shallow_loot_draws_nothing() {
+fn loot_of_a_high_item_level_is_better_made_and_a_low_one_draws_nothing() {
     let sword = Stack::one(CONTENT.object_id("long_sword").expect("long sword"));
     let ring = (CONTENT.object_defs().iter())
         .position(|o| o.is_jewellery())
@@ -316,7 +316,7 @@ fn deeper_loot_is_better_made_and_shallow_loot_draws_nothing() {
         make(&CONTENT, &mut rng, level, &mut made);
         assert_eq!((&made, rng), (stack, before));
     }
-    let row = CONTENT.gear_condition().depth_at(20);
+    let row = CONTENT.gear_condition().at_item_level(20);
     assert!(row.odds().improved() > 0);
     let mut improved = [0u32; 3];
     const N: u32 = 4000;
@@ -339,9 +339,10 @@ fn deeper_loot_is_better_made_and_shallow_loot_draws_nothing() {
     }
 }
 
-/// Creature gear adds the depth row of its level to its tribe's odds: deeper, more improved.
+/// Creature gear adds the row of its item level to its tribe's odds: the higher, the more
+/// improved.
 #[test]
-fn deeper_creature_gear_is_better_made() {
+fn creature_gear_of_a_high_item_level_is_better_made() {
     let improved = |level: u8| {
         let mut n = 0;
         for seed in 0..300 {
