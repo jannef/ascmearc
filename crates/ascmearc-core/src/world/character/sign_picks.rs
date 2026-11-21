@@ -37,6 +37,7 @@ use crate::geom::{Dir, Pos};
 use crate::lang::{MessageId, Msg};
 use crate::msg;
 use crate::noise::{self, Act};
+use crate::world::combat::fight::Words;
 use crate::world::creatures::ai::Plan;
 use crate::world::magic::spell::Caster;
 use crate::world::{ActorId, Spent, World};
@@ -85,8 +86,8 @@ impl World {
         let mut made = Vec::new();
         self.cast_bolt(Caster::Actor(player), here, &path, &breath.bolt, &mut made);
         let noun = content.sign_noun_phrase(active);
-        let verb = (breath.bolt.kind).map_or("burns", |k| content.damage_type(k).verb.as_str());
-        self.say_spell_of(noun, verb, made, events);
+        let words = Words::of_kind_or_burns(noun, breath.bolt.kind, &content);
+        self.say_spell(words, made, events);
         if self.state.death.is_none() {
             self.gift_cooldown(breath.cooldown, breath.degrees, events);
         }

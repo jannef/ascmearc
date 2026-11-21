@@ -272,17 +272,18 @@ impl World {
                     let (a, t) = (end(attacker, sees_attacker), end(target, sees_target));
                     // A creature's throw is said by what flies (`hurl.rs`).
                     if let Some(throw) = hurl::thrown_by(&content, me, kind, with) {
+                        let by = (me.creature, throw);
                         let said =
-                            hurl::throw_messages(&content, throw, (&a, &t), strike, damage, &guard);
+                            hurl::throw_messages(&content, by, (&a, &t), strike, damage, &guard);
                         reports.extend(said.into_iter().map(|text| (text, stops)));
                     } else {
                         // A natural attack after the first is said by its own words (`claws`).
                         let def = content.creature(me.creature);
-                        let words =
-                            match natural.and_then(|i| def.natural_attacks().nth(usize::from(i))) {
-                                Some(attack) => Words::named(&attack.name, &attack.verb, &content),
-                                None => Words::of(me, kind, with, damage, &content),
-                            };
+                        let n = natural.map(usize::from);
+                        let words = match n.filter(|&n| def.natural_attacks().nth(n).is_some()) {
+                            Some(n) => Words::natural(def, n, &content),
+                            None => Words::of(me, kind, with, damage, &content),
+                        };
                         let said = attack_message(&a, &t, &words, kind, strike, &guard);
                         reports.extend(said.map(|text| (text, stops)));
                     }
@@ -405,8 +406,10 @@ impl World {
                 Some(Last::Attack(_, target, seen, _) | Last::Trap(target, seen)) => {
                     let seen = seen && target == actor;
                     if seen {
-                        let dies = (self.actor_or_fallen(actor))
-                            .map_or("dies", |a| content.creature(a.creature).death_verb());
+                        let dies = (self.actor_or_fallen(actor)).map_or_else(
+                            || "dies".into(),
+                            |a| content.creature(a.creature).dies_arg(),
+                        );
                         reports.push((death_message(&end(actor, true), dies), close(at)));
                     }
                     seen
@@ -456,7 +459,11 @@ impl World {
                 // A fall is said with the trap ("You fall into a pit.").
                 if seen && !matches!(def.effect, TrapEffect::Pit { .. }) {
                     let noun = content.trap_noun_phrase(trap);
-                    let words = Words::new(noun.clone(), &def.verb, &content);
+                    let verbs = (
+                        content.trap_verb(trap, false),
+                        content.trap_verb(trap, true),
+                    );
+                    let words = Words::said(noun.clone(), verbs, &content);
                     let guard = Guard::of(self.actor_or_fallen(target), &content, &self.state);
                     let said = attack_message(
                         &End::Trap(noun),

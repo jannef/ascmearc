@@ -103,8 +103,8 @@ impl World {
                 _ => None,
             })
             .collect();
-        let verb = &content.damage_type(breath.kind).verb;
-        self.say_spell((&breath.noun, verb), made, events);
+        let words = fight::Words::of_kind(fight::word(&breath.noun), breath.kind, &content);
+        self.say_spell(words, made, events);
         self.spell_type_lands(id, Some(breath.kind), &harmed, events);
         for target in harmed {
             for rider in breath.riders.clone() {

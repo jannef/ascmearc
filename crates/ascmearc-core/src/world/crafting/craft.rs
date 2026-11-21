@@ -83,10 +83,8 @@ impl RecipeLack {
                 Msg::new(msg::crafting::LACKING_STATION).role("station", terrain(content, t))
             }
             RecipeLack::Knife => msg::crafting::LACKING_KNIFE.into(),
-            RecipeLack::Launcher(o) => Msg::new(msg::crafting::LACKING_LAUNCHER).role(
-                "launcher",
-                super::fletch::launcher_word(content, o).to_string(),
-            ),
+            RecipeLack::Launcher(o) => Msg::new(msg::crafting::LACKING_LAUNCHER)
+                .role("launcher", content.launcher_phrase(o)),
             RecipeLack::Stock(m) => {
                 let def = content.material(m);
                 let stock = def.group.as_deref().unwrap_or(&def.name).to_string();

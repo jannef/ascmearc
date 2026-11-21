@@ -37,7 +37,7 @@ use ascmearc_core::ability::Ability;
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::{ClassActive, Shape, SpellData, SpellId, SpellPurpose, Stance};
 use ascmearc_core::fov::radius2;
-use ascmearc_core::lang::Arg;
+use ascmearc_core::lang::{Arg, Phrase};
 use ascmearc_core::perception::{CellView, PerceptionView};
 use ascmearc_core::world::{ActorId, cone_cells};
 use ascmearc_core::{Action, Dir, Pos, ReadTarget};
@@ -324,9 +324,10 @@ impl Aim {
     /// as far as they know (the rules': it flies along the line of fire and
     /// goes off on the first creature they see in its way, before the first cell they know is
     /// solid, or on the cursor; the player within its radius of that, walls between not
-    /// counted). Returns what would catch them ("fireball"); `None` for anything else, and for
-    /// a player their own bursts spare (Scroll savant).
-    pub fn catches_reader(&self, view: &PerceptionView<'_>) -> Option<String> {
+    /// counted). Returns what would catch them, the spell's noun (`spell_noun:<id>`,
+    /// "fireball"); `None` for anything else, and for a player their own bursts spare (Scroll
+    /// savant).
+    pub fn catches_reader(&self, view: &PerceptionView<'_>) -> Option<Phrase> {
         if view.bursts_spare_me() {
             return None;
         }
@@ -336,7 +337,11 @@ impl Aim {
                 let id = spell_of(view, self.kind)?;
                 let spell = cast_spell(view, self.kind).filter(|s| s.shape == Shape::Burst)?;
                 let reach = view.own_spell_reach(id)?;
-                (reach.radius?, reach.range?, spell.look.noun.clone())
+                (
+                    reach.radius?,
+                    reach.range?,
+                    view.content().spell_noun_phrase(spell),
+                )
             }
             // A flask whose type the player knows, of a burst that harms (a hex's spares its
             // thrower): its splash at its own rung, as far as they throw it.
@@ -350,7 +355,11 @@ impl Aim {
                     return None;
                 }
                 let radius = flask.splash(content).radius?;
-                (radius, view.throw_range(item)?, spell.look.noun.clone())
+                (
+                    radius,
+                    view.throw_range(item)?,
+                    content.spell_noun_phrase(spell),
+                )
             }
             _ => return None,
         };
@@ -778,7 +787,9 @@ mod tests {
             })
         );
         // Next to the reader: it may catch them; far off it does not.
-        assert_eq!(fireball.catches_reader(&view).as_deref(), Some("fireball"));
+        let noun =
+            |aim: &Aim| (aim.catches_reader(&view)).map(|p| view.content().english_of(&p, "bare"));
+        assert_eq!(noun(&fireball).as_deref(), Some("fireball"));
         let far = Aim {
             at: Pos::new(me.x, me.y - 8),
             ..fireball
@@ -851,7 +862,10 @@ mod tests {
         };
         let reach = view.own_spell_reach(spell("flame")).expect("cast");
         assert_eq!(burst.range(&view), reach.range);
-        assert_eq!(burst.catches_reader(&view).as_deref(), Some("flame"));
+        let noun = burst
+            .catches_reader(&view)
+            .map(|p| view.content().english_of(&p, "bare"));
+        assert_eq!(noun.as_deref(), Some("flame"));
         assert_eq!(
             burst.action(&content),
             Some(Action::Cast("flame".into(), Some(burst.at)))

@@ -33,7 +33,7 @@ use super::fight::{End, Guard, Words, attack_message, word};
 use super::shoot::Flight;
 use crate::action::{AttackKind, Event, Positions};
 use crate::combat::Strike;
-use crate::content::{ActionKind, Content, DamageTypeId, ObjectId, Throw};
+use crate::content::{ActionKind, Content, CreatureId, DamageTypeId, ObjectId, Throw};
 use crate::fov::radius2;
 use crate::geom::Pos;
 use crate::lang::Msg;
@@ -72,7 +72,8 @@ impl World {
         let content = self.content.clone();
         let me = &self.state.actors[&id];
         let at = self.state.actors.get(&target).map(|a| a.pos);
-        let throw = content.creature(me.creature).throw.as_ref();
+        let creature = me.creature;
+        let throw = content.creature(creature).throw.as_ref();
         let (Some(throw), Some(profile), Some(at)) = (throw, me.hurled(&content), at) else {
             return self.price_of(id, ActionKind::Wait);
         };
@@ -91,7 +92,7 @@ impl World {
             if self.perception.sees_actors_at(from) && !self.perception.conceals(id) {
                 let line = Msg::new(msg::combat::THROWS_FLASK)
                     .role("actor", self.end_of(id, true).phrase())
-                    .role("verb", throw.attack.verb.as_str());
+                    .role("verb", content.throw_verb(content.creature(creature)));
                 self.say(line);
             }
             self.shatter_flask(id, throw.object, (from, at, throw.range), events);
@@ -152,7 +153,7 @@ pub(in crate::world) fn thrown_by<'c>(
 /// at `target`, what came of it, the kind of damage it did, and the target's guard.
 pub(in crate::world) fn throw_messages(
     content: &Content,
-    throw: &Throw,
+    (by, throw): (CreatureId, &Throw),
     (thrower, target): (&End, &End),
     strike: Option<Strike>,
     damage: Option<DamageTypeId>,
@@ -167,7 +168,7 @@ pub(in crate::world) fn throw_messages(
         said.push(
             Msg::new(msg::combat::THROWS)
                 .role("actor", thrower.phrase())
-                .role("verb", throw.attack.verb.as_str())
+                .role("verb", content.throw_verb(content.creature(by)))
                 .role("what", word(noun)),
         );
     }
