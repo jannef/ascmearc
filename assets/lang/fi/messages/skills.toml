@@ -5,23 +5,23 @@
 # nested messages; `sign` text from the data.
 
 all_of_a_piece = { text = "Se on kauttaaltaan yhtä kappaletta.", of = "26114e" }
-avoid_trap = { text = "Väistät taitavasti {trap:gen}.", of = "0608cd" }
+avoid_trap = { text = "Väistät taitavasti {trap:acc}.", of = "0608cd" }
 caught_stealing = { text = "{who:Nom} yllättää sinut varkaista ja käy kimppuusi!", of = "63dc03" }
 chest_not_locked = { text = "{chest:Nom} ei ole lukossa.", of = "1b6c55" }
 disarm_failed = { text = "Et onnistu purkamaan {trap:par}.", of = "ae2296" }
 disarm_untrained = { text = "Et osaa purkaa ansoja.", of = "d528bf" }
-disarmed = { text = "Purat {trap:gen}.", of = "c5b0ce" }
+disarmed = { text = "Purat {trap:acc}.", of = "c5b0ce" }
 door_not_locked = { text = "Ovi ei ole lukossa.", of = "ab4bbc" }
 falls_for_it = { text = "{who:Nom} menee lankaan.", of = "5a903f" }
 feint_untrained = { text = "Et osaa harhauttaa.", of = "7dda8b" }
 forage_broken_by = { text = "{came:bare}; lopetat ruoan etsimisen.", of = "f0fcd2" }
 forage_start = { text = "Etsit ympäröivästä maastosta jotain syötävää.", of = "24ae6f" }
 forage_untrained = { text = "Et osaa elää luonnon antimilla.", of = "47b79a" }
-foraged = { text = "Löydät syötävää: {what:nom}.", of = "5a8fb5" }
+foraged = { text = "Löydät {what:acc}.", of = "5a8fb5" }
 gather_broken_by = { text = "{came:bare}; lopetat keräämisen.", of = "18e3d9" }
 gather_start = { text = "Etsit hehkuvasta sienikasvustosta yrttejä.", of = "e13a19" }
 gather_untrained = { text = "Et tiedä, mitä näille tehdä: yrttien keruu vaatii yrttitietoutta.", of = "93629b" }
-gathered = { text = "Keräät yrttejä: {what:nom}.", of = "5a8fb5" }
+gathered = { text = "Keräät {what:acc}.", of = "5a8fb5" }
 herbs_besides = { text = "Yrttisilmäsi ansiosta löytyy lisäksi {what:nom}.", of = "a9ec36" }
 hostile_to_thief = { text = "{who:Nom} on vihamielinen: se ei koskaan päästäisi sinua tarpeeksi lähelle.", of = "ce121a" }
 intimidate_untrained = { text = "Et osaa pelotella.", of = "683cf4" }
@@ -53,7 +53,7 @@ out_of_range = { text = "Se on kantaman ulkopuolella.", of = "884956" }
 pick_failed = { text = "Et onnistu tiirikoimaan lukkoa.", of = "64d57d" }
 pick_untrained = { text = "Et osaa tiirikoida lukkoja.", of = "dae27d" }
 picked_bare = { text = "Sienestä on kerätty kaikki.", of = "adaa32" }
-picked_chest = { text = "Tiirikoit lukon ja avaat {chest:gen}.", of = "30d801" }
+picked_chest = { text = "Tiirikoit lukon ja avaat {chest:acc}.", of = "30d801" }
 picked_door = { text = "Tiirikoit lukon ja avaat oven.", of = "464c3d" }
 picked_over = { text = "Tästä sienestä on jo kerätty.", of = "e346df" }
 read_magic = { text = "Luet {before:ill} sidotun taian: {after:nom}.", of = "596bde" }
@@ -62,11 +62,11 @@ recognise = { text = "Tunnistat, mitä {before:nom} on: {after:nom}.", of = "5ec
 search_broken_by = { text = "{came:bare}; lopetat etsittyäsi {time:bare}.", of = "999e41" }
 searched_nothing = { text = "Etsit {time:bare} etkä löydä mitään.", of = "d31268" }
 secret_door = { text = "Löydät salaoven!", of = "594322" }
-set_off = { text = "Laukaiset {trap:gen}!", of = "4573be" }
+set_off = { text = "Laukaiset {trap:acc}!", of = "4573be" }
 sounds_hollow = { text = "Seinä kumisee tässä ontolta.", of = "33465c" }
 steal_untrained = { text = "Et osaa varastaa.", of = "70d2ea" }
 step_over = { text = "Astut kevyesti {trap:gen} yli.", of = "7d469b" }
-stole = { text = "Varastat {who:abl} saaliin: {what:nom}.", of = "b02fb4" }
+stole = { text = "Varastat {who:abl} {what:acc}.", of = "b02fb4" }
 stop_foraging = { text = "Lopetat ruoan etsimisen.", of = "7876e1" }
 stop_gathering = { text = "Lopetat keräämisen.", of = "7f0957" }
 stop_searching = { text = "Lopetat etsittyäsi {time:bare}.", of = "8d7c35" }

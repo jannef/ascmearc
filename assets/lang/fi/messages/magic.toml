@@ -27,7 +27,7 @@ driven_back = { by = "who.person", you = "Joudut perääntymään.", other = "{w
 effect_dev = { text = "Efekti: {id:bare} (dev).", of = "0b2b10" }
 effect_reaches_no_cell = { text = "Efekti `{id:bare}` ei ulotu siellä yhteenkään ruutuun.", of = "23e844" }
 feel_stat_return = { text = "Tunnet, kuinka {stat:bare} palaa.", of = "1e09a6" }
-forgotten = { text = "Olet unohtanut: {spells:and}.", of = "5a9677" }
+forgotten = { text = "Olet unohtanut loitsut {spells:and}.", of = "5a9677" }
 gain_experience_for_learning = { text = "Saat {xp:bare} kokemuspistettä loitsun {spell:Nom} oppimisesta.", of = "73f17e" }
 give_blood = { text = "Annat vertasi, ja voima kuohahtaa sisälläsi.", of = "050c8b" }
 grimoire_crumbles = { text = "Loitsukirja murenee tomuksi.", of = "8acaeb" }
@@ -94,7 +94,7 @@ read_broken_by = { text = "{came:bare}; lopetat lukemisen.", of = "ae76dd" }
 read_it_at_what = { text = "Mihin luet sen? Nimeä ruutu, johon tähtäät: `read:a:12,5`.", of = "2771e5" }
 read_it_on_what = { text = "Mihin luet sen? Nimeä mukanasi oleva tavara: `read:a:b`.", of = "54c873" }
 read_on_yourself = { text = "Se luetaan itseesi: `read:a`.", of = "1011e7" }
-read_the = { text = "Luet {what:gen}.", of = "9237c4" }
+read_the = { text = "Luet {what:acc}.", of = "9237c4" }
 # `faces`: a list of `reroll_face`s, each a face's number.
 reroll = { text = "Silmäluvut {faces:and} heitetään uudelleen.", of = "9ae6d0" }
 reroll_face = { text = "{n:bare}", of = "caa21b" }
@@ -130,7 +130,7 @@ wounds_close = { text = "Haavasi umpeutuvat.", of = "c2be56" }
 write_broken_by = { text = "{came:bare}; lopetat kirjoittamisen.", of = "b5c1ba" }
 writing_does_not_fade = { text = "Kirjoitus ei haalistu kääröstä.", of = "8caf36" }
 writing_swims = { text = "Kirjaimet uivat silmissäsi.", of = "ab1211" }
-you_write = { text = "Kirjoitat {what:gen}.", of = "effb80" }
+you_write = { text = "Kirjoitat {what:acc}.", of = "effb80" }
 zap = { text = "Käytät {what:par}.", of = "137bd9" }
 zone_dev = { text = "{kind:bare}-alue ympäröi ruutua {x:bare},{y:bare} (dev).", of = "976a48" }
 

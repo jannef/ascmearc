@@ -24,7 +24,7 @@ familiar_arrives = { text = "{name:Nom}, {kind:nom_si}, {line:bare}.", of = "760
 familiar_back = { text = "{name:Nom}, {kind:nom_si}, palaa luoksesi pimeydestä.", of = "660911" }
 familiar_heels = { text = "{name:Nom}, {kind:nom_si}, pysyttelee kintereilläsi.", of = "7197b3" }
 familiar_lives = { text = "Apurieläimesi elää yhä.", of = "837c0f" }
-fasten_collar = { text = "Kiinnität {what:gen} {who:gen} kaulaan.", of = "69e1db" }
+fasten_collar = { text = "Kiinnität {what:acc} {who:gen} kaulaan.", of = "69e1db" }
 goes_for_throat = { text = "{who:Nom} käy {target:gen} kurkkuun.", of = "8dde65" }
 growls_at_the_dark = { text = "{who:Nom} murisee pimeydelle.", of = "c32ed6" }
 grows_stronger = { text = "{who:Nom} vahvistuu.", of = "d4c779" }

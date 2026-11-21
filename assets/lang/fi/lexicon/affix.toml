@@ -79,7 +79,7 @@ of_the_alchemist = { word = "alkemisti/5", forms = { gen = "alkemistin", bare = 
 of_the_anvil = { word = "alasin/33", forms = { gen = "alasimen", bare = "alasimen", label = "Alasimen" } }
 of_the_bear = { word = "karhu/1", forms = { gen = "karhun", bare = "karhun", label = "Karhun" } }
 of_the_cutpurse = { word = "tasku|varas/41*D", forms = { gen = "taskuvarkaan", bare = "taskuvarkaan", label = "Taskuvarkaan" } }
-of_the_eagle = { word = "kotka/9", forms = { gen = "kotkan", bare = "kotkan", label = "Kotkan" } }
+of_the_eagle = { word = "kotka/10", forms = { gen = "kotkan", bare = "kotkan", label = "Kotkan" } }
 of_the_fox = { word = "kettu/1*C", forms = { gen = "ketun", bare = "ketun", label = "Ketun" } }
 of_the_hare = { word = "jänis/39", forms = { gen = "jäniksen", bare = "jäniksen", label = "Jäniksen" } }
 of_the_hunt = { word = "metsästys/39", forms = { gen = "metsästyksen", bare = "metsästyksen", label = "Metsästyksen" } }

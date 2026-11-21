@@ -2,10 +2,13 @@
 # `target` is attacked (either may be the player); `weapon` what strikes, with its owner, a trap's
 # possibly plural ("nuolet"); `verb` a line of data, a finite verb taking a partitive object,
 # already in the actor's person. A plural trap actor gets English's plural verb, which in Finnish
-# would be the second person: its lines say a verb of their own (`actor.number` `many`).
+# would be the second person: its lines say a verb of their own (`actor.number` `many`). A
+# `weapon` or `what` of several is a numeral and the partitive, whose verb is singular ("kolme
+# nuolta kimpoaa"), so those lines say no `number` variants; a total object is `acc` ("lyö
+# tikarin", "lyö kolme nuolta").
 
 acid_eats_at = { text = "Happo syövyttää {what:par}.", of = "36004d" }
-acid_eats_away = { text = "Happo syö {what:gen} olemattomiin.", of = "cff4b1" }
+acid_eats_away = { text = "Happo syö {what:acc} olemattomiin.", of = "cff4b1" }
 acid_runs_off = { text = "Happo valuu {what:abl} tekemättä vahinkoa.", of = "5284d4" }
 # What the player does at a place they aim at, an infinitive with its object:
 # `cannot_aim_at_yourself`'s `verb`.
@@ -55,11 +58,11 @@ heat_leaves_unmarked = { text = "Kuumuus ei jätä jälkeä {what:ade}.", of = "
 heat_scorches = { text = "Kuumuus kärventää {what:par}.", of = "e0ec8c" }
 in_the_way = { text = "Jokin on tiellä.", of = "ce360b" }
 keep_wits = { text = "Pidät pääsi kylmänä.", of = "2dc11a" }
-# `what`: the player's weapon, knocked away by `who`; a total object (one: the genitive;
-# counted: the numeral and the partitive, "kolme nuolta").
-knocked_from_hand = { by = "what.number", one = "{who:Nom} lyö {what:gen} kädestäsi!", many = "{who:Nom} lyö {what:nom} kädestäsi!", of = "39bd8a" }
+# `what`: the player's weapon, knocked away by `who`, a total object (`acc`: "tikarin", "kolme
+# nuolta").
+knocked_from_hand = { text = "{who:Nom} lyö {what:acc} kädestäsi!", of = "39bd8a" }
 lands_beside_you = { text = "Se putoaa viereesi.", of = "b4044b" }
-learned_ability = { text = "Olet oppinut {ability:gen}.", of = "869173" }
+learned_ability = { text = "Olet oppinut {ability:acc}.", of = "869173" }
 no_ability = { text = "Sinulla ei ole sellaista kykyä.", of = "f10090" }
 no_ammunition = { text = "Sinulla ei ole {what:pl_par} valmiina.", of = "210e58" }
 no_ammunition_kind = { text = "Sinulla ei ole ammuksia valmiina.", of = "8e3998" }
@@ -77,7 +80,7 @@ nothing_to_bash = { text = "Siellä ei ole mitään töytäistävää.", of = "1
 out_of_range = { text = "Se on kantaman ulkopuolella.", of = "884956" }
 pace_your_breath = { text = "Opit säästelemään hengitystäsi.", of = "1eb68f" }
 reason = { text = "{reason:Bare}.", of = "90dfd1" }
-reflected_at_you = { text = "{weapon:Nom} kääntyy takaisin sinuun.", of = "5f13c9" }
+reflected_at_you = { text = "{weapon:Nom} kääntyy takaisin kohti sinua.", of = "5f13c9" }
 rust_spreads = { text = "Ruoste leviää {what:ill}.", of = "657a46" }
 rusts_away = { text = "{what:Nom} ruostuu olemattomiin.", of = "192c24" }
 shield_wrath = { text = "Vastaat iskuun pyhällä vihalla!", of = "9a6276" }
@@ -88,9 +91,9 @@ skill_risen = { text = "Tunnet olevasi taitavampi {how:bare}.", of = "be8e74" }
 something_dies = { text = "Jokin kuolee.", of = "fd9a9e" }
 staggers = { text = "{who:Nom} horjahtaa.", of = "9f3bd4" }
 # `from`: what turned the blow ("kilpi", "torjunta"), the player's.
-staggers_from = { text = "{from:Nom_si} saa {who:gen} horjahtamaan.", of = "c80f17" }
+staggers_from = { text = "{from:Nom_si} saa {who:acc} horjahtamaan.", of = "c80f17" }
 status = { text = "{who:Nom} on {status:nom}.", of = "3d7f6e" }
-status_from = { text = "{from:Nom_si} jättää {who:gen} {status:tra}.", of = "2e1e72" }
+status_from = { text = "{from:Nom_si} jättää {who:acc} {status:tra}.", of = "2e1e72" }
 takes_no_rust = { text = "{what:Nom} ei ruostu.", of = "9eeb6e" }
 throws = { text = "{actor:Nom} {verb:bare} {what:par}.", of = "1cd694" }
 throws_flask = { text = "{actor:Nom} {verb:bare} pulloa.", of = "ef2b5e" }
@@ -137,9 +140,7 @@ other = "{actor:Nom} kohdistaa loitsun {target:ill}."
 
 [does_no_harm]
 of = "888652"
-by = "weapon.number"
-one = "{weapon:Nom} ei vahingoita {target:par}."
-many = "{weapon:Nom} eivät vahingoita {target:par}."
+text = "{weapon:Nom} ei vahingoita {target:par}."
 
 [dodges]
 of = "9d8d0d"
@@ -156,9 +157,9 @@ else = "{who:Nom} sinkoutuu taaksepäin."
 # `armour`: what it glances off: the piece worn, a hide, "panssari".
 [glances_off]
 of = "2d4639"
-by = "weapon.number"
-one = { by = "target.person", you = "{weapon:Nom} kimpoaa {armour:ela_si}.", other = "{weapon:Nom} kimpoaa {target:gen} {armour:ela}." }
-many = { by = "target.person", you = "{weapon:Nom} kimpoavat {armour:ela_si}.", other = "{weapon:Nom} kimpoavat {target:gen} {armour:ela}." }
+by = "target.person"
+you = "{weapon:Nom} kimpoaa {armour:ela_si}."
+other = "{weapon:Nom} kimpoaa {target:gen} {armour:ela}."
 
 [hit]
 of = "7ca028"
@@ -194,14 +195,14 @@ other = "{target:Nom} torjuu {weapon:par}."
 [reflected]
 of = "fb8a19"
 by = "who.person"
-you = "Kilpesi kääntää {weapon:gen} takaisin {target:ill}."
-other = "{who:Gen} kilpi kääntää {weapon:gen} takaisin {target:ill}."
+you = "Kilpesi kääntää {weapon:acc} takaisin kohti {target:par}."
+other = "{who:Gen} kilpi kääntää {weapon:acc} takaisin kohti {target:par}."
 
 [reflected_at_caster]
 of = "949097"
 by = "who.person"
-you = "Kilpesi kääntää {weapon:gen} takaisin loitsijaansa."
-other = "{who:Gen} kilpi kääntää {weapon:gen} takaisin loitsijaansa."
+you = "Kilpesi kääntää {weapon:acc} takaisin kohti loitsijaansa."
+other = "{who:Gen} kilpi kääntää {weapon:acc} takaisin kohti loitsijaansa."
 
 [shoots_at]
 of = "6e3afe"
@@ -209,11 +210,12 @@ by = "actor.person"
 you = "Ammut {target:par} kohti."
 other = { by = "actor.number", one = "{actor:Nom} ampuu {target:par} kohti.", many = "{actor:Nom} lentävät {target:par} kohti." }
 
+# `target` hides in the wall: the blow finds stone instead of them.
 [strikes_wall]
 of = "c17c10"
-by = "weapon.number"
-one = "{weapon:Nom} iskee kiveen siellä, missä {target:nom} piileskelee seinässä."
-many = "{weapon:Nom} iskevät kiveen siellä, missä {target:nom} piileskelee seinässä."
+by = "target.person"
+you = "{weapon:Nom} iskee kiveen, kun piileskelet seinässä."
+other = "{weapon:Nom} iskee kiveen seinässä piileskelevän {target:gen} sijaan."
 
 [throws_at]
 of = "be5e7c"
@@ -223,6 +225,4 @@ other = "{actor:Nom} heittää {target:par} kohti."
 
 [turned_aside]
 of = "11322f"
-by = "weapon.number"
-one = "{weapon:Nom} kääntyy sivuun ennen kuin ehtii {target:ill}."
-many = "{weapon:Nom} kääntyvät sivuun ennen kuin ehtivät {target:ill}."
+text = "{weapon:Nom} kääntyy sivuun ennen kuin se osuu {target:ill}."

@@ -20,7 +20,7 @@ cannot_afford = { text = "{who:Ade} ei ole varaa {what:ill}.", of = "4b618a" }
 # A dev action's: `quest` the quest's name, `target` as typed.
 cannot_draw_dev = { text = "{quest:bare}: ei voi arpoa kohdetta `{target:bare}`.", of = "3dc577" }
 cannot_pay = { text = "Et pysty maksamaan.", of = "369601" }
-catches_stealing = { by = "who.number", one = "{who:Nom} yllättää sinut varkaista. \"Seis, varas!\"", many = "{who:Nom} yllättävät sinut varkaista. \"Seis, varas!\"", of = "c10c0e" }
+catches_stealing = { text = "{who:Nom} yllättää sinut varkaista. \"Seis, varas!\"", of = "c10c0e" }
 done = { text = "Suoritettu.", of = "4e61af" }
 # A quest done more than once: `times`, how many times.
 done_times = { text = "Suoritettu ({times:bare} kertaa).", of = "aca440" }
@@ -32,12 +32,12 @@ drunk_or_not = { text = "Juotu tai ei, {what:nom} maksaa yhä {price:bare} kulta
 eat_and_buy = { text = "Söit sen, ostit sen: {price:bare} kultaa {what:ela}.", of = "763725" }
 eaten_or_not = { text = "Syöty tai ei, {what:nom} maksaa yhä {price:bare} kultaa.", of = "3951bd" }
 # An escort given something: `who` the escort, `what` what it took off for it, a total object
-# (one: the genitive; counted: the numeral and the partitive, "kolme nuolta").
-escort_drops = { by = "what.number", one = "{who:Nom} pudottaa {what:gen}.", many = "{who:Nom} pudottaa {what:nom}.", of = "a61fd2" }
+# (`acc`: "tikarin", "kolme nuolta").
+escort_drops = { text = "{who:Nom} pudottaa {what:acc}.", of = "a61fd2" }
 escort_follows = { text = "{who:Nom} seuraa sinua.", of = "725168" }
 escort_not_with_you = { text = "{who:Nom} ei ole mukanasi.", of = "7fe0e7" }
-escort_puts_on = { text = "{who:Nom} pukee ylleen {what:gen}.", of = "7cd33d" }
-escort_readies = { text = "{who:Nom} ottaa {what:gen} valmiiksi.", of = "90d223" }
+escort_puts_on = { text = "{who:Nom} pukee ylleen {what:acc}.", of = "7cd33d" }
+escort_readies = { text = "{who:Nom} ottaa {what:acc} valmiiksi.", of = "90d223" }
 escort_wields = { text = "{who:Nom} tarttuu {what:ill}.", of = "bfa934" }
 # Set on given to escorts: `who`, the escorts, a list.
 escorts_refuse = { text = "{who:And} eivät lähde etsimään tappelua.", of = "5f3a02" }
@@ -46,13 +46,13 @@ failed = { text = "Epäonnistui.", of = "af8206" }
 failed_dead = { text = "Epäonnistui: {who:nom} on kuollut.", of = "ec874e" }
 gain_experience = { text = "Saat {xp:bare} kokemuspistettä.", of = "fba3c6" }
 # The player gives an escort something: `what`, one of the stack.
-give_escort = { text = "Annat {what:gen} {who:all}.", of = "2673f3" }
+give_escort = { text = "Annat {what:acc} {who:all}.", of = "2673f3" }
 # The player hands a quest's things in: `what`, what was handed in.
-give_quest_items = { by = "what.number", one = "Annat {who:all} {what:gen}.", many = "Annat {who:all} {what:counted}.", of = "90abff" }
+give_quest_items = { text = "Annat {who:all} {what:acc}.", of = "90abff" }
 # A dev action's.
 given_dev = { text = "{quest:bare}: annettu.", of = "39f59c" }
 # A quest giver hands over a letter to deliver, or a reward: `what`, what it gives.
-gives_you = { by = "what.number", one = "{who:Nom} antaa sinulle {what:gen}.", many = "{who:Nom} antaa sinulle {what:counted}.", of = "348d4e" }
+gives_you = { text = "{who:Nom} antaa sinulle {what:acc}.", of = "348d4e" }
 # A dev action's.
 got_somewhere_dev = { text = "{quest:bare}: on jo edennyt.", of = "b80eb8" }
 have_not_paid = { text = "Et ole maksanut {what:ela}.", of = "1438dd" }
@@ -61,12 +61,12 @@ killed = { text = "{have:bare} / {need:bare} tapettu.", of = "cf8166" }
 learn_more_of = { text = "Opit lisää {skill:par}.", of = "185ddd" }
 leave_without_paying = { text = "Lähdet maksamatta. \"Seis, varas!\" huutaa {who:nom}.", of = "dd53b7" }
 # A dev action's: `who` the lure quest's creature.
-lure_dev = { text = "Houkuttelet {who:gen} puolellesi (dev).", of = "bd65e9" }
+lure_dev = { text = "Houkuttelet {who:acc} puolellesi (dev).", of = "bd65e9" }
 mark_the_way = { text = "Merkitset reitin karttaasi.", of = "5ebe3b" }
 # A dev action's.
 marked_done_dev = { text = "{quest:bare}: merkitty suoritetuksi.", of = "c4b590" }
 # A quest's giver marks a hidden location: `place`, its name as the data writes it.
-marks_on_map = { text = "{who:Nom} merkitsee karttaasi {place:gen}.", of = "ea54d8" }
+marks_on_map = { text = "{who:Nom} merkitsee karttaasi {place:acc}.", of = "ea54d8" }
 # A guild's master names the player to a rank: `title`, the rank; `guild`, the guild by its name.
 names_you = { text = "{master:Nom} nimittää sinut {guild:gen} {title:tra}.", of = "1ebd9a" }
 # What the player does next once a quest's goal is met: `step`, a `step_*` line.
@@ -97,10 +97,10 @@ owe_nothing = { text = "Et ole {who:all} mitään velkaa.", of = "61f97a" }
 pay_for_that = { text = "\"Tästä saat maksaa!\" huutaa {who:nom}.", of = "6345e2" }
 pay_gold = { text = "Maksat {who:all} {gold:bare} kultaa.", of = "8fb3ca" }
 pay_gold_for = { text = "Maksat {who:all} {gold:bare} kultaa {what:ela}.", of = "8a5453" }
-put_back = { by = "what.number", one = "Panet {what:gen} takaisin.", many = "Panet {what:counted} takaisin.", of = "32e574" }
+put_back = { text = "Panet {what:acc} takaisin.", of = "32e574" }
 quest_complete = { text = "Tehtävä suoritettu: {quest:bare}.", of = "a6f766" }
 quest_failed = { text = "Tehtävä epäonnistui: {quest:bare}.", of = "b07eaa" }
-sell = { by = "what.number", one = "Myyt {what:gen} {who:all} hintaan {gold:bare} kultaa.", many = "Myyt {what:counted} {who:all} hintaan {gold:bare} kultaa.", of = "820c2c" }
+sell = { text = "Myyt {what:acc} {who:all} hintaan {gold:bare} kultaa.", of = "820c2c" }
 sniffs = { text = "{who:Nom} nuuhkaisee {what:par} ja sanoo: \"Ei mihinkään hintaan.\"", of = "6e18be" }
 # The next step of a quest whose goal is met (in `next_step`, `updated_step`): `who`, whoever
 # takes it in now.
@@ -109,7 +109,7 @@ step_return = { text = "palaa {who:gen} luo", of = "1acc28" }
 step_take = { text = "vie {what:counted} {who:all}", of = "d67d10" }
 step_take_them = { text = "vie ne {who:all}", of = "6e1fc6" }
 steps_into_your_way = { text = "{who:Nom} astuu tiellesi: et ole maksanut.", of = "684fd6" }
-take_leave = { text = "Hyvästelet {who:gen}.", of = "46cab5" }
+take_leave = { text = "Hyvästelet {who:acc}.", of = "46cab5" }
 # A kill quest's target counted: "jättirotta", "3 jättirottaa".
 target_counted = { text = "{who:counted}", of = "232653" }
 # A kill quest's target in its task: a unique by its name.

@@ -473,6 +473,105 @@ fn creatures_names_and_the_player() {
     );
 }
 
+/// The total object (`acc`, owner review 1, #2072): one thing in the genitive, several as the
+/// nominative numeral and the partitive (never "kolmen nuolen"), a plural word in the
+/// nominative, and the player as `sinut`.
+#[test]
+fn a_total_object_is_the_genitive_for_one_and_the_numeral_with_the_partitive_for_several() {
+    let arrow = Phrase::id("object:arrow");
+    assert_eq!(form(&arrow, "acc"), "nuolen");
+    assert_eq!(form(&arrow.clone().count(3), "acc"), "kolme nuolta");
+    assert_eq!(form(&arrow.clone().count(13), "acc"), "13 nuolta");
+    assert_eq!(form(&arrow.clone().count(0), "acc"), "nolla nuolta");
+    assert_eq!(form(&arrow.clone().count(3), "pl_acc"), "nuolet");
+    let you = Phrase::literal("Hild").person(Person::You);
+    let sword = Phrase::id("object:long_sword").owned_by(you.clone());
+    assert_eq!(
+        form(&sword, "acc"),
+        "pitkämiekkasi",
+        "the player's: the suffix"
+    );
+    assert_eq!(
+        form(&arrow.clone().count(3).owned_by(you.clone()), "acc"),
+        "kolme nuoltasi"
+    );
+    let troll = Phrase::id("creature:troll");
+    assert_eq!(
+        form(&sword.clone().owned_by(troll), "acc"),
+        "peikon pitkämiekan"
+    );
+    assert_eq!(form(&Phrase::id("object:axe"), "acc_nsa"), "kirveensä");
+    assert_eq!(form(&you, "acc"), "sinut");
+    assert_eq!(
+        form(&Phrase::id("creature:black_wystan"), "acc"),
+        "Musta Wystanin"
+    );
+    assert_eq!(form(&Phrase::literal("Cēaptūn"), "acc"), "Cēaptūnin");
+    // A word plural in meaning or with no singular: the nominative, as a total object is.
+    assert_eq!(form(&Phrase::id("word:flames"), "acc"), "liekit");
+    assert_eq!(
+        form(&Phrase::id("word:flames").count(3), "acc"),
+        "kolme liekkiä"
+    );
+    assert_eq!(form(&Phrase::id("object:scissors"), "acc"), "sakset");
+    assert_eq!(
+        form(&Phrase::id("object:scissors").count(3), "acc"),
+        "kolmet sakset"
+    );
+    // Adjectives agree with the head in either shape.
+    let flaming =
+        Phrase::id("object:long_sword").with(Modifier::Adjective(Word::id("affix:flaming")));
+    assert_eq!(form(&flaming, "acc"), "liekehtivän pitkämiekan");
+    assert_eq!(
+        form(&flaming.count(2), "acc"),
+        "kaksi liekehtivää pitkämiekkaa"
+    );
+    let fi = Fi::default();
+    let stadi = Register::new(BTreeMap::from([("sinut".to_string(), "sut".to_string())]));
+    assert_eq!(fi.phrase(&you, "acc", &NoLexicon, &stadi), Ok("sut".into()));
+}
+
+/// Place names inflect as names (owner review 1, #2072): the illative, not "paikkaan X".
+#[test]
+fn place_names_take_their_cases() {
+    let lex = MapLexicon::default()
+        .with("place:level.ceaptun", LexWord::new("Cēaptūn").proper(true))
+        .with(
+            "place:dungeon.lytelscraef",
+            LexWord::new("Lytelscræf").proper(true),
+        )
+        .with("place:level.holtwic", LexWord::new("Holtwīc").proper(true))
+        .with(
+            "place:level.ceaptun.legend.N",
+            LexWord::new("palkkio|taulu/1"),
+        );
+    let fi = Fi::default();
+    let reg = Register::default();
+    let form = |id: &str, f: &str| {
+        fi.phrase(&Phrase::id(id), f, &lex, &reg)
+            .unwrap_or_else(|e| panic!("{f}: {e}"))
+    };
+    assert_eq!(form("place:level.ceaptun", "ill"), "Cēaptūniin");
+    assert_eq!(form("place:level.ceaptun", "ine"), "Cēaptūnissa");
+    assert_eq!(form("place:level.ceaptun", "ela"), "Cēaptūnista");
+    assert_eq!(form("place:dungeon.lytelscraef", "ill"), "Lytelscræfiin");
+    assert_eq!(form("place:dungeon.lytelscraef", "gen"), "Lytelscræfin");
+    assert_eq!(form("place:level.holtwic", "ill"), "Holtwīciin");
+    assert_eq!(
+        form("place:level.ceaptun.legend.N", "ill"),
+        "palkkiotauluun"
+    );
+    assert_eq!(
+        form("place:level.ceaptun.legend.N", "ade"),
+        "palkkiotaululla"
+    );
+    // A literal (a place the language has no word for) inflects the same way.
+    assert_eq!(
+        fi.phrase(&Phrase::literal("Fennmynster"), "ill", &lex, &reg),
+        Ok("Fennmynsteriin".into())
+    );
+}
+
 #[test]
 fn owners_genitive_or_the_players_suffix() {
     let troll = Phrase::id("creature:troll");
@@ -879,7 +978,10 @@ fn forms_numbers_and_lists() {
         !forms.iter().any(|f| f == "pl_com"),
         "the comitative is plural already"
     );
-    assert_eq!(forms.len(), 5 + 12 * 2 * 6 + 6 + 1);
+    for name in ["acc", "pl_acc", "acc_si", "pl_acc_nsa"] {
+        assert!(forms.iter().any(|f| f == name), "{name} listed");
+    }
+    assert_eq!(forms.len(), 5 + 13 * 2 * 6 + 6 + 1);
     let sword = Phrase::id("object:long_sword");
     for name in &forms {
         fi.phrase(&sword, name, &lexicon(), &reg)

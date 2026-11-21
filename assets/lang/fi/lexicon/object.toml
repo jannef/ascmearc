@@ -79,7 +79,7 @@ copper_key = { word = "kupari|avain/33", forms = { material = "kuparinen" } }
 cottar_corpse = { word = "mökkiläisen ruumis/41", forms = { material = "lihainen" } }
 crocodile_corpse = { word = "krokotiilin raato/1*F", forms = { material = "lihainen" } }
 crossbow = { word = "varsi|jousi/26", forms = { material = "puinen" } }
-crystal_black = { word = "musta/9 kide/48*F", forms = { material = "kivinen" } }
+crystal_black = { word = "musta/10 kide/48*F", forms = { material = "kivinen" } }
 crystal_blue = { word = "sininen/38 kide/48*F", forms = { material = "kivinen" } }
 crystal_gold = { word = "kultainen/38 kide/48*F", forms = { material = "kivinen" } }
 crystal_green = { word = "vihreä/15 kide/48*F", forms = { material = "kivinen" } }

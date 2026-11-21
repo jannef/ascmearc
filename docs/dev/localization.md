@@ -130,16 +130,24 @@ everything else strong). 27, 28, and 40 gradate by themselves (`käsi` : `käden
 the inflecting part; a part with neither (`Hild`, `tie`) takes the front series, as Finnish does.
 Endings are written with `A`/`O`/`U` and resolved per word.
 
-**Forms** (`Fi::forms`, 156 names): the fourteen cases `nom gen par ine ela ill ade abl all ess
+**Forms** (`Fi::forms`, 168 names): the fourteen cases `nom gen par ine ela ill ade abl all ess
 tra abe com ins` in the singular and, with `pl_`, the plural (`pl_gen`; `com` and `ins` are
 plural only and take no `pl_`), each with an optional possessive suffix `_ni _si _nsa _mme _nne`
-(`ade_si` "with your …", `pl_ill_nsa`; `ins` takes none), and `bare`/`name` (the nominative,
+(`ade_si` "with your …", `pl_ill_nsa`; `ins` takes none), the total object `acc` (below, with
+`pl_` and the suffixes like a case), and `bare`/`name` (the nominative,
 plural for a count over one, no numeral: "nuolet"), `counted` ("kolme peikkoa", "13 nuolta"; one
 → the nominative), `num`, `ord`. A **count over one in a singular case** puts the numeral first
 and the words in the partitive after a nominative numeral, else in the case: `{item:nom}` "kolme
 nuolta", `{item:ill}` "kolmeen nuoleen" (the cardinals 0–19 decline: `kaksi` and `yksi` from a
 table, the rest by their own class; beyond `number_words` or 19, digits: "13 nuoleen"). A `pl_`
-form ignores the count. **The player** (`person: You`) renders as the second-person pronoun in
+form ignores the count. **The total object** is its own form, `acc` (owner review 1, #2072; with
+`pl_` and a possessive suffix like a case, `fi::ACC`): the genitive for one thing ("pudotat
+tikarin", "pitkämiekkasi"), the nominative numeral and the partitive for several ("pudotat kolme
+nuolta", never "kolmen nuolen"), the plural nominative for a word plural in meaning or with no
+singular ("liekit", "sakset", "kolmet sakset"), and `sinut` for the player (through the register:
+`sut`). A template says `{what:acc}` for what a verb takes whole, so no `by = "what.number"`
+split, and no "Verb: object" colon, stands in for the case; a nested message in that slot reads
+it with `by = "slot.form"` (`items.unpaid`). **The player** (`person: You`) renders as the second-person pronoun in
 the case asked (`{target:ill}` → "sinuun"), through the register (`sinä` → `sie`), whatever the
 head. **Phrase order**: [genitive qualifiers (`Modifier::Of`, genitive singular, not agreeing)]
 [adjectives and materials, agreeing in case and number] head [`, jossa lukee X` for a literal
@@ -1657,6 +1665,21 @@ talent's, or skill's name as its lexicon gives it, a weapon ability "<skill>: <a
 command said as a verb in its `bare` form, "Pura ansa"), weapon abilities, nouns, and roles,
 creature tags, songs, and grimoires ("tulipallon loitsukirja"). **The showcase stays English**:
 the test world of dev builds; the checker does not ask for it.
+
+**Owner review 1 (#2072)**: the owner read a rendered sample and corrected eleven lines, each
+standing for a class of mistake, fixed at the root rather than line by line. A counted total
+object had landed in the genitive ("kolmen nuolen"), so the total object is its own form, `acc`
+("The `fi` module", "Forms"), and every template that took an object through `{what:gen}` or a
+`by = "what.number"` split says `{what:acc}`; the "Verb: object" colon that stood in for the case
+("Pudotat: kolme nuolta") is gone with it. Calques were restructured ("Satuttaisit vain jalkasi
+potkiessasi …", "kääntää … takaisin kohti sinua", "iskee kiveen seinässä piileskelevän koboldin
+sijaan", "ennen kuin se osuu sinuun"); a reflexive locative takes the subject's suffix ("Puet
+yllesi", "molempiin käsiisi"); the existential lines say "Täällä on …" with a plural in the
+partitive ("Täällä on nuolia"); a numeral subject keeps the singular verb, so the `number`
+variants that gave a counted `weapon` or `what` a plural verb are gone; the stairs lines say
+"Laskeudut portaat Cēaptūniin"; the death screen's place is a word in a case ("Cēaptūnissa":
+the screen passes the phrase, not its label), and the graveyard's, text from the file, stands
+after a comma. The registers give `sinut` its dialect forms (`sut`, `siut`, `sind`).
 
 ## Mods (L9)
 
