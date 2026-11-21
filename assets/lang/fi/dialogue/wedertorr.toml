@@ -1,0 +1,36 @@
+# Wedertorr's people (campaigns/ascmearc/data/dialogue/wedertorr.toml): Mistress Ælfswīð, a wizard
+# of the better-off (`register = "posh"`), so kirjakieli, uncompromising: the storm-caller of the
+# three, short imperative sentences. She says "sinä" to the player.
+
+[ascmearc.aelfswith]
+greet = { text = "Sulje ovi. Päästät sään sisään, ja se on minun.", of = "6c5abd" }
+greet_evil = [
+    { text = "Ei. Alas portaita. Heti, ennen kuin selvitän, kuinka kauas pomppaat.", of = "82a59b" },
+    { text = "Tiedän, mikä olet. Niin tietää sääkin. Mene.", of = "288c7d" },
+]
+lines = [
+    { text = "Älä koske lasiin. Se lukee.", of = "24590d" },
+    { text = "Tuuli kääntyy länteen. Sadetta illaksi. Sallin sen.", of = "2076b7" },
+    { text = "Istu, jos on pakko. Ei siihen. Se on kissan.", of = "942b7c" },
+    { text = "Ukkonen on pelkkää ääntä. Salama on se, mikä ratkaisee.", of = "d8eed0" },
+    { text = "Minulla ei ole kärsivällisyyttä. Minulla on salama. Se on nopeampi.", of = "225043" },
+    { text = "Varo parvekkeen kaidetta. Se on ainoa asia täällä, jota en korjaa.", of = "d9b2f8" },
+]
+mutter = [
+    { text = "...kolme piirua itään, ja laskee. Hyvä...", of = "14d3b6" },
+    { text = "...ei, ei, ei. Pidä. Pidä se. Noin...", of = "66b27d" },
+    { text = "...jos Sigeric siirtää tuota tähtilasia vielä kerran, haen sen itse...", of = "9b597d" },
+]
+mutter_verb = { text = "mutisee", of = "4e7347" }
+
+[ascmearc.aelfswith.topic]
+wedertorr = { text = "Wedertorr. Säätorni. Nummien korkein kohta, joten myrskyt tulevat tänne ensin, eikä minun tarvitse etsiä niitä. Portaat ovat minun, ja niin on se, mikä niillä asuu. Olet tavannut sen.", of = "735343" }
+downs = { text = "Hlāwdūn. Vanhoja vainajia jokaisen kummun alla, eikä yksikään heistä kuulu minulle. Ruohoa, tuulta ja pitkä näkymä. Näkymä on säätä varten. Kummut ovat lapiolla varustettuja hölmöjä varten.", of = "8aebb7" }
+learning = { text = "Kuka tahansa voi aloittaa loitsun. Taito on pitää se: myrskyssä, kädet kylminä ja jonkin yrittäessä syödä sinut. Se on keskittymistä. Ordgar antaa sinulle kirjoja. Kirjat eivät seiso katolla ukkosmyrskyssä.", of = "066aec" }
+wizards = { text = "Ordgar lukee. Sigeric kaunistelee itseään. Minä teen työtä. Kolme tornia yhdessä pienessä maassa on kaksi liikaa, ja maa tietää sen. Niin tietävät hekin.", of = "bc3d00" }
+
+[ascmearc.aelfswith.topic_name]
+wedertorr = { text = "Torni", of = "a40da5" }
+downs = { text = "Nummet", of = "d1c169" }
+learning = { text = "Taikuus ja sen oppiminen", of = "8266bf" }
+wizards = { text = "Muut velhot", of = "60ae2c" }

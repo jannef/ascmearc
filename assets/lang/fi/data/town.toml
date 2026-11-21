@@ -2,3 +2,7 @@
 
 [ceaptun]
 told = { text = "Cēaptūnin väki ajattelee sinusta entistä paremmin.", of = "94dd13" }
+
+# Gimmwīc's is empty in the data (its people give no quests of their own), and so here.
+[gimmwic]
+told = { text = "", of = "1c9d44" }
