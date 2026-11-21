@@ -124,7 +124,7 @@ text = "Your character"
 
 # A race's detail line of its sight: `eyes`, the kind of vision.
 [vision]
-text = "Vision: {eyes:bare}"
+text = "Vision: {eyes:label}"
 
 # The summary's label of the character's vision.
 [vision_label]

@@ -20,7 +20,7 @@
 //! | `status:<id>` | its `name` in lower case ("hasted") |
 //! | `tag:<tag>` | a creature tag as the player reads it, its hyphens spaces ([`super::tag::spoken`]: "marsh thing") |
 //! | `terrain:<id>` | its `name` ("stone wall") |
-//! | `vision:<id>` | a vision profile's `name` as written ("Darkvision") |
+//! | `vision:<id>` | a vision profile's `name` in lower case ("darkvision") |
 //! | `talent:<id>`, `tree:<id>` | a talent's (a profane gift's too) and a talent tree's `name` as written ("Cold-blooded") |
 //! | `weapon_skill:<id>` | its `name` in lower case ("long blades") |
 //! | `weapon_skill_phrase:<id>` | its `phrase`, how one is skilled in it ("with long blades") |
@@ -28,11 +28,13 @@
 //! | `ability:<id>` | an ability's name as the abilities menu gives it ([`crate::ability::Ability::name`], by its `id`, a weapon ability's `<weapon skill>.<id>`: "Shield bash") |
 //! | `song:<id>` | a song's (its talent's) `name` in lower case |
 //! | `sign:<element>.<animal>` | a birth sign as players say it ("Fire Manticore") |
+//! | `sign_animal:<id>`, `sign_element:<id>` | a birth sign's animal's and element's `name` as written ("Manticore", "Fire") |
 //! | `class:<id>`, `prestige:<id>` | a class's and a prestige class's `name` in lower case ("warrior") |
 //! | `stance:<id>` | a combat stance's `name` in lower case ("aggressive") |
 //! | `spell:<id>`, `school:<id>`, `damage_type:<id>`, `recipe:<id>`, `slot:<id>`, `item_class:<id>`, `guild:<id>`, `sign_noun:<active>` | magic and gear data names ([`super::magic_word`], #1994) |
 //! | `label:scroll`, `label:wand`, `label:rod`, `label:potion` | an unidentified type's `name` and `plural`, with its `{label}` and `{colour}` slots (`data/scroll_labels.toml`, …) |
 //! | `colour:<colour>` | a potion's colour, as its type writes it ("red") |
+//! | `item_tag:<tag>` | what an item's name says after it in parentheses (`magic/name.rs::tag`): an unidentified item's rarity (`magic`, `rare`, `unique`), `cursed`, and a carried light's `lit` or `hooded`; its English is the tag |
 //! | `trap:<id>`, `chest:<band>`, `status_seen:<id>`, `grade:<creature>.<n>`, ... | the data's words beside a name ([`super::data_word`], #1995) |
 //! | `word:<text>` | a word data names without an id of its own (a natural attack's "bite", a thrown "stone", "something"), keyed by its English, which is the word; with no data to say its number, a plural noun (`many`) as its spelling suggests ([`crate::lang::en::is_plural`]: "claws", "flames", "stakes") |
 //!
@@ -133,7 +135,7 @@ impl Lexicon for Content {
                 Some(LexWord::new(&spoken).many(is_plural(&spoken)))
             }
             "terrain" => Some(LexWord::new(&self.terrain(self.terrain_id(key)?).name)),
-            "vision" => Some(LexWord::new(&self.vision(key)?.name)),
+            "vision" => Some(labelled(&self.vision(key)?.name)),
             "talent"
             | "tree"
             | "weapon_skill"
@@ -142,13 +144,15 @@ impl Lexicon for Content {
             | "ability"
             | "song"
             | "sign"
+            | "sign_animal"
+            | "sign_element"
             | "class"
             | "prestige"
             | "stance" => self.character_word(kind, key),
             // Magic and gear data names (#1994).
             "spell" | "school" | "damage_type" | "recipe" | "slot" | "item_class" | "guild"
             | "sign_noun" => super::magic_word::word(self, kind, key),
-            "colour" => Some(LexWord::new(key)),
+            "colour" | "item_tag" => Some(LexWord::new(key)),
             "word" => Some(LexWord::new(key).many(is_plural(key))),
             // The data's words beside a name (#1995): `trap:`, `chest:`, `status_seen:`, ...
             _ => super::data_word::word(self, kind, key),
@@ -209,6 +213,12 @@ impl Content {
                 horoscope.parts(&sign)?;
                 Some(LexWord::new(horoscope.name(&sign)))
             }
+            "sign_animal" => (self.horoscope()?.animals.iter())
+                .find(|a| a.id == key)
+                .map(|a| LexWord::new(&a.name)),
+            "sign_element" => (self.horoscope()?.elements.iter())
+                .find(|e| e.id == key)
+                .map(|e| LexWord::new(&e.name)),
             "class" => lower(&self.class(key)?.name),
             "prestige" => lower(&self.prestige(key)?.name),
             "stance" => lower(&self.stance_def(key.parse().ok()?).name),
@@ -237,8 +247,8 @@ impl Content {
 
     /// What was chosen for a talent, by its name in lower case: a weapon skill, a skill, an
     /// element (a damage type), or a school by its lexicon id; a kind of creature a `word:`
-    /// phrase.
-    fn choice_phrase(&self, kind: Choice, choice: &str) -> Phrase {
+    /// phrase. A list of choices says it in [`Choice::listed_form`].
+    pub fn choice_phrase(&self, kind: Choice, choice: &str) -> Phrase {
         let name = kind.name(self, choice);
         let school = super::School::ALL.iter().any(|s| s.id() == choice);
         match kind {
@@ -306,6 +316,30 @@ impl Content {
         Phrase::id(format!("sign:{}.{}", sign.element, sign.animal))
     }
 
+    /// A birth sign's animal by its name: `sign_animal:<id>` ("Manticore"); an id the horoscope
+    /// lacks as written.
+    pub fn sign_animal_arg(&self, id: &str) -> Arg {
+        match self
+            .horoscope()
+            .is_some_and(|h| h.animals.iter().any(|a| a.id == id))
+        {
+            true => Phrase::id(format!("sign_animal:{id}")).into(),
+            false => id.into(),
+        }
+    }
+
+    /// A birth sign's element by its name: `sign_element:<id>` ("Fire"); an id the horoscope
+    /// lacks as written.
+    pub fn sign_element_arg(&self, id: &str) -> Arg {
+        match self
+            .horoscope()
+            .is_some_and(|h| h.elements.iter().any(|e| e.id == id))
+        {
+            true => Phrase::id(format!("sign_element:{id}")).into(),
+            false => id.into(),
+        }
+    }
+
     /// A class by its name: `class:<id>` ("{class:a}": "a warrior").
     pub fn class_phrase(&self, id: &str) -> Phrase {
         Phrase::id(format!("class:{id}"))
@@ -327,7 +361,7 @@ impl Content {
         Phrase::id(format!("tag:{tag}"))
     }
 
-    /// A vision profile by its name: `vision:<id>` ("Darkvision").
+    /// A vision profile by its name: `vision:<id>` ("darkvision", its label "Darkvision").
     pub fn vision_phrase(&self, id: &str) -> Phrase {
         Phrase::id(format!("vision:{id}"))
     }
@@ -460,5 +494,49 @@ mod tests {
         );
         let missing = class_arg(&content, "jester", None, 3);
         assert_eq!(missing, Arg::from("jester"), "a class the content lacks");
+    }
+
+    /// The last labels and words (#2028): a vision's name, lower case in a sentence; a sign's
+    /// animal and element as written; a talent's choice in its list; an item's tags.
+    #[test]
+    fn the_last_labels_and_tags_are_words() {
+        use crate::content::Choice;
+        use crate::lang::{LABEL_FORM, Phrase};
+        use crate::messages::english_arg;
+        let content = builtin();
+        let said = |id: &str, form: &str| english_arg(&content, &Phrase::id(id).into(), form);
+        assert_eq!(said("vision:darkvision", "bare"), "darkvision");
+        assert_eq!(said("vision:darkvision", LABEL_FORM), "Darkvision");
+        let animal = content.sign_animal_arg("manticore");
+        assert_eq!(english_arg(&content, &animal, "bare"), "Manticore");
+        let element = content.sign_element_arg("wood");
+        assert_eq!(english_arg(&content, &element, "bare"), "Wood");
+        assert_eq!(
+            content.sign_animal_arg("no_such_beast"),
+            "no_such_beast".into(),
+            "as written"
+        );
+        let listed = |kind: Choice, id: &str| {
+            english_arg(
+                &content,
+                &content.choice_phrase(kind, id).into(),
+                kind.listed_form(),
+            )
+        };
+        assert_eq!(listed(Choice::Style, "twin_blades"), "Twin Blades");
+        assert_eq!(listed(Choice::Element, "fire"), "fire");
+        assert_eq!(listed(Choice::School, "evocation"), "evocation");
+        assert_eq!(listed(Choice::Tag, "goblin"), "goblin");
+        assert_eq!(said("item_tag:cursed", "bare"), "cursed");
+        let tagged = Phrase::id("object:long_sword")
+            .with_note(crate::lang::Note::Tags(vec![
+                crate::magic::name::tag("magic"),
+                crate::magic::name::tag("cursed"),
+            ]))
+            .note(crate::magic::name::tag("lit"));
+        assert_eq!(
+            english_arg(&content, &tagged.into(), "a"),
+            "a long sword (magic, cursed) (lit)"
+        );
     }
 }

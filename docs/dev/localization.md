@@ -292,7 +292,8 @@ docs hold the table): `creature:<id>`, `object:<id>` (with `written`, `written_p
 `adjective`), `gem_size:<id>`, `gem_cut:<id>`, `stock:<material id>` (a piece's form word),
 `terrain:<id>`, `room:<id>` (a special room's name, #1998), `tag:<tag>` (a creature tag),
 `vision:<id>` (a vision profile's name), `label:scroll|wand|rod|potion` (an unidentified type's
-name with its `{label}` and `{colour}` slots), `colour:<colour>`, and `word:<text>`: a word the
+name with its `{label}` and `{colour}` slots), `colour:<colour>`, `item_tag:<tag>` (a tag an
+item's name says after it, #2028), and `word:<text>`: a word the
 data names without an id of its own (a natural attack's "bite", a thrown "stone", "something"),
 keyed
 by its English, which is the word; `disease:<id>` (its name as written, "the shakes"); and
@@ -351,9 +352,13 @@ talents), chargen talents, sign, weapon skills, magic, scribe (the school headin
 profession, craft pick, and equipment screens' rows and headings, `PagedList::new`'s item
 classes, and the Characters list and the graveyard's race and classes. A character's classes
 (`character::class_arg`) are a phrase or the nested `character.class_level` ("Bard 30") and
-`character.classes` ("Bard 30, Hunter 4"), said `label`; the dump says them in English. Still
-text: a talent's choice in the level-up list (`Choice::name`, as the data writes each kind), the
-horoscope's animal and element names, and the abilities menu's rows and source headings.
+`character.classes` ("Bard 30, Hunter 4"), said `label`; the dump says them in English. The
+rest (#2028): a talent's choices in the level-up list are `Content::choice_phrase` said in
+`Choice::listed_form`, `label` for a weapon skill or a skill ("Long Blades"), `bare` for the rest
+("fire"); the sign screen's animal and element `sign_animal:<id>` and `sign_element:<id>`; the
+abilities menu's rows their `ability:` phrase (or the prayer's title, text) said `label`, its
+headings `Source::name`, a `words.source_*` said `Bare`; a resistance row's damage types each a
+`damage_type:` phrase joined by the character screen's `resistance_kinds`.
 
 **The data's words beside a name** (#1995, `content/data_word.rs`, whose module docs hold both
 tables) have keys of their own, chosen by kind: a noun or an adjective a phrase is built of is a
@@ -416,7 +421,8 @@ wolf", "the goblin's long sword"); `Modifier::Made` (the main material) with
 `Material`/`Part` (notable materials, "ruby-pommelled") named as `en::made_names` says (moved
 from `content/part.rs::names`, which wraps it); an `Of` word said with "of" unless it says it
 ("of the Bear"); a head word's `{label}` and `{colour}` slots filled from the phrase's `Label`
-and its `colour:` adjective; `Note::Tags` ("(magic, cursed)"), `Note::Charges` ("(7 charges)"),
+and its `colour:` adjective; `Note::Tags` ("(magic, cursed)", each a lexicon word in its base
+form), `Note::Charges` ("(7 charges)"),
 `Note::Base` (", a long sword"); a proper head counted in the plural when there are several.
 `Language::phrase(&phrase, form, lex)` renders a phrase alone.
 
@@ -715,8 +721,9 @@ the weather's (`Weather::name`; its `Display` is its id, developer text), the we
 screen's sections (`Section::name`), and a compass direction as a sentence says it
 (`Dir::compass_word`: the voice heard from afar, a sound's direction, the way to an ally in the
 Heal ability's list). A worn thing's mark (`equipment::mark`) is an `Arg`: the slot's `mark` as the data's text, or
-`words.in_both_hands` nesting it. A vision profile is the lexicon id `vision:<id>` (its name as
-written, "Darkvision": the dev line and character creation) and a creature tag `tag:<tag>`
+`words.in_both_hands` nesting it. A vision profile is the lexicon id `vision:<id>` (its name in
+lower case, "darkvision", a talent's need; its `label` as written, "Darkvision": the dev line
+and character creation) and a creature tag `tag:<tag>`
 (`tag::spoken`'s words, "marsh thing": a kill quest's target). What stays English: the quest
 roll's and a bane affix's descriptions, `Requirement::words` (the wiki's, which renders the bands
 in English), and a class's refusal (gender by its id, which is its English word). The files
@@ -767,9 +774,9 @@ and each rider the item lists' `items.numbers_with_rider`. **A spell's roll** (`
 `SpellRoll::text`) is a `magic.roll_*` clause, its damage type a `damage_type:` phrase, and a
 reroll (`reroll_words`) `magic.reroll` with its faces said `{faces:and}`, its type's rule the
 line of data `spells:types.<damage type>.words` (#2028). Text roles inside them: the dice; and
-until their data has ids, a birth sign's animal and element, a vision's name in a talent's need
-(lower case there, where `vision:` is as written), an `any_weapon_skill`'s words, a launcher, a
-stock's group. Still English: `magic/describe.rs` (an item's description, which renders a wand's
+until their data has ids, an `any_weapon_skill`'s words, a launcher, a stock's group (a birth
+sign's animal and element are `sign_animal:` and `sign_element:`, a vision `vision:`, #2028).
+Still English: `magic/describe.rs` (an item's description, which renders a wand's
 roll in English; #2029).
 
 **The craft plan and a recipe's row** (#2028, its first part). The craft dialog's plan
@@ -819,6 +826,15 @@ data's English beside the key, which a quest's `waits` and the wiki name them by
 shows it. Still text: the current level's name (`LevelState::name`: the status bar, a save's
 summary), a hidden location's name where a quest marks it (`people.marks_on_map`, whose "The"
 `quest.rs::place` lowers), and the scenario's name on the new-run and chargen screens.
+
+**An item's tags and the last labels** (#2028). A phrase's `Note::Tags` holds lexicon words, not
+English: each morphology says each tag in its base form (`en` and `generic` the lexicon's base,
+`fi` the nominative), in parentheses as before. Core's are `item_tag:<tag>`
+(`magic/name.rs::tag`): an unidentified item's rarity (`magic`, `rare`, `unique`), `cursed`, and
+a carried light's `lit` or `hooded`; English's word is the tag. The labels #2027 left are words
+too ("A name shown alone, as a label"): a talent's choices in the level-up list, the sign
+screen's animal and element, the abilities menu's rows and headings, a resistance row's damage
+types, and a vision's name (`vision:` lower case with its `label`).
 
 ## UI text (L6)
 

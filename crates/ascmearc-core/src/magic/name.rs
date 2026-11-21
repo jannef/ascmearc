@@ -17,7 +17,7 @@
 //! identified: "a Fine long sword", "a Marvellous Sharp long sword of the Bear", "a damaged long
 //! sword (magic)", "Grim Bite, a Masterwork long sword".
 
-use super::{AffixKind, Magic};
+use super::{AffixKind, Magic, Rarity};
 use crate::content::Content;
 use crate::lang::{Modifier, Note, Phrase, Word};
 
@@ -36,8 +36,8 @@ pub(crate) fn phrase(
         return ahead(word, made).count(count);
     };
     if !known {
-        let mut tags = vec![content.english_word(magic.rarity.word(), "bare")];
-        tags.extend(cursed.then(|| "cursed".to_string()));
+        let mut tags = vec![tag(rarity_tag(magic.rarity))];
+        tags.extend(cursed.then(|| tag("cursed")));
         return ahead(word, made).count(count).with_note(Note::Tags(tags));
     }
     let named = match (magic.rarity, &magic.name) {
@@ -48,8 +48,25 @@ pub(crate) fn phrase(
         _ => ahead(word, affixed(made, magic, content)).count(count),
     };
     match cursed {
-        true => named.note("cursed"),
+        true => named.note(tag("cursed")),
         false => named,
+    }
+}
+
+/// A tag an item's name says after it, in parentheses ("(magic, cursed)", "(lit)"), as a lexicon
+/// word: `item_tag:<tag>` (`content/lexicon.rs`), an unidentified item's rarity, a curse the
+/// player knows of, a carried light's mode.
+pub(crate) fn tag(tag: &str) -> Word {
+    Word::id(format!("item_tag:{tag}"))
+}
+
+/// An unidentified item's rarity as its tag names it.
+fn rarity_tag(rarity: Rarity) -> &'static str {
+    match rarity {
+        Rarity::Normal => "normal",
+        Rarity::Magic => "magic",
+        Rarity::Rare => "rare",
+        Rarity::Unique => "unique",
     }
 }
 
