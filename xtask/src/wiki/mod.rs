@@ -1118,12 +1118,15 @@ mod tests {
                 .contains("| Bronze | −1 | +0 | bronze keys, minster reliquaries |")
         );
         assert!(text("material-finds.md").contains(
-            "| Steel | 300 (common) | +60 | 1 | 20 (rare) | +15 | good | good | good | good |"
+            "| Steel | 1 | 300 (common) | +60 | 20 (rare) | +15 | good | good | good | good |"
         ));
         assert!(text("material-finds.md").contains(
-            "| Tin | 300 (common) | −20 | 1 | 200 (common) | −15 | odd | poor | good | good |"
+            "| Tin | 1 | 300 (common) | −20 | 200 (common) | −15 | odd | poor | good | good |"
         ));
         // #1191: a long sword is steel nine times in ten at depth 1; orcs favour bone.
+        assert!(text("material-finds.md").contains(
+            "| Mithril | 20 | 10 (very rare) | +8 | 5 (very rare), from level 24 | +3 |"
+        ));
         assert!(text("material-odds.md").contains("| Long sword | 1 | 90% |"));
         assert!(text("material-tribes.md").contains("| Orcs | bone 55%, iron 15% |"));
         let construction = text("construction.md");

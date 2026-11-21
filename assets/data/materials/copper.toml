@@ -1,4 +1,4 @@
-# A primitive metal: very common shallow, rarer deeper.
+# A primitive metal: very common at low item levels, rarer at higher ones.
 [[material]]
 id = "copper"
 name = "copper"
@@ -10,7 +10,7 @@ to_hit = 0
 damage = -1
 protection = 60
 value = 70
-rarity = { weight = 800, deeper = -50 }
-gear = { weight = 600, deeper = -40 }
+rarity = { weight = 800, per_level = -50 }
+gear = { weight = 600, per_level = -40 }
 fit = { weapon = "poor", armour = "poor" }
 work = -2

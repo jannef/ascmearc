@@ -83,16 +83,16 @@ const MATERIALS: &[(&str, &str)] = &[
 const FOUND: &[(&str, &str)] = &[
     (
         "steel",
-        "rarity = { weight = 300, deeper = 60 }\ngear = { weight = 20, deeper = 15 }",
+        "rarity = { weight = 300, per_level = 60 }\ngear = { weight = 20, per_level = 15 }",
     ),
     ("iron", "rarity = { weight = 300 }\ngear = { weight = 300 }"),
     (
         "bronze",
-        "rarity = { weight = 800, deeper = -40 }\ngear = { weight = 600, deeper = -25 }",
+        "rarity = { weight = 800, per_level = -40 }\ngear = { weight = 600, per_level = -25 }",
     ),
     (
         "tin",
-        "rarity = { weight = 300, deeper = -20 }\ngear = { weight = 200 }",
+        "rarity = { weight = 300, per_level = -20 }\ngear = { weight = 200 }",
     ),
     ("gold", "rarity = { weight = 10 }\ngear = { weight = 5 }"),
     ("silver", "rarity = { weight = 10 }\ngear = { weight = 5 }"),
@@ -100,7 +100,7 @@ const FOUND: &[(&str, &str)] = &[
         "leather",
         "rarity = { weight = 800 }\ngear = { weight = 800 }",
     ),
-    ("dragonscale", "rarity = { weight = 10, level = 10 }"),
+    ("dragonscale", "rarity = { weight = 10, level = 16 }"),
     ("bone", "rarity = { weight = 300 }\ngear = { weight = 600 }"),
 ];
 
@@ -196,16 +196,30 @@ fn materials_check_their_properties() {
     );
     let err = Content::load(&files).expect_err("a gem with a group");
     assert!(err.message.contains("never what one is made of"), "{err}");
-    // Found weights: at their level and deeper, never below 0.
+    // Found weights: nothing below their own level, the weight there, and `per_level` for
+    // each level past it (counted from its own level, #2046), never below 0.
     let found = crate::content::Found {
         weight: 80,
-        deeper: -10,
+        per_level: -10,
         level: 3,
     };
     assert_eq!(
-        [1, 2, 3, 5, 9, 20].map(|l| found.at(l)),
-        [0, 0, 60, 40, 0, 0]
+        [1, 2, 3, 5, 9, 11, 20].map(|l| found.at(l)),
+        [0, 0, 80, 60, 20, 0, 0]
     );
+    let growing = crate::content::Found {
+        weight: 10,
+        per_level: 8,
+        level: 20,
+    };
+    assert_eq!([19, 20, 21, 40].map(|l| growing.at(l)), [0, 10, 18, 170]);
+    // With no own level (the default 1), as from level 1.
+    let from_one = crate::content::Found {
+        weight: 800,
+        per_level: -40,
+        level: 1,
+    };
+    assert_eq!([0, 1, 11, 21].map(|l| from_one.at(l)), [800, 800, 400, 0]);
 }
 
 #[test]
@@ -586,7 +600,7 @@ fn loot_and_gear_draw_materials_by_how_often_they_are_found() {
     ] {
         assert_eq!(found(m, Source::Loot, 1), weight, "{m}");
     }
-    // Deeper: fewer primitive metals, more steel.
+    // At a higher item level: fewer primitive metals, more steel.
     assert_eq!(found("bronze", Source::Loot, 11), 400);
     assert_eq!(found("tin", Source::Loot, 11), 100);
     // A creature's gear by its own level, whatever the item level.
@@ -609,12 +623,12 @@ fn loot_and_gear_draw_materials_by_how_often_they_are_found() {
     assert_eq!(crate::variant::variant_percent(1), 10);
     assert_eq!(crate::variant::variant_percent(11), 15);
     assert_eq!(crate::variant::variant_percent(40), 20);
-    // Below its level a material is not found: dragonscale from item level 10.
+    // Below its level a material is not found: dragonscale from item level 16.
     let jerkin = content.object(object(&content, "leather_jerkin"));
     let hides = |level| crate::variant::weights(&content, jerkin, Source::Loot, level);
-    assert!(hides(9).contains(&(id("dragonscale"), 0)));
+    assert!(hides(15).contains(&(id("dragonscale"), 0)));
     assert!(
-        hides(10)
+        hides(16)
             .iter()
             .any(|&(m, w)| m == id("dragonscale") && w > 0)
     );
@@ -861,19 +875,30 @@ fn the_built_in_materials_are_the_issues_tables() {
     for left_out in ["lerasium", "atium", "malatium"] {
         assert!(content.material_id(left_out).is_none(), "{left_out}");
     }
-    // Chromium and nicrosil, better and dearer, are very rare and only deeper.
-    for deep in [
-        "chromium",
-        "nicrosil",
-        "mithril",
-        "adamantium",
-        "dragonbone",
-        "dragonscale",
+    // The better and dearer materials are very rare, and found only from their own item level
+    // (loot) and creature level (gear), #2046: chromium and nicrosil from 8, dragonbone and
+    // dragonscale where dragons start (Fyrdelf's bottom floor, danger 16; the fire drake, level
+    // 19), mithril from about 20, adamantium from about 30.
+    for (late, loot, gear) in [
+        ("chromium", 8, 8),
+        ("nicrosil", 8, 8),
+        ("dragonbone", 16, 19),
+        ("dragonscale", 16, 19),
+        ("mithril", 20, 24),
+        ("adamantium", 30, 34),
     ] {
-        let found = m(deep).rarity.expect("found");
-        assert!(found.weight <= VERY_RARE && found.level > 1, "{deep}");
+        let rarity = m(late).rarity.expect("rarity");
+        let kit = m(late).gear.expect("gear");
+        assert!(rarity.weight <= VERY_RARE, "{late}");
+        assert_eq!((rarity.level, kit.level), (loot, gear), "{late}");
+        assert_eq!(rarity.at(loot - 1), 0, "{late}");
+        assert_eq!(
+            rarity.at(loot),
+            rarity.weight,
+            "{late}: as rare as its weight at first"
+        );
     }
-    // Primitive metals the common ones; steel the usual only deeper.
+    // Primitive metals the common ones; steel the usual only at higher item levels.
     let at = |id: &str, level| m(id).rarity.expect("found").at(level);
     assert!(at("bronze", 1) > at("steel", 1) && at("copper", 1) > at("steel", 1));
     for primitive in ["bronze", "copper", "iron", "tin"] {

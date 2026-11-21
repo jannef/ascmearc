@@ -1,4 +1,4 @@
-# Better than steel and dearer: very rare, and only deeper.
+# Better than steel and dearer: very rare, and only from item level 8.
 [[material]]
 id = "chromium"
 name = "chromium"
@@ -10,6 +10,6 @@ to_hit = 0
 damage = 1
 protection = 110
 value = 900
-rarity = { weight = 10, deeper = 1, level = 8 }
-gear = { weight = 5, deeper = 1, level = 8 }
+rarity = { weight = 10, per_level = 1, level = 8 }
+gear = { weight = 5, per_level = 1, level = 8 }
 work = 2

@@ -167,8 +167,8 @@ the creature's level instead of the item level.
 
 When an item is made of another material, that material is picked from the item's list by the
 weights in the table further down. The weights compare only the other materials, not the usual one.
-Primitive metals are the common ones near the surface (copper and bronze, then iron and tin),
-and steel becomes the common one only deeper. Some materials are worse in a fight than an item's
+Primitive metals are the common ones at low item levels (copper and bronze, then iron and tin),
+and steel becomes the common one only at higher item levels. Some materials are worse in a fight than an item's
 usual one but dearer, such as gold, silver, or aluminium on a sword, or ivory on a dagger. Such
 a material's weight is 10 at most, which is very rare, whatever its own weight says. Rings and
 amulets are only about worth, so this never applies to them.
@@ -200,8 +200,16 @@ an item of a material it could not otherwise be made of: no tribe carries a bone
 
 {{#include generated/material-tribes.md}}
 
-Chromium, nicrosil, dragonbone, and dragonscale appear only deep. Mithril appears only from
-item level 20 and adamantium from item level 30 (on creatures, from levels 30 and 40).
+Some materials appear only from a certain item level, and are very rare there: a weight of 10.
+Each item level past that adds to the weight, as the table above shows:
+
+- chromium and nicrosil from item level 8;
+- dragonbone and dragonscale from item level 16, where the first dragon lives, and on creatures
+  from level 19;
+- mithril from item level 20, and on creatures from level 24;
+- adamantium from item level 30, and on creatures from level 34.
+
+At item level 40, about one long sword in 23 is mithril, and one in 57 is adamantium.
 
 - **Mithril** is half the weight of steel and quicker in the hand (+1 to hit).
 - **Adamantium** is a little heavier than steel and the best metal to fight with. A weapon of it
