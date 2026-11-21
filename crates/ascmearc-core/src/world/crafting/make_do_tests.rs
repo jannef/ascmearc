@@ -225,7 +225,7 @@ fn eye_for_the_make_names_your_own_hands_with_it() {
     let lines = |w: &World| -> Vec<String> {
         let view = w.perception();
         (view.describe_item(&view.inventory()[0]).into_iter())
-            .map(|l| l.text)
+            .map(|l| l.english(w.content()))
             .collect()
     };
     let with = "It is damaged: work at the anvil would make it good, or your own hands.";

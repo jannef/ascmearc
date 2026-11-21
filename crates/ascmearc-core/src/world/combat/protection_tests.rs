@@ -154,7 +154,7 @@ fn protection_adds_up_across_what_is_worn_and_the_hide() {
     let mut cap = hardened("leather_cap", 2);
     cap.identify();
     let lines: Vec<String> = (crate::magic::describe::lines(&cap, &CONTENT).into_iter())
-        .map(|l| l.text)
+        .map(|l| l.english(&CONTENT))
         .collect();
     assert!(
         lines.contains(&"Hardened: +2 to Protection".into()),
@@ -165,7 +165,7 @@ fn protection_adds_up_across_what_is_worn_and_the_hide() {
         "{lines:?}"
     );
     let helm = crate::magic::describe::lines(&one("great_helm"), &CONTENT);
-    assert!(helm.iter().any(|l| l.text == "Protection 2"));
+    assert!(helm.iter().any(|l| l.english(&CONTENT) == "Protection 2"));
     // What soaks the most names a blow it soaked: the mail.
     let me = w.state.player();
     assert_eq!(me.soaked_by(w.content(), None), Some("chain mail shirt"));

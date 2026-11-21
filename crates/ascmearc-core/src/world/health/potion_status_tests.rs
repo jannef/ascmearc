@@ -196,7 +196,7 @@ fn potions_of_every_new_kind_describe_themselves_in_words() {
         let stack = &w.state.player().inventory[i];
         crate::magic::describe::appraised(stack, w.lore(), Default::default())
             .iter()
-            .map(|l| l.text.clone())
+            .map(|l| l.english(w.content()))
             .collect::<Vec<_>>()
             .join("\n")
     };
@@ -298,7 +298,7 @@ fn helpful_draughts_describe_themselves_in_words() {
         let stack = &w.state.player().inventory[i];
         crate::magic::describe::appraised(stack, w.lore(), Default::default())
             .iter()
-            .map(|l| l.text.clone())
+            .map(|l| l.english(w.content()))
             .collect::<Vec<_>>()
             .join("\n")
     };

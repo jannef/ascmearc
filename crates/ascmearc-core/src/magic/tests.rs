@@ -497,7 +497,8 @@ fn effects_sum_with_their_rules() {
 fn descriptions_say_base_stats_and_known_affixes_in_words() {
     use super::describe::{LineKind, lines};
     let c = content();
-    let text = |s: &Stack| -> Vec<String> { lines(s, &c).into_iter().map(|l| l.text).collect() };
+    let text =
+        |s: &Stack| -> Vec<String> { lines(s, &c).into_iter().map(|l| l.english(&c)).collect() };
     let plain = Stack::one(object(&c, "long_sword"));
     assert_eq!(
         text(&plain),
@@ -534,23 +535,30 @@ fn descriptions_say_base_stats_and_known_affixes_in_words() {
     assert!(unknown.iter().any(|l| l == "To hit +0, damage 1d9"));
     sword.identify();
     let known = lines(&sword, &c);
-    assert!(known.iter().any(|l| l.text == "To hit +0, damage 1d9+2"));
-    let affixes: Vec<(LineKind, &str)> = (known.iter())
+    assert!(
+        known
+            .iter()
+            .any(|l| l.english(&c) == "To hit +0, damage 1d9+2")
+    );
+    let affixes: Vec<(LineKind, String)> = (known.iter())
         .filter(|l| matches!(l.kind, LineKind::Affix(_)))
-        .map(|l| (l.kind, l.text.as_str()))
+        .map(|l| (l.kind, l.english(&c)))
         .collect();
     assert_eq!(
         affixes,
         [
-            (LineKind::Affix(AffixKind::Prefix), "Sharp: +2 damage"),
+            (
+                LineKind::Affix(AffixKind::Prefix),
+                "Sharp: +2 damage".into()
+            ),
             (
                 LineKind::Affix(AffixKind::Suffix),
-                "of Celerity: attacks a little faster"
+                "of Celerity: attacks a little faster".into()
             ),
         ]
     );
     // The item level is a hidden number: never shown.
-    assert!(!known.iter().any(|l| l.text.contains("Item level")));
+    assert!(!known.iter().any(|l| l.english(&c).contains("Item level")));
     // Global effects say so; speed stays in words.
     let mut gloves = item(
         &c,
@@ -715,7 +723,7 @@ fn system_effects_sum_and_pooled_ones_by_their_resource() {
     let words: Vec<String> = [known, armour]
         .iter()
         .flat_map(|s| describe::lines(s, &c))
-        .map(|l| l.text)
+        .map(|l| l.english(&c))
         .collect();
     for phrase in [
         "+3 to maximum stamina",
@@ -1139,15 +1147,16 @@ fn proof_rolls_in_loot_and_is_named_once_identified() {
         "never below its tier's level"
     );
     let mut sword = item(&c, "long_sword", &[("of_proof", 1, 1)], None);
-    assert!(!(describe::lines(&sword, &c).iter()).any(|l| l.text.contains("damage it")));
+    assert!(!(describe::lines(&sword, &c).iter()).any(|l| l.english(&c).contains("damage it")));
     sword.identify();
     assert_eq!(sword.describe(&c), "a long sword of Proof");
     assert!(
-        (describe::lines(&sword, &c).iter()).any(|l| l.text == "of Proof: nothing can damage it"),
+        (describe::lines(&sword, &c).iter())
+            .any(|l| l.english(&c) == "of Proof: nothing can damage it"),
         "{:?}",
         describe::lines(&sword, &c)
             .iter()
-            .map(|l| &l.text)
+            .map(|l| l.english(&c))
             .collect::<Vec<_>>()
     );
 }

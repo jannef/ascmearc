@@ -291,7 +291,7 @@ fn the_capacity_line_is_told_only_to_one_trained_in_appraise() {
     let lines = |w: &World, at: usize| -> Vec<String> {
         let stack = &w.state.player().inventory[at];
         (w.perception().describe_item(stack).into_iter())
-            .map(|l| l.text)
+            .map(|l| l.english(w.content()))
             .collect()
     };
     let told = |lines: &[String]| lines.iter().any(|l| l.contains("bear"));

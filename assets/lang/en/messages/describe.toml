@@ -1,0 +1,319 @@
+# An item's description (`magic/describe.rs`): the describe screen's lines and the wiki's, a line
+# each: what it is and its gems, its base stats, its numbers, an affix's effect (`does_*`, also
+# the enchanting choice's and the wiki's), a grimoire's, a wand's, a rod's, and a potion's lines,
+# what it can bear, its maker's mark, and what the Eye for the make reads of it (`make_*`). Ids
+# alphabetical (`docs/dev/localization.md` "Literal lines"), the plain ones first, then the
+# tables. A unique item's power and lore and a spirit weapon's power are the data's, said as
+# literal lines.
+#
+# Roles: `what` is the item (a phrase, or a message of it); `n` and `v` numbers (an affix's value
+# `v`, said after a sign the template writes: "+{v:bare}"); `dice`, `critical`, `weight`, `made`,
+# `hit`, a crystal's `colour` and a family's `word`, and a part's or a weapon's name (`part`,
+# `noun`) are notation or the data's English, text until they are converted (#1949); `about` is a
+# spell's or a rod effect's description and `effect` a rod effect's name (the data's, text);
+# `spell` a spell by its name (`spell:<id>`, said `Bare` as the data writes it, "Fireball");
+# `kind` a damage type (`damage_type:<id>`, or `some_kind`); `slot` an equipment slot
+# (`slot:<id>`, lower case); `status` a status (`status:<id>`); `stat` a stat's name or
+# comparative (`words.toml`); `skill` a skill (`skill:<id>`); `pool` a resource (`resource:<id>`,
+# or `a_pool`); `bane` a creature tag (`tag:<tag>`, said `plural`); `affix` an affix by its name
+# (`affix:<id>`); `does`, `speed`, `place`, `hard`, `rarity`, and `line` messages of their own;
+# `kinds`, `cures`, `raised`, `against`, `from`, and `parts` lists (a list, or a `listed`,
+# `and_joined`, or `or_joined` message).
+
+# `pool`: a resource the affix names none of.
+a_pool = "a pool"
+# `dice`, the dice; `kind`, a damage type.
+adds = "Adds {dice:bare} {kind:bare} damage"
+# `affix`: the affix; `does`, what it does (a `does_*` message).
+affix = "{affix:bare}: {does:bare}"
+# `noun`: the weapon's kind ("bow"), text; `ammo`, what it shoots (`object:<id>`, said
+# `plural`, or `ammunition`).
+ammo_launcher = "{noun:Bare}, readied as a missile weapon; shoots {ammo:plural}"
+# `from`: the launchers' kinds, each a `word:` phrase of several (an `and_joined`, or one).
+ammo_quivered = "Ammunition, quivered; shot from {from:bare}"
+# What a launcher shoots when no ammunition of its kind exists.
+ammunition = "ammunition"
+# Two or more said with "and": `first`, one; `rest`, the others (this entry again, or the last).
+and_joined = "{first:bare} and {rest:bare}"
+armour = "Armour +{n:bare}"
+# The first line: `what`, the item (`base_count`, `base_rarity`, or its phrase); `made`, its
+# parts and materials; `weight`, its weight.
+base = "{what:Bare} · {made:bare} · {weight:bare}"
+# `n` of `what`, a stack of several.
+base_count = "{n:bare} {what:bare}"
+# `rarity`: its rarity's word; `what`, the item.
+base_rarity = "{rarity:Bare} {what:bare}"
+# `n`: a chance in percent.
+breaks = "Breaks on a hit {n:bare}% of the time"
+capacity_all = "It bears all it can."
+# `room`: how many it can bear (`enchantments`).
+capacity_can = "It can bear {room:bare}."
+# `has`: how many it bears (`enchantments`); `n`, how many more it could.
+capacity_more = "It bears {has:bare} and could bear {n:num} more."
+capacity_over = "It bears more than its make should hold."
+cursed = "Cursed: once worn or wielded, it will not come off."
+# `dice`: the dice; `critical`, the range a critical threatens on; `crit`, its multiplier.
+damage = "Damage {dice:bare}; criticals on {critical:bare}, ×{crit:bare} damage"
+# `kinds`: its damage types (an `or_joined`, or one).
+damage_kinds = "{kinds:Bare} damage"
+# `damage` of a launcher, a shot.
+damage_shot = "Damage {dice:bare} a shot; criticals on {critical:bare}, ×{crit:bare} damage"
+# `dig`: its digging power.
+digs = "Digs at {dig:bare}"
+does_armour = "+{v:bare} to Armour"
+does_attack_speed = "attacks {speed:bare}"
+does_attack_speed_all = "all your attacks are {speed:bare}"
+does_bane = "+{v:bare} to hit and damage against {bane:plural}"
+does_carry = "+{v:bare} kg carrying capacity"
+does_crit = "+{v:bare} to the critical damage multiplier"
+does_damage = "+{v:bare} damage"
+does_deflection = "+{v:bare} to Deflection"
+does_dig = "digs {v:bare}% faster"
+does_disease_check = "+{v:bare} to resist disease"
+does_dodge = "+{v:bare} to Dodge"
+does_door_kick = "your kicks break doors more easily"
+does_draw = "needs {v:bare} less Strength to draw"
+does_durability = "breaks {v:bare}% less often"
+does_elemental = "adds 1d{v:bare} {kind:bare} damage"
+does_extra_damage = "adds 1d{v:bare} damage"
+does_glows = "glows"
+does_glows_brightly = "glows brightly"
+does_glows_faintly = "glows faintly"
+does_heavier = "{v:bare}% heavier"
+# `effect`: the effect's id, a curse no words say.
+does_hinders = "hinders you ({effect:bare})"
+does_hunger = "hunger comes {v:bare}% slower"
+does_hunger_faster = "hunger comes {v:bare}% faster"
+does_lighter = "{v:bare}% lighter"
+does_mana_cost = "abilities cost {v:bare}% less mana"
+does_mana_on_kill = "+{v:bare} mana on a kill close by"
+does_mana_regeneration = "mana comes back {v:bare}% faster"
+does_max_dex = "lets Dexterity add {v:bare} more to Defence"
+does_max_hp = "+{v:bare} to maximum hit points"
+does_max_mana = "+{v:bare} to maximum mana"
+does_move_speed = "you move {speed:bare}"
+does_natural = "+{v:bare} to natural armour"
+does_parry = "+{v:bare} to Parry"
+does_potion_kept = "a potion is not used up {v:bare}% of the time"
+does_proof = "nothing can damage it"
+does_protection = "+{v:bare} to Protection"
+does_regeneration = "hit points come back {v:bare}% faster"
+does_resistance = "+{v:bare}% {kind:bare} resistance"
+does_resource_max = "+{v:bare} to maximum {pool:bare}"
+does_resource_on_kill = "+{v:bare} {pool:bare} on a kill close by"
+does_resource_rate = "{pool:bare} comes back {v:bare}% faster"
+does_shield = "+{v:bare} to Shield"
+does_skill = "+{v:bare} to {skill:Bare}"
+does_skill_any = "+{v:bare} to a skill"
+does_spell_bonus = "+{v:bare} on every spell's roll, harm or healing"
+does_spell_reroll = "spell dice showing {v:bare} or less are rolled again, once"
+does_spell_to_hit = "+{v:bare} to hit with spells"
+does_stamina = "weapon feats cost {v:bare} {pool:bare} less"
+does_stat = "+{v:bare} to {stat:Bare}"
+does_stealth = "your footsteps are {v:bare}% quieter"
+does_to_hit = "+{v:bare} to hit"
+does_trap_damage = "traps hurt you {v:bare}% less"
+# `does`: what an affix that works on every attack does.
+does_with_every_attack = "{does:bare} with every attack"
+finesse = "Finesse: Dexterity guides its blows, not Strength"
+flask = "Thrown, it shatters and casts {spell:Bare} where it breaks"
+# `part`: the part the gem is set in ("pommel"); `gem`, the gem (`gem_cut`, `gem_rough`, or its
+# material).
+gem = "{part:Bare}: {gem:bare}"
+# `size` (`gem_size:<id>`), `gem` (`material:<id>`), and `cut` (`gem_cut:<id>`): a gem.
+gem_cut = "{size:bare} {gem:bare}, {cut:bare} cut"
+# `gem`: a loose gem.
+gem_loose = "Gem: {gem:bare}"
+gem_rough = "{size:bare} {gem:bare}, {cut:bare}"
+# `line`: a gem's line; `worth`, its worth in gold.
+gem_worth = "{line:bare} (worth {worth:bare} gold)"
+grimoire_known = "You know it at rank {n:bare} of {most:bare}: reading it would deepen it."
+grimoire_known_all = "You know it at rank {most:bare} of {most:bare}: it has nothing more to teach."
+grimoire_teaches = "Teaches {spell:Bare} (level {level:bare}): {about:bare}"
+grimoire_unknown = "You do not know it: reading it is a study."
+hard = "hard to work"
+hard_soft = "soft and easy to work"
+hard_very = "very hard to work"
+# `noun`: the weapon's kind ("long blade").
+held_both_hands = "{noun:Bare}, for both hands"
+held_in = "Held in the {slot:bare}"
+held_main = "{noun:Bare}, for the {slot:bare}"
+# Parts said one after another: `first`, a part; `rest`, the others (this entry again, or the
+# last part).
+listed = "{first:bare}, {rest:bare}"
+magic_unknown = "Unidentified: what its magic does is unknown, though it works all the same."
+make_apart = "Taken apart, it would give {what:bare}."
+make_apart_batch = "Taken apart, enough of them would give {what:bare}."
+# `place`: where it would be made good (`place_*`).
+make_damaged = "It is damaged: work {place:bare} would make it good."
+make_damaged_mend = "It is damaged: work {place:bare} would make it good, or your own hands."
+make_finest = "It can be made no finer."
+# `material`: its main material (`material:<id>`); `hard`, how hard it is to work (`hard_*`).
+make_hard = "{material:Bare} is {hard:bare}."
+make_nothing = "Nothing in it is worth saving."
+make_protected = "It would not come apart."
+# `maker`: the maker's name.
+mark = "It bears {maker:poss} mark."
+mark_unknown = "It bears its maker's mark."
+max_dex = "Dexterity adds at most +{n:bare} to Defence while worn"
+needs_strength = "Needs Strength {n:bare} to draw"
+# `parts`: what it adds to every attack (`listed`, or one: `numbers_to_hit`, an
+# `items.numbers_*` part).
+numbers_adds_attack = "Adds to every attack: {parts:bare}"
+numbers_adds_shot = "Adds to a shot: {parts:bare}"
+# `hit`: its to-hit, signed ("+2"); `damage`, its damage (`items.numbers_*`).
+numbers_attack = "To hit {hit:bare}, damage {damage:bare}"
+# `range`: how far it shoots or is thrown.
+numbers_attack_range = "To hit {hit:bare}, damage {damage:bare}, range {range:bare}"
+numbers_to_hit = "{hit:bare} to hit"
+# Two or more said with "or", as `and_joined`.
+or_joined = "{first:bare} or {rest:bare}"
+parry = "Parry +{n:bare}"
+pierces = "Pierces armour"
+place_anvil = "at the anvil"
+place_knife = "with a knife"
+potion_blink = "Takes you elsewhere at once"
+potion_boost = "Makes you {raised:and} for a while"
+potion_boost_much = "Makes you much {raised:and} for a while"
+# `cures`: the statuses it ends.
+potion_cure = "Cures {cures:and} at once"
+potion_cure_diseases = "Cures every disease at once"
+potion_cure_diseases_and = "Cures every disease and {cures:and} at once"
+potion_dark = "Lets you see in the dark for a while"
+potion_elixir = "Makes you {stat:bare} for good"
+potion_gamble = "Does good, or harm, or nothing: a gamble"
+potion_harm = "Sickens whoever drinks it"
+potion_haste = "Quickens you for a while"
+potion_heal = "Heals wounds at once"
+potion_heal_cures = "Heals wounds at once, and cures {cures:and}"
+potion_mana = "Restores mana at once"
+potion_nourish = "Fills you as a meal does"
+potion_restore = "Restores what was drained or damaged of you"
+potion_sharpen = "Sharpens the eyes in the dark for a while"
+# `does`: what its status does (`potion_status_*`).
+potion_status = "{does:bare} for a while"
+potion_status_feel = "Lets you feel the living about you"
+potion_status_harder = "Makes you harder to hit"
+potion_status_hides = "Hides you from sight"
+potion_status_named = "Makes you {status:bare}"
+potion_status_quickens = "Quickens you"
+potion_status_surer = "Makes your blows surer"
+potion_status_water = "Lets you walk on water"
+potion_status_wounds = "Closes your wounds quicker"
+potion_unknown = "You do not know what this potion does."
+potion_unseen = "Shows you what hides from the eye for a while"
+potion_uv = "Opens the eyes to light beyond violet for a while"
+potion_ward = "Wards you against {kinds:and} for a while"
+protection = "Protection {n:bare}"
+# `against`: what it gives against each damage type (`protects_*`, `listed`).
+protection_against = "Protection {n:bare} ({against:bare})"
+protects_less = "−{n:bare} against {kind:bare}"
+protects_more = "+{n:bare} against {kind:bare}"
+quick = "Quick to strike"
+readied = "Readied: {slot:bare}"
+reloads = "Reloaded after every shot"
+# One damage type it resists or is vulnerable to: `kind`, `n` in percent.
+resist = "{kind:bare} {n:bare}%"
+# `kinds`: each a `resist`, `listed`.
+resists = "Resists {kinds:bare}"
+rod_costs = "Costs {mana:bare} mana a use, before your talents; it never runs out"
+rod_holds = "Holds {effect:bare}: {about:bare}"
+rod_unknown = "Unidentified: what it does is unknown until it is used or identified."
+shield = "Shield +{n:bare}"
+shoots = "Shoots up to {n:bare} cells"
+slow = "Slow to strike"
+some_kind = "some kind of"
+# How much faster or slower, in words (speed numbers stay hidden).
+speed_faster = "faster"
+speed_faster_little = "a little faster"
+speed_faster_much = "much faster"
+speed_slower = "slower"
+speed_slower_little = "a little slower"
+speed_slower_much = "much slower"
+# A boost's stat, as its drinker is made.
+stat_dexterity = "nimbler"
+stat_intelligence = "keener of mind"
+stat_presence = "more imposing"
+stat_strength = "stronger"
+stat_toughness = "hardier"
+stat_willpower = "firmer of will"
+thrown = "Thrown up to {n:bare} cells"
+vulnerable = "Vulnerable to {kinds:bare}"
+wand_charges_unknown = "Its charges are unknown until it is identified."
+# `roll`: its roll in the user's hands (`magic.roll_*`); `radius`, a burst's.
+wand_does_radius = "{roll:bare}, radius {radius:bare}"
+wand_empty = "Empty: it does nothing now."
+# `does`: what it does in the user's hands (its roll, or `wand_does_radius`).
+wand_holds = "Holds {spell:Bare}: {does:bare}"
+wand_holds_spell = "Holds {spell:Bare} (level {level:bare}): {about:bare}"
+wand_unknown = "Unidentified: the spell it holds is unknown until it is used or identified."
+worn = "Worn: {slot:bare}"
+worn_finger = "Worn on a finger"
+
+# An affix's value with its unit: `v` of it, one or many.
+[does_range]
+by = "v.number"
+one = "+{v:bare} cell of range"
+many = "+{v:bare} cells of range"
+
+[does_spell_dice]
+by = "v.number"
+one = "spells roll {v:bare} die more"
+many = "spells roll {v:bare} dice more"
+
+[does_spell_duration]
+by = "v.number"
+one = "buffs and hexes last {v:bare} degree longer"
+many = "buffs and hexes last {v:bare} degrees longer"
+
+[does_spell_ease]
+by = "v.number"
+one = "hinders casting {v:bare} point less"
+many = "hinders casting {v:bare} points less"
+
+[does_spell_reach]
+by = "v.number"
+one = "spells reach {v:bare} cell farther"
+many = "spells reach {v:bare} cells farther"
+
+[does_spell_rungs]
+by = "v.number"
+one = "spells stand {v:bare} rung higher on their ladders"
+many = "spells stand {v:bare} rungs higher on their ladders"
+
+[does_spell_sides]
+by = "v.number"
+one = "spell dice {v:bare} side bigger"
+many = "spell dice {v:bare} sides bigger"
+
+[does_spell_threat]
+by = "v.number"
+one = "spells threaten a critical on {v:bare} more roll"
+many = "spells threaten a critical on {v:bare} more rolls"
+
+[does_threat]
+by = "v.number"
+one = "criticals threaten on {v:bare} more roll"
+many = "criticals threaten on {v:bare} more rolls"
+
+[does_wand_rungs]
+by = "v.number"
+one = "wands cast {v:bare} rung higher"
+many = "wands cast {v:bare} rungs higher"
+
+# `n` enchantments, in words.
+[enchantments]
+by = "n.number"
+one = "{n:num} enchantment"
+many = "{n:num} enchantments"
+
+# `n` more improvements `place` (`place_*`), in words.
+[make_improvements]
+by = "n.number"
+one = "It will take {n:num} more improvement {place:bare}."
+many = "It will take {n:num} more improvements {place:bare}."
+
+[wand_charges]
+by = "n.number"
+one = "{n:bare} charge left"
+many = "{n:bare} charges left"

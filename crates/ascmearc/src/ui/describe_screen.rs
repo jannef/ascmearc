@@ -18,7 +18,7 @@
 
 use super::menu::{Nav, Panel, Press, wrap};
 use super::screens::ScreenAction;
-use super::text::{UiText, describe_screen as T, ui, ui_with};
+use super::text::{UiText, describe_screen as T, ui, ui_msg, ui_with};
 use super::{MAGIC, TEXT, TEXT_DIM, rarity_color};
 use crate::input::Bindings;
 use crate::render::console::Console;
@@ -110,7 +110,8 @@ impl DescribeScreen {
                 LineKind::Stat => (None, 0, TEXT),
                 LineKind::Base | LineKind::Note | LineKind::Lore => (None, 0, TEXT_DIM),
             };
-            for (i, text) in wrap(&line.text, width - dx).into_iter().enumerate() {
+            let said = ui_msg(line.msg.clone());
+            for (i, text) in wrap(&said, width - dx).into_iter().enumerate() {
                 rows.push(Row {
                     label: label.filter(|_| i == 0),
                     dx,

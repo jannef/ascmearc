@@ -20,7 +20,7 @@
 use crate::color::Rgb;
 use crate::content::{Content, Cutting, MaterialId, ObjectDef, PartId, dull};
 use crate::item_parts::ItemPart;
-use crate::lang::{Modifier, Phrase, Word};
+use crate::lang::{Arg, Modifier, Msg, Phrase, Word};
 use crate::magic::loot::pick_weighted;
 use crate::object::Stack;
 use crate::rng::Rng;
@@ -55,18 +55,23 @@ pub fn name_phrase(content: &Content, gem: MaterialId, cutting: Cutting) -> Phra
 }
 
 /// `gem` cut as `cutting` in words for a description, its size and cut always said: "small
-/// emerald, fine cut", "tiny garnet, uncut".
-pub fn phrase(content: &Content, gem: MaterialId, cutting: Cutting) -> String {
-    let name = &content.material(gem).name;
+/// emerald, fine cut", "tiny garnet, uncut" (`describe.gem_cut`, `describe.gem_rough`); its
+/// material alone without gems.
+pub fn phrase(content: &Content, gem: MaterialId, cutting: Cutting) -> Arg {
+    let name = Phrase::id(format!("material:{}", content.material(gem).id));
     let Some(gems) = content.gems() else {
-        return name.clone();
+        return name.into();
     };
     let (size, cut) = (gems.size(cutting.size), gems.cut(cutting.cut));
-    if cut.rough {
-        format!("{} {name}, {}", size.name, cut.name)
+    let id = if cut.rough {
+        crate::msg::describe::GEM_ROUGH
     } else {
-        format!("{} {name}, {} cut", size.name, cut.name)
-    }
+        crate::msg::describe::GEM_CUT
+    };
+    (Msg::new(id).role("size", Phrase::id(format!("gem_size:{}", size.id))))
+        .role("gem", name)
+        .role("cut", Phrase::id(format!("gem_cut:{}", cut.id)))
+        .into()
 }
 
 /// The colour of `gem` cut as `cutting`: its own, duller if the cut is rough.

@@ -100,8 +100,8 @@ pub(super) fn magic_bases(content: &Content) -> String {
             .collect();
         let total: u32 = bases.iter().map(|o| o.frequency).sum();
         for o in bases {
-            let stats = describe::base_stats(o, content)
-                .into_iter()
+            let stats = (describe::base_stats(o, content).iter())
+                .map(|s| ascmearc_core::messages::english_msg(content, s))
                 .filter(|s| !s.starts_with("Worn") && !s.starts_with("Held"))
                 .collect::<Vec<_>>();
             let stats = if stats.is_empty() {

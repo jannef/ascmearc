@@ -192,13 +192,17 @@ fn unidentified_it_hides_its_name_affixes_power_and_lore() {
     let shown = |lines: &[describe::Line], kind: LineKind| {
         (lines.iter())
             .filter(|l| l.kind == kind)
-            .map(|l| l.text.clone())
+            .map(|l| l.english(&content))
             .collect::<Vec<_>>()
     };
     assert!(shown(&lines, LineKind::Power).is_empty());
     assert!(shown(&lines, LineKind::Lore).is_empty());
     assert!(!lines.iter().any(|l| matches!(l.kind, LineKind::Affix(_))));
-    assert!(lines.iter().all(|l| !l.text.contains("Widowmaker")));
+    assert!(
+        lines
+            .iter()
+            .all(|l| !l.english(&content).contains("Widowmaker"))
+    );
     // Identified: its name, affixes, power, and lore, the lore last.
     run(&mut w, "identify");
     let known = stack(&w);
@@ -210,8 +214,11 @@ fn unidentified_it_hides_its_name_affixes_power_and_lore() {
     let lines = describe::lines(&known, &content);
     assert_eq!(shown(&lines, LineKind::Power), ["Its every cut poisons."]);
     assert_eq!(
-        lines.last().map(|l| (l.kind, l.text.as_str())),
-        Some((LineKind::Lore, "Thin as a hatpin, and never quite clean."))
+        lines.last().map(|l| (l.kind, l.english(&content))),
+        Some((
+            LineKind::Lore,
+            "Thin as a hatpin, and never quite clean.".to_string()
+        ))
     );
     let affixes = (lines.iter()).filter(|l| matches!(l.kind, LineKind::Affix(_)));
     assert_eq!(affixes.count(), 3);
@@ -551,9 +558,11 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
     );
     let lines = describe::lines(&widowmaker, &content);
     assert!(
-        lines[0].text.starts_with("Unique Marvellous stiletto"),
+        lines[0]
+            .english(&content)
+            .starts_with("Unique Marvellous stiletto"),
         "{}",
-        lines[0].text
+        lines[0].english(&content)
     );
 }
 
