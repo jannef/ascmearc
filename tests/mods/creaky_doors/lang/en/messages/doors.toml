@@ -1,0 +1,7 @@
+# Door lines, reworded: only these ids replace the game's (`assets/lang/en/messages/doors.toml`);
+# every other door line stays as it is. Ids alphabetical.
+
+close = "You close the door. It groans shut."
+crashes_open = "The door crashes open, its hinges shrieking!"
+open = "You open the door. It creaks."
+unwedge = "You pull the wedge free, and the door scrapes open."

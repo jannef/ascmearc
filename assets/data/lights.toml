@@ -273,6 +273,14 @@ id = "item_glow_bright"
 color = [125, 135, 175, 0]
 radius = 4
 
+# The Radiant's (data/uniques/radiant.toml, #1976): a unique war hammer's Light power. Its
+# wielder sheds a white, steady light (magic, so it never flickers), bright close by and reaching
+# four times a lantern's reach: a hall lit end to end.
+[[light]]
+id = "radiant_hammer"
+color = [320, 315, 290, 0]
+radius = 20
+
 # The Light spell's (spells/light.toml, the scroll of light): its caster sheds a pale, steady light
 # about them while Lit lasts, as bright as a lantern and a little farther; magic, so it never
 # flickers.

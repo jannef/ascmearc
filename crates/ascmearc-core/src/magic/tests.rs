@@ -814,9 +814,9 @@ fn reader(effect: Effect) -> (&'static str, &'static str) {
         | Effect::Resistance
         | Effect::Stat(_)
         | Effect::Light
+        | Effect::Range
         | Effect::Skill => MODS,
-        Effect::Range
-        | Effect::Draw
+        Effect::Draw
         | Effect::Parry
         | Effect::Armour
         | Effect::Shield

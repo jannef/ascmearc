@@ -1,0 +1,15 @@
+name = "Tiny"
+code = "xx"
+morphology = "generic"
+fallback = "en"
+
+[generic]
+forms = ["nom", "pl"]
+plural = "pl"
+number_words = ["cero", "uno", "dos", "tres"]
+counted = "{num} {pl}"
+and = "y"
+
+[generic.articles.the]
+"" = "el"
+pl = "los"

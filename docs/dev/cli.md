@@ -43,9 +43,11 @@ metadata`'s `target_directory`) for the build output it reads and the files it w
   `assets/campaigns/showcase/levels/vast.toml`; deterministic, never hand-edit. `--check` fails
   if the file differs from the generator output; run it after touching `xtask/src/vast.rs` (CI runs it).
 - **Check the language files**, `cargo xtask lang [--check] [--strict CODE] [--stamp CODE
-  [--restamp]] [--dir PATH]` (`xtask/src/lang.rs`, #1890; CI runs `--check`;
+  [--restamp]] [--dir PATH] [--mod DIR]...` (`xtask/src/lang.rs`, #1890; CI runs `--check`;
   `docs/dev/localization.md` "The checker"): checks `assets/lang/<code>/` against English with
-  the `ascmearc-lang` parsers. Errors fail the run, a missing id is a warning (an error for a
+  the `ascmearc-lang` parsers, then each mod's `lang/` laid over it (every folder in `mods/`, or
+  the `--mod` folders; `xtask/src/lang/mods.rs`, #1892), reporting what each mod adds under
+  `mods/<id>:`. Errors fail the run, a missing id is a warning (an error for a
   `--strict` language). `--stamp CODE` writes `of` into the entries that lack one, `--restamp`
   refreshes the stale ones too (read the diff). `--dir` points it at another language folder.
   The Finnish translator's tools are the same command (`xtask/src/lang/fi_tools.rs`): `--forms fi

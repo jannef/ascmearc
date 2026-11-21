@@ -2,7 +2,7 @@
 
 use super::order;
 use super::util::{article, capital, yes};
-use ascmearc_core::content::{AffixKind, Content, LightId, TalentEffect};
+use ascmearc_core::content::{AffixKind, Content, LightId, Power, TalentEffect};
 use ascmearc_core::talent::SensesEffect;
 use std::fmt::Write as _;
 
@@ -141,6 +141,15 @@ fn light_name(content: &Content, id: LightId) -> String {
             capital(glow_word(preset.radius)),
             affixes.join(", ")
         );
+    }
+    // A unique item's Light power (#1976): by the item's name.
+    let uniques: Vec<String> = (content.uniques())
+        .filter(|u| order::described(content, u.campaign.as_deref()))
+        .filter(|u| u.power == Some(Power::Light(id)))
+        .map(|u| capital(&u.name))
+        .collect();
+    if !uniques.is_empty() {
+        return format!("{}, wielded (unique)", uniques.join(", "));
     }
     let pedestal = (content.terrain_defs().iter())
         .filter(|t| !t.walkable && t.light.is_none())

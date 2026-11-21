@@ -3,9 +3,11 @@
 //! reeve.toml`). Laid over the built-in files in order, the last one laid wins: a file at a
 //! path the game has replaces it whole, one at a new path is added. The game reads them from
 //! `<config dir>/mods/` and `--mod DIR`, the CLI from `--mod DIR`; the core takes the merged
-//! files ([`ContentFiles::overlay`]) and never reads a folder. Not in the web build.
+//! files ([`ContentFiles::overlay`]) and never reads a folder. A language file merges with the
+//! one under it by id instead, and a mod whose files all lie under `lang/` is a text mod, which
+//! saves and replays never record (#1892). Not in the web build.
 
-use ascmearc_core::content::{Content, ContentFiles, ModStamp};
+use ascmearc_core::content::{Content, ContentFiles, ModStamp, is_text_path, merges_by_id};
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::path::Path;
@@ -68,7 +70,13 @@ impl Mod {
         })
     }
 
-    /// What a save or a replay records of it.
+    /// Whether it is a text mod: every file under `lang/` (none at all counts), so it changes
+    /// how the game reads, never what a save means (#1892). By path, as the core decides it.
+    pub fn is_text(&self) -> bool {
+        self.files.iter().all(|(path, _)| is_text_path(path))
+    }
+
+    /// What a save or a replay records of it (a content mod's).
     pub fn stamp(&self) -> ModStamp {
         ModStamp {
             id: self.id.clone(),
@@ -139,11 +147,12 @@ pub fn load(base: ContentFiles, mods: &[&Mod]) -> Result<Content, String> {
 }
 
 /// The paths more than one of `mods` holds, each with the ids of those mods in order: the last
-/// one's file is the one used.
+/// one's file is the one used. A language file that merges by id is no clash: each mod's
+/// entries apply, the last one's winning an id they share.
 pub fn clashes(mods: &[&Mod]) -> Vec<(String, Vec<String>)> {
     let mut by_path: BTreeMap<&str, Vec<String>> = BTreeMap::new();
     for m in mods {
-        for (path, _) in &m.files {
+        for (path, _) in m.files.iter().filter(|(p, _)| !merges_by_id(p)) {
             by_path.entry(path).or_default().push(m.id.clone());
         }
     }
@@ -162,6 +171,11 @@ mod tests {
         Path::new(env!("CARGO_MANIFEST_DIR")).join("../../mods")
     }
 
+    /// The test mods, which do not ship (the example text mod `creaky_doors`).
+    fn test_mods() -> PathBuf {
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/mods")
+    }
+
     #[test]
     fn the_example_mod_reads_and_loads() {
         let found = scan(&repo_mods());
@@ -172,8 +186,33 @@ mod tests {
         assert_eq!(m.name, "Pride month");
         assert_eq!(m.files.len(), 5);
         assert!(m.files.iter().all(|(p, _)| p.starts_with("campaigns/")));
+        assert!(!m.is_text());
         let content = load(crate::files(), &[m]).expect("loads");
         assert_eq!(content.mods(), [m.stamp()]);
+        assert_eq!(content.content_mods(), [m.stamp()]);
+    }
+
+    /// The example text mod (#1892) reads as one, loads, and leaves the save's mods empty.
+    #[test]
+    fn the_example_text_mod_reads_and_loads() {
+        let m = Mod::read(&test_mods().join("creaky_doors")).expect("reads");
+        assert_eq!(m.name, "Creaky doors");
+        assert!(m.is_text(), "{:?}", m.files);
+        let pride = Mod::read(&repo_mods().join("pride_month")).expect("reads");
+        let content = load(crate::files(), &[&pride, &m]).expect("loads");
+        assert_eq!(content.mods(), [pride.stamp(), m.stamp()]);
+        assert_eq!(content.content_mods(), [pride.stamp()]);
+    }
+
+    /// Two mods' language files at one path merge by id: no clash.
+    #[test]
+    fn language_files_never_clash() {
+        let m = Mod::read(&test_mods().join("creaky_doors")).expect("reads");
+        let other = Mod {
+            id: "other".into(),
+            ..m.clone()
+        };
+        assert!(clashes(&[&m, &other]).is_empty());
     }
 
     #[test]

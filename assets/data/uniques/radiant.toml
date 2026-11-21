@@ -1,0 +1,16 @@
+# The Radiant (#1976): a war hammer for the drop pool to come (#196; placed nowhere yet but the
+# test world's quarry). A solid fighting hammer (+4 damage, a wider critical, a tougher and
+# hardier wielder) that is above all a light: wielded, it lights twenty cells about its bearer
+# (its Light power, the `radiant_hammer` preset of data/lights.toml), a hall end to end. Every value
+# set by hand (`=`), so a regrade of the tiers leaves it as it is (docs/dev/magic-items.md
+# "Unique items").
+[[unique]]
+id = "radiant"
+name = "the Radiant"
+object = "war_hammer"
+affixes = ["sharp=4", "keen=2", "of_the_ox=4", "of_vitality=12"]
+level = 12
+# Four enchantments need its make (docs/dev/enchanting.md): Masterwork.
+quality = "masterwork"
+power = { light = "radiant_hammer", phrase = "It sheds a light like noon about its bearer." }
+lore = "Struck at a holy well, it has not been dark since, though many have tried to put it out."

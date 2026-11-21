@@ -22,7 +22,9 @@ settings module (#1936), which complete L6 (#1889); **L4a**,
 **L4o**, `world/turn/` and `world/mod.rs` (#1926, `messages/turn.toml`, "Literal lines");
 **L4c** and **L4d**, `world/classes/` (#1914, #1915, `messages/classes.toml`, "Literal lines");
 **L8**, the language setting (#1891, "The language setting (L8)"): any language under
-`assets/lang/` loads, the player chooses one, and the log and the screens switch live; and **L5**, dialogue (#1888): every line a creature says is a line of data
+`assets/lang/` loads, the player chooses one, and the log and the screens switch live;
+**L9**, text mods (#1892, "Mods (L9)");
+and **L5**, dialogue (#1888): every line a creature says is a line of data
 said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
 whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
 the character, creatures, the fixtures, items, health, levels, people, skills (L4n, #1925), and talk say
@@ -235,7 +237,7 @@ and `assets/lang/en/messages/<file>.toml`, one file per subsystem (`doors.toml`,
 entries alphabetical, each `id = "text"` or a `[id]` table (`docs/dev/localization.md` "The
 crate", `template.rs`). `lang/` is a content directory beside `campaigns/`, `data/`, and
 `vaults/` (`content/walk.rs::CONTENT_DIRS`): the assets crate embeds it, `ContentFiles::from_dir`
-reads it, and a mod could lay a file over it (text mods are L9).
+reads it, and a mod lays files over it, merging by id ("Mods (L9)").
 
 **Ids at build time.** `crates/ascmearc-core/build.rs` scans `assets/lang/en/messages/*.toml`
 (no dependency: a top-level `id = …` or a `[id]` header is an entry, `{role:form}` and `by =
@@ -1487,7 +1489,8 @@ check them per language, "UI text"); and **stale** entries. **Warnings**: a miss
 **The `of` hash** of a translated entry is the six-hex FNV-1a (32 bits, the top byte folded into
 the low 24) of the English entry's canonical text: a string as it is, an array's items joined by a
 newline, a table's keys in order as `key=value` lines, never `of`. An entry without
-`of` is stale too. `--stamp <code>` writes `of` into entries (and lines of data, "Lines of data")
+`of` is stale too. **Mods**: `--check` then checks each mod's `lang/` over the game's ("Mods (L9)"; `--mod DIR` for
+folders outside `mods/`). `--stamp <code>` writes `of` into entries (and lines of data, "Lines of data")
 that lack one (`--restamp` also
 refreshes stale ones, after the translator has read the English change); it edits lines, so
 comments and layout stay: a `[table]` gets an `of` line after its header, a plain `id = "text"`
@@ -1533,6 +1536,35 @@ Nothing here is guessed against the oracle; these are the choices the oracle can
   compound adjective ("smaragdiponsinen"); the charges note "(7 latausta)".
 - A `plural_only` word: one without a numeral ("sakset", not "yhdet sakset"); zero as "nolla
   saksia"; digits with the agreeing plural ("13 sakset").
+
+## Mods (L9)
+
+A mod's files under `lang/` are its text (#1892; the mechanism and the save rules are
+`docs/dev/mods.md` "Text mods"). **By id**: a mod's language file at a path the game has merges
+with it, the mod's entries replacing the same ids (a message, a UI text, a line of data's key,
+a lexicon word) and the rest staying; at a new path it adds a file (a translation of
+the mod's own dialogue file, `lang/<code>/dialogue/<file>.toml`). A content mod's own lines of
+data are keyed by its content ids and overlay the same way ("Lines of data"): its English is its
+data, its Finnish lines sit in `lang/fi/data/<kind>.toml` beside the game's, merged by key; `lang.toml` is replaced whole. A loader
+reads a merged file as layers through `ContentFiles::in_dir`, so English (`content/english.rs`)
+and whatever reads the other languages get the merge without code of their own. **A text mod**
+(every file under `lang/`) is left out of saves, replays, and the fingerprint; a mod with
+content too pins them by its content alone. **The checker** lays each mod's `lang/` over the
+game's the same way (`xtask/src/lang/mods.rs`: an English file of the mod's merges into English,
+so a translation of it is checked against the merge; a content mod's lines of data against the
+content loaded with it) and reports, under `mods/<id>:`, what the mod adds to the game's own
+report. The examples are test mods, not shipped (`tests/mods/`, `docs/dev/mods.md`):
+`creaky_doors` (English: four door lines reworded) and `tiny_language` (a new language, `xx`).
+
+**Decisions L9 made where the design left them open.** The example text mod is English
+(`creaky_doors`), and §11's tiny `generic` language is a second test mod, `tiny_language`
+(`text_mod_tests.rs`, `a_text_mod_adds_a_language`): since L8 reads every `lang/<code>/` with a
+`lang.toml`, a mod's new language loads, is offered in the settings, and falls back to English.
+Neither ships in `mods/`. A language file merges by id rather than replacing the game's whole (§11 has a
+retranslation replace a file whole): a mod translating its own content ids into Finnish then
+ships `lang/fi/data/creature.toml` holding only its own creatures. The fingerprint's mod digest
+leaves every `lang/` file out, a content mod's too, so a text mod laid over a content mod's text
+cannot change that content mod's fingerprint. An empty mod is a text mod (it changes no content).
 
 ## Next
 

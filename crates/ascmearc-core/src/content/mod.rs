@@ -230,6 +230,8 @@ mod temper;
 mod terrain;
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+mod text_mod_tests;
 mod theft;
 mod throw;
 pub(crate) mod tower;
@@ -365,9 +367,9 @@ pub use material::{
 };
 pub use mining::{Mined, MiningBand, MiningFind, MiningRules, Vein, Veins};
 pub use miscast::{Miscast, MiscastRules, WHO as MISCAST_WHO};
+pub use mods::{ModStamp, describe as describe_mods, is_text_path, merges_by_id};
 #[cfg(test)]
-pub(crate) use mods::pride_month;
-pub use mods::{ModStamp, describe as describe_mods};
+pub(crate) use mods::{pride_month, test_mod};
 pub use monster_pool::{MonsterPool, VaultMonsters};
 pub use names::{NameLists, Names};
 pub use oath::{OathBand, OathRules, TREE as OATH_TREE};
@@ -890,7 +892,9 @@ pub struct Content {
     ids: RequiredIds,
     /// The mods laid over the files it was loaded from, in order (`content/mods.rs`, #1731).
     mods: Vec<ModStamp>,
-    /// A hash of the files those mods supplied, for the fingerprint.
+    /// Those of them that are not text mods: the ones saves and replays record (#1892).
+    content_mods: Vec<ModStamp>,
+    /// A hash of the content files those mods supplied (not their text), for the fingerprint.
     mod_digest: u64,
 }
 
