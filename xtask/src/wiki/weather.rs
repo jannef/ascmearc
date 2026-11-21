@@ -1,5 +1,6 @@
 //! Weather: the chances by month and what each weather does.
 
+use super::util::word;
 use ascmearc_core::content::Content;
 use ascmearc_core::light::{Sky, Sun};
 use ascmearc_core::time::GameTime;
@@ -10,7 +11,7 @@ use std::fmt::Write as _;
 pub(super) fn weather_chances(content: &Content) -> String {
     let mut out = String::from("| Month |");
     for w in Weather::ALL {
-        let _ = write!(out, " {} |", w.name());
+        let _ = write!(out, " {} |", word(w.name(), "Bare"));
     }
     out.push_str("\n|---|---:|---:|---:|---:|\n");
     for month in 1..=12 {
@@ -69,7 +70,7 @@ pub(super) fn weather_effects(content: &Content) -> String {
         let _ = writeln!(
             out,
             "| {} | {}% | {}% | {moon} | {sight} |",
-            w.name(),
+            word(w.name(), "Bare"),
             share(open(&sun), open(&clear)),
             share(sun.sky.luma(), clear.sky.luma()),
         );

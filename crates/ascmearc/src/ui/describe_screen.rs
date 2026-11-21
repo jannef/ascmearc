@@ -44,7 +44,7 @@ pub struct DescribeScreen {
     /// Whether the player knows it is cursed: its name's color then.
     cursed: bool,
     /// What the inventory says of it if it is worn or wielded: "wielded".
-    mark: Option<String>,
+    mark: Option<ascmearc_core::lang::Arg>,
     lines: Vec<Line>,
 }
 
@@ -161,10 +161,7 @@ impl DescribeScreen {
         let name = match &self.mark {
             Some(mark) => ui_with(
                 T::NAME_MARKED,
-                &[
-                    ("name", title.clone().into()),
-                    ("mark", mark.clone().into()),
-                ],
+                &[("name", title.clone().into()), ("mark", mark.clone())],
             ),
             None => ui_with(T::NAME, &[("name", title.clone().into())]),
         };

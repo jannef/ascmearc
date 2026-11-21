@@ -63,7 +63,7 @@ impl FilesScreen {
                 None => return ScreenAction::Close,
                 Some(entry) => {
                     self.status = Some(match &entry.dir {
-                        None => ui_with(T::NOWHERE, &[("label", entry.label.into())]),
+                        None => ui_with(T::NOWHERE, &[("label", ui(entry.label).into())]),
                         Some(dir) => match (self.opener)(dir) {
                             Ok(()) => {
                                 let folder = dir.display().to_string();
@@ -99,8 +99,8 @@ impl FilesScreen {
             let selected = i == self.selected;
             let color = if selected { ACCENT } else { TEXT };
             console.print(x, y, if selected { ">" } else { " " }, ACCENT);
-            console.print(x + 2, y, e.label, color);
-            console.print(x + 14, y, e.what, TEXT_DIM);
+            console.print(x + 2, y, &ui(e.label), color);
+            console.print(x + 14, y, &ui(e.what), TEXT_DIM);
             let place = match &e.dir {
                 Some(dir) => truncated_head(&dir.display().to_string(), (w - 4).max(0) as usize),
                 None => ui(T::NOT_STORED),

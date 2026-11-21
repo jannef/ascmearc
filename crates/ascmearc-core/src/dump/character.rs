@@ -24,7 +24,7 @@ pub(super) fn stat_rows(view: &PerceptionView<'_>) -> Vec<String> {
                 "Gender Other ({} +1)",
                 content.english_word(c.raised.name(), "Bare")
             ),
-            gender => format!("Gender {}", gender.name()),
+            gender => format!("Gender {}", content.english_word(gender.name(), "Bare")),
         });
         rows.push(format!("Class {class}"));
         rows.push(format!("Age {}", c.age_on(view.time())));
@@ -38,7 +38,10 @@ pub(super) fn stat_rows(view: &PerceptionView<'_>) -> Vec<String> {
             .map(|(stat, score)| format!("{} {score}", content.english_word(stat.name(), "Bare"))),
     );
     if let Some(band) = view.own_alignment() {
-        rows.push(format!("Alignment {}", band.name()));
+        rows.push(format!(
+            "Alignment {}",
+            content.english_word(band.name(), "Bare")
+        ));
     }
     // The combat stance by name, when not neutral (as the status bar shows it).
     let stance = view.own_stance();
@@ -86,7 +89,10 @@ pub(super) fn resistance_rows(view: &PerceptionView<'_>) -> Vec<String> {
             .filter(|(_, w)| *w == word)
             .map(|(k, _)| content.damage_type(*k).name.as_str())
             .collect();
-        (!kinds.is_empty()).then(|| format!("{} {}", word.label(), kinds.join(", ")))
+        (!kinds.is_empty()).then(|| {
+            let label = content.english_word(word.label(), "Bare");
+            format!("{label} {}", kinds.join(", "))
+        })
     })
     .collect()
 }

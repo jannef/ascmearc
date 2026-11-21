@@ -585,13 +585,14 @@ impl World {
                     let dir = Dir::toward(viewer, place);
                     match (volume, dir) {
                         (Volume::Faint, None) => Msg::new(msg::talk::VOICE_FAINT),
-                        (Volume::Faint, Some(d)) => Msg::new(msg::talk::VOICE_FAINT_FROM)
-                            .role("dir", Phrase::id(format!("word:{}", d.compass_name()))),
+                        (Volume::Faint, Some(d)) => {
+                            Msg::new(msg::talk::VOICE_FAINT_FROM).role("dir", d.compass_word())
+                        }
                         (Volume::Clear | Volume::Loud, None) => {
                             Msg::new(msg::talk::VOICE).role("line", m.line)
                         }
                         (Volume::Clear | Volume::Loud, Some(d)) => Msg::new(msg::talk::VOICE_FROM)
-                            .role("dir", Phrase::id(format!("word:{}", d.compass_name())))
+                            .role("dir", d.compass_word())
                             .role("line", m.line),
                     }
                 }

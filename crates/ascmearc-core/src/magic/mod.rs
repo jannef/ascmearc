@@ -168,7 +168,8 @@ impl Magic {
         match (self.rarity, &self.name) {
             (Rarity::Normal, _) => return Err("a normal item has no magic".into()),
             (Rarity::Rare | Rarity::Unique, None) => {
-                return Err(format!("a {} item has a name", self.rarity.word()));
+                let rarity = content.english_word(self.rarity.word(), "bare");
+                return Err(format!("a {rarity} item has a name"));
             }
             (Rarity::Magic, Some(_)) => return Err("only rare and unique items have names".into()),
             _ => {}
@@ -222,9 +223,9 @@ impl Magic {
         }
         let most = self.rarity.most_per_kind();
         if per_kind.iter().any(|&n| n > most) {
+            let rarity = content.english_word(self.rarity.word(), "bare");
             return Err(format!(
-                "a {} item has at most {most} prefixes and {most} suffixes",
-                self.rarity.word()
+                "a {rarity} item has at most {most} prefixes and {most} suffixes"
             ));
         }
         Ok(())

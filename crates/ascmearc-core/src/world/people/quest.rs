@@ -418,7 +418,7 @@ fn kill_noun(content: &Content, def: &QuestDef, need: u32) -> Phrase {
         Goal::Kill {
             target: KillTarget::Tag(tag),
             ..
-        } => Phrase::id(format!("word:{}", crate::content::spoken(tag))).count(need),
+        } => content.tag_phrase(tag).count(need),
         _ => Phrase::id("word:something"),
     }
 }

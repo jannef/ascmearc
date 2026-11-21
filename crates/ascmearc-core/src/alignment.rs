@@ -130,16 +130,17 @@ impl Band {
         Band::Wicked,
     ];
 
-    /// Its name, as the character screen shows it: `Callous`.
-    pub const fn name(self) -> &'static str {
+    /// Its name, a message id (`messages/words.toml`): `callous` (the character screen asks
+    /// `Bare`, "Callous").
+    pub const fn name(self) -> crate::lang::MessageId {
         match self {
-            Band::Wicked => "Wicked",
-            Band::Evil => "Evil",
-            Band::Callous => "Callous",
-            Band::Neutral => "Neutral",
-            Band::Kind => "Kind",
-            Band::Good => "Good",
-            Band::Saintly => "Saintly",
+            Band::Wicked => crate::msg::words::BAND_WICKED,
+            Band::Evil => crate::msg::words::BAND_EVIL,
+            Band::Callous => crate::msg::words::BAND_CALLOUS,
+            Band::Neutral => crate::msg::words::BAND_NEUTRAL,
+            Band::Kind => crate::msg::words::BAND_KIND,
+            Band::Good => crate::msg::words::BAND_GOOD,
+            Band::Saintly => crate::msg::words::BAND_SAINTLY,
         }
     }
 
@@ -197,13 +198,15 @@ impl Requirement {
         self.min.is_none_or(|min| band >= min) && self.max.is_none_or(|max| band <= max)
     }
 
-    /// What it asks for, in words: "Good or better", "Callous or worse", "Kind to Saintly".
-    pub fn words(self) -> String {
+    /// What it asks for, in English words (the wiki's): "Good or better", "Callous or worse",
+    /// "Kind to Saintly".
+    pub fn words(self, content: &crate::content::Content) -> String {
+        let name = |band: Band| content.english_word(band.name(), "Bare");
         match (self.min, self.max) {
-            (Some(min), Some(max)) if min == max => min.name().to_string(),
-            (Some(min), Some(max)) => format!("{} to {}", min.name(), max.name()),
-            (Some(min), None) => format!("{} or better", min.name()),
-            (None, Some(max)) => format!("{} or worse", max.name()),
+            (Some(min), Some(max)) if min == max => name(min),
+            (Some(min), Some(max)) => format!("{} to {}", name(min), name(max)),
+            (Some(min), None) => format!("{} or better", name(min)),
+            (None, Some(max)) => format!("{} or worse", name(max)),
             (None, None) => "any".into(),
         }
     }
@@ -284,16 +287,17 @@ mod tests {
         let good: Requirement = toml::from_str("min = \"good\"").unwrap();
         assert!(good.allows(Band::Saintly) && good.allows(Band::Good));
         assert!(!good.allows(Band::Kind));
-        assert_eq!(good.words(), "Good or better");
+        let content = crate::test_support::builtin();
+        assert_eq!(good.words(&content), "Good or better");
         let dark: Requirement = toml::from_str("max = \"callous\"").unwrap();
         assert!(dark.allows(Band::Wicked) && dark.allows(Band::Callous));
         assert!(!dark.allows(Band::Neutral));
-        assert_eq!(dark.words(), "Callous or worse");
+        assert_eq!(dark.words(&content), "Callous or worse");
         let between = Requirement {
             min: Some(Band::Kind),
             max: Some(Band::Good),
         };
-        assert_eq!(between.words(), "Kind to Good");
+        assert_eq!(between.words(&content), "Kind to Good");
         assert!(toml::from_str::<Requirement>("min = \"lawful\"").is_err());
     }
 }

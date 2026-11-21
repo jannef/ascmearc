@@ -298,7 +298,7 @@ id on another rarity than unique, and a unique without its id.
   unique. As a rare: its name (`Rarity::named`, `magic/name.rs`: "Widowmaker, a stiletto"),
   `most_per_kind` (three of each), its worth (`MagicWorth::add` takes `rare`'s percent; the
   wiki's worth table says "Rare or unique"). Unidentified it reads "a stiletto (unique)" and
-  the description's first line "Unique stiletto" (`Rarity::word`); its name is the UI's
+  the description's first line "Unique stiletto" (`Rarity::word`, a `words.rarity_*` id); its name is the UI's
   `UNIQUE` golden orange (`ui::rarity_color`; `ui/mod.rs`'s test keeps it 70 apart from the
   other rarities', the curse's, and the accent in every palette). The `Rarity::Rare` sites left
   as they are only ever see rolled or enchanted items: loot (`loot.rs`), Enchanting (which

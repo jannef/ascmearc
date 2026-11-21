@@ -36,7 +36,7 @@ pub(crate) fn phrase(
         return ahead(word, made).count(count);
     };
     if !known {
-        let mut tags = vec![magic.rarity.word().to_string()];
+        let mut tags = vec![content.english_word(magic.rarity.word(), "bare")];
         tags.extend(cursed.then(|| "cursed".to_string()));
         return ahead(word, made).count(count).with_note(Note::Tags(tags));
     }

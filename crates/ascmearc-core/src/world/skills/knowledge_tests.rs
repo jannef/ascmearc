@@ -186,11 +186,17 @@ fn lore_room() -> (World, Pos, Pos) {
 }
 
 /// What the player's view says of whoever is seen at `at`, in the words' ids.
-fn known_at(w: &World, at: Pos) -> Vec<(String, &'static str)> {
+fn known_at(w: &World, at: Pos) -> Vec<(String, String)> {
     let view = w.perception();
     let actor = view.actor_at(at).expect("seen");
     (view.known_resistances(actor).into_iter())
-        .map(|(kind, word)| (w.content().damage_type(kind).id.clone(), word.word()))
+        .map(|(kind, word)| {
+            let content = w.content();
+            (
+                content.damage_type(kind).id.clone(),
+                content.english_word(word.word(), "bare"),
+            )
+        })
         .collect()
 }
 
@@ -217,7 +223,7 @@ fn knowledge_above_a_creatures_level_tells_what_it_resists_and_at_it_nothing() {
     assert_eq!(resist_bonus_against(&w, skeleton), 0);
     let known = known_at(&w, skeleton);
     let told: Vec<(&str, &str)> = (known.iter())
-        .map(|(kind, word)| (kind.as_str(), *word))
+        .map(|(kind, word)| (kind.as_str(), word.as_str()))
         .collect();
     assert!(told.contains(&("piercing", "resistant")), "{told:?}");
     assert!(told.contains(&("bludgeoning", "vulnerable")), "{told:?}");
