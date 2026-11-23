@@ -132,31 +132,31 @@ source_race = { text = "kansa", of = "077408" }
 source_sign = { text = "syntymämerkki", of = "88db3c" }
 source_skill = { text = "taidot", of = "56dcfa" }
 source_spell = { text = "loitsut", of = "f5d6ba" }
-source_talent = { text = "taipumukset", of = "75ce7e" }
+source_talent = { text = "kyvyt", of = "75ce7e" }
 source_weapon_skill = { text = "asetaidot", of = "386b12" }
-stat_dexterity = { text = "ketteryys", of = "ba0532" }
+stat_dexterity = { by = "slot.form", gen = "ketteryyden", else = "ketteryys", of = "ba0532" }
 stat_dexterity_abbrev = { text = "Ke", of = "ce9e21" }
 # What a corpse gives of the stat, partitive ("Sinuun siirtyy hiukan sen notkeutta.").
 stat_dexterity_gift = { text = "notkeutta", of = "f2d931" }
 # What a rise in the stat makes you, translative ("Tunnet itsesi nopeammaksi.").
 stat_dexterity_more = { text = "nopeammaksi", of = "b93832" }
-stat_intelligence = { text = "äly", of = "2cccfb" }
+stat_intelligence = { by = "slot.form", gen = "älyn", else = "äly", of = "2cccfb" }
 stat_intelligence_abbrev = { text = "Äl", of = "e8c8fe" }
 stat_intelligence_gift = { text = "oveluutta", of = "06e9a9" }
 stat_intelligence_more = { text = "terävämmäksi", of = "0cd45b" }
-stat_presence = { text = "karisma", of = "d34f08" }
+stat_presence = { by = "slot.form", gen = "karisman", else = "karisma", of = "d34f08" }
 stat_presence_abbrev = { text = "Ka", of = "005118" }
 stat_presence_gift = { text = "ryhtiä", of = "125869" }
 stat_presence_more = { text = "itsevarmemmaksi", of = "59a35f" }
-stat_strength = { text = "voima", of = "7a1850" }
+stat_strength = { by = "slot.form", gen = "voiman", else = "voima", of = "7a1850" }
 stat_strength_abbrev = { text = "Vo", of = "027029" }
 stat_strength_gift = { text = "voimaa", of = "7a1850" }
 stat_strength_more = { text = "vahvemmaksi", of = "7be1bf" }
-stat_toughness = { text = "sitkeys", of = "869e51" }
+stat_toughness = { by = "slot.form", gen = "sitkeyden", else = "sitkeys", of = "869e51" }
 stat_toughness_abbrev = { text = "Si", of = "f59605" }
 stat_toughness_gift = { text = "sitkeyttä", of = "5b7037" }
 stat_toughness_more = { text = "sitkeämmäksi", of = "608c68" }
-stat_willpower = { text = "tahto", of = "f5ce05" }
+stat_willpower = { by = "slot.form", gen = "tahdon", else = "tahto", of = "f5ce05" }
 stat_willpower_abbrev = { text = "Ta", of = "f810ca" }
 stat_willpower_gift = { text = "päättäväisyyttä", of = "f31ccd" }
 stat_willpower_more = { text = "päättäväisemmäksi", of = "df5d3b" }

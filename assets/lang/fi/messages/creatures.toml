@@ -11,9 +11,9 @@ casts_at = { text = "{who:Nom} loitsii {spell:acc} {target:par} kohti.", of = "8
 casts_at_you = { text = "{who:Nom} loitsii {spell:acc} sinua kohti!", of = "d9171b" }
 # A heal cast on another.
 casts_on = { text = "{who:Nom} loitsii {spell:acc} {target:all}.", of = "133deb" }
-chest_breathing = { text = "Huomaat {chest:gen} hengittävän: {who:nom}!", of = "3bc0da" }
-chest_lurches = { text = "{chest:Nom} nytkähtää: se onkin {who:nom}!", of = "f896d9" }
-chest_shudders = { text = "{chest:Nom} värisee: se onkin {who:nom}!", of = "806ea0" }
+chest_breathing = { text = "Huomaat {chest:gen} hengittävän: {who:counted_nom}!", of = "3bc0da" }
+chest_lurches = { text = "{chest:Nom} nytkähtää: se onkin {who:counted_nom}!", of = "f896d9" }
+chest_shudders = { text = "{chest:Nom} värisee: se onkin {who:counted_nom}!", of = "806ea0" }
 cold_draught = { text = "Tunnet kylmän henkäyksen.", of = "32748a" }
 cold_stare = { text = "Tunnet kylmän katseen niskassasi.", of = "1c5214" }
 comes_dev = { text = "{who:Nom} tulee (dev).", of = "71c1cf" }
@@ -30,12 +30,12 @@ spins_web = { text = "{who:Nom} kutoo seitin.", of = "6d4992" }
 splits = { text = "{who:Nom} jakautuu kahtia.", of = "aa56d4" }
 splits_first = { text = "{who:Nom} hajoaa kahtia, ja molemmat puolikkaat ryömivät.", of = "57f6cc" }
 stares_at = { text = "{who:Nom} tuijottaa {target:par}.", of = "fab108" }
-statue_falls = { text = "{what:Nom} halkeaa ja murenee kappaleiksi!", of = "b21830" }
+statue_falls = { by = "what.number", one = "{what:Nom} halkeaa ja murenee kappaleiksi!", many = "{what:Nom} halkeavat ja murenevat kappaleiksi!", of = "b21830" }
 statue_stands = { text = "TÖMPS! Jalkasi kohtaa kiven; {what:nom} pysyy pystyssä.", of = "af4818" }
 strike_at_something = { text = "Lyöt jotakin.", of = "ff84ec" }
 # `verb`: how the summoner summons ("kutsuu esiin"); `what`: what came, its total object
 # ("kolme hiittä"), or a list.
-summons = { text = "{who:Nom} {verb:bare} {what:acc}!", of = "f7487b" }
+summons = { text = "{who:Nom} {verb:bare} {what:counted_acc}!", of = "f7487b" }
 tear_eyes_from = { text = "Repäiset katseesi irti {who:gen} silmistä.", of = "3f42c3" }
 verb_summons = { text = "kutsuu esiin", of = "56fded" }
 wakes_up = { text = "{who:Nom} herää.", of = "fe57c7" }
@@ -57,7 +57,7 @@ other = "{who:Nom} on yhtäkkiä {beside:gen} vieressä."
 of = "f9688c"
 by = "what.number"
 one = "{what:Nom} hajoaa kappaleiksi."
-many = "{what:Nom} hajoaa kappaleiksi."
+many = "{what:Counted_nom} hajoaa kappaleiksi."
 
 [crawl_out]
 of = "6db467"
@@ -68,4 +68,4 @@ many = "{from:Gen} ruumiista ryömii esiin {what:counted}!"
 # `who`: the thief; `what`: the stack, the total object ("tikarin", "kolme nuolta").
 [snatches]
 of = "86af41"
-text = "{who:Nom} sieppaa sinulta {what:acc}!"
+text = "{who:Nom} sieppaa sinulta {what:counted_acc}!"

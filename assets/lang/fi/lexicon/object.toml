@@ -79,12 +79,12 @@ copper_key = { word = "kupari|avain/33", forms = { material = "kuparinen" } }
 cottar_corpse = { word = "mökkiläisen ruumis/41", forms = { material = "lihainen" } }
 crocodile_corpse = { word = "krokotiilin raato/1*F", forms = { material = "lihainen" } }
 crossbow = { word = "varsi|jousi/26", forms = { material = "puinen" } }
-crystal_black = { word = "musta/10 kide/48*F", forms = { material = "kivinen" } }
-crystal_blue = { word = "sininen/38 kide/48*F", forms = { material = "kivinen" } }
-crystal_gold = { word = "kultainen/38 kide/48*F", forms = { material = "kivinen" } }
-crystal_green = { word = "vihreä/15 kide/48*F", forms = { material = "kivinen" } }
-crystal_red = { word = "punainen/38 kide/48*F", forms = { material = "kivinen" } }
-crystal_white = { word = "valkoinen/38 kide/48*F", forms = { material = "kivinen" } }
+crystal_black = { word = "musta/10 kristalli/5", forms = { material = "kivinen" } }
+crystal_blue = { word = "sininen/38 kristalli/5", forms = { material = "kivinen" } }
+crystal_gold = { word = "kultainen/38 kristalli/5", forms = { material = "kivinen" } }
+crystal_green = { word = "vihreä/15 kristalli/5", forms = { material = "kivinen" } }
+crystal_red = { word = "punainen/38 kristalli/5", forms = { material = "kivinen" } }
+crystal_white = { word = "valkoinen/38 kristalli/5", forms = { material = "kivinen" } }
 cult_chymist_corpse = { word = "lahkoalkemistin ruumis/41", forms = { material = "lihainen" } }
 cult_priest_corpse = { word = "lahkopapin ruumis/41", forms = { material = "lihainen" } }
 cultist_corpse = { word = "lahkolaisen ruumis/41", forms = { material = "lihainen" } }
@@ -146,12 +146,12 @@ elixir_of_vigour = { word = "sitkeys|eliksiiri/6", forms = { material = "lasinen
 elixir_of_will = { word = "tahto|eliksiiri/6", forms = { material = "lasinen" } }
 elixir_of_wit = { word = "äly|eliksiiri/6", forms = { material = "lasinen" } }
 ember_beetle_corpse = { word = "hiilloskuoriaisen raato/1*F", forms = { material = "lihainen" } }
-essence_of_air = { word = "ilman ydin/33", forms = { material = "kivinen" } }
-essence_of_earth = { word = "maan ydin/33", forms = { material = "kivinen" } }
-essence_of_fire = { word = "tulen ydin/33", forms = { material = "kivinen" } }
-essence_of_ice = { word = "jään ydin/33", forms = { material = "kivinen" } }
-essence_of_lightning = { word = "salaman ydin/33", forms = { material = "kivinen" } }
-essence_of_water = { word = "veden ydin/33", forms = { material = "kivinen" } }
+essence_of_air = { word = "ilman ydin/33*F", forms = { material = "kivinen" } }
+essence_of_earth = { word = "maan ydin/33*F", forms = { material = "kivinen" } }
+essence_of_fire = { word = "tulen ydin/33*F", forms = { material = "kivinen" } }
+essence_of_ice = { word = "jään ydin/33*F", forms = { material = "kivinen" } }
+essence_of_lightning = { word = "salaman ydin/33*F", forms = { material = "kivinen" } }
+essence_of_water = { word = "veden ydin/33*F", forms = { material = "kivinen" } }
 eyebright = { word = "silmäruohon varsi/28", forms = { material = "kasviperäinen" } }
 felt_boots = { word = "huopa|saapas/41*B", plural_only = true, forms = { material = "villainen" } }
 fen_ghoul_corpse = { word = "suonsyöjän raato/1*F", forms = { material = "lihainen" } }
@@ -227,7 +227,7 @@ hanging_lantern = { word = "riippu|lyhty/1*F", forms = { material = "rautainen" 
 hare_corpse = { word = "jäniksen raato/1*F", forms = { material = "lihainen" } }
 hazelnuts = { word = "kourallinen/38 hasselpähkinöitä", forms = { material = "kasviperäinen" } }
 headless_knight_corpse = { word = "päättömän ritarin raato/1*F", forms = { material = "lihainen" } }
-heart_crystal = { word = "sydän|kide/48*F", forms = { material = "kivinen" } }
+heart_crystal = { word = "sydän|kristalli/5", forms = { material = "kivinen" } }
 heavy_crossbow = { word = "raskas/41 varsi|jousi/26", forms = { material = "puinen" } }
 hell_hound_corpse = { word = "hornankoiran raato/1*F", forms = { material = "lihainen" } }
 henbane = { word = "hullukaalin varsi/28", forms = { material = "kasviperäinen" } }
@@ -393,7 +393,7 @@ osrick_corpse = { word = "veli Osrickin ruumis/41", forms = { material = "lihain
 padded_coat = { word = "tikki|nuttu/1*C", forms = { material = "kankainen" } }
 panther_corpse = { word = "pantterin raato/1*F", forms = { material = "lihainen" } }
 patched_smock = { word = "paikattu/1*C röijy/1", forms = { material = "kankainen" } }
-patron_corpse = { word = "suojelijan ruumis/41", forms = { material = "lihainen" } }
+patron_corpse = { word = "mesenaatin ruumis/41", forms = { material = "lihainen" } }
 pedlar_corpse = { word = "kulkukauppiaan ruumis/41", forms = { material = "lihainen" } }
 pick_axe = { word = "hakku/1*A", forms = { material = "rautainen" } }
 piece = "pala/9"

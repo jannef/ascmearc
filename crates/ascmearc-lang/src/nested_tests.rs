@@ -30,7 +30,7 @@ const FI_LEVELS: &str = r#"
 lines = "{lines:lines}"
 stairs = "Tässä on portaat alas."
 mixed = "{who:And} seuraavat sinua portaita alas."
-follower = "{who:nom}"
+follower = "{who:counted_nom}"
 "#;
 
 const GENERIC: &str = r#"

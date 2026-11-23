@@ -19,23 +19,23 @@ text = "{ready:bare}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} 
 
 [prompt_exploit]
 of = "ff24ef"
-text = "Iske aukkoon, heitä {ready:nom}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} heittää, Esc peruu."
+text = "Iske aukkoon, heitä {ready:counted_nom}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} heittää, Esc peruu."
 
 [prompt_fire]
 of = "e33363"
-text = "Ammu {ready:nom}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} ampuu, Esc peruu."
+text = "Ammu {ready:counted_nom}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} ampuu, Esc peruu."
 
 [prompt_read]
 of = "475f27"
-text = "Lue {ready:nom}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} lukee, Esc peruu."
+text = "Lue {ready:counted_nom}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} lukee, Esc peruu."
 
 [prompt_throw]
 of = "18aff1"
-text = "Heitä {ready:nom}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} heittää, Esc peruu."
+text = "Heitä {ready:counted_nom}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} heittää, Esc peruu."
 
 [prompt_zap]
 of = "c16a88"
-text = "Laukaise {ready:nom}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} laukaisee, Esc peruu."
+text = "Laukaise {ready:counted_nom}: {next:bare}/suunta tähtää, {loose:bare}/{confirm:bare} laukaisee, Esc peruu."
 
 [unseen]
 of = "0c4d69"

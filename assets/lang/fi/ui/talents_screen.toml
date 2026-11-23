@@ -70,12 +70,12 @@ text = "ei mitään"
 
 [other_talents]
 of = "40e570"
-text = "Muut taipumukset"
+text = "Muut kyvyt"
 
 [title]
 of = "d7a243"
-text = "Taipumukset"
+text = "Kyvyt"
 
 [your_talents]
 of = "ad1a1c"
-text = "Taipumuksesi"
+text = "Kykysi"

@@ -122,7 +122,7 @@ text = "Aloita seikkailu"
 
 [row_talents]
 of = "d7a243"
-text = "Taipumukset"
+text = "Kyvyt"
 
 [talents_chance]
 of = "a6510f"

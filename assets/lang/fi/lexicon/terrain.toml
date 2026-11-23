@@ -64,7 +64,7 @@ burnt_tree = "hiiltynyt/47 puu/18"
 buttercups = { word = "leinikki/5*A", many = true }
 candles = "kynttilän|jalka/9*D"
 crag = "kallio|paljastuma/10"
-crystal = "valo|kide/48*F"
+crystal = "valo|kristalli/5"
 crystal_portal = "kristalli|portti/5*C"
 deep_water = "syvä/10 vesi/27"
 dense_forest = "tiheä/15 metsä/10"

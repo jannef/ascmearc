@@ -26,7 +26,7 @@ text = "Putosi sortuneen lattian läpi"
 
 [cause_killed_by]
 of = "fdf802"
-text = "{who:Gen} surmaama"
+text = "{who:Counted_gen} surmaama"
 
 [cause_died_of]
 of = "090ede"

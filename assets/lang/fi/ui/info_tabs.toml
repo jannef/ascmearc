@@ -62,11 +62,11 @@ text = "{digit:bare} {page:bare}"
 
 [talents]
 of = "d7a243"
-text = "Taipumukset"
+text = "Kyvyt"
 
 [talents_short]
 of = "c9a385"
-text = "Taip"
+text = "Kyvyt"
 
 [weapons]
 of = "e95c3b"

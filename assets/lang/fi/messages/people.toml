@@ -16,7 +16,7 @@
 asks = { text = "{task:Bare}.", of = "1e3722" }
 # Why a healer will not mend a wound yet: the player shows a disease.
 be_cured_first = { text = "Parane ensin taudistasi.", of = "c75147" }
-cannot_afford = { text = "{who:Ade} ei ole varaa {what:ill}.", of = "4b618a" }
+cannot_afford = { text = "{who:Ade} ei ole varaa {what:counted_ill}.", of = "4b618a" }
 # A dev action's: `quest` the quest's name, `target` as typed.
 cannot_draw_dev = { text = "{quest:bare}: ei voi arpoa kohdetta `{target:bare}`.", of = "3dc577" }
 cannot_pay = { text = "Et pysty maksamaan.", of = "369601" }
@@ -32,7 +32,7 @@ drunk_or_not = { text = "Juotu tai ei, {what:nom} maksaa yhä {price:bare} kulta
 eat_and_buy = { text = "Söit sen, ostit sen: {price:bare} kultaa {what:ela}.", of = "763725" }
 eaten_or_not = { text = "Syöty tai ei, {what:nom} maksaa yhä {price:bare} kultaa.", of = "3951bd" }
 # An escort given something: `who` the escort, `what` what it took off for it, a total object
-# (`acc`: "tikarin", "kolme nuolta").
+# (`acc`: "tikarin"; counted where English counts, `counted_acc`: "kolme nuolta").
 escort_drops = { text = "{who:Nom} pudottaa {what:acc}.", of = "a61fd2" }
 escort_follows = { text = "{who:Nom} seuraa sinua.", of = "725168" }
 escort_not_with_you = { text = "{who:Nom} ei ole mukanasi.", of = "7fe0e7" }
@@ -48,14 +48,14 @@ gain_experience = { text = "Saat {xp:bare} kokemuspistettä.", of = "fba3c6" }
 # The player gives an escort something: `what`, one of the stack.
 give_escort = { text = "Annat {what:acc} {who:all}.", of = "2673f3" }
 # The player hands a quest's things in: `what`, what was handed in.
-give_quest_items = { text = "Annat {who:all} {what:acc}.", of = "90abff" }
+give_quest_items = { text = "Annat {who:all} {what:counted_acc}.", of = "90abff" }
 # A dev action's.
 given_dev = { text = "{quest:bare}: annettu.", of = "39f59c" }
 # A quest giver hands over a letter to deliver, or a reward: `what`, what it gives.
-gives_you = { text = "{who:Nom} antaa sinulle {what:acc}.", of = "348d4e" }
+gives_you = { text = "{who:Nom} antaa sinulle {what:counted_acc}.", of = "348d4e" }
 # A dev action's.
 got_somewhere_dev = { text = "{quest:bare}: on jo edennyt.", of = "b80eb8" }
-have_not_paid = { text = "Et ole maksanut {what:ela}.", of = "1438dd" }
+have_not_paid = { text = "Et ole maksanut {what:counted_ela}.", of = "1438dd" }
 killed = { text = "{have:bare} / {need:bare} tapettu.", of = "cf8166" }
 # A quest's reward teaches more of a skill the player knows.
 learn_more_of = { text = "Opit lisää {skill:par}.", of = "185ddd" }
@@ -68,7 +68,7 @@ marked_done_dev = { text = "{quest:bare}: merkitty suoritetuksi.", of = "c4b590"
 # A quest's giver marks a hidden location: `place`, its name as the data writes it.
 marks_on_map = { text = "{who:Nom} merkitsee karttaasi {place:acc}.", of = "ea54d8" }
 # A guild's master names the player to a rank: `title`, the rank; `guild`, the guild by its name.
-names_you = { text = "{master:Nom} nimittää sinut {guild:gen} {title:tra}.", of = "1ebd9a" }
+names_you = { text = "{master:Nom} nimittää sinut {guild:gen} {title:counted_tra}.", of = "1ebd9a" }
 # What the player does next once a quest's goal is met: `step`, a `step_*` line.
 next_step = { text = "{step:Bare}.", of = "d9d867" }
 no_longer_carry = { text = "Sinulla ei ole enää {what:par}.", of = "d21497" }
@@ -77,7 +77,7 @@ no_lure_quest_dev = { text = "Houkuttelutehtävää `{id:bare}` ei ole.", of = "
 # A dev action's: `id` as typed.
 no_quest_dev = { text = "Tehtävää `{id:bare}` ei ole.", of = "500168" }
 no_room_beside_you = { text = "Vierelläsi ei ole tilaa.", of = "152b5a" }
-no_use_for = { text = "{who:Ade} ei ole käyttöä {what:ill}.", of = "ad0a36" }
+no_use_for = { text = "{who:Ade} ei ole käyttöä {what:counted_ill}.", of = "ad0a36" }
 nobody_to_pay = { text = "Täällä ei ole ketään, jolle maksaa.", of = "402353" }
 not_carrying_anything = { text = "Sinulla ei ole mitään mukanasi.", of = "4a88e2" }
 not_reached_yet = { text = "Ei vielä saavutettu.", of = "5e8fef" }
@@ -90,18 +90,18 @@ not_yet_bound = { text = "{who:Nom} ei ole vielä sidottu {place:ine}.", of = "a
 nothing_to_decide = { text = "Ei ole mitään päätettävää.", of = "50e887" }
 # A dev action's: `target` as typed.
 now_asks_dev = { text = "{quest:bare} pyytää nyt kohdetta {target:bare} (dev).", of = "58cdc3" }
-offers_gold = { text = "{who:Nom} tarjoaa {gold:bare} kultaa {what:ela}.", of = "cd6f76" }
+offers_gold = { text = "{who:Nom} tarjoaa {gold:bare} kultaa {what:counted_ela}.", of = "cd6f76" }
 owe_but_none = { text = "Olet {who:all} velkaa {owed:bare} kultaa, mutta sinulla ei ole yhtään.", of = "f59a26" }
 owe_but_only = { text = "Olet {who:all} velkaa {owed:bare} kultaa, mutta sinulla on vain {gold:bare}.", of = "576b97" }
 owe_nothing = { text = "Et ole {who:all} mitään velkaa.", of = "61f97a" }
 pay_for_that = { text = "\"Tästä saat maksaa!\" huutaa {who:nom}.", of = "6345e2" }
 pay_gold = { text = "Maksat {who:all} {gold:bare} kultaa.", of = "8fb3ca" }
-pay_gold_for = { text = "Maksat {who:all} {gold:bare} kultaa {what:ela}.", of = "8a5453" }
-put_back = { text = "Panet {what:acc} takaisin.", of = "32e574" }
+pay_gold_for = { text = "Maksat {who:all} {gold:bare} kultaa {what:counted_ela}.", of = "8a5453" }
+put_back = { text = "Panet {what:counted_acc} takaisin.", of = "32e574" }
 quest_complete = { text = "Tehtävä suoritettu: {quest:bare}.", of = "a6f766" }
 quest_failed = { text = "Tehtävä epäonnistui: {quest:bare}.", of = "b07eaa" }
-sell = { text = "Myyt {what:acc} {who:all} hintaan {gold:bare} kultaa.", of = "820c2c" }
-sniffs = { text = "{who:Nom} nuuhkaisee {what:par} ja sanoo: \"Ei mihinkään hintaan.\"", of = "6e18be" }
+sell = { text = "Myyt {what:counted_acc} {who:all} hintaan {gold:bare} kultaa.", of = "820c2c" }
+sniffs = { text = "{who:Nom} nuuhkaisee {what:counted_par} ja sanoo: \"Ei mihinkään hintaan.\"", of = "6e18be" }
 # The next step of a quest whose goal is met (in `next_step`, `updated_step`): `who`, whoever
 # takes it in now.
 step_return = { text = "palaa {who:gen} luo", of = "1acc28" }

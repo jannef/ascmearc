@@ -6,10 +6,11 @@
 # `word`, `stock`, `family`, `first`, `rest`, `form`, and `materials` are phrases (or nested
 # messages); `magic`, `time`, `came`, `leave`, `items`, `takes`, and `kinds` nested messages
 # (said `bare`, in the case their own template gives: so `magic` is a subject, "Sen taika
-# siirtyy kiteeseen"); `shut` a list of phrases; `count` and `n` numbers; `name` text.
+# siirtyy kristalliin"); `shut` a list of phrases; `count` and `n` numbers; `name` text.
 #
-# A thing made, handed over, or broken out is a total object, `acc`: the genitive for one ("Teet
-# pitkämiekan") and the numeral with the partitive for several ("Teet kaksikymmentä nuolta"). A
+# A thing made, handed over, or broken out is a total object, counted as English counts it
+# (`counted_acc`): the genitive for one ("Teet pitkämiekan") and the numeral with the partitive
+# for several ("Teet kaksikymmentä nuolta"). A
 # span of time (`time`) is said as an adverbial in the partitive
 # ("Kaivoit kolme minuuttia").
 #
@@ -18,8 +19,8 @@
 # a nested message, which takes no case, so a count of stock says its materials in parentheses
 # ("kolme harkkoa (rautainen tai messinkinen)").
 #
-# Terms: kide (crystal), sydänkide (heart-crystal), sielunkahle (soul-fetter), sinetti (seal),
-# ohje (recipe), tilaustyö (commission), suojelija (patron), ansa (rig, trap), alasin (anvil),
+# Terms: kristalli (crystal), sydänkristalli (heart-crystal), sielunkahle (soul-fetter), sinetti (seal),
+# ohje (recipe), tilaustyö (commission), mesenaatti (patron), ansa (rig, trap), alasin (anvil),
 # ahjo (forge), upottaa (set a gem), hioa (cut a gem), vuolla (whittle), karkaista (temper).
 
 ammunition_set_when_fletched = { text = "Ammuksia ei voi työstää hienommiksi: niiden laatu ratkeaa sulitettaessa.", of = "a7961f" }
@@ -29,7 +30,7 @@ beyond_your_skill = { text = "Se ylittää taitosi.", of = "850280" }
 blade_brittle = { text = "Terä jää hauraaksi, ja rikot sen saadaksesi metallin takaisin.", of = "5ed7b3" }
 blade_brittle_every_ounce = { text = "Terä jää hauraaksi, ja rikot sen saadaksesi metallin takaisin viimeistä hippua myöten.", of = "229fe0" }
 # `what`: what was broken out of the wall.
-break_out = { text = "Louhit irti {what:acc}.", of = "330935" }
+break_out = { text = "Louhit irti {what:counted_acc}.", of = "330935" }
 cannot_dig_here = { text = "Et voi kaivaa tässä.", of = "c748a6" }
 cannot_dig_in_deep_water = { text = "Et voi kaivaa syvässä vedessä.", of = "f0682d" }
 # `wall`: the terrain.
@@ -41,28 +42,28 @@ cannot_rig_in_deep_water = { text = "Et voi virittää ansaa syvään veteen.", 
 carry_no_such_thing = { text = "Sinulla ei ole sellaista mukanasi.", of = "b79167" }
 # `magic`: `its_magic_suffix`, `its_prefix_magic`, or `some_of_its_magic` (a subject); `crystal`:
 # the crystal.
-catch_magic = { text = "{magic:Bare} siirtyy {crystal:ill}.", of = "63b8ba" }
+catch_magic = { text = "{magic:Bare} siirtyy {crystal:counted_ill}.", of = "63b8ba" }
 chest_stands_there = { text = "Siinä seisoo arkku.", of = "4a2f27" }
 # `gem`: the gem's material.
 chips = { text = "{gem:Nom} lohkeaa.", of = "8fa662" }
 clear_the_ground = { text = "Raivaa maa siitä ensin.", of = "b65089" }
 # `item`: the item being unbound.
-clings_to_magic = { text = "{item:Nom} pitää kiinni taiastaan.", of = "f4d173" }
+clings_to_magic = { by = "item.number", one = "{item:Nom} pitää kiinni taiastaan.", many = "{item:Nom} pitävät kiinni taiastaan.", of = "f4d173" }
 # The open commission in the quest log: its name (`work`: the work, by its object), not made
 # yet, made, and what it asks.
-commission_name = { text = "Tilaustyö: {work:nom}", of = "23335f" }
+commission_name = { text = "Tilaustyö: {work:counted_nom}", of = "23335f" }
 commission_not_made = { text = "Ei vielä tehty.", of = "c87011" }
-# `giver`: the patron as the commission calls them ("suojelijasi"), a phrase.
+# `giver`: the patron as the commission calls them ("mesenaattisi"), a phrase.
 commission_return = { text = "Palaa {giver:gen} luo.", of = "e44ccf" }
 # `giver`: as `commission_return`; `what`: the work, by its object.
 commission_wants = { text = "{giver:Nom} haluaa sinun tuovan hänelle {what:acc}, joka on vähintään hienoa työtä.", of = "07053a" }
 could_not_be_finer = { text = "Hienommaksi sitä ei olisi voinut tehdä.", of = "6eb6f9" }
 # `what`: the part ("terä") or the material ("kovapuinen") that failed.
-cracks_good_for_nothing = { text = "{what:Nom} halkeaa eikä kelpaa enää mihinkään.", of = "c7e515" }
+cracks_good_for_nothing = { by = "what.number", one = "{what:Nom} halkeaa eikä kelpaa enää mihinkään.", many = "{what:Nom} halkeavat eivätkä kelpaa enää mihinkään.", of = "c7e515" }
 # `crystal`: the crystal consumed.
 crush_crystal = { text = "Murskaat {crystal:acc} ja juot, mitä siinä on. Jotakin siitä jää sinuun.", of = "5a45d4" }
 # A seal's refusal: `colour`, the one crystal's colour (an adjective); `word`, the family sealed.
-crystal_holds_nothing_of = { text = "{colour:ine} kiteessä ei ole lainkaan {word:par}.", of = "7ee683" }
+crystal_holds_nothing_of = { text = "{colour:ine} kristallissa ei ole lainkaan {word:par}.", of = "7ee683" }
 # `word`: the family sealed, as `crystal_holds_nothing_of`.
 crystals_hold_nothing_of = { text = "Kiteissä ei ole lainkaan {word:par}.", of = "f3bbc4" }
 cut_the_stone = { text = "Hiot kiven.", of = "7778d5" }
@@ -74,29 +75,29 @@ dig_into = { text = "Kaivaudut {wall:ill}.", of = "956a35" }
 # `recipe`: the recipe's name.
 done_from_own_list = { text = "{recipe:Nom} tehdään omasta valikostaan.", of = "5675d4" }
 # `item`: the item being enchanted; `what`: what it is now.
-enchanted_now = { text = "{item:Nom} imee {stone:gen} hehkun. Se on nyt {what:nom}.", of = "bb7852" }
+enchanted_now = { text = "{item:Nom} imee {stone:gen} hehkun. Se on nyt {what:counted_nom}.", of = "bb7852" }
 # `item`, `stone`, `title`: as above.
-ennoble_wakes = { text = "{item:Nom} imee {stone:gen} hehkun ja herää: se on nyt {title:nom}.", of = "f447a6" }
+ennoble_wakes = { text = "{item:Nom} imee {stone:gen} hehkun ja herää: se on nyt {title:counted_nom}.", of = "f447a6" }
 fetter_crumbles = { text = "Sielunkahle murenee tyhjiin.", of = "0a6d5b" }
 # `affix`: the affix the soul-fetter keeps.
 fetter_holds = { text = "Sielunkahle pitää yhden lumouksen tallessa: {affix:bare}.", of = "56bfdd" }
 # `trap`: the trap found.
-find_trap_there = { text = "Siellä on jo valmiina {trap:nom}.", of = "2b0664" }
+find_trap_there = { text = "Siellä on jo valmiina {trap:counted_nom}.", of = "2b0664" }
 # `wall`: the terrain.
 go_on_digging = { text = "Kaivat {wall:par} yhä.", of = "135a45" }
 # `magic`: as `catch_magic`'s.
 goes_out_unread = { text = "{magic:Bare} sammuu lukematta.", of = "3bec76" }
 # `what`: what was handed over.
-hand_over = { text = "Ojennat {what:acc}.", of = "1f73c0" }
+hand_over = { text = "Ojennat {what:counted_acc}.", of = "1f73c0" }
 heap_up_stones = { text = "Kasaat kiviä, joiden päälle asettaa harkon.", of = "dbcb98" }
-heart_crystal_needed = { text = "Harvinainen esine vaatii kiteen lisäksi sydänkiteen, eikä sinulla ole sellaista.", of = "4727c7" }
-heart_goes_dark = { text = "Sydänkide sammuu sen mukana.", of = "022e34" }
+heart_crystal_needed = { text = "Harvinainen esine vaatii kristallin lisäksi sydänkristallin, eikä sinulla ole sellaista.", of = "4727c7" }
+heart_goes_dark = { text = "Sydänkristalli sammuu sen mukana.", of = "022e34" }
 holds_all_it_can = { text = "Siihen ei mahdu enempää.", of = "10bccc" }
 # `item`: the item being imbued; `count`: the crystals spent; `title`: as above.
-imbue_wakes = { by = "count.number", one = "{item:Nom} juo kiteen ja herää: se on nyt {title:nom}.", many = "{item:Nom} juo {count:num} kidettä ja herää: se on nyt {title:nom}.", of = "58dc6c" }
+imbue_wakes = { by = "count.number", one = "{item:Nom} juo kristallin ja herää: se on nyt {title:counted_nom}.", many = "{item:Nom} juo {count:num} kristallia ja herää: se on nyt {title:counted_nom}.", of = "58dc6c" }
 in_the_way_unfinished = { text = "Jokin on tiellä; jätät ansan kesken.", of = "a96b5e" }
 # `what`: the gem as it is now.
-it_is_now = { text = "Se on nyt {what:nom}.", of = "ae2d20" }
+it_is_now = { text = "Se on nyt {what:counted_nom}.", of = "ae2d20" }
 # `affix`: a suffix. Said as a subject.
 its_magic_suffix = { text = "sen taika ({affix:bare})", of = "217cda" }
 # `affix`: a prefix. Said as a subject.
@@ -104,7 +105,7 @@ its_prefix_magic = { text = "sen taika ({affix:bare})", of = "7a38aa" }
 knife_splits_wood = { text = "Veitsi lipsahtaa ja halkaisee puun.", of = "bc14af" }
 # Why a recipe cannot be made now or a rig cannot be rigged, a clause the profession screen and
 # the rig list show beside the row (`RecipeLack::reason`, `rig.rs::Lack`).
-lacking_crystal = { text = "ei kidettä käsillä", of = "3e8460" }
+lacking_crystal = { text = "ei kristallia käsillä", of = "3e8460" }
 lacking_dig_tool = { text = "ei kaivuvälinettä valmiina", of = "3db369" }
 lacking_enchantable = { text = "ei mitään lumottavaa", of = "1fff0a" }
 lacking_gem = { text = "ei jalokiveä käsillä", of = "382391" }
@@ -125,20 +126,20 @@ leave_anvil_unfinished = { text = "jätät alasimen kesken", of = "77842e" }
 leave_off_work = { text = "keskeytät työsi", of = "430417" }
 leave_trap_unfinished = { text = "jätät ansan kesken", of = "d07f43" }
 # `what`: what a failed brew left.
-left_with = { text = "Käsiisi jää {what:nom}.", of = "15eb3e" }
+left_with = { text = "Käsiisi jää {what:counted_nom}.", of = "15eb3e" }
 # `what`: the item made, by grade.
-made_fine = { text = "Tämä on {what:nom}.", of = "a5ce66" }
-made_marvellous = { text = "Tämä on {what:nom}!", of = "a5ba8c" }
-made_masterwork = { text = "Olet tehnyt {what:acc}!", of = "efadfc" }
+made_fine = { text = "Tämä on {what:counted_nom}.", of = "a5ce66" }
+made_marvellous = { text = "Tämä on {what:counted_nom}!", of = "a5ba8c" }
+made_masterwork = { text = "Olet tehnyt {what:counted_acc}!", of = "efadfc" }
 made_no_finer = { text = "Sitä ei voi tehdä hienommaksi.", of = "4a22bb" }
-made_plain = { text = "Olet tehnyt {what:acc}.", of = "ef9b06" }
+made_plain = { text = "Olet tehnyt {what:counted_acc}.", of = "ef9b06" }
 # `item`: the item being unbound, or enchanted without a crystal; `what`: what it is now.
-magic_goes_out = { text = "Taika haihtuu {item:ela}. Se on nyt {what:nom}.", of = "346113" }
+magic_goes_out = { text = "Taika haihtuu {item:ela}. Se on nyt {what:counted_nom}.", of = "346113" }
 magic_in_it_already = { text = "Siinä on jo taikaa.", of = "8b1790" }
 # `what`: the rare material left.
-magic_left = { text = "Taian sijalle jää {what:nom}.", of = "f7ec45" }
+magic_left = { text = "Taian sijalle jää {what:counted_nom}.", of = "f7ec45" }
 # `what`: the item mended, as it is now.
-make_good = { text = "Korjaat vauriot: se on taas {what:nom}.", of = "716e34" }
+make_good = { text = "Korjaat vauriot: se on taas {what:counted_nom}.", of = "716e34" }
 makeshift_anvil = { text = "Asetat järkäleen kivikasan päälle: siitä tulee tilapäinen alasin.", of = "2acd87" }
 metal_cracks = { text = "Metalli halkeaa vasaran alla.", of = "baffc2" }
 metal_rings_true = { text = "Metalli soi puhtaasti.", of = "3fa743" }
@@ -153,7 +154,7 @@ need_an_anvil = { text = "Et voi korjata sitä täällä; siihen tarvitaan alasi
 need_skill_at = { text = "Tarvitset {skill:gen} taitoa työskennelläksesi {station:ade}.", of = "b28a4d" }
 no_anvil_here = { text = "Täällä ei ole alasinta.", of = "4411e7" }
 no_craft_to_mend = { text = "Et osaa mitään taitoa, jolla sen voisi korjata.", of = "7fb575" }
-no_crystal = { text = "Tuo ei ole kide.", of = "5274b5" }
+no_crystal = { text = "Se ei ole kristalli.", of = "5274b5" }
 no_digging_tool = { text = "Sinulla ei ole kaivuvälinettä valmiina.", of = "f82524" }
 no_finer = { text = "Hiot kiveä lisää, mutta se ei tule yhtään hienommaksi.", of = "2678a2" }
 no_gem_can_be_set = { text = "Siihen ei voi upottaa jalokiveä.", of = "86f8a2" }
@@ -177,7 +178,7 @@ no_such_recipe = { text = "Et tunne sellaista ohjetta.", of = "52e9d6" }
 # `name`: the rig as the action named it.
 no_such_rig = { text = "Ansaa `{name}` ei ole.", of = "15c307" }
 no_wall_near = { text = "Lähellä ei ole seinää, johon sen voisi kiinnittää.", of = "68b90d" }
-not_so_many_crystals = { text = "Sinulla ei ole mukanasi niin montaa kidettä.", of = "b320a5" }
+not_so_many_crystals = { text = "Sinulla ei ole mukanasi niin montaa kristallia.", of = "b320a5" }
 # `skill`: the profession's name.
 not_trained = { text = "Et ole harjaantunut {skill:ill}.", of = "ae613c" }
 # A recipe that takes nothing (none does today).
@@ -197,7 +198,7 @@ only_cut_gem = { text = "Vain hiotun jalokiven voi upottaa.", of = "adfdbf" }
 only_metal_at_anvil = { text = "Alasimella voi työstää vain metallia.", of = "b815a9" }
 only_wood_whittled = { text = "Vain puisia aseita voi vuolla.", of = "bfffe8" }
 pare_damage_away = { text = "Vuolet vauriot pois.", of = "436add" }
-patron_dead = { text = "Suojelijasi on kuollut, eikä tilaustyöstä tule mitään.", of = "5e882a" }
+patron_dead = { text = "Mesenaattisi on kuollut, eikä tilaustyöstä tule mitään.", of = "5e882a" }
 # The craft dialog's plan (`craft_make.rs::CraftPlan`; the dialog's sentence is the UI's,
 # `ui/craft_pick_screen.toml`, which says `uses` as the subject of "kuluu"): what it makes, what
 # it uses, and the verb where neither the recipe nor its profession names one (an imperative).
@@ -214,14 +215,14 @@ put_down_hammer = { text = "lasket vasaran käsistäsi", of = "ba35c7" }
 put_down_knife = { text = "lasket veitsen käsistäsi", of = "a8ffe3" }
 put_down_work = { text = "lasket työsi käsistäsi", of = "f21b6b" }
 # `item`, `stone`: as above.
-quicken_heart = { text = "{item:Nom} imee {stone:gen} ja sydänkiteen hehkun, ja siihen mahtuu nyt enemmän.", of = "823d6f" }
-rare_already = { text = "Se on jo harvinainen: vain sydänkiteellä tehty elävöitys lisää siihen.", of = "555ad0" }
+quicken_heart = { text = "{item:Nom} imee {stone:gen} ja sydänkristallin hehkun, ja siihen mahtuu nyt enemmän.", of = "823d6f" }
+rare_already = { text = "Se on jo harvinainen: vain sydänkristallilla tehty elävöitys lisää siihen.", of = "555ad0" }
 rare_unbind_first = { text = "Se on harvinainen: irrota sen taika ja kyllästä se sitten uudelleen.", of = "5c128c" }
 # What a rig takes, as the rig list and the wiki say it (`rig.rs::takes_words`): `what` an
 # object or a piece of stock, `n` the most it takes; `takes` what it takes besides the knife (one
 # of these again).
 rig_takes_dig_tool = { text = "kaivuväline valmiina", of = "40a7e1" }
-rig_takes_one = { text = "{what:nom}", of = "fe9db7" }
+rig_takes_one = { text = "{what:counted_nom}", of = "fe9db7" }
 rig_takes_up_to = { text = "enintään {n:bare} {what:par}", of = "d60461" }
 rig_takes_with_knife = { text = "{takes:bare} ja veitsi", of = "4c331a" }
 rig_will_not_hold = { text = "Viritys ei pysy koossa.", of = "f0a30b" }
@@ -231,10 +232,10 @@ seal_already = { text = "Olet jo sinetöinyt sen.", of = "5c25e6" }
 seal_family = { text = "{family:bare}", of = "a7dd9e" }
 seal_no_such = { text = "Sellaista sinettiä ei ole.", of = "ffd0e9" }
 seal_nothing_there = { text = "Siinä ei ole mitään sinetöitävää.", of = "ab1de8" }
-seal_too_few_crystals = { text = "Sinulla ei ole tarpeeksi kiteitä sinetteihin.", of = "db4e2d" }
+seal_too_few_crystals = { text = "Sinulla ei ole tarpeeksi kristalleja sinetteihin.", of = "db4e2d" }
 set_already = { text = "Siihen on jo upotettu kivi.", of = "5f04a6" }
 # `gem`: the gem's material; `what`: the item as it is now.
-set_gem = { text = "Upotat {gem:acc}. Se on nyt {what:nom}.", of = "e010b4" }
+set_gem = { text = "Upotat {gem:acc}. Se on nyt {what:counted_nom}.", of = "e010b4" }
 # `gem`: the gem's name.
 set_to_cutting = { text = "Ryhdyt hiomaan {gem:par}.", of = "28bec9" }
 # `item`: the item mended, by its title.
@@ -244,7 +245,7 @@ set_to_work = { by = "what.number", one = "Ryhdyt työstämään {what:par}.", m
 # `what`: as `set_to_work`'s; `station`: the station beside the player.
 set_to_work_at = { by = "what.number", one = "Ryhdyt työstämään {what:par} {station:ade}.", many = "Ryhdyt työstämään {what:pl_par} {station:ade}.", of = "a646db" }
 # `rig`: the rig's name.
-set_to_work_on_rig = { text = "Ryhdyt virittämään {rig:par}.", of = "7b88b9" }
+set_to_work_on_rig = { text = "Ryhdyt virittämään {rig:counted_par}.", of = "7b88b9" }
 # `gem`: the gem's material.
 shatters = { text = "{gem:Nom} särkyy.", of = "4a8503" }
 shatters_under_hammer = { text = "Se särkyy vasaran alla!", of = "fcb709" }
@@ -260,14 +261,14 @@ spoil_batch = { text = "Pilaat koko erän.", of = "8d191d" }
 # them, `first`, the first kind, and `rest`, the others (`describe.or_joined`); several, `n`, how
 # many, and `kinds`, every kind of `n`, each in the plural (`describe.or_joined`).
 stock_any_many = { text = "{kinds:bare} ({n:bare} kpl)", of = "770996" }
-stock_any_one = { text = "{first:nom} tai {rest:bare}", of = "19bf34" }
+stock_any_one = { text = "{first:counted_nom} tai {rest:bare}", of = "19bf34" }
 # The same, the materials (agreeing adjectives) under one form word, `form` (`stock:<material>`,
 # of one or of `n`): `first` and `rest`, or all of them, `materials` (one material a phrase, else
 # a `describe.or_joined`). Finnish says the materials before the word either way.
 stock_some_many = { text = "{form:counted} ({materials:bare})", of = "feb0b9" }
 stock_some_of_many = { text = "{form:counted} ({materials:bare})", of = "5d4393" }
-stock_some_of_one = { text = "{materials:bare} {form:nom}", of = "2ed549" }
-stock_some_one = { text = "{first:nom} tai {rest:bare} {form:nom}", of = "9fc74a" }
+stock_some_of_one = { text = "{materials:bare} {form:counted_nom}", of = "2ed549" }
+stock_some_one = { text = "{first:counted_nom} tai {rest:bare} {form:nom}", of = "9fc74a" }
 stone_crumbles = { text = "Kivi murenee työkalujesi alla; mitään säilyttämisen arvoista ei jää.", of = "b17bb0" }
 stone_splits = { text = "Kivi halkeaa pahasti; jäljelle jäävä on pienempi.", of = "f06146" }
 stop_before_steel_spoils = { text = "Työ menee pieleen, mutta osaat lopettaa ennen kuin teräs pilaantuu.", of = "9cdf87" }
@@ -285,12 +286,12 @@ takes_cut = { text = "irrallinen jalokivi", of = "0b8a27" }
 takes_cut_gem = { text = "hiottu jalokivi", of = "e90765" }
 takes_either = { text = "{first:bare} tai {rest:bare}", of = "269c79" }
 takes_knife = { text = "veitsi", of = "82306a" }
-takes_launcher = { text = "{launcher:nom} valmiina", of = "bbf584" }
+takes_launcher = { text = "{launcher:counted_nom} valmiina", of = "bbf584" }
 takes_listed = { text = "{first:bare}, {rest:bare}", of = "a51d07" }
 takes_magic_item = { text = "taikaesine", of = "55b1d6" }
 takes_plain_item = { text = "tavallinen esine", of = "f5fd40" }
 takes_set = { text = "esine ja hiottu jalokivi", of = "508534" }
-takes_station = { text = "{station:nom}", of = "73b889" }
+takes_station = { text = "{station:counted_nom}", of = "73b889" }
 takes_temper = { text = "metallinen ase tai panssari", of = "08dae2" }
 takes_whittle = { text = "puinen ase", of = "6960fe" }
 take_it_off_first = { text = "Riisu se ensin.", of = "a8809b" }
@@ -299,7 +300,7 @@ temper_at_anvil = { text = "Ryhdyt työstämään {item:par} alasimella.", of = 
 too_few = { text = "Sinulla on liian vähän {what:pl_par}.", of = "354299" }
 too_few_of_those = { text = "Sinulla on niitä liian vähän.", of = "ec73da" }
 # `what`: the stack named (said in the plural); `piece`: the piece of stock it would make.
-too_few_to_make = { text = "Sinulla on liian vähän {what:pl_par}, jotta niistä saisi {piece:acc}.", of = "0858bb" }
+too_few_to_make = { text = "Sinulla on liian vähän {what:pl_par}, jotta niistä saisi {piece:counted_acc}.", of = "0858bb" }
 # `what`: as `too_few_to_make`'s.
 too_few_to_make_anything = { text = "Sinulla on liian vähän {what:pl_par}, jotta niistä saisi mitään.", of = "13d7dc" }
 trap_not_in_water = { text = "Ansaa ei voi virittää veteen eikä jäälle.", of = "9f6a47" }
@@ -310,8 +311,8 @@ untrained_mining = { text = "Et osaa louhia: siihen tarvitaan louhinnan taitoa."
 # `time`: how long it went on; `wall`: the terrain.
 wall_crumbles = { text = "Kaivettuasi {time:bare} {wall:nom} murenee.", of = "1e4b57" }
 # `item`: the item that warped.
-warps = { text = "{item:Nom} vääntyy käsissäsi.", of = "344501" }
-warps_apart = { text = "{item:Nom} vääntyy ja hajoaa.", of = "4ca08a" }
+warps = { by = "item.number", one = "{item:Nom} vääntyy käsissäsi.", many = "{item:Nom} vääntyvät käsissäsi.", of = "344501" }
+warps_apart = { by = "item.number", one = "{item:Nom} vääntyy ja hajoaa.", many = "{item:Nom} vääntyvät ja hajoavat.", of = "4ca08a" }
 which_way = { text = "Mihin suuntaan?", of = "bd07cf" }
 # `item`: the item worked, by its title.
 whittle_with_knife = { text = "Ryhdyt vuolemaan {item:par} veitselläsi.", of = "006899" }
@@ -336,23 +337,23 @@ work_stopped_came = { text = "{came:bare}; {leave:bare}.", of = "243aa0" }
 work_the = { text = "{what:nom}", of = "0e1e3f" }
 would_not_hold_so_much = { text = "Siihen ei mahtuisi niin paljon.", of = "0d0c32" }
 you_hammer_damage_out = { text = "Takot vauriot pois.", of = "573abf" }
-you_make = { text = "Teet {what:acc}.", of = "024e31" }
+you_make = { text = "Teet {what:counted_acc}.", of = "024e31" }
 # `what`: what was saved: a stack, a list of two or three, or a count of objects, a total object.
-you_save = { text = "Otat talteen {what:acc}.", of = "7503c8" }
+you_save = { text = "Otat talteen {what:counted_acc}.", of = "7503c8" }
 
 # `count`: the crystals gone dark.
 [crystals_go_dark]
 of = "fd44e0"
 by = "count.number"
-one = "Kide sammuu käsissäsi."
-many = "Kiteet sammuvat käsissäsi."
+one = "Kristalli sammuu käsissäsi."
+many = "Kristallit sammuvat käsissäsi."
 
 # `count`: the crystals the recipe takes.
 [must_choose_crystals]
 of = "3b8885"
 by = "count.number"
-one = "Sinun on valittava kide."
-many = "Sinun on valittava kiteet."
+one = "Sinun on valittava kristalli."
+many = "Sinun on valittava kristallit."
 
 # What the seals take beyond the crystals the work names (`plan_uses`'s items): `n` how many
 # more of a crystal, `what` the crystal by its title.
@@ -367,23 +368,25 @@ many = "vielä {n:num} {what:par}"
 of = "080be4"
 by = "what.number"
 one = "Ryhdyt purkamaan {what:par} osiin."
-many = "Ryhdyt purkamaan {what:par} osiin."
+many = "Ryhdyt purkamaan {what:counted_par} osiin."
 
 # `what`: as `set_to_taking_apart`'s.
 [take_apart]
 of = "7e85ef"
-text = "Purat {what:acc} osiin."
+by = "what.number"
+one = "Purat {what:acc} osiin."
+many = "Purat {what:counted_acc} osiin."
 
 # What an enchanting recipe takes besides the item (`takes_listed`'s part): `n` its crystals.
 [takes_crystals]
 of = "a01ed8"
 by = "n.number"
-one = "kide"
-many = "{n:bare} kidettä"
+one = "kristalli"
+many = "{n:bare} kristallia"
 
 # `what`: what it left: a stack, or a list of two (each said in the nominative).
 [turns_to_glass]
 of = "c372c7"
 by = "what.number"
-one = "Sen ruumis muuttuu lasiksi: siinä, mihin se kaatui, on nyt {what:nom}."
-many = "Sen ruumis muuttuu lasiksi: siinä, mihin se kaatui, on nyt {what:nom}."
+one = "Sen ruumis muuttuu lasiksi: siinä, mihin se kaatui, on nyt {what:counted_nom}."
+many = "Sen ruumis muuttuu lasiksi: siinä, mihin se kaatui, on nyt {what:counted_nom}."

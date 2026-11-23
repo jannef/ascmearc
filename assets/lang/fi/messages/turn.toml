@@ -8,11 +8,11 @@ clouds_gather = { text = "Pilviä kerääntyy.", of = "c136ca" }
 # `who`: a creature seen farther off before, now close (said as `came`).
 comes_close = { text = "{who:Nom} tulee lähelle", of = "0aa0a4" }
 # `who`: a creature not seen before (said as `came`).
-comes_into_view = { text = "{who:Nom} tulee näkyviin", of = "bd39b8" }
+comes_into_view = { text = "{who:Counted_nom} tulee näkyviin", of = "bd39b8" }
 dazzled = { text = "Kirkas valo häikäisee sinut.", of = "580ad3" }
 dies_of_status = { text = "{who:Nom} {dies:bare}.", of = "e15a11" }
 do_not_rest = { text = "Et lepää.", of = "765d34" }
-falls_below = { text = "{what:Nom} putoaa kauas alas maahan.", of = "444038" }
+falls_below = { by = "what.number", one = "{what:Nom} putoaa kauas alas maahan.", many = "{what:Nom} putoavat kauas alas maahan.", of = "444038" }
 falls_through_ice = { text = "{who:Nom} putoaa jään läpi!", of = "e1badb" }
 hear_nothing_beyond_door = { text = "Oven takaa ei kuulu mitään.", of = "3ee9f8" }
 no_path_down = { text = "Et tunne reittiä mihinkään, mistä pääsisi alas.", of = "e2269a" }

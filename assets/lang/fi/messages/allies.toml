@@ -4,7 +4,7 @@
 # status as it looks; `message`, `ends`, `line`, `words` lines of data (third-person verbs);
 # `came` a nested message.
 
-already_at_side = { text = "{who:Nom} on jo jonkun toisen rinnalla.", of = "8285e9" }
+already_at_side = { text = "{who:Nom} kulkee jo jonkun toisen rinnalla.", of = "8285e9" }
 beast_leaves = { text = "{who:Nom} lähtee luotasi; lopetat sen kesyttämisen.", of = "819386" }
 bond_shared = { text = "{who:Nom} on myös {seen:nom}.", of = "f19ec9" }
 calling_begins = { text = "Istuudut pimeään ja kutsut hiljaisella äänellä.", of = "9b9cd9" }
@@ -17,7 +17,7 @@ charm_takes = { text = "{who:Nom} {message:bare}.", of = "0af072" }
 collar_falls = { text = "{who:Gen} {what:nom} putoaa lattialle.", of = "e84c2f" }
 comes_to_your_hand = { text = "{who:Nom} tulee luoksesi. Annat sille nimen {own:nom}.", of = "7deb1c" }
 companion_arrives = { text = "{name:Nom}, {kind:nom_si}, astelee kintereilläsi.", of = "120a8d" }
-crouch_feed = { text = "Kyykistyt {who:gen} viereen ja ojennat {what:par}.", of = "7e46e0" }
+crouch_feed = { text = "Kyykistyt {who:gen} viereen ja ojennat {what:counted_par}.", of = "7e46e0" }
 crouch_speak = { text = "Kyykistyt {who:gen} viereen ja puhut sille hiljaa.", of = "fce36d" }
 fades_away = { text = "{who:Nom} haalistuu olemattomiin.", of = "eb776a" }
 familiar_arrives = { text = "{name:Nom}, {kind:nom_si}, {line:bare}.", of = "7606d7" }
@@ -28,7 +28,7 @@ fasten_collar = { text = "Kiinnität {what:acc} {who:gen} kaulaan.", of = "69e1d
 goes_for_throat = { text = "{who:Nom} käy {target:gen} kurkkuun.", of = "8dde65" }
 growls_at_the_dark = { text = "{who:Nom} murisee pimeydelle.", of = "c32ed6" }
 grows_stronger = { text = "{who:Nom} vahvistuu.", of = "d4c779" }
-has_seen_you = { text = "{who:Nom} on nähnyt sinut: sitä ei nyt kesytetä.", of = "6aeeed" }
+has_seen_you = { text = "{who:Nom} on nähnyt sinut: sitä ei voi nyt kesyttää.", of = "6aeeed" }
 have_companion = { text = "Sinulla on jo seuralainen.", of = "bc3426" }
 lead_no_more = { text = "Et voi johtaa useampia.", of = "bbc4bd" }
 looks_back = { text = "{who:Nom} katsahtaa sinuun.", of = "fb9177" }
@@ -50,7 +50,7 @@ nothing_answers = { text = "Mikään ei vastaa kutsuusi.", of = "8c9f72" }
 nothing_comes = { text = "Mitään ei tule.", of = "ec35ac" }
 nothing_to_set_on = { text = "Siellä ei ole mitään, minkä kimppuun {who:nom} voisi käydä.", of = "6bda79" }
 set_on = { by = "pack.number", one = "{pack:Nom} käy käskystäsi {target:gen} kimppuun.", many = "{pack:Nom} käyvät käskystäsi {target:gen} kimppuun.", of = "d7ce69" }
-set_on_spot = { by = "pack.number", one = "{pack:Nom} lähtee käskystäsi tuohon kohtaan.", many = "{pack:Nom} lähtevät käskystäsi tuohon kohtaan.", of = "46a8b6" }
+set_on_spot = { by = "pack.number", one = "{pack:Nom} noudattaa käskyäsi.", many = "{pack:Nom} noudattavat käskyäsi.", of = "46a8b6" }
 set_on_unseen = { text = "Voit usuttaa ne vain paikkaan, jonka näet.", of = "64c35d" }
 snaps_and_backs_away = { text = "{who:Nom} näykkäisee sinua ja perääntyy.", of = "835892" }
 something_comes = { text = "Jokin tulee pimeydestä ja istuutuu jalkojesi juureen.", of = "c23046" }
@@ -63,8 +63,8 @@ yours_already = { text = "{who:Nom} on jo sinun.", of = "c5348d" }
 [come_to_your_side]
 of = "dca1e6"
 by = "what.number"
-one = "{what:Nom} asettuu puolellesi."
-many = "{what:Nom} asettuu puolellesi."
+one = "{what:Counted_nom} asettuu puolellesi."
+many = "{what:Counted_nom} asettuu puolellesi."
 
 [come_with_you]
 of = "c5652c"
