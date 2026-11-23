@@ -565,7 +565,7 @@ verb = { text = "raastaa", of = "fcd7fc" }
 you = { text = "raastat", of = "a8548e" }
 
 [balor]
-first_sight = { text = "Liekkidemoni, tulen ympäröimänä. Harva sellaisen nähnyt jää kertomaan siitä.", of = "6d8346" }
+first_sight = { text = "Balor, tulen ympäröimänä. Harva sellaisen nähnyt jää kertomaan siitä.", of = "6d8346" }
 
 [balor.attack.0]
 verb = { text = "piiskaa", of = "4dca04" }
@@ -1858,16 +1858,16 @@ verb = { text = "takoo", of = "a5c999" }
 you = { text = "taot", of = "ed5ab3" }
 
 [kobold.on_eat]
-message = { text = "Tämä kuontolaisen liha maistuu kamalalta!", of = "600bb1" }
+message = { text = "Tämä kärmäläisen liha maistuu kamalalta!", of = "600bb1" }
 
 [kobold_alchemist.on_eat]
-message = { text = "Tämä kuontolaisen liha maistuu kamalalta, ja lampunöljyltä!", of = "e083d5" }
+message = { text = "Tämä kärmäläisen liha maistuu kamalalta, ja lampunöljyltä!", of = "e083d5" }
 
 [kobold_alchemist.throw]
 verb = { text = "sinkoaa", of = "29f535" }
 
 [kobold_archer.on_eat]
-message = { text = "Tämä kuontolaisen liha maistuu kamalalta!", of = "600bb1" }
+message = { text = "Tämä kärmäläisen liha maistuu kamalalta!", of = "600bb1" }
 
 [kobold_shaman.on_eat]
 message = { text = "Se maistuu kamalalta, ja karvailta yrteiltä.", of = "7bce80" }
