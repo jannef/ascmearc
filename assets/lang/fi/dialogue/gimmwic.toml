@@ -19,7 +19,7 @@ lines = [
     { text = "Tregearin hiomakivi o laulant ensvuorost asti. Komeeta, se.", of = "795c49" },
     { text = "Äiti Senara hoitaa siut Hohtees, jos sie oot loukkaantunt.", of = "1c3bfc" },
     { text = "Kerensa sannoo, mitä siun repus o. Ja mitä se maksaa, rakkahaine.", of = "32cde9" },
-    { text = "Ylhääl ne ostaa pataset. Ostaa! Jotkut ei oo koskaa tehnt mittää.", of = "b5e030" },
+    { text = "Ylhääl ne ostaa patasa. Ostaa! Jotkut ei oo koskaa tehnt mittää.", of = "b5e030" },
     { text = "Duergarit kaivaa taas meijän suonii. Kaivaa niinku sika tonkii.", of = "34f531" },
     { text = "Gnomi hioo ensmäise kivensä seitsenvuotiaana. Miun ol savukvartsi.", of = "ddd2f4" },
     { text = "Vakaa käsi, tarkka silmä ja kärsivällisyys. Kivityö. Kärsivällisyys.", of = "886c3d" },
@@ -35,7 +35,7 @@ mutter = [
 
 [ascmearc.deep_gnome.economy]
 hard = [
-    { text = "Joryl o hyllyt vähis, miun kultaine. Mitää ei tule alas, ei lähe ylös.", of = "2935db" },
+    { text = "Joryl o tavara vähis, miun kultaine. Mitää ei tule alas, ei lähe ylös.", of = "2935db" },
     { text = "Ei kauppaa ylhäälle. Myö myyvää toisillemme, eikä se oo kauppaa.", of = "661763" },
 ]
 better = [
@@ -57,7 +57,7 @@ greet_evil = [
     { text = "Maksa ovel, pinnalaine, ja pie kätes siin, mis mie ne näen.", of = "8a77f4" },
 ]
 lines = [
-    { text = "Hyvää rautaa, hyvää hopeeta, hyviä harkkoja. Tee niist jotai, tuu.", of = "8bcab3" },
+    { text = "Hyvää rautaa, hyvää hopeeta, hyviä harkkoja. Tee niist jotai, no.", of = "8bcab3" },
     { text = "Mie ostan, mitä sie oot löytänt, jos se o kantamise arvone.", of = "4aeed2" },
     { text = "Kulta o kultaa, mut hyvä harkko o kalu, mikä oottaa tekijäänsä.", of = "8501bc" },
     { text = "Hinnat o reilut. Reilummat ku ylhääl, kuulin.", of = "0ce816" },
@@ -130,7 +130,7 @@ crystal_guardian = [
 greet = { text = "Rauha siul, syvyyksien lapsi tai ylhäält tullut. Hohde ei käännä ketää pois.", of = "537651" }
 greet_evil = [
     { text = "Siuss o verta. Rukoile ensin, ja tule sit takasi.", of = "98dfbc" },
-    { text = "Siukii voija parantaa, aikanaa. Ei tänää.", of = "3d2392" },
+    { text = "Siutkii voija parantaa, aikanaa. Ei tänää.", of = "3d2392" },
 ]
 lines = [
     { text = "Leppää täs nii kaua ku tarviit. Mikkää paha ei astu tän lattian yli.", of = "689fd3" },

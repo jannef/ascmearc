@@ -83,11 +83,11 @@ text = "Haluatko juoda {feature:ela}?"
 
 [offer_pray]
 of = "944fcf"
-text = "Haluatko rukoilla {feature:ade}?"
+text = "Haluatko rukoilla {feature:loc}?"
 
 [offer_temper]
 of = "3fb136"
-text = "Haluatko karkaista jotakin {feature:ade}?"
+text = "Haluatko karkaista jotakin {feature:loc}?"
 
 [offer_title]
 of = "acb4d2"

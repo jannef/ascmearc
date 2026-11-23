@@ -4,7 +4,7 @@
 # player.
 
 [ascmearc.sigeric]
-greet = { text = "Olet kiivennyt pitkän matkan tullaksesi vaikutetuksi. Salli minun.", of = "f55c34" }
+greet = { text = "Olet kiivennyt pitkän matkan vaikuttuaksesi. Salli minun.", of = "f55c34" }
 greet_evil = [
     { text = "Ah. Näytät asialta, jota en soisi pajaani. Portaat ovat takanasi.", of = "94bcbd" },
     { text = "Olen luonut lukuisia ihmeitä, eikä yksikään ollut sinä. Poistu.", of = "c4b1bc" },
@@ -26,7 +26,7 @@ mutter_verb = { text = "mutisee", of = "f17b79" }
 
 [ascmearc.sigeric.topic]
 steorratorr = { text = "Steorratorr. Tähtitorni. Seitsemän kerrosta, korkein rakennus vuorten ja meren välillä, ja sen jokainen kivi on asetettu sanastani. Portaat ovat täynnä töitäni; toivon totisesti, että ihailit niitä matkalla ylös.", of = "3649ae" }
-sea = { text = "Grægsæ. Kylmä, harmaa ja hyvin suuri, minkä vuoksi rakensin tornin sen viereen: suuri asia kaipaa suurempaa, johon sitä mitataan. Hukkuneet kävelevät siitä silloin tällöin ulos. Pidän heitä ikävystyttävänä seurana.", of = "56ca6c" }
+sea = { text = "Grægsæ. Kylmä, harmaa ja hyvin suuri, minkä vuoksi rakensin tornin sen viereen: suuri asia kaipaa suurempaa, jota vasten sitä mitataan. Hukkuneet kävelevät siitä silloin tällöin ulos. Pidän heitä ikävystyttävänä seurana.", of = "56ca6c" }
 learning = { text = "Ordgar sanoo sinulle, että taikuus on lukemista. Ælfswīð sanoo, että se on säätä. Se ei ole kumpaakaan. Se on luomista: otat asian sellaisena kuin se on ja suostuttelet sen paremmaksi. Loitsu on vain velhon ensimmäinen luomus, ja harvoin paras.", of = "31415c" }
 wizards = { text = "Ordgar on hyvin oppinut mies, joka ei ole koskaan luonut muuta kuin muistiinpanoja. Ælfswīð on hyvin voimakas nainen, joka ei ole koskaan luonut muuta kuin melua. Pidän heistä molemmista, noin kuuden peninkulman päästä.", of = "d5c3ad" }
 
