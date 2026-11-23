@@ -7,7 +7,7 @@
 //! the link vowel `i` after a consonant (`Bran` → `Branin`).
 
 use super::classes::{fits, is_kotus_class, spec_of, stems};
-use super::inflect::{Case, Grad, Harmony, Poss, Stems, ends_in_long_vowel, is_vowel, vowel_runs};
+use super::inflect::{Case, Grad, Harmony, Poss, Stems, ends_in_long_vowel, is_vowel};
 
 /// A lexicon entry's words.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -189,8 +189,11 @@ fn parse_token(word: &str, harmony: Option<Harmony>) -> Result<Token, String> {
 
 /// A proper name as Finnish inflects a foreign one: the last word takes the endings, with no
 /// gradation and no stem change, by a class its last letter picks (`Hilda` 9, `Jenni` 5, `Bite`
-/// 8, `Tero` 1, `Lee` 18); after a consonant the link vowel `i` (`Bran` → `Branin`, class 5).
-/// Total: every string gives an entry.
+/// 8, `Tero` 1, `Lee` and `Līgetdrȳ` 18); after a consonant the link vowel `i` (`Bran` →
+/// `Branin`, class 5). The words before the last stay as written: they are titles (`kersantti
+/// Herrick`); an adjective epithet that must agree (`Mustaan Wystaniin`) is a classed entry,
+/// `"Musta/10 Wystan/5"` with `proper = true` (owner review 3). Total: every string gives an
+/// entry.
 pub(super) fn name(name: &str) -> Entry {
     let words: Vec<&str> = name.split_whitespace().collect();
     let Some((last, front)) = words.split_last() else {
@@ -205,8 +208,11 @@ pub(super) fn name(name: &str) -> Entry {
     let chars: Vec<char> = last.chars().collect();
     let class = name_class(&chars);
     let harmony = Harmony::of(&chars);
+    // Class 18's shape is one syllable (`maa`); a name of several ending in a long vowel takes
+    // its endings all the same (`Līgetdrȳhyn`, as `Tennesseehen`), and its stems are total.
+    let shaped = class == 18 || fits(class, &chars);
     match stems(class, &chars, None, harmony) {
-        Ok(stems) if fits(class, &chars) => tokens.push(Token::Inflected {
+        Ok(stems) if shaped => tokens.push(Token::Inflected {
             prefix: String::new(),
             stems,
         }),
@@ -215,6 +221,9 @@ pub(super) fn name(name: &str) -> Entry {
     Entry { tokens }
 }
 
+/// The class a foreign name's last letter picks. A name ending in a long vowel, doubled (`Lee`)
+/// or one letter with a macron (`Līgetdrȳ`), is class 18 whatever its length: Finnish gives
+/// such a name the `-hVn` illative (`Leehen`, `Līgetdrȳhyn`), never a link vowel.
 fn name_class(chars: &[char]) -> u8 {
     let last = chars.last().copied().unwrap_or(' ');
     if !last.is_alphabetic() {
@@ -224,7 +233,7 @@ fn name_class(chars: &[char]) -> u8 {
         return 5;
     }
     if ends_in_long_vowel(chars) {
-        return if vowel_runs(chars) == 1 { 18 } else { 17 };
+        return 18;
     }
     match last.to_lowercase().next().unwrap_or(last) {
         'a' => 9,

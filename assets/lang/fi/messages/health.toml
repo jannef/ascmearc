@@ -31,7 +31,8 @@ epitaph_drowned = { text = "Hukkui syvään veteen", of = "3e7667" }
 epitaph_fall = { text = "Putosi sortuneen lattian läpi", of = "d7d45a" }
 epitaph_fire = { text = "Paloi kuoliaaksi", of = "b820aa" }
 epitaph_miscast = { text = "Sai surmansa omasta väärin lausutusta {spell:ela_nsa}", of = "2ce77c" }
-epitaph_own = { text = "Sai surmansa omasta {what:ela_nsa}", of = "8a277c" }
+# "oma" agrees with the item in number ("omista loitsukirjoistaan").
+epitaph_own = { by = "what.number", one = "Sai surmansa omasta {what:ela_nsa}", many = "Sai surmansa omista {what:ela_nsa}", of = "8a277c" }
 epitaph_own_spell = { text = "Sai surmansa omasta {noun:ela_nsa}", of = "1fcea8" }
 epitaph_profane = { text = "Epäpyhän viemä", of = "1badfe" }
 epitaph_starvation = { text = "Nääntyi nälkään", of = "2d97f4" }

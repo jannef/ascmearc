@@ -318,7 +318,7 @@ hobgoblin_warlord = "iso|hiisi|sota|herra/9"
 horned_devil = "sarvi|paholainen/38"
 hound = "koira/10"
 hound_of_the_hunt = "villin ajon koira/10"
-hrimwyrm = { word = "Valkea Hrīmwyrm", proper = true }
+hrimwyrm = { word = "Valkea/15 Hrīmwyrm/5", proper = true }
 hydra = "hydra/9"
 hydra_head = "hydran pää/18"
 ice_devil = "jää|paholainen/38"
@@ -431,7 +431,7 @@ nightganger = "yö|kulkija/12"
 nightmare = "hornan|ratsu/1"
 nightwing = "yö|siipi/7*E"
 nightworm = "yö|mato/1*F"
-nihtscinna = { word = "Ontto Nihtscinna", proper = true }
+nihtscinna = { word = "Ontto/1*C Nihtscinna/9", proper = true }
 nithdraca = { word = "Vihakäärme Nīðdraca", proper = true }
 nosferatu = "nosferatu/1"
 nycaloth = "nykalotti/5*C"
@@ -527,7 +527,7 @@ warg = "hukka/10*A"
 washer_at_the_ford = "kahlaamon pesijä/12"
 water_elemental = "veden|henki/7*G"
 water_mote = "vesi|hiukkanen/38"
-wealaf = { word = "Hautaamaton Wēalāf", proper = true }
+wealaf = { word = "Hautaamaton/34 Wēalāf/5", proper = true }
 welkin_wind = "taivaan|tuuli/26"
 white_lady = "valkea/15 neito/1*F"
 wight_lord = "kalmo|ruhtinas/41"
@@ -539,6 +539,6 @@ wormhost = "mato|isäntä/10*J"
 wormlord = "matojen herra/9"
 wraith = "haamu/1"
 wraith_lord = "haamu|ruhtinas/41"
-wystan = { word = "Musta Wystan", proper = true }
+wystan = { word = "Musta/10 Wystan/5", proper = true }
 yeth_hound = "päätön/34*C koira/10"
 zombie = "zombi/5"

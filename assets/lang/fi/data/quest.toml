@@ -166,7 +166,7 @@ offer = { text = "Se on Ælfrun, kultaseni, Osgarin tyttö. Meni hakeen risuja m
 accept = { text = "Tässä, mä näytän sulle, missä kumpu on. Pidä rautaa mukanas, äläkä syö mitään mitä ne tarjoo. Se on ihan sen pohjalla.", of = "9bdb21" }
 reminder = { text = "Ælfrun on yhä kukkulan alla, kultaseni, Ælfhāmin pohjalla. Tuo se kotiin Holtwīciin.", of = "500049" }
 done = { text = "Siunatkoon sua, siunatkoon. Kotona, ja yhä oma ittensä. Ota nää, mun omaa keitostani, ja muista ettet kiitä niistä ketään metsässä. Yks vielä on, jonka luo mä sut lähettäisin, kultaseni, ylös metsään: oppinut mies tornissa. Kysy multa hänestä.", of = "b83a85" }
-where = { text = "Ælfhām on paatsamametsässä, Holtwīcistä koilliseen.", of = "9b9263" }
+where = { text = "Ælfhām on paatsamametsässä, Holtwīcista koilliseen.", of = "9b9263" }
 
 [rowan_for_the_wizard]
 name = { text = "Pihlajanoksa", of = "48c5c9" }

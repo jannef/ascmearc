@@ -27,7 +27,7 @@ affix = { text = "{affix:bare}: {does:bare}", of = "4f3b31" }
 # `noun`: the weapon's kind, text; `ammo`, what it shoots (`object:<id>`, or `ammunition`).
 ammo_launcher = { text = "{noun:Bare}, valmiina ampuma-aseena; ampuu {ammo:pl_par}", of = "8f724e" }
 # `from`: the launchers' kinds (an `and_joined`, or one).
-ammo_quivered = { text = "Ammus, nuoliviinissä; ampuma-ase: {from:bare}", of = "9ec104" }
+ammo_quivered = { text = "Ammus, nuoliviinessä; ampuma-ase: {from:bare}", of = "9ec104" }
 # What a launcher shoots when no ammunition of its kind exists (said for `ammo_launcher`'s
 # plural partitive).
 ammunition = { text = "ammuksia", of = "3f1047" }

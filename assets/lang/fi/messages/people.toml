@@ -28,9 +28,9 @@ done_times = { text = "Suoritettu ({times:bare} kertaa).", of = "aca440" }
 drawn_by_giver_dev = { text = "{quest:bare}: antaja arpoo sen; kysy häneltä.", of = "93f8b9" }
 # A potion bought by drinking it in a shop: `what`, the potion as the player knows it.
 drink_and_buy = { text = "Joit sen, ostit sen: {price:bare} kultaa {what:ela}.", of = "223733" }
-drunk_or_not = { text = "Juotu tai ei, {what:nom} maksaa yhä {price:bare} kultaa.", of = "85cb11" }
+drunk_or_not = { text = "Juotu tai ei, {what:gen} hinta on yhä {price:bare} kultaa.", of = "85cb11" }
 eat_and_buy = { text = "Söit sen, ostit sen: {price:bare} kultaa {what:ela}.", of = "763725" }
-eaten_or_not = { text = "Syöty tai ei, {what:nom} maksaa yhä {price:bare} kultaa.", of = "3951bd" }
+eaten_or_not = { text = "Syöty tai ei, {what:gen} hinta on yhä {price:bare} kultaa.", of = "3951bd" }
 # An escort given something: `who` the escort, `what` what it took off for it, a total object
 # (`acc`: "tikarin"; counted where English counts, `counted_acc`: "kolme nuolta").
 escort_drops = { text = "{who:Nom} pudottaa {what:acc}.", of = "a61fd2" }
