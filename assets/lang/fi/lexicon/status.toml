@@ -4,8 +4,8 @@
 # such a status is a locative or an idiom ("unessa", "liekeissä", "hiipumassa", "haavoilla",
 # "raivon vallassa"): its noun with the three forms the templates ask spelled out (`nom`, the
 # predicate and `bare`; `ill` for `died_of`, "Kuoli verenhukkaan"; `tra` for what a spell or
-# potion leaves one in, "jättää kuontolaisen uneen"); the attributive word stays in
-# `status_seen.toml` ("nukkuva kuontolainen"). A spent ability's wait is
+# potion leaves one in, "jättää kärmäläisen uneen"); the attributive word stays in
+# `status_seen.toml` ("nukkuva kärmäläinen"). A spent ability's wait is
 # "<the ability>sta uupunut" ("Olet yhä loikasta uupunut"), its label "<Ability> käytetty".
 acid_blood = { word = "happo|verinen/38", forms = { label = "Happoveri" } }
 area_spell = { word = "alueloitsusta uupunut/47", forms = { label = "Alueloitsu käytetty" } }

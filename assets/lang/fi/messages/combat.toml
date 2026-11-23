@@ -7,7 +7,7 @@
 # ("nuolet kimpoavat": `number` variants give the plural verb), and the numeral with the
 # partitive where English counts (`counted_nom`, "kolme nuolta kimpoaa", a singular verb); a
 # total object is `acc` ("lyö tikarin", "lyö nuolet"; owner review 2, #2073). The partitive
-# object is the target of a blow ("lyö kuontolaista"); a missile thrown or shot whole is a total
+# object is the target of a blow ("lyö kärmäläista"); a missile thrown or shot whole is a total
 # object (`throws`: "sinkoaa järkäleen", "ampuu myrkkynuolen").
 
 acid_eats_at = { text = "Happo syövyttää {what:par}.", of = "36004d" }

@@ -42,7 +42,7 @@ many = "{n:bare} vuoron jälkeen."
 of = "5c07d1"
 text = "{date:bare} kello {time:bare},"
 
-# "Kuontolaisen surmaama".
+# "Kärmäläisen surmaama".
 [killed_by]
 of = "fdf802"
 text = "{who:Counted_gen} surmaama"

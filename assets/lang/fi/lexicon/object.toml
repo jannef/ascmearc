@@ -8,7 +8,7 @@
 aelfswith_corpse = { word = "rouva Ælfswīðin ruumis/41", forms = { material = "lihainen" } }
 amber_amulet = { word = "meripihka-amuletti/5*C", forms = { material = "meripihkainen" } }
 angelica_root = "väinönputken juuri/26"
-annis_hag_corpse = { word = "annissyöjättären ruumis/41", forms = { material = "lihainen" } }
+annis_hag_corpse = { word = "rautasyöjättären ruumis/41", forms = { material = "lihainen" } }
 apple = "omena/11"
 arrow = "nuoli/26"
 arrowhead = { word = "nuolen|kärki/7*L", forms = { material = "rautainen" } }
@@ -26,7 +26,7 @@ bear_corpse = { word = "karhun raato/1*F", forms = { material = "lihainen" } }
 beetle_corpse = { word = "luolakovakuoriaisen raato/1*F", forms = { material = "lihainen" } }
 bellows = { word = "palje/48*L", plural_only = true, forms = { material = "puinen" } }
 berries = { word = "kourallinen/38 marjoja", forms = { material = "kasviperäinen" } }
-bheur_hag_corpse = { word = "bheursyöjättären ruumis/41", forms = { material = "lihainen" } }
+bheur_hag_corpse = { word = "talvisyöjättären ruumis/41", forms = { material = "lihainen" } }
 black_hound_corpse = { word = "mustan hurtan raato/1*F", forms = { material = "lihainen" } }
 black_shuck_corpse = { word = "kalmahurtan raato/1*F", forms = { material = "lihainen" } }
 blank_scroll = { word = "tyhjä/10 käärö/1", forms = { material = "paperinen" } }
@@ -264,11 +264,11 @@ javelin = { word = "heitto|keihäs/41", forms = { material = "rautainen" } }
 kettle = { word = "vesi|pannu/1", forms = { material = "rautainen" } }
 kirtle = { word = "hame/48", forms = { material = "villainen" } }
 knife = { word = "veitsi/30", forms = { material = "teräksinen" } }
-kobold_alchemist_corpse = { word = "kuontolaisalkemistin ruumis/41", forms = { material = "lihainen" } }
-kobold_archer_corpse = { word = "kuontolaisjousimiehen ruumis/41", forms = { material = "lihainen" } }
-kobold_corpse = { word = "kuontolaisen ruumis/41", forms = { material = "lihainen" } }
-kobold_shaman_corpse = { word = "kuontolaistietäjän ruumis/41", forms = { material = "lihainen" } }
-kobold_zombie_corpse = { word = "kuontolaiszombin raato/1*F", forms = { material = "lihainen" } }
+kobold_alchemist_corpse = { word = "kärmäläisalkemistin ruumis/41", forms = { material = "lihainen" } }
+kobold_archer_corpse = { word = "kärmäläisjousimiehen ruumis/41", forms = { material = "lihainen" } }
+kobold_corpse = { word = "kärmäläisen ruumis/41", forms = { material = "lihainen" } }
+kobold_shaman_corpse = { word = "kärmäläistietäjän ruumis/41", forms = { material = "lihainen" } }
+kobold_zombie_corpse = { word = "kärmäläiszombin raato/1*F", forms = { material = "lihainen" } }
 korred_corpse = { word = "korredin ruumis/41", forms = { material = "lihainen" } }
 ladle = { word = "kauha/9", forms = { material = "rautainen" } }
 lantern = { word = "lyhty/1*F", forms = { material = "rautainen" } }

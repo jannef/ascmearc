@@ -54,7 +54,7 @@ of_haggling = { word = "tinkiminen/38", forms = { gen = "tinkimisen", bare = "ti
 of_health = { word = "terveys/40", forms = { gen = "terveyden", bare = "terveyden", label = "Terveyden" } }
 of_hobgoblin_bane = { word = "isohiiden|surma/10", forms = { gen = "isohiidensurman", bare = "isohiidensurman", label = "Isohiidensurman" } }
 of_hunger = { word = "nälkä/10*D", forms = { gen = "nälän", bare = "nälän", label = "Nälän" } }
-of_kobold_bane = { word = "kuontolaisen|surma/10", forms = { gen = "kuontolaisensurman", bare = "kuontolaisensurman", label = "Kuontolaisensurman" } }
+of_kobold_bane = { word = "kärmäläisen|surma/10", forms = { gen = "kärmäläisensurman", bare = "kärmäläisensurman", label = "Kärmäläisensurman" } }
 of_light = { word = "valo/1", forms = { gen = "valon", bare = "valon", label = "Valon" } }
 of_lingering = { word = "viipyminen/38", forms = { gen = "viipymisen", bare = "viipymisen", label = "Viipymisen" } }
 of_mending = { word = "korjaus/39", forms = { gen = "korjauksen", bare = "korjauksen", label = "Korjauksen" } }

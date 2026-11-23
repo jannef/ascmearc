@@ -1830,23 +1830,29 @@ source's word wins, unless that word is just the English one with a Finnish endi
 source has a genuine Finnish word (then the oldest genuine Finnish one). So the drakes are
 *draakki* (`tulidraakki`, `luudraakki`, `kalmandraakki`, `mätänevä draakki`: *lentolisko* is the
 pterosaur, and *lohikäärme* is the dragons'), the ogre *isohinen* (2012; 1988's "ogre" is
-English, 2022's *luolapeikko* newer; the ogre mage *isohismaagi*, 2012's word; *mörkö* is the
-bogeyman), the imp *pikkupiru* (2012 and 2022 agree) so that the *fiend* tag keeps *piru* (2022)
-and "pirunsurma" names the whole class, the kobold *kuontolainen* (2012, over 2022's
-*kärmäläinen*: both are Finnish coinages, so the older wins; the race, the tag, the bane
-*kuontolaisensurma*, `kuontolaisjoukko`, and the compounds `kuontolais-`), the gnome *maahinen*
-(2012 and 2022; the deep gnome *syvämaahinen*, its folk `syvämaahis-`; Kapari's Harry Potter uses
-*maahinen* for the goblin, but the goblin here is Juva's *hiisi*), the hags *syöjätär* (2012: the
-tag, `vihreä syöjätär`, `merisyöjätär`, `suosyöjätär`, `annissyöjätär`, `bheursyöjätär`, the bane
-*syöjättärensurma*, the talent "Syöjättären kauppa"; class 32*C, "syöjättären") and the night hag
-*ajattara* (2012, over 2022's *louhi*; class 11), the hell hound *hornanhurtta* (2012 and 2022),
-the gargoyle *gargoili* (2012 and 2022; *irvikuva* is a caricature), the gorgon *gorgo* (2012 and
-the Greek sisters' Finnish word; "gorgon raato"), the mud golem *mutagolem* (2012; class 6,
-"mutagolemin"), the lemure *lemuri* (2012; *lemuuri* is the primate), the erinyes *erinys* (2012
-and fi.wikipedia's spelling), the balor *liekkidemoni* (2022; 2012's "balor" is the English), the
-quasit *riiviö* (2022; 2012's *kvasitti* is the English), the dretch *dretši* and the barghest
-*bargesti* (2012's spellings; the birth sign too), the draugr *draugr* (fi.wikipedia's consonant
-stem, "draugrin"; the lord "draugrien ruhtinas", since `draugr|ruhtinas` would write *rr*), the
+English, 2022's *luolapeikko* newer; the ogre mage *isohismaagi*, 2012's word, which the owner
+kept; *mörkö* is the bogeyman), the imp *pirulainen* (the owner's word, class 38, over 2012's and 2022's *pikkupiru*)
+so that the *fiend* tag keeps *piru* (2022) and "pirunsurma" names the whole class, the kobold
+*kärmäläinen* (2022, the owner's choice over 2012's *kuontolainen*; class 38; the race, the tag,
+the bane *kärmäläisensurma*, `kärmäläisjoukko`, and the compounds `kärmäläis-`), the gnome
+*maahinen* (2012 and 2022; the deep gnome *syvämaahinen*, its folk `syvämaahis-`; Kapari's Harry
+Potter uses *maahinen* for the goblin, but the goblin here is Juva's *hiisi*), the hags
+*syöjätär* (2012: the tag, `vihreä syöjätär`, `merisyöjätär`, `suosyöjätär`, the bane
+*syöjättärensurma*, the talent "Syöjättären kauppa"; class 32*C, "syöjättären"), the annis and
+bheur hags with invented Finnish first parts, since the owner refused a foreign word on a Finnish
+head: the annis `rautasyöjätär` (her iron-hard skin and iron claws, `creatures/annis_hag.toml`)
+and the bheur `talvisyöjätär` (the winter hag: her icy staff, the winter chill she gives off, her
+frost spells, `creatures/bheur_hag.toml`), and the night hag *ajattara* (2012, over 2022's
+*louhi*; class 11), the hell hound *hornanhurtta* (2012 and 2022), the gargoyle *gargoili* (2012
+and 2022; *irvikuva* is a caricature), the gorgon *gorgo* (2012 and the Greek sisters' Finnish
+word; "gorgon raato"), the mud golem *mutagolem* (2012; class 6, "mutagolemin"), the lemure
+*lemuri* (2012; *lemuuri* is the primate), the erinyes *erinys* (2012 and fi.wikipedia's
+spelling), the balor *balor* (the owner: an Irish mythology name, used as it is in Finnish; a
+consonant-stem loan like *draugr*, class 5, "balorin", "baloria", "balorit"; 2022's
+*liekkidemoni* dropped), the quasit *riiviö* (2022; 2012's *kvasitti* is the English), the dretch
+*dretši* and the barghest *bargesti* (2012's spellings; the birth sign too), the draugr *draugr*
+(fi.wikipedia's consonant stem, "draugrin"; the lord "draugrien ruhtinas", the owner's form, since
+`draugr|ruhtinas` would write *rr* and a hyphen form is wrong grammar), the
 barrow wight's quest *kalmo* as the creature is (its "haamu" was the wraith's word), the dark
 wizard *pimeyden velho* (Kapari's register; *pimeä* of a person is dim), the boggle *menninkäinen*
 (*kummajainen* is an oddity, not a being), the ghast *löyhkäsyöjä* (the ghouls' `-syöjä` head, not

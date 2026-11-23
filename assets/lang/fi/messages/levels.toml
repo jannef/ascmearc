@@ -153,7 +153,7 @@ abl = "{branch:gen} kerrokselta {floor:bare}"
 all = "{branch:gen} kerrokselle {floor:bare}"
 else = "{branch:nom} {floor:bare}"
 
-# `who`: the creatures that followed, all of one type ("kuontolainen", "kolme kuontolaista"; a numeral
+# `who`: the creatures that followed, all of one type ("kärmäläinen", "kolme kärmäläista"; a numeral
 # subject takes a singular verb).
 [follow_down]
 of = "6924d0"
@@ -173,7 +173,7 @@ of = "42c4e1"
 text = "{who:And} tulevat perässäsi portaita ylös."
 
 # An item of `follow_down_mixed`'s and `follow_up_mixed`'s list: `who`, the creatures of one
-# type that followed ("jättirotta", "kaksi kuontolaista").
+# type that followed ("jättirotta", "kaksi kärmäläista").
 [follower]
 of = "3ab9cd"
 by = "who.number"
