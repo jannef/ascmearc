@@ -52,7 +52,7 @@ imbue = { word = "kyllästys/39", forms = { nom = "Kyllästä", label = "Kylläs
 kindle = { word = "sytytys/39", forms = { nom = "Sytytä", label = "Sytytys" } }
 quicken = { word = "elävöitys/39", forms = { nom = "Elävöitä", label = "Elävöitys" } }
 recast = { word = "uudelleen|valu/1", forms = { nom = "Valaa uudelleen", label = "Uudelleenvalu" } }
-unbind = { word = "irrotus/39", forms = { nom = "Irrota taika:", label = "Irrotus" } }
+unbind = { word = "irrotus/39", forms = { nom = "Irrota taika", label = "Irrotus" } }
 
 # Jewelcraft.
 amber_amulet = "meripihka-amuletti/5*C"

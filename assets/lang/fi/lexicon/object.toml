@@ -56,7 +56,7 @@ burning_arrow = { word = "palava/10 nuoli/26", forms = { material = "puinen" } }
 business_partner_corpse = { word = "liikekumppanin ruumis/41", forms = { material = "lihainen" } }
 cambion_corpse = { word = "kambionin ruumis/41", forms = { material = "lihainen" } }
 candle = "vaha|kynttilä/12"
-candlestick = { word = "kynttilän|jalka/10*D", forms = { material = "messinkinen" } }
+candlestick = { word = "kynttilän|jalka/9*D", forms = { material = "messinkinen" } }
 cat_corpse = { word = "kissan raato/1*F", forms = { material = "lihainen" } }
 cave_lizard_corpse = { word = "luolaliskon raato/1*F", forms = { material = "lihainen" } }
 chain_mail = { word = "rengas|paita/9*F", forms = { material = "rautainen" } }
@@ -608,8 +608,8 @@ scroll_of_thunderclap = { word = "jyrähdyksen käärö/1", forms = { material =
 grimoire_of_thunderclap = { word = "jyrähdyksen loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_unbinding = { word = "vapautuksen käärö/1", forms = { material = "paperinen" } }
 grimoire_of_unbinding = { word = "vapautuksen loitsu|kirja/9", forms = { material = "paperinen" } }
-scroll_of_water_walking = { word = "vetten käynnin käärö/1", forms = { material = "paperinen" } }
-grimoire_of_water_walking = { word = "vetten käynnin loitsu|kirja/9", forms = { material = "paperinen" } }
+scroll_of_water_walking = { word = "vetten päällä kävelyn käärö/1", forms = { material = "paperinen" } }
+grimoire_of_water_walking = { word = "vetten päällä kävelyn loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_web = { word = "seitin käärö/1", forms = { material = "paperinen" } }
 grimoire_of_web = { word = "seitin loitsu|kirja/9", forms = { material = "paperinen" } }
 sea_hag_corpse = { word = "merinoita-akan ruumis/41", forms = { material = "lihainen" } }

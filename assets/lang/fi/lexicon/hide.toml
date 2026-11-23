@@ -35,7 +35,7 @@
 "creature.annis_hag" = "raudan|kova/10 iho/1"
 "creature.arcanaloth" = "turkki/5*A"
 "creature.arch_gate" = "loitsittu/1*C reuna/9"
-"creature.archlich" = { word = "kuiva/9 luu/18", many = true }
+"creature.archlich" = { word = "kuiva/10 luu/18", many = true }
 "creature.attorcoppe" = "kitiini|kuori/26"
 "creature.badger" = "paksu/1 nahka/9*D"
 "creature.balefire" = "lepattava/10 liekki/5*A"
@@ -75,7 +75,7 @@
 "creature.crocodile" = { word = "suomu/1", many = true }
 "creature.crystal_guardian" = "kristalli|ruumis/41"
 "creature.death_knight" = "kuollut/47 liha/9"
-"creature.deathless_king" = { word = "kuiva/9 luu/18", many = true }
+"creature.deathless_king" = { word = "kuiva/10 luu/18", many = true }
 "creature.deathshade" = "aineeton/34*C hahmo/1"
 "creature.demilich" = "kallo/1"
 "creature.dire_gate" = "loitsittu/1*C reuna/9"
@@ -93,7 +93,7 @@
 "creature.elder_fire_elemental" = "lepattava/10 liekki/5*A"
 "creature.elder_ice_elemental" = "jää/18"
 "creature.elder_lightning_elemental" = "rätisevä/10 hahmo/1"
-"creature.elder_troll" = "iki|vanha/10 nahka/9*D"
+"creature.elder_troll" = "iki|vanha/9 nahka/9*D"
 "creature.elder_vampire" = "kuollut/47 liha/9"
 "creature.elder_water_elemental" = "virtaava/10 ruumis/41"
 "creature.eldest_vampire" = "kuollut/47 liha/9"
@@ -133,7 +133,7 @@
 "creature.greater_lightning_elemental" = "rätisevä/10 hahmo/1"
 "creature.greater_shadow" = "aineeton/34*C hahmo/1"
 "creature.greater_water_elemental" = "virtaava/10 ruumis/41"
-"creature.grundwyrgen" = "iki|vanha/10 nahka/9*D"
+"creature.grundwyrgen" = "iki|vanha/9 nahka/9*D"
 "creature.headless_knight" = "kuollut/47 liha/9"
 "creature.hellmouth" = "loitsittu/1*C reuna/9"
 "creature.hezrou" = "syyläinen/38 nahka/9*D"
@@ -157,8 +157,8 @@
 "creature.lesser_earth_elemental" = "kivi|ruumis/41"
 "creature.lesser_ice_elemental" = "jää/18"
 "creature.lesser_lightning_elemental" = "rätisevä/10 hahmo/1"
-"creature.lich" = { word = "kuiva/9 luu/18", many = true }
-"creature.lich_drake" = { word = "kuiva/9 luu/18", many = true }
+"creature.lich" = { word = "kuiva/10 luu/18", many = true }
+"creature.lich_drake" = { word = "kuiva/10 luu/18", many = true }
 "creature.ligetdry" = "iho/1"
 "creature.lightning_elemental" = "rätisevä/10 hahmo/1"
 "creature.loam_man" = "savi/7"
