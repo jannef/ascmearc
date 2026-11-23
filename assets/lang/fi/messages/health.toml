@@ -12,7 +12,7 @@ carry_disease_already = { text = "Kannat jo tautia {name:bare} (dev).", of = "65
 carry_no_such_thing = { text = "Sinulla ei ole sellaista.", of = "b79167" }
 catch_disease = { text = "Saat taudin {name:bare} (dev).", of = "4ef535" }
 choke = { text = "Tukehdut {what:ill}...", of = "229e9e" }
-could_grow_yet = { text = "Tunnet, että voisit olla vielä {more:bare}.", of = "42d0fd" }
+could_grow_yet = { text = "Tunnet, että voisit kasvaa vielä {more:bare}.", of = "42d0fd" }
 crash_of_glass = { text = "Kuulet lasin särkyvän.", of = "0e632b" }
 deathly_chill = { text = "Kuolettava kylmyys kulkee lävitsesi.", of = "c8aa80" }
 die = { text = "Kuolet...", of = "d1e389" }
@@ -24,23 +24,25 @@ ease_somewhat = { text = "Lievität {disease:par} hieman.", of = "e8e19e" }
 eat = { text = "Syöt {what:acc}.", of = "9cbb8f" }
 eat_your_fill = { text = "Syöt itsesi kylläiseksi; loppu ei tee sinulle hyvää.", of = "f938b6" }
 elixir_no_difference = { text = "Et tunne mitään eroa.", of = "e1912f" }
-# How the death screen says a death (their own: the suffix `-nsa`).
-epitaph_altar = { text = "Kaatui unohdetulla alttarilla", of = "d6d3d3" }
-epitaph_choked = { text = "Tukehtui {what:counted_ill}", of = "ffca36" }
-epitaph_drowned = { text = "Hukkui syvään veteen", of = "3e7667" }
-epitaph_fall = { text = "Putosi sortuneen lattian läpi", of = "d7d45a" }
-epitaph_fire = { text = "Paloi kuoliaaksi", of = "b820aa" }
-epitaph_miscast = { text = "Sai surmansa omasta väärin lausutusta {spell:ela_nsa}", of = "2ce77c" }
-# "oma" agrees with the item in number ("omista loitsukirjoistaan").
-epitaph_own = { by = "what.number", one = "Sai surmansa omasta {what:ela_nsa}", many = "Sai surmansa omista {what:ela_nsa}", of = "8a277c" }
-epitaph_own_spell = { text = "Sai surmansa omasta {noun:ela_nsa}", of = "1fcea8" }
+# How the death screen says a death (their own: the suffix `-nsa`): a participle, like the
+# screen's own "Koboldin surmaama", so `fixtures.epitaph` can take it after a comma ("Tässä lepää
+# Brakka, syvään veteen hukkunut.").
+epitaph_altar = { text = "Unohdetulla alttarilla kaatunut", of = "d6d3d3" }
+epitaph_choked = { text = "{what:Counted_ill} tukehtunut", of = "ffca36" }
+epitaph_drowned = { text = "Syvään veteen hukkunut", of = "3e7667" }
+epitaph_fall = { text = "Sortuneen lattian läpi pudonnut", of = "d7d45a" }
+epitaph_fire = { text = "Kuoliaaksi palanut", of = "b820aa" }
+epitaph_miscast = { text = "Oman väärin lausutun {spell:gen_nsa} surmaama", of = "2ce77c" }
+# "oma" agrees with the item in number ("Omien loitsukirjojensa surmaama").
+epitaph_own = { by = "what.number", one = "Oman {what:gen_nsa} surmaama", many = "Omien {what:pl_gen_nsa} surmaama", of = "8a277c" }
+epitaph_own_spell = { text = "Oman {noun:gen_nsa} surmaama", of = "1fcea8" }
 epitaph_profane = { text = "Epäpyhän viemä", of = "1badfe" }
-epitaph_starvation = { text = "Nääntyi nälkään", of = "2d97f4" }
-epitaph_trap = { text = "Kuoli {trap:counted_ill}", of = "99141a" }
-elixir_rise = { text = "Olet nyt {feel:bare}.", of = "b81a95" }
-elixir_rise_yet = { text = "Olet nyt {feel:bare}, ja voisit olla vielä {feel:bare}.", of = "5e4ea9" }
-elixir_yet = { text = "Tunnet, että voisit olla vielä {feel:bare}.", of = "b0c380" }
-faint = { text = "Pyörryt nälkään.", of = "c8deba" }
+epitaph_starvation = { text = "Nälkään nääntynyt", of = "2d97f4" }
+epitaph_trap = { text = "{trap:Counted_gen} surmaama", of = "99141a" }
+elixir_rise = { text = "Tunnet itsesi {feel:bare}.", of = "b81a95" }
+elixir_rise_yet = { text = "Tunnet itsesi {feel:bare}, ja voisit kasvaa vielä {feel:bare}.", of = "5e4ea9" }
+elixir_yet = { text = "Tunnet, että voisit kasvaa vielä {feel:bare}.", of = "b0c380" }
+faint = { text = "Pyörryt nälästä.", of = "c8deba" }
 faint_from_hunger = { text = "Olet pyörtymäisilläsi nälästä. Syö nyt, tai nääntyt!", of = "f51429" }
 feel_better = { text = "Olosi on parempi.", of = "1401cc" }
 feel_bloated = { text = "Olet ähkyssä.", of = "548e47" }
@@ -62,7 +64,7 @@ it_is = { text = "Se on {what:counted_nom}.", of = "843fc2" }
 it_was = { text = "Se oli {what:counted_nom}.", of = "2023bb" }
 know_nothing_of_healing = { text = "Et tiedä parantamisesta mitään.", of = "b836ab" }
 land_lurches = { text = "Maa heilahtaa, mutta pysyt paikallasi.", of = "31ee76" }
-less_faint = { text = "Et ole enää yhtä heikotuksissa.", of = "3f6cf3" }
+less_faint = { text = "Sinua ei heikota enää yhtä pahasti.", of = "3f6cf3" }
 less_weak = { text = "Et ole enää yhtä heikko.", of = "aa4025" }
 light_pipe = { text = "Sytytät piippusi ja asetut mukavasti.", of = "cda87a" }
 lurch_stay = { text = "Tunnet nykäisyn, mutta pysyt paikallasi.", of = "dcf1b1" }

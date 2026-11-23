@@ -116,7 +116,7 @@ spend_mana_dev = { text = "Käytät {cost:bare} manaa (dev).", of = "4a1a29" }
 stone_crumbles_away = { text = "Kivi murenee edestäsi.", of = "0e085a" }
 stop_reading = { text = "Lopetat lukemisen.", of = "88da35" }
 stop_writing = { text = "Lopetat kirjoittamisen.", of = "c704d1" }
-takes_mends_you = { text = "Mitä se vie, se parantaa sinua.", of = "33537d" }
+takes_mends_you = { text = "Se, minkä loitsu vie, parantaa sinua.", of = "33537d" }
 too_little_blood = { text = "Sinulla on liian vähän verta annettavaksi.", of = "0f5452" }
 too_little_mana = { text = "Sinulla on liian vähän manaa.", of = "8acd3a" }
 touch_corpse_next_to_you = { text = "Voit koskea vain vieressäsi olevaan ruumiiseen.", of = "73b48c" }

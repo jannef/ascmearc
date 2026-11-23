@@ -105,7 +105,7 @@ does_resource_rate = { text = "{pool:Bare} palautuu {v:bare} % nopeammin", of = 
 does_shield = { text = "kilpi +{v:bare}", of = "b895ec" }
 does_skill = { text = "{skill:Bare} +{v:bare}", of = "a683d8" }
 does_skill_any = { text = "+{v:bare} yhteen taitoon", of = "c0c91a" }
-does_spell_bonus = { text = "+{v:bare} jokaisen loitsun heittoon, vahingossa ja parannuksessa", of = "9c4258" }
+does_spell_bonus = { text = "+{v:bare} jokaisen loitsun heittoon, niin vahinkoon kuin parannukseen", of = "9c4258" }
 does_spell_reroll = { text = "loitsunopat, joiden silmäluku on {v:bare} tai vähemmän, heitetään kerran uudelleen", of = "a26c5d" }
 does_spell_to_hit = { text = "+{v:bare} loitsujen osumaan", of = "841350" }
 does_stamina = { text = "aseliikkeet maksavat {v:bare} vähemmän ({pool:bare})", of = "f789dc" }
@@ -140,8 +140,8 @@ held_main = { text = "{noun:Bare}, pidetään: {slot:bare}", of = "c1db33" }
 # Parts said one after another: `first`, a part; `rest`, the others.
 listed = { text = "{first:bare}, {rest:bare}", of = "a51d07" }
 magic_unknown = { text = "Tunnistamaton: sen taikuuden vaikutus on tuntematon, mutta se toimii silti.", of = "43b51f" }
-make_apart = { text = "Osiin purettuna siitä saisi {what:counted}.", of = "9182bd" }
-make_apart_batch = { text = "Osiin purettuina riittävä määrä näitä antaisi {what:counted}.", of = "47d9e3" }
+make_apart = { text = "Osiin purettuna siitä saisi {what:counted_acc}.", of = "9182bd" }
+make_apart_batch = { text = "Osiin purettuina riittävä määrä näitä antaisi {what:counted_acc}.", of = "47d9e3" }
 # `place`: where it would be made good (`place_*`).
 make_damaged = { text = "Se on vaurioitunut: työ {place:bare} korjaisi sen.", of = "777edd" }
 make_damaged_mend = { text = "Se on vaurioitunut: työ {place:bare} korjaisi sen, tai omat kätesi.", of = "9698be" }

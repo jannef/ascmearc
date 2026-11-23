@@ -138,12 +138,12 @@ talent_needs_choice = { text = "{talent:Bare} vaatii valinnan: {choice:bare}.", 
 talent_needs_chosen_rank = { text = "valittu tasolla {rank:bare}", of = "943128" }
 talent_needs_class = { text = "olla {class:nom}", of = "cf02f6" }
 talent_needs_creation = { text = "olla uusi hahmo", of = "734bc0" }
-talent_needs_eaten = { by = "n.number", one = "olla syönyt {n:bare} ajattelevan olennon", many = "olla syönyt {n:bare} ajattelevaa olentoa", of = "20682b" }
+talent_needs_eaten = { by = "n.number", one = "olla syönyt yhden ajattelevan olennon", many = "olla syönyt {n:bare} ajattelevaa olentoa", of = "20682b" }
 # Any one of several: `first` a prerequisite, `rest` the others.
 talent_needs_either = { text = "{first:bare} tai {rest:bare}", of = "269c79" }
 talent_needs_element = { text = "olla syntynyt {element:gen} merkissä", of = "369dc2" }
 # `eyes`: the visions' names, a list.
-talent_needs_eyes = { text = "olla {eyes:or}", of = "e66ddf" }
+talent_needs_eyes = { text = "{eyes:or}", of = "e66ddf" }
 talent_needs_level = { text = "taso {level:bare}", of = "b535f0" }
 talent_needs_lucky = { text = "olla syntynyt onnenpäivänä", of = "31d9e6" }
 # `races`: a list of `talent_needs_one`s, each a race.

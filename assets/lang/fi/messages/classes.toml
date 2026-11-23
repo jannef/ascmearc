@@ -48,7 +48,7 @@ no_calling_opens_dev = { text = "Mikään tämän maailman kutsumus ei avaa arvo
 no_character_to_call_dev = { text = "Kutsuttavaa hahmoa ei ole (dev).", of = "1104f3" }
 no_missile_weapon_ready = { text = "Sinulla ei ole ampuma-asetta valmiina.", of = "1c1e1e" }
 no_one_there = { text = "Siellä ei ole ketään.", of = "17fcac" }
-no_one_under_hex = { text = "Kukaan näkemäsi ei ole kirouksesi alaisena.", of = "08559f" }
+no_one_under_hex = { text = "Kukaan näkemistäsi ei ole kirouksesi alaisena.", of = "08559f" }
 no_prestige_class_dev = { text = "Arvoluokkaa `{id:bare}` ei ole (dev).", of = "9a0702" }
 no_quarrel_there = { text = "Sinulla ei ole siellä riitaa kenenkään kanssa.", of = "9803b9" }
 no_quarrel_with = { text = "Sinulla ei ole riitaa {who:gen} kanssa.", of = "017b57" }
@@ -84,7 +84,7 @@ rise_from_knees_came = { text = "{came:bare}; nouset polviltasi.", of = "18b1fe"
 roar_your_fury = { text = "Karjaiset raivosi ilmoille!", of = "73fca5" }
 room_consecrated = { text = "Hiljaisuus laskeutuu huoneeseen: se on pyhitetty.", of = "66ce32" }
 run_into_something = { text = "Törmäät johonkin!", of = "5b4d89" }
-set_down_too_much = { text = "Kannat liikaa: {what:counted_nom} jää jalkojesi juureen.", of = "7d3858" }
+set_down_too_much = { text = "Kannat liikaa: jalkojesi juureen jää {what:counted_nom}.", of = "7d3858" }
 shakes_off_song = { text = "{who:Nom} karistaa laulun yltään.", of = "e89879" }
 shop_not_sanctuary = { text = "Tämä on kauppa, ei pyhäkkö.", of = "56456f" }
 short_of_breath_for_charge = { text = "Henkesi ei riitä niin pitkään rynnäkköön.", of = "220557" }
