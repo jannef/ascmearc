@@ -445,7 +445,7 @@ description = { text = "Karistat sairauden pikemmin kuin useimmat: tauti tarvits
 description = { text = "Missä oletkin, harkko kivikasan päällä on alasin (kyky): tunnin työ avoimella maalla vierelläsi, ja alasin jää paikalleen.", of = "ef8128" }
 
 [fire_breath]
-description = { text = "Lentoliskon henkäys: tulisuihku kohisee sinusta kohti valitsemaasi paikkaa ja polttaa jokaisen tiellään; sitten tulesi on hetken ehtynyt.", of = "c15aa1" }
+description = { text = "Draakin henkäys: tulisuihku kohisee sinusta kohti valitsemaasi paikkaa ja polttaa jokaisen tiellään; sitten tulesi on hetken ehtynyt.", of = "c15aa1" }
 
 [flame_and_frost]
 description = { text = "Kaksi loitsua, jotka maksavat manaa: tulipallo tai purevan pakkasen purkaus paikkaan, johon tähtäät.", of = "a65476" }
@@ -484,7 +484,7 @@ description = { text = "Tuulenpuuska linjaa pitkin (maksaa manaa): jokainen linj
 description = { text = "Vihollinen, joka astuu viereesi, voi saada sinulta vapaan iskun tullessaan, sitä todennäköisemmin, mitä rohkeampi asentosi on.", of = "a7ad33" }
 
 [gem_lore]
-description = { text = "Gnomit tuntevat kivensä: näet, mitä kukin jalokivi on arvoinen, ja löydät jalokiviä kaksi kertaa useammin.", of = "9825f6" }
+description = { text = "Maahiset tuntevat kivensä: näet, mitä kukin jalokivi on arvoinen, ja löydät jalokiviä kaksi kertaa useammin.", of = "9825f6" }
 
 [gemcutter]
 description = { text = "Olit jalokivenhiojan oppipoikana: aloitat jalokivityöhön koulutettuna, mukanasi hiomaton granaatti tai zirkoni, ja hiontataitosi kasvaa niin kuin hiojan.", of = "54bc1d" }
@@ -493,7 +493,7 @@ description = { text = "Olit jalokivenhiojan oppipoikana: aloitat jalokivityöh�
 description = { text = "Kevyet, hauraat luut: iskut osuvat kovemmin, raskaat iskut haavoittavat syvemmin, ja ansat satuttavat sinua enemmän.", of = "227dfe" }
 
 [gnomish_glamour]
-description = { text = "Jokainen gnomi oppii lapsena vanhan harhan: osaat harhakuvan loitsun (maksaa manaa).", of = "6b3e3b" }
+description = { text = "Jokainen maahinen oppii lapsena vanhan harhan: osaat harhakuvan loitsun (maksaa manaa).", of = "6b3e3b" }
 
 [gnomish_illusionist]
 description = { text = "Harhat tulevat gnomeille luonnostaan: harhaloitsusi maksavat sinulle paljon vähemmän manaa.", of = "8778ce" }
@@ -601,7 +601,7 @@ refused = { text = "Sarvesi ovat tiellä.", of = "5e8029" }
 description = { text = "Yksisarvisen armo: verenvuotosi ja myrkytyksesi päättyvät, ja karistat taudin; sitten sarvi lepää päivän.", of = "8c91d3" }
 
 [hounds_bay]
-description = { text = "Hornankoiran ulvonta: sen kuulevat heikommat viholliset pakenevat sinua hetken; sitten kurkkusi on tunnin käheä.", of = "12b032" }
+description = { text = "Hornanhurtan ulvonta: sen kuulevat heikommat viholliset pakenevat sinua hetken; sitten kurkkusi on tunnin käheä.", of = "12b032" }
 
 [hounds_nose]
 description = { text = "Haistat veren lähellä olevista vuotavista olennoista pimeässäkin, ja tunnet hajusta, kuinka tuoretta ruoka on.", of = "85ac1f" }
@@ -1273,7 +1273,7 @@ description = { text = "Henkesi voima palaa kuin vuorovesi: mana palaa sinulle n
 description = { text = "Palvelit kisälliaikasi ammatissa: jokainen ammatti, jonka otat, kun sinut luodaan, alkaa selvästi harrastelijan tason yläpuolelta.", of = "ec3af1" }
 
 [tinkerer]
-description = { text = "Gnomin näppärät sormet: voit purkaa tietämiäsi ansoja (kyky), koulutettuna tai ilman.", of = "00e752" }
+description = { text = "Maahisen näppärät sormet: voit purkaa tietämiäsi ansoja (kyky), koulutettuna tai ilman.", of = "00e752" }
 
 [tracker]
 description = { text = "Korvasi ovat metsästäjän: kuulet heikompia ääniä ja tiedät, mistä jokainen kuulemasi ääni lähti.", of = "8dbdae" }

@@ -21,7 +21,7 @@ lines = [
     { text = "Kerensa sannoo, mitä siun repus o. Ja mitä se maksaa, rakkahaine.", of = "32cde9" },
     { text = "Ylhääl ne ostaa patasa. Ostaa! Jotkut ei oo koskaa tehnt mittää.", of = "b5e030" },
     { text = "Duergarit kaivaa taas meijän suonii. Kaivaa niinku sika tonkii.", of = "34f531" },
-    { text = "Gnomi hioo ensmäise kivensä seitsenvuotiaana. Miun ol savukvartsi.", of = "ddd2f4" },
+    { text = "Maahinen hioo ensmäise kivensä seitsenvuotiaana. Miun ol savukvartsi.", of = "ddd2f4" },
     { text = "Vakaa käsi, tarkka silmä ja kärsivällisyys. Kivityö. Kärsivällisyys.", of = "886c3d" },
     { text = "Hiomolattian alasimet o vapaat. Jätä ne vaa siistiks.", of = "592c35" },
 ]
@@ -45,7 +45,7 @@ better = [
 
 [ascmearc.deep_gnome.after]
 gnome_letter = [
-    { text = "Pinnalaiset ja gnomit kauppaa reilust. Peran sannoo, et kirje sen teki.", of = "46f008" },
+    { text = "Pinnalaiset ja maahiset kauppaa reilust. Peran sannoo, et kirje sen teki.", of = "46f008" },
     { text = "Cēaptūnin hopeet kivist, niiden rautaa istutuksiin. Kuka ois uskont?", of = "62fc4c" },
 ]
 
@@ -72,7 +72,7 @@ greet_evil = [
     { text = "Gimmwīcin ovi o auki. Elä pane meitä sulkemaa sitä.", of = "a4b2d4" },
 ]
 lines = [
-    { text = "Istu, istu. Käräjätalon tuolit o gnomin kokosii, kuule. Kyykisty sit.", of = "8797e8" },
+    { text = "Istu, istu. Käräjätalon tuolit o maahisen kokosii, kuule. Kyykisty sit.", of = "8797e8" },
     { text = "Myö hiotaa kiveä, istutetaa kiveä, tehhää kaluja. Se o Gimmwīc.", of = "e3e666" },
     { text = "Ylhääl luullaa, et myö ollaa satuu. Sopii meil, enimmäkseen.", of = "03e16c" },
     { text = "Syvätie o kova. Kova pittää väärät ihmiset ulkona.", of = "6b5495" },
@@ -85,7 +85,7 @@ mutter = [
 ]
 
 [ascmearc.peran.topic]
-gimmwic = { text = "Gimmwīc o syvägnomien kaupunki, miun kultaine, ja aina ol. Myö hakattii se kalliost isku kerrallaa. Hohde loukkaantuneil, Kerensa kivil, Jory tavaroil, ja Tregearin hiomolattia niil, ket halluu oppia. Siel alasimet o vapaat kaikil, ket tekköö siistii jälkee.", of = "625ef2" }
+gimmwic = { text = "Gimmwīc o syvämaahisten kaupunki, miun kultaine, ja aina ol. Myö hakattii se kalliost isku kerrallaa. Hohde loukkaantuneil, Kerensa kivil, Jory tavaroil, ja Tregearin hiomolattia niil, ket halluu oppia. Siel alasimet o vapaat kaikil, ket tekköö siistii jälkee.", of = "625ef2" }
 up_top = { text = "Myö kauppaillaa Syvätietä ylös silloin tällöin, hiljaksee, kivi jauhosäkkii vastaa. Markkinakaupungin pinnalaiset ei kysy, mistä se o. Ei oo koskaa kysynt. Myö ei kerrota. Siks o pysynt ystävällisenä, näätsie.", of = "abf309" }
 deep = { text = "Duergarit idäs, kaivamas meijän suonii. Tummahaltiat nousoo alhaalt, ku ne o kiukkusii. Peikkoi ja pahempaa villeis luolis välis. Siks Syvätie kiemurtelloo niin, ja siks sen ovet piilottelloo. Varo pimmeetä, rakkahaine.", of = "6ed6a6" }
 
@@ -99,7 +99,7 @@ greet_evil = [
 lines = [
     { text = "Rubiini o pelkkää punasta lasii, kunnes joku hioo sen kunnolla.", of = "b7ebae" },
     { text = "Hiomaton o halvempi. Hiomisest sie maksat, näätsie. Tai tee ite.", of = "1cb195" },
-    { text = "Mie ostan jokaise kiven, mink tuot. Reilu hinta: gnomin, ei pinnalaise.", of = "c747ea" },
+    { text = "Mie ostan jokaise kiven, mink tuot. Reilu hinta: maahisen, ei pinnalaise.", of = "c747ea" },
     { text = "Tuon sormukse mie istutin ite. Kolme päivää pelkkii kynsii.", of = "91e4a0" },
     { text = "Mie voin sannoo, mitä mikä tahansa o. Maksust, kuule.", of = "5adc00" },
 ]
@@ -134,7 +134,7 @@ greet_evil = [
 ]
 lines = [
     { text = "Leppää täs nii kaua ku tarviit. Mikkää paha ei astu tän lattian yli.", of = "689fd3" },
-    { text = "Seinien kivet istutti ensmäiset gnomit. Kunnioita niitä.", of = "c1346b" },
+    { text = "Seinien kivet istutti ensmäiset maahiset. Kunnioita niitä.", of = "c1346b" },
     { text = "Parannus maksaa kultaa. Kristallit ei valase itteään.", of = "a036c1" },
     { text = "Tee jotai käsilläs joka päivä. Sekii o parantamista.", of = "a763b1" },
     { text = "Hohde pittää valon, ku lamput sammuu.", of = "b04f1d" },
@@ -146,7 +146,7 @@ mutter = [
 mutter_verb = { text = "rukoilee", of = "9e4ad8" }
 
 [ascmearc.senara.topic]
-glimmering = { text = "Hohde o meijän temppeli, lapsi: kristalleja, mitkä ensmäiset gnomit istutti kallioo, eikä ne oo koskaa pimentynt. Myö parannetaa, haudataa ja pietää valoa. Leppää sen lattial, ni haavas umpeutuu nopeemmin.", of = "5b6821" }
+glimmering = { text = "Hohde o meijän temppeli, lapsi: kristalleja, mitkä ensmäiset maahiset istutti kallioo, eikä ne oo koskaa pimentynt. Myö parannetaa, haudataa ja pietää valoa. Leppää sen lattial, ni haavas umpeutuu nopeemmin.", of = "5b6821" }
 
 [ascmearc.senara.service.cure]
 reply = { text = "Mäne terveenä, lapsi. Ja pysy poies villeist luolist.", of = "59af78" }

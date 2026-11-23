@@ -17,10 +17,10 @@ description = { text = "Suoraan Ælfhāmiin, pimeän keijuhovin saliin kummun al
 description = { text = "Suoraan Cealdhlāwiin, kylmään hautakumpuun Hlāwdūnin alla: kuusi kerrosta käytäviä ja onkaloita.", of = "72c751" }
 
 [deopgang]
-description = { text = "Suoraan Dēopgangiin, Syvätielle: yksitoista kerrosta gnomien hakkaamia käytäviä ja villiä syvyyttä, syvägnomien kaupunkiin asti.", of = "5f111f" }
+description = { text = "Suoraan Dēopgangiin, Syvätielle: yksitoista kerrosta maahisten hakkaamia käytäviä ja villiä syvyyttä, syvämaahisten kaupunkiin asti.", of = "5f111f" }
 
 [drake]
-description = { text = "Tulilentolisko laavasalissa yhdentoista ruudun päässä: se syöksee tulta aina kun voi, ja välillä se taistelee kynsin ja hampain.", of = "963d38" }
+description = { text = "Tulidraakki laavasalissa yhdentoista ruudun päässä: se syöksee tulta aina kun voi, ja välillä se taistelee kynsin ja hampain.", of = "963d38" }
 
 [drytorr]
 description = { text = "Aukio paatsamametsässä, jossa mestari Ordgarin torni seisoo: sen ansasalit, ylemmät kerrokset ja velho huipulla.", of = "8a8ad6" }
@@ -32,7 +32,7 @@ description = { text = "Suoraan Fennmynsteriin, suohon hukkuneeseen kirkkoon: ka
 description = { text = "Suoraan Fyrdelfiin, tulikaivokseen Ascdūnin alla: kaksitoista kerrosta käytäviä ja syviä louhoksia.", of = "014fa2" }
 
 [gimmwic]
-description = { text = "Syvägnomien kaupunki Dēopgangin pohjalla: jalokivikauppias, varustajat, Hohde, hiomolattia ja Tregear-vaari sekä kylänvanhin Peran.", of = "9abf6d" }
+description = { text = "Syvämaahisten kaupunki Dēopgangin pohjalla: jalokivikauppias, varustajat, Hohde, hiomolattia ja Tregear-vaari sekä kylänvanhin Peran.", of = "9abf6d" }
 
 [grundleas]
 description = { text = "Suoraan Grundlēasiin, pohjattomaan: kerroksia loputtomiin, eikä yksikään niistä ole siellä kahdesti.", of = "5e8167" }
@@ -47,7 +47,7 @@ description = { text = "Grundlēasin kymmenes kerros, jota Rottakuningas Gnægan
 description = { text = "Tasanko harmaan meren rannalla, jossa mestari Sigericin torni seisoo: sen ansasalit, ylemmät kerrokset ja velho huipulla.", of = "54f092" }
 
 [utgang]
-description = { text = "Suoraan Ūtgangiin, tielle ulos: kolme kerrosta tulilentoliskon syvyyksistä ylös tulivuoren kyljelle.", of = "9a992e" }
+description = { text = "Suoraan Ūtgangiin, tielle ulos: kolme kerrosta tulidraakin syvyyksistä ylös tulivuoren kyljelle.", of = "9a992e" }
 
 [wedertorr]
 description = { text = "Nummi Hlāwdūnilla, jossa rouva Ælfswīðin torni seisoo: sen ansasalit, ylemmät kerrokset ja velho huipulla.", of = "13c818" }

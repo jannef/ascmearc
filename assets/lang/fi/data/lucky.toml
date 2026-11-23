@@ -2,7 +2,7 @@
 # reveal's line of legend for one born on a lucky day.
 
 [earth.barghest.30]
-description = { text = "Onnenpäivä. Kerran kuudessakymmenessä vuodessa Barghesti syntyy maasta, ja kuun viimeisenä päivänä se syntyy Portinvartijaksi.", of = "51eac2" }
+description = { text = "Onnenpäivä. Kerran kuudessakymmenessä vuodessa Bargesti syntyy maasta, ja kuun viimeisenä päivänä se syntyy Portinvartijaksi.", of = "51eac2" }
 
 [fire.phoenix.10]
 description = { text = "Onnenpäivä. Kerran kuudessakymmenessä vuodessa Feeniks syntyy tulessa, ja kymmenentenä päivänä se syntyy Tulilinnuksi.", of = "7e3069" }

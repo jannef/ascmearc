@@ -565,7 +565,7 @@ verb = { text = "raastaa", of = "fcd7fc" }
 you = { text = "raastat", of = "a8548e" }
 
 [balor]
-first_sight = { text = "Balori liekkien ympäröimänä. Harva sellaisen nähnyt jää kertomaan siitä.", of = "6d8346" }
+first_sight = { text = "Liekkidemoni, tulen ympäröimänä. Harva sellaisen nähnyt jää kertomaan siitä.", of = "6d8346" }
 
 [balor.attack.0]
 verb = { text = "piiskaa", of = "4dca04" }
@@ -1308,7 +1308,7 @@ verb = { text = "puree", of = "bd3846" }
 you = { text = "puret", of = "624b7b" }
 
 [fire_drake.on_eat]
-message = { text = "Lentoliskon liha polttaa kurkkua ja jättää sinut vahvemmaksi.", of = "545034" }
+message = { text = "Draakin liha polttaa kurkkua ja jättää sinut vahvemmaksi.", of = "545034" }
 
 [fire_drake.breath]
 verb = { text = "syöksee tulta", of = "4454fc" }
@@ -1527,7 +1527,7 @@ message = { text = "Tämä hiidenliha on eltaantunutta ja kihelmöi kielellä.",
 verb = { text = "kutsuu esiin", of = "163877" }
 
 [gorgon]
-first_sight = { text = "Gorgoni. Pidätä henkeäsi ja väisty sen tieltä.", of = "791415" }
+first_sight = { text = "Gorgo. Pidätä henkeäsi ja väisty sen tieltä.", of = "791415" }
 
 [gorgon.attack.0]
 verb = { text = "puhkoo", of = "6bd394" }
@@ -1858,16 +1858,16 @@ verb = { text = "takoo", of = "a5c999" }
 you = { text = "taot", of = "ed5ab3" }
 
 [kobold.on_eat]
-message = { text = "Tämä koboldinliha maistuu kamalalta!", of = "600bb1" }
+message = { text = "Tämä kuontolaisen liha maistuu kamalalta!", of = "600bb1" }
 
 [kobold_alchemist.on_eat]
-message = { text = "Tämä koboldinliha maistuu kamalalta, ja lampunöljyltä!", of = "e083d5" }
+message = { text = "Tämä kuontolaisen liha maistuu kamalalta, ja lampunöljyltä!", of = "e083d5" }
 
 [kobold_alchemist.throw]
 verb = { text = "sinkoaa", of = "29f535" }
 
 [kobold_archer.on_eat]
-message = { text = "Tämä koboldinliha maistuu kamalalta!", of = "600bb1" }
+message = { text = "Tämä kuontolaisen liha maistuu kamalalta!", of = "600bb1" }
 
 [kobold_shaman.on_eat]
 message = { text = "Se maistuu kamalalta, ja karvailta yrteiltä.", of = "7bce80" }
@@ -2395,21 +2395,21 @@ verb = { text = "jyskyttää", of = "bc74c2" }
 you = { text = "jyskytät", of = "095c21" }
 
 [ogre.on_eat]
-message = { text = "Sitkeää, ja se haisee mörölle.", of = "ecf0c9" }
+message = { text = "Sitkeää, ja se haisee isohiselle.", of = "ecf0c9" }
 
 [ogre_mage.attack.0]
 verb = { text = "jyskyttää", of = "bc74c2" }
 you = { text = "jyskytät", of = "095c21" }
 
 [ogre_mage.on_eat]
-message = { text = "Se maistuu mörölle, ja jollekin karvaalle.", of = "9b450c" }
+message = { text = "Se maistuu isohiselle, ja jollekin karvaalle.", of = "9b450c" }
 
 [ogre_mauler.attack.0]
 verb = { text = "jyskyttää", of = "bc74c2" }
 you = { text = "jyskytät", of = "095c21" }
 
 [ogre_mauler.on_eat]
-message = { text = "Sitkeää, ja se haisee mörölle.", of = "ecf0c9" }
+message = { text = "Sitkeää, ja se haisee isohiselle.", of = "ecf0c9" }
 
 [ogre_zombie.attack.0]
 verb = { text = "moukaroi", of = "0f02ed" }
@@ -2569,7 +2569,7 @@ verb = { text = "puree", of = "bd3846" }
 you = { text = "puret", of = "624b7b" }
 
 [rotting_drake.on_eat]
-message = { text = "Lentoliskoa, ja läpimätää.", of = "d5456e" }
+message = { text = "Draakkia, ja läpimätää.", of = "d5456e" }
 
 [rotting_troll.attack.0]
 verb = { text = "kynsii", of = "46f960" }
@@ -2608,7 +2608,7 @@ verb = { text = "puree", of = "bd3846" }
 you = { text = "puret", of = "624b7b" }
 
 [sea_hag]
-first_sight = { text = "Merinoita-akka. Niin iljettävä katsoa, että sydän horjuu.", of = "15f757" }
+first_sight = { text = "Merisyöjätär. Niin iljettävä katsoa, että sydän horjuu.", of = "15f757" }
 
 [sea_hag.attack.0]
 verb = { text = "kynsii", of = "46f960" }
