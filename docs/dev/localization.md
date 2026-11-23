@@ -97,7 +97,8 @@ of which the last part inflects, is tested for shape, and sets the harmony:
 overrides the vowel rule for every word of the entry (`"oliivi|öljy/1"`, `harmony = "back"` →
 `oliiviöljyssa`). A `forms` table beside it overrides any generated form by its full name
 (`forms = { par = "hiittä", pl_gen_nsa = "…" }`). `proper = true` with no class makes the entry a
-name (below). An entry with no class at all is refused ("no class: write the Kotus class after a
+name (below); with classes (`"Musta/10 Wystan/5"`) it is a name whose words agree ("Mustaan
+Wystaniin") and that is never counted. An entry with no class at all is refused ("no class: write the Kotus class after a
 slash"), as is a class the module lacks, a letter outside A–M, a word whose last part does not fit
 its class's shape ("`karhu/9`: class 9 (kala) takes a word ending in a or ä"), a letter whose
 consonants the stem does not have ("gradation A (kk~k) needs kk before the last vowel of
@@ -128,15 +129,20 @@ everything else strong). 27, 28, and 40 gradate by themselves (`käsi` : `käden
 
 **Vowel harmony** (`inflect.rs::Harmony`): by the last back (a, o, u) or front (ä, ö, y) vowel of
 the inflecting part; a part with neither (`Hild`, `tie`) takes the front series, as Finnish does.
-Endings are written with `A`/`O`/`U` and resolved per word.
+The Old English letters count with their plain vowels (`ā ō ū` back, `ȳ æ ǣ` front, `ē ī`
+neutral: "Līctūnia", "Lytelscræfiä"; owner review 3). Endings are written with `A`/`O`/`U` and
+resolved per word.
 
-**Forms** (`Fi::forms`, 246 names): the fourteen cases `nom gen par ine ela ill ade abl all ess
+**Forms** (`Fi::forms`, 247 names): the fourteen cases `nom gen par ine ela ill ade abl all ess
 tra abe com ins` in the singular and, with `pl_`, the plural (`pl_gen`; `com` and `ins` are
 plural only and take no `pl_`), each with an optional possessive suffix `_ni _si _nsa _mme _nne`
 (`ade_si` "with your …", `pl_ill_nsa`; `ins` takes none), the total object `acc` (below, with
 `pl_` and the suffixes like a case), each singular case and `acc` again with `counted_` (below),
-and `bare`/`name` (the nominative, plural for a count over one, no numeral: "nuolet"), `counted`
-(= `counted_nom`: "kolme peikkoa", "13 nuolta"; one → the nominative), `num`, `ord`. **A count
+`bare`/`name` (the nominative, plural for a count over one, no numeral: "nuolet"), `counted`
+(= `counted_nom`: "kolme peikkoa", "13 nuolta"; one → the nominative), `loc` (a place's local
+case, "at the …": the adessive, "alasimella", "lähteellä", unless the word's `forms` say `loc =
+"ine"`, an interior, "vuorisolassa", "kaivoksessa"; `fi/mod.rs::LOC`, owner review 3), `num`,
+`ord`. **A count
 shows only where English shows one** (owner review 2, #2073): a **plain case of several** is the
 plural with no numeral, as English's `the` is ("the fetches": `{who:all}` "etiäisille",
 `{what:nom}` "nuolet", "syövyttävät kivesi"), and a **`counted_` case** puts the numeral first
@@ -208,10 +214,16 @@ label, a scroll's; `joissa` in the plural; a label that is a lexicon word is an 
 **Names** (`word.rs::name`): every `Word::Literal`, and a `proper = true` entry without a class,
 inflects as Finnish inflects a foreign name: the last word takes the endings, no gradation, no
 stem change, by a class its last letter picks (`-a` 9 `Hilda` : `Hildaa`, `Hildoja`; `-i` 5;
-`-e` 8 `Grim Bite` : `Grim Biteen`; `-o/-u/-y/-ö` 1; a long vowel 18 `Lee` : `Leehen`), and after
-a consonant the link vowel `i` as class 5 (`Bran` : `Branin`, `Braniin`, `Brania`; `Hild` :
-`Hildiä`). A name ending in a silent consonant (`Bordeaux`) gets no apostrophe unless its lexicon
-entry says `/22`. Capitals stay as written (`ZUNBARin`). A proper phrase is never counted.
+`-e` 8 `Grim Bite` : `Grim Biteen`; `-o/-u/-y/-ö` 1; a long vowel 18 whatever the length, doubled
+or one letter with a macron, `Lee` : `Leehen`, `Līgetdrȳ` : `Līgetdrȳn`, `Līgetdrȳtä`,
+`Līgetdrȳhyn`), and after a consonant the link vowel `i` as class 5 (`Bran` : `Branin`,
+`Braniin`, `Brania`; `Hild` : `Hildiä`; `Cēaptūn` : `Cēaptūniin`). The words before the last stay
+as written, since they are titles and appellatives ("kersantti Herrickiin", "Kehrääjä
+Āttorcoppea"); an epithet that is an adjective agrees with the name, so such a unique is a
+classed `proper` entry, `wystan = { word = "Musta/10 Wystan/5", proper = true }` ("Mustaan
+Wystaniin"; owner review 3). A name ending in a silent consonant (`Bordeaux`) gets no apostrophe
+unless its lexicon entry says `/22`. Capitals stay as written (`ZUNBARin`). A proper phrase is
+never counted.
 
 **Numbers and lists**: `num` says 0–12 in words by default (`number_words`, up to 19), digits
 beyond; `ord` 1–12 (`ensimmäinen` … `kahdestoista`), else "13."; lists join with ", " and `ja` /
@@ -1736,6 +1748,34 @@ the materials' explicit `gen` forms ("piikiven") are gone, since they hijacked t
 adjective's genitive ("piikivisen sidonnan käärö") and nothing said a material "of". A spirit
 weapon "of pale light" is made of spirit-stuff, so "kalpeasta valosta tehty" stands (in the game
 the shape is always a bare melee weapon).
+
+**Owner review 3 (#2074)**: a third rendered sample (`fi-review-3.md`), six corrections, each a
+class, swept over the files. **Names**: an adjective epithet is part of the name and agrees
+("Mustaan Wystaniin", "Mustan Wystanin ruumis", never "Musta Wystaniin"), where a title or an
+appellative stays ("kersantti Herrickiin", "Kehrääjä Āttorcoppea"), so the four uniques with one
+(Musta Wystan, Valkea Hrīmwyrm, Ontto Nihtscinna, Hautaamaton Wēalāf) are classed `proper` entries
+("Names", above) and their corpses say the genitive of both words. The Old English letters are
+vowels to the module: a macron vowel is long, so a name ending in one is class 18 with the `-hVn`
+illative ("Līgetdrȳn", "Līgetdrȳtä", "Līgetdrȳhyn", not "Līgetdrȳin"; the corpse "Līgetdrȳn
+ruumis"), and `ā ō ū` set the back series, `ȳ æ ǣ` the front ("Līctūnia", "Ælfhāmia",
+"Lytelscræfiä"; the hand-written "Holtwīcistä" became "Holtwīcista": o is the last back or front
+vowel). **The local case**: "at the station" is not one case for every station ("alasimella",
+"lähteellä", but "vuorisolassa", "kaivoksessa"), so the crafting lines say `{station:loc}` and
+the terrain words choose ("Forms"; `loc = "ine"` marks the interiors in `lexicon/terrain.toml`;
+in the shipped recipes the only station is the anvil). **Homographs**: the quiver is *viini* :
+*viinen* (class 26, "viineesi", "nuoliviinessä"), not the wine's *viinin*. **Number**: a pronoun
+after a collective or a single creature cannot be "he", so the encounter lines that followed
+`{party:bare}` with "He eivät ole huomanneet sinua" say "Sinua ei ole huomattu", and the pursuit
+lines ("He ovat huomanneet sinut", "He ovat liian lähellä", "Karistat heidät", "Muistat heidät",
+"He eivät mene lankaan") were reworded without the pronoun ("Sinut on huomattu", "Välimatka on
+liian pieni", "Karistat takaa-ajajat", "Muistat tämän joukon: pääsit siltä", "Kukaan ei mene
+lankaan"), as the party may be "koboldijoukko", "ilves", or "Wystanin jousimiehet"; a plural
+subject with the singular verb ("meripihka-amuletit maksaa") is restructured on a singular head,
+"Syöty tai ei, {what:gen} hinta on yhä {price:bare} kultaa" (`drunk_or_not` too); the sweep of
+the new sample added `epitaph_own`'s number variants ("omista loitsukirjoistaan", not "omasta")
+and `goes_for_throat`'s person variants ("käy kurkkuusi", the player's suffix, review 1's rule).
+The English templates with number variants all have their Finnish counterpart (checked file by
+file).
 
 ## Mods (L9)
 

@@ -35,10 +35,15 @@ use std::collections::BTreeMap;
 use word::Entry;
 
 /// The forms besides the cases: `bare` and `name` (the nominative, plural for a count over one),
-/// `counted` (the numeral and the partitive, [`COUNTED`] alone), `num`, `ord`. The total object
-/// `acc` (with `pl_` and a possessive suffix like a case) and the `counted_` cases are listed
-/// with the cases by [`Form::all`].
-pub const OTHER_FORMS: &[&str] = &["bare", "counted", "name", "num", "ord"];
+/// `counted` (the numeral and the partitive, [`COUNTED`] alone), `loc` (a place's local case,
+/// [`LOC`]), `num`, `ord`. The total object `acc` (with `pl_` and a possessive suffix like a
+/// case) and the `counted_` cases are listed with the cases by [`Form::all`].
+pub const OTHER_FORMS: &[&str] = &["bare", "counted", "loc", "name", "num", "ord"];
+
+/// The local case a place takes, "at the …" (owner review 3): the adessive ("alasimella",
+/// "lähteellä") unless the word's `forms` say `loc = "ine"`, the inessive for an interior
+/// ("vuorisolassa", "kaivoksessa"). A template says `{station:loc}` and the lexicon chooses.
+pub const LOC: &str = "loc";
 
 /// The total object's form name: the genitive for one thing ("tikarin"), the plural nominative
 /// for several or for a word plural in meaning or with no singular ("nuolet", "liekit",
@@ -273,6 +278,14 @@ impl Inflectable {
             .and_then(|e| e.form(plural, case, poss))
             .unwrap_or_else(|| self.fallback.clone())
     }
+}
+
+/// The case [`LOC`] stands for with `head`: `ine` when its lexicon entry's `forms` say
+/// `loc = "ine"`, else `ade`.
+fn local_case(head: &Word, lex: &dyn Lexicon) -> &'static str {
+    let interior = matches!(head, Word::Id(id)
+        if lex.word(id).is_some_and(|w| w.forms.get(LOC).is_some_and(|c| c == "ine")));
+    if interior { "ine" } else { "ade" }
 }
 
 fn form_name(plural: bool, case: Case, poss: Option<Poss>) -> String {
@@ -606,6 +619,11 @@ impl Morphology for Fi {
         lex: &dyn Lexicon,
         reg: &Register,
     ) -> Result<String, FormError> {
+        let form = if form == LOC {
+            local_case(&phrase.head, lex)
+        } else {
+            form
+        };
         let form = Form::parse(form).ok_or_else(|| FormError::UnknownForm(form.to_string()))?;
         let head = self.word(&phrase.head, lex);
         let proper = phrase.proper

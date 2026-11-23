@@ -267,6 +267,22 @@ fn names_inflect_like_the_oracle_and_the_design() {
     assert_eq!(form("Grim Bite", Case::Ill), "Grim Biteen");
     assert_eq!(form("Grim Bite", Case::Gen), "Grim Biten");
     assert_eq!(form("Lee", Case::Ill), "Leehen");
+    assert_eq!(
+        form("Tennessee", Case::Ill),
+        "Tennesseehen",
+        "a long vowel takes -hVn whatever the length"
+    );
+    // The Old English letters (owner review 3): a macron vowel is a long vowel and sets the
+    // harmony; `æ` is a front vowel; `ð` a consonant.
+    assert_eq!(form("Līgetdrȳ", Case::Gen), "Līgetdrȳn");
+    assert_eq!(form("Līgetdrȳ", Case::Par), "Līgetdrȳtä");
+    assert_eq!(form("Līgetdrȳ", Case::Ill), "Līgetdrȳhyn");
+    assert_eq!(form("Līctūn", Case::Par), "Līctūnia", "ū is a back vowel");
+    assert_eq!(form("Ælfhām", Case::Par), "Ælfhāmia", "ā is a back vowel");
+    assert_eq!(form("Bānfeld", Case::Ine), "Bānfeldissa");
+    assert_eq!(form("Lytelscræf", Case::Par), "Lytelscræfiä", "æ is front");
+    assert_eq!(form("Ælfswīð", Case::Gen), "Ælfswīðin");
+    assert_eq!(form("Āttorcoppe", Case::Par), "Āttorcoppea");
     assert_eq!(form("Tero", Case::Par), "Teroa");
     assert_eq!(form("ZUNBAR", Case::Gen), "ZUNBARin");
     assert_eq!(form("", Case::Gen), "");
@@ -298,7 +314,15 @@ fn lexicon() -> MapLexicon {
         .with("creature:bear", LexWord::new("karhu/1"))
         .with(
             "creature:black_wystan",
-            LexWord::new("Musta Wystan").proper(true),
+            LexWord::new("Musta/10 Wystan/5").proper(true),
+        )
+        .with(
+            "creature:herrick",
+            LexWord::new("kersantti Herrick").proper(true),
+        )
+        .with(
+            "creature:ligetdry",
+            LexWord::new("Myrskyntakoja Līgetdrȳ").proper(true),
         )
         .with("creature:wolves", LexWord::new("susi/27"))
         .with("affix:flaming", LexWord::new("liekehtivä/10"))
@@ -442,13 +466,29 @@ fn creatures_names_and_the_player() {
     let wystan = Phrase::id("creature:black_wystan");
     assert_eq!(
         form(&wystan, "gen"),
-        "Musta Wystanin",
-        "a proper entry: name rules"
+        "Mustan Wystanin",
+        "a proper entry with classes: the epithet agrees (owner review 3)"
     );
+    assert_eq!(form(&wystan, "ill"), "Mustaan Wystaniin");
+    assert_eq!(form(&wystan, "par"), "Mustaa Wystania");
     assert_eq!(
         form(&wystan.clone().count(2), "nom"),
         "Musta Wystan",
         "not counted"
+    );
+    let herrick = Phrase::id("creature:herrick");
+    assert_eq!(
+        form(&herrick, "ill"),
+        "kersantti Herrickiin",
+        "a title stays as written: name rules"
+    );
+    let ligetdry = Phrase::id("creature:ligetdry");
+    assert_eq!(form(&ligetdry, "gen"), "Myrskyntakoja Līgetdrȳn");
+    assert_eq!(form(&ligetdry, "par"), "Myrskyntakoja Līgetdrȳtä");
+    assert_eq!(
+        form(&ligetdry, "ill"),
+        "Myrskyntakoja Līgetdrȳhyn",
+        "a macron vowel is a long vowel: class 18, no link vowel"
     );
     let hild = Phrase::literal("Hild").gender(Gender::Female);
     assert_eq!(form(&hild, "all"), "Hildille");
@@ -516,7 +556,7 @@ fn a_total_object_is_the_genitive_for_one_and_the_numeral_with_the_partitive_for
     assert_eq!(form(&you, "acc"), "sinut");
     assert_eq!(
         form(&Phrase::id("creature:black_wystan"), "acc"),
-        "Musta Wystanin"
+        "Mustan Wystanin"
     );
     assert_eq!(form(&Phrase::literal("Cēaptūn"), "acc"), "Cēaptūnin");
     // A word plural in meaning or with no singular: the nominative, as a total object is.
@@ -607,6 +647,11 @@ fn place_names_take_their_cases() {
         .with(
             "place:level.ceaptun.legend.N",
             LexWord::new("palkkio|taulu/1"),
+        )
+        .with("terrain:anvil", LexWord::new("alasin/33"))
+        .with(
+            "terrain:mountain_pass",
+            LexWord::new("vuori|sola/10").form("loc", "ine"),
         );
     let fi = Fi::default();
     let reg = Register::default();
@@ -614,12 +659,27 @@ fn place_names_take_their_cases() {
         fi.phrase(&Phrase::id(id), f, &lex, &reg)
             .unwrap_or_else(|e| panic!("{f}: {e}"))
     };
+    // The local case (owner review 3): the adessive unless the entry says `loc = "ine"`.
+    assert_eq!(form("terrain:anvil", "loc"), "alasimella");
+    assert_eq!(form("terrain:mountain_pass", "loc"), "vuorisolassa");
+    assert_eq!(form("terrain:mountain_pass", "ade"), "vuorisolalla");
+    assert_eq!(
+        fi.phrase(&Phrase::literal("Fennmynster"), "loc", &lex, &reg),
+        Ok("Fennmynsterillä".into()),
+        "a literal: the adessive"
+    );
+    assert!(fi.forms().iter().any(|f| f == "loc"));
     assert_eq!(form("place:level.ceaptun", "ill"), "Cēaptūniin");
     assert_eq!(form("place:level.ceaptun", "ine"), "Cēaptūnissa");
     assert_eq!(form("place:level.ceaptun", "ela"), "Cēaptūnista");
     assert_eq!(form("place:dungeon.lytelscraef", "ill"), "Lytelscræfiin");
     assert_eq!(form("place:dungeon.lytelscraef", "gen"), "Lytelscræfin");
     assert_eq!(form("place:level.holtwic", "ill"), "Holtwīciin");
+    assert_eq!(
+        form("place:level.holtwic", "ela"),
+        "Holtwīcista",
+        "o is the last back or front vowel: the back series"
+    );
     assert_eq!(
         form("place:level.ceaptun.legend.N", "ill"),
         "palkkiotauluun"
@@ -1072,10 +1132,11 @@ fn forms_numbers_and_lists() {
         "counted_ill",
         "counted_acc",
         "counted_acc_si",
+        "loc",
     ] {
         assert!(forms.iter().any(|f| f == name), "{name} listed");
     }
-    assert_eq!(forms.len(), 5 + 13 * 3 * 6 + 6 + 1);
+    assert_eq!(forms.len(), 6 + 13 * 3 * 6 + 6 + 1);
     let sword = Phrase::id("object:long_sword");
     for name in &forms {
         fi.phrase(&sword, name, &lexicon(), &reg)

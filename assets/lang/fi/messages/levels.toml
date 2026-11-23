@@ -43,16 +43,16 @@ go_to_meet = { text = "Menet {party:par} vastaan.", of = "c6ad1f" }
 go_under = { text = "Vajoat pinnan alle ja tukehdut.", of = "97530f" }
 ice_creaks = { text = "Jää narisee painosi alla.", of = "b4de97" }
 keep_your_head = { text = "Pysyt rauhallisena, eikä kylmä pure yhtä syvältä.", of = "6856a8" }
-known = { text = "Muistat heidät: pääsit heiltä pakoon täällä ennenkin.", of = "0eaa44" }
+known = { text = "Muistat tämän joukon: pääsit siltä pakoon täällä ennenkin.", of = "0eaa44" }
 # `boss`: the layer boss slain.
 lair_opens = { text = "Nyt kun {boss:nom} on kuollut, lattiaan aukeavat portaat.", of = "614f65" }
 # `what`: the player's light, theirs.
 light_goes_out = { by = "what.number", one = "{what:Nom} sammuu.", many = "{what:Nom} sammuvat.", of = "54e802" }
-lose_them_byways = { text = "Karistat heidät kannoiltasi sivupoluilla.", of = "a2a3e1" }
-lose_them_grass = { text = "Karistat heidät kannoiltasi korkeassa heinikossa.", of = "a2c8c7" }
-lose_them_hills = { text = "Karistat heidät kannoiltasi kukkuloilla.", of = "9c58bd" }
-lose_them_marsh = { text = "Karistat heidät kannoiltasi suolla.", of = "f34f20" }
-lose_them_woods = { text = "Karistat heidät kannoiltasi metsässä.", of = "bbc6f9" }
+lose_them_byways = { text = "Karistat takaa-ajajat kannoiltasi sivupoluilla.", of = "a2a3e1" }
+lose_them_grass = { text = "Karistat takaa-ajajat kannoiltasi korkeassa heinikossa.", of = "a2c8c7" }
+lose_them_hills = { text = "Karistat takaa-ajajat kannoiltasi kukkuloilla.", of = "9c58bd" }
+lose_them_marsh = { text = "Karistat takaa-ajajat kannoiltasi suolla.", of = "f34f20" }
+lose_them_woods = { text = "Karistat takaa-ajajat kannoiltasi metsässä.", of = "bbc6f9" }
 # `place`: the hidden location found on the way out.
 mark_found = { text = "Merkitset karttaasi {place:acc}.", of = "d75c81" }
 # A dev action's: `place`, the hidden location.
@@ -69,12 +69,12 @@ no_secret_dev = { text = "{place:Nom} ei ole enää salaisuus.", of = "21eeef" }
 no_way_down = { text = "Täältä ei näy tietä alas.", of = "80b1d3" }
 no_way_up = { text = "Täältä ei näy tietä ylös.", of = "e6bc67" }
 not_a_choice = { text = "Se ei ole nyt vaihtoehto.", of = "e6207b" }
-not_fooled = { text = "He eivät mene lankaan.", of = "ed40a1" }
+not_fooled = { text = "Kukaan ei mene lankaan.", of = "ed40a1" }
 nothing_to_decide = { text = "Ei ole mitään päätettävää.", of = "50e887" }
 nothing_to_explore = { text = "Täällä ei ole mitään tutkittavaa.", of = "f9478c" }
 # A dev action's: `place`, the level arrived on.
 on_dev = { text = "Olet {place:ine} (dev).", of = "f7a5ab" }
-onto_you = { text = "He ovat huomanneet sinut.", of = "cfc7d6" }
+onto_you = { text = "Sinut on huomattu.", of = "cfc7d6" }
 pending_refused = { text = "Sinun on päätettävä, mitä teet heidän suhteensa.", of = "3cdfba" }
 pit_shudders = { text = "Kuilu vavahtaa. Kaukana ylhäällä kivi hankaa kiveä.", of = "ee910a" }
 plunge = { text = "Jää murtuu altasi, ja syöksyt jäätävään veteen!", of = "cf6a59" }
@@ -96,9 +96,9 @@ slip_away_unseen = { text = "Livahdat pois huomaamatta.", of = "906a8e" }
 # `what`: the paper item, the player's.
 soaked = { by = "what.number", one = "{what:Nom} kastuu läpimäräksi ja pilaantuu.", many = "{what:Nom} kastuvat läpimäriksi ja pilaantuvat.", of = "7c97a0" }
 # `party`, seen first; where, as the land runs.
-spot_ahead = { text = "Edessäpäin on {party:bare}. He eivät ole huomanneet sinua.", of = "b067ce" }
-spot_on_road = { text = "Tiellä edessäpäin on {party:bare}. He eivät ole huomanneet sinua.", of = "b3e85e" }
-spot_on_trail = { text = "Polulla edessäpäin on {party:bare}. He eivät ole huomanneet sinua.", of = "227dc7" }
+spot_ahead = { text = "Edessäpäin on {party:bare}. Sinua ei ole huomattu.", of = "b067ce" }
+spot_on_road = { text = "Tiellä edessäpäin on {party:bare}. Sinua ei ole huomattu.", of = "b3e85e" }
+spot_on_trail = { text = "Polulla edessäpäin on {party:bare}. Sinua ei ole huomattu.", of = "227dc7" }
 stair_crumbles = { text = "Portaat murenevat soraksi takanasi.", of = "d06c2a" }
 staircase_down_here = { text = "Täällä on portaat alas.", of = "858d21" }
 staircase_up_here = { text = "Täällä on portaat ylös.", of = "645f14" }
@@ -115,7 +115,7 @@ thaw_dev = { text = "Kuumuus sulattaa jään kohdan {x:bare},{y:bare} ympärilt�
 # The encounter's dialog text for a party met again: `told`, how it was met, and `known`, the
 # line that remembers it, both as said.
 told_known = { text = "{told:bare} {known:bare}", of = "ea02e0" }
-too_close = { text = "He ovat liian lähellä, jotta voisit livahtaa pois.", of = "991121" }
+too_close = { text = "Välimatka on liian pieni, jotta voisit livahtaa pois.", of = "991121" }
 wait_in_cover = { text = "Odotat suojassa.", of = "bd0f50" }
 wake_at_camp = { text = "Herätessäsi leirissäsi on {party:bare}.", of = "4a67c1" }
 wake_close_by = { text = "Heräät ääniin: leirisi lähellä on {party:bare}.", of = "8ba66c" }

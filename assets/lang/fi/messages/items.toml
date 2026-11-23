@@ -79,7 +79,7 @@ put_on_both_hands = { text = "Puet {what:counted_acc} molempiin käsiisi.", of =
 ready = { text = "Otat {what:counted_acc} valmiiksi.", of = "22ec8a" }
 ready_both_hands = { text = "Otat {what:counted_acc} valmiiksi molempiin käsiisi.", of = "103192" }
 # `what`: the ammunition that went into the quiver by itself.
-ready_in_quiver = { text = "Panet {what:counted_acc} valmiiksi viiniisi.", of = "fa0d3b" }
+ready_in_quiver = { text = "Panet {what:counted_acc} valmiiksi viineesi.", of = "fa0d3b" }
 # `what`: a worn ring, the player's.
 slips_from_finger = { by = "what.number", one = "{what:Nom} luiskahtaa sormesta, jota ei enää ole.", many = "{what:Nom} luiskahtavat sormesta, jota ei enää ole.", of = "0eb329" }
 strain_under_load = { text = "Ponnistelet kuormasi alla.", of = "7ca7f8" }

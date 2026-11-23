@@ -1,19 +1,21 @@
 # Terrain (`terrain:<id>`): Cēaptūn's streets and houses, Lytelscræf's caves and their ore veins
-# first, then the rest of the game.
+# first, then the rest of the game. `loc = "ine"` marks an interior, which "at the …" says in the
+# inessive ("vuorisolassa", "kaivoksessa"); the rest take the adessive ("alasimella", "tiellä")
+# (`{station:loc}`; `docs/dev/localization.md` "Forms").
 altar = "alttari/6"
 anvil = "alasin/33"
-bed = "vuode/48*F"
+bed = { word = "vuode/48*F", forms = { loc = "ine" } }
 brazier = "hiili|pannu/1"
 burning_doorway = "palava/10 oviaukko/1*A"
 burning_grass = "palava/10 ruoho/1"
 burning_wood = "palava/10 hirsi/28"
-bush = "pensas/41"
+bush = { word = "pensas/41", forms = { loc = "ine" } }
 cave_mouth = "luolan|suu/18"
-chest = "arkku/1*A"
-chest_open = "avoin/33 arkku/1*A"
-chest_smashed = "rikottu/1*C arkku/1*A"
+chest = { word = "arkku/1*A", forms = { loc = "ine" } }
+chest_open = { word = "avoin/33 arkku/1*A", forms = { loc = "ine" } }
+chest_smashed = { word = "rikottu/1*C arkku/1*A", forms = { loc = "ine" } }
 cracked_floor = "halkeillut/47 lattia/12"
-dead_tree = "kuollut/47 puu/18"
+dead_tree = { word = "kuollut/47 puu/18", forms = { loc = "ine" } }
 dirt_road = "hiekka|tie/19"
 door_broken = "särkynyt/47 ovi/7"
 door_closed = "suljettu/1*C ovi/7"
@@ -28,52 +30,52 @@ granite = "graniitti/5*C"
 grass = "ruoho/1"
 packed_earth = "tallattu/1*C maa/18"
 plank_floor = "lauta|lattia/12"
-rocky_ground = "kivikko/4*A"
-rubble = "kivi|murska/10"
-running_water = "virtaava/10 vesi/27"
+rocky_ground = { word = "kivikko/4*A", forms = { loc = "ine" } }
+rubble = { word = "kivi|murska/10", forms = { loc = "ine" } }
+running_water = { word = "virtaava/10 vesi/27", forms = { loc = "ine" } }
 sconce = "seinä|soihtu/1*F"
 scorched_earth = "kärventynyt/47 maa/18"
-shallow_water = "matala/10 vesi/27"
+shallow_water = { word = "matala/10 vesi/27", forms = { loc = "ine" } }
 stairs_down = { word = "porras/41*K alas", plural_only = true }
 stairs_up = { word = "porras/41*K ylös", plural_only = true }
 standing_stone = "pysty|kivi/7"
 stool = "jakkara/12"
 table = "pöytä/10*F"
-tall_grass = "heinikko/4*A"
+tall_grass = { word = "heinikko/4*A", forms = { loc = "ine" } }
 timber_wall = "hirsi|seinä/10"
-town = "kaupunki/5*G"
-tree = "puu/18"
+town = { word = "kaupunki/5*G", forms = { loc = "ine" } }
+tree = { word = "puu/18", forms = { loc = "ine" } }
 vein_copper = "kupari|malmi|suoni/26"
 vein_iron = "rauta|malmi|suoni/26"
 vein_tin = "tina|malmi|suoni/26"
 void = "kallio/3"
 wall = "kivi|seinä/10"
-water = "seisova/10 vesi/27"
+water = { word = "seisova/10 vesi/27", forms = { loc = "ine" } }
 # The rest of the game: the overworld, the dungeons' fixtures, and the towers.
 acid_pit = "hapon syövyttämä/10 lattia/12"
-air = "tyhjä/10 ilma/10"
+air = { word = "tyhjä/10 ilma/10", forms = { loc = "ine" } }
 barrow = "hauta|kumpu/1*H"
 bluebells = { word = "sini|kello/2", many = true }
 bone_wall = "luu|muuri/5"
 boulder = "lohkare/48"
 bridge = "silta/9*I"
-burning_bush = "palava/10 pensas/41"
-burning_tree = "palava/10 puu/18"
+burning_bush = { word = "palava/10 pensas/41", forms = { loc = "ine" } }
+burning_tree = { word = "palava/10 puu/18", forms = { loc = "ine" } }
 burning_web = "palava/10 seitti/5*C"
-burnt_tree = "hiiltynyt/47 puu/18"
+burnt_tree = { word = "hiiltynyt/47 puu/18", forms = { loc = "ine" } }
 buttercups = { word = "leinikki/5*A", many = true }
 candles = "kynttilän|jalka/9*D"
 crag = "kallio|paljastuma/10"
 crystal = "valo|kristalli/5"
 crystal_portal = "kristalli|portti/5*C"
-deep_water = "syvä/10 vesi/27"
-dense_forest = "tiheä/15 metsä/10"
+deep_water = { word = "syvä/10 vesi/27", forms = { loc = "ine" } }
+dense_forest = { word = "tiheä/15 metsä/10", forms = { loc = "ine" } }
 dry_grass = "kuiva/10 ruoho/1"
 drystone_wall = "kivi|aita/9*F"
 dungeon_entrance = "luolaston sisään|käynti/5*J"
-empty_niche = "tyhjä/10 syvennys/39"
+empty_niche = { word = "tyhjä/10 syvennys/39", forms = { loc = "ine" } }
 ford = "kahlaamo/2"
-forest = "metsä/10"
+forest = { word = "metsä/10", forms = { loc = "ine" } }
 forest_floor = "metsän|pohja/10"
 forgotten_altar = "unohdettu/1*C alttari/6"
 fountain = "suihku|lähde/48*F"
@@ -82,30 +84,30 @@ gate_open = "avoin/33 portti/5*C"
 gazebo_floor = "huvimajan lattia/12"
 gazebo_post = "puu|pylväs/41"
 grassland = "niitty/1*C"
-grave_plot = "tyhjä/10 hauta/9*F"
+grave_plot = { word = "tyhjä/10 hauta/9*F", forms = { loc = "ine" } }
 gravestone = "hauta|kivi/7"
 graveyard = "hautaus|maa/18"
-hall = "sali/5"
+hall = { word = "sali/5", forms = { loc = "ine" } }
 hills = "mäki|maa/18"
 ice = "jää/18"
-lake = "syvä/10 vesi/27"
-lava = "laava/10"
+lake = { word = "syvä/10 vesi/27", forms = { loc = "ine" } }
+lava = { word = "laava/10", forms = { loc = "ine" } }
 makeshift_anvil = "kyhätty/1*C alasin/33"
 marsh = "räme/48"
-mine = "kaivos/39"
-mountain_pass = "vuori|sola/10"
-mountains = "vuoristo/2"
-open_sarcophagus = "avoin/33 sarkofagi/5"
+mine = { word = "kaivos/39", forms = { loc = "ine" } }
+mountain_pass = { word = "vuori|sola/10", forms = { loc = "ine" } }
+mountains = { word = "vuoristo/2", forms = { loc = "ine" } }
+open_sarcophagus = { word = "avoin/33 sarkofagi/5", forms = { loc = "ine" } }
 parapet = "rinta|varustus/39"
 petrified = "patsas/41"
 picked_fungus = "poimittu/1*C sieni/26"
-pine = "mänty/1*J"
+pine = { word = "mänty/1*J", forms = { loc = "ine" } }
 plains = "tasanko/1*G"
-reeds = "kaislikko/4*A"
-river = "joki/7*D"
+reeds = { word = "kaislikko/4*A", forms = { loc = "ine" } }
+river = { word = "joki/7*D", forms = { loc = "ine" } }
 road = "tie/19"
-sarcophagus = "sarkofagi/5"
-sealed_niche = "umpeen muurattu/1*C syvennys/39"
+sarcophagus = { word = "sarkofagi/5", forms = { loc = "ine" } }
+sealed_niche = { word = "umpeen muurattu/1*C syvennys/39", forms = { loc = "ine" } }
 shelves = { word = "hylly/1", many = true }
 shrine_stone = "pyhä|kivi/7"
 spent_altar = "ehtynyt/47 alttari/6"
@@ -114,7 +116,7 @@ statue = "kulunut/47 patsas/41"
 swamp = "suo/19"
 thick_ice = "paksu/1 jää/18"
 thin_ice = "ohut/43 jää/18"
-tower = "torni/5"
+tower = { word = "torni/5", forms = { loc = "ine" } }
 tower_floor = "torni|lattia/12"
 tower_wall = "torni|muuri/5"
 uv_rune = "himmeä/15 riimu/1"
@@ -124,7 +126,7 @@ vein_mithril = "mithril|malmi|suoni/26"
 vein_silver = "hopea|malmi|suoni/26"
 vein_zinc = "sinkki|malmi|suoni/26"
 volcano = "tuli|vuori/26"
-weapon_rack = "ase|teline/48"
-web = { word = "seitti/5*C", many = true }
-window = "ikkuna/12"
+weapon_rack = { word = "ase|teline/48", forms = { loc = "ine" } }
+web = { word = "seitti/5*C", many = true, forms = { loc = "ine" } }
+window = { word = "ikkuna/12", forms = { loc = "ine" } }
 workbench = "työ|penkki/5*A"

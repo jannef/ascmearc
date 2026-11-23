@@ -25,7 +25,8 @@ familiar_back = { text = "{name:Nom}, {kind:nom_si}, palaa luoksesi pimeydestä.
 familiar_heels = { text = "{name:Nom}, {kind:nom_si}, pysyttelee kintereilläsi.", of = "7197b3" }
 familiar_lives = { text = "Apurieläimesi elää yhä.", of = "837c0f" }
 fasten_collar = { text = "Kiinnität {what:acc} {who:gen} kaulaan.", of = "69e1db" }
-goes_for_throat = { text = "{who:Nom} käy {target:gen} kurkkuun.", of = "8dde65" }
+# The player's throat takes the suffix ("kurkkuusi"), another's the genitive.
+goes_for_throat = { by = "target.person", you = "{who:Nom} käy kurkkuusi.", other = "{who:Nom} käy {target:gen} kurkkuun.", of = "8dde65" }
 growls_at_the_dark = { text = "{who:Nom} murisee pimeydelle.", of = "c32ed6" }
 grows_stronger = { text = "{who:Nom} vahvistuu.", of = "d4c779" }
 has_seen_you = { text = "{who:Nom} on nähnyt sinut: sitä ei voi nyt kesyttää.", of = "6aeeed" }

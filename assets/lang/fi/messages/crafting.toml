@@ -150,8 +150,9 @@ must_choose_gem = { text = "Sinun on valittava jalokivi.", of = "e7bebb" }
 must_choose_item = { text = "Sinun on valittava esine.", of = "8c4d22" }
 must_know_first = { text = "Sinun on ensin tiedettävä, mitä siihen on sidottu.", of = "1ec8fb" }
 need_an_anvil = { text = "Et voi korjata sitä täällä; siihen tarvitaan alasin.", of = "e4bd59" }
-# `skill`: the profession's name; `station`: the anvil's terrain.
-need_skill_at = { text = "Tarvitset {skill:gen} taitoa työskennelläksesi {station:ade}.", of = "b28a4d" }
+# `skill`: the profession's name; `station`: the anvil's terrain, in its local case (`loc`:
+# "alasimella", "vuorisolassa"; `docs/dev/localization.md` "Forms").
+need_skill_at = { text = "Tarvitset {skill:gen} taitoa työskennelläksesi {station:loc}.", of = "b28a4d" }
 no_anvil_here = { text = "Täällä ei ole alasinta.", of = "4411e7" }
 no_craft_to_mend = { text = "Et osaa mitään taitoa, jolla sen voisi korjata.", of = "7fb575" }
 no_crystal = { text = "Se ei ole kristalli.", of = "5274b5" }
@@ -243,7 +244,7 @@ set_to_mending = { text = "Ryhdyt korjaamaan {item:par}.", of = "6e07f5" }
 # `what`: what is made (several: the plural).
 set_to_work = { by = "what.number", one = "Ryhdyt työstämään {what:par}.", many = "Ryhdyt työstämään {what:pl_par}.", of = "79a297" }
 # `what`: as `set_to_work`'s; `station`: the station beside the player.
-set_to_work_at = { by = "what.number", one = "Ryhdyt työstämään {what:par} {station:ade}.", many = "Ryhdyt työstämään {what:pl_par} {station:ade}.", of = "a646db" }
+set_to_work_at = { by = "what.number", one = "Ryhdyt työstämään {what:par} {station:loc}.", many = "Ryhdyt työstämään {what:pl_par} {station:loc}.", of = "a646db" }
 # `rig`: the rig's name.
 set_to_work_on_rig = { text = "Ryhdyt virittämään {rig:counted_par}.", of = "7b88b9" }
 # `gem`: the gem's material.

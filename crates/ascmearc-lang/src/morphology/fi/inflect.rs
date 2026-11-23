@@ -47,6 +47,9 @@ impl Harmony {
     }
 }
 
+/// The vowels, with the accented ones a foreign name carries and the Old English letters (the
+/// long `ā ē ī ō ū ȳ ǣ` and `æ`: `Līgetdrȳ`, `Lytelscræf`; owner review 3). Non-ASCII capitals
+/// are listed, as `to_ascii_lowercase` leaves them.
 pub(super) fn is_vowel(c: char) -> bool {
     matches!(
         c.to_ascii_lowercase(),
@@ -65,23 +68,53 @@ pub(super) fn is_vowel(c: char) -> bool {
             | 'ó'
             | 'ú'
             | 'ü'
-    ) || matches!(c, 'Ä' | 'Ö' | 'Å' | 'É' | 'Ü')
+            | 'æ'
+    ) || matches!(c, 'Ä' | 'Ö' | 'Å' | 'É' | 'Ü' | 'Æ')
+        || is_long_vowel(c)
+}
+
+/// A long vowel written as one letter: the Old English macron vowels and `ǣ`.
+pub(super) fn is_long_vowel(c: char) -> bool {
+    matches!(
+        c,
+        'ā' | 'ē' | 'ī' | 'ō' | 'ū' | 'ȳ' | 'ǣ' | 'Ā' | 'Ē' | 'Ī' | 'Ō' | 'Ū' | 'Ȳ' | 'Ǣ'
+    )
 }
 
 fn is_back(c: char) -> bool {
     matches!(
         c,
-        'a' | 'o' | 'u' | 'å' | 'á' | 'à' | 'ó' | 'ú' | 'A' | 'O' | 'U' | 'Å'
+        'a' | 'o'
+            | 'u'
+            | 'å'
+            | 'á'
+            | 'à'
+            | 'ó'
+            | 'ú'
+            | 'ā'
+            | 'ō'
+            | 'ū'
+            | 'A'
+            | 'O'
+            | 'U'
+            | 'Å'
+            | 'Ā'
+            | 'Ō'
+            | 'Ū'
     )
 }
 
 fn is_front(c: char) -> bool {
-    matches!(c, 'ä' | 'ö' | 'y' | 'ü' | 'Ä' | 'Ö' | 'Y' | 'Ü')
+    matches!(
+        c,
+        'ä' | 'ö' | 'y' | 'ü' | 'ȳ' | 'æ' | 'ǣ' | 'Ä' | 'Ö' | 'Y' | 'Ü' | 'Ȳ' | 'Æ' | 'Ǣ'
+    )
 }
 
-/// Whether `word` ends in a long vowel (two equal vowels).
+/// Whether `word` ends in a long vowel: two equal vowels, or one letter with a macron (`ȳ`).
 pub(super) fn ends_in_long_vowel(word: &[char]) -> bool {
     match word {
+        [.., c] if is_long_vowel(*c) => true,
         [.., a, b] => is_vowel(*a) && a.eq_ignore_ascii_case(b),
         _ => false,
     }
@@ -126,17 +159,20 @@ pub(super) fn text(word: &[char]) -> String {
 }
 
 /// The vowel an illative `-hVn` or a lengthening `-Vn` copies: the stem's last vowel, with an
-/// accented letter read as its plain one (`rosé` → `roséhen`); `i` when the stem has none.
+/// accented or long letter read as its plain one (`rosé` → `roséhen`, `Līgetdrȳ` →
+/// `Līgetdrȳhyn`); `i` when the stem has none.
 pub(super) fn last_vowel(word: &[char]) -> char {
     word.iter()
         .rev()
         .find(|c| is_vowel(**c))
         .map_or('i', |c| match c.to_ascii_lowercase() {
-            'é' | 'è' => 'e',
-            'á' | 'à' => 'a',
-            'å' | 'ó' => 'o',
-            'ú' => 'u',
-            'ü' => 'y',
+            'é' | 'è' | 'ē' | 'Ē' => 'e',
+            'á' | 'à' | 'ā' | 'Ā' => 'a',
+            'å' | 'ó' | 'ō' | 'Ō' => 'o',
+            'ú' | 'ū' | 'Ū' => 'u',
+            'ü' | 'ȳ' | 'Ȳ' => 'y',
+            'ī' | 'Ī' => 'i',
+            'æ' | 'ǣ' | 'Æ' | 'Ǣ' => 'ä',
             other => other,
         })
 }
