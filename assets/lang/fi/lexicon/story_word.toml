@@ -20,7 +20,7 @@
 "data.parents.market_stall.trade" = "koju/1"
 "data.parents.miners_child.guardian" = "äiti/5*F"
 "data.parents.miners_child.trade" = "kaivos/39"
-"data.parents.nobodys_child.guardian" = "sinut ottanut nainen/38"
+"data.parents.nobodys_child.guardian" = "sinut ottanut/47 nainen/38"
 "data.parents.old_money.home" = "talo/1"
 "data.parents.scholars_child.guardian" = "äiti/5*F"
 "data.parents.scholars_child.trade" = { word = "kirja/9", plural_only = true }

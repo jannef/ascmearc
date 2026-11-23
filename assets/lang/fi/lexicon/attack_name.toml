@@ -1,5 +1,5 @@
 # A creature type's natural attacks by name (`attack_name:<creature>.<n>`, n from 0).
-"air_elemental.0" = "tuulen|puuska/9"
+"air_elemental.0" = "tuulen|puuska/10"
 "animated_armour_12.0" = { word = "rauta|kinnas/41*J", many = true }
 "animated_armour_13.0" = { word = "rauta|kinnas/41*J", many = true }
 "animated_armour_14.0" = { word = "rauta|kinnas/41*J", many = true }
@@ -24,7 +24,7 @@
 "animated_armour_33.0" = { word = "rauta|kinnas/41*J", many = true }
 "animated_armour_34.0" = { word = "rauta|kinnas/41*J", many = true }
 "animated_armour_35.0" = { word = "rauta|kinnas/41*J", many = true }
-"animated_bellows.0" = "puuska/9"
+"animated_bellows.0" = "puuska/10"
 "animated_book.0" = { word = "kansi/28", many = true }
 "animated_broom.0" = "varsi/28"
 "animated_bucket.0" = "reuna/9"
@@ -77,7 +77,7 @@
 "bone_dragon.0" = { word = "kynsi/28", many = true }
 "bone_drake.0" = { word = "kynsi/28", many = true }
 "bone_wyvern.0" = "pisto/1"
-"bound_squall.0" = "tuulen|puuska/9"
+"bound_squall.0" = "tuulen|puuska/10"
 "brass_peacock.0" = "nokka/10*A"
 "brimwolf.0" = "aalto/1*I"
 "burning_skull.0" = "puraisu/2"
@@ -132,7 +132,7 @@
 "duergar_skeleton.0" = "kynsi/28"
 "duergar_spider_rider.0" = "hämähäkin puraisu/2"
 "earth_elemental.0" = "nyrkki/5*A"
-"elder_air_elemental.0" = "tuulen|puuska/9"
+"elder_air_elemental.0" = "tuulen|puuska/10"
 "elder_earth_elemental.0" = "nyrkki/5*A"
 "elder_fire_elemental.0" = "kosketus/39"
 "elder_ice_elemental.0" = "nyrkki/5*A"
@@ -181,7 +181,7 @@
 "grave_knight.0" = "isku/1"
 "grave_worm.0" = "puraisu/2"
 "great_boar.0" = { word = "syöksy|hammas/41*H", many = true }
-"greater_air_elemental.0" = "tuulen|puuska/9"
+"greater_air_elemental.0" = "tuulen|puuska/10"
 "greater_earth_elemental.0" = "nyrkki/5*A"
 "greater_fire_elemental.0" = "kosketus/39"
 "greater_ice_elemental.0" = "nyrkki/5*A"
@@ -223,7 +223,7 @@
 "korred.0" = "nyrkki/5*A"
 "large_spider.0" = "puraisu/2"
 "lemure.0" = { word = "kynsi/28", many = true }
-"lesser_air_elemental.0" = "tuulen|puuska/9"
+"lesser_air_elemental.0" = "tuulen|puuska/10"
 "lesser_earth_elemental.0" = "nyrkki/5*A"
 "lesser_fire_elemental.0" = "kosketus/39"
 "lesser_ice_elemental.0" = "nyrkki/5*A"
@@ -380,7 +380,7 @@
 "washer_at_the_ford.0" = "kosketus/39"
 "water_elemental.0" = "aalto/1*I"
 "wealaf.0" = "kumpu|miekka/9*A"
-"welkin_wind.0" = "tuulen|puuska/9"
+"welkin_wind.0" = "tuulen|puuska/10"
 "white_lady.0" = "kosketus/39"
 "wight_lord.0" = "kosketus/39"
 "wild_huntsman.0" = "isku/1"

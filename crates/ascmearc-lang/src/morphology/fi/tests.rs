@@ -977,6 +977,62 @@ fn harmony_compounds_and_agreement() {
     assert_eq!(form(&two, "pl_gen"), "pitkien miekkojen");
 }
 
+/// The classes the grammar hunt (owner review 4) corrected in the lexicon, each at the form
+/// that showed the slip: a two-syllable *-a* word is class 9 with **a, e, i** in its first
+/// syllable (*vanhoja*) and class 10 with **o, u** (*kuivia*, *puuskia*); an agent noun in
+/// *-aja/-äjä* is class 10 (*virittäjiä*), one in *-ija/-ijä* class 12 (*itkijöitä*); class 34
+/// gradates backward only when marked (*Hautaamattoman*); a participle attribute agrees with its
+/// head when classed (*ottaneen naisen*); *sormi* is class 7 (*sormea*), *elämä* class 10
+/// (*elämiä*); and a long-vowel lemma of two syllables is class 17 (*keruuseen*), class 18 being
+/// the one-syllable *maa* and refused for it.
+#[test]
+fn the_grammar_hunts_classes() {
+    let lex = MapLexicon::default()
+        .with("creature:elder_troll", LexWord::new("vanha/9 peikko/1*A"))
+        .with("hide:lich", LexWord::new("kuiva/10 luu/18").many(true))
+        .with("attack:squall", LexWord::new("tuulen|puuska/10"))
+        .with("talent:trapwright", LexWord::new("Ansojen virittäjä/10"))
+        .with("creature:banshee", LexWord::new("kalman|itkijä/12"))
+        .with(
+            "creature:wealaf",
+            LexWord::new("Hautaamaton/34*C Wēalāf/5").proper(true),
+        )
+        .with("story:guardian", LexWord::new("sinut ottanut/47 nainen/38"))
+        .with(
+            "seal:steal",
+            LexWord::new("kevyt/43 sormi/7").plural_only(true),
+        )
+        .with("seal:life", LexWord::new("elämä/10"))
+        .with("ability:gather", LexWord::new("Yrttien keruu/17"))
+        .with("bad:gather", LexWord::new("Yrttien keruu/18"))
+        .with("word:holly", LexWord::new("orjanlaurus|puinen/38"));
+    let form = |id: &str, form: &str| {
+        Fi::default()
+            .phrase(&Phrase::id(id), form, &lex, &Register::default())
+            .unwrap_or_else(|e| panic!("{id} {form}: {e}"))
+    };
+    assert_eq!(form("creature:elder_troll", "pl_par"), "vanhoja peikkoja");
+    assert_eq!(form("creature:elder_troll", "pl_gen"), "vanhojen peikkojen");
+    assert_eq!(form("hide:lich", "par"), "kuivia luita");
+    assert_eq!(form("attack:squall", "pl_par"), "tuulenpuuskia");
+    assert_eq!(form("talent:trapwright", "pl_par"), "Ansojen virittäjiä");
+    assert_eq!(form("creature:banshee", "pl_par"), "kalmanitkijöitä");
+    assert_eq!(form("creature:wealaf", "gen"), "Hautaamattoman Wēalāfin");
+    assert_eq!(form("story:guardian", "gen"), "sinut ottaneen naisen");
+    assert_eq!(form("story:guardian", "all"), "sinut ottaneelle naiselle");
+    assert_eq!(form("seal:steal", "nom"), "kevyet sormet");
+    assert_eq!(form("seal:steal", "par"), "kevyitä sormia");
+    assert_eq!(form("seal:life", "pl_par"), "elämiä");
+    assert_eq!(form("ability:gather", "par"), "Yrttien keruuta");
+    assert_eq!(form("ability:gather", "ill"), "Yrttien keruuseen");
+    assert_eq!(
+        form("bad:gather", "par"),
+        "Yrttien keruu",
+        "class 18 is one syllable: a two-syllable lemma is refused and never inflects"
+    );
+    assert_eq!(form("word:holly", "nom"), "orjanlauruspuinen");
+}
+
 #[test]
 fn refused_entries_render_as_written_and_say_why() {
     let fi = Fi::default();

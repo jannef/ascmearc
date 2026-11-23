@@ -53,7 +53,7 @@ wall = "kivi|seinä/10"
 water = { word = "seisova/10 vesi/27", forms = { loc = "ine" } }
 # The rest of the game: the overworld, the dungeons' fixtures, and the towers.
 acid_pit = "hapon syövyttämä/10 lattia/12"
-air = { word = "tyhjä/10 ilma/10", forms = { loc = "ine" } }
+air = { word = "tyhjä/10 ilma/9", forms = { loc = "ine" } }
 barrow = "hauta|kumpu/1*H"
 bluebells = { word = "sini|kello/2", many = true }
 bone_wall = "luu|muuri/5"

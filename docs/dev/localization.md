@@ -1777,6 +1777,48 @@ and `goes_for_throat`'s person variants ("käy kurkkuusi", the player's suffix, 
 The English templates with number variants all have their Finnish counterpart (checked file by
 file).
 
+**Owner review 4 (the grammar hunt)**: four read-only reviews, one per directory of
+`assets/lang/fi/` (`fi-hunt-lexicon.md`, `fi-hunt-data.md`, `fi-hunt-messages.md` with
+`lang.toml`, `fi-hunt-ui-dialogue.md`), each line read beside its English twin and every lexicon
+word through `--forms fi`; the owner approved the findings, and four PRs, one per directory,
+fixed each at its root. **The lexicon's classes** (`lexicon/`; the regression test is
+`the_grammar_hunts_classes` in `crates/ascmearc-lang/src/morphology/fi/tests.rs`): a
+two-syllable word in *-a* is class 9 (*kala*) with **a, e, i** in its first syllable and class 10
+(*koira*) with **o, u**, a split the singular hides and the plural shows, so *vanha*, *vahva*,
+*paja*, *lahja*, *ilma*, *nahka*, *jalka* are 9 (the `vanha/10` of 93 grade words had rendered
+"Täällä on vanhia rottia" for *vanhoja*) and *kuiva*, *puuska* are 10 (*kuivia luita*,
+*tuulenpuuskia*); an agent noun in *-aja/-äjä/-oja/-uja/-yjä* is class 10 (*virittäjiä*,
+*metsästäjiä*, *murtajien*) and only *-ija/-ijä* class 12 (*kalmanitkijöitä*, *vaanijoita*); a
+long-vowel lemma of two syllables is class 17 (*keruu* : *keruuta* : *keruuseen*, as Kotus and
+Wiktionary have it; the module refuses class 18, the one-syllable *maa*, for it); class 34
+writes its backward gradation (`Hautaamaton/34*C`, "Hautaamattoman Wēalāfin"); *sormi* is class
+7 (*sormea*, never *sormta*), *elämä* class 10 (*elämiä*); and a participle before a classed
+head is classed too, so it agrees (`sinut ottanut/47 nainen/38`, "sinut ottaneen naisen").
+**Words**: a command of the abilities menu is a verb, so Scribe is "Kirjoita käärö" (the talent
+stays "Kirjuri"); "Second wind" is *Hengähdys*, not the calque "Toinen tuuli"; water walking is
+*vetten päällä kävely* (a *käynti* with a genitive is a visit); holly is *orjanlaurus*, not the
+buckthorn *paatsama*; "light fingers" is plural, "kevyet sormet"; and the last "Verb: object"
+colon, inside `recipe:unbind`'s `nom`, is gone. **Lines of data** (`data/`): calques read back
+into Finnish idiom ("jäädä kertomaan", "pitää huolta repustasi", "peninkulmien säteellä", "päästä
+on luvattu palkkio", "taipuu mihin tahansa", "entisestään" for an absolute "the more"), case
+government (*väistää* and *pitää huolta* take the partitive and elative, *arvoinen* a genitive),
+stray forms ("puret", "ylläsi", "sudenpentu", "kääröstä"), *portaat* for a staircase and
+*kirkkomaa* for the churchyard, the plural-only *menot* for a rite, the conditional in a *jotta*
+clause, and a participle agreeing with its partitive head. **Messages** (`messages/`,
+`lang.toml`): a one-off resultative act takes the total object (`counted_acc`: "ojennat sille
+lihapalan", "sinkoaa järkäleen", "siitä saisi harkon"), a mark is left *on* something in the
+illative, a cause of fainting is in the elative ("Pyörryt nälästä"), the epitaphs are participles
+like the death screen's, the elixir lines take the frame their comparative word was made for, a
+plural subject takes `Counted_nom` and the plural verb (the followers on the stairs), the pursuit
+lines still saying "he" were reworded (review 3's rule), "kide" became "kristalli" where the
+sweep had missed it, and the Ostrobothnian register keeps the vowel of its inessive and elative
+(*sussa*, *susta*; the apocope is Turku's). **UI and dialogue** (`ui/`, `dialogue/`): the craft
+and step dialogs say `{station:loc}` and `{feature:loc}` as the messages already did (review 3),
+"Petä {who:nom}" takes the total object, bluff is "Puhu ympäri", and the dialogue lines were
+corrected inside their registers (Stadi *ittensä*, *pliis*; Karelian *siut*, *patasa*; the
+kirjakieli of Steorratorr), with one building given one Finnish name (*Mynsteri*) and the
+calendar's month translated.
+
 ## Mods (L9)
 
 A mod's files under `lang/` are its text (#1892; the mechanism and the save rules are

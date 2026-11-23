@@ -93,13 +93,13 @@ of_the_muse = { word = "runotar/32*C", forms = { gen = "runottaren", bare = "run
 of_the_owl = { word = "pöllö/1", forms = { gen = "pöllön", bare = "pöllön", label = "Pöllön" } }
 of_the_ox = { word = "härkä/10*D", forms = { gen = "härän", bare = "härän", label = "Härän" } }
 of_the_picklock = { word = "tiirikoitsija/12", forms = { gen = "tiirikoitsijan", bare = "tiirikoitsijan", label = "Tiirikoitsijan" } }
-of_the_sage = { word = "tietäjä/12", forms = { gen = "tietäjän", bare = "tietäjän", label = "Tietäjän" } }
+of_the_sage = { word = "tietäjä/10", forms = { gen = "tietäjän", bare = "tietäjän", label = "Tietäjän" } }
 of_the_salamander = { word = "salamanteri/6", forms = { gen = "salamanterin", bare = "salamanterin", label = "Salamanterin" } }
 of_the_scholar = { word = "oppinut/47", forms = { gen = "oppineen", bare = "oppineen", label = "Oppineen" } }
 of_the_stag = { word = "hirvi/7", forms = { gen = "hirven", bare = "hirven", label = "Hirven" } }
 of_the_storm = { word = "myrsky/1", forms = { gen = "myrskyn", bare = "myrskyn", label = "Myrskyn" } }
 of_the_tortoise = { word = "kilpi|konna/10", forms = { gen = "kilpikonnan", bare = "kilpikonnan", label = "Kilpikonnan" } }
-of_the_wanderer = { word = "vaeltaja/12", forms = { gen = "vaeltajan", bare = "vaeltajan", label = "Vaeltajan" } }
+of_the_wanderer = { word = "vaeltaja/10", forms = { gen = "vaeltajan", bare = "vaeltajan", label = "Vaeltajan" } }
 of_the_wind = { word = "tuuli/26", forms = { gen = "tuulen", bare = "tuulen", label = "Tuulen" } }
 of_thrift = { word = "säästäväisyys/40", forms = { gen = "säästäväisyyden", bare = "säästäväisyyden", label = "Säästäväisyyden" } }
 of_troll_bane = { word = "peikon|surma/10", forms = { gen = "peikonsurman", bare = "peikonsurman", label = "Peikonsurman" } }
