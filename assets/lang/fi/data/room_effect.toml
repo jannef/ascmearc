@@ -47,7 +47,7 @@ arrive = { text = "Jokin kertoo sinulle, että tähän kerrokseen on muurattu ko
 enter = { text = "Ilma on tunkkaista ja raskasta vanhan kullan hajusta.", of = "fd3770" }
 
 [haunted]
-enter = { text = "Täällä on hyvin hiljaista. Liian hiljaista nukkua.", of = "cea4c1" }
+enter = { text = "Täällä on hyvin hiljaista. Liian hiljaista nukkumiseen.", of = "cea4c1" }
 near = { text = "Kuulet kuiskauksen, ja sitten ei mitään.", of = "230458" }
 
 [hearth]

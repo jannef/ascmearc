@@ -310,7 +310,7 @@ description = { text = "Rukouksesi ruokkivat sinua: nälkäisenä saat ravintoa.
 description = { text = "Silmäsi oppivat pimeän: näet kaksi ruutua kauemmas, oli kuinka pimeää tahansa.", of = "fe5522" }
 
 [deadly_aim]
-description = { text = "Laukauksesi osuvat sinne, mihin sattuu: vahinkoa 2 enemmän jokaisella laukauksella.", of = "a2af7f" }
+description = { text = "Laukauksesi osuvat sinne, missä sattuu eniten: vahinkoa 2 enemmän jokaisella laukauksella.", of = "a2af7f" }
 
 [deep_eyed]
 description = { text = "Näet niin kuin kääpiö, olipa kansasi mikä tahansa, ja kauemmas pimeään; ja näet ne, jotka eivät ole nähneet sinua.", of = "648f34" }
@@ -829,7 +829,7 @@ description = { text = "Kuolema on kulkenut vierelläsi niin kauan, ettei se juu
 description = { text = "Valasi on pidetty, ja salit laulavat sinusta: yhä varmempi ja kovempi niitä lajeja vastaan, joita vastaan olet vannonut, kovemmat iskut lähitaistelussa, kriittisiä osumia useammin, ja kerran elämässäsi kuolema ohittaa sinut ja jättää sinut riutuneeksi.", of = "9d2b2c" }
 
 [oath_doom.effects.reprieve]
-message = { text = "Valasi eivät ole vielä päästäneet sinusta. Et kuole.", of = "0b022d" }
+message = { text = "Valasi eivät ole vielä päästäneet sinusta irti. Et kuole.", of = "0b022d" }
 
 [oath_grim]
 description = { text = "Kaunasi on kovettunut sinuun: tahtosi on rautaa, eikä pelko koskaan valtaa sinua.", of = "c314ac" }
@@ -844,10 +844,10 @@ description = { text = "Valojesi työ on karaissut käsivartesi: voima +2, ja l�
 description = { text = "Sinua on yhtä vaikea liikuttaa kuin vuoren juuria: voima +2, sitkeys +2, viidennes enemmän osumapisteitä, ja jokainen sinuun osuva isku tekee taas vähemmän.", of = "61530d" }
 
 [oath_stone_skinned]
-description = { text = "Heidän iskunsa eivät helposti satuta sinua: suojaus +2, ja jokainen sinuun osuva isku tekee vähemmän.", of = "a6feb7" }
+description = { text = "Niiden iskut eivät helposti satuta sinua: suojaus +2, ja jokainen sinuun osuva isku tekee vähemmän.", of = "a6feb7" }
 
 [oath_unyielding]
-description = { text = "Olet seissyt heitä vastaan sata kertaa ja enemmänkin: paljon enemmän osumapisteitä, yhä enemmän tasojen myötä, ja haavasi umpeutuvat nopeammin.", of = "7029cd" }
+description = { text = "Olet seissyt niitä vastaan sata kertaa ja enemmänkin: paljon enemmän osumapisteitä, yhä enemmän tasojen myötä, ja haavasi umpeutuvat nopeammin.", of = "7029cd" }
 
 [of_the_deep]
 description = { text = "Jää kantaa sinua kuin et kantaisi mitään, sen läpi pulahtaminen ei koskaan satuta sinua, ja kiipeät helposti sen päälle; kylmä puree sinua vähemmän.", of = "e2f816" }
@@ -1000,7 +1000,7 @@ description = { text = "Isku iskun perään samaan viholliseen, ja jokainen osuu
 description = { text = "Iskusarjasi yhtä vihollista vastaan kestää pidempään, ja sen jatkuessa iskusi purevat kovemmin.", of = "e53ff8" }
 
 [remove_disease]
-description = { text = "Puhdistusmeno (loitsu, maksaa manaa): jokainen kantamasi tauti ja kaikki myrkky sinussa on poissa.", of = "50172a" }
+description = { text = "Puhdistusmenot (loitsu, maksaa manaa): jokainen kantamasi tauti ja kaikki myrkky sinussa on poissa.", of = "50172a" }
 
 [renewal]
 description = { text = "Lihasi kasvaa hetken nopeasti umpeen (loitsu, maksaa manaa): haavat sulkeutuvat neljä kertaa nopeammin.", of = "264bc1" }
@@ -1321,7 +1321,7 @@ description = { text = "Huomaat kätketyt asiat ohimennen, kuin sinut olisi koul
 description = { text = "Kipu ja myrkky taivuttavat sinua vähemmän: mitä vaivasi vievät voimastasi, ketteryydestäsi ja muusta, puolittuu.", of = "2038e9" }
 
 [unbroken_soul]
-description = { text = "Itsesi pitää lujasti: kuolleiden kosketus, joka juo eläviltä voimaa ja järkeä, löytää sinusta paljon vähemmän otettavaa.", of = "c1f3e5" }
+description = { text = "Sisimpäsi pysyy lujana: kuolleiden kosketus, joka juo eläviltä voimaa ja järkeä, löytää sinusta paljon vähemmän otettavaa.", of = "c1f3e5" }
 
 [undertow]
 description = { text = "Vesi kantaa sinua: kahlaaminen ei maksa sinulle enempää kuin askel kuivalla maalla, eikä jään läpi pulahtaminen koskaan satuta sinua.", of = "1f9922" }
@@ -1345,7 +1345,7 @@ description = { text = "Ruumis kaatuu, ja olet jo muualla: tappava salahyökkäy
 description = { text = "Myrkkyhampaat: paljain käsin lyömäsi iskut voivat myrkyttää, ja myrkky vaivaa sinua vähemmän, mutta kitkerä suusi karkottaa ihmisiä.", of = "90c88e" }
 
 [versatile]
-description = { text = "Ihmiset kääntyvät mihin tahansa: yksi kyky lisää, kun sinut luodaan, ja yksi lisää tasolla 30.", of = "c5ade3" }
+description = { text = "Ihminen taipuu mihin tahansa: yksi kyky lisää, kun sinut luodaan, ja yksi lisää tasolla 30.", of = "c5ade3" }
 
 [veterans_wind]
 description = { text = "Vanhan sotilaan toinen tuuli (kyky): osumapisteitä takaisin heti, sitten hengästynyt vartin ajan.", of = "ddc31a" }
@@ -1438,4 +1438,4 @@ description = { text = "Lohikäärmeen veri: tuli, kylmä, salama ja myrkky vaiv
 description = { text = "Nälkä tulee sinulle paljon aiemmin kuin pitäisi, vaikka mikään ateria ei tee sinusta hidastunutta.", of = "f12c28" }
 
 [zealot]
-description = { text = "Jokainen sinuun osuva isku lietsoo intoasi sitä enemmän.", of = "c99f51" }
+description = { text = "Jokainen sinuun osuva isku lietsoo intoasi entisestään.", of = "c99f51" }

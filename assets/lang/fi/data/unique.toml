@@ -34,7 +34,7 @@ phrase = { text = "Sen nuolet jättävät vuotavia haavoja.", of = "0f05cd" }
 
 [radiant]
 lore = { text = "Se taottiin pyhän lähteen äärellä, eikä se ole sen jälkeen pimennyt, vaikka moni on yrittänyt sitä sammuttaa.", of = "1f3284" }
-phrase = { text = "Se valaisee kantajansa ympärille valon kuin keskipäivällä.", of = "db315d" }
+phrase = { text = "Se luo kantajansa ympärille valon kuin keskipäivällä.", of = "db315d" }
 
 [sigerics_star]
 lore = { text = "Sormuksen sisäpuolella, hyvin pienin kirjaimin: SIGERIC MINUT TEKI. Ulkopuolella, suuremmin: SIGERIC.", of = "8aa25a" }

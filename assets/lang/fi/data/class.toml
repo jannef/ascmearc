@@ -1,7 +1,7 @@
 # Lines of data: classes (`class:<id>.description`), as the New run screen shows them.
 
 [aristocrat]
-description = { text = "Syntynyt rikkauteen ja käskemään, eikä häntä ole koskaan pyydetty nostamaan pikaria raskaampaa.", of = "e28409" }
+description = { text = "Syntynyt rikkauteen ja käskemään, eikä häntä ole koskaan pyydetty nostamaan mitään pikaria raskaampaa.", of = "e28409" }
 
 [ascetic]
 description = { text = "Vanhan kurin kiertelevä askeetti, jonka ruumis ja hengitys on harjoitettu yhdeksi: nopea, kestävä ja sisäänpäin kääntynyt.", of = "684641" }

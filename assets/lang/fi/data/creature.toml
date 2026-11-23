@@ -565,7 +565,7 @@ verb = { text = "raastaa", of = "fcd7fc" }
 you = { text = "raastat", of = "a8548e" }
 
 [balor]
-first_sight = { text = "Balori liekkien ympäröimänä. Harva sellaisen nähnyt elää kertomaan siitä.", of = "6d8346" }
+first_sight = { text = "Balori liekkien ympäröimänä. Harva sellaisen nähnyt jää kertomaan siitä.", of = "6d8346" }
 
 [balor.attack.0]
 verb = { text = "piiskaa", of = "4dca04" }
@@ -2384,7 +2384,7 @@ verb = { text = "kynsii", of = "46f960" }
 you = { text = "kynsit", of = "25052a" }
 
 [nymph]
-first_sight = { text = "Nymfi. Suloinen ja pitkäkyntinen; pidä huolta reppusi.", of = "714550" }
+first_sight = { text = "Nymfi. Suloinen ja pitkäkyntinen; pidä huolta repustasi.", of = "714550" }
 
 [nymph.attack.0]
 verb = { text = "koskettaa", of = "883c7f" }

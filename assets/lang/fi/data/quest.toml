@@ -40,7 +40,7 @@ name = { text = "Mitä vesi kätkee", of = "18b168" }
 offer = { text = "Meidän kirjojen mukaan luostarin pyhäinjäännöslipas jätettiin kryptan alttarille, ku sisaret pakeni: perustajan luut, pronssissa. Sen paikka on nyt täällä. Se on Fennmynsterin pohjalla, siellä missä vesi on syvintä. Tuotsä sen kotiin?", of = "971d2e" }
 accept = { text = "Hukkuneet vartioi sitä kryptaa. Ne vartioi sitä elävinäkin. Älä anna niiden pitää sua.", of = "873b34" }
 reminder = { text = "Luostarin pyhäinjäännöslipas, kryptan alttarilla Fennmynsterin ihan pohjalla.", of = "85bc22" }
-done = { text = "Perustaja, viimein kotona. Mynsteri ei pysty maksamaan, mitä tää on arvokas, mut se maksaa minkä pystyy, ja rukoilee sun puolesta siinä sivussa.", of = "326344" }
+done = { text = "Perustaja, viimein kotona. Mynsteri ei pysty maksamaan sitä, minkä arvoinen tää on, mut se maksaa minkä pystyy, ja rukoilee sun puolesta siinä sivussa.", of = "326344" }
 where = { text = "Krypta on Fennmynsterin kahdeksannella, alimmalla tasolla.", of = "6efa8e" }
 
 [water_keeps.on_accept]
@@ -104,7 +104,7 @@ where = { text = "Dēopgangin portaat on hakattu Grægweallin juureen, kaukana l
 # Wat One-Eye: the Gilde's chain.
 [guild_quarry]
 name = { text = "Palkkio", of = "ca171d" }
-offer = { text = "Tolle on pantu hinta pään päälle, kato: {target:name}. Kaada se otus, mist ikinä sen löydät, ni Kilta maksaa. Lasketaan tästä päivästä, muista: mitä teit ennen, on sun omaa bisnestä. {where:Name}", of = "068fea" }
+offer = { text = "Ton päästä on luvattu palkkio, kato: {target:name}. Kaada se otus, mist ikinä sen löydät, ni Kilta maksaa. Lasketaan tästä päivästä, muista: mitä teit ennen, on sun omaa bisnestä. {where:Name}", of = "068fea" }
 accept = { text = "Pistä puumerkkis tähän, sit. Nyt sä oot Killassa.", of = "8bad82" }
 reminder = { text = "{target:Name}, ja vaan se yks. {where:Name}", of = "b319e0" }
 done = { text = "Toi on se. Tässä Killan fyrkat, rehellisesti tienattu.", of = "e8e85e" }
@@ -160,7 +160,7 @@ where = { text = "Grundlēas on ruohikossa Beorhtburnan tiestä etelään.", of 
 # Gammer Wynflæd: the escort and the rowan.
 [taken_under_the_hill]
 name = { text = "Viety kukkulan alle", of = "014f77" }
-joins = { text = "Ootsä oikee? Etsä oo yks niistä? Voi, vie mut kotiin, please. Mä pysyn ihan sun takana, mä lupaan.", of = "8bf41d" }
+joins = { text = "Ootsä oikee? Etsä oo yks niistä? Voi, vie mut kotiin, pliis. Mä pysyn ihan sun takana, mä lupaan.", of = "8bf41d" }
 thanks = { text = "Holtwīc! Kaivo, ja savu, ja äidin ovi. Mä en uskonu et näkisin mitään niistä enää.", of = "fba14e" }
 offer = { text = "Se on Ælfrun, kultaseni, Osgarin tyttö. Meni hakeen risuja metsän laidalta kolme päivää sitten, eikä tullu kotiin. Sen kori löyty sienirenkaasta. Pimeet on vieny sen, kukkulansa alle. Tuo se takas meille, ennen ku se unohtaa, et sil koskaan oli kotia.", of = "327abe" }
 accept = { text = "Tässä, mä näytän sulle, missä kumpu on. Pidä rautaa mukanas, äläkä syö mitään mitä ne tarjoo. Se on ihan sen pohjalla.", of = "9bdb21" }
@@ -190,7 +190,7 @@ betray = { text = "Ah. Mietinkin, olitko lukenut koko sopimuksen. Tule sitten.",
 
 [the_wizards_quarrel.side.aelfswith]
 offer = { text = "Ordgar lähetti sinut. Tietenkin hän lähetti; hän ei kiipeä mihinkään. Tässä parempi tarjous. Asetu minun puolelleni, hoida ne kaksi muuta, niin opetan sinulle enemmän kuin hän osaa. No?", of = "b503c2" }
-join = { text = "Hyvä. Ja nopeasti. Ordgar kuulee tästä ennen sadetta, ja niin kuulee Sigerickin. Mene ja hoida heidät.", of = "25f63d" }
+join = { text = "Hyvä. Ja nopeasti. Ordgar kuulee tästä ennen sadetta, ja niin kuulee Sigericin. Mene ja hoida heidät.", of = "25f63d" }
 refuse = { text = "Sitten olet säätä, ja säästä minä huolehdin.", of = "b2e842" }
 
 [the_wizards_quarrel.side.sigeric]
