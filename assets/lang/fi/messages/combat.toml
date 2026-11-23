@@ -6,7 +6,9 @@
 # `weapon` or `what` of several is the plural with no numeral where English says "the"
 # ("nuolet kimpoavat": `number` variants give the plural verb), and the numeral with the
 # partitive where English counts (`counted_nom`, "kolme nuolta kimpoaa", a singular verb); a
-# total object is `acc` ("lyö tikarin", "lyö nuolet"; owner review 2, #2073).
+# total object is `acc` ("lyö tikarin", "lyö nuolet"; owner review 2, #2073). The partitive
+# object is the target of a blow ("lyö koboldia"); a missile thrown or shot whole is a total
+# object (`throws`: "sinkoaa järkäleen", "ampuu myrkkynuolen").
 
 acid_eats_at = { text = "Happo syövyttää {what:par}.", of = "36004d" }
 acid_eats_away = { text = "Happo syö {what:acc} olemattomiin.", of = "cff4b1" }
@@ -55,7 +57,7 @@ frenzy = { text = "Taistelet hurmoksessa.", of = "64bf46" }
 frenzy_ends = { text = "Palaat hyökkäävään asentoon.", of = "d2e4b9" }
 frenzy_holds = { text = "Raivosi pitää sinut hurmoksessa.", of = "0f167c" }
 frenzy_needs_rage = { text = "Vain raivo tuo hurmoksen.", of = "259871" }
-heat_leaves_unmarked = { text = "Kuumuus ei jätä jälkeä {what:ade}.", of = "49fb36" }
+heat_leaves_unmarked = { text = "Kuumuus ei jätä jälkeä {what:ill}.", of = "49fb36" }
 heat_scorches = { text = "Kuumuus kärventää {what:par}.", of = "e0ec8c" }
 in_the_way = { text = "Jokin on tiellä.", of = "ce360b" }
 keep_wits = { text = "Pidät pääsi kylmänä.", of = "2dc11a" }
@@ -95,8 +97,8 @@ staggers_from = { text = "{from:Nom_si} saa {who:acc} horjahtamaan.", of = "c80f
 status = { text = "{who:Nom} on {status:nom}.", of = "3d7f6e" }
 status_from = { text = "{from:Nom_si} jättää {who:acc} {status:tra}.", of = "2e1e72" }
 takes_no_rust = { by = "what.number", one = "{what:Nom} ei ruostu.", many = "{what:Nom} eivät ruostu.", of = "9eeb6e" }
-throws = { text = "{actor:Nom} {verb:bare} {what:counted_par}.", of = "1cd694" }
-throws_flask = { text = "{actor:Nom} {verb:bare} pulloa.", of = "ef2b5e" }
+throws = { text = "{actor:Nom} {verb:bare} {what:counted_acc}.", of = "1cd694" }
+throws_flask = { text = "{actor:Nom} {verb:bare} pullon.", of = "ef2b5e" }
 # Verbs said in a line's `verb` where the data gives none, each taking a partitive object; the
 # third person, and the player's (second person) beside it.
 verb_bash = { text = "töytäiset", of = "dc9025" }

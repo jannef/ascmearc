@@ -17,7 +17,7 @@ charm_takes = { text = "{who:Nom} {message:bare}.", of = "0af072" }
 collar_falls = { text = "{who:Gen} {what:nom} putoaa lattialle.", of = "e84c2f" }
 comes_to_your_hand = { text = "{who:Nom} tulee luoksesi. Annat sille nimen {own:nom}.", of = "7deb1c" }
 companion_arrives = { text = "{name:Nom}, {kind:nom_si}, astelee kintereilläsi.", of = "120a8d" }
-crouch_feed = { text = "Kyykistyt {who:gen} viereen ja ojennat {what:counted_par}.", of = "7e46e0" }
+crouch_feed = { text = "Kyykistyt {who:gen} viereen ja ojennat sille {what:counted_acc}.", of = "7e46e0" }
 crouch_speak = { text = "Kyykistyt {who:gen} viereen ja puhut sille hiljaa.", of = "fce36d" }
 fades_away = { text = "{who:Nom} haalistuu olemattomiin.", of = "eb776a" }
 familiar_arrives = { text = "{name:Nom}, {kind:nom_si}, {line:bare}.", of = "7606d7" }

@@ -75,12 +75,12 @@ nothing_to_explore = { text = "Täällä ei ole mitään tutkittavaa.", of = "f9
 # A dev action's: `place`, the level arrived on.
 on_dev = { text = "Olet {place:ine} (dev).", of = "f7a5ab" }
 onto_you = { text = "Sinut on huomattu.", of = "cfc7d6" }
-pending_refused = { text = "Sinun on päätettävä, mitä teet heidän suhteensa.", of = "3cdfba" }
+pending_refused = { text = "Sinun on päätettävä, mitä teet.", of = "3cdfba" }
 pit_shudders = { text = "Kuilu vavahtaa. Kaukana ylhäällä kivi hankaa kiveä.", of = "ee910a" }
 plunge = { text = "Jää murtuu altasi, ja syöksyt jäätävään veteen!", of = "cf6a59" }
 # `place`: the overworld the player walked back onto.
 return_to = { text = "Palaat {place:ill}.", of = "8d5352" }
-run_you_down = { text = "He saavat sinut kiinni.", of = "00ba39" }
+run_you_down = { text = "Takaa-ajajat saavat sinut kiinni.", of = "00ba39" }
 see_each_other = { text = "Sinä ja {party:bare} huomaatte toisenne samalla hetkellä.", of = "bd5389" }
 # `what`: what lies on the cell the player entered, one stack; `price` its price, for sale.
 see_here = { text = "Täällä on {what:counted_nom}.", of = "835e0e" }
@@ -157,7 +157,7 @@ else = "{branch:nom} {floor:bare}"
 # subject takes a singular verb).
 [follow_down]
 of = "6924d0"
-text = "{who:Nom} tulee perässäsi portaita alas."
+text = "{who:Counted_nom} tulee perässäsi portaita alas."
 
 # `who`: the creatures that followed, of several types, a list of `follower`s.
 [follow_down_mixed]
@@ -166,19 +166,19 @@ text = "{who:And} tulevat perässäsi portaita alas."
 
 [follow_up]
 of = "4defb5"
-text = "{who:Nom} tulee perässäsi portaita ylös."
+text = "{who:Counted_nom} tulee perässäsi portaita ylös."
 
 [follow_up_mixed]
 of = "42c4e1"
 text = "{who:And} tulevat perässäsi portaita ylös."
 
 # An item of `follow_down_mixed`'s and `follow_up_mixed`'s list: `who`, the creatures of one
-# type that followed ("jättirotta", "kaksi koboltia").
+# type that followed ("jättirotta", "kaksi koboldia").
 [follower]
 of = "3ab9cd"
 by = "who.number"
 one = "{who:nom}"
-many = "{who:nom}"
+many = "{who:counted_nom}"
 
 # `what`: what sank: a stack, a list of two or three, or a count of objects (the verb first, so
 # it stays singular before a list).

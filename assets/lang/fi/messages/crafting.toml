@@ -65,7 +65,7 @@ crush_crystal = { text = "Murskaat {crystal:acc} ja juot, mitä siinä on. Jotak
 # A seal's refusal: `colour`, the one crystal's colour (an adjective); `word`, the family sealed.
 crystal_holds_nothing_of = { text = "{colour:ine} kristallissa ei ole lainkaan {word:par}.", of = "7ee683" }
 # `word`: the family sealed, as `crystal_holds_nothing_of`.
-crystals_hold_nothing_of = { text = "Kiteissä ei ole lainkaan {word:par}.", of = "f3bbc4" }
+crystals_hold_nothing_of = { text = "Kristalleissa ei ole lainkaan {word:par}.", of = "f3bbc4" }
 cut_the_stone = { text = "Hiot kiven.", of = "7778d5" }
 cut_the_stone_again = { text = "Hiot kiven uudelleen.", of = "3e3dde" }
 dare_not_cut = { text = "Et uskalla hioa sitä.", of = "d7bd7a" }
