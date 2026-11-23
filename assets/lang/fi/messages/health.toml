@@ -25,7 +25,7 @@ eat = { text = "Syöt {what:acc}.", of = "9cbb8f" }
 eat_your_fill = { text = "Syöt itsesi kylläiseksi; loppu ei tee sinulle hyvää.", of = "f938b6" }
 elixir_no_difference = { text = "Et tunne mitään eroa.", of = "e1912f" }
 # How the death screen says a death (their own: the suffix `-nsa`): a participle, like the
-# screen's own "Koboldin surmaama", so `fixtures.epitaph` can take it after a comma ("Tässä lepää
+# screen's own "Kuontolaisen surmaama", so `fixtures.epitaph` can take it after a comma ("Tässä lepää
 # Brakka, syvään veteen hukkunut.").
 epitaph_altar = { text = "Unohdetulla alttarilla kaatunut", of = "d6d3d3" }
 epitaph_choked = { text = "{what:Counted_ill} tukehtunut", of = "ffca36" }

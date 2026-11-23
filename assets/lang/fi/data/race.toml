@@ -31,7 +31,7 @@ description = { text = "Pieniä, nopeita ja hätkähtämättömiä, sormet näpp
 description = { text = "Lyhytikäisiä, kunnianhimoisia ja joka paikassa: ei erityistä lahjaa, ei erityistä vikaa.", of = "292a76" }
 
 [kobold]
-description = { text = "Pieniä, suomuisia ja kaikista heikoimpia, mutta taitavia ansoissa ja nopeita huomaamaan ne; koboldit elävät kiivaasti ja kuolevat nuorina.", of = "07e4fc" }
+description = { text = "Pieniä, suomuisia ja kaikista heikoimpia, mutta taitavia ansoissa ja nopeita huomaamaan ne; kuontolaiset elävät kiivaasti ja kuolevat nuorina.", of = "07e4fc" }
 
 [lizardfolk]
 description = { text = "Vahvaa ja sitkeää suokansaa, nahka suomujen peitossa: vaihtolämpöisiä, hitaita järjeltään ja kaikille muille vieraita.", of = "f793dd" }

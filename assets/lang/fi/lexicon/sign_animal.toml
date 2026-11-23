@@ -1,9 +1,9 @@
 # Lexicon: a birth sign's animal (`sign_animal:<id>`), capitalized as a sign's name ("syntynyt
 # Mantikoran vuonna", `messages/character.toml`). The beasts the bestiary also has keep its words
-# (`creature.toml`: barghesti, basiliski, hydra, salamanteri; the wyvern as in its bone wyvern,
+# (`creature.toml`: bargesti, basiliski, hydra, salamanteri; the wyvern as in its bone wyvern,
 # luusiipikäärme); the roc is the Rokkilintu of `talent.toml`, the unicorn and the phoenix the
 # Yksisarvinen and Feeniks of `data/talent.toml`.
-barghest = "Barghesti/5"
+barghest = "Bargesti/5"
 basilisk = "Basiliski/5"
 griffin = "Griippi/5*B"
 hydra = "Hydra/9"

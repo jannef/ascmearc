@@ -1,4 +1,4 @@
-# A status as seen on someone (`status_seen:<id>`), an adjective ("horjuva koboldi").
+# A status as seen on someone (`status_seen:<id>`), an adjective ("horjuva kuontolainen").
 ashen = "tuhkan|harmaa/17"
 asleep = "nukkuva/10"
 barkskin = "kaarna|ihoinen/38"

@@ -1,7 +1,7 @@
 # Lines of data: the overworld's encounter parties (`encounter:<campaign>.<entry>.name`), said as
-# written in the nominative ("Vastaasi tulee koboldijoukko.") or, where the slot asks a case
-# (`by = "slot.form"`), in the genitive ("Lähdet koboldijoukon perään.") or the partitive ("Menet
-# koboldijoukkoa vastaan."), which drop `joukko` and say the members ("hiisiryöstäjien perään";
+# written in the nominative ("Vastaasi tulee kuontolaisjoukko.") or, where the slot asks a case
+# (`by = "slot.form"`), in the genitive ("Lähdet kuontolaisjoukon perään.") or the partitive ("Menet
+# kuontolaisjoukkoa vastaan."), which drop `joukko` and say the members ("hiisiryöstäjien perään";
 # owner review 2, #2073). A party of several is a group noun or `joukko` and the partitive, so
 # the verb stays singular ("Sinä ja joukko hiisiryöstäjiä huomaatte toisenne").
 
@@ -15,7 +15,7 @@ name = { by = "slot.form", gen = "kaivoksen uumenista nousseen olennon", par = "
 name = { by = "slot.form", gen = "hiisiryöstäjien", par = "hiisiryöstäjiä", else = "joukko hiisiryöstäjiä", of = "02bfb0" }
 
 [ascmearc.ascdun_kobolds]
-name = { by = "slot.form", gen = "koboldijoukon", par = "koboldijoukkoa", else = "koboldijoukko", of = "e058ca" }
+name = { by = "slot.form", gen = "kuontolaisjoukon", par = "kuontolaisjoukkoa", else = "kuontolaisjoukko", of = "e058ca" }
 
 [ascmearc.ascdun_troll]
 name = { by = "slot.form", gen = "mäkipeikon", par = "mäkipeikkoa", else = "mäkipeikko", of = "db1d2c" }
@@ -42,7 +42,7 @@ name = { by = "slot.form", gen = "kummunsyöjän", par = "kummunsyöjää", else
 name = { by = "slot.form", gen = "hiisiryöstäjien", par = "hiisiryöstäjiä", else = "joukko hiisiryöstäjiä", of = "02bfb0" }
 
 [ascmearc.downs_kobolds]
-name = { by = "slot.form", gen = "koboldijoukon", par = "koboldijoukkoa", else = "koboldijoukko", of = "e058ca" }
+name = { by = "slot.form", gen = "kuontolaisjoukon", par = "kuontolaisjoukkoa", else = "kuontolaisjoukko", of = "e058ca" }
 
 [ascmearc.downs_skeletons]
 name = { by = "slot.form", gen = "luurankojen rykelmän", par = "luurankojen rykelmää", else = "luurankojen rykelmä", of = "14e1ec" }
@@ -123,7 +123,7 @@ name = { by = "slot.form", gen = "yksinäisen maantierosvon", par = "yksinäist�
 name = { by = "slot.form", gen = "hiisiryöstäjien", par = "hiisiryöstäjiä", else = "joukko hiisiryöstäjiä", of = "02bfb0" }
 
 [ascmearc.vale_kobolds]
-name = { by = "slot.form", gen = "koboldijoukon", par = "koboldijoukkoa", else = "koboldijoukko", of = "e058ca" }
+name = { by = "slot.form", gen = "kuontolaisjoukon", par = "kuontolaisjoukkoa", else = "kuontolaisjoukko", of = "e058ca" }
 
 [ascmearc.vale_rats]
 name = { by = "slot.form", gen = "jättirottien lauman", par = "jättirottien laumaa", else = "jättirottien lauma", of = "336798" }

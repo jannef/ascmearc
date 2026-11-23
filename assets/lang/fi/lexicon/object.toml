@@ -8,7 +8,7 @@
 aelfswith_corpse = { word = "rouva Ælfswīðin ruumis/41", forms = { material = "lihainen" } }
 amber_amulet = { word = "meripihka-amuletti/5*C", forms = { material = "meripihkainen" } }
 angelica_root = "väinönputken juuri/26"
-annis_hag_corpse = { word = "annisakan ruumis/41", forms = { material = "lihainen" } }
+annis_hag_corpse = { word = "annissyöjättären ruumis/41", forms = { material = "lihainen" } }
 apple = "omena/11"
 arrow = "nuoli/26"
 arrowhead = { word = "nuolen|kärki/7*L", forms = { material = "rautainen" } }
@@ -16,7 +16,7 @@ attorcoppe_corpse = { word = "Kehrääjä Āttorcoppen ruumis/41", forms = { mat
 badger_corpse = { word = "mäyrän raato/1*F", forms = { material = "lihainen" } }
 banded_mail = { word = "vanne|haarniska/13", forms = { material = "teräksinen" } }
 bard_corpse = { word = "kiertävän runoniekan ruumis/41", forms = { material = "lihainen" } }
-barghest_corpse = { word = "barghestin raato/1*F", forms = { material = "lihainen" } }
+barghest_corpse = { word = "bargestin raato/1*F", forms = { material = "lihainen" } }
 barrow_ghoul_corpse = { word = "kummunsyöjän raato/1*F", forms = { material = "lihainen" } }
 barrow_spider_corpse = { word = "kumpuhämähäkin raato/1*F", forms = { material = "lihainen" } }
 basilisk_corpse = { word = "basiliskin raato/1*F", forms = { material = "lihainen" } }
@@ -26,7 +26,7 @@ bear_corpse = { word = "karhun raato/1*F", forms = { material = "lihainen" } }
 beetle_corpse = { word = "luolakovakuoriaisen raato/1*F", forms = { material = "lihainen" } }
 bellows = { word = "palje/48*L", plural_only = true, forms = { material = "puinen" } }
 berries = { word = "kourallinen/38 marjoja", forms = { material = "kasviperäinen" } }
-bheur_hag_corpse = { word = "bheurakan ruumis/41", forms = { material = "lihainen" } }
+bheur_hag_corpse = { word = "bheursyöjättären ruumis/41", forms = { material = "lihainen" } }
 black_hound_corpse = { word = "mustan hurtan raato/1*F", forms = { material = "lihainen" } }
 black_shuck_corpse = { word = "kalmahurtan raato/1*F", forms = { material = "lihainen" } }
 blank_scroll = { word = "tyhjä/10 käärö/1", forms = { material = "paperinen" } }
@@ -35,9 +35,9 @@ blink_dog_corpse = { word = "välkekoiran raato/1*F", forms = { material = "liha
 boar_corpse = { word = "villisian raato/1*F", forms = { material = "lihainen" } }
 bodach_corpse = { word = "bodakin raato/1*F", forms = { material = "lihainen" } }
 bog_body_corpse = { word = "suoruumiin raato/1*F", forms = { material = "lihainen" } }
-bog_hag_corpse = { word = "suonoita-akan ruumis/41", forms = { material = "lihainen" } }
+bog_hag_corpse = { word = "suosyöjättären ruumis/41", forms = { material = "lihainen" } }
 bog_myrtle = { word = "suomyrtin oksa/10", forms = { material = "kasviperäinen" } }
-boggle_corpse = { word = "kummajaisen ruumis/41", forms = { material = "lihainen" } }
+boggle_corpse = { word = "menninkäisen ruumis/41", forms = { material = "lihainen" } }
 bolt = { word = "varsijousen nuoli/26", forms = { material = "rautainen" } }
 bone_amulet = { word = "luu|amuletti/5*C", forms = { material = "luinen" } }
 bones = { word = "luu|kasa/9", forms = { material = "luinen" } }
@@ -49,7 +49,7 @@ brewers_blunder = { word = "keittäjän|kömmähdys/39", forms = { material = "l
 brittle_arrow = { word = "hauras/41 nuoli/26", forms = { material = "puinen" } }
 brittle_bolt = { word = "hauras/41 varsijousen nuoli/26", forms = { material = "puinen" } }
 bronze_key = { word = "pronssi|avain/33", forms = { material = "pronssinen" } }
-broom = { word = "luuta/9*F", forms = { material = "puinen" } }
+broom = { word = "luuta/10*F", forms = { material = "puinen" } }
 bucket = { word = "sanko/1*G", forms = { material = "puinen" } }
 buckler = { word = "nyrkki|kilpi/7*E", forms = { material = "rautainen" } }
 burning_arrow = { word = "palava/10 nuoli/26", forms = { material = "puinen" } }
@@ -90,21 +90,21 @@ cult_priest_corpse = { word = "lahkopapin ruumis/41", forms = { material = "liha
 cultist_corpse = { word = "lahkolaisen ruumis/41", forms = { material = "lihainen" } }
 cutlery = { word = "ruokailu|väline/48", forms = { material = "rautainen" } }
 dagger = { word = "tikari/6", forms = { material = "teräksinen" } }
-dark_wizard_corpse = { word = "pimeän velhon ruumis/41", forms = { material = "lihainen" } }
+dark_wizard_corpse = { word = "pimeyden velhon ruumis/41", forms = { material = "lihainen" } }
 darkling_corpse = { word = "hämäräisen ruumis/41", forms = { material = "lihainen" } }
 death_knight_corpse = { word = "kuolonritarin raato/1*F", forms = { material = "lihainen" } }
-deep_gnome_binder_corpse = { word = "syvägnomisitojan ruumis/41", forms = { material = "lihainen" } }
-deep_gnome_corpse = { word = "syvägnomin ruumis/41", forms = { material = "lihainen" } }
-deep_gnome_headman_corpse = { word = "syvägnomipäämiehen ruumis/41", forms = { material = "lihainen" } }
-deep_gnome_jeweller_corpse = { word = "syvägnomikultasepän ruumis/41", forms = { material = "lihainen" } }
-deep_gnome_priest_corpse = { word = "syvägnomipapin ruumis/41", forms = { material = "lihainen" } }
-deep_gnome_trader_corpse = { word = "syvägnomikauppiaan ruumis/41", forms = { material = "lihainen" } }
+deep_gnome_binder_corpse = { word = "syvämaahissitojan ruumis/41", forms = { material = "lihainen" } }
+deep_gnome_corpse = { word = "syvämaahisen ruumis/41", forms = { material = "lihainen" } }
+deep_gnome_headman_corpse = { word = "syvämaahispäämiehen ruumis/41", forms = { material = "lihainen" } }
+deep_gnome_jeweller_corpse = { word = "syvämaahiskultasepän ruumis/41", forms = { material = "lihainen" } }
+deep_gnome_priest_corpse = { word = "syvämaahispapin ruumis/41", forms = { material = "lihainen" } }
+deep_gnome_trader_corpse = { word = "syvämaahiskauppiaan ruumis/41", forms = { material = "lihainen" } }
 deer_corpse = { word = "peuran raato/1*F", forms = { material = "lihainen" } }
 dire_warg_corpse = { word = "kauhuhukan raato/1*F", forms = { material = "lihainen" } }
 doublet = { word = "nuttu/1*C", forms = { material = "villainen" } }
 draught_of_chance = { word = "onnen|juoma/10", forms = { material = "lasinen" } }
 draugr_corpse = { word = "draugrin raato/1*F", forms = { material = "lihainen" } }
-draugr_lord_corpse = { word = "draugriruhtinaan raato/1*F", forms = { material = "lihainen" } }
+draugr_lord_corpse = { word = "draugrien ruhtinaan raato/1*F", forms = { material = "lihainen" } }
 dread_lord_corpse = { word = "kauhuruhtinaan raato/1*F", forms = { material = "lihainen" } }
 dried_meat = "kuiva|liha|suikale/48"
 drow_arbalester_corpse = { word = "tummahaltia-ampujan ruumis/41", forms = { material = "lihainen" } }
@@ -156,7 +156,7 @@ eyebright = { word = "silmäruohon varsi/28", forms = { material = "kasviperäin
 felt_boots = { word = "huopa|saapas/41*B", plural_only = true, forms = { material = "villainen" } }
 fen_ghoul_corpse = { word = "suonsyöjän raato/1*F", forms = { material = "lihainen" } }
 feverfew = { word = "kuumeyrtin varsi/28", forms = { material = "kasviperäinen" } }
-fire_drake_corpse = { word = "tulilentoliskon ruumis/41", forms = { material = "lihainen" } }
+fire_drake_corpse = { word = "tulidraakin ruumis/41", forms = { material = "lihainen" } }
 fire_giant_corpse = { word = "tulijättiläisen ruumis/41", forms = { material = "lihainen" } }
 fire_salamander_corpse = { word = "tulisalamanterin raato/1*F", forms = { material = "lihainen" } }
 fire_troll_corpse = { word = "tulipeikon ruumis/41", forms = { material = "lihainen" } }
@@ -183,7 +183,7 @@ gallows_dead_corpse = { word = "hirsipuuvainajan raato/1*F", forms = { material 
 gardener_corpse = { word = "puutarhurin ruumis/41", forms = { material = "lihainen" } }
 gauntlets = { word = "panssari|hansikas/41*A", plural_only = true, forms = { material = "rautainen" } }
 gem = "jalo|kivi/7"
-ghast_corpse = { word = "löyhkäkalmon raato/1*F", forms = { material = "lihainen" } }
+ghast_corpse = { word = "löyhkäsyöjän raato/1*F", forms = { material = "lihainen" } }
 ghoul_king_corpse = { word = "kalmonsyöjäkuninkaan raato/1*F", forms = { material = "lihainen" } }
 ghoul_lord_corpse = { word = "kalmonsyöjäruhtinaan raato/1*F", forms = { material = "lihainen" } }
 giant_centipede_corpse = { word = "jättijuoksiaisen raato/1*F", forms = { material = "lihainen" } }
@@ -197,12 +197,12 @@ gnaegan_corpse = { word = "Rottakuningas Gnæganin ruumis/41", forms = { materia
 goblin_archer_corpse = { word = "hiisijousimiehen ruumis/41", forms = { material = "lihainen" } }
 goblin_chief_corpse = { word = "hiisipäällikön ruumis/41", forms = { material = "lihainen" } }
 goblin_corpse = { word = "hiiden ruumis/41", forms = { material = "lihainen" } }
-goblin_firebomber_corpse = { word = "hiisituhopolttajan ruumis/41", forms = { material = "lihainen" } }
+goblin_firebomber_corpse = { word = "hiisipommittajan ruumis/41", forms = { material = "lihainen" } }
 goblin_wizard_corpse = { word = "hiisivelhon ruumis/41", forms = { material = "lihainen" } }
 gold_amulet = { word = "kulta-amuletti/5*C", forms = { material = "kultainen" } }
 gold_coin = "kulta|raha/9"
 gold_ring = { word = "kulta|sormus/39", forms = { material = "kultainen" } }
-gorgon_corpse = { word = "gorgonin raato/1*F", forms = { material = "lihainen" } }
+gorgon_corpse = { word = "gorgon raato/1*F", forms = { material = "lihainen" } }
 gown = { word = "juhla|puku/1*M", forms = { material = "villainen" } }
 grave_hound_corpse = { word = "hautakoiran raato/1*F", forms = { material = "lihainen" } }
 grave_knight_corpse = { word = "hautaritarin raato/1*F", forms = { material = "lihainen" } }
@@ -217,7 +217,7 @@ greater_potion_of_presence = { word = "väkevä/10 karisma|juoma/10", forms = { 
 greater_potion_of_vigour = { word = "väkevä/10 sitkeys|juoma/10", forms = { material = "lasinen" } }
 greater_potion_of_will = { word = "väkevä/10 tahto|juoma/10", forms = { material = "lasinen" } }
 greater_potion_of_wit = { word = "väkevä/10 äly|juoma/10", forms = { material = "lasinen" } }
-green_hag_corpse = { word = "vihreän noita-akan ruumis/41", forms = { material = "lihainen" } }
+green_hag_corpse = { word = "vihreän syöjättären ruumis/41", forms = { material = "lihainen" } }
 grundwyrgen_corpse = { word = "Lammenvaimo Grundwyrgenin ruumis/41", forms = { material = "lihainen" } }
 guildmaster_corpse = { word = "oltermannin ruumis/41", forms = { material = "lihainen" } }
 habit = { word = "munkin|kaapu/1*E", forms = { material = "villainen" } }
@@ -229,7 +229,7 @@ hazelnuts = { word = "kourallinen/38 hasselpähkinöitä", forms = { material = 
 headless_knight_corpse = { word = "päättömän ritarin raato/1*F", forms = { material = "lihainen" } }
 heart_crystal = { word = "sydän|kristalli/5", forms = { material = "kivinen" } }
 heavy_crossbow = { word = "raskas/41 varsi|jousi/26", forms = { material = "puinen" } }
-hell_hound_corpse = { word = "hornankoiran raato/1*F", forms = { material = "lihainen" } }
+hell_hound_corpse = { word = "hornanhurtan raato/1*F", forms = { material = "lihainen" } }
 henbane = { word = "hullukaalin varsi/28", forms = { material = "kasviperäinen" } }
 hermit_corpse = { word = "vanhan erakon ruumis/41", forms = { material = "lihainen" } }
 herrick_corpse = { word = "kersantti Herrickin ruumis/41", forms = { material = "lihainen" } }
@@ -264,11 +264,11 @@ javelin = { word = "heitto|keihäs/41", forms = { material = "rautainen" } }
 kettle = { word = "vesi|pannu/1", forms = { material = "rautainen" } }
 kirtle = { word = "hame/48", forms = { material = "villainen" } }
 knife = { word = "veitsi/30", forms = { material = "teräksinen" } }
-kobold_alchemist_corpse = { word = "koboldialkemistin ruumis/41", forms = { material = "lihainen" } }
-kobold_archer_corpse = { word = "koboldijousimiehen ruumis/41", forms = { material = "lihainen" } }
-kobold_corpse = { word = "koboldin ruumis/41", forms = { material = "lihainen" } }
-kobold_shaman_corpse = { word = "kobolditietäjän ruumis/41", forms = { material = "lihainen" } }
-kobold_zombie_corpse = { word = "koboldizombin raato/1*F", forms = { material = "lihainen" } }
+kobold_alchemist_corpse = { word = "kuontolaisalkemistin ruumis/41", forms = { material = "lihainen" } }
+kobold_archer_corpse = { word = "kuontolaisjousimiehen ruumis/41", forms = { material = "lihainen" } }
+kobold_corpse = { word = "kuontolaisen ruumis/41", forms = { material = "lihainen" } }
+kobold_shaman_corpse = { word = "kuontolaistietäjän ruumis/41", forms = { material = "lihainen" } }
+kobold_zombie_corpse = { word = "kuontolaiszombin raato/1*F", forms = { material = "lihainen" } }
 korred_corpse = { word = "korredin ruumis/41", forms = { material = "lihainen" } }
 ladle = { word = "kauha/9", forms = { material = "rautainen" } }
 lantern = { word = "lyhty/1*F", forms = { material = "rautainen" } }
@@ -363,7 +363,7 @@ mummy_priest_corpse = { word = "muumiopapin raato/1*F", forms = { material = "li
 murky_draught = { word = "samea/15 juoma/10", forms = { material = "lasinen" } }
 mushroom = { word = "sieni/26", forms = { material = "kasviperäinen" } }
 necromancer_corpse = { word = "kalmanmanaajan ruumis/41", forms = { material = "lihainen" } }
-night_hag_corpse = { word = "yönoita-akan ruumis/41", forms = { material = "lihainen" } }
+night_hag_corpse = { word = "ajattaran ruumis/41", forms = { material = "lihainen" } }
 nightganger_corpse = { word = "yökulkijan raato/1*F", forms = { material = "lihainen" } }
 nightmare_corpse = { word = "hornanratsun raato/1*F", forms = { material = "lihainen" } }
 nightwing_corpse = { word = "yösiiven raato/1*F", forms = { material = "lihainen" } }
@@ -372,10 +372,10 @@ nihtscinna_corpse = { word = "Onton Nihtscinnan ruumis/41", forms = { material =
 nithdraca_corpse = { word = "Vihakäärme Nīðdracan ruumis/41", forms = { material = "lihainen" } }
 nosferatu_corpse = { word = "nosferatun raato/1*F", forms = { material = "lihainen" } }
 nymph_corpse = { word = "nymfin ruumis/41", forms = { material = "lihainen" } }
-ogre_corpse = { word = "mörön ruumis/41", forms = { material = "lihainen" } }
-ogre_mage_corpse = { word = "mörkövelhon ruumis/41", forms = { material = "lihainen" } }
-ogre_mauler_corpse = { word = "mörkömurskaajan ruumis/41", forms = { material = "lihainen" } }
-ogre_zombie_corpse = { word = "mörközombin raato/1*F", forms = { material = "lihainen" } }
+ogre_corpse = { word = "isohisen ruumis/41", forms = { material = "lihainen" } }
+ogre_mage_corpse = { word = "isohismaagin ruumis/41", forms = { material = "lihainen" } }
+ogre_mauler_corpse = { word = "isohismurskaajan ruumis/41", forms = { material = "lihainen" } }
+ogre_zombie_corpse = { word = "isohiszombin raato/1*F", forms = { material = "lihainen" } }
 orc_archer_corpse = { word = "örkkijousimiehen ruumis/41", forms = { material = "lihainen" } }
 orc_berserker_corpse = { word = "örkkiberserkin ruumis/41", forms = { material = "lihainen" } }
 orc_bowman_corpse = { word = "örkkijousiampujan ruumis/41", forms = { material = "lihainen" } }
@@ -455,7 +455,7 @@ rod_of_teleport_other = { word = "siirto|valtikka/14*A", forms = { material = "r
 rod_of_terror = { word = "kauhu|valtikka/14*A", forms = { material = "rautainen" } }
 rope = "köysi/27"
 rotting_dragon_corpse = { word = "mätänevän lohikäärmeen raato/1*F", forms = { material = "lihainen" } }
-rotting_drake_corpse = { word = "mätänevän lentoliskon raato/1*F", forms = { material = "lihainen" } }
+rotting_drake_corpse = { word = "mätänevän draakin raato/1*F", forms = { material = "lihainen" } }
 rotting_troll_corpse = { word = "mätänevän peikon raato/1*F", forms = { material = "lihainen" } }
 rowan_sprig = { word = "pihlajan|oksa/10", forms = { material = "kasviperäinen" } }
 rug = { word = "matto/1*C", forms = { material = "villainen" } }
@@ -612,7 +612,7 @@ scroll_of_water_walking = { word = "vetten päällä kävelyn käärö/1", forms
 grimoire_of_water_walking = { word = "vetten päällä kävelyn loitsu|kirja/9", forms = { material = "paperinen" } }
 scroll_of_web = { word = "seitin käärö/1", forms = { material = "paperinen" } }
 grimoire_of_web = { word = "seitin loitsu|kirja/9", forms = { material = "paperinen" } }
-sea_hag_corpse = { word = "merinoita-akan ruumis/41", forms = { material = "lihainen" } }
+sea_hag_corpse = { word = "merisyöjättären ruumis/41", forms = { material = "lihainen" } }
 sealed_letter = { word = "sinetöity/1*F kirje/48", forms = { material = "paperinen" } }
 servant_corpse = { word = "palvelijan ruumis/41", forms = { material = "lihainen" } }
 sexton_corpse = { word = "suntion ruumis/41", forms = { material = "lihainen" } }
@@ -638,7 +638,7 @@ soul_fetter = { word = "sielun|kahle/48", forms = { material = "kivinen" } }
 spear = { word = "keihäs/41", forms = { material = "rautainen" } }
 sprite_corpse = { word = "keijun ruumis/41", forms = { material = "lihainen" } }
 squire_corpse = { word = "aseenkantajan ruumis/41", forms = { material = "lihainen" } }
-staneoten_corpse = { word = "Linkoaja Stānēotenin ruumis/41", forms = { material = "lihainen" } }
+staneoten_corpse = { word = "Heittäjä Stānēotenin ruumis/41", forms = { material = "lihainen" } }
 stiletto = { word = "stiletti/5*C", forms = { material = "teräksinen" } }
 stinking_flask = { word = "löyhkä|pullo/1", forms = { material = "lasinen" } }
 stone_giant_corpse = { word = "kivijättiläisen ruumis/41", forms = { material = "lihainen" } }
@@ -668,7 +668,7 @@ vervain = { word = "rautayrtin varsi/28", forms = { material = "kasviperäinen" 
 vial_of_acid = { word = "happo|pullo/1", forms = { material = "lasinen" } }
 vial_of_nightmares = { word = "painajais|pullo/1", forms = { material = "lasinen" } }
 vial_of_silence = { word = "hiljaisuus|pullo/1", forms = { material = "lasinen" } }
-villager_corpse = { word = "kaupunkilaisen ruumis/41", forms = { material = "lihainen" } }
+villager_corpse = { word = "kyläläisen ruumis/41", forms = { material = "lihainen" } }
 waelcyrge_corpse = { word = "Valitsija Wælcyrgen ruumis/41", forms = { material = "lihainen" } }
 waistcoat = { word = "villa|liivi/5", forms = { material = "villainen" } }
 wand_of_bind = { word = "sidonnan taika|sauva/9", forms = { material = "puinen" } }

@@ -49,7 +49,7 @@ fire_deep = [
 ]
 gnome_letter = [
     { text = "Syvyyksien gnomei kauppaamas kivii torilla. En ikinä uskonu et näkisin sen.", of = "708943" },
-    { text = "Ne syvägnomit on kovii tinkaamaan, mut niiden kamat on tosi hienoi.", of = "4681bb" },
+    { text = "Ne syvämaahiset on kovii tinkaamaan, mut niiden kamat on tosi hienoi.", of = "4681bb" },
 ]
 
 # Sister Hild of the Mynster.

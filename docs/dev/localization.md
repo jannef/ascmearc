@@ -1634,12 +1634,13 @@ verbs, eating, deaths, first sight, auras, summonings, departures; `data/familia
 `data/animated.toml`). A named one (a unique, a tower wizard) is `proper = true` without a class:
 its title or byname first and said as written, its name inflected as a foreign name ("Rottakuningas
 Gnæganin"). Choices: the old Finnish beings where one fits (hiisi goblin, isohiisi hobgoblin,
-peikko troll, mörkö ogre, piru imp, tursas thurse, virvatuli will-o'-wisp, etiäinen fetch, kalmanitkijä
+peikko troll, tursas thurse, virvatuli will-o'-wisp, etiäinen fetch, kalmanitkijä
 banshee, painajainen night mare, horna for hell), native compounds for the rest (an elemental is a
-`-henki`, a lich a `kalmanvelho`, a ghoul a `-syöjä`, a drake a `lentolisko`), and the D&D fiends'
-names as Finnish loans (`balori`, `arkanalotti`). A type's corpse
+`-henki`, a lich a `kalmanvelho`, a ghoul a `-syöjä`), and the D&D fiends'
+names as Finnish loans (`arkanalotti`); the words owner review 5 (below) replaced (the ogre, the
+imp, the drakes, the kobold, the gnome, the hags, the balor, ...) are listed there. A type's corpse
 (`object:<id>_corpse`, `lexicon/object.toml`, the third slice) is its genitive and its head
-("mörön ruumis"), and a bane (`of_<kind>_bane`) the kind's genitive and `surma`.
+("isohisen ruumis"), and a bane (`of_<kind>_bane`) the kind's genitive and `surma`.
 
 **The third slice, items** (#2055): every object, material, affix, spell, talent and tree,
 recipe, crystal and seal family, rig, and an unknown wand's, rod's, or potion's label word; the
@@ -1818,6 +1819,46 @@ and step dialogs say `{station:loc}` and `{feature:loc}` as the messages already
 corrected inside their registers (Stadi *ittensä*, *pliis*; Karelian *siut*, *patasa*; the
 kirjakieli of Steorratorr), with one building given one Finnish name (*Mynsteri*) and the
 calendar's month translated.
+
+**Monster names (owner review 5)**: two read-only reports, one reading every creature word
+against its creature's definition (`fi-monster-names.md`: wrong creatures, collisions, classes)
+and one checking the bare loans against the Finnish translations that exist
+(`fi-monster-loans.md`: the 1988 Finnish D&D red box, Protocol Productions, transl. Jari Pauna;
+the 2012 *Lohikäärmeen luola* SRD glossary; the 2022 *Legendoja & lohikäärmeitä* glossary;
+Juva's Tolkien). **The owner's rule for choosing between sources**: where they differ, the oldest
+source's word wins, unless that word is just the English one with a Finnish ending and a later
+source has a genuine Finnish word (then the oldest genuine Finnish one). So the drakes are
+*draakki* (`tulidraakki`, `luudraakki`, `kalmandraakki`, `mätänevä draakki`: *lentolisko* is the
+pterosaur, and *lohikäärme* is the dragons'), the ogre *isohinen* (2012; 1988's "ogre" is
+English, 2022's *luolapeikko* newer; the ogre mage *isohismaagi*, 2012's word; *mörkö* is the
+bogeyman), the imp *pikkupiru* (2012 and 2022 agree) so that the *fiend* tag keeps *piru* (2022)
+and "pirunsurma" names the whole class, the kobold *kuontolainen* (2012, over 2022's
+*kärmäläinen*: both are Finnish coinages, so the older wins; the race, the tag, the bane
+*kuontolaisensurma*, `kuontolaisjoukko`, and the compounds `kuontolais-`), the gnome *maahinen*
+(2012 and 2022; the deep gnome *syvämaahinen*, its folk `syvämaahis-`; Kapari's Harry Potter uses
+*maahinen* for the goblin, but the goblin here is Juva's *hiisi*), the hags *syöjätär* (2012: the
+tag, `vihreä syöjätär`, `merisyöjätär`, `suosyöjätär`, `annissyöjätär`, `bheursyöjätär`, the bane
+*syöjättärensurma*, the talent "Syöjättären kauppa"; class 32*C, "syöjättären") and the night hag
+*ajattara* (2012, over 2022's *louhi*; class 11), the hell hound *hornanhurtta* (2012 and 2022),
+the gargoyle *gargoili* (2012 and 2022; *irvikuva* is a caricature), the gorgon *gorgo* (2012 and
+the Greek sisters' Finnish word; "gorgon raato"), the mud golem *mutagolem* (2012; class 6,
+"mutagolemin"), the lemure *lemuri* (2012; *lemuuri* is the primate), the erinyes *erinys* (2012
+and fi.wikipedia's spelling), the balor *liekkidemoni* (2022; 2012's "balor" is the English), the
+quasit *riiviö* (2022; 2012's *kvasitti* is the English), the dretch *dretši* and the barghest
+*bargesti* (2012's spellings; the birth sign too), the draugr *draugr* (fi.wikipedia's consonant
+stem, "draugrin"; the lord "draugrien ruhtinas", since `draugr|ruhtinas` would write *rr*), the
+barrow wight's quest *kalmo* as the creature is (its "haamu" was the wraith's word), the dark
+wizard *pimeyden velho* (Kapari's register; *pimeä* of a person is dim), the boggle *menninkäinen*
+(*kummajainen* is an oddity, not a being), the ghast *löyhkäsyöjä* (the ghouls' `-syöjä` head, not
+the wights' `-kalmo`), the goblin firebomber *hiisipommittaja* (*tuhopolttaja* is an arsonist),
+Stānēoten "Heittäjä" (*linkoaja* uses a sling), the villager *kyläläinen* as the encounter already
+said, *luuta* class 10*F (*luutia*), and `forms` for *hezrou* and *ankou* ("hezrouta",
+"hezrouhun": a name in *-ou* ends in a diphthong). Left as the reports found them right: the
+ghost/wraith/spectre cluster (aave/haamu/kummitus), pixie/sprite, the yugoloths, the demons with
+no Finnish precedent (glabrezu, hezrou, nalfeshnee, balgura, kasme), *inkubus/sukkubus* (one
+creature under two names; 2022's *viettelijä* would merge them), *vrokki*, *mariliitti*,
+*rakshasa*, *kambioni*, *korredi*, *meenlokki*, *bodakki*, *homunkulus*. Already fixed by reviews
+3 and 4 before this one: the adjective bynames' agreement, Līgetdrȳ's forms, *puuska* class 10.
 
 ## Mods (L9)
 

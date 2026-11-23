@@ -9,7 +9,7 @@ note = { text = "Ilmoituksia on naulattu kolmeen kerrokseen, ja useimmat niistä
 
 # Gimmwīc.
 [gimmwic]
-arrival = { text = "Lampunvaloa ja pienten alasinten kalke: Gimmwīc, syvägnomien kaupunki.", of = "8cdb93" }
+arrival = { text = "Lampunvaloa ja pienten alasinten kalke: Gimmwīc, syvämaahisten kaupunki.", of = "8cdb93" }
 
 [gimmwic.hidden.skeul_hir]
 opens = { text = "Peran koputtaa pitkää pöytää kolmesti. Taempana, luolassa, josta tulit, kivi narskuu kiveä vasten, ja laatta kääntyy ylös jyrkän pimeyteen nousevan portaikon edestä: Skeul Hir.", of = "09a363" }

@@ -68,10 +68,10 @@ reminder = { text = "Neljä tasoo alas Cealdhlāwiin, kukkulan alle. Tuu sit tak
 done = { text = "Kuolleita kävelemässä pimeessä, ja yks niistä antaa käskyjä. Sitä mä pelkäsinkin. Tässä: sä oot ansainnu tän.", of = "579459" }
 
 [wight]
-name = { text = "Hautakummun haamu", of = "617a88" }
-offer = { text = "Se, minkä sä näit: vanhat kutsuu sitä haamuks, kummun herraks, kylmäks ku itse kumpu. Niin kauan ku se kävelee, kuolleet kävelee sen kanssa. Pane se maahan lopullisesti, ni Cēaptūn on sulle velkaa enemmän ku rahaa.", of = "9e7bf8" }
+name = { text = "Hautakummun kalmo", of = "617a88" }
+offer = { text = "Se, minkä sä näit: vanhat kutsuu sitä kalmoks, kummun herraks, kylmäks ku itse kumpu. Niin kauan ku se kävelee, kuolleet kävelee sen kanssa. Pane se maahan lopullisesti, ni Cēaptūn on sulle velkaa enemmän ku rahaa.", of = "9e7bf8" }
 accept = { text = "Ota valo ja hyvä terä. Se imee lämmön susta, jos annat sen tulla lähelle.", of = "e929d7" }
-reminder = { text = "Cealdhlāwin haamu. Se on syvällä, kukkulan alla olevissa onkaloissa.", of = "ba457c" }
+reminder = { text = "Cealdhlāwin kalmo. Se on syvällä, kukkulan alla olevissa onkaloissa.", of = "ba457c" }
 done = { text = "Se on siis tehty? Paimenet sanoo, et valot nummilla on sammunu. Tää haarniska oli mun isän; se palvelee sua paremmin ku seinää.", of = "8fbfd7" }
 
 # Factor Wulfrun: the Fyrdelf chain and the letter.
@@ -88,7 +88,7 @@ where = { text = "Kuilu on Ascdūnissa, Fyrbeorgin alla olevilla kukkuloilla, ka
 name = { text = "Tuli syvyydessä", of = "73b34c" }
 offer = { text = "Viimenen työnjohtaja kirjotti sen ylös ennen ku tilikirja loppuu: tulta syvimmässä louhoksessa, ja jotain sen sisällä, joka liikkui. Lohikäärme, mä sanoisin, vuoren alla. Tapa se, ni kaupunki vois taas kaivaa. Tapa se, ni mä maksan sulle, mitä kaivokset on mulle velkaa.", of = "41e007" }
 accept = { text = "Se on louhosten pohjalla, kakstoist tasoo alas. Ota vettä. Ota enemmän ku luulet tarvitsevas.", of = "09f74c" }
-reminder = { text = "Tulilohikäärme, Fyrdelfin pohjalla.", of = "2384d3" }
+reminder = { text = "Tulidraakki, Fyrdelfin pohjalla.", of = "2384d3" }
 done = { text = "Kuollu? Ihan oikeesti? Sit mä kirjotan tilikirjaan uuden sivun, ekan vuosiin. Tässä. Kaivokset on mulle velkaa enemmän, mut tää on mitä mul on.", of = "79c753" }
 where = { text = "Se on Fyrdelfin kahdestoista, alimmalla tasolla.", of = "e6e18e" }
 
@@ -96,7 +96,7 @@ where = { text = "Se on Fyrdelfin kahdestoista, alimmalla tasolla.", of = "e6e18
 name = { text = "Kirje syvyyksiin", of = "cc7445" }
 offer = { text = "Ku lohikäärme on kuollu, kaivokset voi taas kaivaa, ja kivet pitää hioa. Kauppiaat kuiskii syvägnomeista, harmaasta kansasta, joka hioo jalokiviä niinku kukaan täällä ylhäällä ei osaa, kaupungissa Syvätien pohjalla. Veisitsä tän kirjeen sille, joka puhuu niiden puolesta? Se ehdottaa kauppaa, mitä kohteliaimmin.", of = "b1afa1" }
 accept = { text = "Erinomaista. Syvätie on Dēopgang: portaat, jotka on hakattu Grægweallin juureen, kaukana lounaassa Lindwudun takana. Yksitoist tasoo alas, kuulemma. Pidä sinetti ehjänä, ole hyvä.", of = "086340" }
-reminder = { text = "Mun kirje sille, joka puhuu syvägnomien puolesta, Dēopgangin pohjalla.", of = "d8c052" }
+reminder = { text = "Mun kirje sille, joka puhuu syvämaahisten puolesta, Dēopgangin pohjalla.", of = "d8c052" }
 # Said by Peran, who is handed the letter: Karelian.
 done = { text = "Kirje? Ylhäält? No jopas. Faktori Wulfrun, ja sinetti kans. Kauppaa, se sannoo, oikein kohteliaast. Käräjät halluu märehtiä sitä. Tässä, miun kultaine, alastulost. Reilu kivi se o, Gimmwīcis hiottu.", of = "23f401" }
 where = { text = "Dēopgangin portaat on hakattu Grægweallin juureen, kaukana lounaassa Lindwudun takana. Gimmwīc on sen pohjalla.", of = "54099f" }
