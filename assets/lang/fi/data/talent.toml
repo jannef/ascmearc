@@ -6,7 +6,7 @@
 # `spirit_weapon.phrase` (the spirit weapon's description). Game terms keep the screens' words,
 # lowercase inside a sentence as `messages/describe.toml` writes them (suojaus +1, väistö,
 # kimmotus, torjunta, a skill's or a stat's word); another talent is named by its
-# `lexicon/talent.toml` name, capitalized ("Halkaisu-taipumuksen"). "(a spell, paid in mana)" is
+# `lexicon/talent.toml` name, capitalized ("Halkaisu-kyvyn"). "(a spell, paid in mana)" is
 # "(loitsu, maksaa manaa)", "(an ability, paid in zeal)" "(kyky, maksaa intoa)", a cantrip
 # "pikkuloitsu", a smite "rankaisu". Months: hämäräkuu (Darkening), sulakuu (Thawmonth),
 # kylvökuu (Seedtide), lehtikuu (Greenleaf), suvikuu (Highsun), hehkukuu (Emberheat),
@@ -49,7 +49,7 @@ description = { text = "Oppisi on harjoitustasi edellä: luet loitsuja kuin kirj
 description = { text = "Loitsusi ovat kaksi askelmaa ylempänä tikapuillaan, ja ne maksavat puolet vähemmän manaa.", of = "6c4547" }
 
 [armour_breaker]
-description = { text = "Parhaat iskusi löytävät raot: kriittinen osumasi tunkeutuu paremmin nahan, kuoren ja levyhaarniskan läpi, ja haarniskan halkaiseminen tai sen rakojen etsiminen vie sinulta vähemmän kestävyyttä.", of = "7ae79c" }
+description = { text = "Parhaat iskusi löytävät raot: kriittinen osumasi tunkeutuu paremmin nahan, kuoren ja levyhaarniskan läpi, ja haarniskan halkaiseminen tai sen rakojen etsiminen vie sinulta vähemmän puhtia.", of = "7ae79c" }
 
 [armour_drill]
 description = { text = "Liikut vapaasti haarniskassa, ja se istuu oikein: haarniska haittaa väistelyäsi vähemmän, ja suojaus +1, kun sinulla on yllä mikä tahansa haarniska.", of = "5ba4e1" }
@@ -76,7 +76,7 @@ description = { text = "Näet hieman pimeään, kuin se olisi ohuempaa.", of = "
 description = { text = "Tahto, joka kesti kauemmin kuin valtakunta: tahtosi on vahvempi, ja haudan kylmä kosketus ja se, mikä imee eläviä, tehoavat sinuun heikommin, mutta haavasi umpeutuvat hitaasti.", of = "a8fac2" }
 
 [battle_rhythm]
-description = { text = "Taistelu itse pitää hengityksesi yllä: jokainen lähitaistelussa osuva iskusi palauttaa yhden kestävyyspisteen, ja vihollisen kaatava isku kaksi.", of = "425802" }
+description = { text = "Taistelu itse pitää hengityksesi yllä: jokainen lähitaistelussa osuva iskusi palauttaa yhden pisteen puhtia, ja vihollisen kaatava isku kaksi.", of = "425802" }
 
 [battle_scarred]
 description = { text = "Arpesi ovat opettaneet ruumiisi kestämään iskun: suojaus +1, ja raivotessasi vielä +2.", of = "1e8feb" }
@@ -202,7 +202,7 @@ description = { text = "Kriittiset iskusi lähitaisteluaseilla iskevät vielä k
 description = { text = "Voima virtaa lävitsesi helposti: valtikka ottaa manastasi neljänneksen vähemmän joka käyttökerralla.", of = "23758e" }
 
 [charge]
-description = { text = "Rynnistä suoraa tietä kohti näkemääsi vihollista ja iske sitä tullessasi (kyky): yksi kestävyyspiste ja yksi lisää joka askeleelta. Kukaan, jonka ohitat, ei ehdi lyödä.", of = "7daf9e" }
+description = { text = "Rynnistä suoraa tietä kohti näkemääsi vihollista ja iske sitä tullessasi (kyky): yksi piste puhtia ja yksi lisää joka askeleelta. Kukaan, jonka ohitat, ei ehdi lyödä.", of = "7daf9e" }
 
 [charnel_burst]
 description = { text = "Näkemäsi ruumis räjähtää siinä, missä se makaa, ja repii jokaista sen vierellä olevaa (loitsu, maksaa manaa).", of = "2421f2" }
@@ -226,7 +226,7 @@ description = { text = "Rauhallinen mieli kerää voimansa nopeasti: mana palaa 
 description = { text = "Vihollisen kaatava isku jatkaa matkaansa: kun iskusi tappaa, lyöt heti toista vierelläsi olevaa vihollista.", of = "f73dba" }
 
 [cleaving_strike]
-description = { text = "Vihollisen kaatava isku jatkaa matkaansa toiseen vierelläsi olevaan; Halkaisu-taipumuksen kanssa yhä uudelleen, niin kauan kuin vihollisia kaatuu.", of = "6a9d8c" }
+description = { text = "Vihollisen kaatava isku jatkaa matkaansa toiseen vierelläsi olevaan; Halkaisu-kyvyn kanssa yhä uudelleen, niin kauan kuin vihollisia kaatuu.", of = "6a9d8c" }
 
 [clotting]
 description = { text = "Haavasi umpeutuvat nopeasti: raskas isku ei saa sinua vuotamaan verta, tappava saa vähemmän, ja verenvuoto tyrehtyy kaksi kertaa nopeammin.", of = "bc6d02" }
@@ -316,7 +316,7 @@ description = { text = "Laukauksesi osuvat sinne, mihin sattuu: vahinkoa 2 enemm
 description = { text = "Näet niin kuin kääpiö, olipa kansasi mikä tahansa, ja kauemmas pimeään; ja näet ne, jotka eivät ole nähneet sinua.", of = "648f34" }
 
 [deep_lungs]
-description = { text = "Kestävyyttäsi on reilusti enemmän.", of = "714068" }
+description = { text = "Puhtia sinulla on reilusti enemmän.", of = "714068" }
 
 [deep_pockets]
 description = { text = "Kannat omaisuutta helposti: kolikot eivät paina sinulle mitään.", of = "aeda24" }
@@ -355,7 +355,7 @@ description = { text = "Livahdat sivuun iskujen tieltä: väistö +1 torjuntaasi
 description = { text = "Rikkaudet löytävät sinut: löytämäsi ja surmaamasi on yhä useammin rikkaampaa, jalokiviä tulee vastaan yhä useammin, ja kauppojen suosio +10 %.", of = "b5251f" }
 
 [drillmaster]
-description = { text = "Vuosien harjoitus on tehnyt asetempuistasi hengitykselle halpoja: jokainen vie sinulta vähemmän kestävyyttä.", of = "585bca" }
+description = { text = "Vuosien harjoitus on tehnyt asetempuistasi hengitykselle halpoja: jokainen vie sinulta vähemmän puhtia.", of = "585bca" }
 
 [drow_fume]
 description = { text = "Tummahaltioiden vanha pimeyden temppu: osaat savuverhon loitsun (maksaa manaa).", of = "3f5fb1" }
@@ -739,7 +739,7 @@ description = { text = "Voiman tikka, joka kiemurtelee jokaisen tiellään oleva
 description = { text = "Voit korjata mukanasi kantamasi vahingoittuneen esineen missä tahansa, ilman alasinta (kyky): se vie aikaa, ja jos kätesi pettävät, menetät vain ajan.", of = "f5354e" }
 
 [makers_mark]
-description = { text = "Tekemäsi kantaa merkkiäsi: tekemäsi aseet, haarniskat ja korut ovat puolitoista kertaa arvokkaampia, suojelijasi maksaa niistä enemmän, ja niihin mahtuu yksi lumous lisää.", of = "eb6a3d" }
+description = { text = "Tekemäsi kantaa merkkiäsi: tekemäsi aseet, haarniskat ja korut ovat puolitoista kertaa arvokkaampia, mesenaattisi maksaa niistä enemmän, ja niihin mahtuu yksi lumous lisää.", of = "eb6a3d" }
 
 [malison]
 description = { text = "Noitumasi olento kärsii enemmän iskuistasi ja loitsuistasi, ja kun se kuolee noituutesi alla, noituus palaa sinulle manana.", of = "f2d2b5" }
@@ -898,7 +898,7 @@ description = { text = "Ihosi on ohut kuin paperi: raskaat iskut haavoittavat si
 description = { text = "Avauksesi haihtuvat hitaammin, ja vihollinen, jota olet työstänyt, antaa sinulle kaatuessaan kaksi avausta.", of = "10615a" }
 
 [patron]
-description = { text = "Varakas suojelija kaupungissa tilaa työtäsi: yksi hieno kappale kerrallaan, aineet etukäteen, maksu täysimääräisenä toimitettaessa.", of = "65d9b4" }
+description = { text = "Varakas mesenaatti kaupungissa tilaa työtäsi: yksi hieno kappale kerrallaan, aineet etukäteen, maksu täysimääräisenä toimitettaessa.", of = "65d9b4" }
 
 [peerless]
 description = { text = "Kun löydät avauksen, otat siitä kaiken irti: kriittiset iskusi osuvat varmemmin.", of = "b3ec34" }
@@ -1144,7 +1144,7 @@ description = { text = "Olit loitsusepän oppipoikana: aloitat lumoamiseen koulu
 description = { text = "Hänen myrkkynsä virtaa nyt sinussa: myrkky vaivaa sinua vähän, seitit valuvat sinusta, ja lyöt kovaa varomattomia.", of = "2c8ffa" }
 
 [spirit_weapon]
-description = { text = "Kutsu henkiaineesta tehty ase käteesi valitsemassasi muodossa (kyky). Se osuu varmemmin ja löytää raot mistä tahansa haarniskasta, ja se palaa sinne, mistä tuli, heti kun se lähtee otteestasi; kutsu se uudestaan.", of = "fb45e6" }
+description = { text = "Vedä esiin henkiaineesta tehty ase valitsemassasi muodossa (kyky). Se osuu varmemmin ja löytää raot mistä tahansa haarniskasta, ja se palaa sinne, mistä tuli, heti kun se lähtee otteestasi; vedä se esiin uudestaan.", of = "fb45e6" }
 
 [spirit_weapon.effects.spirit_weapon]
 phrase = { text = "Henkiaineesta tehty ase: se löytää raot mistä tahansa haarniskasta ja haihtuu, kun se lähtee kädestäsi.", of = "79dc0a" }
@@ -1159,7 +1159,7 @@ description = { text = "Luet olennon ryhdin yhdellä silmäyksellä: tiedät, ke
 description = { text = "Puolustusasento ei vie iskuiltasi mitään tarkkuudesta.", of = "f9d0ca" }
 
 [steady_breathing]
-description = { text = "Kestävyytesi palaa nopeammin.", of = "3c7f0f" }
+description = { text = "Puhtisi palaa nopeammin.", of = "3c7f0f" }
 
 [steady_hand]
 description = { text = "Keskittyneisyytesi palaa nopeammin.", of = "f0e807" }
@@ -1345,7 +1345,7 @@ description = { text = "Ruumis kaatuu, ja olet jo muualla: tappava salahyökkäy
 description = { text = "Myrkkyhampaat: paljain käsin lyömäsi iskut voivat myrkyttää, ja myrkky vaivaa sinua vähemmän, mutta kitkerä suusi karkottaa ihmisiä.", of = "90c88e" }
 
 [versatile]
-description = { text = "Ihmiset kääntyvät mihin tahansa: yksi taipumus lisää, kun sinut luodaan, ja yksi lisää tasolla 30.", of = "c5ade3" }
+description = { text = "Ihmiset kääntyvät mihin tahansa: yksi kyky lisää, kun sinut luodaan, ja yksi lisää tasolla 30.", of = "c5ade3" }
 
 [veterans_wind]
 description = { text = "Vanhan sotilaan toinen tuuli (kyky): osumapisteitä takaisin heti, sitten hengästynyt vartin ajan.", of = "ddc31a" }

@@ -42,7 +42,7 @@ text = "{cost:bare}, tähdättävä"
 
 [charge_stamina]
 of = "9856d7"
-text = "{base:bare} kestävyyttä + {per:bare} askelta kohden"
+text = "{base:bare} puhtia + {per:bare} askelta kohden"
 
 [close]
 of = "12c352"
@@ -86,7 +86,7 @@ text = "{cost:bare}: sinulla on {mana:bare}"
 
 [stamina]
 of = "1063b7"
-text = "{stamina:bare} kestävyyttä"
+text = "{stamina:bare} puhtia"
 
 [title]
 of = "1510d4"

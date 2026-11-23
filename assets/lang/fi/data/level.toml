@@ -49,7 +49,7 @@ arrival = { text = "Nummen paljas laki, tuuli aina kimpussaan, ja sillä yksinä
 note = { text = "Säiden vihertämää messinkiä: WEDERTORR. Æ. Alla, syvään raaputettuna: SULJE OVI.", of = "a20e4b" }
 
 [wedertorr_top.legend.G]
-note = { text = "Korkea lasi kirkasta nestettä messinkijalustalla, ja siinä leijuu valkoisten kiteiden pilvi. Kiteet nousevat.", of = "13ab2a" }
+note = { text = "Korkea lasi kirkasta nestettä messinkijalustalla, ja siinä leijuu valkoisten kristallien pilvi. Kristallit nousevat.", of = "13ab2a" }
 
 [steorratorr]
 arrival = { text = "Vihreä tasanko viettää harmaaseen mereen, ja sillä kohoaa torni valkoisesta kivestä, korkeampana kuin mikään peninkulmien alalla.", of = "8dc06b" }

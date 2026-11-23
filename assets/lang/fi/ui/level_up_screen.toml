@@ -54,11 +54,11 @@ text = "Tason nousu"
 
 [title_bonus]
 of = "e6133b"
-text = "Lisätaipumus {n:bare}"
+text = "Lisäkyky {n:bare}"
 
 [title_free]
 of = "5b74bc"
-text = "Ilmainen taipumus {n:bare}"
+text = "Ilmainen kyky {n:bare}"
 
 [title_level]
 of = "65043e"
@@ -70,7 +70,7 @@ text = "Taitoheitot {n:bare}"
 
 [title_talent]
 of = "3ca68e"
-text = "Taipumus {n:bare}"
+text = "Kyky {n:bare}"
 
 [left_rolls]
 of = "1f72b1"
@@ -80,7 +80,7 @@ many = "Sinulla on {n:bare} taitoheittoa käyttämättä."
 
 [left_talent]
 of = "c82ab8"
-text = "Valitse ensin taipumus."
+text = "Valitse ensin kyky."
 
 [marks]
 of = "b40ff7"
@@ -132,4 +132,4 @@ text = "kansa"
 
 [source_talents]
 of = "bf8e80"
-text = "taipumukset"
+text = "kyvyt"

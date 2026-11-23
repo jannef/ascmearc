@@ -22,7 +22,7 @@ short = { text = "Raivo", of = "defbd2" }
 
 [resource.stamina]
 lacking = { text = "olet hengästynyt", of = "29133e" }
-short = { text = "Kest", of = "d654ae" }
+short = { text = "Puhti", of = "d654ae" }
 
 [resource.zeal]
 lacking = { text = "intosi ei riitä", of = "105563" }

@@ -3,7 +3,7 @@
 # creature, `what` an item, `status` a status, `spell` a spell (`spell:<id>`), `stat` and `came`
 # and `reason` nested messages (said `bare`), `id`, `kind`, `usage`, `x`, `y`, numbers in digits.
 
-already_know = { text = "Tiedät jo, mikä {what:nom} on.", of = "78d703" }
+already_know = { text = "Tiedät jo, mikä {what:counted_nom} on.", of = "78d703" }
 begin_to_read = { text = "Alat lukea {what:par}.", of = "608d58" }
 begin_to_write = { text = "Alat kirjoittaa.", of = "4e1c4d" }
 blank_scroll_gone = { text = "Tyhjä käärö on poissa.", of = "cf6703" }
@@ -12,7 +12,7 @@ bolt_strikes_nothing = { text = "Salama ei osu mihinkään.", of = "38af4f" }
 cannot_cast_while = { text = "Olet {status:nom}: et voi loitsia nyt.", of = "5e9c8a" }
 cannot_lead_more = { text = "Et voi johtaa useampia.", of = "bbc4bd" }
 cannot_make_sense = { text = "Et saa siitä selvää.", of = "1fdeee" }
-cannot_read = { text = "Et osaa lukea {what:par}.", of = "709fa5" }
+cannot_read = { text = "Et osaa lukea {what:counted_par}.", of = "709fa5" }
 cannot_reason = { text = "Et voi: {reason:bare}.", of = "a58460" }
 cannot_use_rod_while = { text = "Et voi käyttää sauvaa, kun olet {status:nom}.", of = "b2094e" }
 cannot_write_it = { text = "Et pysty kirjoittamaan sitä.", of = "0c4dca" }
@@ -26,9 +26,9 @@ draw_life_out_of = { text = "Imet {what:ela} sen viimeisetkin elämän rippeet."
 driven_back = { by = "who.person", you = "Joudut perääntymään.", other = "{who:Nom} joutuu perääntymään.", of = "cd9ead" }
 effect_dev = { text = "Efekti: {id:bare} (dev).", of = "0b2b10" }
 effect_reaches_no_cell = { text = "Efekti `{id:bare}` ei ulotu siellä yhteenkään ruutuun.", of = "23e844" }
-feel_stat_return = { text = "Tunnet, kuinka {stat:bare} palaa.", of = "1e09a6" }
+feel_stat_return = { text = "Tunnet {stat:gen} palaavan.", of = "1e09a6" }
 forgotten = { text = "Olet unohtanut loitsut {spells:and}.", of = "5a9677" }
-gain_experience_for_learning = { text = "Saat {xp:bare} kokemuspistettä loitsun {spell:Nom} oppimisesta.", of = "73f17e" }
+gain_experience_for_learning = { text = "Saat {xp:bare} kokemuspistettä {spell:Gen} oppimisesta.", of = "73f17e" }
 give_blood = { text = "Annat vertasi, ja voima kuohahtaa sisälläsi.", of = "050c8b" }
 grimoire_crumbles = { text = "Loitsukirja murenee tomuksi.", of = "8acaeb" }
 grimoire_gone = { text = "Loitsukirja on poissa.", of = "0ac1b4" }
@@ -37,16 +37,16 @@ healing_flows_into = { text = "Parantava voimasi virtaa {who:ill}.", of = "d1937
 hex_comes_home = { text = "Kirous palaa sinuun itseesi.", of = "9c7142" }
 holds_fast = { by = "who.person", you = "Pysyt lujasti paikallasi.", other = "{who:Nom} pysyy lujasti paikallaan.", of = "c16331" }
 is_status = { by = "who.person", you = "Olet {status:nom}.", other = "{who:Nom} on {status:nom}.", of = "3d7f6e" }
-it_is = { text = "Se on {what:nom}.", of = "843fc2" }
+it_is = { text = "Se on {what:counted_nom}.", of = "843fc2" }
 it_will_not_rise = { text = "Se ei nouse käskystäsi.", of = "d36e56" }
-know_all_of = { text = "Tiedät kaiken, mitä loitsusta {spell:Nom} voi tietää.", of = "ed0ebc" }
+know_all_of = { text = "Tiedät kaiken, mitä {spell:Ela} voi tietää.", of = "ed0ebc" }
 know_all_of_this_spell = { text = "Tiedät kaiken, mitä tästä loitsusta voi tietää.", of = "2b5d71" }
-know_less_well = { text = "Osaat loitsun {spell:Nom} huonommin kuin ennen.", of = "d704fc" }
+know_less_well = { text = "Osaat {spell:Acc} huonommin kuin ennen.", of = "d704fc" }
 know_the_spell_less_well = { text = "Osaat loitsun huonommin kuin ennen.", of = "4f5e81" }
 lack_mana_to_write = { text = "Manasi ei riitä sen kirjoittamiseen.", of = "550dec" }
-learned_spell = { text = "Sanat asettuvat mieleesi: olet oppinut loitsun {spell:Nom}.", of = "660807" }
+learned_spell = { text = "Sanat asettuvat mieleesi: olet oppinut {spell:Acc}.", of = "660807" }
 looks_better = { by = "who.person", you = "Näytät voivan paremmin.", other = "{who:Nom} näyttää voivan paremmin.", of = "6a26ba" }
-make_out_writing = { text = "Saat selvää kirjoituksesta: {what:nom}.", of = "119012" }
+make_out_writing = { text = "Saat selvää kirjoituksesta: {what:counted_nom}.", of = "119012" }
 mana_full = { text = "Manasi on jo täynnä.", of = "a4773b" }
 means_no_harm = { text = "{who:Nom} ei tarkoita sinulle pahaa.", of = "718797" }
 no_blood_magic = { text = "Et osaa veritaikuutta.", of = "c3fdbc" }
@@ -59,7 +59,7 @@ no_one_to_hex = { text = "Et näe siellä ketään kirottavaa.", of = "a1c0ae" }
 no_one_to_touch = { text = "Siellä ei ole ketään, johon koskea.", of = "d5e012" }
 no_room_beside_you = { text = "Vierelläsi ei ole niille tilaa.", of = "4985c5" }
 no_room_to_stand = { text = "Sille ei ole tilaa seistä.", of = "bf4055" }
-no_scroll_can_hold = { text = "Mikään käärö ei voi kantaa loitsua {spell:Nom}.", of = "21958b" }
+no_scroll_can_hold = { text = "Mikään käärö ei voi kantaa {spell:Par}.", of = "21958b" }
 no_spell_named = { text = "Loitsua `{id:bare}` ei ole.", of = "3228b2" }
 no_such_ability = { text = "Sinulla ei ole sellaista kykyä.", of = "f10090" }
 not_hurt = { by = "who.person", you = "Et ole haavoittunut.", other = "{who:Nom} ei ole haavoittunut.", of = "db599b" }
@@ -124,13 +124,13 @@ touch_next_to_you = { text = "Voit koskea vain vieressäsi olevaan.", of = "13ba
 untrained_decipher = { text = "Et ole harjaantunut kirjoitusten tulkintaan: et ymmärrä, miten loitsu opitaan loitsukirjasta.", of = "7f3beb" }
 vanishes = { by = "who.person", you = "Katoat!", other = "{who:Nom} katoaa!", of = "d5bd46" }
 words_add_nothing = { text = "Sanat eivät tuo mitään uutta.", of = "3b222f" }
-words_settle_deeper = { text = "Sanat painuvat syvemmälle: osaat loitsun {spell:Nom} asteella {rank:bare}/{most:bare}.", of = "00e49b" }
+words_settle_deeper = { text = "Sanat painuvat syvemmälle: osaat {spell:Acc} asteella {rank:bare}/{most:bare}.", of = "00e49b" }
 words_twist_away = { text = "Sanat kiemurtelevat otteestasi.", of = "a8ffca" }
 wounds_close = { text = "Haavasi umpeutuvat.", of = "c2be56" }
 write_broken_by = { text = "{came:bare}; lopetat kirjoittamisen.", of = "b5c1ba" }
 writing_does_not_fade = { text = "Kirjoitus ei haalistu kääröstä.", of = "8caf36" }
 writing_swims = { text = "Kirjaimet uivat silmissäsi.", of = "ab1211" }
-you_write = { text = "Kirjoitat {what:acc}.", of = "effb80" }
+you_write = { text = "Kirjoitat {what:counted_acc}.", of = "effb80" }
 zap = { text = "Käytät {what:par}.", of = "137bd9" }
 zone_dev = { text = "{kind:bare}-alue ympäröi ruutua {x:bare},{y:bare} (dev).", of = "976a48" }
 
@@ -139,8 +139,8 @@ zone_dev = { text = "{kind:bare}-alue ympäröi ruutua {x:bare},{y:bare} (dev)."
 [comes_to_call]
 of = "797f34"
 by = "who.number"
-one = "{who:Nom} vastaa kutsuusi."
-many = "{who:Nom} vastaa kutsuusi."
+one = "{who:Counted_nom} vastaa kutsuusi."
+many = "{who:Counted_nom} vastaa kutsuusi."
 
 # Several types: `who` a list of `hostile_creatures`.
 [comes_to_call_mixed]
@@ -150,8 +150,8 @@ text = "{who:And} vastaavat kutsuusi."
 [hostile_call]
 of = "a532a0"
 by = "who.number"
-one = "{who:Nom} vastaa kutsuusi, mutta ei asetu puolellesi!"
-many = "{who:Nom} vastaa kutsuusi, mutta ei asetu puolellesi!"
+one = "{who:Counted_nom} vastaa kutsuusi, mutta ei asetu puolellesi!"
+many = "{who:Counted_nom} vastaa kutsuusi, mutta ei asetu puolellesi!"
 
 [hostile_call_mixed]
 of = "5f0ea1"
@@ -161,8 +161,8 @@ text = "{who:And} vastaavat kutsuusi, mutta eivät asetu puolellesi!"
 [hostile_call_seen]
 of = "7dffb6"
 by = "who.number"
-one = "{who:Nom} vastaa {caster:gen} kutsuun, mutta ei asetu sen puolelle!"
-many = "{who:Nom} vastaa {caster:gen} kutsuun, mutta ei asetu sen puolelle!"
+one = "{who:Counted_nom} vastaa {caster:gen} kutsuun, mutta ei asetu sen puolelle!"
+many = "{who:Counted_nom} vastaa {caster:gen} kutsuun, mutta ei asetu sen puolelle!"
 
 [hostile_call_seen_mixed]
 of = "3509f4"
@@ -172,8 +172,8 @@ text = "{who:And} vastaavat {caster:gen} kutsuun, mutta eivät asetu sen puolell
 [hostile_creatures]
 of = "d5e012"
 by = "who.number"
-one = "{who:nom}"
-many = "{who:nom}"
+one = "{who:counted_nom}"
+many = "{who:counted_nom}"
 
 # Items ruined: `what` with their count, `title` one of them; `one` and `many` the ruin row's verb
 # for one and for several. A numeral subject takes the singular verb, so `many` says `one`'s.
@@ -181,4 +181,4 @@ many = "{who:nom}"
 of = "caa017"
 by = "what.number"
 one = "{title:Nom} {one:bare}."
-many = "{what:Nom} {one:bare}."
+many = "{what:Counted_nom} {one:bare}."

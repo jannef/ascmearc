@@ -2,7 +2,7 @@
 # `verb` is a damage type's verb, a line of data taking a partitive object.
 
 altar_fire_harmless = { text = "Alttarin tuli huuhtoo ylitsesi vahingoittamatta.", of = "c2264b" }
-altar_fire_hits = { text = "Alttarin tuli {verb:bare} {who:par}.", of = "37789a" }
+altar_fire_hits = { text = "Alttarin tuli {verb:bare} {who:counted_par}.", of = "37789a" }
 altar_fire_hits_you = { text = "Alttarin tuli {verb:bare} sinua.", of = "58e8ae" }
 altar_gutters = { text = "Alttarin hehku lepattaa ja sammuu.", of = "3ec4df" }
 bear_the_mark = { text = "Kannat merkkiä {talent:bare}.", of = "f0e96a" }
@@ -13,9 +13,9 @@ chest_empty = { text = "Se on tyhjä.", of = "852f59" }
 chest_kick_holds = { text = "Potkaiset {chest:par}. Se kestää.", of = "e2b354" }
 chest_locked = { text = "{chest:Nom} on lukossa.", of = "28df86" }
 chest_open = { text = "Avaat {chest:acc}.", of = "af8476" }
-chest_trapped = { text = "Huomaat, että {chest:nom} on ansoitettu: {trap:nom}.", of = "fa924b" }
+chest_trapped = { text = "Huomaat, että {chest:nom} on ansoitettu: {trap:counted_nom}.", of = "fa924b" }
 chest_unlock = { text = "Aukaiset {chest:gen} lukon {what:ade} ja avaat sen.", of = "1168c7" }
-corpse_rises = { text = "{dead:Gen} ruumis nousee {risen:ess}!", of = "5b1bc4" }
+corpse_rises = { text = "{dead:Gen} ruumis nousee {risen:counted_ess}!", of = "5b1bc4" }
 corpse_twitches = { text = "{dead:Gen} ruumis nytkähtää.", of = "25fa65" }
 doors_slam = { text = "Ovet paiskautuvat kiinni!", of = "fbe0a5" }
 drink = { text = "Kauhot vettä kämmeniisi ja juot lähteestä.", of = "416421" }
@@ -24,12 +24,12 @@ epitaph = { text = "Tässä lepää {name:bare}, {death:bare}.", of = "3bcf2d" }
 fall_to = { text = "Putoat alas {place:ill}.", of = "be4ea0" }
 # Existential ("täällä on …"): one thing in the nominative, a mass and a plural word in the
 # partitive ("nuolia").
-feature_here = { text = "Täällä on {what:nom}.", of = "3a3888" }
+feature_here = { text = "Täällä on {what:counted_nom}.", of = "3a3888" }
 feature_mass_here = { text = "Täällä on {what:par}.", of = "398b04" }
 feature_plural_here = { text = "Täällä on {what:pl_par}.", of = "dea2ac" }
 floor_gives_way = { text = "Lattia pettää altasi!", of = "4482d9" }
-find_inside = { text = "Sisällä on {what:nom}.", of = "56cee8" }
-gain_talent = { text = "Saat taipumuksen {talent:bare}.", of = "a9e72d" }
+find_inside = { text = "Sisällä on {what:counted_nom}.", of = "56cee8" }
+gain_talent = { text = "Saat {talent:acc}.", of = "a9e72d" }
 grave_name = { text = "{name:bare}, {race:bare}, {class:bare}", of = "8192e3" }
 grave_name_class = { text = "{name:bare}, {class:bare}", of = "c13908" }
 grave_name_race = { text = "{name:bare}, {race:bare}", of = "b67d58" }
@@ -42,7 +42,7 @@ pray = { text = "Polvistut alttarin eteen ja rukoilet.", of = "4fd715" }
 prayer_broken = { text = "Rukouksesi keskeytyy.", of = "ccd966" }
 prayer_broken_by = { text = "{came:bare}; rukouksesi keskeytyy.", of = "8e00b9" }
 prayer_unheard = { text = "Rukouksesi jää kuulematta.", of = "fb6e47" }
-step_lightly_off = { text = "Astut kevyesti pois {trap:gen} päältä.", of = "afdb13" }
+step_lightly_off = { text = "Astut kevyesti pois {trap:counted_gen} päältä.", of = "afdb13" }
 stop_drinking = { text = "Lopetat juomisen.", of = "9abb38" }
 too_little_mana = { text = "Sinulla on liian vähän manaa.", of = "8acd3a" }
 # A grave's `death` when the graveyard does not tell it.
@@ -54,4 +54,4 @@ wrenched_elsewhere = { text = "Sinut temmataan muualle.", of = "85872b" }
 # tuhoutuu").
 [destroyed]
 of = "63cf2b"
-text = "{what:Nom} tuhoutuu."
+text = "{what:Counted_nom} tuhoutuu."

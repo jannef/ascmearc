@@ -116,7 +116,7 @@ does_trap_damage = { text = "ansat vahingoittavat sinua {v:bare} % vähemmän", 
 # `does`: what an affix that works on every attack does.
 does_with_every_attack = { text = "{does:bare} jokaisella hyökkäyksellä", of = "22e41e" }
 finesse = { text = "Taitava: ketteryys ohjaa sen iskuja, ei voima", of = "d8cee7" }
-flask = { text = "Heitettynä se särkyy ja vapauttaa loitsun {spell:Bare} siihen, mihin se osuu", of = "86e782" }
+flask = { text = "Heitettynä se särkyy ja vapauttaa {spell:Acc} siihen, mihin se osuu", of = "86e782" }
 # `part`: the part the gem is set in; `gem`, the gem.
 gem = { text = "{part:Bare}: {gem:bare}", of = "dbaecf" }
 # `size` (`gem_size:<id>`), `gem` (`material:<id>`), and `cut` (`gem_cut:<id>`): a gem.
@@ -128,7 +128,7 @@ gem_rough = { text = "{size:bare} {gem:bare}, {cut:bare}", of = "aaedc0" }
 gem_worth = { text = "{line:bare} (arvo {worth:bare} kultaa)", of = "b30b29" }
 grimoire_known = { text = "Osaat sen tasolla {n:bare}/{most:bare}: sen lukeminen syventäisi taitoasi.", of = "0e9e1a" }
 grimoire_known_all = { text = "Osaat sen tasolla {most:bare}/{most:bare}: sillä ei ole enää mitään opetettavaa.", of = "18c584" }
-grimoire_teaches = { text = "Opettaa loitsun {spell:Bare} (taso {level:bare}): {about:bare}", of = "345910" }
+grimoire_teaches = { text = "Opettaa {spell:Acc} (taso {level:bare}): {about:bare}", of = "345910" }
 grimoire_unknown = { text = "Et osaa sitä: sen lukeminen on opiskelua.", of = "9a50db" }
 hard = { text = "vaikea työstää", of = "9aa7e1" }
 hard_soft = { text = "pehmeä ja helppo työstää", of = "403921" }
@@ -215,7 +215,7 @@ reloads = { text = "Ladataan jokaisen laukauksen jälkeen", of = "2dc3ff" }
 resist = { text = "{kind:bare} {n:bare} %", of = "39c489" }
 # `kinds`: each a `resist`, `listed`.
 resists = { text = "Kestää: {kinds:bare}", of = "fcfcdc" }
-rod_costs = { text = "Maksaa {mana:bare} manaa käytöltä ennen taipumuksiasi; se ei koskaan tyhjene", of = "382bdc" }
+rod_costs = { text = "Maksaa {mana:bare} manaa käytöltä ennen kykyjäsi; se ei koskaan tyhjene", of = "382bdc" }
 rod_holds = { text = "Sisältää vaikutuksen {effect:bare}: {about:bare}", of = "3f7af4" }
 rod_unknown = { text = "Tunnistamaton: sen vaikutus on tuntematon, kunnes sitä käytetään tai se tunnistetaan.", of = "c3ef3b" }
 shield = { text = "Kilpi +{n:bare}", of = "401ecc" }
@@ -243,8 +243,8 @@ wand_charges_unknown = { text = "Sen lataukset ovat tuntemattomat, kunnes se tun
 wand_does_radius = { text = "{roll:bare}, säde {radius:bare}", of = "945df7" }
 wand_empty = { text = "Tyhjä: se ei tee nyt mitään.", of = "d9d78f" }
 # `does`: what it does in the user's hands.
-wand_holds = { text = "Sisältää loitsun {spell:Bare}: {does:bare}", of = "93db40" }
-wand_holds_spell = { text = "Sisältää loitsun {spell:Bare} (taso {level:bare}): {about:bare}", of = "f64889" }
+wand_holds = { text = "Sisältää {spell:Acc}: {does:bare}", of = "93db40" }
+wand_holds_spell = { text = "Sisältää {spell:Acc} (taso {level:bare}): {about:bare}", of = "f64889" }
 wand_unknown = { text = "Tunnistamaton: sen sisältämä loitsu on tuntematon, kunnes sitä käytetään tai se tunnistetaan.", of = "1c9e72" }
 worn = { text = "Puettuna: {slot:bare}", of = "3c8714" }
 worn_finger = { text = "Pidetään sormessa", of = "f7962a" }

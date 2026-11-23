@@ -73,6 +73,13 @@ pub trait Morphology: fmt::Debug + Send + Sync {
     /// A number in a form: `num` (digits or words), `ord` (an ordinal); digits for any other.
     fn number(&self, n: i64, form: &str, reg: &Register) -> String;
 
+    /// Whether a phrase is plural for a template's `by = "role.number"` variants, the way this
+    /// language's plain forms say it: by its count alone unless a language says otherwise (`fi`
+    /// counts a word with no singular, "sakset", as plural, so its verb agrees).
+    fn plural(&self, phrase: &Phrase, _lex: &dyn Lexicon) -> bool {
+        phrase.count != 1
+    }
+
     /// Rendered items joined as a list with the conjunction.
     fn list(&self, items: &[String], conj: Conj) -> String;
 

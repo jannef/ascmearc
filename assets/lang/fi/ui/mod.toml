@@ -2,7 +2,7 @@
 
 [aim_wand]
 of = "a213a8"
-text = "{item:nom} ({does:bare})"
+text = "{item:counted_nom} ({does:bare})"
 
 # Status bar: eyes kept from a gaze.
 [averted]

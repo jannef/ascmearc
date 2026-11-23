@@ -73,7 +73,7 @@
 "creature.cloud_giant" = "nahka/9*D"
 "creature.cockatrice" = { word = "höyhen/32", many = true }
 "creature.crocodile" = { word = "suomu/1", many = true }
-"creature.crystal_guardian" = "kide|ruumis/41"
+"creature.crystal_guardian" = "kristalli|ruumis/41"
 "creature.death_knight" = "kuollut/47 liha/9"
 "creature.deathless_king" = { word = "kuiva/9 luu/18", many = true }
 "creature.deathshade" = "aineeton/34*C hahmo/1"

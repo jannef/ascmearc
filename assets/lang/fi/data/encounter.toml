@@ -1,148 +1,150 @@
 # Lines of data: the overworld's encounter parties (`encounter:<campaign>.<entry>.name`), said as
-# written in the nominative ("Vastaasi tulee koboldijoukko."). A party of several is a group noun
-# or `joukko` and the partitive, so the verb stays singular ("Sinä ja joukko hiisiryöstäjiä
-# huomaatte toisenne").
+# written in the nominative ("Vastaasi tulee koboldijoukko.") or, where the slot asks a case
+# (`by = "slot.form"`), in the genitive ("Lähdet koboldijoukon perään.") or the partitive ("Menet
+# koboldijoukkoa vastaan."), which drop `joukko` and say the members ("hiisiryöstäjien perään";
+# owner review 2, #2073). A party of several is a group noun or `joukko` and the partitive, so
+# the verb stays singular ("Sinä ja joukko hiisiryöstäjiä huomaatte toisenne").
 
 [ascmearc.ascdun_duergar]
-name = { text = "joukko harmaakääpiöiden malminetsijöitä", of = "b27b45" }
+name = { by = "slot.form", gen = "harmaakääpiöiden malminetsijöiden", par = "harmaakääpiöiden malminetsijöitä", else = "joukko harmaakääpiöiden malminetsijöitä", of = "b27b45" }
 
 [ascmearc.ascdun_fyrdelf]
-name = { text = "jokin kaivoksen uumenista", of = "d3c05f" }
+name = { by = "slot.form", gen = "kaivoksen uumenista nousseen olennon", par = "kaivoksen uumenista noussutta olentoa", else = "jokin kaivoksen uumenista", of = "d3c05f" }
 
 [ascmearc.ascdun_goblins]
-name = { text = "joukko hiisiryöstäjiä", of = "02bfb0" }
+name = { by = "slot.form", gen = "hiisiryöstäjien", par = "hiisiryöstäjiä", else = "joukko hiisiryöstäjiä", of = "02bfb0" }
 
 [ascmearc.ascdun_kobolds]
-name = { text = "koboldijoukko", of = "e058ca" }
+name = { by = "slot.form", gen = "koboldijoukon", par = "koboldijoukkoa", else = "koboldijoukko", of = "e058ca" }
 
 [ascmearc.ascdun_troll]
-name = { text = "mäkipeikko", of = "db1d2c" }
+name = { by = "slot.form", gen = "mäkipeikon", par = "mäkipeikkoa", else = "mäkipeikko", of = "db1d2c" }
 
 [ascmearc.deep_lynx]
-name = { text = "ilves", of = "c3b27a" }
+name = { by = "slot.form", gen = "ilveksen", par = "ilvestä", else = "ilves", of = "c3b27a" }
 
 [ascmearc.deep_orcs]
-name = { text = "joukko örkkirääpäleitä", of = "d58ab0" }
+name = { by = "slot.form", gen = "örkkirääpäleiden", par = "örkkirääpäleitä", else = "joukko örkkirääpäleitä", of = "d58ab0" }
 
 [ascmearc.deep_skeletal_wolves]
-name = { text = "luurankosusien lauma", of = "5d7b79" }
+name = { by = "slot.form", gen = "luurankosusien lauman", par = "luurankosusien laumaa", else = "luurankosusien lauma", of = "5d7b79" }
 
 [ascmearc.deep_wargs]
-name = { text = "hukkalauma", of = "fadfe5" }
+name = { by = "slot.form", gen = "hukkalauman", par = "hukkalaumaa", else = "hukkalauma", of = "fadfe5" }
 
 [ascmearc.deep_wulfeshol]
-name = { text = "jokin Wulfesholin uumenista", of = "557c51" }
+name = { by = "slot.form", gen = "Wulfesholin uumenista nousseen olennon", par = "Wulfesholin uumenista noussutta olentoa", else = "jokin Wulfesholin uumenista", of = "557c51" }
 
 [ascmearc.downs_ghoul]
-name = { text = "kummunsyöjä", of = "e484d7" }
+name = { by = "slot.form", gen = "kummunsyöjän", par = "kummunsyöjää", else = "kummunsyöjä", of = "e484d7" }
 
 [ascmearc.downs_goblins]
-name = { text = "joukko hiisiryöstäjiä", of = "02bfb0" }
+name = { by = "slot.form", gen = "hiisiryöstäjien", par = "hiisiryöstäjiä", else = "joukko hiisiryöstäjiä", of = "02bfb0" }
 
 [ascmearc.downs_kobolds]
-name = { text = "koboldijoukko", of = "e058ca" }
+name = { by = "slot.form", gen = "koboldijoukon", par = "koboldijoukkoa", else = "koboldijoukko", of = "e058ca" }
 
 [ascmearc.downs_skeletons]
-name = { text = "luurankojen rykelmä", of = "14e1ec" }
+name = { by = "slot.form", gen = "luurankojen rykelmän", par = "luurankojen rykelmää", else = "luurankojen rykelmä", of = "14e1ec" }
 
 [ascmearc.downs_spiders]
-name = { text = "joukko kumpuhämähäkkejä", of = "17ab2d" }
+name = { by = "slot.form", gen = "kumpuhämähäkkien", par = "kumpuhämähäkkejä", else = "joukko kumpuhämähäkkejä", of = "17ab2d" }
 
 [ascmearc.downs_strays]
-name = { text = "jokin hautakummusta", of = "8f5d95" }
+name = { by = "slot.form", gen = "hautakummusta nousseen olennon", par = "hautakummusta noussutta olentoa", else = "jokin hautakummusta", of = "8f5d95" }
 
 [ascmearc.downs_wight]
-name = { text = "kumpukalmo", of = "c71816" }
+name = { by = "slot.form", gen = "kumpukalmon", par = "kumpukalmoa", else = "kumpukalmo", of = "c71816" }
 
 [ascmearc.fen_bog_body]
-name = { text = "suoruumis", of = "5373c4" }
+name = { by = "slot.form", gen = "suoruumiin", par = "suoruumista", else = "suoruumis", of = "5373c4" }
 
 [ascmearc.fen_cultists]
-name = { text = "joukko lahkolaisia suotiellä", of = "500033" }
+name = { by = "slot.form", gen = "suotien lahkolaisten", par = "suotien lahkolaisia", else = "joukko lahkolaisia suotiellä", of = "500033" }
 
 [ascmearc.fen_drowned]
-name = { text = "joukko hukkuneita", of = "66a2c8" }
+name = { by = "slot.form", gen = "hukkuneiden", par = "hukkuneita", else = "joukko hukkuneita", of = "66a2c8" }
 
 [ascmearc.fen_frogs]
-name = { text = "joukko jättisammakoita", of = "d291a0" }
+name = { by = "slot.form", gen = "jättisammakoiden", par = "jättisammakoita", else = "joukko jättisammakoita", of = "d291a0" }
 
 [ascmearc.fen_leeches]
-name = { text = "joukko jätti-iilimatoja", of = "22978a" }
+name = { by = "slot.form", gen = "jätti-iilimatojen", par = "jätti-iilimatoja", else = "joukko jätti-iilimatoja", of = "22978a" }
 
 [ascmearc.fen_wisp]
-name = { text = "virvatuli", of = "adf650" }
+name = { by = "slot.form", gen = "virvatulen", par = "virvatulta", else = "virvatuli", of = "adf650" }
 
 [ascmearc.orc_raiders]
-name = { text = "örkkien ryöstöjoukko", of = "9243ff" }
+name = { by = "slot.form", gen = "örkkien ryöstöjoukon", par = "örkkien ryöstöjoukkoa", else = "örkkien ryöstöjoukko", of = "9243ff" }
 
 [ascmearc.orc_raiders_night]
-name = { text = "örkkien ryöstöjoukko", of = "9243ff" }
+name = { by = "slot.form", gen = "örkkien ryöstöjoukon", par = "örkkien ryöstöjoukkoa", else = "örkkien ryöstöjoukko", of = "9243ff" }
 
 [ascmearc.road_deer]
-name = { text = "peuralauma", of = "776713" }
+name = { by = "slot.form", gen = "peuralauman", par = "peuralaumaa", else = "peuralauma", of = "776713" }
 
 [ascmearc.road_footpads]
-name = { text = "maantierosvojen joukko", of = "674867" }
+name = { by = "slot.form", gen = "maantierosvojen", par = "maantierosvoja", else = "maantierosvojen joukko", of = "674867" }
 
 [ascmearc.road_footpads_night]
-name = { text = "maantierosvojen joukko", of = "674867" }
+name = { by = "slot.form", gen = "maantierosvojen", par = "maantierosvoja", else = "maantierosvojen joukko", of = "674867" }
 
 [ascmearc.road_goblins]
-name = { text = "joukko hiisiryöstäjiä", of = "02bfb0" }
+name = { by = "slot.form", gen = "hiisiryöstäjien", par = "hiisiryöstäjiä", else = "joukko hiisiryöstäjiä", of = "02bfb0" }
 
 [ascmearc.road_pedlar]
-name = { text = "kulkukauppias", of = "f7bb2a" }
+name = { by = "slot.form", gen = "kulkukauppiaan", par = "kulkukauppiasta", else = "kulkukauppias", of = "f7bb2a" }
 
 [ascmearc.road_villagers]
-name = { text = "joukko kyläläisiä matkalla", of = "80a81d" }
+name = { by = "slot.form", gen = "matkalla olevien kyläläisten", par = "matkalla olevia kyläläisiä", else = "joukko kyläläisiä matkalla", of = "80a81d" }
 
 [ascmearc.strange_spirit_downs]
-name = { text = "outo henki", of = "35ead9" }
+name = { by = "slot.form", gen = "oudon hengen", par = "outoa henkeä", else = "outo henki", of = "35ead9" }
 
 [ascmearc.strange_spirit_roads]
-name = { text = "outo henki", of = "35ead9" }
+name = { by = "slot.form", gen = "oudon hengen", par = "outoa henkeä", else = "outo henki", of = "35ead9" }
 
 [ascmearc.strange_spirit_vale]
-name = { text = "outo henki", of = "35ead9" }
+name = { by = "slot.form", gen = "oudon hengen", par = "outoa henkeä", else = "outo henki", of = "35ead9" }
 
 [ascmearc.strange_spirit_woods]
-name = { text = "outo henki", of = "35ead9" }
+name = { by = "slot.form", gen = "oudon hengen", par = "outoa henkeä", else = "outo henki", of = "35ead9" }
 
 [ascmearc.vale_badger]
-name = { text = "mäyrä", of = "a6a7f2" }
+name = { by = "slot.form", gen = "mäyrän", par = "mäyrää", else = "mäyrä", of = "a6a7f2" }
 
 [ascmearc.vale_deer]
-name = { text = "peuralauma", of = "776713" }
+name = { by = "slot.form", gen = "peuralauman", par = "peuralaumaa", else = "peuralauma", of = "776713" }
 
 [ascmearc.vale_footpad]
-name = { text = "yksinäinen maantierosvo", of = "10178a" }
+name = { by = "slot.form", gen = "yksinäisen maantierosvon", par = "yksinäistä maantierosvoa", else = "yksinäinen maantierosvo", of = "10178a" }
 
 [ascmearc.vale_goblins]
-name = { text = "joukko hiisiryöstäjiä", of = "02bfb0" }
+name = { by = "slot.form", gen = "hiisiryöstäjien", par = "hiisiryöstäjiä", else = "joukko hiisiryöstäjiä", of = "02bfb0" }
 
 [ascmearc.vale_kobolds]
-name = { text = "koboldijoukko", of = "e058ca" }
+name = { by = "slot.form", gen = "koboldijoukon", par = "koboldijoukkoa", else = "koboldijoukko", of = "e058ca" }
 
 [ascmearc.vale_rats]
-name = { text = "jättirottien lauma", of = "336798" }
+name = { by = "slot.form", gen = "jättirottien lauman", par = "jättirottien laumaa", else = "jättirottien lauma", of = "336798" }
 
 [ascmearc.woods_boar]
-name = { text = "villisika", of = "10202d" }
+name = { by = "slot.form", gen = "villisian", par = "villisikaa", else = "villisika", of = "10202d" }
 
 [ascmearc.woods_deer]
-name = { text = "peuralauma", of = "776713" }
+name = { by = "slot.form", gen = "peuralauman", par = "peuralaumaa", else = "peuralauma", of = "776713" }
 
 [ascmearc.woods_footpads]
-name = { text = "maantierosvojen joukko", of = "674867" }
+name = { by = "slot.form", gen = "maantierosvojen", par = "maantierosvoja", else = "maantierosvojen joukko", of = "674867" }
 
 [ascmearc.woods_goblins]
-name = { text = "joukko hiisiryöstäjiä", of = "02bfb0" }
+name = { by = "slot.form", gen = "hiisiryöstäjien", par = "hiisiryöstäjiä", else = "joukko hiisiryöstäjiä", of = "02bfb0" }
 
 [ascmearc.woods_spiders]
-name = { text = "joukko kumpuhämähäkkejä", of = "17ab2d" }
+name = { by = "slot.form", gen = "kumpuhämähäkkien", par = "kumpuhämähäkkejä", else = "joukko kumpuhämähäkkejä", of = "17ab2d" }
 
 [ascmearc.woods_wargs]
-name = { text = "kaksi hukkaa", of = "7b3cc8" }
+name = { by = "slot.form", gen = "kahden hukan", par = "kahta hukkaa", else = "kaksi hukkaa", of = "7b3cc8" }
 
 [ascmearc.wystan_archers]
-name = { text = "Wystanin jousimiehet", of = "1636a6" }
+name = { by = "slot.form", gen = "Wystanin jousimiesten", par = "Wystanin jousimiehiä", else = "Wystanin jousimiehet", of = "1636a6" }

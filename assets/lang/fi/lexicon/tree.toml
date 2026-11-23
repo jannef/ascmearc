@@ -1,5 +1,5 @@
 # Talent trees (`tree:<id>`): a tree's name keeps its capital as English does ("Sinun on
-# valittava taipumus puusta Sisu tai Voima"), said in the nominative.
+# valittava kyky puusta Sisu tai Voima"), said in the nominative.
 class = { word = "Luokan kyky/1*M", plural_only = true }
 crafts = { word = "Käsi|työ/19", plural_only = true }
 craving = "Himo/1"

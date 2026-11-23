@@ -373,8 +373,10 @@ fn the_designs_item_phrases() {
         "13 nuolta",
         "beyond number_words: digits"
     );
-    assert_eq!(form(&arrows, "nom"), "13 nuolta");
-    assert_eq!(form(&arrows, "ill"), "13 nuoleen");
+    assert_eq!(form(&arrows, "nom"), "nuolet", "a plain case: no numeral");
+    assert_eq!(form(&arrows, "ill"), "nuoliin");
+    assert_eq!(form(&arrows, "counted_nom"), "13 nuolta");
+    assert_eq!(form(&arrows, "counted_ill"), "13 nuoleen");
     assert_eq!(
         form(&arrows.clone().count(12), "counted"),
         "kaksitoista nuolta"
@@ -389,11 +391,13 @@ fn the_designs_item_phrases() {
     let three = Phrase::id("creature:troll").count(3);
     assert_eq!(form(&three, "counted"), "kolme peikkoa");
     assert_eq!(
-        form(&three, "ill"),
+        form(&three, "counted_ill"),
         "kolmeen peikkoon",
         "the numeral declines"
     );
-    assert_eq!(form(&three, "gen"), "kolmen peikon");
+    assert_eq!(form(&three, "counted_gen"), "kolmen peikon");
+    assert_eq!(form(&three, "ill"), "peikkoihin", "uncounted: the plural");
+    assert_eq!(form(&three, "gen"), "peikkojen");
     assert_eq!(form(&three, "num"), "kolme");
     assert_eq!(form(&three, "ord"), "kolmas");
     assert_eq!(
@@ -463,26 +467,30 @@ fn creatures_names_and_the_player() {
     assert_eq!(form(&axe, "com_nsa"), "kirveineen");
     assert_eq!(form(&axe, "ins"), "kirvein");
     let wolves = Phrase::id("creature:wolves").count(2);
-    assert_eq!(form(&wolves, "nom"), "kaksi sutta");
+    assert_eq!(form(&wolves, "counted_nom"), "kaksi sutta");
+    assert_eq!(form(&wolves, "nom"), "sudet");
     assert_eq!(form(&wolves, "pl_nom"), "sudet");
-    assert_eq!(form(&wolves, "ade_nsa"), "kahdella sudellaan");
+    assert_eq!(form(&wolves, "counted_ade_nsa"), "kahdella sudellaan");
+    assert_eq!(form(&wolves, "ade_nsa"), "susillaan");
     assert_eq!(form(&Phrase::id("object:shield"), "pl_ine"), "kilvissä");
     assert_eq!(
-        form(&Phrase::id("object:shield").count(0), "nom"),
+        form(&Phrase::id("object:shield").count(0), "counted_nom"),
         "nolla kilpeä"
     );
 }
 
 /// The total object (`acc`, owner review 1, #2072): one thing in the genitive, several as the
-/// nominative numeral and the partitive (never "kolmen nuolen"), a plural word in the
-/// nominative, and the player as `sinut`.
+/// plural nominative, or counted (`counted_acc`, owner review 2, #2073) as the nominative
+/// numeral and the partitive (never "kolmen nuolen"), a plural word in the nominative, and the
+/// player as `sinut`.
 #[test]
 fn a_total_object_is_the_genitive_for_one_and_the_numeral_with_the_partitive_for_several() {
     let arrow = Phrase::id("object:arrow");
     assert_eq!(form(&arrow, "acc"), "nuolen");
-    assert_eq!(form(&arrow.clone().count(3), "acc"), "kolme nuolta");
-    assert_eq!(form(&arrow.clone().count(13), "acc"), "13 nuolta");
-    assert_eq!(form(&arrow.clone().count(0), "acc"), "nolla nuolta");
+    assert_eq!(form(&arrow.clone().count(3), "acc"), "nuolet");
+    assert_eq!(form(&arrow.clone().count(3), "counted_acc"), "kolme nuolta");
+    assert_eq!(form(&arrow.clone().count(13), "counted_acc"), "13 nuolta");
+    assert_eq!(form(&arrow.clone().count(0), "counted_acc"), "nolla nuolta");
     assert_eq!(form(&arrow.clone().count(3), "pl_acc"), "nuolet");
     let you = Phrase::literal("Hild").person(Person::You);
     let sword = Phrase::id("object:long_sword").owned_by(you.clone());
@@ -492,8 +500,12 @@ fn a_total_object_is_the_genitive_for_one_and_the_numeral_with_the_partitive_for
         "the player's: the suffix"
     );
     assert_eq!(
-        form(&arrow.clone().count(3).owned_by(you.clone()), "acc"),
+        form(&arrow.clone().count(3).owned_by(you.clone()), "counted_acc"),
         "kolme nuoltasi"
+    );
+    assert_eq!(
+        form(&arrow.clone().count(3).owned_by(you.clone()), "acc"),
+        "nuolesi"
     );
     let troll = Phrase::id("creature:troll");
     assert_eq!(
@@ -510,25 +522,76 @@ fn a_total_object_is_the_genitive_for_one_and_the_numeral_with_the_partitive_for
     // A word plural in meaning or with no singular: the nominative, as a total object is.
     assert_eq!(form(&Phrase::id("word:flames"), "acc"), "liekit");
     assert_eq!(
-        form(&Phrase::id("word:flames").count(3), "acc"),
+        form(&Phrase::id("word:flames").count(3), "counted_acc"),
         "kolme liekkiä"
     );
+    assert_eq!(form(&Phrase::id("word:flames").count(3), "acc"), "liekit");
     assert_eq!(form(&Phrase::id("object:scissors"), "acc"), "sakset");
     assert_eq!(
-        form(&Phrase::id("object:scissors").count(3), "acc"),
+        form(&Phrase::id("object:scissors").count(3), "counted_acc"),
         "kolmet sakset"
+    );
+    assert_eq!(
+        form(&Phrase::id("object:scissors").count(3), "acc"),
+        "sakset"
     );
     // Adjectives agree with the head in either shape.
     let flaming =
         Phrase::id("object:long_sword").with(Modifier::Adjective(Word::id("affix:flaming")));
     assert_eq!(form(&flaming, "acc"), "liekehtivän pitkämiekan");
     assert_eq!(
-        form(&flaming.count(2), "acc"),
+        form(&flaming.clone().count(2), "counted_acc"),
         "kaksi liekehtivää pitkämiekkaa"
     );
+    assert_eq!(form(&flaming.count(2), "acc"), "liekehtivät pitkämiekat");
     let fi = Fi::default();
     let stadi = Register::new(BTreeMap::from([("sinut".to_string(), "sut".to_string())]));
     assert_eq!(fi.phrase(&you, "acc", &NoLexicon, &stadi), Ok("sut".into()));
+}
+
+/// A count appears only where English shows one (owner review 2, #2073): a plain case says
+/// several in the plural with no numeral, as `{who:the}` does ("the fetches"), and the
+/// `counted_` forms say the numeral, as `{what:a}` does ("6 fetches"); an owner of several is a
+/// plural genitive ("the stools' Radiant"); a word with no singular is plural for a template's
+/// `number` variants, so its verb agrees.
+#[test]
+fn a_count_shows_only_where_the_template_asks() {
+    let fetches = Phrase::id("creature:troll").count(6);
+    assert_eq!(form(&fetches, "all"), "peikoille");
+    assert_eq!(form(&fetches, "counted_all"), "kuudelle peikolle");
+    assert_eq!(form(&fetches, "acc"), "peikot");
+    assert_eq!(form(&fetches, "counted_acc"), "kuusi peikkoa");
+    let you = Phrase::literal("Hild").person(Person::You);
+    let rocks = Phrase::id("object:arrow").count(8).owned_by(you.clone());
+    assert_eq!(form(&rocks, "nom"), "nuolesi", "your rocks: no numeral");
+    assert_eq!(form(&rocks, "counted_nom"), "kahdeksan nuoltasi");
+    let theirs = Phrase::id("object:long_sword").owned_by(Phrase::id("creature:troll").count(2));
+    assert_eq!(form(&theirs, "nom"), "peikkojen pitkämiekka");
+    assert_eq!(form(&theirs, "acc"), "peikkojen pitkämiekan");
+    let one = Phrase::id("object:arrow");
+    assert_eq!(
+        form(&one, "counted_ill"),
+        "nuoleen",
+        "one: as the plain case"
+    );
+    assert_eq!(form(&one, "counted_acc"), "nuolen");
+    let fi = Fi::default();
+    let lex = lexicon();
+    assert!(fi.plural(&fetches, &lex));
+    assert!(!fi.plural(&one, &lex));
+    assert!(
+        fi.plural(&Phrase::id("object:scissors"), &lex),
+        "no singular"
+    );
+    assert!(
+        fi.plural(&Phrase::id("word:flames"), &lex),
+        "plural in meaning"
+    );
+    assert!(
+        !fi.plural(&Phrase::id("creature:black_wystan").count(2), &lex),
+        "a name"
+    );
+    assert!(!fi.plural(&you.clone().count(3), &lex), "the player");
 }
 
 /// Place names inflect as names (owner review 1, #2072): the illative, not "paikkaan X".
@@ -582,7 +645,8 @@ fn owners_genitive_or_the_players_suffix() {
     assert_eq!(form(&theirs, "ill"), "peikon pitkämiekkaan");
     assert_eq!(
         form(&theirs.clone().owned_by(troll.clone().count(3)), "nom"),
-        "kolmen peikon pitkämiekka"
+        "peikkojen pitkämiekka",
+        "several owners: the plural, no numeral (English: the trolls')"
     );
     let yours = sword.clone().owned_by(you.clone());
     assert_eq!(form(&yours, "nom"), "pitkämiekkasi", "the player: a suffix");
@@ -709,7 +773,7 @@ fn a_word_plural_in_meaning_is_counted_as_any_noun() {
         } else {
             (&kolme.sg[i], &liekki.sg[i])
         };
-        let got = form(&three, case.name());
+        let got = form(&three, &format!("counted_{}", case.name()));
         let (got_numeral, got_noun) = got.split_once(' ').expect("numeral and noun");
         assert!(
             accepts(numeral, got_numeral) && accepts(noun, got_noun),
@@ -717,8 +781,13 @@ fn a_word_plural_in_meaning_is_counted_as_any_noun() {
             case.name()
         );
     }
-    assert_eq!(form(&three, "ill"), "kolmeen liekkiin");
-    assert_eq!(form(&three, "ade"), "kolmella liekillä");
+    assert_eq!(form(&three, "counted_ill"), "kolmeen liekkiin");
+    assert_eq!(form(&three, "counted_ade"), "kolmella liekillä");
+    assert_eq!(
+        form(&three, "ill"),
+        "liekkeihin",
+        "a plain case: no numeral"
+    );
     assert_eq!(
         form(&three, "pl_ill"),
         "liekkeihin",
@@ -742,25 +811,35 @@ fn a_word_with_no_singular_takes_the_plural_numeral() {
     assert_eq!(form(&scissors, "pl_ill"), "saksiin");
     let three = scissors.clone().count(3);
     assert_eq!(form(&three, "counted"), "kolmet sakset");
-    assert_eq!(form(&three, "nom"), "kolmet sakset");
-    assert_eq!(form(&three, "par"), "kolmia saksia");
-    assert_eq!(form(&three, "gen"), "kolmien saksien");
+    assert_eq!(form(&three, "counted_nom"), "kolmet sakset");
+    assert_eq!(form(&three, "counted_par"), "kolmia saksia");
+    assert_eq!(form(&three, "counted_gen"), "kolmien saksien");
+    assert_eq!(form(&three, "nom"), "sakset", "a plain case: no numeral");
+    assert_eq!(form(&three, "gen"), "saksien");
     assert_eq!(form(&three, "bare"), "sakset", "bare: no numeral");
     let trousers = Phrase::id("object:trousers").count(3);
-    assert_eq!(form(&trousers, "ine"), "kolmissa housuissa");
-    assert_eq!(form(&trousers.clone().count(2), "nom"), "kahdet housut");
+    assert_eq!(form(&trousers, "counted_ine"), "kolmissa housuissa");
+    assert_eq!(form(&trousers, "ine"), "housuissa");
     assert_eq!(
-        form(&trousers.clone().count(11), "nom"),
+        form(&trousers.clone().count(2), "counted_nom"),
+        "kahdet housut"
+    );
+    assert_eq!(
+        form(&trousers.clone().count(11), "counted_nom"),
         "yhdettoista housut"
     );
     assert_eq!(
-        form(&trousers.clone().count(13), "nom"),
+        form(&trousers.clone().count(13), "counted_nom"),
         "13 housut",
         "digits agree"
     );
-    assert_eq!(form(&trousers.clone().count(13), "ill"), "13 housuihin");
     assert_eq!(
-        form(&trousers.clone().count(0), "nom"),
+        form(&trousers.clone().count(13), "counted_ill"),
+        "13 housuihin"
+    );
+    assert_eq!(form(&trousers.clone().count(13), "ill"), "housuihin");
+    assert_eq!(
+        form(&trousers.clone().count(0), "counted_nom"),
         "nolla housuja",
         "zero: the plain numeral and the plural partitive"
     );
@@ -768,7 +847,7 @@ fn a_word_with_no_singular_takes_the_plural_numeral() {
         let owned = Phrase::id("object:trousers")
             .count(n)
             .owned_by(Phrase::literal("Hild").person(Person::You));
-        form(&owned, "nom")
+        form(&owned, "counted_nom")
     };
     assert_eq!(mine(3), "kolmet housusi");
     // Every case of every numeral 1–10, 11, and 13 against the oracle: the plural numeral and
@@ -790,7 +869,12 @@ fn a_word_with_no_singular_takes_the_plural_numeral() {
         for case in Case::SINGULAR {
             let i = index(&oracle, case);
             let got = fi
-                .phrase(&phrase, case.name(), &lex, &Register::default())
+                .phrase(
+                    &phrase,
+                    &format!("counted_{}", case.name()),
+                    &lex,
+                    &Register::default(),
+                )
                 .expect("a case");
             if n == 1 {
                 assert_eq!(got, karhu.pl[i], "one: no numeral");
@@ -883,9 +967,10 @@ fn refused_entries_render_as_written_and_say_why() {
     );
     assert_eq!(form(&Phrase::id("no:such"), "ade"), "[no:such]");
     assert_eq!(
-        form(&Phrase::id("no:such").count(2), "ade"),
+        form(&Phrase::id("no:such").count(2), "counted_ade"),
         "kahdella [no:such]"
     );
+    assert_eq!(form(&Phrase::id("no:such").count(2), "ade"), "[no:such]");
     assert_eq!(Entry::base_text("pitkä|miekka/9*A"), "pitkämiekka");
     assert_eq!(Entry::base_text("pitkä/10 miekka/9*A"), "pitkä miekka");
     assert_eq!(
@@ -978,17 +1063,37 @@ fn forms_numbers_and_lists() {
         !forms.iter().any(|f| f == "pl_com"),
         "the comitative is plural already"
     );
-    for name in ["acc", "pl_acc", "acc_si", "pl_acc_nsa"] {
+    for name in [
+        "acc",
+        "pl_acc",
+        "acc_si",
+        "pl_acc_nsa",
+        "counted_nom",
+        "counted_ill",
+        "counted_acc",
+        "counted_acc_si",
+    ] {
         assert!(forms.iter().any(|f| f == name), "{name} listed");
     }
-    assert_eq!(forms.len(), 5 + 13 * 2 * 6 + 6 + 1);
+    assert_eq!(forms.len(), 5 + 13 * 3 * 6 + 6 + 1);
     let sword = Phrase::id("object:long_sword");
     for name in &forms {
         fi.phrase(&sword, name, &lexicon(), &reg)
             .unwrap_or_else(|e| panic!("{name}: {e}"));
     }
     for bad in [
-        "the", "a", "ins_ni", "pl_com", "pl_", "nom_", "nom_xx", "", "Nom",
+        "the",
+        "a",
+        "ins_ni",
+        "pl_com",
+        "pl_",
+        "nom_",
+        "nom_xx",
+        "",
+        "Nom",
+        "counted_pl_nom",
+        "counted_com",
+        "counted_",
     ] {
         assert_eq!(
             fi.phrase(&sword, bad, &lexicon(), &reg),

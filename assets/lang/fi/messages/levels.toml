@@ -5,7 +5,8 @@
 # Roles: `who` is the creature a line is about; `pack` the player's allies, a list; `what` a thing
 # or a terrain; `fire` the burning terrain. `place` a place by its name, a word in any case
 # (`lexicon/place.toml`, or `branch_level`: "Saavut {place:ill}."); `party` an encounter's party,
-# a line of data said as written ("Vastaasi tulee {party:bare}."). `verb` is
+# a line of data said as written ("Vastaasi tulee {party:bare}.") or in the case its slot asks
+# ("Lähdet {party:gen} perään.", `by = "slot.form"` in `data/encounter.toml`). `verb` is
 # a damage type's verb (third person, takes a partitive object) and `seen` how a status looks.
 # `error` is a refusal's reason, English for developers; `id` a level, location, or encounter id
 # as typed; `x`, `y`, `cells`, `laid`, and `price` are numbers.
@@ -31,14 +32,14 @@ enter_place = { text = "Saavut {place:ill}.", of = "069d3d" }
 # `what`: the terrain of the overworld cell ("metsä").
 explore = { text = "Tutkit {what:par}.", of = "c0ddea" }
 # `fire`: the burning terrain; `who`: the creature it burns; `verb`: how the damage type says it.
-fire_burns = { text = "{fire:Nom} {verb:bare} {who:par}.", of = "d75721" }
+fire_burns = { text = "{fire:Nom} {verb:bare} {who:counted_par}.", of = "d75721" }
 fire_burns_you = { text = "{fire:Nom} {verb:bare} sinua!", of = "1bc04c" }
 fire_harmless = { by = "fire.number", one = "{fire:Nom} leimahtaa ympärilläsi vahingoittamatta sinua.", many = "{fire:Nom} leimahtavat ympärilläsi vahingoittamatta sinua.", of = "d26338" }
 foot_finds_no_bottom = { text = "Jalkasi ei tavoita pohjaa: edessä on syvää vettä.", of = "6fe33c" }
 # A dev action's: `x`, `y` the centre, `cells` how many froze.
 frost_dev = { text = "Pakkanen jäädyttää veden kohdan {x:bare},{y:bare} ympäriltä ({cells:bare} ruutua, dev).", of = "bf08fb" }
-go_after = { text = "Lähdet perään: {party:bare}.", of = "675406" }
-go_to_meet = { text = "Menet vastaan: {party:bare}.", of = "c6ad1f" }
+go_after = { text = "Lähdet {party:gen} perään.", of = "675406" }
+go_to_meet = { text = "Menet {party:par} vastaan.", of = "c6ad1f" }
 go_under = { text = "Vajoat pinnan alle ja tukehdut.", of = "97530f" }
 ice_creaks = { text = "Jää narisee painosi alla.", of = "b4de97" }
 keep_your_head = { text = "Pysyt rauhallisena, eikä kylmä pure yhtä syvältä.", of = "6856a8" }
@@ -46,7 +47,7 @@ known = { text = "Muistat heidät: pääsit heiltä pakoon täällä ennenkin.",
 # `boss`: the layer boss slain.
 lair_opens = { text = "Nyt kun {boss:nom} on kuollut, lattiaan aukeavat portaat.", of = "614f65" }
 # `what`: the player's light, theirs.
-light_goes_out = { text = "{what:Nom} sammuu.", of = "54e802" }
+light_goes_out = { by = "what.number", one = "{what:Nom} sammuu.", many = "{what:Nom} sammuvat.", of = "54e802" }
 lose_them_byways = { text = "Karistat heidät kannoiltasi sivupoluilla.", of = "a2a3e1" }
 lose_them_grass = { text = "Karistat heidät kannoiltasi korkeassa heinikossa.", of = "a2c8c7" }
 lose_them_hills = { text = "Karistat heidät kannoiltasi kukkuloilla.", of = "9c58bd" }
@@ -82,8 +83,8 @@ return_to = { text = "Palaat {place:ill}.", of = "8d5352" }
 run_you_down = { text = "He saavat sinut kiinni.", of = "00ba39" }
 see_each_other = { text = "Sinä ja {party:bare} huomaatte toisenne samalla hetkellä.", of = "bd5389" }
 # `what`: what lies on the cell the player entered, one stack; `price` its price, for sale.
-see_here = { text = "Täällä on {what:nom}.", of = "835e0e" }
-see_here_for_sale = { text = "Täällä on {what:nom} (myytävänä, {price:bare} kultaa).", of = "b21110" }
+see_here = { text = "Täällä on {what:counted_nom}.", of = "835e0e" }
+see_here_for_sale = { text = "Täällä on {what:counted_nom} (myytävänä, {price:bare} kultaa).", of = "b21110" }
 # `party` is set upon the player from cover, which the land gives.
 set_upon_grass = { text = "Korkeasta heinikosta kimppuusi käy {party:bare}!", of = "04e2dd" }
 set_upon_hills = { text = "Kivien takaa kimppuusi käy {party:bare}!", of = "891b83" }
@@ -93,7 +94,7 @@ set_upon_undergrowth = { text = "Tiheiköstä kimppuusi käy {party:bare}!", of 
 several_objects_here = { text = "Täällä on useita esineitä.", of = "96dae4" }
 slip_away_unseen = { text = "Livahdat pois huomaamatta.", of = "906a8e" }
 # `what`: the paper item, the player's.
-soaked = { text = "{what:Nom} kastuu läpimäräksi ja pilaantuu.", of = "7c97a0" }
+soaked = { by = "what.number", one = "{what:Nom} kastuu läpimäräksi ja pilaantuu.", many = "{what:Nom} kastuvat läpimäriksi ja pilaantuvat.", of = "7c97a0" }
 # `party`, seen first; where, as the land runs.
 spot_ahead = { text = "Edessäpäin on {party:bare}. He eivät ole huomanneet sinua.", of = "b067ce" }
 spot_on_road = { text = "Tiellä edessäpäin on {party:bare}. He eivät ole huomanneet sinua.", of = "b3e85e" }
@@ -121,7 +122,7 @@ wake_close_by = { text = "Heräät ääniin: leirisi lähellä on {party:bare}."
 wake_near_camp = { text = "Herätessäsi leirisi liepeillä on {party:bare}.", of = "02a060" }
 wake_upon_you = { text = "Heräät, ja kimpussasi on {party:bare}!", of = "a86e80" }
 # `what`: the terrain in the way.
-way_blocked = { text = "{what:Nom} on tielläsi.", of = "8ca62d" }
+way_blocked = { by = "what.number", one = "{what:Nom} on tielläsi.", many = "{what:Nom} ovat tielläsi.", of = "8ca62d" }
 # `place`: the overworld location a way down leads into, by its name.
 way_into_here = { text = "Tästä pääsee {place:ill}.", of = "a7e48a" }
 # `who`: the one a web caught; `seen`: how the web's status looks.
@@ -184,5 +185,5 @@ many = "{who:nom}"
 [sinks]
 of = "8b4a23"
 by = "what.number"
-one = "{what:Nom} uppoaa veteen."
-many = "Veteen uppoaa {what:nom}."
+one = "{what:Counted_nom} uppoaa veteen."
+many = "Veteen uppoaa {what:counted_nom}."

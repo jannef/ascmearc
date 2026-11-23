@@ -4,9 +4,13 @@
 //! fourteen cases, singular and plural, with or without a possessive suffix; the forms are
 //! generated when a template asks, from small tables (`classes.rs`, `inflect.rs`), never
 //! expanded ahead. A phrase's adjectives agree with its head, a genitive qualifier comes first,
-//! a count puts the numeral before a partitive, and the player is a pronoun in the case asked.
-//! The total object (`acc`) is the genitive for one thing and the numeral with the partitive
-//! for several ("pudotat tikarin", "pudotat kolme nuolta"), `sinut` for the player.
+//! and the player is a pronoun in the case asked. A count shows only where the template asks
+//! for it (owner review 2, #2073): a plain case says several in the plural with no numeral, as
+//! English's `the` does ("nuoliin", "etiäisille"), and the `counted_` forms put the numeral
+//! before a partitive, as English's `a` does ("kolmeen nuoleen"). The total object (`acc`) is
+//! the genitive for one thing and the plural nominative for several ("pudotat tikarin",
+//! "nappaat nuolet"), `counted_acc` the numeral with the partitive ("pudotat kolme nuolta"),
+//! `sinut` for the player.
 //! An owner is a genitive before the phrase ("peikon pitkämiekka"), the player as owner a
 //! possessive suffix ("pitkämiekkasi"); a part's material makes a compound adjective
 //! ("smaragdiponsinen"). A word plural in meaning (English's `many`, "liekit") is said in the
@@ -31,14 +35,21 @@ use std::collections::BTreeMap;
 use word::Entry;
 
 /// The forms besides the cases: `bare` and `name` (the nominative, plural for a count over one),
-/// `counted` (the numeral and the partitive), `num`, `ord`. The total object `acc` (with `pl_`
-/// and a possessive suffix like a case) is listed with the cases by [`Form::all`].
+/// `counted` (the numeral and the partitive, [`COUNTED`] alone), `num`, `ord`. The total object
+/// `acc` (with `pl_` and a possessive suffix like a case) and the `counted_` cases are listed
+/// with the cases by [`Form::all`].
 pub const OTHER_FORMS: &[&str] = &["bare", "counted", "name", "num", "ord"];
 
-/// The total object's form name: the genitive for one thing ("tikarin"), the numeral and the
-/// partitive for several ("kolme nuolta"), the plural nominative for a word plural in meaning
-/// or with no singular ("liekit", "sakset"), `sinut` for the player.
+/// The total object's form name: the genitive for one thing ("tikarin"), the plural nominative
+/// for several or for a word plural in meaning or with no singular ("nuolet", "liekit",
+/// "sakset"), `sinut` for the player. `counted_acc` counts several ("kolme nuolta").
 pub const ACC: &str = "acc";
+
+/// The prefix of a case form that says the count (owner review 2, #2073): `counted_ill`
+/// "kolmeen nuoleen", `counted_acc` "kolme nuolta", `counted_acc_si` "kolme nuoltasi"; `counted`
+/// alone is `counted_nom`. A plain case says several in the plural with no numeral, as
+/// English's `the` does ("nuoliin"), so a count appears only where English shows one.
+pub const COUNTED: &str = "counted";
 
 /// The case names, in the order the tables use.
 pub const CASES: &[&str] = &[
@@ -65,52 +76,75 @@ impl Default for Fi {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Form {
     Bare,
-    Counted,
     Num,
     Ord,
+    /// A case; `counted` says the numeral for several ("kolmeen nuoleen"), else several are
+    /// the plural with no numeral ("nuoliin").
     Case {
         plural: bool,
+        counted: bool,
         case: Case,
         poss: Option<Poss>,
     },
-    /// The total object ([`ACC`]): what a verb takes whole ("lyö tikarin kädestäsi", "pudotat
-    /// kolme nuolta").
+    /// The total object ([`ACC`]): what a verb takes whole ("lyö tikarin kädestäsi", "nappaat
+    /// nuolet"; `counted` "pudotat kolme nuolta").
     Acc {
         plural: bool,
+        counted: bool,
         poss: Option<Poss>,
     },
 }
 
 impl Form {
-    /// `nom`, `pl_gen`, `ade_si`, `pl_ill_nsa`, `com`, `acc`, `acc_si`, `bare`, …
+    /// `nom`, `pl_gen`, `ade_si`, `pl_ill_nsa`, `com`, `acc`, `acc_si`, `counted`,
+    /// `counted_ill`, `counted_acc_si`, `bare`, …
     fn parse(form: &str) -> Option<Form> {
         match form {
             "bare" | "name" => return Some(Form::Bare),
-            "counted" => return Some(Form::Counted),
             "num" => return Some(Form::Num),
             "ord" => return Some(Form::Ord),
             _ => {}
         }
-        let (plural, rest) = match form.strip_prefix("pl_") {
+        let form = if form == COUNTED { "counted_nom" } else { form };
+        let (counted, rest) = match form.strip_prefix("counted_") {
             Some(rest) => (true, rest),
             None => (false, form),
         };
+        let (plural, rest) = match rest.strip_prefix("pl_") {
+            Some(rest) => (true, rest),
+            None => (false, rest),
+        };
+        if counted && plural {
+            return None;
+        }
         let (case, poss) = match rest.split_once('_') {
             Some((case, poss)) => (case, Some(Poss::parse(poss)?)),
             None => (rest, None),
         };
         if case == ACC {
-            return Some(Form::Acc { plural, poss });
+            return Some(Form::Acc {
+                plural,
+                counted,
+                poss,
+            });
         }
         let case = Case::parse(case)?;
-        if (poss.is_some() && case == Case::Ins) || (plural && case.plural_only()) {
+        if (poss.is_some() && case == Case::Ins)
+            || (plural && case.plural_only())
+            || (counted && case.plural_only())
+        {
             return None;
         }
-        Some(Form::Case { plural, case, poss })
+        Some(Form::Case {
+            plural,
+            counted,
+            case,
+            poss,
+        })
     }
 
     /// Every form name, for [`Morphology::forms`]: the cases and `acc`, each with `pl_` and
-    /// the possessive suffixes.
+    /// `counted_` and the possessive suffixes.
     fn all() -> Vec<String> {
         let mut out: Vec<String> = OTHER_FORMS.iter().map(|f| (*f).to_string()).collect();
         let names = Case::ALL
@@ -125,7 +159,11 @@ impl Form {
                     .chain(POSSESSIVES.iter().copied())
                     .collect()
             };
-            let numbers: &[&str] = if plural_only { &[""] } else { &["", "pl_"] };
+            let numbers: &[&str] = if plural_only {
+                &[""]
+            } else {
+                &["", "pl_", "counted_"]
+            };
             for number in numbers {
                 for p in &poss {
                     let suffix = if p.is_empty() {
@@ -579,48 +617,44 @@ impl Morphology for Fi {
                 Form::Ord => self.number(i64::from(phrase.count), "ord", reg),
                 Form::Case { case, .. } => reg.word(you(case)).to_string(),
                 Form::Acc { .. } => reg.word(YOU_ACC).to_string(),
-                Form::Bare | Form::Counted => reg.word(you(Case::Nom)).to_string(),
+                Form::Bare => reg.word(you(Case::Nom)).to_string(),
             });
         }
         let (owner, owned) = self.owner(phrase, lex, reg);
+        // Several in a plain case: the plural, no numeral (English's `the`: "nuoliin").
+        let number = if several {
+            Number::Plural
+        } else {
+            Number::Singular
+        };
         let words = match form {
             Form::Num => return Ok(self.number(i64::from(phrase.count), "num", reg)),
             Form::Ord => return Ok(self.number(i64::from(phrase.count), "ord", reg)),
-            Form::Bare => {
-                let number = if several {
-                    Number::Plural
-                } else {
-                    Number::Singular
-                };
-                self.assemble(phrase, &head, number, Case::Nom, owned, lex, reg)
-            }
-            Form::Counted => {
-                if several {
-                    self.counted(phrase, &head, Case::Nom, owned, lex, reg)
-                } else {
-                    let number = Number::Singular;
-                    self.assemble(phrase, &head, number, Case::Nom, owned, lex, reg)
-                }
-            }
+            Form::Bare => self.assemble(phrase, &head, number, Case::Nom, owned, lex, reg),
+            // A counted case: the numeral and the words after it ("kolme nuolta", "kolmeen
+            // nuoleen"); one thing as the plain case.
             Form::Case {
-                plural: false,
+                counted: true,
                 case,
                 poss,
-            } if several && !case.plural_only() => {
-                self.counted(phrase, &head, case, poss.or(owned), lex, reg)
-            }
-            Form::Case { plural, case, poss } => {
-                let number = if plural {
-                    Number::Plural
-                } else {
-                    Number::Singular
-                };
+                ..
+            } if several => self.counted(phrase, &head, case, poss.or(owned), lex, reg),
+            Form::Case {
+                plural, case, poss, ..
+            } => {
+                let number = if plural { Number::Plural } else { number };
                 self.assemble(phrase, &head, number, case, poss.or(owned), lex, reg)
             }
-            // The total object: several are the numeral and the partitive ("kolme nuolta",
-            // "kolmet sakset"); one thing the genitive ("tikarin", "tikarisi"), unless the
-            // word is plural ("liekit", "sakset"), whose total object is the nominative.
-            Form::Acc { plural: true, poss } => self.assemble(
+            // The total object: several are the plural nominative ("nuolet", "sakset"), or
+            // counted the numeral and the partitive ("kolme nuolta", "kolmet sakset"); one
+            // thing the genitive ("tikarin", "tikarisi"), unless the word is plural ("liekit",
+            // "sakset"), whose total object is the nominative.
+            Form::Acc {
+                counted: true,
+                poss,
+                ..
+            } if several => self.counted(phrase, &head, Case::Nom, poss.or(owned), lex, reg),
+            Form::Acc { poss, .. } if several => self.assemble(
                 phrase,
                 &head,
                 Number::Plural,
@@ -629,9 +663,17 @@ impl Morphology for Fi {
                 lex,
                 reg,
             ),
-            Form::Acc { poss, .. } if several => {
-                self.counted(phrase, &head, Case::Nom, poss.or(owned), lex, reg)
-            }
+            Form::Acc {
+                plural: true, poss, ..
+            } => self.assemble(
+                phrase,
+                &head,
+                Number::Plural,
+                Case::Nom,
+                poss.or(owned),
+                lex,
+                reg,
+            ),
             Form::Acc { poss, .. } => {
                 let (many, plural_only) = self.plurality(phrase, lex);
                 let case = if many || plural_only {
@@ -651,6 +693,18 @@ impl Morphology for Fi {
             }
         };
         Ok(owner + &words)
+    }
+
+    /// Plural as a plain form says it: several (not a name), a word with no singular
+    /// ("sakset"), or one plural in meaning ("liekit"), so "Saappaasi kastuvat".
+    fn plural(&self, phrase: &Phrase, lex: &dyn Lexicon) -> bool {
+        if phrase.person == Person::You {
+            return false;
+        }
+        let proper = phrase.proper
+            || matches!(&phrase.head, Word::Id(id) if lex.word(id).is_some_and(|w| w.proper));
+        let (many, plural_only) = self.plurality(phrase, lex);
+        (phrase.count != 1 && !proper) || plural_only || many
     }
 
     fn number(&self, n: i64, form: &str, reg: &Register) -> String {

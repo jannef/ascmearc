@@ -9,7 +9,7 @@ text = "liittolaisesi"
 
 [below_creature]
 of = "b4a9cd"
-text = "{who:nom} {ground:ade}"
+text = "{who:counted_nom} {ground:ade}"
 
 [below_ground]
 of = "68cbed"
@@ -17,7 +17,7 @@ text = "{ground:nom}"
 
 [below_thing]
 of = "c37423"
-text = "{what:nom} {ground:ade}"
+text = "{what:counted_nom} {ground:ade}"
 
 [companion]
 of = "f591c5"
@@ -25,7 +25,7 @@ text = "{name:bare}, {who:nom} ({state:bare}){writhing:bare}{moves:bare}{wieldin
 
 [creature]
 of = "b572a4"
-text = "{who:Nom} ({state:bare}){services:bare}{waits:bare}{writhing:bare}{moves:bare}{wielding:bare}{wearing:bare}{ready:bare}"
+text = "{who:Counted_nom} ({state:bare}){services:bare}{waits:bare}{writhing:bare}{moves:bare}{wielding:bare}{wearing:bare}{ready:bare}"
 
 [cures]
 of = "b75bb9"
@@ -58,7 +58,7 @@ text = "{ground:ade}{of:bare}{where:bare}{room:bare}"
 
 [ground_named]
 of = "3db2f4"
-text = "{ground:nom}{of:bare}{where:bare}{room:bare}"
+text = "{ground:counted_nom}{of:bare}{where:bare}{room:bare}"
 
 [ground_named_mass]
 of = "315f6c"
@@ -82,7 +82,7 @@ text = "{heard:bare} paikasta, jossa muistaaksesi oli {memory:bare}."
 
 [here]
 of = "5d6ead"
-text = "; tässä on {things:nom}"
+text = "; tässä on {things:counted_nom}"
 
 [hostile]
 of = "f239d1"
@@ -98,7 +98,7 @@ text = "immuuni {kinds:all}"
 
 [in_room]
 of = "6c9d7e"
-text = "{room:ine}"
+text = "{room:counted_ine}"
 
 [known]
 of = "48a80b"
@@ -138,7 +138,7 @@ text = ", {place:bare}"
 
 [ready]
 of = "71a1e6"
-text = ", valmiina {what:nom}"
+text = ", valmiina {what:counted_nom}"
 
 [reflection]
 of = "397fa2"
@@ -150,11 +150,11 @@ text = "Tässä oli muistaaksesi {ground:bare}{room:bare}."
 
 [remember_things]
 of = "dca03a"
-text = "Tässä oli muistaaksesi {things:nom} {ground:bare}."
+text = "Tässä oli muistaaksesi {things:counted_nom} {ground:bare}."
 
 [remember_trap]
 of = "6376fd"
-text = "Tässä oli muistaaksesi {trap:nom} {ground:bare}."
+text = "Tässä oli muistaaksesi {trap:counted_nom} {ground:bare}."
 
 [resistant_to]
 of = "7349aa"
@@ -178,11 +178,11 @@ text = "{ground:Bare}."
 
 [seen_things]
 of = "1efff2"
-text = "{things:Nom} {ground:bare}."
+text = "{things:Counted_nom} {ground:bare}."
 
 [seen_trap]
 of = "df8097"
-text = "{trap:Nom} {ground:bare}."
+text = "{trap:Counted_nom} {ground:bare}."
 
 [services]
 of = "4a6abf"
@@ -190,11 +190,11 @@ text = ", joka {verbs:and} maksusta"
 
 [statue_of]
 of = "2f253b"
-text = ", joka esittää {of:par} suu ammollaan"
+text = ", joka esittää {of:counted_par} suu ammollaan"
 
 [tagged]
 of = "9f6bc9"
-text = "{what:nom} ({tags:bare})"
+text = "{what:counted_nom} ({tags:bare})"
 
 [tags]
 of = "00bce2"
@@ -206,15 +206,15 @@ text = "opettaa"
 
 [things_on]
 of = "fdba38"
-text = "{things:nom} {ground:bare}"
+text = "{things:counted_nom} {ground:bare}"
 
 [trap_on]
 of = "c1ed47"
-text = "{trap:nom} {ground:bare}"
+text = "{trap:counted_nom} {ground:bare}"
 
 [trapped]
 of = "6b3b6d"
-text = ", ansoitettu: {trap:nom}"
+text = ", ansoitettu: {trap:counted_nom}"
 
 [unaware]
 of = "2bbae6"
@@ -234,11 +234,11 @@ text = ", joka odottaa"
 
 [wearing]
 of = "159a6f"
-text = ", yllään {what:nom}"
+text = ", yllään {what:counted_nom}"
 
 [wielding]
 of = "ae46cf"
-text = ", kädessään {what:nom}"
+text = ", kädessään {what:counted_nom}"
 
 [writhing]
 of = "2b9da6"

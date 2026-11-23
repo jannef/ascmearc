@@ -1,6 +1,6 @@
 # Talents (`talent:<id>`): every talent of the trees and every profane gift (a gift is a
 # talent). A talent's name keeps its capital as English does, in a sentence too ("Opit
-# taipumuksen Valpas.", "Saat taipumuksen: Raivo."), and is said mostly in the nominative; every
+# Valppauden.", "Saat Raivon."), and is said in the case its sentence asks (owner review 2); every
 # word has its class so it inflects. A name of hands, roots, or eyes is plural (`plural_only`).
 # A gift is said "Olet nyt {gift}", so most gifts are adjectives. A talent named for the spell
 # it grants takes the spell's name (`lexicon/spell.toml`).
@@ -252,7 +252,7 @@ pack_leader = "Lauman johtaja/12"
 pack_mule = "Kuorma|muuli/5"
 pack_tactics = "Lauma|taktiikka/9*A"
 patient_blade = "Kärsivällinen/38 terä/10"
-patron = "Suojelija/12"
+patron = "Mesenaatti/5*C"
 peerless = "Verraton/34*C"
 perfect_self = "Täydellisyys/40"
 petrifying_gaze = "Kivettävä/10 katse/48"

@@ -1,21 +1,27 @@
-# Statuses (`status:<id>`), said as a predicate adjective ("Olet yhä pökertynyt"); `label` where
-# the status bar's capitalized word is not the capitalized adjective. A spent ability's wait is
+# Statuses (`status:<id>`), said as a predicate ("Olet yhä pökertynyt"); `label` where the
+# status bar's capitalized word is not the capitalized predicate. A predicate is never a `-va`
+# participle, which Finnish does not say of a state ("Olet nukkuva", "on hiipuva": owner review 2):
+# such a status is a locative or an idiom ("unessa", "liekeissä", "hiipumassa", "haavoilla",
+# "raivon vallassa"): its noun with the three forms the templates ask spelled out (`nom`, the
+# predicate and `bare`; `ill` for `died_of`, "Kuoli verenhukkaan"; `tra` for what a spell or
+# potion leaves one in, "jättää koboldin uneen"); the attributive word stays in
+# `status_seen.toml` ("nukkuva koboldi"). A spent ability's wait is
 # "<the ability>sta uupunut" ("Olet yhä loikasta uupunut"), its label "<Ability> käytetty".
 acid_blood = { word = "happo|verinen/38", forms = { label = "Happoveri" } }
 area_spell = { word = "alueloitsusta uupunut/47", forms = { label = "Alueloitsu käytetty" } }
 ashen = "tuhkan|harmaa/17"
-asleep = { word = "nukkuva/10", forms = { label = "Unessa" } }
+asleep = { word = "uni/24", forms = { nom = "unessa", ill = "unessa", tra = "uneen", label = "Unessa" } }
 aura = { word = "aurasta uupunut/47", forms = { label = "Aura käytetty" } }
 barbed_hide = { word = "okanahkainen/38", forms = { label = "Okainen nahka" } }
 barkskin = { word = "kaarna|ihoinen/38", forms = { label = "Kaarnaiho" } }
-bleeding = { word = "verta vuotava/10", forms = { label = "Verenvuoto" } }
+bleeding = { word = "haava/10", forms = { nom = "haavoilla", ill = "verenhukkaan", tra = "haavoille", label = "Verenvuoto" } }
 blessed = "siunattu/1*C"
 blink = { word = "loikasta uupunut/47", forms = { label = "Loikka käytetty" } }
 bound = "sidottu/1*C"
 branded = "leimattu/1*C"
 branded_blade = { word = "tuli|teräinen/38", forms = { label = "Tuliterä" } }
 breath = { word = "henkäyksestä uupunut/47", forms = { label = "Henkäys käytetty" } }
-burning = { word = "palava/10", forms = { label = "Liekeissä" } }
+burning = { word = "liekki/5*A", forms = { nom = "liekeissä", ill = "palovammoihin", tra = "liekkeihin", label = "Liekeissä" } }
 burnt_out = "loppuun palanut/47"
 cat_eyed = "kissan|silmäinen/38"
 chill_proof = "kylmän|kestävä/10"
@@ -25,7 +31,7 @@ disguised = "naamioitunut/47"
 drained = "tyhjentynyt/47"
 drowsy = "uninen/38"
 earthed = "maadoittunut/47"
-ebbing = "hiipuva/10"
+ebbing = { word = "hiipuminen/38", forms = { nom = "hiipumassa", ill = "hiipumassa", tra = "hiipumaan", label = "Hiipumassa" } }
 engulfed = "sisään suljettu/1*C"
 exhausted = "uupunut/47"
 fire_cloaked = { word = "liekkeihin verhoutunut/47", forms = { label = "Tuliviitta" } }
@@ -48,7 +54,7 @@ keen = "terävä/10"
 latched = "kiinni tarttunut/47"
 light_footed = "kevyt|jalkainen/38"
 lit = "hehkuva/10"
-lurking = "väijyvä/10"
+lurking = { word = "väijytys/39", forms = { nom = "väijyksissä", ill = "väijyksissä", tra = "väijyksiin", label = "Väijyksissä" } }
 moth_eyed = "koi|silmäinen/38"
 nimble = "ketterä/10"
 owl_eyed = "pöllö|silmäinen/38"
@@ -57,8 +63,8 @@ poison_proof = "myrkyn|kestävä/10"
 poisoned = { word = "myrkyttynyt/47", forms = { label = "Myrkytys" } }
 quick_sensed = { word = "eläviä aistiva/10", forms = { label = "Elävien tunto" } }
 radiant = "säteilevä/10"
-raging = { word = "raivoava/10", forms = { label = "Raivo" } }
-renewing = "elpyvä/10"
+raging = { word = "raivo/1", forms = { nom = "raivon vallassa", ill = "raivon vallassa", tra = "raivon valtaan", label = "Raivo" } }
+renewing = { word = "elpyminen/38", forms = { nom = "elpymässä", ill = "elpymässä", tra = "elpymään", label = "Elpymässä" } }
 savage = "hurja/10"
 seeing = "tarkka|näköinen/38"
 silenced = "vaiennettu/1*C"
@@ -66,9 +72,9 @@ sluggish = "hidastunut/47"
 spell_ward = { word = "loitsuilta suojattu/1*C", forms = { label = "Loitsusuoja" } }
 spent_eyed = "kipeä|silmäinen/38"
 spun = { word = "seitin kutomisesta uupunut/47", forms = { label = "Seitti kudottu" } }
-staggered = "horjuva/10"
+staggered = "horjahtanut/47"
 steadfast = "vankkumaton/34*C"
-stiffening = "jäykistyvä/10"
+stiffening = { word = "jäykistyminen/38", forms = { nom = "jäykistymässä", ill = "jäykistymässä", tra = "jäykistymään", label = "Jäykistymässä" } }
 stunned = "pökertynyt/47"
 summoning = { word = "kutsunnasta uupunut/47", forms = { label = "Kutsunta käytetty" } }
 surprised = "yllättynyt/47"

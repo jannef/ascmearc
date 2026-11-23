@@ -1,6 +1,6 @@
 # What a creature type throws (`throw_noun:<creature>`).
 cloud_giant = "järkäle/48"
-crystal_guardian = "kide|siru/1"
+crystal_guardian = "kristallin|siru/1"
 cult_chymist = "haiseva/10 pullo/1"
 drow_arbalester = "myrkky|nuoli/26"
 drow_crossbowman = "myrkky|nuoli/26"

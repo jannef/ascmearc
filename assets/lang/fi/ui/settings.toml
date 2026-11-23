@@ -239,7 +239,7 @@ text = "Varasta"
 
 [command_talents]
 of = "d7a243"
-text = "Taipumukset"
+text = "Kyvyt"
 
 [command_text_back]
 of = "358d7e"

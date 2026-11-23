@@ -92,7 +92,7 @@ text = "Osumapisteet"
 
 [kept]
 of = "bbb1c9"
-text = "{name:bare}, {kind:nom}"
+text = "{name:bare}, {kind:counted_nom}"
 
 [level]
 of = "c8b99c"
@@ -152,7 +152,7 @@ text = "Tila"
 
 [talents]
 of = "d7a243"
-text = "Taipumukset"
+text = "Kyvyt"
 
 [title]
 of = "1f826b"

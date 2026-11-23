@@ -448,6 +448,12 @@ impl<'a> Ctx<'a> {
             } => {
                 let value = match self.args.get(role.as_str()) {
                     None if role == SLOT_ROLE && feature == FORM_FEATURE => self.form,
+                    // A phrase's number as this language's plain forms say it (`fi`: a word
+                    // with no singular is plural, "saappaasi kastuvat").
+                    Some(Arg::Phrase(phrase)) if feature == "number" => {
+                        let plural = self.language.morphology.plural(phrase, &self.lex);
+                        Some(if plural { "many" } else { "one" })
+                    }
                     Some(arg) => arg.feature(feature),
                     None if otherwise.is_some() => None,
                     None => return Err(RenderError::MissingRole(role.clone())),

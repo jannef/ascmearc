@@ -130,24 +130,38 @@ everything else strong). 27, 28, and 40 gradate by themselves (`käsi` : `käden
 the inflecting part; a part with neither (`Hild`, `tie`) takes the front series, as Finnish does.
 Endings are written with `A`/`O`/`U` and resolved per word.
 
-**Forms** (`Fi::forms`, 168 names): the fourteen cases `nom gen par ine ela ill ade abl all ess
+**Forms** (`Fi::forms`, 246 names): the fourteen cases `nom gen par ine ela ill ade abl all ess
 tra abe com ins` in the singular and, with `pl_`, the plural (`pl_gen`; `com` and `ins` are
 plural only and take no `pl_`), each with an optional possessive suffix `_ni _si _nsa _mme _nne`
 (`ade_si` "with your …", `pl_ill_nsa`; `ins` takes none), the total object `acc` (below, with
-`pl_` and the suffixes like a case), and `bare`/`name` (the nominative,
-plural for a count over one, no numeral: "nuolet"), `counted` ("kolme peikkoa", "13 nuolta"; one
-→ the nominative), `num`, `ord`. A **count over one in a singular case** puts the numeral first
-and the words in the partitive after a nominative numeral, else in the case: `{item:nom}` "kolme
-nuolta", `{item:ill}` "kolmeen nuoleen" (the cardinals 0–19 decline: `kaksi` and `yksi` from a
-table, the rest by their own class; beyond `number_words` or 19, digits: "13 nuoleen"). A `pl_`
-form ignores the count. **The total object** is its own form, `acc` (owner review 1, #2072; with
-`pl_` and a possessive suffix like a case, `fi::ACC`): the genitive for one thing ("pudotat
-tikarin", "pitkämiekkasi"), the nominative numeral and the partitive for several ("pudotat kolme
-nuolta", never "kolmen nuolen"), the plural nominative for a word plural in meaning or with no
-singular ("liekit", "sakset", "kolmet sakset"), and `sinut` for the player (through the register:
-`sut`). A template says `{what:acc}` for what a verb takes whole, so no `by = "what.number"`
-split, and no "Verb: object" colon, stands in for the case; a nested message in that slot reads
-it with `by = "slot.form"` (`items.unpaid`). **The player** (`person: You`) renders as the second-person pronoun in
+`pl_` and the suffixes like a case), each singular case and `acc` again with `counted_` (below),
+and `bare`/`name` (the nominative, plural for a count over one, no numeral: "nuolet"), `counted`
+(= `counted_nom`: "kolme peikkoa", "13 nuolta"; one → the nominative), `num`, `ord`. **A count
+shows only where English shows one** (owner review 2, #2073): a **plain case of several** is the
+plural with no numeral, as English's `the` is ("the fetches": `{who:all}` "etiäisille",
+`{what:nom}` "nuolet", "syövyttävät kivesi"), and a **`counted_` case** puts the numeral first
+and the words in the partitive after a nominative numeral, else in the case, as English's `a`
+does ("6 fetches": `{what:counted_nom}` "kolme nuolta", `{item:counted_ill}` "kolmeen nuoleen";
+the cardinals 0–19 decline: `kaksi` and `yksi` from a table, the rest by their own class; beyond
+`number_words` or 19, digits: "13 nuoleen"); one thing is the same in both. So a translation
+mirrors the English form: `{x:the}`/`{x:poss}`/`{x:bare}` → a plain case, `{x:a}`/`{x:counted}`
+→ `counted_`. A `pl_` form ignores the count; `counted_pl_` and `counted_com` do not exist. An
+owner of several is the plural genitive ("elävien jakkaroiden Radiant", "the stools'"). **The
+total object** is its own form, `acc` (owner review 1, #2072; with `pl_`, `counted_`, and a
+possessive suffix like a case, `fi::ACC`): the genitive for one thing ("pudotat tikarin",
+"pitkämiekkasi"), the plural nominative for several ("nappaat nuolet") or for a word plural in
+meaning or with no singular ("liekit", "sakset"), `counted_acc` the nominative numeral and the
+partitive ("pudotat kolme nuolta", never "kolmen nuolen"; "kolmet sakset"), and `sinut` for the
+player (through the register: `sut`). A template says `{what:acc}` or `{what:counted_acc}` for
+what a verb takes whole (a block, a parry, a dodge too: "torjuu Radiantin"), so no "Verb:
+object" colon stands in for the case; a nested message in that slot reads it with `by =
+"slot.form"` (`items.unpaid`: `acc`, `counted_acc`, `else`). **A plural subject's verb** agrees
+through `by = "what.number"` variants ("Nuolesi ruostuvat olemattomiin", "Saappaasi kastuvat
+läpimäriksi"): `Morphology::plural` is the language's own answer to a phrase's `number` (`fi`: several,
+a `plural_only` word, or a `many` word; not a name or the player), which `render.rs` asks instead
+of the count alone, so a word with no singular gets the plural verb. The item lines whose subject
+can be a stack have the variants (`rusts_away`, `soaked`, `glances_off`, …); a creature actor is
+one creature, so its lines do not. **The player** (`person: You`) renders as the second-person pronoun in
 the case asked (`{target:ill}` → "sinuun"), through the register (`sinä` → `sie`), whatever the
 head. **Phrase order**: [genitive qualifiers (`Modifier::Of`, genitive singular, not agreeing)]
 [adjectives and materials, agreeing in case and number] head [`, jossa lukee X` for a literal
@@ -1557,8 +1571,10 @@ staleness (a word has no `of`).
   list is finite (156) and a template reads `{weapon:ade_si}`; `com`/`ins` are plural only.
 - **A counted phrase in a case declines its numeral** ("kolmeen nuoleen"), since the design's
   "12 nuoleen" is only right with digits; digits take no case ending.
-- **`bare` is the plain nominative, plural for a count** (en's `bare` is the plural noun), and
-  `nom` of a count over one is the counted phrase ("kolme nuolta"), what a subject reads as.
+- **`bare` is the plain nominative, plural for a count** (en's `bare` is the plural noun). `nom`
+  of a count over one was the counted phrase ("kolme nuolta") until owner review 2 (#2073) made
+  every plain case the plural with no numeral ("nuolet", as English's `the`) and gave the count
+  its own `counted_` forms ("The `fi` module", "Forms").
 - **The player is a pronoun** in every form, since a Finnish narrator line names the second
   person by its verb and `{target:ill}` must read "sinuun" when the target is the player.
 - **Names pick a class by their last letter** (above) instead of one fixed rule: `Hilda` and
@@ -1680,6 +1696,46 @@ variants that gave a counted `weapon` or `what` a plural verb are gone; the stai
 "Laskeudut portaat Cēaptūniin"; the death screen's place is a word in a case ("Cēaptūnissa":
 the screen passes the phrase, not its label), and the graveyard's, text from the file, stands
 after a comma. The registers give `sinut` its dialect forms (`sut`, `siut`, `sind`).
+
+**Owner review 2 (#2073)**: a second rendered sample, seventeen corrections, again each a class.
+**Numbers from nowhere**: Finnish counted every phrase of several in every case ("kuudelle
+etiäiselle", "Kahden vesihiukkasen tikari", "Kahdeksan syövyttävää kiveäsi") where English
+showed no count ("the fetches", "the water motes' dagger", "Your Corrosive rocks"): English's
+`the`/`poss` drop the count and only `a`/`counted` say it, so now a plain Finnish case is the
+plural with no numeral and the count is its own `counted_` form family ("Forms"); the 144 slots
+whose English says `a` were rewritten `counted_` by a script over both languages' templates, an
+owner of several is a plural genitive, and the item lines whose subject can be a stack got
+`number` variants with the plural verb (`Morphology::plural`, above). The sample's other numbers
+were the generator's, not the game's: it drew counted creatures for single-actor roles, a damage
+verb for a death line ("Jättikarju syövyttää": `combat.dies` takes a creature's own `dies` line,
+so the intransitive question did not arise in the game), a number for a birth sign's animal
+("syntynyt 35 vuonna": the game says "rotan vuonna"), and a random status for `web_caught`
+("on hiipuva": the game's is "seittiin takertunut"); the generator now fills those roles as the
+game does. **Terms**: stamina is **puhti** everywhere (`resource:stamina`, the seal families, the
+abilities menu, the status bar "Puhti", the talent texts), "kestävyys" stays for resistance; a
+talent is **kyky** (the tabs, the chargen and level-up screens, every message), the same word the
+abilities menu uses; a crystal is **kristalli** (the crystal objects, the heart-crystal, the
+crystal guardian, the glowing crystal terrain, the crafting lines), "kide" nowhere; a spirit
+weapon is **drawn**, "vetää esiin", not called; the crafter's patron (`creature:patron`,
+`talent:patron`: a well-to-do townsperson who commissions fine work, `allies.already_at_side` is
+said when a charm hex hits a creature that already has a master) is **mesenaatti**, not
+"suojelija". **A named talent is an object in its case**, never wrapped in "taipumus"/"kyky":
+"Opit Rusahduksen" (`{talent:acc}`), "Et voi ottaa Rusahdusta: vaatimuksena on …"
+(`{talent:par}`, the negative's partitive); `talent_chosen` reads the slot's case (`by =
+"slot.form"`) so "Saat Lempiaseen (pitkämiekat)"; a talent's needs are infinitives, "olla
+berserkki", "olla syntynyt rotan vuonna", "olla syönyt kolme ajattelevaa olentoa", in place of
+the "luokka: …" labels. **Other classes**: the total object for a completed block, parry, or
+dodge ("torjuu Radiantin kilvellään"); "ei voi nyt kesyttää" for English's "will not be" of
+impossibility; the pack "noudattaa käskyäsi" with no "tuohon" (the player points); the
+participial construction for feel/see/hear X doing ("Tunnet voiman valuvan sinusta", "Tunnet
+voiman palaavan": `words.stat_*` carry a `gen` variant by `slot.form`); "Lähdet koboldijoukon
+perään", "Menet koboldijoukkoa vastaan" (`data/encounter.toml` names carry `gen` and `par` by
+`slot.form`, dropping "joukko" for the members); hardened leather is the adjective **karkaistu**
+("karkaistu nahkalakki", not "kovanahkainen nahkalakki"; its `compound` stays "kovanahka"); and
+the materials' explicit `gen` forms ("piikiven") are gone, since they hijacked the agreeing
+adjective's genitive ("piikivisen sidonnan käärö") and nothing said a material "of". A spirit
+weapon "of pale light" is made of spirit-stuff, so "kalpeasta valosta tehty" stands (in the game
+the shape is always a bare melee weapon).
 
 ## Mods (L9)
 

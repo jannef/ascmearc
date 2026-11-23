@@ -11,8 +11,8 @@ text = "Sattuma"
 [chosen_all]
 of = "c3d727"
 by = "count.number"
-one = "Olet valinnut taipumuksesi: poista ensin merkintä."
-many = "Olet valinnut {count:bare} taipumusta: poista ensin yhden merkintä."
+one = "Olet valinnut kykysi: poista ensin merkintä."
+many = "Olet valinnut {count:bare} kykyä: poista ensin yhden merkintä."
 
 [mark]
 of = "37699c"
@@ -24,11 +24,11 @@ text = "Valmis"
 
 [done_hint]
 of = "ccde49"
-text = "Jatka näillä taipumuksilla."
+text = "Jatka näillä kyvyillä."
 
 [none]
 of = "8df0ee"
-text = "Valittavia taipumuksia ei ole."
+text = "Valittavia kykyjä ei ole."
 
 [random]
 of = "8c579b"
@@ -36,11 +36,11 @@ text = "Satunnainen"
 
 [random_hint]
 of = "130f99"
-text = "Anna sattuman valita taipumuksesi."
+text = "Anna sattuman valita kykysi."
 
 [cannot_take]
 of = "374b83"
-text = "Et voi vielä ottaa taipumusta {name:bare}."
+text = "{name:bare} ei ole vielä otettavissa."
 
 [title_free]
 of = "6d1790"
@@ -52,4 +52,4 @@ text = "Valitse ammatti (4/5): {left:bare} jäljellä"
 
 [title_talents]
 of = "8b50d3"
-text = "Valitse taipumukset (4/5): {left:bare} jäljellä"
+text = "Valitse kyvyt (4/5): {left:bare} jäljellä"
