@@ -1749,7 +1749,7 @@ adjective's genitive ("piikivisen sidonnan käärö") and nothing said a materia
 weapon "of pale light" is made of spirit-stuff, so "kalpeasta valosta tehty" stands (in the game
 the shape is always a bare melee weapon).
 
-**Owner review 3 (#PRNUM)**: a third rendered sample (`fi-review-3.md`), six corrections, each a
+**Owner review 3 (#2074)**: a third rendered sample (`fi-review-3.md`), six corrections, each a
 class, swept over the files. **Names**: an adjective epithet is part of the name and agrees
 ("Mustaan Wystaniin", "Mustan Wystanin ruumis", never "Musta Wystaniin"), where a title or an
 appellative stays ("kersantti Herrickiin", "Kehrääjä Āttorcoppea"), so the four uniques with one
