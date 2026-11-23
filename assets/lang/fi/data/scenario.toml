@@ -5,7 +5,7 @@ arrival = { text = "Sola avautuu Ascmearciin. Kaukana idässä Fyrbeorg savuaa."
 description = { text = "Laskeudu Beorggeatin kautta Ascmearciin; Cēaptūnin markkinakaupunki on lyhyen matkan päässä itään tietä pitkin.", of = "8367d2" }
 
 [ceaptun]
-description = { text = "Ascmearcin markkinakaupunki: sen kaupat, Mynster ja sisar Hild, Gæsthūs ja kaupungin väki.", of = "aaff63" }
+description = { text = "Ascmearcin markkinakaupunki: sen kaupat, Mynsteri ja sisar Hild, Gæsthūs ja kaupungin väki.", of = "aaff63" }
 
 [lytelscraef]
 description = { text = "Suoraan Lytelscræfiin, pieneen luolaan: kolme lyhyttä kerrosta syöpäläisiä ja koboldeja.", of = "11d9d9" }

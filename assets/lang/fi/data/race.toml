@@ -19,7 +19,7 @@ description = { text = "Pieniä, väsymättömiä näpertelijöitä ja harhojen 
 description = { text = "Pieniä, heikkoja ja lyhytikäisiä, mutta näppäräkätisiä, salakavalia ja pimeässä kuin kotonaan; he syövät vähän.", of = "328b16" }
 
 [half_elf]
-description = { text = "Kahden kansan lapsia, kummankaan luona eivät kotonaan: sopeutuvaisia ja hurmaavia, ja silmissään hieman haltioiden näköä.", of = "171f64" }
+description = { text = "Kahden kansan lapsia, kotonaan ei kummankaan luona: sopeutuvaisia ja hurmaavia, ja silmissään hieman haltioiden näköä.", of = "171f64" }
 
 [half_orc]
 description = { text = "Vahvoja, sitkeitä ja pimeässä tarkkasilmäisiä, mutta kirjaimet ovat heille vaikeita, eikä heillä ole juuri sulokkuutta.", of = "25e633" }
@@ -37,4 +37,4 @@ description = { text = "Pieniä, suomuisia ja kaikista heikoimpia, mutta taitavi
 description = { text = "Vahvaa ja sitkeää suokansaa, nahka suomujen peitossa: vaihtolämpöisiä, hitaita järjeltään ja kaikille muille vieraita.", of = "f793dd" }
 
 [ratfolk]
-description = { text = "Pieniä, ketteriä raadonsyöjiä viemäreistä ja raunioista: heikkoja ja karsastettuja, mutta sairastuvat harvoin ja syövät mitä tahansa, mätää tai ei.", of = "6ad6c6" }
+description = { text = "Pieniä, ketteriä raadonsyöjiä viemäreistä ja raunioista: heikkoja ja karsastettuja, mutta he sairastuvat harvoin ja syövät mitä tahansa, mätää tai ei.", of = "6ad6c6" }

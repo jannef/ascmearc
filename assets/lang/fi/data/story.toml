@@ -32,7 +32,7 @@ quiet_birth = { text = "Synnyit ilman merkkiä tai enteitä, minkä {guardian:no
 hard_winter = { text = "Tulit kovana talvena, kun joki jäätyi pohjaa myöten, ja tulit varhain ja pienenä.", of = "04f2ce" }
 on_the_road = { text = "Synnyit tien päällä, kärryjen perällä kahden kaupungin välillä, etkä ole sen jälkeen viihtynyt yhdessä paikassa.", of = "586456" }
 the_twin = { text = "Synnyit kaksosena. Toinen ei elänyt viikon loppuun, eikä {guardian:nom} koskaan puhunut siitä.", of = "cd5066" }
-feet_first = { text = "Tulit jalat edellä, myöhässä ja parkuen, ja sinua on siitä asti ollut vaikea satuttaa ja hidas hurmata.", of = "5e9380" }
+feet_first = { text = "Tulit jalat edellä, myöhässä ja parkuen, ja sinua on siitä asti ollut vaikea satuttaa ja vaikea hurmata.", of = "5e9380" }
 named_for = { text = "Sinut nimettiin isovanhemman mukaan, jota et koskaan tavannut, ja joka vuosi sinulle kerrottiin, kuinka vähän muistutit häntä.", of = "3234a1" }
 last_egg = { text = "Munasi oli pesueen viimeinen, joka kuoriutui, pisimpään lämpimässä mudassa, ja sinusta tuli niistä suurin.", of = "a9cc76" }
 lucky_day = { text = "Synnyit päivänä, jonka tähdet olivat merkinneet, eikä kätilö, joka tiesi sellaisista, ottanut palkkiota.", of = "25b003" }
@@ -63,17 +63,17 @@ the_shepherds_stars = { text = "Vanha paimen vei sinut kukkulalle kirkkaina öin
 [data.youth]
 plain_work = { text = "Teit työtä, niin kuin kaikki, eikä siitä ole mitään kerrottavaa.", of = "081c82" }
 the_levy = { text = "Neljätoistavuotiaana seisoit nostoväessä lainakeihään kanssa ja huomasit pitäväsi siitä.", of = "c98f9e" }
-the_raids = { text = "Ratsastit ensimmäiselle ryöstöretkellesi ennen kuin äänesi oli murtunut, ja tulit kotiin hevosella, joka ei ollut sinun, ja haava, josta olit ylpeä.", of = "ea73b6" }
+the_raids = { text = "Ratsastit ensimmäiselle ryöstöretkellesi ennen kuin äänesi oli murtunut, ja tulit kotiin mukanasi hevonen, joka ei ollut sinun, ja haava, josta olit ylpeä.", of = "ea73b6" }
 temple_years = { text = "Palvelit vuotesi luostarissa: lakaisit, lauloit ja istuit kuolevien vierellä.", of = "87ab0c" }
 the_sisters_work = { text = "Ansaitsit leipäsi {home:ine} pesten lattioita ja kantaen vettä sairaille, ja opit kuumeista enemmän kuin halusit.", of = "5eee22" }
 the_cloister = { text = "Sinut annettiin nuorena kurinpidon taloon, ja vietit nuoruutesi hiljaisuudessa, kovassa työssä ja oppien kaatumaan satuttamatta itseäsi.", of = "9bc5c7" }
 the_copyist = { text = "Kyläloitsija otti sinut kirjurikseen; opit kirjaimesi hänen loitsukirjoistaan, ja vähän muutakin.", of = "356490" }
 the_cunning_woman = { text = "Opit taitosi kylän laidalla asuneelta tietäjänaiselta, jota päivällä pelättiin ja jonka luo yöllä lähetettiin.", of = "3df525" }
-the_alehouses = { text = "Lauloit ruokasi jokaisessa kapakassa päivän kävelymatkan säteellä ja opit, että hyvä laulu voi lopettaa tappelun ja huono aloittaa sen.", of = "694eda" }
+the_alehouses = { text = "Lauloit itsellesi illallisen jokaisessa kapakassa päivän kävelymatkan säteellä ja opit, että hyvä laulu voi lopettaa tappelun ja huono aloittaa sen.", of = "694eda" }
 light_fingers = { text = "Juoksit torilasten mukana, ja sormesi kevenivät ennen kuin omatuntosi raskaantui.", of = "12e387" }
 bad_company = { text = "Juoksit asioilla väärille ihmisille ja opit, mitkä kukkarot olivat vaivan arvoisia ja mitkä valheet pitivät.", of = "a41d9d" }
 apprentice_smith = { text = "Sinut pantiin oppiin {trade:ill} seitsemäksi vuodeksi, ja palvelit jokaisen niistä.", of = "a4a68b" }
-apprentice_stall = { text = "Hoidit {trade:par} {guardian:gen} puolesta koko nuoruutesi ja opit tinkimään kolmella kielellä ja valehtelemaan ei yhdelläkään.", of = "37b41a" }
+apprentice_stall = { text = "Hoidit {trade:par} {guardian:gen} puolesta koko nuoruutesi ja opit tinkimään kolmella kielellä ja olemaan valehtelematta yhdelläkään.", of = "37b41a" }
 the_workshop = { text = "Sinut otettiin verstaaseen lakaisijaksi, jäit apulaiseksi ja opit ammatin olan yli katsomalla.", of = "fc8f99" }
 the_counting_house = { text = "Pidit kauppahuoneen kirjoja ja opit, että jokainen tilikirja kertoo kaksi tarinaa.", of = "372cb1" }
 idle_youth = { text = "Vietit nuoruutesi niin kuin hyvien talojen pojat ja tyttäret: metsästäen, pöydän ääressä ja tyhjää tehden.", of = "d59f66" }
@@ -93,11 +93,11 @@ the_master = { text = "Aikansa paras taistelija majaili kauden {guardian:gen} lu
 quiet_years = { text = "Mikään suuri suru ei löytänyt sinua, ja pidät sitä onnena, kuten kuuluukin.", of = "8993cf" }
 the_fever = { text = "Kuume tuli sinä vuonna, kun olit aikuistunut, ja vei {guardian:gen}. Hoidit muita sairaita, eikä se vienyt sinua.", of = "6aa04a" }
 the_fire = { text = "Talo paloi eräänä kuivana syksynä kaikkineen. Menit tuhkaan pelastamaan, mitä pelastettavissa oli, ja tulit ulos isoäitisi sormus kädessäsi.", of = "9f5074" }
-the_flood = { text = "Joki nousi eräänä keväänä ja vei alakaupungin ja sen mukana talon, jossa kasvoit; pääsit vedestä hengissä, ja pelon, jonka olet sittemmin voittanut.", of = "340323" }
+the_flood = { text = "Joki nousi eräänä keväänä ja vei alakaupungin ja sen mukana talon, jossa kasvoit; pääsit vedestä hengissä, mukanasi pelko, jonka olet sittemmin voittanut.", of = "340323" }
 the_feud = { text = "Suvullasi oli verikosto, niin kuin suvuilla on, ja kylkiluidesi poikki kulkee arpi siltä yöltä, jona se ratkaistiin.", of = "3b819f" }
 the_war = { text = "Herran sota vei sinut kahdeksi vuodeksi ja antoi takaisin vanhempana, ontuvana kosteilla säillä ja heräävänä jokaiseen ääneen.", of = "dce07d" }
 promise_broken = { text = "Sinut luvattiin kerran, ja lupaus rikottiin, etkä ole antanut toista.", of = "91ed41" }
-the_debt = { text = "{guardian:Nom} kuoli velkaa, ja maksoit velan pois killinki kerrallaan ja opit, mitä jokainen killinki oli arvoinen.", of = "87bd86" }
+the_debt = { text = "{guardian:Nom} kuoli velkaisena, ja maksoit velan pois killinki kerrallaan ja opit, minkä arvoinen jokainen killinki oli.", of = "87bd86" }
 the_hungry_year = { text = "Tuli nälkävuosi, kun sato petti, ja opit löytämään ruokaa sieltä, missä sitä ei ollut, ja olemaan antamatta sitä pois.", of = "168dff" }
 the_mill = { text = "Menetit vasemman kätesi kaksi sormea myllynpyörälle ja opit pärjäämään ilman niitä.", of = "add7d0" }
 the_cave_in = { text = "Katto sortui alakaivoksissa, ja makasit kolme päivää pimeässä ystävän vierellä, joka ei jäänyt eloon, kunnes sinut kaivettiin esiin.", of = "f82c51" }
@@ -126,7 +126,7 @@ fathers_blade_told = { text = "Kantamasi ase oli isäsi ja hänen isänsä; sen 
 [data.companion]
 plain_companion = { text = "Erämaan peto oli kiintynyt sinuun ja tuli mukaan, kun lähdit.", of = "8c8dfb" }
 the_hound = { text = "Ajokoira seurasi sinua kotiin eräänä talvena eikä suostunut lähtemään, eikä se ole sen jälkeen poistunut kantapäästäsi.", of = "a47b90" }
-the_boar = { text = "Kasvatit villisian porsaasta, jonka lauma oli hylännyt, ja siitä kasvoi jotakin, jolle koiratkin väistävät.", of = "3a7fae" }
+the_boar = { text = "Kasvatit villisian porsaasta, jonka lauma oli hylännyt, ja siitä kasvoi jotakin, jota koiratkin väistävät.", of = "3a7fae" }
 the_lynx = { text = "Ilveksenpentu, joka löytyi naukumasta kuolleen emonsa alta, oppi metsästämään vierelläsi eikä koskaan oppinut lähtemään.", of = "b0829c" }
 the_badger = { text = "Mäyrä kaivautui {home:gen} muurin alle ja jäi, ja ajan mittaan se oli sinun, niin paljon kuin mäyrä kenenkään on.", of = "1c8688" }
 the_polecat = { text = "Hilleri, jonka otit ansastajan säkistä, ratsastaa olallasi ja tappaa sen, mikä oljissa liikkuu.", of = "19a7bb" }
@@ -135,7 +135,7 @@ the_rat = { text = "Ansoille liian ovela rotta vei leipäsi vuoden ajan, sitten 
 the_bat = { text = "Vuoteesi yllä yöpynyt lepakko tuli viheltäessäsi ja tulee nyt käteesi.", of = "e24a92" }
 the_lizard = { text = "Luolalisko lämmitteli liesikivelläsi niin usein, että unohti olevansa villi.", of = "5a0f01" }
 the_beetle = { text = "Syvien teiden kovakuoriainen, panssaroitu kuin kilpi, alkoi seurata lyhtyäsi ja sitten sinua.", of = "8ff346" }
-the_wolf = { text = "Susinpentu, viimeinen pesueesta, jonka metsästäjät veivät, kasvoi tulesi ääressä, eikä kylä koskaan oikein antanut sitä sinulle anteeksi.", of = "eb2f74" }
+the_wolf = { text = "Sudenpentu, viimeinen pesueesta, jonka metsästäjät veivät, kasvoi tulesi ääressä, eikä kylä koskaan oikein antanut sitä sinulle anteeksi.", of = "eb2f74" }
 the_black_hound = { text = "Suuri musta koira tuli eräänä yönä sumusta ja istui ovellesi, ja vanhat tekivät ristinmerkin; se on yhä siellä.", of = "0cfe1e" }
 the_great_boar = { text = "Villisika, joka tappoi kaksi ajokoiraa ja metsästäjän, antoi sinun kävellä luokseen, kukaan ei tiedä miksi, eikä ole sen jälkeen päästänyt ketään muuta lähelleen.", of = "c60cf4" }
 the_panther = { text = "Miehen mittainen musta kissa tuli kukkuloilta kovana talvena ja valitsi sinun liesisi kaikkien muiden sijaan; se liikkuu äänettä.", of = "016464" }
@@ -152,7 +152,7 @@ familiar_cave_lizard = { text = "Luolalisko makasi liesikivelläsi koko talven, 
 [data.leaving]
 plain_leaving = { text = "Lähdit, niin kuin nuoret lähtevät, koska jääminen oli ainoa asia, jota et kestänyt.", of = "38c7d0" }
 nothing_held_you = { text = "Mikään ei pidättänyt sinua, eikä ollut ketään, jolle hyvästellä, joten et hyvästellyt.", of = "62e416" }
-third_child = { text = "Olit kolmas lapsi talossa, joka pystyi ruokkimaan kaksi, ja lähdit, jotta muut saivat jäädä.", of = "0ea56d" }
+third_child = { text = "Olit kolmas lapsi talossa, joka pystyi ruokkimaan kaksi, ja lähdit, jotta muut voisivat jäädä.", of = "0ea56d" }
 for_the_stories = { text = "Lähdit, koska kaikki tarinat olivat jossain muualla.", of = "dc72cc" }
 the_quarrel = { text = "Lähdit riideltyäsi {guardian:gen} kanssa, eikä kumpikaan teistä ole vielä antanut sitä anteeksi.", of = "68bd34" }
 grown_too_big = { text = "Kasvoit liian suureksi {home:ill}, ja {home:nom} sanoi sen suoraan.", of = "218161" }

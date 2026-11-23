@@ -255,7 +255,7 @@ fn texts_fill_their_slots() {
     c.story = story(&["parents/smiths_child", "trial/the_debt"]);
     let told = retold(&CONTENT, "ascmearc", &c);
     assert!(
-        in_fi(&told[1]).starts_with("Isä kuoli velkaa"),
+        in_fi(&told[1]).starts_with("Isä kuoli velkaisena"),
         "{}",
         in_fi(&told[1])
     );

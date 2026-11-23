@@ -12,7 +12,7 @@ note = { text = "Ilmoituksia on naulattu kolmeen kerrokseen, ja useimmat niistä
 arrival = { text = "Lampunvaloa ja pienten alasinten kalke: Gimmwīc, syvägnomien kaupunki.", of = "8cdb93" }
 
 [gimmwic.hidden.skeul_hir]
-opens = { text = "Peran koputtaa pitkää pöytää kolmesti. Taempana, luolassa josta tulit, kivi narskuu kiveä vasten, ja laatta kääntyy ylös jyrkän pimeyteen nousevan portaikon edestä: Skeul Hir.", of = "09a363" }
+opens = { text = "Peran koputtaa pitkää pöytää kolmesti. Taempana, luolassa, josta tulit, kivi narskuu kiveä vasten, ja laatta kääntyy ylös jyrkän pimeyteen nousevan portaikon edestä: Skeul Hir.", of = "09a363" }
 
 [gimmwic.hidden.meyn_bew]
 opens = { text = "Ysella laulaa yhden pitkän sävelen. Kallio hänen vierellään soi ja aukeaa kristallinvalon kehäksi.", of = "412b6c" }
@@ -23,7 +23,7 @@ opens = { text = "Ysella laulaa yhden pitkän sävelen. Kallio hänen vierellä�
 note = { text = "Paljaaseen kallioon hakatut portaat vievät alas. Kulunutta tekstiä ovenpalkissa: mitkään portaat eivät vie kahdesti samaan paikkaan.", of = "5c8ed4" }
 
 [ascmearc.legend.D]
-note = { text = "Vuoren juureen hakatut pienet, siistit portaat vievät alas. Ovenpalkkiin on upotettu jalokivi, liian korkealle ulottuville.", of = "c8c50e" }
+note = { text = "Vuoren juureen hakatut pienet, siistit portaat vievät alas. Ovenpalkkiin on upotettu jalokivi, liian korkealle, jotta siihen ulottuisi.", of = "c8c50e" }
 
 [ascmearc.legend.P]
 note = { text = "Tie, jota tulit; lumi on sulkenut sen takanasi.", of = "8a352d" }
@@ -52,7 +52,7 @@ note = { text = "Säiden vihertämää messinkiä: WEDERTORR. Æ. Alla, syvään
 note = { text = "Korkea lasi kirkasta nestettä messinkijalustalla, ja siinä leijuu valkoisten kristallien pilvi. Kristallit nousevat.", of = "13ab2a" }
 
 [steorratorr]
-arrival = { text = "Vihreä tasanko viettää harmaaseen mereen, ja sillä kohoaa torni valkoisesta kivestä, korkeampana kuin mikään peninkulmien alalla.", of = "8dc06b" }
+arrival = { text = "Vihreä tasanko viettää harmaaseen mereen, ja sillä kohoaa torni valkoisesta kivestä, korkeampana kuin mikään peninkulmien säteellä.", of = "8dc06b" }
 
 [steorratorr.legend.Q]
 note = { text = "Kiillotettua, hyvin kirkasta messinkiä: STEORRATORR. MESTARI SIGERICIN, LUOJAN, TALO. Alla, pienemmällä: Vieraiden odotetaan vaikuttuvan.", of = "5d95a8" }
@@ -99,7 +99,7 @@ epitaph = { text = "Wulfstan Smyth, 1389–1427. Alasin on hiljaa.", of = "504a2
 epitaph = { text = "Tässä lepää Mildred Bacere, 1366–1433. Hänen leipänsä olivat rajamaan parhaat.", of = "34b038" }
 
 [lictun.legend.6]
-epitaph = { text = "Leofwine Hunta, 1402–1424. Hän nousi solaan, eikä häntä löydetty. Tämä kivi pitää hänen nimensä.", of = "d5aa6b" }
+epitaph = { text = "Leofwine Hunta, 1402–1424. Hän nousi solaan, eikä häntä löydetty. Tämä kivi kantaa hänen nimeään.", of = "d5aa6b" }
 
 [lictun.legend.7]
 epitaph = { text = "Tässä lepää Wynburh, Godwinen vaimo, 1380–1412, ja hänen lapsensa, nimetön.", of = "64e512" }
@@ -108,7 +108,7 @@ epitaph = { text = "Tässä lepää Wynburh, Godwinen vaimo, 1380–1412, ja hä
 epitaph = { text = "Osmund Fiscere, 1350–1421. Joki vei hänet kahlaamolla.", of = "14154c" }
 
 [lictun.legend.9]
-epitaph = { text = "Tässä lepää Dunstan Swān, tämän pihan haudankaivaja, 1330–1404. Hän kaivoi heille kaikille. — D.", of = "2f6e50" }
+epitaph = { text = "Tässä lepää Dunstan Swān, tämän kirkkomaan haudankaivaja, 1330–1404. Hän kaivoi heille kaikille. — D.", of = "2f6e50" }
 
 [lictun.legend.0]
 epitaph = { text = "Hereward Langin, sotilaan, muistolle, 1395–1439. Mennyt kukkulan alle.", of = "bc6eeb" }
@@ -129,7 +129,7 @@ arrival = { text = "Līctūnin krypta 2, luuhuone: vanhoista luista tehtyjä sei
 epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Haudattu vanhojen luiden joukkoon.", of = "9f6fc4" }
 
 [lictun_crypt_02.legend.F]
-epitaph = { text = "Tässä lepäävät vanhan pihan luut, tuotuina alas, kun heidän hautojaan tarvittiin. Heidän nimensä tuntee Jumala.", of = "7c0a5f" }
+epitaph = { text = "Tässä lepäävät vanhan kirkkomaan luut, tuotuina alas, kun heidän hautojaan tarvittiin. Heidän nimensä tuntee Jumala.", of = "7c0a5f" }
 
 [lictun_crypt_03]
 arrival = { text = "Līctūnin krypta 3, pappien krypta: keskilaiva ja sen sakarat ristin muotoon, alttari sen päässä.", of = "a65518" }
@@ -156,7 +156,7 @@ arrival = { text = "Līctūnin krypta 5, haudankaivajan varasto: hyllyjä, työp
 epitaph = { text = "Tässä lepää {name:bare}, {death:bare}. Pantu syrjään haudankaivajan varastoon.", of = "8fd6ca" }
 
 [lictun_crypt_05.legend.F]
-epitaph = { text = "Tässä lepää Tīdhelm, Līctūnin haudankaivaja, 1101–1170. Viisikymmentä vuotta hän kaivoi pihaa; kaivakoon toinen hänen hautansa.", of = "428ceb" }
+epitaph = { text = "Tässä lepää Tīdhelm, Līctūnin haudankaivaja, 1101–1170. Viisikymmentä vuotta hän kaivoi kirkkomaata; kaivakoon toinen hänen hautansa.", of = "428ceb" }
 
 [lictun_crypt_06]
 arrival = { text = "Līctūnin krypta 6, tulvahuone: seisovaa vettä lattian päällä, ja arkkuja seisomassa siinä.", of = "b3609f" }

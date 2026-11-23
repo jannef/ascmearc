@@ -8,7 +8,7 @@ message = { text = "Rikkoutuneen loitsun jälkimaininki jättää sinut heikoksi
 message = { text = "Musta kirous laskeutuu yllesi.", of = "25d24b" }
 
 [eruption]
-message = { text = "Loitsu purkautuu käsissäsi olevasta käärööstä!", of = "5b45f7" }
+message = { text = "Loitsu purkautuu käsissäsi olevasta kääröstä!", of = "5b45f7" }
 
 [fizzle]
 message = { text = "Sanat haalistuvat sivulta ennen kuin ehdit tarttua niihin.", of = "b1441f" }

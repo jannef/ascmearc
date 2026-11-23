@@ -151,19 +151,19 @@ message = { text = "Unohdus.", of = "01af11" }
 seen = { text = "{who:Nom} lakkaa olemasta.", of = "a5fc8d" }
 
 [pit]
-message = { text = "Lattia halkeaa, ja porras laskeutuu punaiseen pimeään. Jokin odottaa sen päässä.", of = "34d815" }
-seen = { text = "Lattia halkeaa {who:gen} vieressä, ja porras laskeutuu punaiseen pimeään!", of = "411419" }
+message = { text = "Lattia halkeaa, ja portaat laskeutuvat punaiseen pimeään. Jokin odottaa niiden päässä.", of = "34d815" }
+seen = { text = "Lattia halkeaa {who:gen} vieressä, ja portaat laskeutuvat punaiseen pimeään!", of = "411419" }
 
 [pit_and_lords]
-message = { text = "Lattia halkeaa, porras laskeutuu punaiseen pimeään, ja helvettien ruhtinas nousee sitä ylös!", of = "350cea" }
+message = { text = "Lattia halkeaa, portaat laskeutuvat punaiseen pimeään, ja helvettien ruhtinas nousee niitä ylös!", of = "350cea" }
 seen = { text = "Lattia halkeaa {who:gen} vieressä, ja helvettien ruhtinas nousee portaita ylös!", of = "1eb604" }
 
 [pit_roaring]
-message = { text = "Lattia halkeaa jylisten, ja porras laskeutuu punaiseen pimeään. Sen päässä seisoo kauhea portti!", of = "7ae1c6" }
+message = { text = "Lattia halkeaa jylisten, ja portaat laskeutuvat punaiseen pimeään. Niiden päässä seisoo kauhea portti!", of = "7ae1c6" }
 seen = { text = "Lattia halkeaa jylisten {who:gen} vieressä, ja portaiden päässä seisoo kauhea portti!", of = "f00437" }
 
 [pit_yawning]
-message = { text = "Lattia ammottaa auki, ja porras laskeutuu punaiseen pimeään. Sen päässä seisoo suuri portti!", of = "ac439a" }
+message = { text = "Lattia ammottaa auki, ja portaat laskeutuvat punaiseen pimeään. Niiden päässä seisoo suuri portti!", of = "ac439a" }
 seen = { text = "Lattia ammottaa auki {who:gen} vieressä, ja portaiden päässä seisoo suuri portti!", of = "b7078f" }
 
 [quickened]
@@ -252,7 +252,7 @@ seen = { text = "{who:Nom} purkautuu sisältäpäin!", of = "7c763b" }
 
 [unravelling]
 message = { text = "Kudos purkautuu lävitsesi, ja raaka voima repii sinua sisältäpäin!", of = "8a23ed" }
-seen = { text = "Raaka voima repeää {who:gen} läpi!", of = "bd3336" }
+seen = { text = "Raaka voima repii tiensä {who:gen} läpi!", of = "bd3336" }
 
 [withering]
 message = { text = "Loitsu kääntyy ja imee sinua.", of = "fd4476" }

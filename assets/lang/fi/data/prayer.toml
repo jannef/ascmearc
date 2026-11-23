@@ -37,5 +37,5 @@ dark = { text = "Se, mikä vietiin, otetaan takaisin.", of = "c08f77" }
 holy = { text = "Tunnet olevasi taas ehjä.", of = "8e9bce" }
 
 [use.wounds]
-dark = { text = "Haavasi sulkeutuvat, kylminä kosketukselle.", of = "211ca4" }
+dark = { text = "Haavasi sulkeutuvat, ja ne tuntuvat kylmiltä.", of = "211ca4" }
 holy = { text = "Haavasi sulkeutuvat.", of = "c2be56" }

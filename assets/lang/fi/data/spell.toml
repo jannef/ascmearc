@@ -244,7 +244,7 @@ description = { text = "Purevan kylmän purkaus sinne, minne tähtäät: vesi, j
 [frost.cast]
 message = { text = "Pureva pakkanen purkautuu käsistäsi!", of = "57b1b6" }
 verb = { text = "puree", of = "bd3846" }
-you = { text = "pureet", of = "624b7b" }
+you = { text = "puret", of = "624b7b" }
 
 [fume]
 description = { text = "Sakea savu purkautuu sinne, minne tähtäät, ja viipyy siinä jonkin aikaa: mikään silmä ei näe sen sisään eikä läpi, ja sen sisällä olevat näkevät vain käsivarren mitan päähän.", of = "044a8a" }
@@ -261,7 +261,7 @@ verb = { text = "lyö", of = "b8fdd1" }
 you = { text = "lyöt", of = "d2b8a8" }
 
 [glamour]
-description = { text = "Harhakuva lepää yllääsi jonkin aikaa: näytät olevan hieman sivussa siitä, missä seisot, ja sinuun tähdätyt iskut menevät useammin ohi.", of = "5a9844" }
+description = { text = "Harhakuva lepää ylläsi jonkin aikaa: näytät olevan hieman sivussa siitä, missä seisot, ja sinuun tähdätyt iskut menevät useammin ohi.", of = "5a9844" }
 
 [glamour.cast]
 verb = { text = "lyö", of = "b8fdd1" }
@@ -399,7 +399,7 @@ verb = { text = "tukahduttaa", of = "53bb84" }
 you = { text = "tukahdutat", of = "3a0384" }
 
 [remove_disease]
-description = { text = "Puhdistuksen meno: jokainen kantamasi tauti ja kaikki myrkky sinussa katoavat.", of = "bd6da4" }
+description = { text = "Puhdistusmenot: jokainen kantamasi tauti ja kaikki myrkky sinussa katoavat.", of = "bd6da4" }
 
 [remove_disease.cast]
 verb = { text = "lyö", of = "b8fdd1" }
@@ -418,7 +418,7 @@ description = { text = "Tappavan pakkasen henkäys käsistäsi kohti paikkaa, jo
 [rime.cast]
 message = { text = "Kuuraa tulvii käsistäsi!", of = "ec6f38" }
 verb = { text = "puree", of = "bd3846" }
-you = { text = "pureet", of = "624b7b" }
+you = { text = "puret", of = "624b7b" }
 
 [rouse_the_dead]
 description = { text = "Näkemäsi ruumis nousee siksi, mikä se oli, ja taistelee rinnallasi, kunnes kaatuu uudelleen tai kymmenen minuuttia kuluu. Silloin tällöin se nousee kaikkia vastaan, sinuakin.", of = "8aa54a" }
@@ -489,7 +489,7 @@ verb = { text = "lyö", of = "b8fdd1" }
 you = { text = "lyöt", of = "d2b8a8" }
 
 [soulglass]
-description = { text = "Hautakylmän säde kohti paikkaa, johon tähtäät: se iskee ensimmäiseen olentoon tiellään, jos osuu, ja minkä se tappaa, se ei jätä ruumista vaan kristallin luonnostaan.", of = "1173d3" }
+description = { text = "Hautakylmän säde kohti paikkaa, johon tähtäät: se iskee ensimmäiseen olentoon tiellään, jos osuu, ja minkä se tappaa, se ei jätä ruumista vaan kristallin sen olemuksesta.", of = "1173d3" }
 
 [soulglass.cast]
 verb = { text = "kuihduttaa", of = "a1cf49" }

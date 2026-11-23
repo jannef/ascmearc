@@ -14,7 +14,7 @@ description = { text = "Juokseminen, hyppiminen, kiipeily ja potkiminen: voimaa 
 description = { text = "Varma jalansija raskaan kuorman alla tai huonolla maalla.", of = "75fb29" }
 
 [bluff]
-description = { text = "Valehtelu pokkana, harhautus ja itsensä puhuminen ohi.", of = "945999" }
+description = { text = "Valehtelu pokkana, harhautus ja puhumalla ohi pääseminen.", of = "945999" }
 
 [concentration]
 description = { text = "Mielen pitäminen tehtävässä, tapahtuipa ympärillä mitä tahansa: manasi palaa nopeammin, ja varantosi on hieman syvempi.", of = "ba3132" }

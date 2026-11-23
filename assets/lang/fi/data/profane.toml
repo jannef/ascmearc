@@ -116,7 +116,7 @@ line = { text = "Kätesi vapisevat, eivätkä lakkaa.", of = "a6ef3e" }
 line = { text = "Ihosi ohenee paperinohueksi.", of = "4f3fd2" }
 
 [prehensile_tail]
-line = { text = "Häntä kiertyy auki takanasi ja tarttuu tyhjään, ja taas tyhjään.", of = "520666" }
+line = { text = "Takanasi kiertyy auki häntä, joka tarttuu tyhjään, ja taas tyhjään.", of = "520666" }
 undone = { text = "Häntäsi veltostuu ja putoaa pois.", of = "14ad14" }
 
 [quick_knit]
