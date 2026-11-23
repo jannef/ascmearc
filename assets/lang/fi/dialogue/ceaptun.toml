@@ -101,7 +101,7 @@ greet_evil = [
 lines = [
     { text = "Kaikki tulee Gæsthūsin kautta ennemmin tai myöhemmin. Ja kaikki puhuu.", of = "81f529" },
     { text = "Leipä pöydäs on matkalaisille ilmasta. Kalja ei oo.", of = "008052" },
-    { text = "Kuskit sanoo et jokitie on taas tulvinu Fennhāmin takana.", of = "8e89d9" },
+    { text = "Kuskit sanoo et jokitie on taas tulvan alla Fennhāmin takana.", of = "8e89d9" },
     { text = "Pidä saappaat tulen vieres. Kukaan ei täällä pölli saappaita. Yleensä.", of = "b26f39" },
     { text = "Vouti juo täällä markkinapäivinä. Ja maksaakin, toisin ku jotkut.", of = "77367f" },
     { text = "Wulfrunille ei oo tullu malmikuormaa vuosiin, mut kirjoja se pitää silti.", of = "6aeb3d" },
@@ -114,7 +114,7 @@ mutter = [
 mutter_verb = { text = "hyräilee", of = "a689f7" }
 
 [ascmearc.godgifu.topic]
-barrows = { text = "Itään päin tietä nummet on niitä täynnä: Hlāwdūn, hautakumpujen nummet. Ison, Cealdhlāwin, näkee tielle asti. Paimenet ei laiduta sen lähellä. Öisin valoi, ja kylmää ilmaa hönkii maan alta. Vouti on siit huolissaan enemmän ku myöntää.", of = "bc9c89" }
+barrows = { text = "Itään päin tietä nummet on niitä täynnä: Hlāwdūn, hautakumpujen nummet. Ison, Cealdhlāwin, näkee tieltä asti. Paimenet ei laiduta sen lähellä. Öisin valoi, ja kylmää ilmaa hönkii maan alta. Vouti on siit huolissaan enemmän ku myöntää.", of = "bc9c89" }
 marsh = { text = "Etelään ja itään maa pehmenee: Micelfenn, suuri suo, mist Blæcwæter valuu mereen. Kuumetta lähinnä, ja pahempii otuksii kaislois. Siel oli kerran luostari. Sisar Hild osais kertoo lisää, jos sitä huvittaa.", of = "120a99" }
 mines = { text = "Cēaptūn rikastu Fyrbeorgin alla olevien kukkuloiden malmilla mun mummon aikaan. Sit kaivokset hiljeni, ja ne jätkät, jotka meni kattoo miks, ei koskaan tullu takas. Wulfrun pitää yhä tilikirjoja. Kysy siltä, mut älä silloin ku se laskee.", of = "bbd937" }
 volcano = { text = "Fyrbeorg, tulivuori, savuttaa rajamaan koillisosan yllä, ja on savuttanu niin kauan ku kukaan muistaa. Sielt se tuhka tulee: harmaata lumel, harmaata joes. Vanhat sanoo et kukkuloiden alla olevat jutut tottelee sitä. Mä sanon: pistä ikkuna kiinni.", of = "17b95f" }
@@ -132,7 +132,7 @@ lines = [
     { text = "Pidä miekka tupes torilla, ole hyvä. Se on laki.", of = "6341a3" },
     { text = "Sola on kiinni kevääseen asti. Kuka on täällä, se jää tänne.", of = "e77542" },
     { text = "Meil oli ennen enemmän käsii. Kummut vei osan. Kaivokset vei enemmän.", of = "1bc1b4" },
-    { text = "Markkinapäivä on ainoo päivä, ku kaupunki tuntuu ittelleen.", of = "37e815" },
+    { text = "Markkinapäivä on ainoo päivä, ku kaupunki on oma ittensä.", of = "37e815" },
 ]
 
 [ascmearc.leofric.topic]
@@ -193,7 +193,7 @@ mines = { text = "Rautaa tuli Fyrbeorgilt kärrykuormittain, ennen. Sit kaivokse
 
 [ascmearc.eadric.service.train_metalcraft]
 reply = { text = "Selvä. Ota vasarast kii varren päästä, älä pään vierest. Kuumenna kunnes se on auringonlaskun värinen, ja lyö ku se on pehmee. Kuuletsä ton kilahduksen? Se sanoo kiitti. Mee nyt, äläkä polta paikkoi.", of = "dc8984" }
-nothing = { text = "Sä osaat jo alasimen kanssa, pomo. En mä ota sun fyrkkaa tyhjäst.", of = "1be230" }
+nothing = { text = "Sä osaat jo alasinhommat, pomo. En mä ota sun fyrkkaa tyhjäst.", of = "1be230" }
 
 # Wat One-Eye of the Gildhalle.
 [ascmearc.wat]
@@ -261,7 +261,7 @@ mutter_verb = { text = "mutisee", of = "ecd609" }
 
 # The topics' and services' names: menu labels the player picks, in standard Finnish.
 [ascmearc.hild.topic_name]
-mynster = { text = "Mynster", of = "34543d" }
+mynster = { text = "Mynsteri", of = "34543d" }
 fen = { text = "Emoluostari", of = "3729ba" }
 
 [ascmearc.hild.service_name]

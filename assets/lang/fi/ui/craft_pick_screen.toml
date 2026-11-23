@@ -35,7 +35,7 @@ text = "{verb:bare} {name:bare}? Aikaa kuluu {time:bare}."
 
 [dialog_takes_at]
 of = "25a4d1"
-text = "{verb:bare} {name:bare}? Työ tehdään {station:ade}, ja aikaa kuluu {time:bare}."
+text = "{verb:bare} {name:bare}? Työ tehdään {station:loc}, ja aikaa kuluu {time:bare}."
 
 [dialog_title]
 of = "5e9915"
@@ -47,7 +47,7 @@ text = "{verb:bare} {name:bare}? Siihen kuluu {uses:bare}, ja aikaa {time:bare}.
 
 [dialog_uses_at]
 of = "7e5c12"
-text = "{verb:bare} {name:bare}? Siihen kuluu {uses:bare}, työ tehdään {station:ade}, ja aikaa kuluu {time:bare}."
+text = "{verb:bare} {name:bare}? Siihen kuluu {uses:bare}, työ tehdään {station:loc}, ja aikaa kuluu {time:bare}."
 
 [empty_affix]
 of = "0f4dba"

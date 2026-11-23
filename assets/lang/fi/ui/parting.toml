@@ -3,7 +3,7 @@
 # `who`, the wizard.
 [betray]
 of = "54a61f"
-text = "Petä {who:par}"
+text = "Petä {who:nom}"
 
 [leave]
 of = "5b87a4"

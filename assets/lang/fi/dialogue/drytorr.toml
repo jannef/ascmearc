@@ -24,10 +24,10 @@ mutter = [
 mutter_verb = { text = "mutisee", of = "f17b79" }
 
 [ascmearc.ordgar.topic]
-drytorr = { text = "Drȳtorr: muinaisella kielellä velhon torni, mikä on varsin osuvaa. Pystytin sen vanhoille kiville ja asetin portaiden ansat itse. Olen huomannut, että ne vieraat, jotka selviävät niistä, ovat yleensä tulleet asiasta, joka kannattaa kuulla.", of = "e2f0fe" }
+drytorr = { text = "Drȳtorr: muinaisella kielellä velhon torni, mikä on varsin osuvaa. Pystytin sen vanhoille kiville ja asetin portaiden ansat itse. Olen huomannut, että ne vieraat, jotka selviävät niistä, ovat yleensä tulleet asialla, joka kannattaa kuulla.", of = "e2f0fe" }
 holly_wood = { text = "Holegnwudu on vanhempi kuin kenenkään kartat siitä. Wynflæd tuntee sen polut minua paremmin, ja olen ollut niin viisas, että annan hänen tuntea. Siellä on kehiä, joihin ei astuta, ja kukkula, jonka alla ei aterioida. Näen siitä paljon parvekkeeltani, ja pysyttelen parvekkeella.", of = "a2a540" }
 learning = { text = "Loitsutaito on kielioppi ja loitsukirja lause. Ilman kielioppia lause on pelkkää melua, ilman lausetta kielioppi joutilasta. Useimmat taikuuteen tulevat haluavat tulipallon eivätkä kielioppia. He eivät yleensä palaa kieliopin vuoksi.", of = "0cc475" }
-wizards = { text = "Tässä maassa on kolme meistä, jotka voivat kutsua itseään velhoiksi. Rouva Ælfswīð pitää tornia nummilla ja säätä siinä. Mestari Sigeric pitää korkeampaa harmaan meren rannalla ja siitä hyvin korkeaa käsitystä. Emme ole kirjeenvaihdossa.", of = "fc731f" }
+wizards = { text = "Tässä maassa meitä on kolme, jotka voimme kutsua itseämme velhoiksi. Rouva Ælfswīð pitää tornia nummilla ja säätä siinä. Mestari Sigeric pitää korkeampaa harmaan meren rannalla ja siitä hyvin korkeaa käsitystä. Emme ole kirjeenvaihdossa.", of = "fc731f" }
 
 [ascmearc.ordgar.topic_name]
 drytorr = { text = "Torni", of = "a40da5" }
