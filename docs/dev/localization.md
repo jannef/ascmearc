@@ -1221,8 +1221,9 @@ code the content lacks stops the game with `--lang` and is a warning from the fi
 shown in English (`settings::check_language`). Captures are English unless given `--lang`.
 
 **Live switching.** The app keeps the code it shows (`text::use_language`, set at startup in
-`main.rs` and on every change of the settings: `settings::apply_language`, and
-`screens::refresh` before it rebuilds the open screens). Every screen asks `ui`/`ui_with` as it
+`main.rs` and on every change of the settings by `settings::apply_language`, which runs after
+`input::route_keys` and before `screens::refresh` and the UI's draw, so the frame of the key
+press already draws in the new language: the draw redraws only on a change). Every screen asks `ui`/`ui_with` as it
 draws, and the message line, the history, and `--more--` render the log's entries each frame
 (`text::message`), so a switch shows at once, what was said before it included: the log holds
 entries, not text. What a screen built when it opened (the dialogue screen's speech,
