@@ -4,4 +4,4 @@
 name = "Tiny language"
 description = "A language of a few lines, for the tests."
 version = "1.0.0"
-game_version = "0.23.0"
+game_version = "0.23.1"

@@ -6,4 +6,4 @@
 name = "Creaky doors"
 description = "Doors creak, groan, and scrape as they open and close."
 version = "1.0.0"
-game_version = "0.23.0"
+game_version = "0.23.1"
