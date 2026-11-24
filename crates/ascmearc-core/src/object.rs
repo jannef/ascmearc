@@ -562,7 +562,13 @@ impl Stack {
             return crate::scrap::name_phrase(content, def, self.parts(content)[0].material);
         }
         let object = Phrase::id(format!("object:{}", def.id));
+        let material = |m: MaterialId| Word::id(format!("material:{}", content.material(m).id));
         if self.parts.is_none() {
+            // The ore is one object for every metal: its own (iron) is said too, as another's is,
+            // where a language's word for it names no metal ("malmikimpale").
+            if content.mining().is_some_and(|m| m.ore == self.object) {
+                return object.with(Modifier::Made(material(def.material())));
+            }
             return object;
         }
         if let Some((gem, cutting)) = self.gem(content) {
@@ -572,7 +578,6 @@ impl Stack {
         let Some(main) = parts.first() else {
             return object;
         };
-        let material = |m: MaterialId| Word::id(format!("material:{}", content.material(m).id));
         let mut phrase = object.with(Modifier::Made(material(main.material)));
         for p in parts
             .iter()

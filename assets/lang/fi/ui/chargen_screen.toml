@@ -60,6 +60,14 @@ text = "ei mitään"
 of = "8d0ca6"
 text = "Kohtalo sanoo sanansa, kun lähdet matkaan."
 
+[pace_slow]
+of = "9487bf"
+text = "Taso nousee hitaasti."
+
+[pace_quick]
+of = "59a7cc"
+text = "Taso nousee nopeasti."
+
 [no_stat_changes]
 of = "0f078f"
 text = "Ominaisuudet ennallaan"

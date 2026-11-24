@@ -191,7 +191,10 @@ label, a scroll's; `joissa` in the plural; a label that is a lexicon word is an 
   after the other adjectives and parts: "smaragdiponsinen pronssinen pitkämiekka", `ill`
   "pronssiseen kypärään"; not said when the head's lexicon `material` form is that word (the
   head names it already, as `made_names` leaves "iron helm" alone). A Finnish head word for an
-  item made of its parts names no material (`kypärä`, not `rautakypärä`).
+  item made of its parts names no material (`kypärä`, not `rautakypärä`). A head whose lexicon
+  has `made = "compound"` takes the material's `compound` form (else its base) joined to its
+  front instead (`Fi::head`): the ore, one object for every metal and so said with its metal
+  even when iron (`Stack::made_phrase`), is "rautamalmikimpale", "kuparimalmikimpale".
 - **Notes**: `Tags` in one parenthesis, as written ("(taika, kirottu)"; the tag words are a
   notes table's when one exists, design §8); `Charges` "(7 latausta)", "(1 lataus)", "(tyhjä)";
   `Base` the base phrase after a comma in the same case, "Grim Biteen, pitkämiekkaan".

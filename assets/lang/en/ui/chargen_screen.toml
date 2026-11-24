@@ -61,6 +61,14 @@ text = "nothing"
 [fate]
 text = "Fate will have its say when you set out."
 
+# A race's or class's detail line when levels come slowly for it (it needs more experience).
+[pace_slow]
+text = "Levels come slowly."
+
+# A race's or class's detail line when levels come quickly for it (it needs less experience).
+[pace_quick]
+text = "Levels come quickly."
+
 # What a race or class changes in the stats, when it changes none.
 [no_stat_changes]
 text = "No stat changes"

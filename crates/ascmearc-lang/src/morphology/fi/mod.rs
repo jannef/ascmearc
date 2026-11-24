@@ -453,6 +453,28 @@ impl Fi {
         }
     }
 
+    /// The phrase's head word, with what it is made of joined to the front where its lexicon asks
+    /// so (`made = "compound"`): the material's `compound` form (else its base) and the head's
+    /// word, inflecting by the head: `rauta` + `malmi|kimpale/48` is "rautamalmikimpale".
+    fn head(&self, phrase: &Phrase, lex: &dyn Lexicon) -> Inflectable {
+        let made = phrase.mods.iter().find_map(|m| match m {
+            Modifier::Made(Word::Id(id)) => lex.word(id),
+            _ => None,
+        });
+        match (&phrase.head, made) {
+            (Word::Id(id), Some(material)) => match lex.word(id) {
+                Some(mut w) if w.forms.get("made").map(String::as_str) == Some("compound") => {
+                    let front = (material.forms.get("compound").cloned())
+                        .unwrap_or_else(|| Entry::base_text(&material.base));
+                    w.base = format!("{front}|{}", w.base);
+                    Inflectable::lex(&w)
+                }
+                _ => self.word(&phrase.head, lex),
+            },
+            _ => self.word(&phrase.head, lex),
+        }
+    }
+
     /// The count as a numeral in `case`, `plural` for a word with no singular: a word up to
     /// `number_words` (and 19), else digits.
     fn count(&self, n: u32, case: Case, plural: bool, reg: &Register) -> String {
@@ -505,8 +527,10 @@ impl Fi {
                 }
                 Modifier::Made(w) => {
                     let material = self.word(w, lex);
-                    // Not the material the head's word already says ("pitkämiekka" is steel).
-                    if head.forms.get("material") != Some(&material.fallback) {
+                    // Not the material the head's word already says ("pitkämiekka" is steel), nor
+                    // one joined to it ("rautamalmikimpale", `Fi::head`).
+                    let compound = head.forms.get("made").map(String::as_str) == Some("compound");
+                    if !compound && head.forms.get("material") != Some(&material.fallback) {
                         made.push(material.form(plural, case, None));
                     }
                 }
@@ -625,7 +649,7 @@ impl Morphology for Fi {
             form
         };
         let form = Form::parse(form).ok_or_else(|| FormError::UnknownForm(form.to_string()))?;
-        let head = self.word(&phrase.head, lex);
+        let head = self.head(phrase, lex);
         let proper = phrase.proper
             || matches!(&phrase.head, Word::Id(id) if lex.word(id).is_some_and(|w| w.proper));
         let several = phrase.count != 1 && !proper;

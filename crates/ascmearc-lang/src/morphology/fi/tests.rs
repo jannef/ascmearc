@@ -343,7 +343,14 @@ fn lexicon() -> MapLexicon {
             LexWord::new("kypärä/12").form("material", "rautainen"),
         )
         .with("object:wand", LexWord::new("sauva/10"))
-        .with("material:iron", LexWord::new("rautainen/38"))
+        .with(
+            "object:ore",
+            LexWord::new("malmi|kimpale/48").form("made", "compound"),
+        )
+        .with(
+            "material:iron",
+            LexWord::new("rautainen/38").form("compound", "rauta"),
+        )
         .with("material:bronze", LexWord::new("pronssinen/38"))
         .with("material:emerald", LexWord::new("smaragdi/5"))
         .with(
@@ -728,6 +735,22 @@ fn owners_genitive_or_the_players_suffix() {
         "the owner before the numeral"
     );
     assert_eq!(form(&arrows.owned_by(sword), "num"), "kolme");
+}
+
+#[test]
+fn a_head_can_take_what_it_is_made_of_as_a_compound() {
+    let ore = |m: &str| Phrase::id("object:ore").with(Modifier::Made(Word::id(m)));
+    assert_eq!(form(&ore("material:iron"), "nom"), "rautamalmikimpale");
+    assert_eq!(form(&ore("material:iron"), "ill"), "rautamalmikimpaleeseen");
+    assert_eq!(
+        form(&ore("material:bronze"), "nom"),
+        "pronssinenmalmikimpale",
+        "no `compound` form: the base"
+    );
+    assert_eq!(
+        form(&ore("material:iron").count(2), "counted"),
+        "kaksi rautamalmikimpaletta"
+    );
 }
 
 #[test]

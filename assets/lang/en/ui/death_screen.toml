@@ -3,6 +3,11 @@
 # The epitaph is lines the screen centres: each is one line of it, in the order read. The screen
 # fits each text to its panel (docs/dev/localization.md "UI text").
 
+# The date of death in the epitaph's `date`: `day`, the day of the month; `month`, its name
+# (`calendar:months.<n>`, a line of data); `year`.
+[date]
+text = "{day:bare} {month:bare}, Year {year:bare}"
+
 # The cause, a status without words of its own: `status`, by its name (`status:<id>`).
 [died_of]
 text = "Died of {status:bare}"

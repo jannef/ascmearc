@@ -193,12 +193,19 @@ impl Factor {
     }
 }
 
-/// How a race's or a class's `experience` reads when it is chosen: "Levels come slowly." from 115
-/// %, "Levels come quickly." to 95 %, else nothing.
-pub fn pace_words(experience: u16) -> Option<&'static str> {
+/// How fast levels come for a race's or a class's `experience`, as character creation tells it
+/// in words: slowly from 115 %, quickly to 95 %.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Pace {
+    Slow,
+    Quick,
+}
+
+/// The [`Pace`] of a race's or a class's `experience`, none between 96 and 114 %.
+pub fn pace(experience: u16) -> Option<Pace> {
     match experience {
-        115.. => Some("Levels come slowly."),
-        ..=95 => Some("Levels come quickly."),
+        115.. => Some(Pace::Slow),
+        ..=95 => Some(Pace::Quick),
         _ => None,
     }
 }
@@ -671,14 +678,14 @@ mod tests {
     }
 
     #[test]
-    fn pace_words_say_slow_and_quick_factors() {
-        assert_eq!(pace_words(140), Some("Levels come slowly."));
-        assert_eq!(pace_words(115), Some("Levels come slowly."));
-        assert_eq!(pace_words(110), None);
-        assert_eq!(pace_words(100), None);
-        assert_eq!(pace_words(96), None);
-        assert_eq!(pace_words(95), Some("Levels come quickly."));
-        assert_eq!(pace_words(80), Some("Levels come quickly."));
+    fn pace_says_slow_and_quick_factors() {
+        assert_eq!(pace(140), Some(Pace::Slow));
+        assert_eq!(pace(115), Some(Pace::Slow));
+        assert_eq!(pace(110), None);
+        assert_eq!(pace(100), None);
+        assert_eq!(pace(96), None);
+        assert_eq!(pace(95), Some(Pace::Quick));
+        assert_eq!(pace(80), Some(Pace::Quick));
     }
 
     #[test]

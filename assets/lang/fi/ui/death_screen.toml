@@ -1,5 +1,9 @@
 # The death screen (`crates/ascmearc/src/ui/death_screen.rs`).
 
+[date]
+of = "2388f6"
+text = "{day:bare}. {month:bare} {year:bare}"
+
 [died_of]
 of = "484afa"
 text = "Kuoli {status:ill}"

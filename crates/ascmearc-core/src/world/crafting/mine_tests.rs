@@ -326,6 +326,22 @@ fn copper_ore(w: &World, count: u32) -> Stack {
     super::mine::ore(&w.content, rules, copper, count)
 }
 
+/// The ore says its metal in every language, its own (iron) too, though in English its name
+/// says it already.
+#[test]
+fn the_ore_says_its_metal_iron_too() {
+    let w = forge(1);
+    let rules = w.content.mining().expect("mining");
+    let iron = w.content.material_id("iron").expect("iron");
+    let iron = super::mine::ore(&w.content, rules, iron, 1);
+    let copper = copper_ore(&w, 1);
+    assert_eq!(iron.describe(&w.content), "a lump of iron ore");
+    let fi = w.content.language("fi").expect("fi");
+    let said = |s: &Stack| fi.phrase(&s.made_phrase(&w.content), "nom", w.content.lexicon());
+    assert_eq!(said(&iron), "rautamalmikimpale");
+    assert_eq!(said(&copper), "kuparimalmikimpale");
+}
+
 #[test]
 fn smelt_makes_the_ore_s_ingot_at_an_anvil_for_the_trained() {
     let mut made = 0;
