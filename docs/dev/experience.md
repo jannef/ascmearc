@@ -21,8 +21,8 @@ bands, and `[discovery]` (`first_kill_xp`, `arrival_xp`). A character's threshol
 by their race's and their class's `experience` percents (`Factor`, `threshold_for`,
 `level_for(xp, factor)`); `Factor::of(content, spec)` is the one way to get the player's, and
 every reader of the level goes through it (`World::player_level`,
-`PerceptionView::own_experience`). `pace_words` is how a factor reads on the character creation
-steps (and in the wiki).
+`PerceptionView::own_experience`). `pace` is how fast a factor says levels come (`Pace`), told
+in words on the character creation steps (the `pace_slow` and `pace_quick` texts) and in the wiki.
 
 `world/character/experience.rs` applies them: `earn_kill` from `fight.rs::dies` when the player lands the
 killing blow, or caused the status effect that killed (`Effect::by`), adds the first-kill bonus

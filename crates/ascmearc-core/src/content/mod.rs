@@ -317,7 +317,7 @@ pub use encounter::{
     Evade, Meetings, PhaseRates, PlayerPlaces, Positions, When as EncounterWhen,
 };
 pub use experience::{
-    Discovery, Experience, FACTORS, Factor, Guideline, Kills, Levels, MAX_LEVEL, MAX_XP, pace_words,
+    Discovery, Experience, FACTORS, Factor, Guideline, Kills, Levels, MAX_LEVEL, MAX_XP, Pace, pace,
 };
 pub use faction::{FactionDef, FactionId, Factions, PLAYER_FACTION, Stance};
 pub use familiar::FamiliarRules;

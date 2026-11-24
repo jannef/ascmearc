@@ -4,7 +4,7 @@
 
 use super::creatures::xp_cell;
 use super::util::{capital, thousands};
-use ascmearc_core::content::{Content, CreatureId, Factor, pace_words};
+use ascmearc_core::content::{Content, CreatureId, Factor, Pace, pace};
 use std::fmt::Write as _;
 
 /// The slowest and the quickest race and class: the characters whose thresholds are the
@@ -79,7 +79,12 @@ fn last_level_of(content: &Content, level: u8) -> String {
 
 /// The race's and the class's experience factors, with what the game says of them.
 pub(super) fn experience_factors(content: &Content) -> String {
-    let words = |percent: u16| pace_words(percent).unwrap_or("");
+    // The game's English words (`assets/lang/en/ui/chargen_screen.toml`, `pace_slow`, `pace_quick`).
+    let words = |percent: u16| match pace(percent) {
+        Some(Pace::Slow) => "Levels come slowly.",
+        Some(Pace::Quick) => "Levels come quickly.",
+        None => "",
+    };
     let mut out =
         String::from("| Race | XP a level needs | When you choose it |\n|---|:---:|---|\n");
     for r in &content.races().list {

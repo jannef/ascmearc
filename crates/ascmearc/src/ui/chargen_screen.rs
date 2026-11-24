@@ -27,7 +27,7 @@ use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::character::{CharacterSpec, Gender, NAMELESS, Start, check_name, random_name};
 use ascmearc_core::content::place_word;
-use ascmearc_core::content::{ClassDef, Content, pace_words};
+use ascmearc_core::content::{ClassDef, Content, Pace, pace};
 use ascmearc_core::dice::Dice;
 use ascmearc_core::kit;
 use ascmearc_core::lang::Arg;
@@ -259,6 +259,16 @@ struct Choice {
     details: Vec<String>,
 }
 
+/// How fast levels come for a race's or a class's `experience`, in words, where it is told.
+fn pace_words(experience: u16) -> Option<String> {
+    pace(experience).map(|p| {
+        ui(match p {
+            Pace::Slow => T::PACE_SLOW,
+            Pace::Quick => T::PACE_QUICK,
+        })
+    })
+}
+
 /// The stat adjustments that are not zero, in stat order, as written in data: `St 1d3+1  Dx −1`.
 pub(super) fn adjustments(by: &PerStat<Dice>) -> String {
     let parts: Vec<String> = (by.iter())
@@ -302,7 +312,7 @@ impl ChoiceScreen {
                     };
                     let mut details =
                         vec![adjustments(&r.stats), ui_with(T::VISION, &[("eyes", eyes)])];
-                    details.extend(pace_words(r.experience).map(String::from));
+                    details.extend(pace_words(r.experience));
                     Choice {
                         id: r.id.clone(),
                         name: label(content.race_phrase(&r.id)),
@@ -336,7 +346,7 @@ impl ChoiceScreen {
                 ),
                 details: [adjustments(&c.stats)]
                     .into_iter()
-                    .chain(pace_words(c.experience).map(String::from))
+                    .chain(pace_words(c.experience))
                     .collect(),
             })
             .collect(),
@@ -1065,6 +1075,15 @@ mod tests {
         assert_eq!(words(Step::Class, "wizard"), Some("Levels come slowly."));
         assert_eq!(words(Step::Class, "warrior"), None);
         assert_eq!(words(Step::Class, "commoner"), Some("Levels come quickly."));
+    }
+
+    #[test]
+    fn how_fast_levels_come_reads_in_the_language_shown() {
+        crate::ui::text::use_language("fi");
+        let words = pace_words(140);
+        crate::ui::text::use_language("en");
+        assert_eq!(words.as_deref(), Some("Taso nousee hitaasti."));
+        assert_eq!(pace_words(80).as_deref(), Some("Levels come quickly."));
     }
 
     #[test]

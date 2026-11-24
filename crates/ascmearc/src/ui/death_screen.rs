@@ -18,12 +18,24 @@ use ascmearc_core::lang::{Arg, Msg};
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::time::GameTime;
 
+/// The date of death, the month's name a line of data: `11 Darkening, Year 1444`, "11.
+/// hämäräkuuta 1444".
+fn date(time: GameTime) -> String {
+    let month = ascmearc_core::content::data_line::month(time.month());
+    let args = [
+        ("day", Arg::Number(i64::from(time.day()))),
+        ("month", Arg::said(month)),
+        ("year", Arg::Number(time.year() as i64)),
+    ];
+    ui_with(T::DATE, &args)
+}
+
 #[derive(Debug)]
 pub struct DeathScreen {
     /// The lines of the epitaph, in order; the empty one is the date and time of death.
     lines: Vec<String>,
-    /// The date and time of death (the clock setting decides how the time is written).
-    when: Option<(String, GameTime)>,
+    /// The time of death (the clock setting decides how the time is written).
+    when: Option<GameTime>,
     /// The character went into the graveyard (`graveyard.rs`, written by `screens::on_death`):
     /// "Remembered in the graveyard."
     pub remembered: bool,
@@ -41,7 +53,6 @@ impl DeathScreen {
             };
         };
         let content = view.content();
-        let calendar = content.calendar();
         let by = match (death.of, death.cause, death.by) {
             // A status effect killed them: "Bled to death".
             (Some(status), _, _) => {
@@ -99,7 +110,7 @@ impl DeathScreen {
         ]);
         Self {
             lines,
-            when: Some((calendar.full_date(death.time), death.time)),
+            when: Some(death.time),
             remembered: false,
         }
     }
@@ -115,9 +126,9 @@ impl DeathScreen {
     pub fn draw(&self, console: &mut Console, clock: Clock) {
         let w = 52;
         let lines = self.lines.iter().map(|line| match &self.when {
-            Some((date, time)) if line.is_empty() => {
+            Some(time) if line.is_empty() => {
                 let args = [
-                    ("date", Arg::text(date.as_str())),
+                    ("date", Arg::text(date(*time))),
                     ("time", Arg::text(clock.format(*time))),
                 ];
                 ui_with(T::EPITAPH_WHEN, &args)
@@ -169,6 +180,16 @@ mod tests {
     use ascmearc_core::content::Content;
     use ascmearc_core::{Action, World};
     use std::sync::Arc;
+
+    #[test]
+    fn the_date_of_death_reads_in_the_language_shown() {
+        let at = GameTime::from_calendar(1444, 11, 11, 10, 27).expect("valid");
+        assert_eq!(date(at), "11 Darkening, Year 1444");
+        crate::ui::text::use_language("fi");
+        let fi = date(at);
+        crate::ui::text::use_language("en");
+        assert_eq!(fi, "11. hämäräkuuta 1444");
+    }
 
     fn text(console: &Console) -> String {
         (0..console.rows() as i32)

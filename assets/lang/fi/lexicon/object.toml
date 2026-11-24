@@ -388,7 +388,7 @@ orc_war_chief_corpse = { word = "örkkisotapäällikön ruumis/41", forms = { ma
 orc_warlord_corpse = { word = "örkkisotaherran ruumis/41", forms = { material = "lihainen" } }
 orc_warrior_corpse = { word = "örkkisoturin ruumis/41", forms = { material = "lihainen" } }
 ordgar_corpse = { word = "mestari Ordgarin ruumis/41", forms = { material = "lihainen" } }
-ore = "malmi|kimpale/48"
+ore = { word = "malmi|kimpale/48", forms = { made = "compound" } }
 osrick_corpse = { word = "veli Osrickin ruumis/41", forms = { material = "lihainen" } }
 padded_coat = { word = "tikki|nuttu/1*C", forms = { material = "kankainen" } }
 panther_corpse = { word = "pantterin raato/1*F", forms = { material = "lihainen" } }
