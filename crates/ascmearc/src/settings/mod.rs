@@ -573,7 +573,7 @@ impl Plugin for SettingsPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Settings>()
             .init_resource::<SettingsStore>()
-            .add_systems(First, apply_language)
+            .add_systems(Update, apply_language.after(crate::input::route_keys))
             .add_systems(Last, persist);
     }
 }
@@ -603,9 +603,10 @@ pub fn check_language(
     }
 }
 
-/// Shows the game in the language the settings name, from the frame after it changed: every
-/// screen and the message log render each frame, so they switch at once.
-fn apply_language(settings: Res<Settings>) {
+/// Shows the game in the language the settings name, from the frame it changed in: it runs
+/// after the key that changed it and before the UI rebuilds and redraws (`ui::draw` redraws
+/// only on a change, so a later switch would show the old language until the next key).
+pub fn apply_language(settings: Res<Settings>) {
     if settings.is_changed() {
         crate::ui::text::use_language(&settings.language);
     }

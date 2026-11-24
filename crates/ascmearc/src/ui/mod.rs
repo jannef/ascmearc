@@ -213,13 +213,16 @@ impl Plugin for UiPlugin {
                     )
                         .chain()
                         .after(SimSet)
+                        .after(crate::settings::apply_language)
                         .before(draw)
                         .run_if(resource_exists::<Game>),
                     more::wait
                         .after(SimSet)
                         .before(draw)
                         .run_if(resource_exists::<Game>),
-                    draw.after(draw_map_layer).after(screens::apply_choice),
+                    draw.after(draw_map_layer)
+                        .after(screens::apply_choice)
+                        .after(crate::settings::apply_language),
                 ),
             );
         #[cfg(not(target_arch = "wasm32"))]

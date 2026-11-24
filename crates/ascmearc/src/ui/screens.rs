@@ -1005,9 +1005,6 @@ impl Screens<'_> {
 /// the settings rebuilds them too, so what a screen built when it opened (what was said in a
 /// conversation) reads in the language chosen.
 pub(super) fn refresh(game: Res<Game>, settings: Res<Settings>, mut stack: ResMut<ScreenStack>) {
-    if settings.is_changed() {
-        super::text::use_language(&settings.language);
-    }
     if (game.is_changed() || settings.is_changed()) && !stack.is_empty() {
         stack.refresh(&game.world.perception(), last_talk(&game.last_outcome));
     }
