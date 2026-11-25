@@ -12,9 +12,12 @@
 //! - **A restock** ([`World::restock`]): from its own stream, `restock/<level>/<shop>/<player
 //!   level>`, so what comes does not depend on when or whether the player looks: `gone` stacks
 //!   of goods lying on the shop floor (what the shop trades, never its kind's `always`) leave,
-//!   chosen evenly; then the kind's `always` objects missing from the floor come back, and `come`
-//!   stacks more are drawn from what the kind stocks (`Shops::goods`: a base item only once the
-//!   restock's item level reaches its own, as loot's), each on a free cell of the
+//!   chosen evenly, first from what the shop has outgrown (goods of a class it stocks that it
+//!   no longer draws at this item level, #2089); then the kind's `always` objects missing from
+//!   the floor come back, and `come` stacks more are drawn from what the kind stocks
+//!   (`Shops::goods`: a base item only once the restock's item level reaches its own, as
+//!   loot's; any other good within the `reach` above it and not below its class's floor, a
+//!   staple at any level), each on a free cell of the
 //!   shop floor (plain ground, nothing lying there, no trap or fire, not the keeper's
 //!   post; who stands where does not count, so goods may come to lie under a creature), made at
 //!   the restock's item level (`Shops::lay_out`).
@@ -107,7 +110,7 @@ impl World {
         let shop = state.shops[i].clone();
         let def = shops.get(shop.kind);
         // What goes: goods lying on the floor, by cell and then top first.
-        let mut lying: Vec<(Pos, usize)> = (state.objects.iter())
+        let lying: Vec<(Pos, usize)> = (state.objects.iter())
             .filter(|(p, _)| shop.contains(**p))
             .flat_map(|(&p, pile)| {
                 (pile.iter().enumerate())
@@ -115,10 +118,26 @@ impl World {
                     .map(move |(k, _)| (p, k))
             })
             .collect();
+        // Stock the shop has outgrown (a good of a class it stocks that it no longer draws at
+        // this item level: below its class's floor) goes first.
+        let goods = shops.goods(content, shop.kind, made_at);
+        let outgrown = |(p, k): &(Pos, usize)| {
+            let o = state.objects[p][*k].object;
+            shops.stocks(content, shop.kind, o) && !goods.iter().any(|&(g, _)| g == o)
+        };
+        let (mut stale, mut lying): (Vec<_>, Vec<_>) = lying.into_iter().partition(outgrown);
         let gone = rng.range(i32::from(rules.gone.0), i32::from(rules.gone.1));
         let mut chosen: Vec<(Pos, usize)> = Vec::new();
-        for _ in 0..usize::try_from(gone).unwrap_or(0).min(lying.len()) {
-            chosen.push(lying.remove(rng.index(lying.len())));
+        for _ in 0..usize::try_from(gone)
+            .unwrap_or(0)
+            .min(stale.len() + lying.len())
+        {
+            let from = if stale.is_empty() {
+                &mut lying
+            } else {
+                &mut stale
+            };
+            chosen.push(from.remove(rng.index(from.len())));
         }
         for (p, _) in &chosen {
             if let Some(pile) = state.objects.get_mut(p) {
@@ -150,7 +169,6 @@ impl World {
             .collect();
         rng.shuffle(&mut free);
         let come = rng.range(i32::from(rules.come.0), i32::from(rules.come.1));
-        let goods = shops.goods(content, shop.kind, made_at);
         let mut cells = free.into_iter();
         let drawn = (0..usize::try_from(come).unwrap_or(0)).map(|_| None);
         for always in missing.into_iter().map(Some).chain(drawn) {

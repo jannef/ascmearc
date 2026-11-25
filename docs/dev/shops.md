@@ -103,8 +103,16 @@ derived from the quest records and `WorldState::fund` (never saved): the town fi
 after }`), and a town's level is `TownDef::levels` (`Content::town_at`). Every id is checked at
 load; the Rust names no town or quest. Goods are drawn by `Shops::goods` at that item level: a
 base item (an object with a `kind`) only once the item level reaches its own `level`, as loot's
-(#2048; what is no base item, a potion or a scroll, is drawn at any level), so a town's first goods
-hold no plate; the same holds for a generated shop's first stock. They are made by
+(#2048), so a town's first goods hold no plate; any other good (a potion, a scroll, a wand, a
+rod; #2089) in a band read from `data/shops.toml`: from item level + `reach` (2) down to its
+class's floor, `floor` percent (50) of the lower of the item level and the highest level of that
+class within reach (`Shops::class_floor`: potions top out at 10, so their floor stops at 5; a
+class with no levels, food, keeps everything), with the `staples` (healing, greater healing,
+antidote, cure disease, identify) drawn at any level within reach. The same holds for a
+generated shop's first stock. A restock's `gone` stacks come first from what the shop has
+outgrown (a good of a stocked class it no longer draws at the restock's item level), so a town
+shop sheds its first goods as the player rises. The wiki's band table is
+`xtask/src/wiki/objects.rs::shop_levels`. They are made by
 `Shops::lay_out` (`magic::loot::make`: magic and an ornament, never another material,
 spec/06-content.md). The townsfolk's talk of it
 is `[dialogue.economy]` (docs/dev/npcs.md). The wiki's table is `xtask/src/wiki/objects.rs::restock`.
