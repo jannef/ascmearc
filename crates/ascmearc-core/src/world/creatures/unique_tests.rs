@@ -163,6 +163,7 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
                 Power::Inflict { .. } => "inflict",
                 Power::Vision(_) => "vision",
                 Power::Ward { .. } => "ward",
+                Power::Negate { .. } => "negate",
                 Power::Light(_) => "light",
                 Power::Range(_) => "range",
             };
@@ -688,9 +689,9 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
         assert_eq!(magic.check(def, &content), Ok(()), "{}", u.id);
         ids.push(u.id.as_str());
     }
-    // The outlaws' four, Sigeric's Star, the pedlar's three, the drop pool's three (#1976), and
-    // the test world's Stonebiter.
-    assert_eq!(ids.len(), 12, "{ids:?}");
+    // The outlaws' four, Sigeric's Star, the pedlar's three, the drop pool's three (#1976),
+    // the test world's Stonebiter, and the Masterpiece (#2100).
+    assert_eq!(ids.len(), 13, "{ids:?}");
     let widowmaker = unique(&w, "widowmaker");
     let magic = widowmaker.magic().expect("magic");
     let stiletto = content.object(widowmaker.object);

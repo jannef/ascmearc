@@ -153,6 +153,11 @@ fn power_text(content: &Content, u: &UniqueDef) -> String {
         Some(Power::Ward { status, .. }) => {
             format!("its wearer is never {}", content.status(*status).name)
         }
+        Some(Power::Negate { chance, .. }) => format!(
+            "{chance}% of the hits that beat its wearer's Defence (a blow, a shot, a throw, a \
+             trap's strike) come to nothing: no damage, no status, nothing the hit would bring; \
+             spells, breath, and blasts are not stopped"
+        ),
         Some(Power::Light(id)) => {
             let radius = content.light(*id).radius;
             format!(

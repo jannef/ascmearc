@@ -320,8 +320,8 @@ affixes work as a rare item's do. A [shop](shops.md#magic-items) prices it as a 
 name, its affixes, its power in words, and a line of lore. Each one lies in one place in the
 world, so a character finds each at most once, and loot never makes one. Most are carried by
 those who own them. Three are only ever offered, very rarely, by a
-[pedlar](npcs.md#the-pedlars-offer). Three more, the Grandmother, Silverstrike, and the Radiant,
-are not yet found anywhere in the world.
+[pedlar](npcs.md#the-pedlars-offer). Four more, the Grandmother, Silverstrike, the Radiant,
+and the Masterpiece, are not yet found anywhere in the world.
 
 Nothing harms it: no [item damage](materials.md#protected-items), no spell's ruin, and no
 [chest](chests.md) smashed or blown apart.
@@ -342,6 +342,11 @@ Its power works while it is worn or wielded, identified or not:
 - **Vision**: its wearer sees with a [vision](vision.md#the-four-types) profile wherever that is
   better than their own eyes.
 - **Ward**: its wearer never suffers a status.
+- **Negate**: when a blow, a shot, a thrown thing, or a trap's strike beats its wearer's
+  [Defence](combat.md#defence), it comes to nothing by the chance the table gives: no damage, no
+  status, and nothing else the hit would bring. You are told "The blow comes to nothing against
+  your mail." A miss is never rolled for. Spells, breath, and blasts are not stopped, since they
+  never roll against Defence.
 - **Light**: its bearer sheds a steady [light](light.md#light-sources) that reaches the number
   of cells the table gives. A glowing affix's light does not add to it: the one that reaches
   farther counts.

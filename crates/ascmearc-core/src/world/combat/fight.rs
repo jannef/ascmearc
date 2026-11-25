@@ -1008,6 +1008,8 @@ impl World {
         let blow = blow.map(|b| self.lore_blow(attacker, target, b));
         // Holy wrath's die (`smite.rs`).
         let blow = blow.map(|b| self.holy_wrathed(attacker, target, b));
+        // A unique armour's Negate (`negate.rs`): the hit comes to nothing, before anything comes of it.
+        let blow = blow.map(|b| self.negated(target, b));
         if blow.is_some_and(|b| b.strike.is_hit()) {
             self.savage_spent(attacker, events);
         }

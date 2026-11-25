@@ -85,6 +85,12 @@ objects = ["unique:radiant"]
 at = [23, 4]
 objects = ["rock*4"]
 
+# The Masterpiece (#2100), a unique of the drop pool to come, placed nowhere else: in the arrival
+# room's south-west corner, so tests and captures can reach it.
+[[pile]]
+at = [3, 12]
+objects = ["unique:masterpiece"]
+
 # What the sealed chamber keeps.
 [[pile]]
 at = [48, 8]
