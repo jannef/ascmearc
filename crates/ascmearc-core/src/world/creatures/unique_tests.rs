@@ -154,8 +154,8 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     let mut other = bedes.magic().clone();
     other.unique = None;
     assert!(other.check(content.object(bedes.object), &content).is_err());
-    // The drop pool's three (#1976, the shared table first), the criminals' four, the pedlar's
-    // three (#808), and Sigeric's (#1787), each with its power.
+    // The drop pool's five (#1976, #2095, #2097, the shared table first), the criminals' four,
+    // the pedlar's three (#808), and Sigeric's (#1787), each with its power.
     let powers: Vec<(&str, &str)> = (content.uniques())
         .filter(|u| u.stack.magic().is_some_and(|m| m.level >= 12))
         .map(|u| {
@@ -173,6 +173,8 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert_eq!(
         powers,
         [
+            ("deep_night", "vision"),
+            ("demonsoul", "cast"),
             ("grandmother", "inflict"),
             ("radiant", "light"),
             ("silverstrike", "range"),
