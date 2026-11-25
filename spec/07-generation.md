@@ -32,9 +32,10 @@ Part of the design document; the index is [`specification.md`](../specification.
 ## Danger and spawning
 
 - Every level has a danger, 0 where none is given. Nothing is drawn or spawns at 0.
-- A draw weighs creature types by how near their level is to the danger, times their rarity. Some draws are strays (from anything the campaign knows) or out of depth (deeper than the floor, reaching further at lower odds, with no cap).
+- A draw weighs creature types by how near their level is to the danger, times their rarity. Some draws are strays (from anything the campaign knows) or out of depth (above the floor's danger, reaching further at lower odds, with no cap).
 - The owner's rule: "anything may come at astronomical odds; that is where the stories come from."
-- Dread monsters come at one draw in N, set by the place and rising deeper.
+- Dread monsters come at one draw in N, set by the place and rising with its danger.
+- A branch floor's locks and hidden things (secret doors, hidden traps) are harder by the branch's share of the floor's danger. Gameplay reads the danger, never the depth; depth only lays out the world (#2094).
 - A unique type is met once a run.
 - A level with a danger starts full and refills slowly toward a cap, out of the player's sight. Floors the player is not on are frozen.
 - The odds are hidden in the game; the wiki gives every one.

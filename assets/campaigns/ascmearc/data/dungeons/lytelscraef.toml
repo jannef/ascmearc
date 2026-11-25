@@ -26,7 +26,7 @@ danger = 1
 population = ["rat", "bat", "beetle", "grave_worm", "kobold"]
 # Only its own folk, and none drawn deeper: nothing tougher strays in.
 stray = 0
-out_of_depth = 0
+above_danger = 0
 # A thin population: about a dozen on a floor.
 population_count = { per_1000 = 15, least = 8, most = 16 }
 # A cave of vermin keeps no shop, and no special room: a teeming den's swarm would be too much for a

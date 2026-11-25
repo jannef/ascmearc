@@ -411,7 +411,7 @@ chance, and each further step (`danger::deeper`: `D + 1`, then `odds.deeper` % a
 one more, with no cap since #1711, the loop ending at danger `u8::MAX` so it stays bounded), then one `below(total)` per pick that finds something
 (`danger::pick`): at the deeper danger the chosen pool, else the generic list (the own folk all
 too weak), then at `D` the chosen pool, else the own folk. `danger::Odds` is
-`Spawning::odds`: each of `stray`, `out_of_depth`, `deeper` as a branch or level
+`Spawning::odds`: each of `stray`, `above_danger`, `deeper` as a branch or level
 gives it, else `data/dungeons.toml`'s `[defaults]` (`danger::DefaultsFile`, read into
 `Content::draw_odds` before the levels; a `danger` without it is a load error, and `[defaults]`
 in any other dungeons file is refused). The generic creature list is derived
@@ -429,7 +429,7 @@ placed by hand or by its own rules; no shipped type uses it yet). So a roster ty
 population is met as a stray, and people, keepers, hand-placed guardians, and quest creatures
 (neutral or unique) never stray. Tests: `content::tests::the_generic_list_is_every_hostile_type_without_uniques_or_people`,
 `a_lair_draws_its_strays_from_the_populations_only`,
-`a_first_floor_draw_gone_far_out_of_depth_brings_a_type_of_no_population`, and
+`a_first_floor_draw_gone_far_above_danger_brings_a_type_of_no_population`, and
 `world::creatures::spawn_tests::strays_come_from_every_hostile_type_but_those_kept_out`; `populate` builds the generic candidates once a floor, the own ones per creature (a
 unique leaves them). Hand-placed creatures (level legends, vaults,
 scenario people, shopkeepers) are never drawn, whatever their tier.
@@ -457,7 +457,7 @@ and reads no flag: a vault's monster pool (`mapgen/population.rs`). A den's warr
 from a non-dread type drawn without the roll (`mapgen/den.rs::Theme::roll`). The odds of a draw on
 a level are `Content::draw_odds_at(id)`: its spawning rules' odds with a branch depth's own
 `dread_one_in` (`DungeonDef::dread_one_in`: an endless branch's `content/dread.rs::DreadCurve` at
-the floor's true depth, else its plan's, `LevelPlan::spawning`'s odds: its row's over the template's
+the floor's rising danger, never its depth, else its plan's, `LevelPlan::spawning`'s odds: its row's over the template's
 over `[defaults]`); the
 spawner, the population (`mapgen::generate_for` patches the `Spawning` it hands `populate` and
 `den::fill`), hoards' guardians, and outcomes' summons read it; an encounter's draw takes its

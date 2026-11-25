@@ -1054,7 +1054,7 @@ mod tests {
             "{picking}"
         );
         assert!(
-            picking.contains("| Usual, on the Depths 8 | 21 |"),
+            picking.contains("| Usual, on the Depths 8 (danger 8) | 21 |"),
             "{picking}"
         );
         assert!(
@@ -1540,11 +1540,11 @@ mod tests {
         );
         let depths = text("search-depths.md");
         assert!(
-            depths.contains("| the Depths 3 | none (these floors have no doors) |"),
+            depths.contains("| the Depths 3 (danger 3) | none (these floors have no doors) |"),
             "{depths}"
         );
         assert!(
-            depths.contains("| the Depths 8 | 1 to 2 | 6.9% | 51% | 0.69% |"),
+            depths.contains("| the Depths 8 (danger 8) | 1 to 2 | 6.9% | 51% | 0.69% |"),
             "{depths}"
         );
         let races = text("search-races.md");

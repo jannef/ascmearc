@@ -8,7 +8,7 @@
 //! population_count = { per_1000 = 35, least = 25, most = 80 }   # or a number: 40
 //! stray = 5                             # percent of draws from the generic creature list
 //! stray_pool = "populations"            # strays only from the campaign's populations (default "all")
-//! out_of_depth = 5                      # percent of draws made 1 deeper, then perhaps more
+//! above_danger = 5                      # percent of draws made 1 danger higher, then more
 //! deeper = 5                            # percent, again and again, of 1 deeper still
 //! dread_one_in = 100                    # one draw in this many is among the dread types
 //! spawn = { every = "2m", chance = 60, cap = 40 }
@@ -137,8 +137,9 @@ impl Count {
 pub struct Odds {
     /// Percent of draws made from the generic creature list instead of the population.
     pub stray: u8,
-    /// Percent of draws made out of depth: one danger deeper, then perhaps more.
-    pub out_of_depth: u8,
+    /// Percent of draws made out of depth, above the floor's danger: one danger higher, then
+    /// perhaps more.
+    pub above_danger: u8,
     /// Percent, again and again, that an out-of-depth draw goes one danger deeper still, with
     /// no cap (#1711).
     pub deeper: u8,
@@ -308,7 +309,7 @@ fn deeper(rng: &mut crate::rng::Rng, danger: u8, odds: &Odds) -> u8 {
 
 /// Draws a type at `danger`: from `own` (the population), or with
 /// `odds.stray` % from `generic` (the generic creature list), both sorted by type, by
-/// [`weight`]. With `odds.out_of_depth` % the draw is made deeper ([`deeper`]); where the own
+/// [`weight`]. With `odds.above_danger` % the draw is made deeper ([`deeper`]); where the own
 /// folk weigh nothing at that depth (all too weak for it), the generic list is drawn there
 /// instead. A draw that finds nothing that deep is made at the danger itself, and a stray that
 /// finds nothing there comes from the own folk.
@@ -333,7 +334,7 @@ pub fn draw(
     }
     let dread = (odds.dread_one_in > 0).then(|| rng.below(odds.dread_one_in.into()) == 0);
     let stray = rng.chance(odds.stray.into());
-    let at = (rng.chance(odds.out_of_depth.into())).then(|| deeper(rng, danger, odds));
+    let at = (rng.chance(odds.above_danger.into())).then(|| deeper(rng, danger, odds));
     let first = if stray { generic } else { own };
     let draw_among = |rng: &mut crate::rng::Rng, among: Among| {
         if let Some(at) = at
@@ -421,7 +422,7 @@ pub(super) struct SpawningSpec {
 #[derive(Clone, Copy, Debug, Default, Deserialize)]
 pub(super) struct OddsSpec {
     pub(super) stray: Option<u8>,
-    pub(super) out_of_depth: Option<u8>,
+    pub(super) above_danger: Option<u8>,
     pub(super) deeper: Option<u8>,
     pub(super) dread_one_in: Option<u16>,
     pub(super) neutral: Option<u8>,
@@ -430,7 +431,7 @@ pub(super) struct OddsSpec {
 impl OddsSpec {
     fn given(&self) -> bool {
         self.stray.is_some()
-            || self.out_of_depth.is_some()
+            || self.above_danger.is_some()
             || self.deeper.is_some()
             || self.dread_one_in.is_some()
             || self.neutral.is_some()
@@ -440,7 +441,7 @@ impl OddsSpec {
     fn resolve(self, defaults: Odds) -> Result<Odds, String> {
         let odds = Odds {
             stray: self.stray.unwrap_or(defaults.stray),
-            out_of_depth: self.out_of_depth.unwrap_or(defaults.out_of_depth),
+            above_danger: self.above_danger.unwrap_or(defaults.above_danger),
             deeper: self.deeper.unwrap_or(defaults.deeper),
             dread_one_in: self.dread_one_in.unwrap_or(defaults.dread_one_in),
             neutral: self.neutral.unwrap_or(defaults.neutral),
@@ -509,7 +510,7 @@ impl SpawningSpec {
                 || self.spawn.is_some();
             if given {
                 return Err(
-                    "`population`, `population_count`, `stray`, `stray_pool`, `out_of_depth`, \
+                    "`population`, `population_count`, `stray`, `stray_pool`, `above_danger`, \
                             `deeper`, `dread_one_in`, `neutral`, and `spawn` need a \
                             `danger`"
                         .into(),
@@ -591,7 +592,7 @@ mod tests {
     /// The defaults of `data/dungeons.toml`.
     const ODDS: Odds = Odds {
         stray: 5,
-        out_of_depth: 5,
+        above_danger: 5,
         deeper: 5,
         dread_one_in: DREAD_ONE_IN,
         neutral: 10,
@@ -600,7 +601,7 @@ mod tests {
     /// Every draw one deeper, never more.
     const ONE_DEEPER: Odds = Odds {
         stray: 0,
-        out_of_depth: 100,
+        above_danger: 100,
         deeper: 0,
         dread_one_in: 0,
         neutral: 100,
@@ -609,7 +610,7 @@ mod tests {
     /// No strays and no out-of-depth draws.
     const PLAIN: Odds = Odds {
         stray: 0,
-        out_of_depth: 0,
+        above_danger: 0,
         deeper: 0,
         dread_one_in: 0,
         neutral: 100,
@@ -766,7 +767,7 @@ mod tests {
             [(CreatureId(2), (5, 5), 100, false)],
         );
         let odds = Odds {
-            out_of_depth: 0,
+            above_danger: 0,
             ..ODDS
         };
         let mut rng = Rng::stream(3, "test");
@@ -787,7 +788,7 @@ mod tests {
     }
 
     #[test]
-    fn out_of_depth_draws_explode_geometrically() {
+    fn above_danger_draws_explode_geometrically() {
         let mut rng = Rng::stream(9, "test");
         let mut steps = [0u32; 12];
         for _ in 0..100_000 {
@@ -921,7 +922,7 @@ mod tests {
     }
 
     #[test]
-    fn out_of_depth_draws_weigh_rarity_too() {
+    fn above_danger_draws_weigh_rarity_too() {
         // A common type two below the danger; one deeper, a common and a very rare one.
         let kinds = [
             (CreatureId(1), (3, 3), 100, false),

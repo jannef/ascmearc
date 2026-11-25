@@ -680,7 +680,7 @@ fn a_lair_draws_its_strays_from_the_populations_only() {
 /// anything the campaign knows may come to a level-1 floor at astronomical odds: a type no
 /// population names, and the deepest type of all.
 #[test]
-fn a_first_floor_draw_gone_far_out_of_depth_may_bring_anything() {
+fn a_first_floor_draw_gone_far_above_danger_may_bring_anything() {
     let content = builtin();
     let barrow = (content
         .dungeon("cealdhlaw")
@@ -697,7 +697,7 @@ fn a_first_floor_draw_gone_far_out_of_depth_may_bring_anything() {
     // counting): the first of 10 000 seeds whose draw on a danger-1 floor gives `wanted`.
     let odds = danger::Odds {
         stray: 0,
-        out_of_depth: 100,
+        above_danger: 100,
         deeper: 95,
         dread_one_in: 0,
         neutral: 100,
@@ -1016,7 +1016,7 @@ fn dungeons_need_the_terrain_generators_build_with() {
     let mut files = minimal_files("#@#\n", "");
     files.insert(
         "data/dungeons.toml",
-        "[defaults]\nstray = 5\nout_of_depth = 5\ndeeper = 5\ndread_one_in = 100\nneutral = 10\n\
+        "[defaults]\nstray = 5\nabove_danger = 5\ndeeper = 5\ndread_one_in = 100\nneutral = 10\n\
          [[dungeon]]\nid = \"d\"\ndepth = 1\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\n\
          size = [80, 21]\ndanger = 1\npopulation = [\"rat\"]\n",
     );

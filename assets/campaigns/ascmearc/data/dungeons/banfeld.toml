@@ -16,8 +16,8 @@ generator = { kind = "rooms" }
 size = [80, 21]
 traps = ["arrow", "spear", "pit", "alarm"]
 secret_doors = [1, 2]
-hidden_per_depth = 1
-locks_per_depth = 1
+hidden_danger_percent = 25
+locks_danger_percent = 25
 loot = [2, 4]
 key = "rusty_key"
 temperature = 8

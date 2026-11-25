@@ -350,7 +350,7 @@ water and ruin rising with depth; the parameters' line), `mapgen/fennmynster_tes
 earth under Gimmwīc, entered only through the crystal portal Ysella the Binder's quest reveals
 in the town (a hidden location of a hand-made level, `docs/dev/overworld.md`), so its first
 floor's `<` (the run's `entered_from`) climbs back out onto the portal. Four `rooms` floors 80×21
-of danger 22 to 25 (`stray = 0`, `out_of_depth = 0`: earth, greater earth, basilisk, stone giant,
+of danger 22 to 25 (`stray = 0`, `above_danger = 0`: earth, greater earth, basilisk, stone giant,
 stone troll), a violet `ambient`, no shop, no special room, no ore (`ores = []`). The plane's
 crystal comes from vaults (the generators have no palette of their own): `crystal_garden` (crystal
 clusters lit red, amber, and green round an uncut amethyst) is pinned on floors 1 to 3, and
@@ -470,10 +470,12 @@ floors in a row, which no one can compare. `Content::spawning` reads the danger 
 branch's population and strays, so every draw (population, dens, hoards, spawns) stops rising at
 the roster's top and a floor at any depth holds creatures; `Content::floor_danger` is the number
 that keeps rising. The dread draws do not stop rising: `[dungeon.endless] dread` (`content/dread.rs`,
-`DungeonDef::dread`) gives `dread_one_in` by the floor's true depth (`Content::draw_odds_at`, which
+`DungeonDef::dread`) gives `dread_one_in` by the floor's rising danger, never its depth (#2094;
+`DangerRule::rising`, what `Content::floor_danger` gives; `Content::draw_odds_at`, which
 `generate_for` patches into the `Spawning` the population and dens draw by; docs/dev/creatures.md
-"Dread"), Grundlēas's falling from one in 40 at 70 to one in 5 from 100. Other caps past that top: `Content::item_level` clamps at `MAX_ITEM_LEVEL` as
-ever; `hidden_at` and `locks_at` saturate and keep rising (the stairs never hang on a lock or a
+"Dread"), Grundlēas's (whose danger is its floor number) falling from one in 40 at danger 70 to one in 5
+from 100. Other caps past that top: `Content::item_level` clamps at `MAX_ITEM_LEVEL` as
+ever; `hidden_at` and `locks_at` read the rising danger too, saturate, and keep rising (the stairs never hang on a lock or a
 secret, `connect::validate`). Grundlēas gets its draws by `stray = 100` over the campaign's generic
 list and names only the rat as a `population`, which every other branch's strays already hold, so
 none of their lists move.
@@ -543,7 +545,7 @@ chalice of Sister Hild's quest on an altar). Its tests and first-level snapshot:
 (`describe_in` from `mapgen/tests.rs`). Lytelscræf (`lytelscraef`, #792;
 `campaigns/ascmearc/data/dungeons/lytelscraef.toml`), the starter cave beside Beorggeat: three
 caves floors of 60×30 at danger 1 to 3, 8 to 16 creatures of five level-1 and level-2 types with
-`stray = 0` and `out_of_depth = 0`, no shop or special room, and the kobolds' cache named by
+`stray = 0` and `above_danger = 0`, no shop or special room, and the kobolds' cache named by
 floor 3's `vaults` (two kobolds and one shut chest, neither locked nor trapped, filled by
 `chest::fill_vaults` at the floor's item level). Tests: `mapgen/lytelscraef_tests.rs` (the cache
 on floor 3 over ten seeds, the folk, the way in and back as a replay). Floor 2's row gives
