@@ -132,7 +132,8 @@ pub struct Discovery {
     /// whatever the levels.
     #[serde(default)]
     pub first_kill: u32,
-    /// The player's first arrival on a level gives this times the level's item level.
+    /// The player's first arrival on a level gives this times the level's danger (none
+    /// without one; `World::discover_level`).
     #[serde(default)]
     pub arrival: u32,
 }
@@ -492,9 +493,9 @@ impl Experience {
         self.spell.per_level * u32::from(level.max(1))
     }
 
-    /// What the player's first arrival on a level of item level `item_level` gives.
-    pub fn arrival_xp(&self, item_level: u8) -> u32 {
-        self.discovery.arrival * u32::from(item_level)
+    /// What the player's first arrival on a level of danger `danger` gives: nothing at danger 0.
+    pub fn arrival_xp(&self, danger: u32) -> u32 {
+        self.discovery.arrival.saturating_mul(danger)
     }
 }
 
@@ -693,8 +694,10 @@ mod tests {
         let x = builtin();
         assert_eq!(x.first_kill_xp(15), 15, "a kobold's XP once more");
         assert_eq!(x.first_kill_xp(0), 0);
-        assert_eq!(x.arrival_xp(1), 5, "a hand-made level");
+        assert_eq!(x.arrival_xp(0), 0, "a level without a danger: a town");
+        assert_eq!(x.arrival_xp(1), 5, "a floor of danger 1");
         assert_eq!(x.arrival_xp(4), 20, "a dungeon floor of danger 4");
+        assert_eq!(x.arrival_xp(u32::MAX), u32::MAX, "saturates");
         assert_eq!(
             (x.spell_xp(0), x.spell_xp(11), x.spell_xp(70)),
             (5, 55, 350)

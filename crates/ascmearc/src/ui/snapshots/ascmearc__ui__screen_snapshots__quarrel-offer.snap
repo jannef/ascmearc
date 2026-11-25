@@ -1,9 +1,10 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: "render(case, content.clone())"
+assertion_line: 181
+expression: shown
 ---
  You climb the stairs to The Storm-caller's Top. Mistress Stormwell says: "Bookhold sent you. Of
- course he did. Here is a better offer: take my side, and finish the other two for me." --more--
+ course he did. Here is a better offer: take my side, and finish the other two for me."
 
 
 

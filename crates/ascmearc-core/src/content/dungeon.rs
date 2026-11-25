@@ -645,7 +645,8 @@ pub struct LevelPlan {
     /// The only ores (metal ids) its walls give a miner (`world/crafting/mine.rs`;
     /// checked against `data/mining.toml`'s ore rows); `None`: every ore of the table.
     pub ores: Option<Vec<String>>,
-    /// How many items of loot lie on its floor, fewest and most (item level: the depth).
+    /// How many items of loot lie on its floor, fewest and most (item level: its danger,
+    /// `Content::item_level`).
     pub loot: [u8; 2],
     /// How often it gets chests.
     pub chests: ChestOdds,

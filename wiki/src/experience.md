@@ -59,8 +59,11 @@ Meeting something new teaches you a little.
 
 - The first time you kill a kind of creature yourself, it is worth its XP once more, however far
   below you it is ("You learn something of kobolds.").
-- The first time you arrive on a level, you gain a little for finding your way there ("You gain 10
-  experience for finding your way here.").
+- The first time you arrive on a level, you gain 5 XP for each point of its
+  [danger](dungeons.md#who-lives-there-and-how-many) ("You gain 10 experience for finding your way
+  here."). How deep the level lies does not matter, only how dangerous it is. A safe place with no
+  danger, such as a town or a crypt, pays nothing. In a [Pit](pits.md) the danger grows as you do,
+  and so does what a new floor pays.
 - The first time you learn a spell by reading its [grimoire](learning-spells.md#learning-a-spell), you gain 5 XP for each level of the spell
   (at least 5): 55 for a level 11 spell, 350 for a level 70 one. Spells a class gives you cost
   nothing and pay nothing; a failed reading pays nothing.
