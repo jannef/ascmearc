@@ -1,8 +1,10 @@
 # The people of Cēaptūn (campaigns/ascmearc/data/dialogue/ceaptun.toml). Everyone here is
-# human and has no `register` of their own, so all speak as commoners: Stadin slangi (#1896),
-# a medieval market town's (no modern things). Hild, Leofric, and Wulfrun keep the tone their
-# English has (Hild gentle, Leofric official, Wulfrun prim) inside it; prayers stay in the
-# written language, as prayers do.
+# human. Reeve Leofric and Factor Wulfrun are the town's better-off (`register = "posh"`), so
+# they speak kirjakieli, uncompromising (#2087): Leofric official, saying "sinä" to the player;
+# Wulfrun prim and dry, saying "te", as her partners in trade do. The rest have no `register`
+# of their own, so they speak as commoners: Stadin slangi (#1896), a medieval market town's (no
+# modern things). Hild keeps her gentle tone inside it; prayers stay in the written language,
+# as prayers do.
 
 # The townsfolk.
 [ascmearc.villager]
@@ -120,49 +122,49 @@ mines = { text = "Cēaptūn rikastu Fyrbeorgin alla olevien kukkuloiden malmilla
 volcano = { text = "Fyrbeorg, tulivuori, savuttaa rajamaan koillisosan yllä, ja on savuttanu niin kauan ku kukaan muistaa. Sielt se tuhka tulee: harmaata lumel, harmaata joes. Vanhat sanoo et kukkuloiden alla olevat jutut tottelee sitä. Mä sanon: pistä ikkuna kiinni.", of = "17b95f" }
 pass = { text = "Beorggeat, vuoriportti. Sä tulit sitä alas, veikkaan, niinku kaikki. Se menee kiinni ekan lumen kans eikä aukee ennen suojasäitä, ja tänä vuonna lumi tuli aikasin. Sä oot nyt yks meistä, ainakin talven yli. Tervetuloa.", of = "e51263" }
 
-# Reeve Leofric.
+# Reeve Leofric: kirjakieli.
 [ascmearc.leofric]
-greet = { text = "Uus naama. Mä oon täällä vouti. Pidä rauha, nii me tullaan toimeen.", of = "13ec4d" }
+greet = { text = "Tulokas. Olen tämän kaupungin vouti. Pidä rauha, niin tulemme toimeen.", of = "13ec4d" }
 greet_evil = [
-    { text = "Mä tunnistan hankaluudet ku mä nään ne. Pidä rauha, tai ole hyvä ja lähde.", of = "639c13" },
-    { text = "Yks väärä liike mun kaupungis, ja sä roikut hirressä kukkulalla.", of = "ddcc37" },
+    { text = "Tunnistan hankaluudet, kun näen ne. Pidä rauha, tai poistu, ole hyvä.", of = "639c13" },
+    { text = "Yksikin väärä askel kaupungissani, ja roikut hirressä kukkulalla.", of = "ddcc37" },
 ]
 lines = [
-    { text = "Kaupunki pärjää omillaan. Kummut vaan, valitettavasti, vie veronsa.", of = "99fdda" },
-    { text = "Pidä miekka tupes torilla, ole hyvä. Se on laki.", of = "6341a3" },
-    { text = "Sola on kiinni kevääseen asti. Kuka on täällä, se jää tänne.", of = "e77542" },
-    { text = "Meil oli ennen enemmän käsii. Kummut vei osan. Kaivokset vei enemmän.", of = "1bc1b4" },
-    { text = "Markkinapäivä on ainoo päivä, ku kaupunki on oma ittensä.", of = "37e815" },
+    { text = "Kaupunki tulee toimeen omillaan. Kummut tosin, valitettavasti, vaativat veronsa.", of = "99fdda" },
+    { text = "Pidä miekkasi tupessa torilla, ole hyvä. Niin laki määrää.", of = "6341a3" },
+    { text = "Sola on suljettu kevääseen asti. Joka on täällä, myös jää tänne.", of = "e77542" },
+    { text = "Meillä oli ennen enemmän työkäsiä. Kummut veivät osan. Kaivokset veivät enemmän.", of = "1bc1b4" },
+    { text = "Markkinapäivä on ainoa päivä, jolloin kaupunki on oma itsensä.", of = "37e815" },
 ]
 
 [ascmearc.leofric.topic]
-town = { text = "Cēaptūn, markkinakaupunki. Solatie kohtaa jokitiet täällä, nii me käydään kauppaa: villaa, malmii silloin ku sitä oli, mitä vaan vuorten yli tulee. Sekatavarapuoti, paja, haarniskaseppä, muonakauppa, Mynsteri ja Godgifun majatalo. Ja muuri solan puolella.", of = "ab66ac" }
-barrow = { text = "Kylmä kumpu, itään päin tietä nummilla. Ikivanha, eikä vainajat siel lepää rauhassa. Sielt nousee nykyään öisin kaikenlaista, joka vuosi enemmän. Jonain päivänä mä tarviin jonkun menemään sinne alas kattomaan miks.", of = "6fcc2c" }
+town = { text = "Cēaptūn, markkinakaupunki. Solatie kohtaa täällä jokitiet, joten käymme kauppaa: villaa, malmia silloin kun sitä oli, ja mitä tahansa vuorten yli tuleekin. Sekatavarapuoti, paja, haarniskaseppä, muonakauppa, Mynsteri ja Godgifun majatalo. Ja muuri solan puolella.", of = "ab66ac" }
+barrow = { text = "Kylmä kumpu, itään päin tietä nummilla. Ikivanha, eivätkä vainajat lepää siellä rauhassa. Sieltä nousee nykyään öisin kaikenlaista, joka vuosi enemmän. Jonakin päivänä tarvitsen jonkun menemään sinne alas ottamaan selvää, miksi.", of = "6fcc2c" }
 
-# Factor Wulfrun.
+# Factor Wulfrun: kirjakieli, saying "te".
 [ascmearc.wulfrun]
-greet = { text = "Niin? Mul on hirvee kiire. No ei oikeesti, mut mä tykkään näyttää silt.", of = "b292fb" }
+greet = { text = "Niin? Olen hirmuisen kiireinen. Tai en toki ole, mutta haluan näyttää siltä.", of = "b292fb" }
 lines = [
-    { text = "Ennen malmii kärrykuormittain. Nyt mä pidän kirjaa kärryist, jotka ei tullu.", of = "8dba59" },
-    { text = "Joka kaivokses on työnjohtajansa, ja joka työnjohtajal tilikirjansa.", of = "fa76fe" },
-    { text = "Kulta on kultaa, mut rauta rakentaa kaupungit.", of = "fbc46f" },
-    { text = "Kaivokset ei ehtyny. Joku pysäytti kaivamisen.", of = "85f3ed" },
-    { text = "Sellaseen karttaan ei luoteta, mist ei oo ite maksanu.", of = "0372db" },
-    { text = "Mä voin arvioida mitä vaan, ku saan hetken ja maksun. Etenkin maksun.", of = "813368" },
+    { text = "Ennen malmia tuli kärrykuormittain. Nyt pidän kirjaa kärryistä, jotka eivät koskaan saapuneet.", of = "8dba59" },
+    { text = "Jokaisella kaivoksella on työnjohtajansa, ja jokaisella työnjohtajalla tilikirjansa.", of = "fa76fe" },
+    { text = "Kulta on kultaa, mutta rauta rakentaa kaupungit.", of = "fbc46f" },
+    { text = "Kaivokset eivät ehtyneet. Jokin pysäytti kaivamisen.", of = "85f3ed" },
+    { text = "Karttaan, josta ei ole itse maksanut, ei luoteta.", of = "0372db" },
+    { text = "Arvioin mitä tahansa, kunhan saan hetken aikaa ja palkkion. Etenkin palkkion.", of = "813368" },
 ]
 mutter = [
-    { text = "Kakstoist kärryy... ei ku yksitoist...", of = "28442a" },
-    { text = "Mihin mä pistin sen tilikirjan?", of = "92459e" },
+    { text = "Kaksitoista kärryä... ei, yksitoista...", of = "28442a" },
+    { text = "Minne panin sen tilikirjan?", of = "92459e" },
 ]
 
 [ascmearc.wulfrun.topic]
-diggings = { text = "Kaivokset oli Fyrbeorgin alla kukkuloilla, itään kahlaamon takana. Syvii käytävii, hyvää rautaa, ja välillä hopeeta. Sit kuilut hiljeni. Ne jätkät, jotka meni kattoo mitä tapahtu, ei koskaan tullu takas, eikä sen jälkeen oo kukaan menny.", of = "99438e" }
-trade = { text = "Kaupunki elää tiestä: mitä tulee solan yli, mitä tulee jokee ylös, mitä me kaivetaan. Ku sola on kiinni ja kaivokset kuollu, jäljel on vaan joki. Myy torin putiikeille. Ne maksaa huonosti, mut maksaa kuitenkin.", of = "dbe98d" }
-appraisal = { text = "Mä erotan lumotun terän tavallisesta ja luen kääröjen töherrykset. Satanen kultaa jokaisesta kamasta, mitä sä et tunne; nippu samaa tavaraa lasketaan yhdeks, oli siin kuinka monta tahansa. Ja mä katon kaiken mitä sul on mukana, tai en mitään. Puolittain mä en tee.", of = "59d4d2" }
+diggings = { text = "Kaivokset sijaitsivat Fyrbeorgin alla olevilla kukkuloilla, itään kahlaamon takana. Syviä käytäviä, hyvää rautaa ja toisinaan hopeaa. Sitten kuilut hiljenivät. Miehet, jotka lähtivät katsomaan, mitä oli tapahtunut, eivät koskaan palanneet, eikä sen jälkeen ole lähtenyt kukaan.", of = "99438e" }
+trade = { text = "Kaupunki elää tiestä: siitä, mitä tulee solan yli, mitä tulee jokea ylös ja mitä kaivamme. Nyt kun sola on suljettu ja kaivokset kuolleet, jäljellä on vain joki. Myykää tavaranne torin kauppiaille. He maksavat huonosti, mutta maksavat kuitenkin.", of = "dbe98d" }
+appraisal = { text = "Erotan lumotun terän tavallisesta ja luen kääröjen kiemurat. Sata kultaa jokaisesta esineestä, jota ette tunne; nippu samaa tavaraa lasketaan yhdeksi, oli siinä kuinka monta tahansa. Ja katson kaiken, mitä kannatte mukananne, tai en mitään. Puolinaisia töitä en tee.", of = "59d4d2" }
 
 [ascmearc.wulfrun.service.identify]
-reply = { text = "Kas niin. Kirjattu ja tilitetty. Nyt sä tiedät mitä sä kannat, mikä on enemmän ku useimmat.", of = "a27b55" }
-nothing = { text = "Sä tiedät jo kaiken mitä sul on mukana. En mä laskuta siit, et kerron sen sulle.", of = "3fa46d" }
+reply = { text = "Kas niin. Kirjattu ja tilitetty. Nyt tiedätte, mitä kannatte, mikä on enemmän kuin useimmat tietävät.", of = "a27b55" }
+nothing = { text = "Tiedätte jo kaiken, mitä kannatte mukananne. En laskuta teitä siitä, että kerron sen teille.", of = "3fa46d" }
 
 # Eadric the smith.
 [ascmearc.eadric]
