@@ -11,7 +11,7 @@
 #   message      said when the player perceives it go off (optional); a line of data, said by its
 #                key `trap:<id>.message`, naming no role (docs/dev/localization.md "Lines of data")
 #   difficulty   how hard it is to find while hidden: what a search must
-#                reach (default 15); on a dungeon branch its `hidden_per_depth` adds to it
+#                reach (default 15); on a dungeon branch its `hidden_danger_percent` of the danger adds to it
 #                (data/dungeons.toml)
 #   sign         what gives it away to whoever finds it: "You notice a tripwire: an alarm trap."
 #                (default "a pressure plate")

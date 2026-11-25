@@ -76,7 +76,7 @@ fn spawn_text(content: &Content, s: &Spawning) -> String {
         format!(
             "{}% strays; {}% of draws deeper, each further step {}%; kinds not hostile to you \
              at {}% of their weight",
-            o.stray, o.out_of_depth, o.deeper, o.neutral
+            o.stray, o.above_danger, o.deeper, o.neutral
         )
     };
     format!(
@@ -425,7 +425,7 @@ pub(super) fn neutral_weight(content: &Content) -> String {
 pub(super) fn draw_odds(content: &Content) -> String {
     let Some(Odds {
         stray,
-        out_of_depth,
+        above_danger,
         deeper,
         dread_one_in,
         ..
@@ -440,8 +440,8 @@ pub(super) fn draw_odds(content: &Content) -> String {
         "| [dread](#dread), among the dread kinds alone | 1 in {dread_one_in} ({}) |",
         percent(100.0 / f64::from(dread_one_in.max(1)))
     );
-    let _ = writeln!(out, "| out of depth, all told | {out_of_depth}% |");
-    let (ood, more) = (f64::from(out_of_depth) / 100.0, f64::from(deeper) / 100.0);
+    let _ = writeln!(out, "| out of depth, all told | {above_danger}% |");
+    let (ood, more) = (f64::from(above_danger) / 100.0, f64::from(deeper) / 100.0);
     // No cap (#1711): the first few steps one by one, then the rest together.
     let shown = 3;
     for step in 0..=shown {
@@ -471,8 +471,8 @@ fn one_in(n: u16) -> String {
 
 /// How often a draw is dread, place by place (docs/design/monster-dread.md §8): every branch with
 /// a danger by id, its floors grouped where the chance is the same (an endless branch's curve by
-/// its steps, then floors past the last until the least), then every hand-made level with a
-/// danger by id.
+/// its steps, each at the first floor of its danger, then floors past the last until the least),
+/// then every hand-made level with a danger by id.
 pub(super) fn dread_draws(content: &Content) -> String {
     let mut out = String::from("| Place | Floors | A draw is dread |\n|---|---|---|\n");
     let mut branches: Vec<_> = content.dungeons().collect();
@@ -482,23 +482,32 @@ pub(super) fn dread_draws(content: &Content) -> String {
         let at = |depth: u32| d.dread_one_in(depth).unwrap_or(s.odds.dread_one_in);
         let name = &d.name;
         if let Some(curve) = &d.dread {
-            let first = curve.steps.first().map_or(1, |&(from, _)| from);
+            // The curve is by danger (#2094): each step from the first floor of its danger.
+            let rule = d.plan(1).and_then(|p| p.danger);
+            let per = rule.map_or(0, |r| u32::from(r.per_depth));
+            let floor_of = |danger: u32| match rule {
+                Some(r) if per > 0 => 1 + danger.saturating_sub(r.base.into()).div_ceil(per),
+                _ => 1,
+            };
+            let first = curve.steps.first().map_or(1, |&(from, _)| floor_of(from));
             if first > 1 {
                 let _ = writeln!(out, "| {name} | 1 to {} | {} |", first - 1, one_in(at(1)));
             }
             for pair in curve.steps.windows(2) {
                 let ((from, n), (next, _)) = (pair[0], pair[1]);
+                let (from, next) = (floor_of(from), floor_of(next));
                 let _ = writeln!(out, "| {name} | {from} to {} | {} |", next - 1, one_in(n));
             }
             let Some(&(last, _)) = curve.steps.last() else {
                 continue;
             };
+            let last = floor_of(last);
             let Some(halves) = curve.halves else {
                 let _ = writeln!(out, "| {name} | {last} on | {} |", one_in(at(last)));
                 continue;
             };
             // Past the last step, a floor every half a halving until the least is reached.
-            let step = (halves / 2).max(1);
+            let step = (halves / 2 / per.max(1)).max(1);
             let mut depth = last;
             loop {
                 let n = at(depth);

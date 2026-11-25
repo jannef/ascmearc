@@ -1,16 +1,20 @@
-# The Radiant (#1976): a war hammer for the drop pool to come (#196; placed nowhere yet but the
-# test world's quarry). A solid fighting hammer (+4 damage, a wider critical, a tougher and
-# hardier wielder) that is above all a light: wielded, it lights twenty cells about its bearer
-# (its Light power, the `radiant_hammer` preset of data/lights.toml), a hall end to end. Every value
-# set by hand (`=`), so a regrade of the tiers leaves it as it is (docs/dev/magic-items.md
-# "Unique items").
+# The Radiant (#1976, #2091): a war hammer for the drop pool to come (#196; placed nowhere yet
+# but the test world's quarry). A warden's hammer more than a slaughterer's: +4 to hit, +2 to
+# Dodge (its light shows every blow coming: +2 Defence against every attack, and Dodge adds up)
+# and +2 Protection (no affix rolls either on a weapon; a unique may set them), +10
+# Toughness and +30 hit points (past the top tiers at item level 40, +7 and +28), and above all
+# a light: wielded, it lights twenty cells about its bearer (its Light power, the
+# `radiant_hammer` preset of data/lights.toml), a hall end to end. Every value set by hand
+# (`=`), so a regrade of the tiers leaves it as it is (docs/dev/magic-items.md "Unique items").
 [[unique]]
 id = "radiant"
 name = "the Radiant"
 object = "war_hammer"
-affixes = ["sharp=4", "keen=2", "of_the_ox=4", "of_vitality=12"]
-level = 12
-# Four enchantments need its make (docs/dev/enchanting.md): Masterwork.
+affixes = ["nimble=2", "hardened=2", "of_precision=4", "of_the_ox=10", "of_vitality=30"]
+level = 40
+# Five enchantments need its make (docs/dev/enchanting.md): Masterwork (4) and a set gem, a
+# flawless diamond in its pommel (+2).
 quality = "masterwork"
+parts = [{ part = "pommel", of = "diamond", cut = "flawless" }]
 power = { light = "radiant_hammer", phrase = "It sheds a light like noon about its bearer." }
 lore = "Struck at a holy well, it has not been dark since, though many have tried to put it out."

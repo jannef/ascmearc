@@ -18,11 +18,11 @@ below = "fyrdelf:12"
 generator = { kind = "passage" }
 size = [80, 21]
 traps = ["arrow", "spear", "fireball", "lightning_bolt", "alarm"]
-# As Fyrdelf's deep workings: few secret doors, hidden things and locks as hard as there at about
-# the same depth (Fyrdelf's per-depth step counted from its ninth floor).
+# As Fyrdelf's deep workings: few secret doors; hidden things and locks only a little harder
+# than their own difficulty, as they were when depth set it (#2094).
 secret_doors = [0, 2]
-hidden_per_depth = 1
-locks_per_depth = 2
+hidden_danger_percent = 10
+locks_danger_percent = 15
 loot = [3, 5]
 key = "brass_key"
 # No traders this far from the galleries.

@@ -619,6 +619,19 @@ impl Tier {
     pub fn passed_by(&self, value: i32) -> bool {
         self.max != 0 && value.signum() == self.max.signum() && value.abs() > self.max.abs()
     }
+
+    /// Whether `value` works against its ladder, below zero where the tier rolls above: a
+    /// unique's penalty written by hand on its affix's last tier (#2091, the Grandmother's
+    /// −2 to Parry). Loot never rolls one: every rolled value lies within a tier.
+    pub fn opposed_by(&self, value: i32) -> bool {
+        self.max != 0 && value != 0 && value.signum() == -self.max.signum()
+    }
+
+    /// Whether a unique may set `value` on this, its affix's last tier, though no tier rolls
+    /// it: past the top ([`Tier::passed_by`]) or a penalty ([`Tier::opposed_by`]).
+    pub fn set_past(&self, value: i32) -> bool {
+        self.passed_by(value) || self.opposed_by(value)
+    }
 }
 
 /// A prefix or a suffix.

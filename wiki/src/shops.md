@@ -124,8 +124,24 @@ start, and its new goods are better too.
 
 A shop sells a kind of weapon, armour, or jewellery only once its goods' item level reaches that
 item's own level, the same as loot: an armourer has no plate armour (item level 7) until then,
-and no full plate (item level 20). Potions, scrolls, and other things that are never magic are
-sold at any item level.
+and no full plate (item level 20).
+
+[Potions](potions.md), [scrolls](scrolls.md), [wands, and rods](wands-and-rods.md) follow the
+item level too, in a band. A shop sells one from two item levels below its own level, a little
+earlier than you find it as loot. As the item level climbs, the weakest leave the shelves. A
+thing is no longer laid out once its level is below half the item level. The strongest potion is
+level 10, though, so for potions the line stops at half of 10, level 5, and the same goes for
+each kind of good with its own strongest. Food, candles, and rope are always sold. Potions of
+healing, the cures, and scrolls of identify are sold at every item level, so you can always buy
+them.
+
+The table gives the levels of the goods a general store lays out, by its item level. Each
+thing's level is in its own table ("Found from" for potions and scrolls, "Item level" for wands and
+rods).
+
+{{#include generated/shop-levels.md}}
+
+When a shop gets new goods, the things it no longer lays out are the first to leave.
 
 It does not matter where you are when you gain the level. A shop in a town you are far from gets
 its new goods at once, the same as if you were standing in it. A level you lose and gain again

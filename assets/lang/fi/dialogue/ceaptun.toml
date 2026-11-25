@@ -8,57 +8,57 @@
 
 # The townsfolk.
 [ascmearc.villager]
-greet = { text = "Markkinapäivä, vieras. Pidä kukkarost kii tungokses, kato.", of = "b0f9f4" }
+greet = { text = "Markkinapäivä, vieras. Pidä kukkarosta kiinni tungoksessa, kato.", of = "b0f9f4" }
 greet_evil = [
-    { text = "Jatka vaan matkaa. Me tunnetaan sun sorttis täällä.", of = "e0c509" },
-    { text = "Mee nyt vaan. Ei täällä kukaan mitään rähinää kaipaa.", of = "81fd3a" },
+    { text = "Jatka vaan matkaa. Me tunnetaan sun sorttiset täällä.", of = "e0c509" },
+    { text = "Mee nyt vaan. Ei täällä kukaan mitään stidiä kaipaa.", of = "81fd3a" },
 ]
 lines = [
     { text = "Tulit solan kautta, vai? Sitä kautta ei kukaan mee takas.", of = "57f7be" },
-    { text = "Beorggeatis on jo lunta. Aikasin tänä vuonna, eiks je?", of = "7ba82b" },
-    { text = "Fyrbeorg savuttaa taas. Pyykit on tuhkas jo puolilt päivin.", of = "80113f" },
-    { text = "Huono olo? Sisar Hild kattoo sut Mynsteris. Maksust tietty.", of = "0cdcbb" },
-    { text = "Löysit jotain kummaa? Wulfrun kertoo mikä se on. Ei ilmatteeks, kato.", of = "c1c882" },
-    { text = "Godgiful on Gæsthūsis hyvä tuli, ja viel parempi kalja.", of = "9ccc02" },
-    { text = "Älä mee sörkkii hautakumpui. Kuolleet pitää omat kamansa.", of = "9f708b" },
-    { text = "Vouti on reilu jätkä. Tosin pihi kaupungin fyrkkien kaa.", of = "1d1d55" },
-    { text = "Leipä on ollu tyyrist siit asti ku kaivokset suljettiin. Kaikki on tyyrist.", of = "e32275" },
+    { text = "Beorggeatissa on jo lunta. Aikasin tänä vuonna, eiks je?", of = "7ba82b" },
+    { text = "Fyrbeorg savuttaa taas. Pyykit on tuhkassa jo puolilta päivin.", of = "80113f" },
+    { text = "Huono olo? Sisar Hild tsiigaa sut Mynsterissä. Maksusta tietty.", of = "0cdcbb" },
+    { text = "Löysit jotain kummaa? Wulfrun kertoo, mikä se on. Ei ilmatteeks, kato.", of = "c1c882" },
+    { text = "Godgifulla on Gæsthūsissa hyvä tuli, ja vielä parempi kalja.", of = "9ccc02" },
+    { text = "Älä mee sörkkimään hautakumpuja. Kuolleet pitää omat kamansa.", of = "9f708b" },
+    { text = "Vouti on reilu kundi. Tosin pihi kaupungin fyrkkien kaa.", of = "1d1d55" },
+    { text = "Leipä on ollu tyyristä siitä asti, ku kaivokset suljettiin. Kaikki on tyyristä.", of = "e32275" },
 ]
 mutter = [
-    { text = "Kaivovedes taas tuhkaa.", of = "017823" },
-    { text = "Kuka nyt tollasen maksais sipulist, häh?", of = "7621d9" },
+    { text = "Kaivovedessä taas tuhkaa.", of = "017823" },
+    { text = "Kuka nyt tollasen maksais sipulista, häh?", of = "7621d9" },
     { text = "Mun polvet ennustaa lunta.", of = "4e4aa7" },
-    { text = "Kummuil oli valoi viime yön. Mä näin ne ite.", of = "39537b" },
-    { text = "Kärryt myöhäs. Kärryt on aina myöhäs.", of = "e5e22f" },
+    { text = "Kummuilla oli valoja viime yönä. Mä näin ne ite.", of = "39537b" },
+    { text = "Kärryt myöhässä. Kärryt on aina myöhässä.", of = "e5e22f" },
 ]
 
 [ascmearc.villager.economy]
 hard = [
-    { text = "Ælfricin hyllyt puoliks tyhjii, ja mitä on, on rojuu. Kovat ajat, kato.", of = "82a1d5" },
-    { text = "Putiikeis ei oo ollu mitään uutt sit ku kaivokset suljettiin. Samaa romuu viikost toiseen.", of = "66e48e" },
+    { text = "Ælfricin hyllyt puoliks tyhjinä, ja mitä on, on rojua. Kovat ajat, kato.", of = "82a1d5" },
+    { text = "Lafkoissa ei oo ollu mitään uutta sen jälkeen, ku kaivokset suljettiin. Samaa romua viikosta toiseen.", of = "66e48e" },
     { text = "Fyrkkaa ei oo kellään. Kukaan ei osta, nii kukaan ei myy.", of = "690605" },
 ]
 better = [
-    { text = "Kauppa käy taas, eiks je. Putiikeis on taas kunnon kamaa.", of = "0d97eb" },
+    { text = "Kauppa käy taas, eiks je. Lafkoissa on taas kunnon kamaa.", of = "0d97eb" },
     { text = "Eadric sai kärryllisen hyvää rautaa. Eka moneen kuukauteen, se.", of = "7e7bb7" },
     { text = "Fyrkka liikkuu taas. Vouti hymyileekin, eikä se ikinä hymyile.", of = "627c45" },
 ]
 
 [ascmearc.villager.after]
 fire_deep = [
-    { text = "Kaivokset on taas auki! Mun serkku on taas kuilus, ja tyytyväinen duuniin.", of = "03b850" },
-    { text = "Se lohikäärme on kuulemma kaputt. Malmii nousee, ja fyrkkaa sen mukan.", of = "15bc62" },
+    { text = "Kaivokset on taas auki! Mun serkku on taas kuilussa, ja diggaa duunistaan.", of = "03b850" },
+    { text = "Se lohikäärme on kuulemma kaputt. Malmia nousee, ja fyrkkaa sen mukana.", of = "15bc62" },
 ]
 gnome_letter = [
-    { text = "Syvyyksien gnomei kauppaamas kivii torilla. En ikinä uskonu et näkisin sen.", of = "708943" },
-    { text = "Ne syvämaahiset on kovii tinkaamaan, mut niiden kamat on tosi hienoi.", of = "4681bb" },
+    { text = "Syvyyksien gnomeja kauppaamassa kiviä torilla. En ikinä uskonu, et näkisin sen.", of = "708943" },
+    { text = "Ne syvämaahiset on kovia tinkaamaan, mut niiden kamat on tosi fiinejä.", of = "4681bb" },
 ]
 
 # Sister Hild of the Mynster.
 [ascmearc.hild]
 greet = { text = "Rauha sulle. Mynsterin ovi on auki kaikille, jotka tulee rauhassa.", of = "5c159c" }
 greet_evil = [
-    { text = "Sus on verta. Rukoile ensin, ja tuu sit takas mun luo.", of = "6c0f49" },
+    { text = "Sussa on verta. Rukoile ensin, ja tuu sitten takas mun luo.", of = "6c0f49" },
     { text = "Sullekin voi tulla parannus, aikanaan. Mut ei tänään.", of = "c3a0fa" },
 ]
 lines = [
@@ -66,7 +66,7 @@ lines = [
     { text = "Suon luostari oli meidän emoluostari, ennen ku vesi vei sen.", of = "c3bf83" },
     { text = "Rukoile ku voit. Syö ku on pakko. Nuku ku on pimeetä.", of = "1df435" },
     { text = "Suolta saatu kuume ei oo mikään häpee. Sen hoitamatta jättäminen on.", of = "d361d3" },
-    { text = "Mynsteri pyytää kultaa parannuksist. Ei se katto ite itteään korjaa.", of = "cccd0b" },
+    { text = "Mynsteri pyytää kultaa parannuksista. Ei se katto ite itteään korjaa.", of = "cccd0b" },
     { text = "Älä tuo mulle vainajan hopeeta, jos sitä ei annettu vapaaehtosesti.", of = "7f7555" },
     { text = "Veli Osrick myi uskovaiset ruumiinleikkelijöille. Me ei sanota sen nimee.", of = "eecc3c" },
 ]
@@ -78,12 +78,12 @@ mutter = [
 mutter_verb = { text = "rukoilee", of = "9e4ad8" }
 
 [ascmearc.hild.topic]
-mynster = { text = "Mynsteri on vanhempi ku kaupungin muuri. Sisaret on pitäny sitä siit asti ku suon luostari lähetti meidät tänne, ennen ku vesi nousi meidän emoluostarin yli. Me parannetaan, haudataan ja rukoillaan niiden puolest, jotka menee kukkuloiden alle. Lepää sen lattialla: haavat umpeutuu täällä nopeemmin.", of = "e9093a" }
-fen = { text = "Fennmynster seiso Micelfennissä, suurella suolla, kauan sitten. Vesi nousi sen portaita vähän joka vuosi, kunnes kukaan ei enää pystyny pitämään sitä. Mitä siit on jäljellä, on jossain kaislikon alla. Mä en lähtis ettimään sitä yksin.", of = "c04a1a" }
+mynster = { text = "Mynsteri on vanhempi ku kaupungin muuri. Sisaret on pitäny sitä siitä asti, ku suon luostari lähetti meidät tänne, ennen ku vesi nousi meidän emoluostarin yli. Me parannetaan, haudataan ja rukoillaan niiden puolesta, jotka menee kukkuloiden alle. Lepää sen lattialla: haavat umpeutuu täällä nopeemmin.", of = "e9093a" }
+fen = { text = "Fennmynster seiso Micelfennissä, suurella suolla, kauan sitten. Vesi nousi sen portaita vähän joka vuosi, kunnes kukaan ei enää pystyny pitämään sitä. Mitä siitä on jäljellä, on jossain kaislikon alla. Mä en lähtis ettimään sitä yksin.", of = "c04a1a" }
 
 [ascmearc.hild.service.cure]
 reply = { text = "Mee terveenä, lapsi. Ja pysy poissa suolta.", of = "69b6e5" }
-nothing = { text = "Sul ei oo mitään vaivaa, lapsi.", of = "3a079d" }
+nothing = { text = "Sulla ei oo mitään vaivaa, lapsi.", of = "3a079d" }
 
 [ascmearc.hild.service.mend]
 reply = { text = "Kas niin. Taas ehjä, sellasena ku sut on luotu.", of = "7e43a7" }
@@ -91,35 +91,35 @@ nothing = { text = "Sä oot ehjä, lapsi. Mee mun siunauksen kanssa.", of = "858
 
 [ascmearc.hild.service.decurse]
 reply = { text = "Kas niin. Se päästi susta irti. Jätä se siihen mihin se putos, lapsi: se on yhä kirottu.", of = "92a2fb" }
-nothing = { text = "Sus ei roiku mitään kirottua, lapsi.", of = "841873" }
+nothing = { text = "Sussa ei roiku mitään kirottua, lapsi.", of = "841873" }
 
 # Godgifu of the Gæsthūs.
 [ascmearc.godgifu]
-greet = { text = "Tuu sisään kylmästä, kulta! Istu tulen viereen. Uutisii kai haluut?", of = "d5902a" }
+greet = { text = "Tuu sisään kylmästä, kulta! Istu tulen viereen. Uutisia kai haluut?", of = "d5902a" }
 greet_evil = [
     { text = "Kyl mä sulle tarjoilen, ku on pakko. Juo ja häivy.", of = "ac4a11" },
     { text = "Ei oo tilaa sun sorttisille tänä yönä. Eikä minään muunakaan.", of = "15c906" },
 ]
 lines = [
     { text = "Kaikki tulee Gæsthūsin kautta ennemmin tai myöhemmin. Ja kaikki puhuu.", of = "81f529" },
-    { text = "Leipä pöydäs on matkalaisille ilmasta. Kalja ei oo.", of = "008052" },
+    { text = "Leipä pöydässä on matkalaisille ilmasta. Kalja ei oo.", of = "008052" },
     { text = "Kuskit sanoo et jokitie on taas tulvan alla Fennhāmin takana.", of = "8e89d9" },
-    { text = "Pidä saappaat tulen vieres. Kukaan ei täällä pölli saappaita. Yleensä.", of = "b26f39" },
-    { text = "Vouti juo täällä markkinapäivinä. Ja maksaakin, toisin ku jotkut.", of = "77367f" },
+    { text = "Pidä saappaat tulen vieressä. Kukaan ei täällä pölli saappaita. Yleensä.", of = "b26f39" },
+    { text = "Vouti pämppää täällä markkinapäivinä. Ja maksaakin, toisin ku jotkut.", of = "77367f" },
     { text = "Wulfrunille ei oo tullu malmikuormaa vuosiin, mut kirjoja se pitää silti.", of = "6aeb3d" },
 ]
 mutter = [
-    { text = "Alhaal veden luona, kukkulan alla...", of = "471168" },
+    { text = "Alhaalla veden luona, kukkulan alla...", of = "471168" },
     { text = "Tuli haluu puuta. Tuli haluu aina puuta.", of = "c610fc" },
-    { text = "Kaks limppuu, kolme... kuka pölli kolmannen?", of = "424314" },
+    { text = "Kaks limppua, kolme... kuka pölli kolmannen?", of = "424314" },
 ]
 mutter_verb = { text = "hyräilee", of = "a689f7" }
 
 [ascmearc.godgifu.topic]
-barrows = { text = "Itään päin tietä nummet on niitä täynnä: Hlāwdūn, hautakumpujen nummet. Ison, Cealdhlāwin, näkee tieltä asti. Paimenet ei laiduta sen lähellä. Öisin valoi, ja kylmää ilmaa hönkii maan alta. Vouti on siit huolissaan enemmän ku myöntää.", of = "bc9c89" }
-marsh = { text = "Etelään ja itään maa pehmenee: Micelfenn, suuri suo, mist Blæcwæter valuu mereen. Kuumetta lähinnä, ja pahempii otuksii kaislois. Siel oli kerran luostari. Sisar Hild osais kertoo lisää, jos sitä huvittaa.", of = "120a99" }
-mines = { text = "Cēaptūn rikastu Fyrbeorgin alla olevien kukkuloiden malmilla mun mummon aikaan. Sit kaivokset hiljeni, ja ne jätkät, jotka meni kattoo miks, ei koskaan tullu takas. Wulfrun pitää yhä tilikirjoja. Kysy siltä, mut älä silloin ku se laskee.", of = "bbd937" }
-volcano = { text = "Fyrbeorg, tulivuori, savuttaa rajamaan koillisosan yllä, ja on savuttanu niin kauan ku kukaan muistaa. Sielt se tuhka tulee: harmaata lumel, harmaata joes. Vanhat sanoo et kukkuloiden alla olevat jutut tottelee sitä. Mä sanon: pistä ikkuna kiinni.", of = "17b95f" }
+barrows = { text = "Itään päin tietä nummet on niitä täynnä: Hlāwdūn, hautakumpujen nummet. Ison, Cealdhlāwin, näkee tieltä asti. Paimenet ei laiduta sen lähellä. Öisin valoja, ja kylmää ilmaa hönkii maan alta. Vouti on siitä huolissaan enemmän ku myöntää.", of = "bc9c89" }
+marsh = { text = "Etelään ja itään maa pehmenee: Micelfenn, suuri suo, mistä Blæcwæter valuu mereen. Kuumetta lähinnä, ja pahempia otuksia kaislikoissa. Siellä oli kerran luostari. Sisar Hild osais kertoo lisää, jos sitä huvittaa.", of = "120a99" }
+mines = { text = "Cēaptūn rikastu Fyrbeorgin alla olevien kukkuloiden malmilla mun mummon aikaan. Sit kaivokset hiljeni, ja ne kundit, jotka meni tsiigaamaan miks, ei koskaan tullu takas. Wulfrun pitää yhä tilikirjoja. Kysy siltä, mut älä silloin ku se laskee.", of = "bbd937" }
+volcano = { text = "Fyrbeorg, tulivuori, savuttaa rajamaan koillisosan yllä, ja on savuttanu niin kauan ku kukaan muistaa. Sieltä se tuhka tulee: harmaata lumella, harmaata joessa. Vanhat sanoo, et kukkuloiden alla olevat jutut tottelee sitä. Mä sanon: pistä ikkuna kiinni.", of = "17b95f" }
 pass = { text = "Beorggeat, vuoriportti. Sä tulit sitä alas, veikkaan, niinku kaikki. Se menee kiinni ekan lumen kans eikä aukee ennen suojasäitä, ja tänä vuonna lumi tuli aikasin. Sä oot nyt yks meistä, ainakin talven yli. Tervetuloa.", of = "e51263" }
 
 # Reeve Leofric: kirjakieli.
@@ -168,16 +168,16 @@ nothing = { text = "Tiedätte jo kaiken, mitä kannatte mukananne. En laskuta te
 
 # Eadric the smith.
 [ascmearc.eadric]
-greet = { text = "Varo kipinöit, pomo. Kato vapaasti. Mitä nostat, siit maksat ovel, kato.", of = "40ada3" }
+greet = { text = "Varo kipinöitä, pomo. Tsiigaa vapaasti. Mitä nostat, siitä maksat ovella, kato.", of = "40ada3" }
 greet_evil = [
     { text = "Mä myyn terästä kaikenlaisille. Älä pistä mua katumaan et myin sitä sulle.", of = "3cde82" },
-    { text = "Maksa ovel ja pidä tassus siel mis mä nään ne.", of = "1e43f8" },
+    { text = "Maksa ovella ja pidä tassus siellä, missä mä nään ne.", of = "1e43f8" },
 ]
 lines = [
-    { text = "Rauta on tyyrist siit ku kaivokset suljettiin. Joka naulan mä teen jostain muusta.", of = "a432ea" },
+    { text = "Rauta on tyyristä siitä asti, ku kaivokset suljettiin. Joka naulan mä teen jostain muusta.", of = "a432ea" },
     { text = "Tuo mulle sun katkenneet terät. Hyvä teräs ei mee hukkaan, se vaan odottaa.", of = "8c5d5b" },
     { text = "Toi alasin on vanhempi ku mun mummo. Käytä vaan. Varo sormias.", of = "1d4761" },
-    { text = "Jengi luulee et takominen on pelkkää paukuttelua. Puolet on metallin kuuntelemist.", of = "26bd64" },
+    { text = "Sakki luulee, et takominen on pelkkää paukuttelua. Puolet on metallin kuuntelemista.", of = "26bd64" },
     { text = "Kääpiöt väittää keksineensä ahjon. Antaa niiden. Mä vaan teen kamaa.", of = "de48d6" },
     { text = "Terä, joka soi puhtaasti ku sitä näpäyttää, se on pitämisen arvonen.", of = "b13458" },
 ]
@@ -189,32 +189,32 @@ mutter = [
 mutter_verb = { text = "nurisee", of = "a967f2" }
 
 [ascmearc.eadric.topic]
-forge = { text = "Tuli, alasin, palkeet ja hyvä käsivarsi. Alasin on vapaasti kenen tahansa käytös, jolla on taito: karkase terä, tao uus noist tangoist tos. Ilman taitoo sä vaan seisot siin ja tuijotat sitä.", of = "6cc370" }
-smithing = { text = "Metallityöks mun faija sitä sano. Kuumenna, tao, karkase, ja tiedä milloin lopettaa. Mä opetan sulle alun, jos haluut. Kaks tonnii kultaa, ja joka pennin arvonen. Tee kaupungille hyvä teko tai pari, ni mä mietin hintaa uudestaan.", of = "28d9e9" }
-mines = { text = "Rautaa tuli Fyrbeorgilt kärrykuormittain, ennen. Sit kaivokset hiljeni ja siihen se jäi. Nyt mä sulatan hevosenkenkii ja kattiloit. Jos joku haluu avata ne kuilut uudestaan, mä ostan joka tangon mitä ne tuo ylös.", of = "430dda" }
+forge = { text = "Tuli, alasin, palkeet ja hyvä käsivarsi. Alasin on vapaasti kenen tahansa käytössä, jolla on taito: karkase terä, tao uus noista tangoista tossa. Ilman taitoa sä vaan seisot siinä ja tuijotat sitä.", of = "6cc370" }
+smithing = { text = "Metallityöks mun faija sitä sano. Kuumenna, tao, karkase, ja tiedä milloin lopettaa. Mä opetan sulle alun, jos haluut. Kaks tonnia kultaa, ja joka pennin arvonen. Tee kaupungille hyvä teko tai pari, ni mä mietin hintaa uudestaan.", of = "28d9e9" }
+mines = { text = "Rautaa tuli Fyrbeorgilta kärrykuormittain, ennen. Sit kaivokset hiljeni ja siihen se jäi. Nyt mä sulatan hevosenkenkiä ja kattiloita. Jos joku haluu avata ne kuilut uudestaan, mä ostan joka tangon, mitä ne tuo ylös.", of = "430dda" }
 
 [ascmearc.eadric.service.train_metalcraft]
-reply = { text = "Selvä. Ota vasarast kii varren päästä, älä pään vierest. Kuumenna kunnes se on auringonlaskun värinen, ja lyö ku se on pehmee. Kuuletsä ton kilahduksen? Se sanoo kiitti. Mee nyt, äläkä polta paikkoi.", of = "dc8984" }
-nothing = { text = "Sä osaat jo alasinhommat, pomo. En mä ota sun fyrkkaa tyhjäst.", of = "1be230" }
+reply = { text = "Selvä. Ota vasarasta kiinni varren päästä, älä pään vierestä. Kuumenna, kunnes se on auringonlaskun värinen, ja lyö ku se on pehmee. Kuuletsä ton kilahduksen? Se sanoo kiitti. Mee nyt, äläkä polta paikkoja.", of = "dc8984" }
+nothing = { text = "Sä bonjaat jo alasinhommat, pomo. En mä ota sun fyrkkaa tyhjästä.", of = "1be230" }
 
 # Wat One-Eye of the Gildhalle.
 [ascmearc.wat]
 greet = { text = "Taas yks solalta? Istu jos haluut. Seisominen maksaa saman verran.", of = "65f5bf" }
 lines = [
-    { text = "Nelkyt vuotta mä menin koloihin fyrkan takii. Ekana lähti polvet, sit pokka.", of = "a0ac01" },
-    { text = "Tää silmä jäi hautakumpuun. Älä mee ettimään, sil on ollu pitkä päivä.", of = "5654f9" },
-    { text = "Puolet noist ilmotuksist on otuksist, jotka kuoli aikoja sit. Seuran vuoks ne on siin.", of = "d7dc0f" },
-    { text = "Kaupunki huutaa meit apuun ku joku syö lampaat, ja vaihtaa tien puolta jälkeenpäin.", of = "5774ba" },
-    { text = "Cealdhlāw on taas heränny. Valoi nummil, niinku silloin ku mä olin skidi.", of = "f1f9d1" },
+    { text = "Nelkyt vuotta mä menin koloihin fyrkan takia. Ekana lähti polvet, sitten pokka.", of = "a0ac01" },
+    { text = "Tää silmä jäi hautakumpuun. Älä mee ettimään, sillä on ollu pitkä päivä.", of = "5654f9" },
+    { text = "Puolet noista ilmotuksista on otuksista, jotka kuoli aikoja sitten. Seuran vuoks ne on siinä.", of = "d7dc0f" },
+    { text = "Kaupunki huutaa meitä apuun, ku joku syö lampaat, ja vaihtaa tien puolta jälkeenpäin.", of = "5774ba" },
+    { text = "Cealdhlāw on taas heränny. Valoja nummilla, niinku silloin ku mä olin skidi.", of = "f1f9d1" },
 ]
 
 [ascmearc.wat.topic]
-guild = { text = "Me tehdään ne duunit, joist vouti ei pysty maksaa ja joihin sisaret ei koske. Tee keikka, tuu takas, saat palkan. Kaikki alottaa Tinast. Tee tarpeeks, ni oot Tinaseos, sit Rauta, ja jengi lakkaa huutelemast sulle 'hei, sä siel'.", of = "9754e3" }
-board = { text = "Ilmotuksii kolme kerrosta, ja useimmat vanhempii ku sä. Mut aina siel on joku keikka. Kysy multa, ni mä kerron seuraavan.", of = "04548a" }
+guild = { text = "Me duunataan ne keikat, joista vouti ei pysty maksaa ja joihin sisaret ei koske. Tee keikka, tuu takas, saat liksan. Kaikki alottaa Tinasta. Tee tarpeeks, ni oot Tinaseos, sitten Rauta, ja sakki lakkaa huutelemasta sulle 'hei, sä siellä'.", of = "9754e3" }
+board = { text = "Ilmotuksia kolme kerrosta, ja useimmat vanhempia ku sä. Mut aina siellä on joku keikka. Kysy multa, ni mä kerron seuraavan.", of = "04548a" }
 
 # Ceolred, Eadric's apprentice.
 [ascmearc.ceolred]
-greet = { text = "Eadric on mun mestari. Kysy siltä hinnoist. Kysy multa metalleist.", of = "0bc4e9" }
+greet = { text = "Eadric on mun mestari. Kysy siltä hinnoista. Kysy multa metalleista.", of = "0bc4e9" }
 greet_evil = [
     { text = "Mä oon vaan oppipoika. Älä satuta mua. Ole kiltti.", of = "b67ddc" },
     { text = "Eadric sano et mä en saa myydä sulle mitään. Mä vaan lakasen.", of = "0dc51b" },
@@ -225,17 +225,17 @@ lines = [
     { text = "Pronssi on vähän pehmeetä, mut ei ruostu. Hyvä kilpeen, se.", of = "ee5550" },
     { text = "Messinki? Nätti. Vähän pehmee terään, mut käy heloihin.", of = "10d38d" },
     { text = "Kupari on pehmeetä ku voi, melkein. Taipuu ennen ku puree.", of = "50995c" },
-    { text = "Tinast ei oo miekaks. Sekota se kuparin kaa, ni saat pronssii.", of = "fd03a5" },
-    { text = "Tinaseos on pehmeetä ja helppoo käsitellä. Tuoppei ja lautasii, ei teriä.", of = "fd83ed" },
-    { text = "Sinkki ja kadmium? Pehmeitä, ja ilkeitä työstää. Kukaan ei tao niist.", of = "e3ee4e" },
-    { text = "Lyijy on raskasta ku synti ja tylsää ku lusikka. Ei pidä loitsuukaan.", of = "70c37c" },
+    { text = "Tinasta ei oo miekaks. Sekota se kuparin kaa, ni saat pronssia.", of = "fd03a5" },
+    { text = "Tinaseos on pehmeetä ja helppoo käsitellä. Tuoppeja ja lautasia, ei teriä.", of = "fd83ed" },
+    { text = "Sinkki ja kadmium? Pehmeitä, ja ilkeitä työstää. Kukaan ei tao niistä.", of = "e3ee4e" },
+    { text = "Lyijy on raskasta ku synti ja tylsää ku lusikka. Ei pidä loitsuakaan.", of = "70c37c" },
     { text = "Hopee on pehmeetä, mut se satuttaa kuolleita. Sylkee loitsut ulos, tosin.", of = "6d0cad" },
-    { text = "Kulta on pehmeetä ja raskasta. Se tykkää loitsuist, kato.", of = "568e9c" },
-    { text = "Elektrumi on kultaa ja hopeeta yhes. Raskasta, pehmeetä, taikuuden ystävä.", of = "b30b20" },
+    { text = "Kulta on pehmeetä ja raskasta. Se tykkää loitsuista, kato.", of = "568e9c" },
+    { text = "Elektrumi on kultaa ja hopeeta yhessä. Raskasta, pehmeetä, taikuuden ystävä.", of = "b30b20" },
     { text = "Alumiini on kevyt ku höyhen eikä ruostu. Vähän pehmee, tosin.", of = "d50ecd" },
     { text = "Duralumiini on se kevyt kama kovemmaks tehtynä. Harvinaista, ja kiva pitää yllä.", of = "89f681" },
-    { text = "Kromi on kovaa ja kiiltävää eikä ruostu. Näpertelyy työstää, kato.", of = "864812" },
-    { text = "Nikrosil on kovaa ku teräs ja kestää happoo. Hankalaa alasimel.", of = "1cce97" },
+    { text = "Kromi on kovaa ja kiiltävää eikä ruostu. Näpertelyä työstää, kato.", of = "864812" },
+    { text = "Nikrosil on kovaa ku teräs ja kestää happoa. Hankalaa alasimella.", of = "1cce97" },
     { text = "Bendalloy on raskasta, pehmeetä ja jääräpäistä. Loitsut ei tartu siihen.", of = "4fbf2a" },
     { text = "Mithril on kevyttä ku pellava, kovaa ku teräs. Ottaa loitsun ku unelma.", of = "6dc4c2" },
     { text = "Adamantium? Mikään ei leikkaa sitä, mikään ei polta sitä. Hirvee työstää.", of = "a31f78" },
@@ -246,16 +246,16 @@ lines = [
     { text = "Kovapuu on sitkeempää ku tavallinen puu. Palaa silti, kato.", of = "2e6559" },
     { text = "Nahka on kevyttä ja notkeeta. Keitä se, ni se kovettuu, näätsä.", of = "306df2" },
     { text = "Luu on kevyttä ja haurasta. Sarvi on melkein samaa, vaikeempi muotoilla.", of = "28882d" },
-    { text = "Norsunluu on nättii, ja se tykkää loitsuist. Norsut ei niinkään.", of = "5958d9" },
-    { text = "Kivi on raskasta ja tylsää, eikä se pidä loitsuu. Piikivi lohkeilee, kato.", of = "51b6a0" },
-    { text = "Obsidiaani leikkaa terävästi, mut se on lasii, ja lasi menee rikki. Ei loitsui.", of = "531679" },
-    { text = "Jade on kovaa ja nättii ja vähän taikuuden ystävä. Kääpiöt tykkää siit.", of = "c44bf4" },
+    { text = "Norsunluu on nättiä, ja se tykkää loitsuista. Norsut ei niinkään.", of = "5958d9" },
+    { text = "Kivi on raskasta ja tylsää, eikä se pidä loitsua. Piikivi lohkeilee, kato.", of = "51b6a0" },
+    { text = "Obsidiaani leikkaa terävästi, mut se on lasia, ja lasi menee rikki. Ei loitsuja.", of = "531679" },
+    { text = "Jade on kovaa ja nättiä ja vähän taikuuden ystävä. Kääpiöt diggaa sitä.", of = "c44bf4" },
     { text = "Silkki on kevyin kangas. Villa on lämmintä. Kumpikaan ei pysäytä terää.", of = "67c5d1" },
-    { text = "Jalokivet? Kysy gnomeilt. Rubiinit ja safiirit on vaikeit hioo, kuulemma.", of = "70c6de" },
+    { text = "Jalokivet? Kysy gnomeilta. Rubiinit ja safiirit on vaikeita hioa, kuulemma.", of = "70c6de" },
 ]
 mutter = [
     { text = "Rauta on kovaa, teräs kovempaa, mithril on... mitä se olikaan?", of = "7935be" },
-    { text = "Pumppaa palkeit, lakase lattia, opettele metallit.", of = "d7b70c" },
+    { text = "Pumppaa palkeita, lakase lattia, opettele metallit.", of = "d7b70c" },
     { text = "Älä koske kuumaan päähän. Älä koske kuumaan päähän.", of = "8c911c" },
     { text = "Joko on safkan aika?", of = "b902a1" },
 ]

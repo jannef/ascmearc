@@ -62,8 +62,8 @@ pub(super) fn search_features(content: &Content) -> String {
     out
 }
 
-/// Deeper in a dungeon, hidden things are harder: a secret door at each depth of the branches
-/// that make them so, for an average character.
+/// On a more dangerous floor, hidden things are harder: a secret door on each floor of the
+/// branches that make them so, for an average character.
 pub(super) fn search_depths(content: &Content) -> String {
     let mut out = String::from(
         "| Level | Secret doors per level | A secret door: a turn of searching | Ten turns | A turn \
@@ -73,7 +73,7 @@ pub(super) fn search_depths(content: &Content) -> String {
     branches.sort_by(|a, b| a.name.cmp(&b.name));
     let door = i32::from(content.search().secret_door);
     for def in branches {
-        if (def.plans()).all(|p| p.hidden_per_depth == 0 && p.secret_doors[1] == 0) {
+        if (def.plans()).all(|p| p.hidden_danger_percent == 0 && p.secret_doors[1] == 0) {
             continue;
         }
         for depth in 1..=def.depth {
@@ -94,11 +94,12 @@ pub(super) fn search_depths(content: &Content) -> String {
                 [least, most] if least == most => least.to_string(),
                 [least, most] => format!("{least} to {most}"),
             };
+            let danger = super::doors::floor_danger(content, def, depth);
             let _ = writeln!(
                 out,
-                "| {} | {doors} | {} |",
+                "| {} (danger {danger}) | {doors} | {} |",
                 def.level_name(depth),
-                chances(content, door + def.hidden_at(depth))
+                chances(content, door + def.hidden_at(depth, danger))
             );
         }
     }

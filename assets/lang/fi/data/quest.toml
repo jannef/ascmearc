@@ -12,9 +12,9 @@
 # Sister Hild: the Fennmynster chain.
 [grave_goods]
 name = { text = "Hautalahjat", of = "bfd1b5" }
-offer = { text = "Mun äidin aikaan Mynsterist vietiin hopeinen kalkki ja haudattiin jonkun herran kaa Cealdhlāwiin, kylmään kumpuun. Se oli meidän, annettu Jumalalle, ei sille. Tuo se takas mulle. Kummun kammio on kaks tasoo alempana.", of = "b9ba59" }
+offer = { text = "Mun äidin aikaan Mynsteristä vietiin hopeinen kalkki ja haudattiin jonkun herran kaa Cealdhlāwiin, kylmään kumpuun. Se oli meidän, annettu Jumalalle, ei sille. Tuo se takas mulle. Kummun kammio on kaks tasoa alempana.", of = "b9ba59" }
 accept = { text = "Kiitos. Kammio on lukossa, sanotaan, ja joku vahtii avainta. Mee varovasti.", of = "009520" }
-reminder = { text = "Hopeinen kalkki, Cealdhlāwin kummun kammiosta, kaks tasoo alempana.", of = "feeb7a" }
+reminder = { text = "Hopeinen kalkki, Cealdhlāwin kummun kammiosta, kaks tasoa alempana.", of = "feeb7a" }
 done = { text = "Meidän kalkki. Se on kylmä vieläkin. Mä pesen sen ja rukoilen sen ylle. Istu ensin hetki: anna mun näyttää, miten me täällä hoidetaan haavottuneita, koska sä tuut kohtaamaan haavoja matkallas. Ota tääkin.", of = "d6d5f4" }
 where = { text = "Kummun kammio on Cealdhlāwin toisella tasolla.", of = "6a554f" }
 
@@ -27,11 +27,11 @@ more = { text = "Opit lisää parantamisesta.", of = "465509" }
 
 [fen_minster]
 name = { text = "Suon luostari", of = "ab0a1b" }
-offer = { text = "Kalkki tuli meille Fennmynsterist, meidän emoluostarist, ennen ku vesi nousi sen yli. Mä tiedän, missä se seiso: meidän kirjoissa on yhä tie sinne. Mee sinne mun puolesta. Mee sen sisään alas, kolme tasoo, ja kerro mulle, onks siit mitään jäljellä.", of = "7035a3" }
+offer = { text = "Kalkki tuli meille Fennmynsteristä, meidän emoluostarista, ennen ku vesi nousi sen yli. Mä tiedän, missä se seiso: meidän kirjoissa on yhä tie sinne. Mee sinne mun puolesta. Mee sen sisään alas, kolme tasoa, ja kerro mulle, onks siitä mitään jäljellä.", of = "7035a3" }
 accept = { text = "Tässä, anna ku mä näytän sun kartalta. Tiet loppuu Fennhāmiin; sen jälkeen pysy korkeella maalla.", of = "24614d" }
-reminder = { text = "Fennmynster, kolme tasoo alas. Se on Micelfennissä, Fennhāmist itään.", of = "099959" }
+reminder = { text = "Fennmynster, kolme tasoa alas. Se on Micelfennissä, Fennhāmista itään.", of = "099959" }
 done = { text = "Krypta on siis yhä siellä, veden alla. Tässä: juuria niihin kuumeisiin, jotka sä oot saanu. Pidä ne.", of = "d57f4e" }
-where = { text = "Luostari on Micelfennissä, Fennhāmist itään.", of = "2cf727" }
+where = { text = "Luostari on Micelfennissä, Fennhāmista itään.", of = "2cf727" }
 
 [fen_minster.on_accept]
 says = { text = "Ennen ku lähdet, lapsi: ota tää. Se on parannusjuomaa, Mynsterin omasta tislaamosta. Juo se, ku haava ei suostu umpeutumaan, eikä ennen.", of = "d35ef2" }
@@ -105,23 +105,23 @@ where = { text = "Dēopgangin portaat on hakattu Grægweallin juureen, kaukana l
 # Wat One-Eye: the Gilde's chain.
 [guild_quarry]
 name = { text = "Palkkio", of = "ca171d" }
-offer = { text = "Ton päästä on luvattu palkkio, kato: {target:name}. Kaada se otus, mist ikinä sen löydät, ni Kilta maksaa. Lasketaan tästä päivästä, muista: mitä teit ennen, on sun omaa bisnestä. {where:Name}", of = "068fea" }
+offer = { text = "Ton päästä on luvattu palkkio, kato: {target:name}. Kaada se otus, mistä ikinä sen löydät, ni Kilta maksaa. Lasketaan tästä päivästä, muista: mitä teit ennen, on sun omaa bisnestä. {where:Name}", of = "068fea" }
 accept = { text = "Pistä puumerkkis tähän, sit. Nyt sä oot Killassa.", of = "8bad82" }
 reminder = { text = "{target:Name}, ja vaan se yks. {where:Name}", of = "b319e0" }
 done = { text = "Toi on se. Tässä Killan fyrkat, rehellisesti tienattu.", of = "e8e85e" }
-where = { text = "Niit tunnetaan paikassa {branch:name}.", of = "b79609" }
+where = { text = "Niitä tunnetaan paikassa {branch:name}.", of = "b79609" }
 
 [guild_score]
 name = { text = "Kaksikymmentäviisi", of = "91c04a" }
 offer = { text = "Kakskytviis kaatunutta Killalle, sorttia {target:name}. Kaikki niiden lajit käy, ja mä kirjotan sulle ylös mitkä. Missä vaan, kunhan se on sun käsi, joka sen tekee. Lasketaan tästä päivästä.", of = "7c956d" }
 accept = { text = "Laske ne tarkkaan. Mä lasken.", of = "27ca44" }
 reminder = { text = "Kakskytviis, sorttia {target:name}, kaikkiaan. {where:Name}", of = "3d6a0a" }
-done = { text = "Kakskytviis! Mul oli epäilykseni, en mä sitä peittele. Tinaseos sopii sulle. Juomat kaupan päälle.", of = "a88a7e" }
+done = { text = "Kakskytviis! Mulla oli epäilykseni, en mä sitä peittele. Tinaseos sopii sulle. Juomat kaupan päälle.", of = "a88a7e" }
 where = { text = "{target:Name} tunnetaan paikassa {branch:name}.", of = "f30d05" }
 
 [guild_scroll]
 name = { text = "Käärö Killalle", of = "92a864" }
-offer = { text = "Kilta pitää muutaman käärön varalla, siltä varalta et keikka menee pieleen, ja meilt puuttuu yks: {target:name}. Löydä tai osta, mä en kysele kumpi, ja tuo se tänne.", of = "7b604d" }
+offer = { text = "Kilta pitää muutaman käärön varalla, siltä varalta et keikka menee pieleen, ja meiltä puuttuu yks: {target:name}. Löydä tai osta, mä en kysele kumpi, ja tuo se tänne.", of = "7b604d" }
 reminder = { text = "{target:Name}, Killan hyllylle. Tuo se tänne.", of = "92f5cf" }
 done = { text = "Mahtavaa. Toi menee hyllyyn, ja tää menee sun kukkaroon.", of = "83dbe1" }
 
@@ -161,9 +161,9 @@ where = { text = "Grundlēas on ruohikossa Beorhtburnan tiestä etelään.", of 
 # Gammer Wynflæd: the escort and the rowan.
 [taken_under_the_hill]
 name = { text = "Viety kukkulan alle", of = "014f77" }
-joins = { text = "Ootsä oikee? Etsä oo yks niistä? Voi, vie mut kotiin, pliis. Mä pysyn ihan sun takana, mä lupaan.", of = "8bf41d" }
+joins = { text = "Ootsä oikee? Etsä oo yks niistä? Voi, vie mut kotiin, ole kiltti. Mä pysyn ihan sun takana, mä lupaan.", of = "8bf41d" }
 thanks = { text = "Holtwīc! Kaivo, ja savu, ja äidin ovi. Mä en uskonu et näkisin mitään niistä enää.", of = "fba14e" }
-offer = { text = "Se on Ælfrun, kultaseni, Osgarin tyttö. Meni hakeen risuja metsän laidalta kolme päivää sitten, eikä tullu kotiin. Sen kori löyty sienirenkaasta. Pimeet on vieny sen, kukkulansa alle. Tuo se takas meille, ennen ku se unohtaa, et sil koskaan oli kotia.", of = "327abe" }
+offer = { text = "Se on Ælfrun, kultaseni, Osgarin tyttö. Meni hakeen risuja metsän laidalta kolme päivää sitten, eikä tullu kotiin. Sen kori löyty sienirenkaasta. Pimeet on vieny sen, kukkulansa alle. Tuo se takas meille, ennen ku se unohtaa, et sillä koskaan oli kotia.", of = "327abe" }
 accept = { text = "Tässä, mä näytän sulle, missä kumpu on. Pidä rautaa mukanas, äläkä syö mitään mitä ne tarjoo. Se on ihan sen pohjalla.", of = "9bdb21" }
 reminder = { text = "Ælfrun on yhä kukkulan alla, kultaseni, Ælfhāmin pohjalla. Tuo se kotiin Holtwīciin.", of = "500049" }
 done = { text = "Siunatkoon sua, siunatkoon. Kotona, ja yhä oma ittensä. Ota nää, mun omaa keitostani, ja muista ettet kiitä niistä ketään metsässä. Yks vielä on, jonka luo mä sut lähettäisin, kultaseni, ylös metsään: oppinut mies tornissa. Kysy multa hänestä.", of = "b83a85" }

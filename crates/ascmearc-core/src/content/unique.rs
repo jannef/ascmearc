@@ -82,6 +82,9 @@ pub struct UniqueDef {
     pub lore: Option<String>,
     /// The campaign whose table it is in (`None`: shared, `data/uniques/`).
     pub campaign: Option<String>,
+    /// Its dice families that roll more dice than any tier (`"heavy=6d6"`, #2091), by affix id
+    /// with the count: the item's affix holds the sides on the last tier, and this the count.
+    dice: Vec<(String, u8)>,
 }
 
 impl UniqueDef {
@@ -89,6 +92,12 @@ impl UniqueDef {
     /// affixes, its item level, and its id.
     pub fn magic(&self) -> &Magic {
         self.stack.magic().expect("a unique item is magic")
+    }
+
+    /// How many dice its affix `id` rolls when its table sets more than any tier
+    /// ([`crate::magic::Rolled::dice`]); `None` for every other affix.
+    pub fn dice(&self, id: &str) -> Option<u8> {
+        (self.dice.iter()).find(|(a, _)| a == id).map(|&(_, n)| n)
     }
 
     /// Its name as a list or a table says it, without its own "the": "Brosinga Mene".
@@ -223,6 +232,7 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
         None => (None, None),
     };
     let lore = (spec.lore.map(|l| l.trim().to_string())).filter(|l| !l.is_empty());
+    let dice = more_dice(&spec.affixes, content);
     Ok(UniqueDef {
         id: spec.id,
         name: name.into(),
@@ -232,7 +242,22 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
         phrase,
         lore,
         campaign: None,
+        dice,
     })
+}
+
+/// The affixes of `written` (already read, `magic_of`) whose dice are more than their affix's
+/// last tier rolls, with the count: `"heavy=6d6"` is `("heavy", 6)`.
+fn more_dice(written: &[String], content: &Content) -> Vec<(String, u8)> {
+    (written.iter())
+        .filter_map(|text| {
+            let (id, value) = text.split_once('=')?;
+            let a = content.affixes().get(id)?;
+            let count = value.trim().split_once('d')?.0.parse::<u8>().ok()?;
+            let last = a.tiers.last()?;
+            (a.effect.is_dice() && count > last.dice).then(|| (id.to_string(), count))
+        })
+        .collect()
 }
 
 /// The power a `power` table names on base item `def`: exactly one of `inflict` (with `chance`

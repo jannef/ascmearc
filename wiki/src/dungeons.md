@@ -88,8 +88,9 @@ creature, before counting those that come later. Creatures placed by hand, a
 [vault](#a-floor-starts-full)'s own folk, and the first kind a
 [teeming den](teeming-dens.md#teeming-dens) is drawn around are never dread draws.
 
-The deeper and more dangerous a place, the more often a draw is dread. In Grundlēas, past the
-floor where the draws stop rising, the dread keep coming more often floor by floor:
+The more dangerous a place, the more often a draw is dread. In Grundlēas, whose danger is its
+floor number, the dread keep coming more often as the danger rises, even past the floor where
+the other draws stop rising:
 
 {{#include generated/dread-draws.md}}
 

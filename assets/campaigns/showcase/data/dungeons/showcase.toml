@@ -10,11 +10,12 @@ generator = { kind = "rooms" }
 size = [80, 21]
 creatures = ["rat", "bat", "kobold"]
 traps = ["arrow", "arrow", "spear", "spear", "pit", "pit", "alarm", "teleport", "fireball", "frost", "lightning_bolt"]
-# A secret door or two on each rooms level, and everything hidden harder to find deeper down.
+# A secret door or two on each rooms level, and everything hidden harder to find the more
+# dangerous the floor.
 secret_doors = [1, 2]
-hidden_per_depth = 1
-# Locks harder to pick deeper down too (14 on the first level, 21 on the eighth).
-locks_per_depth = 1
+hidden_danger_percent = 90
+# Locks harder to pick there too (14 on the first level, danger 1, and 21 on the eighth).
+locks_danger_percent = 90
 # Loot on the floor of each level, at the floor's danger: 1 on the first, one more a level down.
 loot = [2, 4]
 danger = 1
