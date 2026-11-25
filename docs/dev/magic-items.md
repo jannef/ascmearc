@@ -386,9 +386,36 @@ id on another rarity than unique, and a unique without its id.
   hits), Silverstrike (a Marvellous long war bow: Range ×2, +6 to hit, Keen, Steady), and the
   Radiant (a Masterwork war hammer: Light `radiant_hammer`, radius 20, `data/lights.toml`; +4
   damage, Keen, +4 Toughness, +12 hit points), in the shared `data/uniques/`, item level 12,
-  every affix written with its value. They are meant for the low-chance drop pool (#196; #2004 / #2009 may
-  move them to item level 40) and placed nowhere yet but the test world's quarry
-  (`campaigns/showcase/levels/quarry.toml`), so tests and captures reach them.
+  every affix written with its value, each `pool = true` (below). Placed nowhere but the test
+  world's quarry (`campaigns/showcase/levels/quarry.toml`, a showcase), so tests and captures
+  reach them.
+- **The drop pool** (#2103, `magic/unique_pool.rs`): a unique whose data says `pool = true`
+  (`UniqueDef::pool`; opt-in, so a new unique joins by its own line) may stand in for a **rare**
+  find. The placed ones (the outlaws' four, Sigeric's Star, the pedlar's three, the test world's
+  Stonebiter) never say it (`magic/unique_pool_tests.rs` holds them out). `unique_pool::instead`
+  asks of a find that came out `Rarity::Rare`: the open uniques (`open`: of the pool, own item
+  level at most the find's `Magic::level`, not in `WorldState::uniques_dropped`, by id); none
+  open, no draw; else one `below(10_000)` against `rare.unique` of `data/affixes.toml` (200: 1 in
+  50 rare finds) and on a hit one `index` among them. The unique comes as its template stack
+  (unidentified, its curse and all, as any find): no affix or power of it enters a rollable
+  pool. The paths: a generated level's `unique_pool::fill` (branch levels after
+  `treasury::fill` and before `gear::arm`, local areas after `place_loot`), over the piles by
+  cell, the chests' holds by cell, and the spawns' carry (a mimic's chest; gear is not rolled
+  yet), from the level's own stream `unique_pool/<level id>` and none twice on the level
+  (`mapgen::Visit::dropped` is the run's set); `World::loot_of` (a creature's drop, on its
+  `drop/` stream after the roll) and `World::leave_loot` (a feature's loot, on its
+  `outcome/loot` draw after the roll). Never asked: creatures' gear, shops, a trader's offer,
+  quest pay, a quarrel's hoard, a stipend. **Once a run**: `WorldState::uniques_dropped`
+  (saved, left out while empty, so other saves and replays hash as before) takes every pool
+  unique a made level holds (`instantiate_level`: its piles, chests, and spawns' carry, so the
+  quarry's showcase counts) and each creature drop (`World::creature_dies`, after `loot_of`) and feature loot. A level whose
+  generation the pool changes depends on what the run found before, as a unique creature's lair
+  does (`Visit::uniques`). One left on an endless floor that is let go is lost with it. Tests:
+  `magic/unique_pool_tests.rs` (who is in, the item-level gate, no draw for what is not rare or
+  with all found, the odds over 20,000 draws, a level's pass each once and none found),
+  `world/items/unique_pool_tests.rs` (the quarry counts, a creature's drop and none once found).
+  The wiki: the pool's line in "Carried by" (`xtask/src/wiki/uniques.rs::pooled`) and
+  `wiki/src/magic-items.md` "The drop pool".
 - **Powers**, a variant each, read in one place each: `Power::Inflict { hit, added }` rides
   `Mods::local` of the weapon into `Profile::on_hit` (`sharpen`), which `World::resolve` hands
   to `after_blow` after the natural attack's `on_hit` (`Mods::worn` never carries it: it is the

@@ -506,6 +506,7 @@ impl World {
             player_level: self.player_level(),
             uniques: Some(&self.state.progress.uniques),
             slain: Some(pit_slain.as_ref().unwrap_or(self.state.quests.slain_set())),
+            dropped: Some(&self.state.uniques_dropped),
         };
         let template = level_template(
             content,
@@ -621,6 +622,16 @@ pub(in crate::world) fn instantiate_level(
 ) {
     let id = template.id.as_str();
     let seed = state.level_seed(content, id);
+    // A unique of the drop pool its loot holds is found: it comes no more (`unique_pool.rs`).
+    let held = (template.chests.values()).flat_map(|c| c.holds.iter());
+    let carried = (template.creatures.iter()).flat_map(|c| c.carry.iter());
+    let laid = template
+        .objects
+        .values()
+        .flatten()
+        .chain(held)
+        .chain(carried);
+    crate::magic::unique_pool::note(content, laid, &mut state.uniques_dropped);
     let mut level = LevelState::from_template(template, content, (&state.campaign, state.time));
     crate::rot::made_at(level.objects.values_mut().flatten(), content, state.time);
     // The wands lying there and in its chests that have no rung yet (a level file's, a

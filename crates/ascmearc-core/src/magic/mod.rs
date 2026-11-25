@@ -31,6 +31,7 @@ pub(crate) mod make;
 pub mod mods;
 pub(crate) mod name;
 pub mod numbers;
+pub mod unique_pool;
 pub mod worked;
 
 pub use crate::content::{AffixKind, Effect, ItemKind, Rarity};
@@ -283,3 +284,5 @@ mod pool_tests;
 mod shares_tests;
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+pub(crate) mod unique_pool_tests;

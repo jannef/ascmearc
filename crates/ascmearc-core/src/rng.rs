@@ -56,6 +56,7 @@
 //! | Vault chests | `vault_chests/<level id>` |
 //! | Chests | `chests/<level id>` |
 //! | Treasure rooms | `treasure/<level id>` |
+//! | The drop pool's uniques (`magic/unique_pool.rs`) | `unique_pool/<level id>` |
 //! | Creatures' gear | `gear/<level id>` |
 //! | Animated creatures' bodies | `animated/<level id>` |
 //! | Gravestones (and which fallen they name) | `graves/<level id>`, `graves/<level id>/fallen` |

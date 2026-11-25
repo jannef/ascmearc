@@ -6,6 +6,8 @@
 [[unique]]
 id = "silverstrike"
 name = "Silverstrike"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
 object = "long_bow"
 affixes = ["keen=2", "steady=4", "of_precision=6"]
 level = 12
