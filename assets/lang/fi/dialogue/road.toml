@@ -4,36 +4,36 @@
 
 # The pedlar.
 [ascmearc.pedlar]
-greet = { text = "Neuloi, nuppineuloi, nauhoi, kynttilöit! Mitäs saa olla, kulkija?", of = "046644" }
+greet = { text = "Neuloja, nuppineuloja, nauhoja, kynttilöitä! Mitäs saa olla, kulkija?", of = "046644" }
 offer_name = { text = "Tavarasi", of = "5c54fb" }
 greet_evil = [
-    { text = "Pidä tassut siel mis mä nään ne, jos sopii.", of = "fd7e14" },
-    { text = "Ei mitään myytävää sun sorttisille. Liikettä.", of = "a34202" },
+    { text = "Pidä tassut siellä, missä mä nään ne, jos sopii.", of = "fd7e14" },
+    { text = "Ei mitään trokattavaa sun sorttisille. Liikettä.", of = "a34202" },
 ]
 lines = [
-    { text = "Tiet on hiljasii tällä viikol. Liian hiljasii, jos multa kysyt.", of = "d22d79" },
-    { text = "Rosvoi taas nummitiel. Kulje päiväl, se on mun neuvo.", of = "d8b0f7" },
-    { text = "Fennhāmis satoi kolme päivää. Kurassa polvii myöten, eikä asiakkaita.", of = "e2e09b" },
-    { text = "Hiisii on tullu alas kukkuloilt. Röyhkeit ku mitkä, ne.", of = "fe43e4" },
+    { text = "Tiet on hiljasia tällä viikolla. Liian hiljasia, jos multa kysyt.", of = "d22d79" },
+    { text = "Rosvoja taas nummitiellä. Dallaa päivällä, se on mun neuvo.", of = "d8b0f7" },
+    { text = "Fennhāmissa satoi kolme päivää. Kurassa polvia myöten, eikä yhtään kundia ostamassa.", of = "e2e09b" },
+    { text = "Hiisiä on tullu alas kukkuloilta. Röyhkeitä ku mitkä, ne.", of = "fe43e4" },
     { text = "Lunta solas. Kukaan ei tuu sisään, kukaan ei pääse ulos. Huono bisnekselle.", of = "c9545e" },
-    { text = "Valoi suolla öisin. Mä en mee kattoo, eikä sunkaan pitäis.", of = "d6532a" },
-    { text = "Kuskit sanoo et kahlaamo on akseleit myöten. Kato miten meet yli.", of = "4470b4" },
+    { text = "Valoja suolla öisin. Mä en mee tsiigaamaan, eikä sunkaan pitäis.", of = "d6532a" },
+    { text = "Kuskit sanoo, et kahlaamo on akseleita myöten. Kato miten meet yli.", of = "4470b4" },
     { text = "Fyrbeorg yskii taas tuhkaa. Pilaa nauhat, se.", of = "6cd665" },
 ]
 mutter = [
-    { text = "Neuloi ja nappei, nappei ja neuloi...", of = "ff7d96" },
-    { text = "Cēaptūnis illaks, jos kintut kestää.", of = "714e63" },
+    { text = "Neuloja ja nappeja, nappeja ja neuloja...", of = "ff7d96" },
+    { text = "Cēaptūnissa illaks, jos kintut kestää.", of = "714e63" },
     { text = "Kaks penniä kynttilä, ja halpa puoleenkin hintaan.", of = "65cc9e" },
 ]
 mutter_verb = { text = "viheltelee", of = "36d830" }
 
 [ascmearc.pedlar.topic]
-rumours = { text = "Mitkä, tiet? Helppoo. Kaupungist itään tie menee nummien yli. Näät ison kummun, Cealdhlāwin, ihan tien vieres, kylmä ku hauta, ja hauta se onkin. Siit eteenpäin tie jatkuu kahlaamolle asti, Blæcwæterin yli. Matalaa, enimmäkseen. Enimmäkseen.", of = "d6d98c" }
-news = { text = "Uutisii? Rosvoi nummitiel, hiisii kukkuloil ja jotain ilkeet suolla, mitä kukaan ei sano ääneen. Cēaptūnin Kilta maksaa palkkioit, kuulin. Mä vaan kävelen ja pidän järjen päässä. Paras konsti.", of = "c5d453" }
+rumours = { text = "Mitkä, tiet? Helppoa. Kaupungista itään tie menee nummien yli. Näät ison kummun, Cealdhlāwin, ihan tien vieressä, kylmä ku hauta, ja hauta se onkin. Siitä eteenpäin tie jatkuu kahlaamolle asti, Blæcwæterin yli. Matalaa, enimmäkseen. Enimmäkseen.", of = "d6d98c" }
+news = { text = "Uutisia? Rosvoja nummitiellä, hiisiä kukkuloilla ja jotain ilkeää suolla, mitä kukaan ei sano ääneen. Cēaptūnin Kilta maksaa palkkioita, kuulin. Mä vaan dallaan ja pidän järjen päässä. Paras konsti.", of = "c5d453" }
 
 [ascmearc.pedlar.offer]
-reply = { text = "Kiva tehä kauppaa, pomo. Käytä terveenä, äläkä kerro mist sen sait.", of = "cfaa4e" }
-sold = { text = "Se oli ainoo mitä mul oli, ja sä sait sen. Neuloi nyt, jos haluut.", of = "c528b1" }
+reply = { text = "Kliffaa tehä kauppaa, pomo. Käytä terveenä, äläkä kerro, mistä sen sait.", of = "cfaa4e" }
+sold = { text = "Se oli ainoa, mitä mulla oli, ja sä sait sen. Neuloja nyt, jos haluut.", of = "c528b1" }
 
 [ascmearc.pedlar.topic_name]
 rumours = { text = "Tiet", of = "41f55c" }
@@ -43,16 +43,16 @@ news = { text = "Teiden uutiset", of = "87aff0" }
 [ascmearc.road_folk]
 greet = { text = "Huomenta. Hieno päivä tielle, eiks je.", of = "625a30" }
 greet_evil = [
-    { text = "Ei me mitään hankaluuksii haluta. Ollaan vaan ohikulkumatkal.", of = "0e27a0" },
+    { text = "Ei me mitään hankaluuksia haluta. Ollaan vaan ohikulkumatkalla.", of = "0e27a0" },
     { text = "Mee sit. Anna meidän olla.", of = "4dc7b5" },
 ]
 lines = [
     { text = "Torille menos. Ei nauriit itteään myy, vai mitä.", of = "48af5f" },
-    { text = "Varo nummitietä pimeel. Valoi kummuil.", of = "b6bfbe" },
-    { text = "Myllyltä tullaan. Jauhot on tyyrist, ja joka viikko tyyriimpii.", of = "8a4ba7" },
-    { text = "Ootsä niit Kilta-jätkii? Onnee vaan, kai.", of = "418ab2" },
-    { text = "Näin kulkukauppiaan aamul. Myi mulle nauhan, jota en tarvii.", of = "bcbe8f" },
-    { text = "Pysy tiel. Tie on turvallinen, enimmäkseen.", of = "c78150" },
+    { text = "Varo nummitietä pimeellä. Valoja kummuilla.", of = "b6bfbe" },
+    { text = "Myllyltä tullaan. Jauhot on tyyristä, ja joka viikko tyyriimpiä.", of = "8a4ba7" },
+    { text = "Ootsä niitä Kilta-kundeja? Onnea vaan, kai.", of = "418ab2" },
+    { text = "Näin kulkukauppiaan aamulla. Myi mulle nauhan, jota en tarvii.", of = "bcbe8f" },
+    { text = "Pysy tiellä. Tie on turvallinen, enimmäkseen.", of = "c78150" },
 ]
 mutter = [
     { text = "Mun jalat, mun raukat jalat.", of = "082ffb" },

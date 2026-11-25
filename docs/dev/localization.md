@@ -1451,6 +1451,37 @@ Brummie as "yow" beside the design's Irish, Middle English, and Cornish words, s
 renderer never inserts "my". Every register is declared even with no overrides, so a race's and
 a dialogue's register are checked names.
 
+Finnish's registers (`assets/lang/fi/lang.toml`, the owner's table, #1896; #2088):
+
+| Register | Who | How it is written |
+|---|---|---|
+| `posh` | the rich: a person of means, a patron, a wizard | kirjakieli, uncompromising |
+| `stadi` | commoners (humans, half-elves, half-orcs) | the old Stadin slangi of 1920–1950s Helsinki (below) |
+| `pohjalainen` | dwarves, duergar | Ostrobothnian |
+| `turku` | elves | the Turku dialect |
+| `savo` | halflings, gnomes | Savo |
+| `rauma` | goblins, kobolds, ratfolk | Rauma, laid on thick but followable |
+| `vanha_kirjasuomi` | drow | the Old Literary Finnish of Agricola's day |
+| `cornish` | the deep gnomes of Gimmwīc | Karelian |
+| `viro` | lizardfolk | Estonian, untranslated |
+
+**Stadin slangi** (the owner, #2088: "more old fashioned 1920-1950s style"): the commoners speak
+the old slang (vanha stadin slangi), not today's clipped Helsinki speech. Its Swedish and Russian
+loans come where they fall naturally, never one stuffed into every line: *diggaa* (like),
+*snadi* (small), *kundi* (man), *flikka* (girl), *bonjaa* (understand), *tsiigaa* (look),
+*dallaa* (walk), *mesta* (place), *lafka* (shop), *fyrkka* and *liksa* (money, pay), *duuni*
+(work), *stidi* (a fight), *pämppää* (drink), *tyyris* (dear), *fiini* (fine), *kliffa* (nice),
+*faija*, *mutsi*, *skidi*, *trokaa* (peddle). The case endings are full: "siltä", "siinä",
+"Mynsteristä", "valoja", "mulla", never the clipped "silt", "siin", "Mynsterist", "valoi",
+"mul" (the owner's correction: "mut mä tykkään näyttää silt" → "mut mä diggaan näyttää siltä").
+What stays colloquial: *mä*/*sä*, *mun*/*sun*, a plural subject with the singular verb ("ne
+on"), *ku*, *et*, *ni*, *mee*, *tuu*, *oo*, the long vowels of *pimeetä*, *hopeeta*. Every line
+stays followable for a modern reader. Old slang is the baseline, and **speakers vary inside it**
+(the owner: "not everyone talks exactly the same in helsinki either"): the pedlar, Wat, and
+Godgifu lean heavy on the loans, Sister Hild, Gammer Wynflæd, Ælfrun, and Holtwīc's cottars
+speak it plain, and a speaker keeps pet words of their own (Ceolred's *kato*, Dudda's
+*porukka*). A line that already sounds right for its speaker is left as it is.
+
 ## Decisions L5 made where the design left them open
 
 - One mechanism for every line of data, dialogue and narrator alike (the integrator,
@@ -1468,7 +1499,7 @@ a dialogue's register are checked names.
 - A speech of several lines (a one-liner and a stake's worth) is one entry with a list in the
   `lines` form, not two entries.
 - `register` is set where a speaker's race's register is not theirs (the human patron and
-  partner, Sigeric, Ælfswīð, Ordgar: `posh`; Gimmwīc's people: `cornish`). English's overrides and race map came
+  partner, Sigeric, Ælfswīð, Ordgar, Reeve Leofric, Factor Wulfrun: `posh`; Gimmwīc's people: `cornish`). English's overrides and race map came
   with L14 ("Registers").
 
 ## Decisions L1 made where the design left them open

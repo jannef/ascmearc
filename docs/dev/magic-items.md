@@ -217,7 +217,8 @@ a hand-made level's `item_level` (default 1); 1 elsewhere. Never the depth (#206
 rule: loot follows danger only): every branch floor needs a `danger` (`content/dungeon.rs` refuses
 a depth without one), so depth reaches loot only through `per_depth`; within 1 to `MAX_ITEM_LEVEL`. Everything that reads it follows: floor loot, vault
 `loot` cells, chests, hoards, creature gear and drops, a generated shop's stock and restocking,
-herbs gathered, gems mined, a fixture's loot, and the arrival XP (`content/item_level_tests.rs`).
+herbs gathered, gems mined, and a fixture's loot (`content/item_level_tests.rs`). The arrival XP
+reads the danger itself, not the item level (`docs/dev/experience.md`, #2086).
 
 **The utility hooks** (D1, #631): each worn effect joins its talent's term at the one line that
 reads it, through `Actor::mods` (so unidentified gear works, and a creature's gear wherever the
@@ -380,19 +381,34 @@ id on another rarity than unique, and a unique without its id.
   offer (`docs/dev/npcs.md` "A trader's offer"; no other content places them), and the run's
   `WorldState::uniques_offered` keeps each to one offer a run. The wiki's
   "Carried by" names the offer with its chance (`offered_by`).
-- **The drop-pool three** (#1976): the Grandmother (a Masterwork mithril great sword: +10
-  damage, a d12 more, a d12 of necrotic, +4 to hit, +4 Strength, and Bleeding on half its
-  hits), Silverstrike (a Marvellous long war bow: Range ×2, +6 to hit, Keen, Steady), and the
-  Radiant (a Masterwork war hammer: Light `radiant_hammer`, radius 20, `data/lights.toml`; +4
-  damage, Keen, +4 Toughness, +12 hit points), in the shared `data/uniques/`, item level 12,
-  every affix written with its value. They are meant for the low-chance drop pool (#196; #2004 / #2009 may
-  move them to item level 40) and placed nowhere yet but the test world's quarry
+- **The drop-pool three** (#1976; the owner's numbers, #2091): the Grandmother (a Masterwork
+  mithril great sword: +10 damage, 6d6 more, +6 to hit, +6 Strength, −2 to Dodge, and Bleeding
+  on half its hits), Silverstrike (a Marvellous long war bow: Range ×2, +6 to hit, Keen 6,
+  Steady 6), and the Radiant (a Masterwork war hammer: Light `radiant_hammer`, radius 20,
+  `data/lights.toml`; +4 to hit, +2 to Dodge, +2 Protection, +10 Toughness, +30 hit points), in
+  the shared `data/uniques/`, item level 40 (docs/design/item-level-40.md §10: at or above
+  §5.8's best roll), every affix written with its value. They are meant for the low-chance drop
+  pool (#196) and placed nowhere yet but the test world's quarry
   (`campaigns/showcase/levels/quarry.toml`), so tests and captures reach them. Two more join
-  them at item level 40 (§10's pool level), in the same quarry: **Demonsoul** (#2095, a large
+  them at the same item level, in the same quarry: **Demonsoul** (#2095, a large
   shield: Sturdy +3, a Cast power of Burning hands, 4 cells and 6d6, on 25 % of the blows it
   blocks from beside and 33 % of its bashes; `bash = 6`, `immune = ["fire"]`, `resist = { cold
   = -50 }`) and **Deep Night** (#2097, a wool cloak: of the Lynx +4, a Vision power of
   darkvision, `invisible = true`, `douse = 10`).
+- **What only a unique sets** (#2091), each refused to any other item by `Magic::check` and
+  never rolled (`content/unique_values_tests.rs::what_only_a_unique_sets_never_rolls`: every
+  random affix, loot's, a vault's, a shop's, enchanting's and its recast's, comes of
+  `loot::pick`, among affixes whose `bases` hold the item's kind, at a value within a tier):
+  a **penalty**, a value against its ladder (`Tier::opposed_by`: `"nimble=-2"`, said "−2 to
+  Dodge", `describe.does_dodge_less`); **more dice than any tier** (`"heavy=6d6"`: the affix
+  takes the last tier with the sides as its value, and `UniqueDef::dice` keeps the count, which
+  `Magic::rolled` puts in `Rolled::dice` for `Mods` and the description); and **Protection on a
+  weapon** (`"hardened=2"`: `Actor::protection` sums every worn and wielded piece's, but only
+  armour counts as a piece for the body-armour talents and names what soaks a blow). The
+  owner's "+2 DV" and "−2 DV" are Dodge (`"nimble=±2"`, on a weapon only by a unique's hand):
+  Defence against every attack, missiles too (Parry counts against melee only), and the one
+  kind that adds up (`Category::stacks`), so it always counts in full; Deflection keeps only
+  the best, so a +2 there would be lost beside a better ring and a −2 beside any.
 - **Powers**, a variant each, read in one place each: `Power::Inflict { hit, added }` rides
   `Mods::local` of the weapon into `Profile::on_hit` (`sharpen`), which `World::resolve` hands
   to `after_blow` after the natural attack's `on_hit` (`Mods::worn` never carries it: it is the

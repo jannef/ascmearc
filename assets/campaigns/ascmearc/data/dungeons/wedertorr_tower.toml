@@ -26,7 +26,7 @@ top = "wedertorr_top"
 generator = { kind = "tower" }
 traps = ["lightning_bolt", "frost", "alarm", "pit"]
 traps_per_level = [5, 8]
-hidden_per_depth = 2
+hidden_danger_percent = 45
 danger = { base = 8, per_depth = 1 }
 population = [
     "galvanic_homunculus", "bound_squall", "storm_gargoyle", "spark_mote", "lesser_air_elemental",

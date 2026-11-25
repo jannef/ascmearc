@@ -33,7 +33,7 @@
 //! `[keeper]`) is spawned, and optionally the unique character the keeper is (`npc`, whose dialogue
 //! it speaks) and its creature type (`creature`, default the `[keeper]`'s).
 //! Optional `danger = N` (0 to 99, or `{ base, player }`) with
-//! `population` (creature ids), `population_count`, `stray`, `stray_pool`, `out_of_depth`,
+//! `population` (creature ids), `population_count`, `stray`, `stray_pool`, `above_danger`,
 //! `deeper`, `dread_one_in`, `neutral`, and `spawn`, as a dungeon branch gives them
 //! (`super::danger`): creatures of about that danger keep coming while the player is there; none on
 //! the overworld.
@@ -150,7 +150,7 @@ struct LevelFile {
     stray: Option<u8>,
     /// Where its strays come from; default: every type that may stray.
     stray_pool: Option<StrayPool>,
-    out_of_depth: Option<u8>,
+    above_danger: Option<u8>,
     deeper: Option<u8>,
     dread_one_in: Option<u16>,
     neutral: Option<u8>,
@@ -1192,7 +1192,7 @@ pub(super) fn parse_level(
         population_count: parsed.population_count,
         odds: OddsSpec {
             stray: parsed.stray,
-            out_of_depth: parsed.out_of_depth,
+            above_danger: parsed.above_danger,
             deeper: parsed.deeper,
             dread_one_in: parsed.dread_one_in,
             neutral: parsed.neutral,

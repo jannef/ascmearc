@@ -28,7 +28,7 @@ top = "steorratorr_top"
 generator = { kind = "tower" }
 traps = ["fireball", "lightning_bolt", "teleport", "pit"]
 traps_per_level = [5, 8]
-hidden_per_depth = 2
+hidden_danger_percent = 50
 danger = { base = 10, per_depth = 1 }
 population = [
     "brass_peacock", "quicksilver_hound", "gilded_likeness", "animated_blade", "animated_armour",

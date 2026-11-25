@@ -26,7 +26,7 @@ top = "drytorr_top"
 generator = { kind = "tower" }
 traps = ["arrow", "spear", "alarm", "pit"]
 traps_per_level = [5, 8]
-hidden_per_depth = 2
+hidden_danger_percent = 45
 danger = { base = 6, per_depth = 1 }
 population = [
     "animated_book", "animated_broom", "animated_candlestick", "animated_chair", "animated_coat_stand",

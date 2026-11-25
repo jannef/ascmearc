@@ -28,7 +28,10 @@ in words on the character creation steps (the `pace_slow` and `pace_quick` texts
 killing blow, or caused the status effect that killed (`Effect::by`), adds the first-kill bonus
 the first time a creature type pays (remembered by id in `WorldState::progress`, `Progress::
 discovered`, left out of the JSON while empty); `discover_level` from `World::travel` when the
-arrival made the level's state (the start level, the overworld, and local areas give none);
+arrival made the level's state, `arrival` × `Content::floor_danger(id, player_level)` (the
+danger read directly, never the depth or the item level, #2086: a player-scaled Pit's grows with
+the player, an endless branch's keeps rising; the start level, the overworld, local areas, and
+every level without a danger, the towns and crypts, give none);
 `[spell] per_level` (`Experience::spell_xp(level)`, paid in `World::learn_spell`, `world/magic/learn.rs`, the one place a spell joins `Actor::spells` by study or a lucky mishap; first time only, as `insert` is new); `grant_xp`, level-up messages queued in `World::news` and said after the attack's own, or at
 the end of `perceive` for a creature that bled to death and for an arrival. Discovery draws from
 no keyed stream (a Knowledge mark, `Use::Discover`, draws from the training stream:

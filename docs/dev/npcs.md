@@ -283,12 +283,15 @@ gnomes of Gimmwīc, a tag and no playable race) wins over its race's (`docs/dev/
 `race`). The authored line carries the accent; a register only swaps the few function words the
 renderer inserts into a line (`[registers.<name>]`), so a line reads as written. Finnish names
 its own dialects in `assets/lang/fi/lang.toml` (the owner's table, #1896): a translator writes a
-speaker's lines in the dialect the same rule gives them there.
+speaker's lines in the dialect the same rule gives them there. Finnish commoners speak the old
+Stadin slangi of 1920–1950s Helsinki (#2088), its Swedish and Russian loans used naturally and
+its case endings full, each speaker varying inside it (`docs/dev/localization.md` "Registers"
+says how it is written).
 
 How each register is written, the accent hinted and readability first:
 
 - **Cockney** (commoners) and **posh** (the rich, by station: a person of means, a patron, a
-  wizard who owns a tower).
+  wizard who owns a tower, a town's reeve or factor).
 - **Geordie** (dwarves and the duergar; #1391, the owner 2026-11-12): "howay", "hinny", "pet",
   "canny", "divvent" (don't), "aa" (I), "wor" (our), "ye knaa", "gan" (go), "noo" (now), "doon",
   "oot", "aboot", "nee" (no), "reet" (right), "marra" (mate), "gadgie" (man), "bairn", "wey aye"

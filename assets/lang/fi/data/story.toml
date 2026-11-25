@@ -169,7 +169,7 @@ the_dream = { text = "Näit kolmena yönä peräkkäin unta ovesta kukkulan alla
 [ascmearc.road]
 the_last_cart = { text = "Tulit Grægweallin yli viimeisillä kärryillä ennen lunta ja maksoit kyydin työllä.", of = "802fcc" }
 alone_on_foot = { text = "Tulit solan yli yksin ja jalan, lumi päivän perässäsi.", of = "b27cd9" }
-the_pedlar = { text = "Kävelit ylös kulkukauppiaan kanssa, joka puhui koko matkan ja myi sinulle huipulla veitsen kaksinkertaiseen hintaan. \"Sie tarviit tota siel minne meet\", hän sanoi, ja oli oikeassa.", of = "749f59" }
+the_pedlar = { text = "Kävelit ylös kulkukauppiaan kanssa, joka puhui koko matkan ja myi sinulle huipulla veitsen kaksinkertaiseen hintaan. \"Sä tarviit tota siellä, minne sä meet\", hän sanoi, ja oli oikeassa.", of = "749f59" }
 lost_to_the_snow = { text = "Lumi yllätti sinut ylätiellä ja vei reppusi; tulit Beorggeatin toista puolta alas pelkissä vaatteissasi ja uudella kunnioituksella säätä kohtaan.", of = "14c130" }
 the_drovers = { text = "Tulit ylös karjatietä mustan karjan ja sen ajajien kanssa, jotka maksoivat sinulle kuivalihalla ja lauluilla, joita sinun ei pitäisi toistaa.", of = "78d61b" }
 the_fire_that_should_not_burn = { text = "Solan huipulla vanha nainen istui nuotion ääressä, jonka ei olisi pitänyt palaa siinä tuulessa, ja sanoi, että tuhkan rajamaa tekisi sinusta tai tuhoaisi sinut. Hän antoi sinulle leipää matkaa varten.", of = "b908ea" }

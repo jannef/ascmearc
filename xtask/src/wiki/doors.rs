@@ -3,7 +3,7 @@
 use super::order;
 use super::util::{capital, glyph, percent_of};
 use ascmearc_core::check;
-use ascmearc_core::content::Content;
+use ascmearc_core::content::{Content, DungeonDef};
 use ascmearc_core::door;
 use std::fmt::Write as _;
 
@@ -39,7 +39,8 @@ pub(super) fn doors(content: &Content) -> String {
 const PICK_BONUSES: [i32; 7] = [0, 2, 4, 6, 8, 10, 12];
 
 /// How often a try picks a lock, by its difficulty and what the picker adds: a
-/// lock of the usual difficulty, then the usual lock deeper in each branch whose locks harden.
+/// lock of the usual difficulty, then the usual lock on each floor of the branches whose locks
+/// harden with the floor's danger.
 pub(super) fn lock_picking(content: &Content) -> String {
     let mut out = String::from("| Lock | Difficulty |");
     let mut rule = String::from("|---|:---:|");
@@ -54,11 +55,14 @@ pub(super) fn lock_picking(content: &Content) -> String {
     branches.sort_by(|a, b| a.name.cmp(&b.name));
     for def in branches
         .into_iter()
-        .filter(|d| d.plans().any(|p| p.locks_per_depth > 0))
+        .filter(|d| d.plans().any(|p| p.locks_danger_percent > 0))
     {
-        for depth in 2..=def.depth {
-            let place = def.level_name(depth);
-            rows.push((format!("Usual, on {place}"), usual + def.locks_at(depth)));
+        for depth in 1..=def.depth {
+            let (place, danger) = (def.level_name(depth), floor_danger(content, def, depth));
+            rows.push((
+                format!("Usual, on {place} (danger {danger})"),
+                usual + def.locks_at(depth, danger),
+            ));
         }
     }
     for (lock, difficulty) in rows {
@@ -69,6 +73,12 @@ pub(super) fn lock_picking(content: &Content) -> String {
         out.push('\n');
     }
     out
+}
+
+/// The danger of floor `depth` of branch `def`, for a player of level 1 (what makes its locks and
+/// hidden things harder).
+pub(super) fn floor_danger(content: &Content, def: &DungeonDef, depth: u32) -> u32 {
+    content.floor_danger(&def.level_id(depth), 1)
 }
 
 /// The keys and the locks they open.

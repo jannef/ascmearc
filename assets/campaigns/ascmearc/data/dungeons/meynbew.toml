@@ -31,7 +31,7 @@ ores = []
 danger = { base = 22, per_depth = 1 }
 population = ["earth_elemental", "basilisk", "greater_earth_elemental", "stone_giant", "stone_troll"]
 stray = 0
-out_of_depth = 0
+above_danger = 0
 population_count = { per_1000 = 25, least = 10, most = 30 }
 # A pocket of another plane keeps no trade, and no special room.
 shops = { chance = 0 }
