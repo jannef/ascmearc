@@ -41,7 +41,7 @@ use crate::perception::PerceptionView;
 use crate::rng::Rng;
 use crate::talent::TalentMods;
 use crate::world::items::stacks_arg;
-use crate::world::{ActorId, Deed, Speech, Spent, TopicView, World};
+use crate::world::{ActorId, Deed, Speech, Spent, TopicName, TopicView, World};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::collections::{BTreeMap, BTreeSet};
@@ -763,7 +763,8 @@ impl World {
         for def in self.content.quests() {
             let topic = || TopicView {
                 id: format!("{QUEST}{}", def.id),
-                name: def.name.clone().into(),
+                // Its name by its key (`quest:<id>.name`), so a translation names it (#2085).
+                name: TopicName::Line(data_line::quest(&def.id, "name")),
                 price: None,
                 items: None,
                 ware: None,
