@@ -389,6 +389,12 @@ id on another rarity than unique, and a unique without its id.
   every affix written with its value. They are meant for the low-chance drop pool (#196; #2004 / #2009 may
   move them to item level 40) and placed nowhere yet but the test world's quarry
   (`campaigns/showcase/levels/quarry.toml`), so tests and captures reach them.
+- **The Cracked Resurrection Stone** (#2098, `data/uniques/cracked_resurrection_stone.toml`): a
+  iron ring, item level 30, for the same drop pool (it drops by danger and item level, never
+  depth; placed nowhere yet but the quarry). Its Restore power (below, `{ restore = 50, radius =
+  10 }`); of Mending at 200 (its wearer's hit points come back three times as fast, past the
+  ladder's top of 50); and of Hunger at 25, the curse that binds it ("Curses": a temple's
+  `decurse` frees it).
 - **Powers**, a variant each, read in one place each: `Power::Inflict { hit, added }` rides
   `Mods::local` of the weapon into `Profile::on_hit` (`sharpen`), which `World::resolve` hands
   to `after_blow` after the natural attack's `on_hit` (`Mods::worn` never carries it: it is the
@@ -409,6 +415,18 @@ id on another rarity than unique, and a unique without its id.
   base's range plus what affixes add, times it, read by `Actor::launcher_range`,
   `Actor::throw_range`, and `Numbers::of` (talents add after). A creature's AI still judges
   its reach by its launcher's plain `range` (`world/creatures/ai.rs`), as it ignores Hunter's.
+  `Power::Restore { chance, radius }` (`{ restore = 50, radius = 10 }`, #2098): the one check
+  `World::restored` (`world/health/restore.rs`) runs where a death is decided, before anything
+  of it: `World::hurt` at 0 hit points (before Rise from the ashes, so the stone spends no
+  rising), and the deaths that skip `hurt` (Banishing smite's `unmake`, a disease's Toughness
+  run out, `creature_bursts`, choking in `eat::feed`; the Profane's taking, `profane_takes`, is
+  not a death of the body and stays the run's end). Anyone on the dying actor's level wearing
+  one whose radius (the fov's round radius, `radius2`; no line of sight) holds it, the dying
+  one too, makes one draw (`unique/restore`) at the first such wearer's chance; never for the
+  undead (`is_undead`). Restored: `hp` to `max_hp` and `cure_by_magic`; no `Died` event, no
+  death procedure (no corpse, loot, experience, kill tally, on-death effect, death screen); the
+  caller goes on as if it lived. Said: `uniques.restored_you`, `restored` (seen), or
+  `restored_unseen` (the player wears one and does not see the death); nothing otherwise.
   `magic::worn_powers` lists the powers of what an actor has equipped.
 - **Description**: `describe::lines` adds `LineKind::Power` (the `phrase`) and
   `LineKind::Lore` after the affixes, only through `known_magic`; the UI labels the first
@@ -424,7 +442,9 @@ id on another rarity than unique, and a unique without its id.
   Bleeding by its chance on its keyed stream, the
   Bedes' darkvision on and off and under the dev override, the Turncoat's ward, the Radiant's
   light on and off and on a creature, Silverstrike's doubled range, the load's checks of both
-  powers, a save); the
+  powers, a save), `world/health/restore_tests.rs` (Restore: the wearer, an ally, a foe, a
+  creature wearer; the undead and beyond the radius; no experience or loot; each death rolled
+  anew at half; the stone's curse; never rolled); the
   item description's text snapshots `unique-description` and `unique-description-unidentified`
   (the quarry's Stonebiter, the test world's unique). Tests that strip statuses or skills
   remove `campaigns/ascmearc/data/uniques` with them.

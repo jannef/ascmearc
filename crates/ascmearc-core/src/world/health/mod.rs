@@ -25,6 +25,7 @@ mod magic_heal;
 pub(in crate::world) mod pipe;
 pub(in crate::world) mod potion;
 mod regen;
+mod restore;
 pub(in crate::world) mod rot;
 mod status;
 cfg_if! {
@@ -50,6 +51,7 @@ cfg_if! {
         mod potion_status_tests;
         mod potion_tests;
         mod potion_utility_tests;
+        mod restore_tests;
         mod rot_tests;
         mod second_breakfast_tests;
         mod smoke_tests;

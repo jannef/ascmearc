@@ -22,6 +22,11 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "cracked_resurrection_stone",
+        30,
+        &[("of_mending", 200), ("of_hunger", 25)],
+    ),
+    (
         "eorcanstan",
         12,
         &[

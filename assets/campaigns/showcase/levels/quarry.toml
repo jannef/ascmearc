@@ -80,6 +80,11 @@ objects = ["unique:silverstrike", "arrow*20"]
 at = [9, 11]
 objects = ["unique:radiant"]
 
+# The Cracked Resurrection Stone (#2098), for the same pool: a cursed ring that undoes deaths.
+[[pile]]
+at = [11, 11]
+objects = ["unique:cracked_resurrection_stone"]
+
 # Stones from the old digging, to throw.
 [[pile]]
 at = [23, 4]

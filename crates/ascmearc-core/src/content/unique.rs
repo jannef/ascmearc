@@ -48,6 +48,12 @@ pub enum Power {
     /// its range and what its affixes add, read where its reach is computed
     /// ([`crate::magic::Mods::local`], `Mods::range`); only on a base with a `range`.
     Range(u8),
+    /// Whatever dies within `radius` cells of its wearer (the wearer too; plain distance, the
+    /// fov's round radius, no line of sight) is restored to full health instead, by `chance` in
+    /// a hundred, each death rolled anew; never the undead (`{ restore = 50, radius = 10 }`,
+    /// #2098): read where a death is decided ([`crate::world::World`]'s `restored`, from
+    /// `World::hurt` and the deaths that skip it).
+    Restore { chance: u8, radius: u8 },
     /// Its wearer sees with this vision profile (an index into
     /// [`Content::vision_profiles`]) where it is better than their own (`{ vision =
     /// "darkvision" }`): read where an actor's eyes are chosen.
@@ -152,6 +158,10 @@ struct PowerSpec {
     light: Option<String>,
     /// How many times as far it shoots (2 or more).
     range: Option<u8>,
+    /// The chance in a hundred that a death near its wearer is undone.
+    restore: Option<u8>,
+    /// How far from its wearer a death is undone (`restore` only).
+    radius: Option<u8>,
     phrase: String,
 }
 
@@ -227,7 +237,7 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
 
 /// The power a `power` table names on base item `def`: exactly one of `inflict` (with `chance`
 /// and `severity`, and perhaps `added`), `vision`, `ward` (with a `message`), `light`, and
-/// `range` (2 or more, on a base with a range).
+/// `range` (2 or more, on a base with a range), and `restore` (with a `radius`).
 fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, String> {
     let named = [
         p.inflict.is_some(),
@@ -235,9 +245,16 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         p.ward.is_some(),
         p.light.is_some(),
         p.range.is_some(),
+        p.restore.is_some(),
     ];
     if named.iter().filter(|&&n| n).count() != 1 {
-        return Err("power: name one of `inflict`, `vision`, `ward`, `light`, and `range`".into());
+        return Err(
+            "power: name one of `inflict`, `vision`, `ward`, `light`, `range`, and `restore`"
+                .into(),
+        );
+    }
+    if p.restore.is_none() && p.radius.is_some() {
+        return Err("power: `radius` belongs to `restore`".into());
     }
     if p.inflict.is_none() && (p.chance.is_some() || p.severity.is_some() || p.added.is_some()) {
         return Err("power: `chance`, `severity`, and `added` belong to `inflict`".into());
@@ -282,6 +299,13 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
             return Err("power: `range` needs a base that shoots or is thrown (a `range`)".into());
         }
         return Ok(Power::Range(times));
+    }
+    if let Some(chance) = p.restore {
+        if !(1..=100).contains(&chance) {
+            return Err("power: `restore` is a chance in a hundred, 1 to 100".into());
+        }
+        let radius = p.radius.ok_or("power: `restore` needs a `radius`")?;
+        return Ok(Power::Restore { chance, radius });
     }
     if let Some(vision) = &p.vision {
         let index = (content.vision_index(vision))
