@@ -562,7 +562,7 @@ pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> Msg {
     let by = |id: MessageId| Msg::new(id).role("v", num(v));
     // A dice family's value is its dice's sides, its tier's `dice` how many: `1d8`, `2d10`.
     let dice = |id: MessageId| {
-        let count = rolled.def.tier(rolled.tier).map_or(1, |t| t.dice);
+        let count = rolled.dice;
         Msg::new(id).role("dice", Arg::notation(format!("{count}d{v}")))
     };
     match effect {
@@ -587,6 +587,8 @@ pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> Msg {
         Effect::Draw => by(msg::describe::DOES_DRAW),
         Effect::Durability => by(msg::describe::DOES_DURABILITY),
         Effect::Bane => by(msg::describe::DOES_BANE).role("bane", bane_of(rolled)),
+        // A unique's penalty (#2091: the Grandmother's −2).
+        Effect::Parry if v < 0 => Msg::new(msg::describe::DOES_PARRY_LESS).role("v", num(-v)),
         Effect::Parry => by(msg::describe::DOES_PARRY),
         Effect::Armour => by(msg::describe::DOES_ARMOUR),
         Effect::Protection => by(msg::describe::DOES_PROTECTION),

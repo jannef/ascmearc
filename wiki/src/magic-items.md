@@ -312,8 +312,10 @@ and [item level](affixes.md#base-items) are set by hand. Its name is shown in go
 also has a **power**, a rule of its own that no affix gives.
 
 Its affixes may go past what loot ever rolls: a value above an affix's highest
-[tier](affixes.md), or an affix on a kind of item it never rolls on (High Toby, a bow, has +2
-damage). The table below marks such an affix "set" where the others name their tier.
+[tier](affixes.md), more dice than any tier gives (the Grandmother's 6d6), a penalty (her −2 to
+Parry), or an affix on a kind of item it never rolls on (High Toby, a bow, has +2 damage; the
+Radiant, a hammer, has +2 Protection). The table below marks such an affix "set" where the
+others name their tier. No random item, shop's ware, or enchantment ever gets one of these.
 
 It is found unidentified like any magic item, but its rarity shows ("a stiletto (unique)"). Its
 affixes work as a rare item's do. A [shop](shops.md#magic-items) prices it as a rare item, but by its own item level instead of its affixes' tiers. Once identified, it shows its

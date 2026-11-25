@@ -1703,7 +1703,7 @@ mod tests {
             "who carries Widowmaker"
         );
         assert!(!uniques.contains("Stonebiter"));
-        assert!(uniques.contains("| Silverstrike | Long war bow | 12 |"));
+        assert!(uniques.contains("| Silverstrike | Long war bow | 40 |"));
         assert!(text("lights.md").contains("| The Radiant, wielded (unique) | 20 cells |"));
         assert!(
             text("lights.md")

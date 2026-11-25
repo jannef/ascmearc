@@ -890,8 +890,10 @@ impl Actor {
                 continue;
             };
             let object = content.object(stack.object);
-            // The body armour: the piece worn with the most Protection.
-            let protection = stack.protection(content);
+            // The body armour: the piece worn with the most Protection. A weapon's (a unique's,
+            // the Radiant's) adds to the sum above but is no piece of armour.
+            let armour = object.kind.is_some_and(|k| k.is_armour());
+            let protection = if armour { stack.protection(content) } else { 0 };
             if protection > 0 && body.is_none_or(|b| protection > b) {
                 body = Some(protection);
             }
@@ -991,7 +993,12 @@ impl Actor {
             let Some(stack) = self.inventory.get(item) else {
                 continue;
             };
-            let pv = stack.protection(content);
+            // Armour soaks; a weapon's Protection (the Radiant's) is no armour to name.
+            let armour = content
+                .object(stack.object)
+                .kind
+                .is_some_and(|k| k.is_armour());
+            let pv = if armour { stack.protection(content) } else { 0 };
             if pv > 0 && best.is_none_or(|(b, _)| pv > b) {
                 best = Some((pv, stack.object));
             }

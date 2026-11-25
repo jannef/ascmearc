@@ -94,6 +94,7 @@ does_max_mana = { text = "+{v:bare} manan enimmäismäärään", of = "1b78b8" }
 does_move_speed = { text = "liikut {speed:bare}", of = "017d5f" }
 does_natural = { text = "luontainen panssari +{v:bare}", of = "bfb705" }
 does_parry = { text = "asetorjunta +{v:bare}", of = "a87ec5" }
+does_parry_less = { text = "asetorjunta −{v:bare}", of = "245d3b" }
 does_potion_kept = { text = "juoma jää käyttämättä {v:bare} %:ssa kerroista", of = "e510b4" }
 does_proof = { text = "mikään ei voi vahingoittaa sitä", of = "b76b4b" }
 does_protection = { text = "suojaus +{v:bare}", of = "783c58" }

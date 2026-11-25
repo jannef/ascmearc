@@ -157,7 +157,7 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     // The drop pool's three (#1976, the shared table first), the criminals' four, the pedlar's
     // three (#808), and Sigeric's (#1787), each with its power.
     let powers: Vec<(&str, &str)> = (content.uniques())
-        .filter(|u| u.stack.magic().is_some_and(|m| m.level == 12))
+        .filter(|u| u.stack.magic().is_some_and(|m| m.level >= 12))
         .map(|u| {
             let power = match u.power.as_ref().expect("a power") {
                 Power::Inflict { .. } => "inflict",
@@ -282,14 +282,16 @@ fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
     // A bow takes flat damage set by hand, though Sharp never rolls on one.
     load("long_bow", "\"sharp=2\"").expect("an effect a bow's shots use");
     for (object, affixes, needle) in [
-        ("gold_ring", "\"mystic=-3\"", "no tier of `mystic` rolls it"),
+        // A penalty (`mystic=-3`, #2091) is a unique's to set; nothing is no value.
+        ("gold_ring", "\"mystic=0\"", "no tier of `mystic` rolls it"),
         ("gold_ring", "\"mystic=1\"", "no tier of `mystic` rolls it"),
         ("gold_ring", "\"mystic=x\"", "must be a number"),
         ("gold_ring", "\"mystic:2\"", "not a tier"),
         ("gold_ring", "\"mystic\"", "not a tier"),
         ("gold_ring", "\"nothing=3\"", "unknown affix"),
         ("dagger", "\"heavy=8\"", "the value is dice"),
-        ("dagger", "\"heavy=3d8\"", "no tier of `heavy` rolls 3 dice"),
+        // More dice than a tier (`heavy=3d8`, #2091) are a unique's to set; fewer sides not.
+        ("dagger", "\"heavy=1d1\"", "no tier of `heavy` rolls it"),
         ("dagger", "\"heavy=2d6\"", "no tier of `heavy` rolls it"),
         ("dagger", "\"sharp=1d4\"", "must be a number"),
         ("gold_ring", "\"of_light=3\"", "a light's value is a light"),
