@@ -3037,7 +3037,9 @@ mod tests {
         let mut stale = last_talk(&game.last_outcome).expect("talk").clone();
         stale.topics.push(ascmearc_core::world::TopicView {
             id: "wares".into(),
-            name: "Your wares".into(),
+            name: ascmearc_core::world::TopicName::Line(
+                "dialogue:ascmearc.pedlar.offer_name".into(),
+            ),
             price: Some(340),
             items: None,
             ware: Some(ascmearc_core::lang::Arg::text("A ring")),

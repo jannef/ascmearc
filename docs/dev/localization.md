@@ -1166,7 +1166,9 @@ own words (its footer, the keys after an option); every title, question, and opt
 caller's, from `step_dialogs.toml`, `dialogue_screen.toml`, and `parting.toml`. A topic the rules
 make is a `TopicName` (core), worded by the screen: a quarrel's `Side` and `Refuse` with the
 wizard as a phrase (`{who:poss}`, `{who:the}`), and the partner's invest and withdraw rows; one
-the data names stays `Text`. `PartingView` holds the wizard as a phrase and the choices' ids.
+the data names is a `Line` by its key: a dialogue's topic, service, or offer, and a quest's topic,
+its `quest:<id>.name` (#2085). `TopicName` has no variant for text, so no topic name reaches the
+screen untranslated, and the lang check's `--strict` asks every key of a translation. `PartingView` holds the wizard as a phrase and the choices' ids.
 The speaker, a feature (`terrain:`), a trap (`trap:`), a burst (`word:`), and a scroll (`object:`) are
 phrases; a shopkeeper is a name (text), a shop's sign a line of data (`step_dialogs.rs::sign`, from the run's content). The
 sign reveal's date is a message (`BirthDate::arg`, "Names kept in saves"); its sign name and

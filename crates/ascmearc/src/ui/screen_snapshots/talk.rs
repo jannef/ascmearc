@@ -62,6 +62,15 @@ cases! {
         screen: Some("dialogue"),
         ..BASE
     },
+    // The same in Finnish (#2085): a quest's topic is named by its key, as the others are.
+    dialogue_guild_fi: Case {
+        name: "dialogue-guild-fi",
+        scenario: "ceaptun",
+        actions: "move:E*26 move:S*4 move:E*9 open:S move:S*5 chat:S",
+        screen: Some("dialogue"),
+        lang: Some("fi"),
+        ..BASE
+    },
     // Cēaptūn's smith, Eadric, the smithy's keeper (#1394): his topics, then Metalcraft taught
     // for 2000 gold.
     dialogue_smith: Case {

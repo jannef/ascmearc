@@ -59,6 +59,8 @@ pub(super) struct Case {
     pub(super) status_bar: bool,
     /// The UI console's size (columns, rows).
     pub(super) size: (u32, u32),
+    /// The language shown (`--lang`, a folder under `assets/lang/`); none: English.
+    pub(super) lang: Option<&'static str>,
 }
 
 pub(super) const BASE: Case = Case {
@@ -77,6 +79,7 @@ pub(super) const BASE: Case = Case {
     graveyard: None,
     status_bar: false,
     size: (100, 30),
+    lang: None,
 };
 
 /// A graveyard of twelve, two of them turned to stone.
@@ -292,6 +295,8 @@ pub(super) fn start(case: &Case, content: Arc<Content>) -> App {
     argv.extend(save_dir.iter().flat_map(|d| ["--save-dir", d.as_str()]));
     argv.extend(config_dir.iter().flat_map(|d| ["--config-dir", d.as_str()]));
     let args = Args::parse_from(argv);
+    // On this thread, for this case only: the next case run here starts in its own language.
+    crate::ui::text::use_language(case.lang.unwrap_or("en"));
 
     let game = (case.run || !case.actions.is_empty()).then(|| {
         let kit = case.kit || case.character.is_some();
