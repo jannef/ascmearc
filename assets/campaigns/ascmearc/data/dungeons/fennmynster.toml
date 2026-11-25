@@ -14,11 +14,11 @@ depth = 8
 generator = { kind = "minster" }
 size = [100, 40]
 traps = ["pit", "frost", "alarm", "teleport"]
-# The monks hid their stores: more secret doors than the other dungeons, hidden things one harder
-# to find each level down, and locks one harder a level.
+# The monks hid their stores: more secret doors than the other dungeons, and hidden things and
+# locks harder by more than half the floor's danger.
 secret_doors = [1, 3]
-hidden_per_depth = 1
-locks_per_depth = 1
+hidden_danger_percent = 60
+locks_danger_percent = 60
 # A floor is about three times a rooms floor of 80x21: so is its loot.
 loot = [5, 10]
 key = "iron_key"

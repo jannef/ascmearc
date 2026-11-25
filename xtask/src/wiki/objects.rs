@@ -311,6 +311,64 @@ pub(super) fn restock(content: &Content) -> String {
     out
 }
 
+/// The levels of the goods that are no base item a general store lays out, by its item level
+/// (`data/shops.toml` `reach`, `floor`, `staples`; #2089): for each class whose goods have
+/// levels, the least and the most, staples aside; then the staples.
+pub(super) fn shop_levels(content: &Content) -> String {
+    let Some(shops) = content.shops() else {
+        return String::new();
+    };
+    let Some(store) = shops.id("general_store") else {
+        return String::new();
+    };
+    let stock = &shops.get(store).stock;
+    let graded = |class: ItemClassId| {
+        (0..content.object_defs().len())
+            .map(|o| ObjectId(o as u16))
+            .filter(|&o| shops.stocks(content, store, o))
+            .map(|o| content.object(o))
+            .any(|d| d.class == class && d.kind.is_none() && d.level > 1)
+    };
+    let classes: Vec<ItemClassId> = stock.iter().copied().filter(|&c| graded(c)).collect();
+    let mut out = String::from("| Item level |");
+    for &c in &classes {
+        let _ = write!(out, " {} |", content.item_class(c).name);
+    }
+    out.push_str("\n|---:|");
+    out.push_str(&"---|".repeat(classes.len()));
+    out.push('\n');
+    for level in [1u8, 3, 6, 10, 15, 20, 30, 40] {
+        let goods = shops.goods(content, store, level);
+        let _ = write!(out, "| {level} |");
+        for &c in &classes {
+            let levels: Vec<u8> = (goods.iter())
+                .map(|&(o, _)| (o, content.object(o)))
+                .filter(|(o, d)| d.class == c && !shops.staples.contains(o))
+                .map(|(_, d)| d.level.max(1))
+                .collect();
+            let (lo, hi) = (levels.iter().min(), levels.iter().max());
+            let cell = match (lo, hi) {
+                (Some(lo), Some(hi)) if lo == hi => lo.to_string(),
+                (Some(lo), Some(hi)) => format!("{lo} to {hi}"),
+                _ => "none".to_string(),
+            };
+            let _ = write!(out, " {cell} |");
+        }
+        out.push('\n');
+    }
+    let staples: Vec<String> = (shops.staples.iter())
+        .map(|&o| content.object(o).plural.clone())
+        .collect();
+    if !staples.is_empty() {
+        let _ = writeln!(
+            out,
+            "\nAt every item level, any shop that sells them: {}.",
+            and_list(&staples)
+        );
+    }
+    out
+}
+
 /// What magic adds to an item's worth (`data/rules/magic_worth.toml`): by rarity, then by each
 /// identified affix's tier level (a unique's by its own), through item level 40.
 pub(super) fn magic_worth(content: &Content) -> String {

@@ -29,7 +29,9 @@ secret_door }`, `Content::search()`; optional, `SearchRules::default` without it
 Spot, and Detect traps skills' benefits in `data/skills/` (`skills::Effect::Search`,
 `SearchReach`, `Spot`, `DetectTraps`; marks on `Use::Search`, `Use::Spot`, `Use::FindTrap`), races' `passive_search` (`PassiveSearch::{All,
 Stone, Traps}`) and `search` bonus (`RaceDef`), terrain `stone`, traps' `difficulty` and `sign`
-(`TrapDef`), branches' `secret_doors` and `hidden_per_depth` (`DungeonDef::hidden_at`).
+(`TrapDef`), branches' `secret_doors` and `hidden_danger_percent` (`DungeonDef::hidden_at`: that
+percent of the floor's danger, `Content::floor_danger` for the player's level, rounded down;
+the danger, never the depth, #2094).
 
 **Secret doors** are per-cell ground truth beside the wall they look like, like locks:
 `content::Secret { door, difficulty }` in `LevelTemplate::secrets` and `LevelState::secrets`
@@ -49,7 +51,7 @@ where the map had `+`.
 
 **The rules** are `world/skills/search.rs`: `hidden_near(reach)` (the hidden features within reach,
 never the player's own cell, in position order; beyond the adjacent cells only those in line of
-sight), `difficulty_of` (own difficulty + `hidden_at(depth)`), `search_modifier(Look, Hidden)` (the
+sight), `difficulty_of` (own difficulty + `hidden_at(depth, danger)`), `search_modifier(Look, Hidden)` (the
 effective Intelligence or Willpower modifier, the skill effect through `Actor::skill_effect`,
 Detect traps' for a trap, the race's `search`, the passive penalty), `notices(at, hidden)` (Spot
 trained via `Skills::trains_effect(Effect::Spot)`, for a trap Detect traps, else the race's `passive_search`, `stone` read from the

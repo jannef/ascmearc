@@ -32,9 +32,10 @@ Part of the design document; the index is [`specification.md`](../specification.
 ## Danger and spawning
 
 - Every level has a danger, 0 where none is given. Nothing is drawn or spawns at 0.
-- A draw weighs creature types by how near their level is to the danger, times their rarity. Some draws are strays (from anything the campaign knows) or out of depth (deeper than the floor, reaching further at lower odds, with no cap).
+- A draw weighs creature types by how near their level is to the danger, times their rarity. Some draws are strays (from anything the campaign knows) or out of depth (above the floor's danger, reaching further at lower odds, with no cap).
 - The owner's rule: "anything may come at astronomical odds; that is where the stories come from."
-- Dread monsters come at one draw in N, set by the place and rising deeper.
+- Dread monsters come at one draw in N, set by the place and rising with its danger.
+- A branch floor's locks and hidden things (secret doors, hidden traps) are harder by the branch's share of the floor's danger. Gameplay reads the danger, never the depth; depth only lays out the world (#2094).
 - A unique type is met once a run.
 - A level with a danger starts full and refills slowly toward a cap, out of the player's sight. Floors the player is not on are frozen.
 - The odds are hidden in the game; the wiki gives every one.
@@ -65,7 +66,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Unpaid goods cannot be shot or thrown.
 - The Steal skill takes from a keeper's pack, never from the shop floor.
 - Generated shops appear only on rooms and mines levels, in a single-door room (a mine's worked chamber) other than the arrival's. Each branch has its own odds, kinds, and keepers. A town's own kinds are never generated.
-- Every shop restocks as the player gains a level: a few goods go, a few of its kind come, their magic made at an item level that climbs slowly with the player's level, the item level (the danger) of a shop's floor outside a town, and its town's trade (quests done, a merchant's stake). A base item comes only once that item level reaches its own, as in loot, so a starting town sells no plate. Each level gained counts once, wherever the player is, and the result does not depend on when they look. The game says it only through the townsfolk's talk of hard and better times (#1735).
+- Every shop restocks as the player gains a level: a few goods go, a few of its kind come, their magic made at an item level that climbs slowly with the player's level, the item level (the danger) of a shop's floor outside a town, and its town's trade (quests done, a merchant's stake). A base item comes only once that item level reaches its own, as in loot, so a starting town sells no plate; a potion, scroll, wand, or rod comes once the item level is within two of its own and leaves once it is under half the item level (or half its kind's highest level, if lower), healing, the cures, and identify aside (#2089), and what a shop no longer stocks leaves first. Each level gained counts once, wherever the player is, and the result does not depend on when they look. The game says it only through the townsfolk's talk of hard and better times (#1735).
 
 ## Special rooms
 

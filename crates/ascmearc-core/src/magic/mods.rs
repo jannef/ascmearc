@@ -240,7 +240,7 @@ impl Mods {
             if rolled.def.effect.is_local_on(kind) == local {
                 let tier = rolled.def.tier(rolled.tier);
                 let light = tier.and_then(|t| t.light);
-                let dice = tier.map_or(1, |t| t.dice);
+                let dice = rolled.dice;
                 // A curse works its effect the other way (#1754): hunger faster, heavier, slower.
                 let value = match rolled.def.cursed {
                     true => -rolled.value,

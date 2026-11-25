@@ -6,7 +6,7 @@
 //! **breaches** of sealed rooms (a greater treasure room's), a wall like
 //! any other until found, at the secret doors' difficulty. Each has a
 //! **difficulty**: the trap type's, or the secret door's own, plus on a dungeon branch its
-//! `hidden_per_depth` for each level below the first. Two checks find them ([`crate::check`]: 2d12
+//! `hidden_danger_percent` of the floor's danger. Two checks find them ([`crate::check`]: 2d12
 //! plus a modifier against the difficulty):
 //!
 //! - **Searching** ([`crate::Action::Search`]): each turn of it (the `search` action, and the
@@ -118,7 +118,7 @@ impl World {
     }
 
     /// What finding `hidden` takes: its own difficulty, plus on a branch
-    /// level the branch's `hidden_per_depth` for each level below the first.
+    /// level the branch's `hidden_danger_percent` of the floor's danger.
     pub(in crate::world) fn difficulty_of(&self, hidden: Hidden) -> i32 {
         let own = match hidden {
             Hidden::Door(difficulty) => i32::from(difficulty),
@@ -128,9 +128,11 @@ impl World {
             }),
             Hidden::Hollow => i32::from(self.content.search().secret_door),
         };
-        let deeper = (self.content.branch_level(&self.state.current_level))
-            .map_or(0, |(def, depth)| def.hidden_at(depth));
-        own.saturating_add(deeper)
+        let here = &self.state.current_level;
+        let danger = self.content.floor_danger(here, self.player_level());
+        let harder = (self.content.branch_level(here))
+            .map_or(0, |(def, depth)| def.hidden_at(depth, danger));
+        own.saturating_add(harder)
     }
 
     /// What finding `hidden` takes the player: its difficulty, a hidden trap less the

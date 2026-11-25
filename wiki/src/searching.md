@@ -73,7 +73,9 @@ of difficulty 14 on about 46% of their turns of searching, so ten turns all but 
 
 {{#include generated/search-features.md}}
 
-Deeper in a dungeon, everything hidden is harder to find. [Generated dungeons](dungeons.md) hide
+On a more dangerous floor, everything hidden is harder to find: each
+branch adds its own share of the floor's danger, rounded down, to every hidden thing's
+difficulty. The table below gives every floor. [Generated dungeons](dungeons.md) hide
 a door or two on each level of rooms. They only hide [doors](doors.md) you can do without: you can
 always reach the [stairs](terrain.md#stairs) and the [keys](doors.md#keys) without finding any.
 Behind a [secret door](doors.md#secret-doors) there may be a room nobody has entered in a long

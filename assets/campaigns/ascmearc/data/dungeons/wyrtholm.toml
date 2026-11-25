@@ -14,7 +14,7 @@ depth = 4
 generator = { kind = "caves" }
 size = [100, 40]
 traps = ["pit", "alarm"]
-hidden_per_depth = 1
+hidden_danger_percent = 25
 loot = [2, 4]
 # The fen's damp cold.
 temperature = 9
