@@ -17,10 +17,10 @@ generator = { kind = "rooms" }
 size = [80, 21]
 traps = ["arrow", "spear", "pit", "frost", "lightning_bolt", "alarm", "teleport"]
 # The gnomes hide their ways as well as they cut them: more secret doors than the duergar's mine,
-# harder to find the deeper they go, and locks as hard as Fyrdelf's.
+# harder to find the more dangerous the floor, and hard locks.
 secret_doors = [1, 3]
-hidden_per_depth = 2
-locks_per_depth = 2
+hidden_danger_percent = 55
+locks_danger_percent = 55
 loot = [3, 6]
 key = "brass_key"
 temperature = 12

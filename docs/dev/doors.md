@@ -32,7 +32,9 @@ the trap with a door kicked in. **Picking locks** (#233) is `world/skills/lockpi
 #684 took the thief's Pick lock: the thief trains Open lock; `Ability::had_by`), a `crate::check` of the Dexterity modifier plus
 `skill_effect(Effect::Pick)` against `World::lock_difficulty` (the lock's own
 `Lock::difficulty`, `door::LOCK_DIFFICULTY` 14 unless a legend's `lock_difficulty` gives one,
-plus the floor's `DungeonDef::locks_at`, from its plan's `locks_per_depth` in `dungeons.toml`); both prices
+plus the floor's `DungeonDef::locks_at(depth, danger)`: its plan's `locks_danger_percent` in
+`dungeons.toml` of the floor's danger, `Content::floor_danger` for the player's level, rounded
+down; the danger, never the depth, #2094); both prices
 are taken before the check, `Use::Pick` trains Open lock, and a picked lock is removed and the
 door opened by `swing_open` (so a trapped door's trap goes off at the picker); a failure changes
 nothing, so trying again is free but for time. The ability is `Ability::PickLock`

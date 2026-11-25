@@ -35,7 +35,7 @@ population = ["lemure", "dretch", "imp", "quasit", "hell_hound", "bearded_devil"
   "mezzoloth", "balgura", "barbed_devil", "incubus", "succubus", "chasme", "canoloth", "hezrou",
   "bone_devil", "night_hag", "vrock", "nycaloth", "erinyes"]
 stray = 0
-out_of_depth = 10
+above_danger = 10
 # A forgotten floor keeps no trade, as Grundlēas's.
 shops = { chance = 0 }
 room_effects = { chance = 0 }

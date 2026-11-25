@@ -50,8 +50,10 @@ key.
   Dexterity is over 10, rounded down: 14 gives +2, 18 gives +4, 8 gives −1. Two ones always fail
   and two twelves always work.
 - **Locks** are of difficulty 14 unless the place says otherwise; a vault's or a level's lock may
-  be harder or easier. In a [generated dungeon](dungeons.md), each level down makes a lock one
-  harder: 15 on the second level, 21 on the eighth.
+  be harder or easier. In a [generated dungeon](dungeons.md), a lock is harder the more
+  dangerous the floor: each branch adds its own share of the floor's danger,
+  rounded down. In Fyrdelf it adds a little more than the danger itself, so a lock on its last
+  floor, at danger 16, is of difficulty 31. The table below gives every floor.
 - **A try takes 12 seconds** at a [normal pace](turns.md#what-actions-cost), whatever comes of it.
   If it fails, `You fail to pick the lock.` and the door stays locked. You may try again as often
   as you like. Only time is lost, and nothing about the lock changes.

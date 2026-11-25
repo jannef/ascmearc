@@ -15,11 +15,11 @@ depth = 12
 generator = { kind = "mines" }
 size = [100, 36]
 traps = ["arrow", "spear", "fireball", "lightning_bolt", "alarm"]
-# Few secret doors (the duergar dig, they do not hide), hidden things harder to find deeper down,
-# and the hardest locks of the three dungeons.
+# Few secret doors (the duergar dig, they do not hide), hidden things harder to find the more
+# dangerous the floor, and the hardest locks of the three dungeons.
 secret_doors = [0, 2]
-hidden_per_depth = 1
-locks_per_depth = 2
+hidden_danger_percent = 55
+locks_danger_percent = 110
 loot = [3, 5]
 key = "brass_key"
 temperature = 10

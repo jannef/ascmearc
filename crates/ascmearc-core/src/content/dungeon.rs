@@ -61,8 +61,8 @@
 //! traps = ["arrow", "pit"]      # traps generators may hide; default none
 //! traps_per_level = [2, 4]      # how many a level gets, at least and at most; default [2, 4]
 //! secret_doors = [0, 2]         # doors hidden on each level; default none
-//! hidden_per_depth = 1          # hidden features this much harder to find per level down
-//! locks_per_depth = 1           # locks this much harder to pick per level down
+//! hidden_danger_percent = 50    # hidden features harder to find by this percent of the danger
+//! locks_danger_percent = 50     # locks harder to pick by this percent of the floor's danger
 //! loot = [2, 4]                 # items of loot on each level's floor; default none
 //! chests = { chance = 20, count = [1, 1] } # chests a floor gets; the default
 //! ambient = [0, 0, 0, 0]        # optional
@@ -73,7 +73,7 @@
 //! population_count = 40         # come back; the danger is also its loot's item level
 //! stray = 5                    # the draws' odds (`super::danger::Odds`); default
 //! stray_pool = "populations"    # strays only from populations; default "all"
-//! out_of_depth = 5             # data/dungeons.toml's `[defaults]`
+//! above_danger = 5             # data/dungeons.toml's `[defaults]`
 //! deeper = 5
 //! dread_one_in = 100            # one draw in this many among the dread types
 //! spawn = { every = "15m", chance = 60 }
@@ -97,7 +97,7 @@
 //! caves = 15                    # percent of floors made by `caves_level`, the rest the template
 //! caves_level = { generator = { kind = "caves" }, size = [100, 40] }  # the level fields the
 //!                               # caves floors change, over the template
-//! dread = { steps = [[70, 40]], halves = 10, least = 5 }   # `dread_one_in` by depth
+//! dread = { steps = [[70, 40]], halves = 10, least = 5 }   # `dread_one_in` by danger
 //!                               # (`super::dread`), as `[[dungeon.levels]]` give it elsewhere
 //!
 //! [dungeon.portal]              # with `depth`: a branch of Pits (no `endless`, no `below`)
@@ -222,8 +222,8 @@ struct LevelSpec {
     traps: Option<Vec<String>>,
     traps_per_level: Option<[u32; 2]>,
     secret_doors: Option<[u32; 2]>,
-    hidden_per_depth: Option<u8>,
-    locks_per_depth: Option<u8>,
+    hidden_danger_percent: Option<u16>,
+    locks_danger_percent: Option<u16>,
     /// The only ores its walls give a miner (`data/mining.toml`); none: every ore.
     ores: Option<Vec<String>>,
     /// How dangerous its floors are, and their loot's item level; every floor needs one.
@@ -234,7 +234,7 @@ struct LevelSpec {
     stray: Option<u8>,
     /// Where its strays come from; default: every type that may stray.
     stray_pool: Option<StrayPool>,
-    out_of_depth: Option<u8>,
+    above_danger: Option<u8>,
     deeper: Option<u8>,
     dread_one_in: Option<u16>,
     /// Neutral animals' weight in percent; default `[defaults]`'s.
@@ -278,15 +278,15 @@ impl LevelSpec {
             traps: self.traps.clone().or_else(|| under.traps.clone()),
             traps_per_level: self.traps_per_level.or(under.traps_per_level),
             secret_doors: self.secret_doors.or(under.secret_doors),
-            hidden_per_depth: self.hidden_per_depth.or(under.hidden_per_depth),
-            locks_per_depth: self.locks_per_depth.or(under.locks_per_depth),
+            hidden_danger_percent: self.hidden_danger_percent.or(under.hidden_danger_percent),
+            locks_danger_percent: self.locks_danger_percent.or(under.locks_danger_percent),
             ores: self.ores.clone().or_else(|| under.ores.clone()),
             danger: self.danger.or(under.danger),
             population: self.population.clone().or_else(|| under.population.clone()),
             population_count: self.population_count.or(under.population_count),
             stray: self.stray.or(under.stray),
             stray_pool: self.stray_pool.or(under.stray_pool),
-            out_of_depth: self.out_of_depth.or(under.out_of_depth),
+            above_danger: self.above_danger.or(under.above_danger),
             deeper: self.deeper.or(under.deeper),
             dread_one_in: self.dread_one_in.or(under.dread_one_in),
             neutral: self.neutral.or(under.neutral),
@@ -339,7 +339,7 @@ struct EndlessSpec {
     caves_level: Option<LevelSpec>,
     #[serde(default)]
     boss: Vec<BossSpec>,
-    /// `dread_one_in` by depth (`super::dread`).
+    /// `dread_one_in` by the floor's danger (`super::dread`).
     dread: Option<DreadCurveSpec>,
 }
 
@@ -636,12 +636,12 @@ pub struct LevelPlan {
     /// How many of its doors are hidden (secret doors), at least and
     /// at most: only doors the level can do without, so it may get fewer.
     pub secret_doors: [u32; 2],
-    /// How much harder its hidden features (secret doors, hidden traps) are to find
-    /// for each level below the first ([`DungeonDef::hidden_at`]).
-    pub hidden_per_depth: u8,
-    /// How much harder its locks are to pick for each level below the first
+    /// How much harder its hidden features (secret doors, hidden traps) are to find, in percent
+    /// of the floor's danger ([`DungeonDef::hidden_at`]).
+    pub hidden_danger_percent: u16,
+    /// How much harder its locks are to pick, in percent of the floor's danger
     /// ([`DungeonDef::locks_at`]).
-    pub locks_per_depth: u8,
+    pub locks_danger_percent: u16,
     /// The only ores (metal ids) its walls give a miner (`world/crafting/mine.rs`;
     /// checked against `data/mining.toml`'s ore rows); `None`: every ore of the table.
     pub ores: Option<Vec<String>>,
@@ -699,7 +699,7 @@ pub struct DungeonDef {
     /// An endless branch's layer bosses, by depth, or a portal branch's one (every Pit's
     /// warden); none for any other branch.
     pub bosses: Vec<LayerBoss>,
-    /// An endless branch's `dread_one_in` by depth (`[dungeon.endless.dread]`), if it gives one.
+    /// An endless branch's `dread_one_in` by danger (`[dungeon.endless.dread]`), if it gives one.
     pub dread: Option<DreadCurve>,
     /// The branch's folk as its template gives them: what lives on its floors unless a row says
     /// otherwise (a floor's own, a row's, is its plan's, [`LevelPlan::spawning`], which
@@ -759,13 +759,16 @@ impl DungeonDef {
         Some(sibling(id, depth + 1))
     }
 
-    /// Level `depth`'s `dread_one_in` (1-based): an endless branch's curve there, else its
-    /// plan's (its row's over the template's over `[defaults]`'); `None` without a danger
+    /// Level `depth`'s `dread_one_in` (1-based): an endless branch's curve at the floor's
+    /// danger (its rising one, [`DangerRule::rising`], as `Content::floor_danger` gives it), else
+    /// its plan's (its row's over the template's over `[defaults]`'); `None` without a danger
     /// (docs/design/monster-dread.md §8).
     pub fn dread_one_in(&self, depth: u32) -> Option<u16> {
-        match &self.dread {
-            Some(curve) if curve.at(depth).is_some() => curve.at(depth),
-            _ => Some(self.plan(depth)?.spawning.as_ref()?.odds.dread_one_in),
+        let plan = self.plan(depth)?;
+        let curve = (self.dread.as_ref()).zip(plan.danger);
+        match curve.and_then(|(curve, rule)| curve.at(rule.rising(depth))) {
+            Some(one_in) => Some(one_in),
+            None => Some(plan.spawning.as_ref()?.odds.dread_one_in),
         }
     }
 
@@ -813,16 +816,23 @@ impl DungeonDef {
         format!("{}@{pit}:{depth}", self.id)
     }
 
-    /// What finding a hidden feature on level `depth` takes beyond its own difficulty: its
-    /// plan's [`LevelPlan::hidden_per_depth`] for each level below the first.
-    pub fn hidden_at(&self, depth: u32) -> i32 {
-        per_level_below(self.plan(depth).map_or(0, |p| p.hidden_per_depth), depth)
+    /// What finding a hidden feature on level `depth`, at danger `danger` (the floor's,
+    /// [`crate::content::Content::floor_danger`]), takes beyond its own difficulty: its plan's
+    /// [`LevelPlan::hidden_danger_percent`] of the danger.
+    pub fn hidden_at(&self, depth: u32, danger: u32) -> i32 {
+        percent_of(
+            self.plan(depth).map_or(0, |p| p.hidden_danger_percent),
+            danger,
+        )
     }
 
-    /// What picking a lock on level `depth` takes beyond the lock's own difficulty: its plan's
-    /// [`LevelPlan::locks_per_depth`] for each level below the first.
-    pub fn locks_at(&self, depth: u32) -> i32 {
-        per_level_below(self.plan(depth).map_or(0, |p| p.locks_per_depth), depth)
+    /// What picking a lock on level `depth`, at danger `danger`, takes beyond the lock's own
+    /// difficulty: its plan's [`LevelPlan::locks_danger_percent`] of the danger.
+    pub fn locks_at(&self, depth: u32, danger: u32) -> i32 {
+        percent_of(
+            self.plan(depth).map_or(0, |p| p.locks_danger_percent),
+            danger,
+        )
     }
 
     /// The display name of level `depth`, e.g. `The Depths 3`; a tower's floors count from its
@@ -904,10 +914,10 @@ fn resolve_bosses(
     Ok(bosses)
 }
 
-/// `per_level` for each level below the first, on level `depth`.
-fn per_level_below(per_level: u8, depth: u32) -> i32 {
-    let below = i32::try_from(depth.saturating_sub(1)).unwrap_or(i32::MAX);
-    i32::from(per_level).saturating_mul(below)
+/// `percent` of `danger`, rounded down.
+fn percent_of(percent: u16, danger: u32) -> i32 {
+    let part = u64::from(danger) * u64::from(percent) / 100;
+    i32::try_from(part).unwrap_or(i32::MAX)
 }
 
 /// The level `depth` of the branch (or Pit) branch level `id` is in: `depths:3` → `depths:4`,
@@ -1027,7 +1037,7 @@ impl LevelSpec {
             population_count: self.population_count,
             odds: OddsSpec {
                 stray: self.stray,
-                out_of_depth: self.out_of_depth,
+                above_danger: self.above_danger,
                 deeper: self.deeper,
                 dread_one_in: self.dread_one_in,
                 neutral: self.neutral,
@@ -1099,8 +1109,8 @@ impl LevelSpec {
             traps,
             traps_per_level,
             secret_doors,
-            hidden_per_depth: self.hidden_per_depth.unwrap_or(0),
-            locks_per_depth: self.locks_per_depth.unwrap_or(0),
+            hidden_danger_percent: self.hidden_danger_percent.unwrap_or(0),
+            locks_danger_percent: self.locks_danger_percent.unwrap_or(0),
             // Nothing is mined in a tower: nothing breaks there.
             ores: if at.tower {
                 Some(Vec::new())
@@ -1365,7 +1375,7 @@ mod tests {
             shops: None,
             defaults: Some(Odds {
                 stray: 5,
-                out_of_depth: 5,
+                above_danger: 5,
                 deeper: 5,
                 dread_one_in: 100,
                 neutral: 100,

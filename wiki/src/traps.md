@@ -124,7 +124,7 @@ A try is a [check](diseases.md#checks): two twelve-sided dice, plus your
 [Dexterity](stats.md#stat-dexterity) modifier, plus what your
 [Disable device](skills.md#skill-disable-device) gives (+8 at 100, +12 at 200; see
 [Skills](skills.md)). It is rolled against the trap's **difficulty**, the same number that finding
-it takes. Deeper in a dungeon, both are harder.
+it takes. On a more [dangerous](dungeons.md) dungeon floor, both are harder.
 
 - **Reach it** and the trap is gone for good ("You disarm the arrow trap.").
 - **Fall short** and it stays ("You fail to disarm the arrow trap.").

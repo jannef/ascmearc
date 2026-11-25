@@ -4,8 +4,8 @@
 # A secret door looks and acts like the wall around it until it is found; a hidden trap looks
 # like the floor. Each has a difficulty: a trap's comes from its type (traps.toml `difficulty`),
 # a secret door's from its level (`secret = N` in a legend, else `secret_door` below); on a dungeon
-# branch every hidden feature is harder by the branch's `hidden_per_depth` for each level below
-# the first (dungeons.toml).
+# branch every hidden feature is harder by the branch's `hidden_danger_percent` of the floor's
+# danger (dungeons.toml).
 #
 # - Searching (`s` or numpad 5, a turn, as every wait is; Alt+s, for a while): every hidden feature on the cells around you
 #   (farther with a high Search skill) gets the active check: 2d12 + your Intelligence modifier +

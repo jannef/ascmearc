@@ -15,8 +15,8 @@ generator = { kind = "rooms" }
 size = [80, 21]
 traps = ["arrow", "spear", "alarm"]
 secret_doors = [0, 1]
-hidden_per_depth = 1
-locks_per_depth = 1
+hidden_danger_percent = 25
+locks_danger_percent = 25
 loot = [2, 4]
 key = "iron_key"
 # Danger 6 on the first floor to 9 on the fourth: the goblins he hires

@@ -283,22 +283,20 @@ fn trying_trains_open_lock() {
 }
 
 #[test]
-fn locks_are_harder_to_pick_deeper_in_a_branch() {
+fn locks_are_harder_to_pick_the_more_dangerous_the_floor() {
     let content = content(false);
     let depths = content.dungeon("depths").expect("the Depths");
-    assert!(
-        depths.plan(8).expect("a floor").locks_per_depth > 0,
-        "the Depths' locks harden"
-    );
-    assert_eq!(depths.locks_at(1), 0);
-    assert_eq!(
-        depths.locks_at(8),
-        7 * i32::from(depths.plan(8).expect("a floor").locks_per_depth)
-    );
-    // A lock on the Depths 2: its own difficulty and one level's worth; the usual one too.
+    let percent = depths.plan(8).expect("a floor").locks_danger_percent;
+    assert_eq!(percent, 90, "the Depths' locks harden");
+    // Its percent of the danger, rounded down, whatever the depth.
+    assert_eq!(depths.locks_at(1, 1), 0);
+    assert_eq!(depths.locks_at(8, 8), 7);
+    assert_eq!(depths.locks_at(1, 20), 18, "the danger, not the depth");
+    // A lock on the Depths 2 (danger 2): its own difficulty and 90 % of 2; the usual one too.
     let mut w = World::new(content.clone(), "deep", None).expect("world");
+    assert_eq!(w.state.current_level, "depths:2");
     let here = w.player_pos();
-    let plus = i32::from(depths.plan(8).expect("a floor").locks_per_depth);
+    let plus = 1;
     let hard = Lock {
         difficulty: Some(20),
         ..Lock::new(None)
