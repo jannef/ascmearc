@@ -10,6 +10,18 @@ phrase = { text = "Mikään myrkky ei tartu sen kantajaan.", of = "78b2f2" }
 [brosinga_mene.power]
 message = { text = "Myrkky ei saa sinusta otetta.", of = "f7ef80" }
 
+[cracked_resurrection_stone]
+lore = { text = "Se hiottiin herättämään yksi kuningas kuolosta. Kolmannella herättämisellä se murtui, ja siitä asti se on herättänyt mitä tahansa.", of = "42686a" }
+phrase = { text = "Mikä tahansa sen kantajan lähellä kuolee, voi nousta jälleen eheänä, niin ystävä kuin vihollinenkin.", of = "a82e77" }
+
+[deep_night]
+lore = { text = "Kudottu aamunkoittoa edeltävästä hetkestä, jolloin tähdetkin luovuttavat.", of = "f80374" }
+phrase = { text = "Sen kantaja kulkee näkymättömänä ja näkee pimeässä, ja jokainen valo hänen lähellään sammuu.", of = "41888b" }
+
+[demonsoul]
+lore = { text = "Jotakin suljettiin sen sisään kauan sitten, eikä se ole sen jälkeen jäähtynyt.", of = "bc3b0c" }
+phrase = { text = "Se vastaa iskuihin tulella. Sen kantaja ei pelkää liekkejä, mutta pakkanen puree häntä syvemmältä.", of = "c725ae" }
+
 [eorcanstan]
 lore = { text = "Kivi on tumma, kunnes sen lähellä lausutaan loitsu; silloin se tummuu entisestään.", of = "5dc3aa" }
 phrase = { text = "Mikään hiljaisuus ei vaienna sen kantajan ääntä.", of = "b8013d" }

@@ -60,10 +60,12 @@ use crate::world::creatures::ai::Plan;
 use crate::world::{Actor, ActorId, ActorKind, World, WorldState, smelt_within};
 
 impl Actor {
-    /// Whether it is invisible now: by its type, or by a status of its that is `unseen`.
+    /// Whether it is invisible now: by its type, by a status of its that is `unseen`, or by a
+    /// unique it wears that makes it so (Deep Night, #2097).
     pub fn invisible(&self, content: &Content) -> bool {
         content.creature(self.creature).invisible == Some(Invisible::Innate)
             || self.effects.unseen(content)
+            || self.worn_uniques(content).any(|u| u.invisible)
     }
 }
 

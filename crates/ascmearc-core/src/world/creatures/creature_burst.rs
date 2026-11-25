@@ -67,7 +67,8 @@ impl World {
             return price;
         };
         self.go_off(id, here, creature, events);
-        if self.state.actors.contains_key(&id) {
+        // A Restore power near may undo its death (`restore.rs`).
+        if self.state.actors.contains_key(&id) && !self.restored(id, events) {
             self.dies(id, None, None, self.state.time, events);
         }
         price

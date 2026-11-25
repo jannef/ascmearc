@@ -23,6 +23,7 @@ pub(in crate::world) mod shoot;
 pub(in crate::world) mod slip;
 pub(crate) mod surprise;
 mod two_shields;
+mod unique_spell;
 pub(in crate::world) mod weapon_ability;
 pub(in crate::world) mod weapon_active;
 cfg_if! {
@@ -56,6 +57,7 @@ cfg_if! {
         mod surprise_words_tests;
         mod thrown_exploit_tests;
         mod two_shield_tests;
+        mod unique_spell_tests;
         pub(in crate::world) mod vitals_tests;
         mod weapon_ability_tests;
         mod weapon_active_tests;

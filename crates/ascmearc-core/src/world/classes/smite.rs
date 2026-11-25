@@ -169,6 +169,13 @@ impl World {
         let kind = AttackKind::Melee;
         let skills = (self.state.player()).attack_skills(&self.content, kind, None);
         let mut made = Vec::new();
+        // A Restore power near may undo the unmaking (`restore.rs`): then nothing of a kill.
+        if self.restored(target, &mut made) {
+            if seen {
+                events.extend(made);
+            }
+            return;
+        }
         self.dies(target, Some(player), None, self.state.time, &mut made);
         self.train_kill((player, target), kind);
         self.siphon(player, (target, at));

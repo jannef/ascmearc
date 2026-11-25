@@ -80,6 +80,21 @@ objects = ["unique:silverstrike", "arrow*20"]
 at = [9, 11]
 objects = ["unique:radiant"]
 
+# Two more of the pool (#2095, #2097): Demonsoul, a shield that breathes fire, and Deep Night, a
+# cloak that puts out the lights about its wearer.
+[[pile]]
+at = [11, 11]
+objects = ["unique:demonsoul"]
+
+[[pile]]
+at = [11, 9]
+objects = ["unique:deep_night"]
+
+# The Cracked Resurrection Stone (#2098), for the same pool: a cursed ring that undoes deaths.
+[[pile]]
+at = [11, 10]
+objects = ["unique:cracked_resurrection_stone"]
+
 # Stones from the old digging, to throw.
 [[pile]]
 at = [23, 4]
