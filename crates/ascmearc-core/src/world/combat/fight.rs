@@ -1008,6 +1008,8 @@ impl World {
         let blow = blow.map(|b| self.lore_blow(attacker, target, b));
         // Holy wrath's die (`smite.rs`).
         let blow = blow.map(|b| self.holy_wrathed(attacker, target, b));
+        // A unique armour's Negate (`negate.rs`): the hit comes to nothing, before anything comes of it.
+        let blow = blow.map(|b| self.negated(target, b));
         if blow.is_some_and(|b| b.strike.is_hit()) {
             self.savage_spent(attacker, events);
         }
@@ -1123,6 +1125,8 @@ impl World {
         }
         // Drowning grip: a hit holds, a miss or another target lets go.
         self.grip(attacker, target, kind, blow.as_ref(), events);
+        // A unique shield's free spell, on a block beside or a bash (`unique_spell.rs`).
+        self.unique_spell((attacker, target), (kind, with), (from, to), blow, events);
         blow
     }
 
@@ -1277,6 +1281,10 @@ impl World {
         if actor.hp > 0 {
             // A blow, or any harm, wakes a sleeper (`den.rs`).
             self.wake(id);
+            return false;
+        }
+        // A Restore power near it undoes the death before any of it (`restore.rs`).
+        if self.restored(id, events) {
             return false;
         }
         // Rise from the ashes: once in a life, but never from starving.

@@ -369,7 +369,7 @@ impl World {
             }
             Pay::Wand(item, _) => self.use_charge(item),
             // The flask broke as it landed (`flask.rs`).
-            Pay::Creature | Pay::Flask => {}
+            Pay::Creature | Pay::Flask | Pay::Power => {}
         }
         true
     }
@@ -1181,6 +1181,8 @@ enum Pay {
     Creature,
     /// A flask, thrown and shattered (`flask.rs`): gone before the cast.
     Flask,
+    /// A unique's power, free (`unique_spell.rs`).
+    Power,
 }
 
 /// One cast's settled facts, handed to each kind's code.
@@ -1262,6 +1264,35 @@ impl<'c> Cast<'c> {
         }
     }
 
+    /// The free cast of a unique's Cast power by `by` (`unique_spell.rs`, #2095): the spell
+    /// it names at the power's own reach and roll, with no caster's stats, hooks, school, or
+    /// style (the item's fire, not the bearer's skill), as a flask's splash is.
+    pub(in crate::world) fn by_power(
+        by: ActorId,
+        content: &'c Content,
+        power: &crate::content::CastPower,
+    ) -> Self {
+        let def = content.spell(power.spell);
+        Cast {
+            spell: power.spell,
+            def,
+            by,
+            pay: Pay::Power,
+            skills: AttackSkills::default(),
+            reach: Reach {
+                range: Some(i32::from(power.length)),
+                radius: None,
+                jumps: def.effect.arcs.map(i32::from),
+            },
+            roll: Some(power.damage),
+            reroll: 0,
+            degrees: None,
+            riders: Vec::new(),
+            read: Cell::new(None),
+            outcome: Cell::new(Outcome::default()),
+        }
+    }
+
     /// `caster`'s cast of `def`, paid by `pay`: its hooks summed once with the caster style's
     /// ([`Actor::spell_mods_in_style_by`]: the caster's rank counts for an own cast only), the
     /// roll at the rung of who casts it (its own, a scroll's, a wand's), the reach and the
@@ -1273,7 +1304,7 @@ impl<'c> Cast<'c> {
         pay: Pay,
     ) -> Self {
         let by = match pay {
-            Pay::Mana(_) | Pay::Creature | Pay::Flask => CastBy::Own,
+            Pay::Mana(_) | Pay::Creature | Pay::Flask | Pay::Power => CastBy::Own,
             Pay::Scroll(_, rungs) => CastBy::Scroll(rungs),
             Pay::Wand(_, rungs) => CastBy::Wand(rungs),
         };

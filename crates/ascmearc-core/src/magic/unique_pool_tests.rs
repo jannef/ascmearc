@@ -24,6 +24,17 @@ const PLACED: [&str; 9] = [
     "stonebiter",
 ];
 
+/// The uniques of the drop pool, every one `pool = true` in its data.
+const POOL: [&str; 7] = [
+    "cracked_resurrection_stone",
+    "deep_night",
+    "demonsoul",
+    "grandmother",
+    "masterpiece",
+    "radiant",
+    "silverstrike",
+];
+
 /// The built-in content with its every rare find a unique of the pool (`rare.unique` 10,000).
 pub(crate) fn sure() -> Content {
     let mut files = ContentFiles::builtin();
@@ -65,10 +76,8 @@ fn the_placed_uniques_never_join_the_pool() {
         assert!(!def.pool, "{id} is placed, never of the pool");
         assert_eq!(member(c, &def.stack), None);
     }
+    assert_eq!(pool_ids(c), BTreeSet::from(POOL.map(String::from)));
     let pool = pool_ids(c);
-    for id in ["grandmother", "radiant", "silverstrike"] {
-        assert!(pool.contains(id), "{id} is of the pool");
-    }
     // At the top item level every unique of the pool is open, and nothing else.
     let open: BTreeSet<String> = (open(c, MAX_ITEM_LEVEL, &BTreeSet::new()).into_iter())
         .map(|u| u.id.clone())
@@ -82,6 +91,13 @@ fn the_placed_uniques_never_join_the_pool() {
             instead(&sure, &mut Rng::stream(i as u64, "pool"), rare, &found).expect("a sure pool");
         assert!(member(&sure, &unique).is_some());
     }
+    // The cursed one comes cursed, as it is.
+    let stone = c.unique("cracked_resurrection_stone").expect("the stone");
+    assert!(stone.stack.magic().expect("magic").cursed(c));
+    let rare = rares(&sure, stone.magic().level, 1).remove(0);
+    let unique = instead(&sure, &mut Rng::stream(0, "pool"), &rare, &found).expect("a sure pool");
+    assert_eq!(member(&sure, &unique), Some("cracked_resurrection_stone"));
+    assert!(unique.magic().expect("magic").cursed(&sure));
 }
 
 #[test]

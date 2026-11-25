@@ -154,17 +154,20 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     let mut other = bedes.magic().clone();
     other.unique = None;
     assert!(other.check(content.object(bedes.object), &content).is_err());
-    // The drop pool's three (#1976, the shared table first), the criminals' four, the pedlar's
-    // three (#808), and Sigeric's (#1787), each with its power.
+    // The drop pool's seven (#1976, #2095, #2097, #2098, #2100, the shared table first), the
+    // criminals' four, the pedlar's three (#808), and Sigeric's (#1787), each with its power.
     let powers: Vec<(&str, &str)> = (content.uniques())
-        .filter(|u| u.stack.magic().is_some_and(|m| m.level == 12))
+        .filter(|u| u.stack.magic().is_some_and(|m| m.level >= 12))
         .map(|u| {
             let power = match u.power.as_ref().expect("a power") {
                 Power::Inflict { .. } => "inflict",
                 Power::Vision(_) => "vision",
                 Power::Ward { .. } => "ward",
+                Power::Negate { .. } => "negate",
                 Power::Light(_) => "light",
                 Power::Range(_) => "range",
+                Power::Restore { .. } => "restore",
+                Power::Cast(_) => "cast",
             };
             (u.id.as_str(), power)
         })
@@ -172,7 +175,11 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert_eq!(
         powers,
         [
+            ("cracked_resurrection_stone", "restore"),
+            ("deep_night", "vision"),
+            ("demonsoul", "cast"),
             ("grandmother", "inflict"),
+            ("masterpiece", "negate"),
             ("radiant", "light"),
             ("silverstrike", "range"),
             ("brosinga_mene", "ward"),
@@ -282,14 +289,16 @@ fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
     // A bow takes flat damage set by hand, though Sharp never rolls on one.
     load("long_bow", "\"sharp=2\"").expect("an effect a bow's shots use");
     for (object, affixes, needle) in [
-        ("gold_ring", "\"mystic=-3\"", "no tier of `mystic` rolls it"),
+        // A penalty (`mystic=-3`, #2091) is a unique's to set; nothing is no value.
+        ("gold_ring", "\"mystic=0\"", "no tier of `mystic` rolls it"),
         ("gold_ring", "\"mystic=1\"", "no tier of `mystic` rolls it"),
         ("gold_ring", "\"mystic=x\"", "must be a number"),
         ("gold_ring", "\"mystic:2\"", "not a tier"),
         ("gold_ring", "\"mystic\"", "not a tier"),
         ("gold_ring", "\"nothing=3\"", "unknown affix"),
         ("dagger", "\"heavy=8\"", "the value is dice"),
-        ("dagger", "\"heavy=3d8\"", "no tier of `heavy` rolls 3 dice"),
+        // More dice than a tier (`heavy=3d8`, #2091) are a unique's to set; fewer sides not.
+        ("dagger", "\"heavy=1d1\"", "no tier of `heavy` rolls it"),
         ("dagger", "\"heavy=2d6\"", "no tier of `heavy` rolls it"),
         ("dagger", "\"sharp=1d4\"", "must be a number"),
         ("gold_ring", "\"of_light=3\"", "a light's value is a light"),
@@ -688,9 +697,10 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
         assert_eq!(magic.check(def, &content), Ok(()), "{}", u.id);
         ids.push(u.id.as_str());
     }
-    // The outlaws' four, Sigeric's Star, the pedlar's three, the drop pool's three (#1976), and
-    // the test world's Stonebiter.
-    assert_eq!(ids.len(), 12, "{ids:?}");
+    // The outlaws' four, Sigeric's Star, the pedlar's three, the drop pool's five (#1976, #2095,
+    // #2097), the Cracked Resurrection Stone (#2098), the test world's Stonebiter, and the
+    // Masterpiece (#2100).
+    assert_eq!(ids.len(), 16, "{ids:?}");
     let widowmaker = unique(&w, "widowmaker");
     let magic = widowmaker.magic().expect("magic");
     let stiletto = content.object(widowmaker.object);

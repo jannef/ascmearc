@@ -94,7 +94,7 @@ fn offered_by(content: &Content, u: &UniqueDef) -> Vec<String> {
 }
 
 /// The drop pool's line for unique `u` (#2103), if it is of the pool: "a rare find of item level
-/// 12 or more (1 in 50; once a run)".
+/// 40 or more (1 in 50; once a run)".
 fn pooled(content: &Content, u: &UniqueDef) -> Option<String> {
     let chance = content.affixes().unique_pool;
     (u.pool && chance > 0).then(|| {
@@ -130,8 +130,45 @@ fn rewarded_by(content: &Content, u: &UniqueDef) -> Vec<String> {
         .collect()
 }
 
-/// What a unique's power does, exactly.
+/// What a unique's power does, exactly, and what more it gives besides its affixes (an
+/// immunity, a resistance, a bash's damage, invisibility, a douse; #2095, #2097).
 fn power_text(content: &Content, u: &UniqueDef) -> String {
+    let mut all: Vec<String> = (u.power.as_ref())
+        .map(|_| own_power(content, u))
+        .into_iter()
+        .collect();
+    let kind = |k| content.damage_type(k).name.clone();
+    all.extend(
+        u.immune
+            .iter()
+            .map(|&k| format!("its bearer is immune to {}", kind(k))),
+    );
+    all.extend(u.resist.iter().map(|&(k, percent)| match percent {
+        p if p < 0 => format!("its bearer takes {}% more {} damage", -p, kind(k)),
+        p => format!("its bearer resists {p}% of {} damage", kind(k)),
+    }));
+    if u.bash != 0 {
+        all.push(format!("its bashes deal {:+} damage", u.bash));
+    }
+    if u.invisible {
+        all.push("its wearer is invisible, as the Invisible status makes one".into());
+    }
+    if u.douse > 0 {
+        all.push(format!(
+            "every light source within {} cells of its wearer gives no light (lamps, torches, \
+             fires, and lights carried, the wearer's own too; nothing is used up)",
+            u.douse
+        ));
+    }
+    if all.is_empty() {
+        "-".into()
+    } else {
+        all.join("; ")
+    }
+}
+
+/// What a unique's own `power` does, exactly.
+fn own_power(content: &Content, u: &UniqueDef) -> String {
     match &u.power {
         None => "-".into(),
         Some(Power::Inflict { hit, added }) => {
@@ -175,6 +212,11 @@ fn power_text(content: &Content, u: &UniqueDef) -> String {
         Some(Power::Ward { status, .. }) => {
             format!("its wearer is never {}", content.status(*status).name)
         }
+        Some(Power::Negate { chance, .. }) => format!(
+            "{chance}% of the hits that beat its wearer's Defence (a blow, a shot, a throw, a \
+             trap's strike) come to nothing: no damage, no status, nothing the hit would bring; \
+             spells, breath, and blasts are not stopped"
+        ),
         Some(Power::Light(id)) => {
             let radius = content.light(*id).radius;
             format!(
@@ -189,6 +231,37 @@ fn power_text(content: &Content, u: &UniqueDef) -> String {
                 n => format!("{n} times"),
             };
             format!("it shoots {word} as far: its range, and what its affixes add, times {times}")
+        }
+        Some(Power::Restore { chance, radius }) => format!(
+            "whatever dies within {radius} cells of its wearer (the wearer, their allies, and \
+             their foes; no line of sight needed) comes back to full hit points instead, \
+             {chance}% of the time, rolled anew at every death; never the undead. A creature \
+             brought back did not die: no experience, no loot, no corpse, no kill counted"
+        ),
+        Some(Power::Cast(cast)) => {
+            let def = content.spell(cast.spell);
+            let kind = (def.damage_type).map_or(String::new(), |k| {
+                format!(" {}", content.damage_type(k).name)
+            });
+            let what = format!(
+                "a free {} ({} cells long, {}{kind} damage, whatever the bearer's own magic)",
+                def.name, cast.length, cast.damage
+            );
+            let mut when = Vec::new();
+            if cast.on_block > 0 {
+                when.push(format!(
+                    "{}% of the melee blows it blocks from beside its bearer cast {what} at the \
+                     attacker (a missile, or a blow from farther off, never)",
+                    cast.on_block
+                ));
+            }
+            if cast.on_bash > 0 {
+                when.push(format!(
+                    "{}% of its bashes, hit or miss, cast it at the one bashed",
+                    cast.on_bash
+                ));
+            }
+            when.join("; ")
         }
     }
 }

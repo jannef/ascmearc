@@ -381,14 +381,51 @@ id on another rarity than unique, and a unique without its id.
   offer (`docs/dev/npcs.md` "A trader's offer"; no other content places them), and the run's
   `WorldState::uniques_offered` keeps each to one offer a run. The wiki's
   "Carried by" names the offer with its chance (`offered_by`).
-- **The drop-pool three** (#1976): the Grandmother (a Masterwork mithril great sword: +10
-  damage, a d12 more, a d12 of necrotic, +4 to hit, +4 Strength, and Bleeding on half its
-  hits), Silverstrike (a Marvellous long war bow: Range ×2, +6 to hit, Keen, Steady), and the
-  Radiant (a Masterwork war hammer: Light `radiant_hammer`, radius 20, `data/lights.toml`; +4
-  damage, Keen, +4 Toughness, +12 hit points), in the shared `data/uniques/`, item level 12,
-  every affix written with its value, each `pool = true` (below). Placed nowhere but the test
-  world's quarry (`campaigns/showcase/levels/quarry.toml`, a showcase), so tests and captures
-  reach them.
+- **The drop-pool three** (#1976; the owner's numbers, #2091): the Grandmother (a Masterwork
+  mithril great sword: +10 damage, 6d6 more, +6 to hit, +6 Strength, −2 to Dodge, and Bleeding
+  on half its hits), Silverstrike (a Marvellous long war bow: Range ×2, +6 to hit, Keen 6,
+  Steady 6), and the Radiant (a Masterwork war hammer: Light `radiant_hammer`, radius 20,
+  `data/lights.toml`; +4 to hit, +2 to Dodge, +2 Protection, +10 Toughness, +30 hit points), in
+  the shared `data/uniques/`, item level 40 (docs/design/item-level-40.md §10: at or above
+  §5.8's best roll), every affix written with its value, each `pool = true` (the drop pool, below). Placed
+  nowhere but the test world's quarry (`campaigns/showcase/levels/quarry.toml`, a showcase),
+  so tests and captures reach them. Two more join
+  them at the same item level, in the same quarry: **Demonsoul** (#2095, a large
+  shield: Sturdy +3, a Cast power of Burning hands, 4 cells and 6d6, on 25 % of the blows it
+  blocks from beside and 33 % of its bashes; `bash = 6`, `immune = ["fire"]`, `resist = { cold
+  = -50 }`) and **Deep Night** (#2097, a wool cloak: of the Lynx +4, a Vision power of
+  darkvision, `invisible = true`, `douse = 10`), both `pool = true`.
+- **The Cracked Resurrection Stone** (#2098, `data/uniques/cracked_resurrection_stone.toml`): a
+  iron ring, item level 30, of the same drop pool (`pool = true`; it drops by danger and item
+  level, never depth; placed nowhere but the quarry), and drops cursed as it is. Its Restore power (below, `{ restore = 50, radius =
+  10 }`); of Mending at 200 (its wearer's hit points come back three times as fast, past the
+  ladder's top of 50); and of Hunger at 25, the curse that binds it ("Curses": a temple's
+  `decurse` frees it).
+- **The Masterpiece** (#2100, the owner's design): a mithril chain mail shirt in the
+  shared `data/uniques/`, item level 40 (the drop pool's, as #2091 moves the three above), of the
+  drop pool (`pool = true`), placed nowhere but the quarry. Its four affixes fit mithril's binding (no make). Featherweight 70 stacks on mithril's own half (`Stack::weight`:
+  `variant::weight`, then the affix), so it weighs 1,650 g, 15% of a steel shirt's 11,000;
+  of Warding 5 (+5 Defence, as Deflection) and Hardened 5 (+5 Protection), both past their
+  ladders; Mage-wrought 10 takes all of chain mail's `spell_cost_percent` 10 off
+  (`Actor::worn_spell_cost`), the one way armour hinders casting (its cost, the miscast
+  difficulty, the armoured grip), so it hinders none. Its power is Negate 50. No new affix: the
+  four are the rollable ones with a unique's hand-set values, so no rollable pool changes.
+  Tests: `world/combat/negate_tests.rs` (the weight, Defence and Protection, casting, a negated
+  hit, a miss never rolling, loot never making one).
+- **What only a unique sets** (#2091), each refused to any other item by `Magic::check` and
+  never rolled (`content/unique_values_tests.rs::what_only_a_unique_sets_never_rolls`: every
+  random affix, loot's, a vault's, a shop's, enchanting's and its recast's, comes of
+  `loot::pick`, among affixes whose `bases` hold the item's kind, at a value within a tier):
+  a **penalty**, a value against its ladder (`Tier::opposed_by`: `"nimble=-2"`, said "−2 to
+  Dodge", `describe.does_dodge_less`); **more dice than any tier** (`"heavy=6d6"`: the affix
+  takes the last tier with the sides as its value, and `UniqueDef::dice` keeps the count, which
+  `Magic::rolled` puts in `Rolled::dice` for `Mods` and the description); and **Protection on a
+  weapon** (`"hardened=2"`: `Actor::protection` sums every worn and wielded piece's, but only
+  armour counts as a piece for the body-armour talents and names what soaks a blow). The
+  owner's "+2 DV" and "−2 DV" are Dodge (`"nimble=±2"`, on a weapon only by a unique's hand):
+  Defence against every attack, missiles too (Parry counts against melee only), and the one
+  kind that adds up (`Category::stacks`), so it always counts in full; Deflection keeps only
+  the best, so a +2 there would be lost beside a better ring and a −2 beside any.
 - **The drop pool** (#2103, `magic/unique_pool.rs`): a unique whose data says `pool = true`
   (`UniqueDef::pool`; opt-in, so a new unique joins by its own line) may stand in for a **rare**
   find. The placed ones (the outlaws' four, Sigeric's Star, the pedlar's three, the test world's
@@ -436,7 +473,51 @@ id on another rarity than unique, and a unique without its id.
   base's range plus what affixes add, times it, read by `Actor::launcher_range`,
   `Actor::throw_range`, and `Numbers::of` (talents add after). A creature's AI still judges
   its reach by its launcher's plain `range` (`world/creatures/ai.rs`), as it ignores Hunter's.
+  `Power::Negate { chance, message }` (`{ negate = 50, message = "..." }`, 1 to 99, worn armour
+  only; #2100): `world/combat/negate.rs::World::negated` asks it of a blow rolled against
+  Defence once it has hit, in `World::resolve` (after the strike's own changes, Holy wrath's
+  die last, before anything comes of the hit) and in a trap's `trap_strikes`; by the chance (one
+  draw from the keyed stream `negate/<wearer>`, made only for a hit on a wearer, so other
+  fights keep their draws) the hit becomes `Missed { by: Armour }` ("glances off your armour"),
+  so no damage, status, `on_hit`, bleeding, grab, weapon ability, knockback, or acid follows,
+  and the player wearing it hears `message` (`data_line::ward`'s key, said through `news`
+  after the attack's line). Spells (even those that roll to hit, `cast.rs::spell_attack`),
+  breath, and blasts never meet it.
+  `Power::Restore { chance, radius }` (`{ restore = 50, radius = 10 }`, #2098): the one check
+  `World::restored` (`world/health/restore.rs`) runs where a death is decided, before anything
+  of it: `World::hurt` at 0 hit points (before Rise from the ashes, so the stone spends no
+  rising), and the deaths that skip `hurt` (Banishing smite's `unmake`, a disease's Toughness
+  run out, `creature_bursts`, choking in `eat::feed`; the Profane's taking, `profane_takes`, is
+  not a death of the body and stays the run's end). Anyone on the dying actor's level wearing
+  one whose radius (the fov's round radius, `radius2`; no line of sight) holds it, the dying
+  one too, makes one draw (`unique/restore`) at the first such wearer's chance; never for the
+  undead (`is_undead`). Restored: `hp` to `max_hp` and `cure_by_magic`; no `Died` event, no
+  death procedure (no corpse, loot, experience, kill tally, on-death effect, death screen); the
+  caller goes on as if it lived. Said: `uniques.restored_you`, `restored` (seen), or
+  `restored_unseen` (the player wears one and does not see the death); nothing otherwise.
+  `Power::Cast(CastPower)` (`{ cast = "burning_hands", length = 4, damage = "6d6", on_block =
+  25, on_bash = 33 }`, only on a shield and a damage spell; #2095): read once, at the end of
+  `World::resolve` (`world/combat/unique_spell.rs`): a melee blow on the bearer missed by their
+  Shield from a cell beside them casts it at the attacker by `on_block`, and a blow the bearer
+  strikes with that shield (any bash: the action, the style's free bash, Shield rush, a second
+  shield's), hit or miss, at the one bashed by `on_bash`; one draw on
+  `unique/cast/<bearer>/<other>`, only then. The cast is `Cast::by_power` (`Pay::Power`: the
+  power's reach and roll, no caster's stats, hooks, school, or style, as a flask's) through
+  `World::creature_spell_does`, the spell's own code for any caster (a cone from the bearer's
+  cell, never holding it), its lines held into the news so they follow the blow's ("Flames leap
+  from your shield!", `uniques.flames_from_*`). The spell's data is untouched.
   `magic::worn_powers` lists the powers of what an actor has equipped.
+- **Rules beside the power** (#2095, #2097), fields of the unique's table read where the rule
+  is, never affixes (so no pool can roll them; `unique_spell_tests.rs::nothing_unique_only_is_ever_rolled`):
+  `immune` (kinds; `Actor::resistances` adds them to the immunities) and `resist` (kind to
+  percent, −100 to 99, a negative one a weakness; summed with the gear's), read through
+  `Actor::worn_uniques`; `bash` (damage its bashes add, only on a base that bashes:
+  `Actor::bash_with`); `invisible` (`Actor::invisible`, which every rule of the unseen reads, as
+  the Invisible status: creatures' sight, the AI, the dump); and `douse` (cells: every light
+  source within that Chebyshev distance of the wearer gives no light while it is worn, placed
+  lights, fires, fire zones, and every carried light, the wearer's own too, dropped where
+  `light/cache.rs`'s `sources` drops a darkened one, so the light map, sight, and the perception
+  snapshot follow; nothing is put out or used up).
 - **Description**: `describe::lines` adds `LineKind::Power` (the `phrase`) and
   `LineKind::Lore` after the affixes, only through `known_magic`; the UI labels the first
   "Power" and dims the lore in a section of its own. A spirit weapon (`Stack::spirit`, the
@@ -451,7 +532,12 @@ id on another rarity than unique, and a unique without its id.
   Bleeding by its chance on its keyed stream, the
   Bedes' darkvision on and off and under the dev override, the Turncoat's ward, the Radiant's
   light on and off and on a creature, Silverstrike's doubled range, the load's checks of both
-  powers, a save); the
+  powers, a save), `world/health/restore_tests.rs` (Restore: the wearer, an ally, a foe, a
+  creature wearer; the undead and beyond the radius; no experience or loot; each death rolled
+  anew at half; the stone's curse; never rolled); `world/combat/unique_spell_tests.rs`
+  (Demonsoul's block from beside and none from range, in play too, its bash, bash bonus,
+  immunity and weakness; Deep Night's invisibility on and off and its douse's radius, carried
+  lights too; nothing of either rolled); the
   item description's text snapshots `unique-description` and `unique-description-unidentified`
   (the quarry's Stonebiter, the test world's unique). Tests that strip statuses or skills
   remove `campaigns/ascmearc/data/uniques` with them.

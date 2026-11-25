@@ -84,12 +84,21 @@ fn a_unique_is_priced_by_its_own_item_level_not_its_tiers() {
         let mut stack = unique.stack.clone();
         let made = stack.worth(&c);
         assert!(stack.identify(), "{}", unique.id);
+        // A cursed one known (the Cracked Resurrection Stone, #2098): its magic is worth
+        // nothing, as any known curse's (#1754).
+        if stack.is_cursed(&c) {
+            let plain = Stack::one(unique.object).worth(&c);
+            assert_eq!(stack.worth(&c), plain, "{}", unique.id);
+            continue;
+        }
         let magic = unique.magic();
         let affixes = magic.affixes.len() as u64 * rules.affix_worth(magic.level);
         assert_eq!(stack.worth(&c), made + affixes, "{}", unique.id);
     }
     // The same affixes on a rare that is no unique are priced by their tiers.
-    let unique = c.uniques().next().expect("a unique");
+    let unique = (c.uniques())
+        .find(|u| !u.stack.is_cursed(&c))
+        .expect("an uncursed unique");
     let mut rare = unique.stack.clone();
     let tiers = |m: &Magic| -> u64 {
         (m.affixes.iter())

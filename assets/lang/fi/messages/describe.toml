@@ -71,6 +71,7 @@ does_deflection = { text = "kimmotus +{v:bare}", of = "f4e743" }
 does_dig = { text = "kaivaa {v:bare} % nopeammin", of = "c0cbbf" }
 does_disease_check = { text = "+{v:bare} tautien vastustamiseen", of = "c54d09" }
 does_dodge = { text = "väistö +{v:bare}", of = "769b3e" }
+does_dodge_less = { text = "väistö −{v:bare}", of = "70fc8e" }
 does_door_kick = { text = "potkusi murtavat ovia helpommin", of = "533775" }
 does_draw = { text = "jännittäminen vaatii {v:bare} vähemmän voimaa", of = "463ff1" }
 does_durability = { text = "särkyy {v:bare} % harvemmin", of = "35696d" }

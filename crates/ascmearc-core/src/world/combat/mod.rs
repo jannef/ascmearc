@@ -16,12 +16,14 @@ pub(in crate::world) mod item_damage;
 mod knock_away;
 mod lurk;
 mod natural;
+mod negate;
 pub(in crate::world) mod reflect;
 mod sear;
 pub(in crate::world) mod shoot;
 pub(in crate::world) mod slip;
 pub(crate) mod surprise;
 mod two_shields;
+mod unique_spell;
 pub(in crate::world) mod weapon_ability;
 pub(in crate::world) mod weapon_active;
 cfg_if! {
@@ -42,6 +44,7 @@ cfg_if! {
         mod item_damage_tests;
         mod knock_away_tests;
         mod lurk_tests;
+        mod negate_tests;
         mod protection_tests;
         mod sear_tests;
         pub(in crate::world) mod shoot_tests;
@@ -54,6 +57,7 @@ cfg_if! {
         mod surprise_words_tests;
         mod thrown_exploit_tests;
         mod two_shield_tests;
+        mod unique_spell_tests;
         pub(in crate::world) mod vitals_tests;
         mod weapon_ability_tests;
         mod weapon_active_tests;

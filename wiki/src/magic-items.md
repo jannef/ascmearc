@@ -312,8 +312,11 @@ and [item level](affixes.md#base-items) are set by hand. Its name is shown in go
 also has a **power**, a rule of its own that no affix gives.
 
 Its affixes may go past what loot ever rolls: a value above an affix's highest
-[tier](affixes.md), or an affix on a kind of item it never rolls on (High Toby, a bow, has +2
-damage). The table below marks such an affix "set" where the others name their tier.
+[tier](affixes.md), more dice than any tier gives (the Grandmother's 6d6), a penalty (her −2 to
+[Dodge](combat.md#defence), which lowers your Defence against every attack), or an affix on a
+kind of item it never rolls on (High Toby, a bow, has +2 damage; the Radiant, a hammer, has +2
+Protection and +2 Dodge). The table below marks such an affix "set" where the
+others name their tier. No random item, shop's ware, or enchantment ever gets one of these.
 
 It is found unidentified like any magic item, but its rarity shows ("a stiletto (unique)"). Its
 affixes work as a rare item's do. A [shop](shops.md#magic-items) prices it as a rare item, but by its own item level instead of its affixes' tiers. Once identified, it shows its
@@ -341,11 +344,37 @@ Its power works while it is worn or wielded, identified or not:
 - **Vision**: its wearer sees with a [vision](vision.md#the-four-types) profile wherever that is
   better than their own eyes.
 - **Ward**: its wearer never suffers a status.
+- **Negate**: when a blow, a shot, a thrown thing, or a trap's strike beats its wearer's
+  [Defence](combat.md#defence), it comes to nothing by the chance the table gives: no damage, no
+  status, and nothing else the hit would bring. You are told "The blow comes to nothing against
+  your mail." A miss is never rolled for. Spells, breath, and blasts are not stopped, since they
+  never roll against Defence.
 - **Light**: its bearer sheds a steady [light](light.md#light-sources) that reaches the number
   of cells the table gives. A glowing affix's light does not add to it: the one that reaches
   farther counts.
 - **Range**: it [shoots](ranged.md#distance) that many times as far: its own range and what its
   affixes add are multiplied, and a talent's extra range is added after.
+- **Restore**: whatever dies within the number of cells the table gives of its wearer may come
+  back to life instead, by the table's chance. That is anyone: the wearer, their allies, and
+  their foes. No line of sight is needed, and every death rolls again, so one creature can come
+  back many times. The undead never come back: they are already dead. Brought back, a creature
+  has all its hit points again, and Bleeding and anything else a
+  [magical heal](healing.md#magical-healing) cures ends. Its other statuses, its
+  diseases, and its hunger stay, so a poison that killed it can kill it again. It did not die:
+  a foe brought back gives no experience and drops nothing, leaves no corpse, and counts for no
+  quest. The Cracked Resurrection Stone is also [cursed](#cursed-items): once on, it stays on until a
+  temple [lifts the curse](npcs.md#services).
+- **Cast**: a shield that casts a spell for free, by a chance. When it [blocks](combat.md#why-an-attack-missed) a melee blow from
+  someone beside you, the spell goes at them. A missile, or a blow from farther off, never sets
+  it off. When you bash with it, hit or miss, the spell goes at the one you bashed. The spell
+  works as it always does, with the reach and damage the table gives, whatever your own magic.
+  A cone never reaches you.
+
+Some give more besides their power, as the table says: an immunity or a weakness to a kind of
+[damage](damage-types.md#armour-and-resistance), damage added to a shield's
+[bashes](abilities.md#ability-shield-bash), going [unseen](creature-tricks.md#when-you-are-invisible), or a darkness about you: while you wear it, every light within
+that many cells of you gives no light, the lamps, the fires, and the lights others carry, your
+own too. Nothing is used up: the lights shine again once you are gone or take it off.
 
 {{#include generated/uniques.md}}
 

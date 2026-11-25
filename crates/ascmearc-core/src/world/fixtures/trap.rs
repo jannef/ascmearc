@@ -272,6 +272,8 @@ impl World {
         let blow = combat::strike(profile, &struck, &mut rng);
         // Diamond soul's catch (`ascetic.rs`): a trap's missile too.
         let blow = self.caught_trap_shot(trap, target, source.1, blow, events);
+        // A unique armour's Negate (`negate.rs`).
+        let blow = self.negated(target, blow);
         events.push(Event::TrapStruck {
             trap,
             target,

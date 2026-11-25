@@ -472,7 +472,7 @@ pub use tower::Tower;
 pub use town::{InvestShare, TownDef, TownRestock, TownServant};
 pub use trap::{Trap, TrapAvoid, TrapDef, TrapDisarm, TrapEffect, TrapHarm, TrapId, TrapNoise};
 pub use tuning::Tuning;
-pub use unique::{Power, UNIQUE, UniqueDef, Uniques};
+pub use unique::{CastPower, Power, UNIQUE, UniqueDef, Uniques};
 pub(crate) use unseen::fading;
 pub use unseen::{Fading, Invisible};
 pub use vault::{DangerRange, Vault};

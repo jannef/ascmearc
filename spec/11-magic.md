@@ -101,6 +101,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Effects apply only while worn or wielded, never while carried. Attack effects are local on weapons, global elsewhere.
 - Magic raises an item's worth: a magic or rare item is priced above its base item, and the price follows what the magic is.
 - Each unique comes at most once a run. Most are placed by content once; loot never rolls one, but a unique of the drop pool (#2103) may stand in for a rare find, very rarely, where the find's item level reaches the unique's own: by item level and so danger, never depth.
+- The Cracked Resurrection Stone (#2098), a cursed unique ring: whatever dies within 10 cells of its wearer (the wearer, allies, foes) is restored to full health instead half the time, each death rolled anew, never the undead. Restored, it did not die: no experience, loot, corpse, kill count, or on-death effect.
 
 ### Curses
 

@@ -1,0 +1,20 @@
+# Demonsoul (#2095): a large shield for the drop pool (#2103; placed nowhere else but the
+# test world's quarry), item level 40 as the pool's uniques are (docs/design/item-level-40.md
+# §10). Its Defence is an ordinary good shield's at 40 (Sturdy +3, the ladder's top), and it
+# breathes fire: a free Burning hands, stronger than any caster's (a cone 4 cells long, 6d6
+# fire), at the one whose blow it blocked from beside its bearer (1 in 4) and at the one it
+# bashes (1 in 3), and +6 damage on its bashes. Its bearer is immune to fire and takes half again
+# as much from cold. Every value set by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "demonsoul"
+name = "Demonsoul"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "large_shield"
+affixes = ["sturdy=3"]
+level = 40
+bash = 6
+immune = ["fire"]
+resist = { cold = -50 }
+power = { cast = "burning_hands", length = 4, damage = "6d6", on_block = 25, on_bash = 33, phrase = "It answers blows with fire. Its bearer fears no flame, but the cold bites deeper." }
+lore = "Something was shut inside it, long ago, and has been warm ever since."

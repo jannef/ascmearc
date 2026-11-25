@@ -526,7 +526,12 @@ impl World {
             let o = def.overeating;
             let mut rng = draw!(self, "eat/overeat/player");
             if o.choke > 0 && rng.chance(u32::from(o.choke)) {
-                self.die_of(Cause::Choked(what), self.state.time);
+                // A Restore power near may undo it (`restore.rs`); the cure's status events have
+                // no turn's list to join here, and the next snapshot shows what changed.
+                let player = self.state.player;
+                if !self.restored(player, &mut Vec::new()) {
+                    self.die_of(Cause::Choked(what), self.state.time);
+                }
                 return;
             }
             let iron = self

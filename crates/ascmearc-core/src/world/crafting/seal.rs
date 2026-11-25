@@ -237,11 +237,7 @@ pub(super) fn steps(
             (it.affixes.iter().enumerate())
                 .filter_map(|(i, a)| {
                     let def = content.affixes().get(&a.id)?;
-                    let rolled = crate::magic::Rolled {
-                        def,
-                        tier: a.tier,
-                        value: a.value,
-                    };
+                    let rolled = crate::magic::Rolled::of(def, a);
                     let name = affix_line(&rolled, base, content);
                     Some(option(i, name, def.name.clone()))
                 })

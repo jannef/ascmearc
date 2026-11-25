@@ -97,6 +97,21 @@ pub struct Rolled<'a> {
     pub def: &'a AffixDef,
     pub tier: u8,
     pub value: i32,
+    /// How many dice a dice family's value is the sides of: its tier's `dice`, or what a
+    /// unique's table sets past the ladder ([`crate::content::UniqueDef::dice`]); 1 for the rest.
+    pub dice: u8,
+}
+
+impl<'a> Rolled<'a> {
+    /// `affix` of `def` as its tier rolls it.
+    pub fn of(def: &'a AffixDef, affix: &Affix) -> Self {
+        Rolled {
+            def,
+            tier: affix.tier,
+            value: affix.value,
+            dice: def.tier(affix.tier).map_or(1, |t| t.dice),
+        }
+    }
 }
 
 impl Magic {
@@ -128,13 +143,14 @@ impl Magic {
     /// not have, are left out).
     pub fn rolled<'c>(&self, content: &'c Content) -> Vec<Rolled<'c>> {
         let affixes = content.affixes();
+        let unique = (self.unique.as_deref()).and_then(|id| content.unique(id));
         let mut rolled: Vec<Rolled<'c>> = (self.affixes.iter())
             .filter_map(|a| {
-                Some(Rolled {
-                    def: affixes.get(&a.id)?,
-                    tier: a.tier,
-                    value: a.value,
-                })
+                let mut rolled = Rolled::of(affixes.get(&a.id)?, a);
+                if let Some(dice) = unique.and_then(|u| u.dice(&a.id)) {
+                    rolled.dice = dice;
+                }
+                Some(rolled)
             })
             .collect();
         rolled.sort_by_key(|r| r.def.kind);
@@ -156,8 +172,9 @@ impl Magic {
 
     /// [`Magic::check`], but the affixes in `set` (a unique item's, written with their values,
     /// `"mystic=30"`, #2001, #2044, checked where its table is read) are not held to the affix's
-    /// bases, and on the affix's last tier one may lie past its top (`Tier::passed_by`; a rolled
-    /// item's is held within its tier).
+    /// bases, and on the affix's last tier one may lie past its top or be a penalty
+    /// (`Tier::set_past`), or roll more dice than the tier (a rolled item's is held within its
+    /// tier).
     pub(crate) fn check_set(
         &self,
         def: &ObjectDef,
@@ -211,7 +228,11 @@ impl Magic {
                 .tier(affix.tier)
                 .ok_or_else(|| format!("`{}` has no tier {}", a.id, affix.tier))?;
             let last = usize::from(affix.tier) == a.tiers.len();
-            if !tier.holds(affix.value) && !(hand_set && last && tier.passed_by(affix.value)) {
+            // A unique's dice past the ladder's (`"heavy=6d6"`, its count in its table) were
+            // read at load (`content::affix_value`), on the last tier.
+            let more_dice = a.effect.is_dice();
+            let past = hand_set && last && (tier.set_past(affix.value) || more_dice);
+            if !tier.holds(affix.value) && !past {
                 return Err(format!(
                     "`{}` tier {} rolls {} to {}, not {}",
                     a.id, affix.tier, tier.min, tier.max, affix.value
