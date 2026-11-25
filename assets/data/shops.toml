@@ -28,6 +28,16 @@
 #   names     shopkeepers' names for generated shops, picked uniformly
 #   bundle    [least, most]: how many of a stackable object lie in one stack of generated stock
 #             (least at least 1)
+#   reach     goods that are no base item (potions, scrolls, wands, rods; an object with no
+#             `kind`) follow the shop's item level too (#2089): one comes once the item level plus
+#             `reach` reaches its own `level`, so a shop sells a little above what loot of its
+#             level finds (a base item, a weapon or a ring, comes only at its own level, as loot)
+#   floor     percent: such a good is no longer drawn once its `level` is below this share of the
+#             lower of the item level and the highest level of its class the shop draws, so a
+#             shop of a high item level lays out its class's better goods, not the lowest. A class
+#             whose ladder is short (food, potions) keeps more of it than a long one (scrolls)
+#   staples   goods every shop that stocks them draws whatever the floor: healing, the cures,
+#             and identify stay for sale at every item level
 #   [keeper]  every shopkeeper: `creature` (creatures.toml), what it carries (`carry`, as in level
 #             legends: `"gold_coin*250"` is its purse, which pays for what it buys), and what of
 #             that it wields and wears (`wield`, `wear`)
@@ -65,6 +75,12 @@ names = [
     "Wulfgar", "Leofwine", "Brannoc", "Wilfrida", "Cuthbert", "Eadgyth", "Fenwick", "Isolde",
 ]
 bundle = [6, 15]
+reach = 2
+floor = 50
+staples = [
+    "potion_of_antidote", "potion_of_cure_disease", "potion_of_greater_healing",
+    "potion_of_healing", "scroll_of_identify",
+]
 
 [keeper]
 creature = "shopkeeper"

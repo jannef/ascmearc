@@ -17,7 +17,7 @@
 //! level `data/rules/restock.toml` gives a level-1 player on a floor of this danger
 //! (`Shops::lay_out`: its magic and an ornament, never another material), so a shop on a
 //! dangerous floor lays out better goods (#1735), and a base item comes only once that item level
-//! reaches its own (#2048).
+//! reaches its own (#2048); any other good within its band of item levels (#2089).
 
 use super::Canvas;
 use crate::content::ShopPlan;

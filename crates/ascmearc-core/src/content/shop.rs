@@ -50,6 +50,12 @@ struct ShopFile {
     #[serde(default)]
     names: Vec<String>,
     bundle: [u32; 2],
+    #[serde(default)]
+    reach: u8,
+    #[serde(default)]
+    floor: u8,
+    #[serde(default)]
+    staples: Vec<String>,
     keeper: KeeperSpec,
     #[serde(default)]
     shop: Vec<ShopSpec>,
@@ -181,6 +187,15 @@ pub struct Shops {
     pub names: Vec<String>,
     /// How many of a stackable object lie in one stack of generated stock, least and most.
     pub bundle: (u32, u32),
+    /// How many item levels above a shop's item level a good that is no base item (a potion, a
+    /// scroll, a wand) may be (#2089): a shop sells a little more than loot of its level finds.
+    pub reach: u8,
+    /// Percent of the lower of a shop's item level and the highest level of a class it draws:
+    /// a good that is no base item, below that share, is no longer drawn (#2089), so a shop of
+    /// a high item level does not fill up with low goods.
+    pub floor: u8,
+    /// Goods every shop that stocks them draws whatever its `floor`: healing, cures, identify.
+    pub staples: Vec<ObjectId>,
     pub keeper: Keeper,
     defs: Vec<ShopDef>,
 }
@@ -225,18 +240,22 @@ impl Shops {
     }
 
     /// What a shop of kind `kind` draws its goods made at item level `level` from
-    /// ([`Shops::stocks`]; a base item, one with a `kind`, only once `level` reaches its own
-    /// `level`, as loot's: #2048), each weighed by its loot `frequency` (100 for what is never
-    /// loot: a low tier's spell scroll lies there more often), by object id (the string): the
-    /// same draw lays out the same goods however the object files are ordered
-    /// (docs/dev/content.md).
+    /// ([`Shops::stocks`]), each weighed by its loot `frequency` (100 for what is never loot: a
+    /// low tier's spell scroll lies there more often), by object id (the string): the same draw
+    /// lays out the same goods however the object files are ordered (docs/dev/content.md).
+    ///
+    /// A base item (one with a `kind`) comes only once `level` reaches its own `level`, as
+    /// loot's (#2048). Any other good (a potion, a scroll, a wand; #2089) comes once `level`
+    /// plus the `reach` reaches its own, and no longer once it is below its class's floor
+    /// ([`Shops::class_floor`]); a staple stays.
     pub fn goods(&self, content: &Content, kind: ShopId, level: u8) -> Vec<(ObjectId, u32)> {
-        let mut goods: Vec<ObjectId> = (0..content.object_defs().len())
-            .map(|o| ObjectId(o as u16))
-            .filter(|&o| self.stocks(content, kind, o))
+        let candidates = self.within_reach(content, kind, level);
+        let mut goods: Vec<ObjectId> = (candidates.iter().copied())
             .filter(|&o| {
                 let def = content.object(o);
-                def.kind.is_none() || def.level <= level.max(1)
+                def.kind.is_some()
+                    || self.staples.contains(&o)
+                    || def.level >= class_floor(content, &candidates, def.class, level, self.floor)
             })
             .collect();
         goods.sort_by(|a, b| content.object(*a).id.cmp(&content.object(*b).id));
@@ -244,6 +263,37 @@ impl Shops {
             .map(|o| match content.object(o).frequency {
                 0 => (o, 100),
                 f => (o, f),
+            })
+            .collect()
+    }
+
+    /// The least level of a good of class `class` that is no base item and no staple a shop of
+    /// kind `kind` draws at item level `level` ([`Shops::goods`]): `floor` percent of the lower
+    /// of `level` and the highest level of the class within its reach.
+    pub fn class_floor(
+        &self,
+        content: &Content,
+        kind: ShopId,
+        class: ItemClassId,
+        level: u8,
+    ) -> u8 {
+        let candidates = self.within_reach(content, kind, level);
+        class_floor(content, &candidates, class, level, self.floor)
+    }
+
+    /// What a shop of kind `kind` stocks that is not above item level `level`: a base item at
+    /// its own level, anything else up to `reach` above.
+    fn within_reach(&self, content: &Content, kind: ShopId, level: u8) -> Vec<ObjectId> {
+        let level = level.max(1);
+        (0..content.object_defs().len())
+            .map(|o| ObjectId(o as u16))
+            .filter(|&o| self.stocks(content, kind, o))
+            .filter(|&o| {
+                let def = content.object(o);
+                match def.kind {
+                    Some(_) => def.level <= level,
+                    None => def.level <= level.saturating_add(self.reach),
+                }
             })
             .collect()
     }
@@ -352,6 +402,12 @@ impl Shops {
         if parsed.shop.len() > MAX_SHOPS {
             return Err(err(format!("at most {MAX_SHOPS} kinds of shop")));
         }
+        if parsed.floor > 100 {
+            return Err(err("`floor` is a percent, at most 100".into()));
+        }
+        let staples = (parsed.staples.iter())
+            .map(|o| (content.object_id(o)).ok_or_else(|| err(format!("unknown staple `{o}`"))))
+            .collect::<Result<Vec<_>, _>>()?;
         let mut defs: Vec<ShopDef> = Vec::new();
         for spec in parsed.shop {
             let bad = |m: String| err(format!("shop `{}`: {m}", spec.id));
@@ -400,10 +456,32 @@ impl Shops {
             chance: parsed.chance,
             names: parsed.names,
             bundle: (least, most),
+            reach: parsed.reach,
+            floor: parsed.floor,
+            staples,
             keeper,
             defs,
         })
     }
+}
+
+/// `floor` percent of the lower of `level` and the highest level among `candidates` of class
+/// `class` that are no base item ([`Shops::class_floor`]).
+fn class_floor(
+    content: &Content,
+    candidates: &[ObjectId],
+    class: ItemClassId,
+    level: u8,
+    floor: u8,
+) -> u8 {
+    let top = (candidates.iter())
+        .map(|&o| content.object(o))
+        .filter(|d| d.kind.is_none() && d.class == class)
+        .map(|d| d.level)
+        .max()
+        .unwrap_or(0);
+    let under = u32::from(top.min(level.max(1)));
+    u8::try_from(under * u32::from(floor) / 100).unwrap_or(u8::MAX)
 }
 
 impl super::RulesFile for Shops {
@@ -498,7 +576,7 @@ mod tests {
     #[test]
     fn a_base_item_is_stocked_only_from_its_own_item_level() {
         // As loot: plate armour (item level 7) and full plate (20) wait for a shop of theirs
-        // (#2048); what is no base item (a potion) does not.
+        // (#2048), with no reach above it.
         let c = content();
         let shops = c.shops().expect("shops");
         let armourer = shops.id("armourer").expect("an armourer");
@@ -511,17 +589,88 @@ mod tests {
         assert_eq!(c.object(c.object_id(full).expect(full)).level, 20);
         assert!(has(1, "leather_jerkin") && !has(1, plate) && !has(1, full));
         assert!(!has(6, plate) && has(7, plate) && !has(19, full) && has(20, full));
-        let alchemist = shops.id("alchemist").expect("an alchemist");
-        let potion = c.object_id("potion_of_full_healing").expect("a potion");
-        assert!(c.object(potion).level > 1 && c.object(potion).kind.is_none());
-        assert!((shops.goods(&c, alchemist, 1).iter()).any(|&(g, _)| g == potion));
-        // Every base laid out at a level is one of that level or below.
+        // Every base laid out at a level is one of that level or below, and none falls under a
+        // floor: a full-plate armourer still sells leather.
         for level in [1, 4, 12, 40] {
             for (o, _) in shops.goods(&c, armourer, level) {
                 let def = c.object(o);
                 assert!(def.kind.is_none() || def.level <= level, "{}", def.id);
             }
         }
+        assert!(has(40, "leather_jerkin") && has(40, full));
+    }
+
+    #[test]
+    fn other_goods_follow_the_item_level_within_a_band() {
+        // #2089: a potion, a scroll, or a wand comes once the item level plus the reach meets
+        // its own level, and goes once it is under its class's floor; a staple stays.
+        let c = content();
+        let shops = c.shops().expect("shops");
+        let (reach, floor) = (shops.reach, shops.floor);
+        assert!(reach > 0 && floor > 0 && floor < 100);
+        let has = |shop: &str, level: u8, name: &str| {
+            let kind = shops.id(shop).expect(shop);
+            let o = c.object_id(name).expect(name);
+            (shops.goods(&c, kind, level).iter()).any(|&(g, _)| g == o)
+        };
+        let level = |name: &str| c.object(c.object_id(name).expect(name)).level;
+        // A starting alchemist has more than healing: everything within its reach.
+        let full = "potion_of_full_healing";
+        assert_eq!(level(full), 10);
+        assert!(!has("alchemist", 10 - reach - 1, full) && has("alchemist", 10 - reach, full));
+        let alchemist = shops.id("alchemist").expect("an alchemist");
+        let first = shops.goods(&c, alchemist, 1);
+        assert!(first.len() >= 10, "{} potions at item level 1", first.len());
+        for (o, _) in &first {
+            assert!(c.object(*o).level <= 1 + reach, "{}", c.object(*o).id);
+        }
+        // Late, the low potions go and the staples stay.
+        assert!(has("alchemist", 1, "murky_draught") && !has("alchemist", 30, "murky_draught"));
+        for staple in [
+            "potion_of_healing",
+            "potion_of_antidote",
+            "potion_of_greater_healing",
+        ] {
+            assert!(has("alchemist", 40, staple), "{staple}");
+            assert!(has("provisioner", 40, staple), "{staple}");
+        }
+        assert!(has("town_store", 40, "scroll_of_identify"));
+        assert!(has("alchemist", 40, full) && has("alchemist", 40, "potion_of_quickness"));
+        // A class of a short ladder keeps its top: food never goes, the best wands stay.
+        assert!(has("provisioner", 40, "ration"));
+        assert!(has("general_store", 40, "wand_of_fireball"));
+        assert!(!has("general_store", 40, "wand_of_magic_missile"));
+        // Every shop that stocks a class lays out some of it at every item level.
+        for (k, def) in shops.defs().iter().enumerate() {
+            let kind = ShopId(k as u8);
+            for &class in &def.stock {
+                let any = |level: u8| {
+                    (shops.goods(&c, kind, level).iter()).any(|&(o, _)| c.object(o).class == class)
+                };
+                if !any(1) {
+                    continue;
+                }
+                for level in [1, 5, 10, 20, 30, 40] {
+                    assert!(any(level), "{} {class:?} at {level}", def.id);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn the_floor_follows_the_lower_of_the_item_level_and_the_class_top() {
+        let c = content();
+        let shops = c.shops().expect("shops");
+        let store = shops.id("general_store").expect("a general store");
+        let class = |name: &str| c.item_class_id(name).expect(name);
+        let floor = |name: &str, level: u8| shops.class_floor(&c, store, class(name), level);
+        // Potions top out at 10, scrolls at 18: past them, the floor stops rising.
+        assert_eq!(floor("potions", 1), 0);
+        assert_eq!(floor("potions", 8), 4);
+        assert_eq!(floor("potions", 30), 5);
+        assert_eq!(floor("potions", 40), 5);
+        assert_eq!(floor("scrolls", 30), 9);
+        assert_eq!(floor("food", 40), 0);
     }
 
     #[test]
@@ -594,6 +743,12 @@ mod tests {
                 "unknown faction",
             ),
             ("bundle = [6, 15]", "bundle = [0, 15]", "`bundle`"),
+            ("floor = 50", "floor = 150", "`floor`"),
+            (
+                "\"potion_of_healing\", \"scroll_of_identify\",",
+                "\"potion_of_healing\", \"nothing\",",
+                "unknown staple",
+            ),
             (
                 "creature = \"shopkeeper\"",
                 "creature = \"player\"",
