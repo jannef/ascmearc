@@ -320,8 +320,8 @@ affixes work as a rare item's do. A [shop](shops.md#magic-items) prices it as a 
 name, its affixes, its power in words, and a line of lore. Each one lies in one place in the
 world, so a character finds each at most once, and loot never makes one. Most are carried by
 those who own them. Three are only ever offered, very rarely, by a
-[pedlar](npcs.md#the-pedlars-offer). Three more, the Grandmother, Silverstrike, and the Radiant,
-are not yet found anywhere in the world.
+[pedlar](npcs.md#the-pedlars-offer). Five more, the Grandmother, Silverstrike, the Radiant,
+Demonsoul, and Deep Night, are not yet found anywhere in the world.
 
 Nothing harms it: no [item damage](materials.md#protected-items), no spell's ruin, and no
 [chest](chests.md) smashed or blown apart.
@@ -347,6 +347,17 @@ Its power works while it is worn or wielded, identified or not:
   farther counts.
 - **Range**: it [shoots](ranged.md#distance) that many times as far: its own range and what its
   affixes add are multiplied, and a talent's extra range is added after.
+- **Cast**: a shield that casts a spell for free, by a chance. When it [blocks](combat.md#why-an-attack-missed) a melee blow from
+  someone beside you, the spell goes at them. A missile, or a blow from farther off, never sets
+  it off. When you bash with it, hit or miss, the spell goes at the one you bashed. The spell
+  works as it always does, with the reach and damage the table gives, whatever your own magic.
+  A cone never reaches you.
+
+Some give more besides their power, as the table says: an immunity or a weakness to a kind of
+[damage](damage-types.md#armour-and-resistance), damage added to a shield's
+[bashes](abilities.md#ability-shield-bash), going [unseen](creature-tricks.md#when-you-are-invisible), or a darkness about you: while you wear it, every light within
+that many cells of you gives no light, the lamps, the fires, and the lights others carry, your
+own too. Nothing is used up: the lights shine again once you are gone or take it off.
 
 {{#include generated/uniques.md}}
 

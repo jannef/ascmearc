@@ -1,0 +1,17 @@
+# Deep Night (#2097): a wool cloak for the drop pool to come (#196; placed nowhere yet but the
+# test world's quarry), item level 40 as the pool's uniques are (docs/design/item-level-40.md
+# §10). Worn, it hides its wearer (invisible, as the Invisible status hides one) and puts out
+# every light within ten cells of them while it is worn (`douse`: lamps, fires, and lights carried,
+# their own too; nothing is used up, and a light shines again once they are gone or the cloak is
+# off), and gives them darkvision to see by (its Vision power) and +4 Dexterity. Every value set
+# by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "deep_night"
+name = "Deep Night"
+object = "wool_cloak"
+affixes = ["of_the_lynx=4"]
+level = 40
+invisible = true
+douse = 10
+power = { vision = "darkvision", phrase = "Its wearer goes unseen, sees in the dark, and every light near them goes out." }
+lore = "Woven of the hour before dawn, when even the stars give up."

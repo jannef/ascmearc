@@ -21,6 +21,8 @@ const UNIQUES: &[Written] = &[
             ("of_the_wind", 10),
         ],
     ),
+    ("deep_night", 40, &[("of_the_lynx", 4)]),
+    ("demonsoul", 40, &[("sturdy", 3)]),
     (
         "eorcanstan",
         12,
