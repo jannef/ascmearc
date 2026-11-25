@@ -5,7 +5,7 @@
 //! range holds the value (a dice family's: of as many dice; a light's: the tier of that light), which prices it
 //! ([`super::MagicWorth`]) and counts toward the item level; a unique's value may lie past its
 //! affix's last tier (`Tier::passed_by`; of as many dice), be a penalty (`Tier::opposed_by`:
-//! the Grandmother's `"guarding=-2"`), or roll more dice than any tier (`"heavy=6d6"`, its
+//! the Grandmother's `"nimble=-2"`), or roll more dice than any tier (`"heavy=6d6"`, its
 //! count kept by [`super::UniqueDef::dice`]), which then takes the last tier, and a unique may set an affix on
 //! any base its effect works on (the affix's bases say only where loot rolls it).
 //! [`crate::magic::Magic::check`] holds the same.

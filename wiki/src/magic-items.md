@@ -313,8 +313,9 @@ also has a **power**, a rule of its own that no affix gives.
 
 Its affixes may go past what loot ever rolls: a value above an affix's highest
 [tier](affixes.md), more dice than any tier gives (the Grandmother's 6d6), a penalty (her −2 to
-Parry), or an affix on a kind of item it never rolls on (High Toby, a bow, has +2 damage; the
-Radiant, a hammer, has +2 Protection). The table below marks such an affix "set" where the
+[Dodge](combat.md#defence), which lowers your Defence against every attack), or an affix on a
+kind of item it never rolls on (High Toby, a bow, has +2 damage; the Radiant, a hammer, has +2
+Protection and +2 Dodge). The table below marks such an affix "set" where the
 others name their tier. No random item, shop's ware, or enchantment ever gets one of these.
 
 It is found unidentified like any magic item, but its rarity shows ("a stiletto (unique)"). Its

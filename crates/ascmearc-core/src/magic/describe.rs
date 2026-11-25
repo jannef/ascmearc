@@ -587,8 +587,6 @@ pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> Msg {
         Effect::Draw => by(msg::describe::DOES_DRAW),
         Effect::Durability => by(msg::describe::DOES_DURABILITY),
         Effect::Bane => by(msg::describe::DOES_BANE).role("bane", bane_of(rolled)),
-        // A unique's penalty (#2091: the Grandmother's −2).
-        Effect::Parry if v < 0 => Msg::new(msg::describe::DOES_PARRY_LESS).role("v", num(-v)),
         Effect::Parry => by(msg::describe::DOES_PARRY),
         Effect::Armour => by(msg::describe::DOES_ARMOUR),
         Effect::Protection => by(msg::describe::DOES_PROTECTION),
@@ -596,6 +594,8 @@ pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> Msg {
         Effect::MaxDex => by(msg::describe::DOES_MAX_DEX),
         Effect::Weight => by(msg::describe::DOES_LIGHTER),
         Effect::Proof => msg::describe::DOES_PROOF.into(),
+        // A unique's penalty (#2091: the Grandmother's −2).
+        Effect::Dodge if v < 0 => Msg::new(msg::describe::DOES_DODGE_LESS).role("v", num(-v)),
         Effect::Dodge => by(msg::describe::DOES_DODGE),
         Effect::Deflection => by(msg::describe::DOES_DEFLECTION),
         Effect::Natural => by(msg::describe::DOES_NATURAL),

@@ -1,6 +1,7 @@
 # The Radiant (#1976, #2091): a war hammer for the drop pool to come (#196; placed nowhere yet
 # but the test world's quarry). A warden's hammer more than a slaughterer's: +4 to hit, +2 to
-# Parry and +2 Protection (no affix rolls Protection on a weapon; a unique may set it), +10
+# Dodge (its light shows every blow coming: +2 Defence against every attack, and Dodge adds up)
+# and +2 Protection (no affix rolls either on a weapon; a unique may set them), +10
 # Toughness and +30 hit points (past the top tiers at item level 40, +7 and +28), and above all
 # a light: wielded, it lights twenty cells about its bearer (its Light power, the
 # `radiant_hammer` preset of data/lights.toml), a hall end to end. Every value set by hand
@@ -9,7 +10,7 @@
 id = "radiant"
 name = "the Radiant"
 object = "war_hammer"
-affixes = ["guarding=2", "hardened=2", "of_precision=4", "of_the_ox=10", "of_vitality=30"]
+affixes = ["nimble=2", "hardened=2", "of_precision=4", "of_the_ox=10", "of_vitality=30"]
 level = 40
 # Five enchantments need its make (docs/dev/enchanting.md): Masterwork (4) and a set gem, a
 # flawless diamond in its pommel (+2).

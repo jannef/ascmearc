@@ -38,7 +38,7 @@ const UNIQUES: &[Written] = &[
         &[
             ("sharp", 10),
             ("heavy", 6),
-            ("guarding", -2),
+            ("nimble", -2),
             ("of_precision", 6),
             ("of_the_bear", 6),
         ],
@@ -69,7 +69,7 @@ const UNIQUES: &[Written] = &[
         "radiant",
         40,
         &[
-            ("guarding", 2),
+            ("nimble", 2),
             ("hardened", 2),
             ("of_precision", 4),
             ("of_the_ox", 10),
@@ -144,8 +144,8 @@ fn a_light_is_written_with_its_light() {
 }
 
 /// What only a unique carries never rolls (#2091, the owner: "do not let new unique specific
-/// affixes bleed into a rollable pool"): Protection on a weapon (the Radiant's), a penalty (the
-/// Grandmother's −2 to Parry), and more dice than a tier (her 6d6). Every random affix, loot's,
+/// affixes bleed into a rollable pool"): Protection and Dodge on a weapon (the Radiant's), a
+/// penalty (the Grandmother's −2 to Dodge), and more dice than a tier (her 6d6). Every random affix, loot's,
 /// a vault's, a shop's, enchanting's and its recast's, is drawn by `loot::pick` among the affixes
 /// whose `bases` hold the item's kind, at a value within a tier; salvage only takes affixes off.
 #[test]
@@ -158,22 +158,23 @@ fn what_only_a_unique_sets_never_rolls() {
         .filter(|o| matches!(o.kind, Some(ItemKind::Weapon | ItemKind::Launcher)))
         .collect();
     assert!(!weapons.is_empty());
-    // No Protection affix rolls on a weapon: its bases leave weapons out.
+    // No Protection or Dodge affix rolls on a weapon: their bases leave weapons out.
+    let unique_only = [Effect::Protection, Effect::Dodge];
     for def in &weapons {
         let kind = def.kind.expect("a kind");
         for a in content.affixes().all() {
-            if a.effect == Effect::Protection {
+            if unique_only.contains(&a.effect) {
                 assert!(!may_roll(a, kind, def), "{} on {}", a.id, def.id);
             }
         }
     }
     // Every affix drawn, by loot and by enchanting, on every weapon at every item level: within
-    // a tier (so never a penalty) and never Protection.
+    // a tier (so never a penalty) and never Protection or Dodge.
     let check = |affix: &crate::magic::Affix, on: &str| {
         let a = content.affixes().get(&affix.id).expect("known");
         let tier = a.tier(affix.tier).expect("its tier");
         assert!(tier.holds(affix.value), "{} {} on {on}", a.id, affix.value);
-        assert_ne!(a.effect, Effect::Protection, "{} on {on}", a.id);
+        assert!(!unique_only.contains(&a.effect), "{} on {on}", a.id);
     };
     for def in &weapons {
         for level in [1, 12, 20, 30, 40, 60, MAX_ITEM_LEVEL] {
@@ -224,9 +225,9 @@ fn what_only_a_unique_sets_never_rolls() {
     }
 }
 
-/// The Grandmother's six d6 and her −2 to Parry, as the rules read them and the item says them.
+/// The Grandmother's six d6 and her −2 to Dodge, as the rules read them and the item says them.
 #[test]
-fn the_grandmother_rolls_six_dice_and_lowers_her_parry() {
+fn the_grandmother_rolls_six_dice_and_lowers_her_dodge() {
     let content = Content::load(&ContentFiles::builtin()).expect("builtin content");
     let grandmother = content.unique("grandmother").expect("loaded");
     assert_eq!(grandmother.dice("heavy"), Some(6));
@@ -241,15 +242,25 @@ fn the_grandmother_rolls_six_dice_and_lowers_her_parry() {
         crate::messages::english_msg(&content, &msg)
     };
     assert_eq!(said("heavy"), "adds 6d6 damage");
-    assert_eq!(said("guarding"), "−2 to Parry");
-    let mods = crate::magic::Mods::local(&grandmother.stack, &content);
-    assert_eq!(mods.get(Effect::Parry), -2);
+    assert_eq!(said("nimble"), "−2 to Dodge");
+    // Wielded, it lowers its wielder's Dodge, which adds up with every other.
+    let mut hands = crate::equipment::Equipment::default();
+    hands.put(&[content.slot_id("main_hand").expect("a hand")], 0);
+    let inventory = [grandmother.stack.clone()];
+    let mods = crate::magic::Mods::worn(&inventory, &hands, &content);
+    assert_eq!(mods.get(Effect::Dodge), -2);
 }
 
-/// The Radiant's +2 Protection counts in its wielder's, though it is no piece of armour.
+/// The Radiant's +2 Protection counts in its wielder's, though it is no piece of armour, and
+/// its +2 Dodge in its wielder's Defence.
 #[test]
-fn the_radiant_adds_its_protection() {
+fn the_radiant_adds_its_protection_and_dodge() {
     let content = Content::load(&ContentFiles::builtin()).expect("builtin content");
     let radiant = content.unique("radiant").expect("loaded");
     assert_eq!(radiant.stack.protection(&content), 2);
+    let mut hands = crate::equipment::Equipment::default();
+    hands.put(&[content.slot_id("main_hand").expect("a hand")], 0);
+    let inventory = [radiant.stack.clone()];
+    let mods = crate::magic::Mods::worn(&inventory, &hands, &content);
+    assert_eq!(mods.get(Effect::Dodge), 2);
 }

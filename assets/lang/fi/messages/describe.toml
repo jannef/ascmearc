@@ -71,6 +71,7 @@ does_deflection = { text = "kimmotus +{v:bare}", of = "f4e743" }
 does_dig = { text = "kaivaa {v:bare} % nopeammin", of = "c0cbbf" }
 does_disease_check = { text = "+{v:bare} tautien vastustamiseen", of = "c54d09" }
 does_dodge = { text = "väistö +{v:bare}", of = "769b3e" }
+does_dodge_less = { text = "väistö −{v:bare}", of = "70fc8e" }
 does_door_kick = { text = "potkusi murtavat ovia helpommin", of = "533775" }
 does_draw = { text = "jännittäminen vaatii {v:bare} vähemmän voimaa", of = "463ff1" }
 does_durability = { text = "särkyy {v:bare} % harvemmin", of = "35696d" }
@@ -94,7 +95,6 @@ does_max_mana = { text = "+{v:bare} manan enimmäismäärään", of = "1b78b8" }
 does_move_speed = { text = "liikut {speed:bare}", of = "017d5f" }
 does_natural = { text = "luontainen panssari +{v:bare}", of = "bfb705" }
 does_parry = { text = "asetorjunta +{v:bare}", of = "a87ec5" }
-does_parry_less = { text = "asetorjunta −{v:bare}", of = "245d3b" }
 does_potion_kept = { text = "juoma jää käyttämättä {v:bare} %:ssa kerroista", of = "e510b4" }
 does_proof = { text = "mikään ei voi vahingoittaa sitä", of = "b76b4b" }
 does_protection = { text = "suojaus +{v:bare}", of = "783c58" }
