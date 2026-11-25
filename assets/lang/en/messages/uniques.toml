@@ -7,3 +7,11 @@ flames_from_shield = "Flames leap from {who:poss} shield!"
 flames_from_your_shield = "Flames leap from your shield!"
 # A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.
 no_craft = "It is unique: no craft of yours will change it."
+
+# The Restore power (#2098, `world/health/restore.rs`): a death near the stone's wearer undone.
+# `who`: a creature the player sees restored.
+restored = "{who:The} fall{who:s}, and rise{who:s} whole again!"
+# A death the player does not see, undone by the stone they wear.
+restored_unseen = "The stone on your finger grows warm."
+# The player restored.
+restored_you = "Death lets go of you: you rise whole again!"

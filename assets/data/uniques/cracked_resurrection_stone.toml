@@ -1,0 +1,16 @@
+# The Cracked Resurrection Stone (#2098): a cursed iron ring for the drop pool to come (#196;
+# placed nowhere yet but the test world's quarry), item level 30. Whatever dies within 10 cells of
+# its wearer, the wearer, their allies, and their foes alike, is restored to full health instead
+# half the time (its Restore power, `world/health/restore.rs`), each death rolled anew; never the
+# undead. Its wearer's hit points come back three times as fast (of Mending past its last tier);
+# its curse (of Hunger) binds it to the finger until a temple lifts it (docs/dev/magic-items.md
+# "Curses"). Every value set by hand (`=`), so a regrade of the tiers leaves it as it is
+# (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "cracked_resurrection_stone"
+name = "the Cracked Resurrection Stone"
+object = "iron_ring"
+affixes = ["of_mending=200", "of_hunger=25"]
+level = 30
+power = { restore = 50, radius = 10, phrase = "Whatever dies near its wearer may rise again, whole, friend and foe alike." }
+lore = "It was cut to wake one king from death. It cracked on the third waking, and has woken anything since."

@@ -205,6 +205,12 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
             };
             format!("it shoots {word} as far: its range, and what its affixes add, times {times}")
         }
+        Some(Power::Restore { chance, radius }) => format!(
+            "whatever dies within {radius} cells of its wearer (the wearer, their allies, and \
+             their foes; no line of sight needed) comes back to full hit points instead, \
+             {chance}% of the time, rolled anew at every death; never the undead. A creature \
+             brought back did not die: no experience, no loot, no corpse, no kill counted"
+        ),
         Some(Power::Cast(cast)) => {
             let def = content.spell(cast.spell);
             let kind = (def.damage_type).map_or(String::new(), |k| {

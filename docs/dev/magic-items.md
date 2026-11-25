@@ -395,6 +395,12 @@ id on another rarity than unique, and a unique without its id.
   blocks from beside and 33 % of its bashes; `bash = 6`, `immune = ["fire"]`, `resist = { cold
   = -50 }`) and **Deep Night** (#2097, a wool cloak: of the Lynx +4, a Vision power of
   darkvision, `invisible = true`, `douse = 10`).
+- **The Cracked Resurrection Stone** (#2098, `data/uniques/cracked_resurrection_stone.toml`): a
+  iron ring, item level 30, for the same drop pool (it drops by danger and item level, never
+  depth; placed nowhere yet but the quarry). Its Restore power (below, `{ restore = 50, radius =
+  10 }`); of Mending at 200 (its wearer's hit points come back three times as fast, past the
+  ladder's top of 50); and of Hunger at 25, the curse that binds it ("Curses": a temple's
+  `decurse` frees it).
 - **What only a unique sets** (#2091), each refused to any other item by `Magic::check` and
   never rolled (`content/unique_values_tests.rs::what_only_a_unique_sets_never_rolls`: every
   random affix, loot's, a vault's, a shop's, enchanting's and its recast's, comes of
@@ -429,6 +435,18 @@ id on another rarity than unique, and a unique without its id.
   base's range plus what affixes add, times it, read by `Actor::launcher_range`,
   `Actor::throw_range`, and `Numbers::of` (talents add after). A creature's AI still judges
   its reach by its launcher's plain `range` (`world/creatures/ai.rs`), as it ignores Hunter's.
+  `Power::Restore { chance, radius }` (`{ restore = 50, radius = 10 }`, #2098): the one check
+  `World::restored` (`world/health/restore.rs`) runs where a death is decided, before anything
+  of it: `World::hurt` at 0 hit points (before Rise from the ashes, so the stone spends no
+  rising), and the deaths that skip `hurt` (Banishing smite's `unmake`, a disease's Toughness
+  run out, `creature_bursts`, choking in `eat::feed`; the Profane's taking, `profane_takes`, is
+  not a death of the body and stays the run's end). Anyone on the dying actor's level wearing
+  one whose radius (the fov's round radius, `radius2`; no line of sight) holds it, the dying
+  one too, makes one draw (`unique/restore`) at the first such wearer's chance; never for the
+  undead (`is_undead`). Restored: `hp` to `max_hp` and `cure_by_magic`; no `Died` event, no
+  death procedure (no corpse, loot, experience, kill tally, on-death effect, death screen); the
+  caller goes on as if it lived. Said: `uniques.restored_you`, `restored` (seen), or
+  `restored_unseen` (the player wears one and does not see the death); nothing otherwise.
   `Power::Cast(CastPower)` (`{ cast = "burning_hands", length = 4, damage = "6d6", on_block =
   25, on_bash = 33 }`, only on a shield and a damage spell; #2095): read once, at the end of
   `World::resolve` (`world/combat/unique_spell.rs`): a melee blow on the bearer missed by their
@@ -466,10 +484,12 @@ id on another rarity than unique, and a unique without its id.
   Bleeding by its chance on its keyed stream, the
   Bedes' darkvision on and off and under the dev override, the Turncoat's ward, the Radiant's
   light on and off and on a creature, Silverstrike's doubled range, the load's checks of both
-  powers, a save); `world/combat/unique_spell_tests.rs` (Demonsoul's block from beside and none
-  from range, in play too, its bash, bash bonus, immunity and weakness; Deep Night's
-  invisibility on and off and its douse's radius, carried lights too; nothing of either rolled);
-  the
+  powers, a save), `world/health/restore_tests.rs` (Restore: the wearer, an ally, a foe, a
+  creature wearer; the undead and beyond the radius; no experience or loot; each death rolled
+  anew at half; the stone's curse; never rolled); `world/combat/unique_spell_tests.rs`
+  (Demonsoul's block from beside and none from range, in play too, its bash, bash bonus,
+  immunity and weakness; Deep Night's invisibility on and off and its douse's radius, carried
+  lights too; nothing of either rolled); the
   item description's text snapshots `unique-description` and `unique-description-unidentified`
   (the quarry's Stonebiter, the test world's unique). Tests that strip statuses or skills
   remove `campaigns/ascmearc/data/uniques` with them.

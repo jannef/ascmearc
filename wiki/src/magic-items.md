@@ -323,8 +323,9 @@ affixes work as a rare item's do. A [shop](shops.md#magic-items) prices it as a 
 name, its affixes, its power in words, and a line of lore. Each one lies in one place in the
 world, so a character finds each at most once, and loot never makes one. Most are carried by
 those who own them. Three are only ever offered, very rarely, by a
-[pedlar](npcs.md#the-pedlars-offer). Five more, the Grandmother, Silverstrike, the Radiant,
-Demonsoul, and Deep Night, are not yet found anywhere in the world.
+[pedlar](npcs.md#the-pedlars-offer). Six more, the Grandmother, Silverstrike, the Radiant,
+Demonsoul, Deep Night, and the Cracked Resurrection Stone, are not yet found anywhere in the
+world.
 
 Nothing harms it: no [item damage](materials.md#protected-items), no spell's ruin, and no
 [chest](chests.md) smashed or blown apart.
@@ -350,6 +351,16 @@ Its power works while it is worn or wielded, identified or not:
   farther counts.
 - **Range**: it [shoots](ranged.md#distance) that many times as far: its own range and what its
   affixes add are multiplied, and a talent's extra range is added after.
+- **Restore**: whatever dies within the number of cells the table gives of its wearer may come
+  back to life instead, by the table's chance. That is anyone: the wearer, their allies, and
+  their foes. No line of sight is needed, and every death rolls again, so one creature can come
+  back many times. The undead never come back: they are already dead. Brought back, a creature
+  has all its hit points again, and Bleeding and anything else a
+  [magical heal](healing.md#magical-healing) cures ends. Its other statuses, its
+  diseases, and its hunger stay, so a poison that killed it can kill it again. It did not die:
+  a foe brought back gives no experience and drops nothing, leaves no corpse, and counts for no
+  quest. The Cracked Resurrection Stone is also [cursed](#cursed-items): once on, it stays on until a
+  temple [lifts the curse](npcs.md#services).
 - **Cast**: a shield that casts a spell for free, by a chance. When it [blocks](combat.md#why-an-attack-missed) a melee blow from
   someone beside you, the spell goes at them. A missile, or a blow from farther off, never sets
   it off. When you bash with it, hit or miss, the spell goes at the one you bashed. The spell

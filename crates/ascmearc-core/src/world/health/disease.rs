@@ -250,7 +250,8 @@ impl World {
         actor.hp = actor.hp.min(actor.max_hp(&content));
         // Damage to the mental stats lowers the most mana the same way.
         actor.mana = actor.mana.min(actor.max_mana(&content));
-        if def.kills && no_toughness {
+        // A Restore power near may undo the death (`restore.rs`).
+        if def.kills && no_toughness && !self.restored(id, events) {
             self.dies(id, by, of, when, events);
             return false;
         }

@@ -1281,6 +1281,10 @@ impl World {
             self.wake(id);
             return false;
         }
+        // A Restore power near it undoes the death before any of it (`restore.rs`).
+        if self.restored(id, events) {
+            return false;
+        }
         // Rise from the ashes: once in a life, but never from starving.
         if id == self.state.player
             && !matches!(harm, Harm::Starving(_))

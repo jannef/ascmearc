@@ -5,3 +5,8 @@ flames_from_shield = { text = "{who:Gen} kilvestä leimahtaa liekkejä!", of = "
 flames_from_your_shield = { text = "Kilvestäsi leimahtaa liekkejä!", of = "e3fd55" }
 # A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.
 no_craft = { text = "Se on ainutlaatuinen: mikään taitosi ei muuta sitä.", of = "749215" }
+
+# The Restore power (#2098): a death near the stone's wearer undone.
+restored = { text = "{who:Nom} kaatuu ja nousee jälleen eheänä!", of = "15db52" }
+restored_unseen = { text = "Sormesi kivi lämpenee.", of = "621eab" }
+restored_you = { text = "Kuolema päästää sinusta irti: nouset jälleen eheänä!", of = "50e146" }
