@@ -905,9 +905,20 @@ impl Actor {
             .protection_with(body, shield, pieces)
     }
 
+    /// The unique items it wears or wields, in equipment order.
+    pub fn worn_uniques<'c>(
+        &'c self,
+        content: &'c Content,
+    ) -> impl Iterator<Item = &'c crate::content::UniqueDef> + 'c {
+        (self.equipment.items().into_iter()).filter_map(move |(_, item)| {
+            let id = self.inventory.get(item)?.magic()?.unique.as_deref()?;
+            content.unique(id)
+        })
+    }
+
     /// What it resists, in percent per kind: what its creature type
     /// is and its race (`race`, the player's when the run has a character), plus what it wears
-    /// and wields (each piece's `resist`, and the resistance affixes of all of it), its talents,
+    /// and wields (each piece's `resist`, the resistance affixes of all of it, a unique's own), its talents,
     /// and its status effects (a potion's `resist`), added up uncapped, and its creature type's
     /// immunities ([`Resistances::sum`]; what counts is capped, [`Resistances::get`]).
     pub fn resistances(&self, content: &Content, race: Option<&RaceDef>) -> Resistances {
@@ -929,13 +940,19 @@ impl Actor {
         .filter_map(|(element, r)| Some((content.damage_type_id(&element)?, r)));
         // And so do its status effects' (a potion's Warmed).
         let lent = (self.effects.iter()).flat_map(|e| content.status(e.status).resist.iter());
+        // And a unique's own (Demonsoul's, #2095), with its immunities.
+        let uniques: Vec<&crate::content::UniqueDef> = self.worn_uniques(content).collect();
+        let unique_resist = uniques.iter().flat_map(|u| u.resist.iter().copied());
         let sources: Vec<(DamageTypeId, i32)> = (innate.chain(worn))
+            .chain(unique_resist)
             .chain(magic.resistances().iter().copied())
             .chain(talents)
             .chain(lent.copied())
             .collect();
         // The kinds it is immune to: its type's, and a talent's (the ratfolk craving's).
-        let immune = (def.immune_kinds.iter().copied()).chain(self.talent_immune_kinds(content));
+        let immune = (def.immune_kinds.iter().copied())
+            .chain(self.talent_immune_kinds(content))
+            .chain(uniques.iter().flat_map(|u| u.immune.iter().copied()));
         Resistances::sum(count, immune, sources)
     }
 
@@ -1723,6 +1740,11 @@ impl Actor {
         if let Some(banes) = self.shield_banes(content) {
             profile.to_hit += banes.to_hit;
         }
+        // A unique shield's own bash bonus (Demonsoul's, #2095).
+        let unique = (self.inventory.get(item))
+            .and_then(|s| s.magic()?.unique.as_deref())
+            .and_then(|id| content.unique(id));
+        profile.bonus += unique.map_or(0, |u| u.bash);
         mods.sharpen(&mut profile);
         profile.penetration += self
             .talent_mods(content)

@@ -1123,6 +1123,8 @@ impl World {
         }
         // Drowning grip: a hit holds, a miss or another target lets go.
         self.grip(attacker, target, kind, blow.as_ref(), events);
+        // A unique shield's free spell, on a block beside or a bash (`unique_spell.rs`).
+        self.unique_spell((attacker, target), (kind, with), (from, to), blow, events);
         blow
     }
 
