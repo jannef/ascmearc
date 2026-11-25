@@ -73,6 +73,16 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "masterpiece",
+        40,
+        &[
+            ("featherweight", 70),
+            ("hardened", 5),
+            ("mage_wrought", 10),
+            ("of_warding", 5),
+        ],
+    ),
+    (
         "radiant",
         40,
         &[

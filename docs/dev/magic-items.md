@@ -401,6 +401,17 @@ id on another rarity than unique, and a unique without its id.
   10 }`); of Mending at 200 (its wearer's hit points come back three times as fast, past the
   ladder's top of 50); and of Hunger at 25, the curse that binds it ("Curses": a temple's
   `decurse` frees it).
+- **The Masterpiece** (#2100, the owner's design): a mithril chain mail shirt in the
+  shared `data/uniques/`, item level 40 (the drop pool's, as #2091 moves the three above), placed
+  nowhere yet but the quarry. Its four affixes fit mithril's binding (no make). Featherweight 70 stacks on mithril's own half (`Stack::weight`:
+  `variant::weight`, then the affix), so it weighs 1,650 g, 15% of a steel shirt's 11,000;
+  of Warding 5 (+5 Defence, as Deflection) and Hardened 5 (+5 Protection), both past their
+  ladders; Mage-wrought 10 takes all of chain mail's `spell_cost_percent` 10 off
+  (`Actor::worn_spell_cost`), the one way armour hinders casting (its cost, the miscast
+  difficulty, the armoured grip), so it hinders none. Its power is Negate 50. No new affix: the
+  four are the rollable ones with a unique's hand-set values, so no rollable pool changes.
+  Tests: `world/combat/negate_tests.rs` (the weight, Defence and Protection, casting, a negated
+  hit, a miss never rolling, loot never making one).
 - **What only a unique sets** (#2091), each refused to any other item by `Magic::check` and
   never rolled (`content/unique_values_tests.rs::what_only_a_unique_sets_never_rolls`: every
   random affix, loot's, a vault's, a shop's, enchanting's and its recast's, comes of
@@ -435,6 +446,16 @@ id on another rarity than unique, and a unique without its id.
   base's range plus what affixes add, times it, read by `Actor::launcher_range`,
   `Actor::throw_range`, and `Numbers::of` (talents add after). A creature's AI still judges
   its reach by its launcher's plain `range` (`world/creatures/ai.rs`), as it ignores Hunter's.
+  `Power::Negate { chance, message }` (`{ negate = 50, message = "..." }`, 1 to 99, worn armour
+  only; #2100): `world/combat/negate.rs::World::negated` asks it of a blow rolled against
+  Defence once it has hit, in `World::resolve` (after the strike's own changes, Holy wrath's
+  die last, before anything comes of the hit) and in a trap's `trap_strikes`; by the chance (one
+  draw from the keyed stream `negate/<wearer>`, made only for a hit on a wearer, so other
+  fights keep their draws) the hit becomes `Missed { by: Armour }` ("glances off your armour"),
+  so no damage, status, `on_hit`, bleeding, grab, weapon ability, knockback, or acid follows,
+  and the player wearing it hears `message` (`data_line::ward`'s key, said through `news`
+  after the attack's line). Spells (even those that roll to hit, `cast.rs::spell_attack`),
+  breath, and blasts never meet it.
   `Power::Restore { chance, radius }` (`{ restore = 50, radius = 10 }`, #2098): the one check
   `World::restored` (`world/health/restore.rs`) runs where a death is decided, before anything
   of it: `World::hurt` at 0 hit points (before Rise from the ashes, so the stone spends no

@@ -47,6 +47,14 @@ pub enum Power {
     /// ([`crate::magic::Mods::worn`]), where it counts as a glowing affix's light does (the
     /// brightest, by radius).
     Light(LightId),
+    /// A hit on its wearer comes to nothing by this chance in a hundred (`{ negate = 50,
+    /// message = "..." }`, #2100; worn armour only): read where an attack rolled against
+    /// Defence has hit and before anything comes of it (`world/combat/negate.rs`, `World::resolve`
+    /// and a trap's strike), which turns the hit into a miss by Armour, drawing from the keyed
+    /// stream `negate/<wearer>`; a spell, a breath, a blast, and anything else not rolled against
+    /// Defence are untouched. The player wearing it is told `message` (a line of data, said by its
+    /// key: [`super::data_line::ward`]).
+    Negate { chance: u8, message: String },
     /// It shoots (or is thrown) this many times as far (`{ range = 2 }`, #1976): a multiplier on
     /// its range and what its affixes add, read where its reach is computed
     /// ([`crate::magic::Mods::local`], `Mods::range`); only on a base with a `range`.
@@ -218,6 +226,9 @@ struct PowerSpec {
     added: Option<AddedSpec>,
     vision: Option<String>,
     ward: Option<String>,
+    /// The chance in a hundred that a hit on its wearer comes to nothing.
+    negate: Option<u8>,
+    /// What its wearer is told (`ward` and `negate`).
     message: Option<String>,
     /// A light preset its wielder carries.
     light: Option<String>,
@@ -353,13 +364,15 @@ fn more_dice(written: &[String], content: &Content) -> Vec<(String, u8)> {
 }
 
 /// The power a `power` table names on base item `def`: exactly one of `inflict` (with `chance`
-/// and `severity`, and perhaps `added`), `vision`, `ward` (with a `message`), `light`, `range`
-/// (2 or more, on a base with a range), `restore` (with a `radius`), and `cast` (on a shield).
+/// and `severity`, and perhaps `added`), `vision`, `ward` (with a `message`), `negate` (1 to 99,
+/// with a `message`, on worn armour), `light`, `range` (2 or more, on a base with a range),
+/// `restore` (with a `radius`), and `cast` (on a shield).
 fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, String> {
     let named = [
         p.inflict.is_some(),
         p.vision.is_some(),
         p.ward.is_some(),
+        p.negate.is_some(),
         p.light.is_some(),
         p.range.is_some(),
         p.restore.is_some(),
@@ -367,7 +380,7 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     ];
     if named.iter().filter(|&&n| n).count() != 1 {
         return Err(
-            "power: name one of `inflict`, `vision`, `ward`, `light`, `range`, `restore`, and `cast`"
+            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, and `cast`"
                 .into(),
         );
     }
@@ -382,8 +395,8 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     if p.inflict.is_none() && (p.chance.is_some() || p.severity.is_some() || p.added.is_some()) {
         return Err("power: `chance`, `severity`, and `added` belong to `inflict`".into());
     }
-    if p.ward.is_none() && p.message.is_some() {
-        return Err("power: `message` belongs to `ward`".into());
+    if p.ward.is_none() && p.negate.is_none() && p.message.is_some() {
+        return Err("power: `message` belongs to `ward` and `negate`".into());
     }
     if let Some(status) = &p.inflict {
         let spec = OnHitSpec {
@@ -413,6 +426,20 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         let id = (content.light_id(light))
             .ok_or_else(|| format!("power: unknown light preset `{light}`"))?;
         return Ok(Power::Light(id));
+    }
+    if let Some(chance) = p.negate {
+        if !(1..=99).contains(&chance) {
+            return Err("power: `negate` is a chance in a hundred, 1 to 99".into());
+        }
+        if !def.kind.is_some_and(|k| k.is_armour()) {
+            return Err("power: `negate` needs a base that is worn armour".into());
+        }
+        let message = (p.message.as_deref().map(str::trim))
+            .ok_or("power: `negate` needs a `message` (what the player is told)")?;
+        return Ok(Power::Negate {
+            chance,
+            message: message.into(),
+        });
     }
     if let Some(times) = p.range {
         if times < 2 {

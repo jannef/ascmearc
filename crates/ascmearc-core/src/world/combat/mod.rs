@@ -16,6 +16,7 @@ pub(in crate::world) mod item_damage;
 mod knock_away;
 mod lurk;
 mod natural;
+mod negate;
 pub(in crate::world) mod reflect;
 mod sear;
 pub(in crate::world) mod shoot;
@@ -43,6 +44,7 @@ cfg_if! {
         mod item_damage_tests;
         mod knock_away_tests;
         mod lurk_tests;
+        mod negate_tests;
         mod protection_tests;
         mod sear_tests;
         pub(in crate::world) mod shoot_tests;

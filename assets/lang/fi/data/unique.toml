@@ -44,6 +44,13 @@ message = { text = "Pysyt jaloillasi.", of = "dada06" }
 lore = { text = "Moni vaunu on pysähtynyt sen tähden, ja moni kuski juossut karkuun.", of = "6c3884" }
 phrase = { text = "Sen nuolet jättävät vuotavia haavoja.", of = "0f05cd" }
 
+[masterpiece]
+lore = { text = "Sen tehnyt seppä laski vasaransa sen jälkeen, sillä parannettavaa ei enää ollut.", of = "98c4d7" }
+phrase = { text = "Moni sen tavoittanut isku raukeaa tyhjiin.", of = "75ac3a" }
+
+[masterpiece.power]
+message = { text = "Isku raukeaa tyhjiin rengaspaitaasi vasten.", of = "5a42d8" }
+
 [radiant]
 lore = { text = "Se taottiin pyhän lähteen äärellä, eikä se ole sen jälkeen pimennyt, vaikka moni on yrittänyt sitä sammuttaa.", of = "1f3284" }
 phrase = { text = "Se luo kantajansa ympärille valon kuin keskipäivällä.", of = "db315d" }

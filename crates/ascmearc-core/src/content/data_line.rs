@@ -63,7 +63,8 @@ pub fn depart(id: &str) -> String {
     format!("creature:{id}.depart")
 }
 
-/// What a unique item `id` that wards off a status tells its wearer (`power.message`).
+/// What a unique item `id` tells its wearer as its power works (`power.message`): a Ward's as it
+/// wards off a status, a Negate's as a hit comes to nothing.
 pub fn ward(id: &str) -> String {
     format!("unique:{id}.power.message")
 }
@@ -595,7 +596,9 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
         }
     }
     for def in content.uniques() {
-        if let Some(super::Power::Ward { message, .. }) = &def.power {
+        if let Some(super::Power::Ward { message, .. } | super::Power::Negate { message, .. }) =
+            &def.power
+        {
             add(ward(&def.id), message);
         }
     }
