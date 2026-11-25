@@ -88,14 +88,14 @@ pub struct TopicView {
     pub ware: Option<crate::lang::Arg>,
 }
 
-/// A topic's name. The data's own words, or a topic the rules make, which the dialogue screen
-/// words (its `assets/lang/en/ui/dialogue_screen.toml`): no English is built here.
+/// A topic's name. A line of data by its key, or a topic the rules make, which the dialogue
+/// screen words (its `assets/lang/en/ui/dialogue_screen.toml`): no English is built here, and
+/// no name is kept as text, so every topic renders in the player's language (#2085).
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum TopicName {
-    /// As the data writes it: "The rooms".
-    Text(String),
     /// A line of data by its key: a dialogue's topic or service, which a translation names
-    /// (`dialogue:<scope>.topic_name.<id>`, `content/dialogue_line.rs`).
+    /// (`dialogue:<scope>.topic_name.<id>`, `content/dialogue_line.rs`), or a quest's name
+    /// (`quest:<id>.name`, `QuestDef::name_arg`).
     Line(String),
     /// Taking the side of the wizard spoken to, in a quarrel (`quarrel.rs`): "Take Mistress
     /// Stormwell's side".
@@ -116,25 +116,12 @@ impl TopicName {
     /// The data's words in English, for a topic the data names (tests and tools).
     pub fn text(&self, content: &crate::content::Content) -> Option<String> {
         match self {
-            TopicName::Text(text) => Some(text.clone()),
             TopicName::Line(key) => Some(crate::messages::english_msg(
                 content,
                 &Msg::data_line(Arg::said(key.clone())),
             )),
             _ => None,
         }
-    }
-}
-
-impl From<String> for TopicName {
-    fn from(text: String) -> Self {
-        TopicName::Text(text)
-    }
-}
-
-impl From<&str> for TopicName {
-    fn from(text: &str) -> Self {
-        TopicName::Text(text.into())
     }
 }
 

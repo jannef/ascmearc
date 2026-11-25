@@ -260,6 +260,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("item-classes.md", objects::item_classes),
         ("shops.md", objects::shops),
         ("restock.md", objects::restock),
+        ("shop-levels.md", objects::shop_levels),
         ("magic-worth.md", objects::magic_worth),
         ("equipment.md", objects::equipment),
         ("materials.md", materials::materials),
@@ -1054,7 +1055,7 @@ mod tests {
             "{picking}"
         );
         assert!(
-            picking.contains("| Usual, on the Depths 8 | 21 |"),
+            picking.contains("| Usual, on the Depths 8 (danger 8) | 21 |"),
             "{picking}"
         );
         assert!(
@@ -1540,11 +1541,11 @@ mod tests {
         );
         let depths = text("search-depths.md");
         assert!(
-            depths.contains("| the Depths 3 | none (these floors have no doors) |"),
+            depths.contains("| the Depths 3 (danger 3) | none (these floors have no doors) |"),
             "{depths}"
         );
         assert!(
-            depths.contains("| the Depths 8 | 1 to 2 | 6.9% | 51% | 0.69% |"),
+            depths.contains("| the Depths 8 (danger 8) | 1 to 2 | 6.9% | 51% | 0.69% |"),
             "{depths}"
         );
         let races = text("search-races.md");

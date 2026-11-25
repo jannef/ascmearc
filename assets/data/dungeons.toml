@@ -42,7 +42,7 @@
 #   [dungeon.endless]  instead of `depth`: floors without end, each made as it is reached and
 #              forgotten when left: `caves` (percent of floors made by `caves_level`), `caves_level`
 #              (the level fields a caves floor changes, over the template: e.g. `{ generator = {
-#              kind = "caves" }, size = [100, 40] }`), `dread` (`dread_one_in` by depth: `{ steps =
+#              kind = "caves" }, size = [100, 40] }`), `dread` (`dread_one_in` by danger: `{ steps =
 #              [[70, 40]], halves = 10, least = 5 }`), and `[[dungeon.endless.boss]]` rows (`depth`,
 #              `creature`, `vault`: a layer boss and its lair). One plan at every depth: no
 #              `[[dungeon.levels]]`, no `vaults`, no `hidden`
@@ -94,11 +94,11 @@
 #   secret_doors  [least, most] doors the rooms generator hides on a level (secret doors; default
 #              none): only doors the stairs and every key are reached
 #              without, so a level may get fewer
-#   hidden_per_depth  how much harder its hidden features (secret doors, hidden traps) are to
-#              find for each level below the first (default 0)
-#   locks_per_depth  how much harder its locks are to pick for each level below
-#              the first, on top of the lock's own difficulty (14 unless a vault gives it one;
-#              default 0)
+#   hidden_danger_percent  how much harder its hidden features (secret doors, hidden traps)
+#              are to find, in percent of the floor's danger (rounded down; default 0)
+#   locks_danger_percent  how much harder its locks are to pick, in percent of the floor's
+#              danger (rounded down), on top of the lock's own difficulty (14 unless a vault
+#              gives it one; default 0)
 #   ores       the only ores (metal ids, each with an ore row in data/mining.toml) its walls give
 #              a miner; `[]` none; stone and gems are found anyway (default:
 #              every ore of the table)
@@ -134,9 +134,9 @@
 #   stray_pool  where the strays come from: "all" (the default, as above) or "populations"
 #              (only the types living in some branch or level with a danger of this campaign
 #              or of none, uniques left out: a branch whose folk are a design's table)
-#   out_of_depth  percent of draws made out of depth (default `[defaults]`'s): one
-#              danger deeper, then `deeper` % again and again one deeper still, with no
-#              cap (#1711: anything may come at astronomical odds); where `population` weighs
+#   above_danger  percent of draws made out of depth, above the floor's danger (default
+#              `[defaults]`'s): one danger higher, then `deeper` % again and again one higher
+#              still, with no cap (#1711: anything may come at astronomical odds); where `population` weighs
 #              nothing that deep (all too weak), the generic list is drawn there instead
 #   deeper     percent of each further step deeper (default `[defaults]`'s)
 #   neutral    the weight, in percent of its own (default `[defaults]`'s), that a
@@ -170,7 +170,7 @@
 #              `from`), and any of the level fields above, over the template's
 #
 # [defaults] (this file only; required once any branch or level has a danger): the odds every
-# area with a danger draws by unless it gives its own `stray`, `out_of_depth`, `deeper`,
+# area with a danger draws by unless it gives its own `stray`, `above_danger`, `deeper`,
 # `dread_one_in`, and `neutral` (`dread_one_in` defaults
 # to 100, `neutral` to 100).
 #
@@ -181,9 +181,9 @@
 [defaults]
 # Percent of draws from the generic creature list.
 stray = 5
-# Percent of draws made out of depth: one danger deeper ...
-out_of_depth = 5
-# ... then this percent, again and again, one deeper still, with no cap.
+# Percent of draws made out of depth, above the floor's danger: one danger higher ...
+above_danger = 5
+# ... then this percent, again and again, one higher still, with no cap.
 deeper = 5
 # One draw in this many is made among the dread types alone, every other among the rest
 # (docs/design/monster-dread.md §8; the owner: "let's increase the default to 1-in-100").

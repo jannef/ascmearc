@@ -217,7 +217,8 @@ a hand-made level's `item_level` (default 1); 1 elsewhere. Never the depth (#206
 rule: loot follows danger only): every branch floor needs a `danger` (`content/dungeon.rs` refuses
 a depth without one), so depth reaches loot only through `per_depth`; within 1 to `MAX_ITEM_LEVEL`. Everything that reads it follows: floor loot, vault
 `loot` cells, chests, hoards, creature gear and drops, a generated shop's stock and restocking,
-herbs gathered, gems mined, a fixture's loot, and the arrival XP (`content/item_level_tests.rs`).
+herbs gathered, gems mined, and a fixture's loot (`content/item_level_tests.rs`). The arrival XP
+reads the danger itself, not the item level (`docs/dev/experience.md`, #2086).
 
 **The utility hooks** (D1, #631): each worn effect joins its talent's term at the one line that
 reads it, through `Actor::mods` (so unidentified gear works, and a creature's gear wherever the

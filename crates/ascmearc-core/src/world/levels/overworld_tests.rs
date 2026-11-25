@@ -281,16 +281,20 @@ fn locations_lead_into_their_levels_and_back_out_to_the_location() {
         assert_eq!(world.time().since(before), Duration::seconds(6));
         assert_eq!(world.perception().level_id(), to);
         // The Hall's stairs nook is a sanctuary (a special room): the player is told so after.
-        // Each level is new, worth 5 experience (item level 1), said last.
+        // A new level with a danger is worth 5 × it, said last (the Depths 1, danger 1); the Hub
+        // and the Vast have none and are worth nothing (#2086).
         let log = world.messages();
-        let said: Vec<&str> = (log.iter().rev().take(3))
+        let said: Vec<&str> = (log.iter().rev().take(4))
             .map(|m| m.text.as_str())
             .collect();
         let entered = format!("You enter {name}.");
         let found = "You gain 5 experience for finding your way here.";
+        assert!(said.contains(&entered.as_str()), "{said:?}");
+        assert_eq!(said.contains(&found), to == "depths:1", "{to}: {said:?}");
         match to {
-            "hub" => assert_eq!(said, [found, "You feel at peace here.", entered.as_str()]),
-            _ => assert_eq!(said[..2], [found, entered.as_str()]),
+            "hub" => assert!(said.contains(&"You feel at peace here."), "{said:?}"),
+            "depths:1" => assert_eq!(said[..2], [found, entered.as_str()]),
+            _ => {}
         }
         let up = world
             .state

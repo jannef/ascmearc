@@ -19,7 +19,13 @@ fallback = "en"
 # Kirjakieli: standard written Finnish, no colloquialisms.
 [registers.posh]
 
-# Stadin slangi.
+# Stadin slangi, the old slang of 1920–1950s Helsinki (vanha stadin slangi; #2088), not today's
+# clipped speech: its Swedish and Russian loans used where they fall naturally, never one in every
+# line (diggaa, snadi, kundi, flikka, bonjaa, tsiigaa, dallaa, mesta, lafka, fyrkka, duuni,
+# stidi, pämppää, tyyris, fiini, kliffa, faija, mutsi, skidi), and full case endings ("siltä",
+# "siinä", "Mynsteristä", not "silt", "siin", "Mynsterist"); mä/sä stay. Old slang is the
+# baseline and each speaker varies inside it: some heavy with loans, some plain, each with pet
+# words of their own (docs/dev/localization.md "Stadin slangi").
 [registers.stadi]
 "sinä" = "sä"
 "sinun" = "sun"

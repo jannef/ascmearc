@@ -192,6 +192,47 @@ fn a_town_restocks_no_base_item_above_its_item_level() {
 }
 
 #[test]
+fn a_town_shop_sheds_what_it_has_outgrown() {
+    // #2089: by character level 50 (item level 30) Cēaptūn's shops hold no potion, scroll, wand,
+    // or rod they no longer lay out (below their class's floor), staples aside: what is
+    // outgrown goes first at each restock.
+    let mut w = town();
+    to_level(&mut w, 50);
+    let rules = w.content().restock().cloned().expect("shops restock");
+    let made_at = rules.item_level(50, 0, bonus(&w, "ceaptun"));
+    assert!(made_at >= 30, "{made_at}");
+    let c = w.content().clone();
+    let shops = c.shops().expect("shops");
+    let state = &w.state.levels["ceaptun"];
+    let mut seen = 0;
+    for shop in &state.shops {
+        let goods = shops.goods(&c, shop.kind, made_at);
+        for (p, pile) in &state.objects {
+            if !shop.contains(*p) {
+                continue;
+            }
+            for s in pile {
+                let def = c.object(s.object);
+                if def.kind.is_some() || !shops.stocks(&c, shop.kind, s.object) {
+                    continue;
+                }
+                seen += 1;
+                assert!(
+                    goods.iter().any(|&(g, _)| g == s.object),
+                    "{} (level {}) still in a shop at item level {made_at}",
+                    def.id,
+                    def.level
+                );
+            }
+        }
+    }
+    assert!(
+        seen > 0,
+        "the town's shops sell goods that are no base item"
+    );
+}
+
+#[test]
 fn towns_name_their_levels() {
     let w = town();
     assert!(w.content().town_at("ceaptun").is_some());

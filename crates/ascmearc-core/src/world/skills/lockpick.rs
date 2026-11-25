@@ -94,13 +94,15 @@ impl World {
 
     /// How hard the lock at `at` on the current level is to pick: its own
     /// difficulty ([`crate::door::Lock::difficulty`]), plus on a dungeon branch its
-    /// `locks_per_depth` for each level below the first. 0 where there is no lock.
+    /// `locks_danger_percent` of the floor's danger. 0 where there is no lock.
     pub(super) fn lock_difficulty(&self, at: Pos) -> i32 {
         let Some(lock) = self.state.current().locks.get(&at) else {
             return 0;
         };
-        let deeper = (self.content.branch_level(&self.state.current_level))
-            .map_or(0, |(def, depth)| def.locks_at(depth));
-        i32::from(lock.difficulty()).saturating_add(deeper)
+        let here = &self.state.current_level;
+        let danger = self.content.floor_danger(here, self.player_level());
+        let harder =
+            (self.content.branch_level(here)).map_or(0, |(def, depth)| def.locks_at(depth, danger));
+        i32::from(lock.difficulty()).saturating_add(harder)
     }
 }

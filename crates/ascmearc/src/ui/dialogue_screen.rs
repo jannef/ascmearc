@@ -332,7 +332,6 @@ fn gold(price: u32) -> (&'static str, Arg) {
 fn topic_name(name: &TopicName) -> String {
     let gold = |n: u32| [("gold", Arg::Number(n.into()))];
     match name {
-        TopicName::Text(text) => text.clone(),
         TopicName::Line(key) => super::text::data_line(key.clone()),
         TopicName::Side(who) => ui_with(T::SIDE, &[("who", who.clone().into())]),
         TopicName::Refuse(who) => ui_with(T::REFUSE, &[("who", who.clone().into())]),
@@ -407,7 +406,7 @@ mod tests {
         let mut talk = last_talk(&outcome).expect("talked").clone();
         talk.topics.push(ascmearc_core::world::TopicView {
             id: "cure".into(),
-            name: "A cure for what ails you".into(),
+            name: TopicName::Line("dialogue:ascmearc.hild.service_name.cure".into()),
             price: Some(60),
             items: None,
             ware: None,
@@ -433,7 +432,7 @@ mod tests {
         let mut talk = last_talk(&outcome).expect("talked").clone();
         talk.topics.push(ascmearc_core::world::TopicView {
             id: "identify".into(),
-            name: "An appraisal of your goods".into(),
+            name: TopicName::Line("dialogue:ascmearc.wulfrun.service_name.identify".into()),
             price: Some(0),
             items: Some(3),
             ware: None,
@@ -466,7 +465,7 @@ mod tests {
         let mut talk = last_talk(&outcome).expect("talked").clone();
         talk.topics.push(ascmearc_core::world::TopicView {
             id: "identify".into(),
-            name: "An appraisal of your goods".into(),
+            name: TopicName::Line("dialogue:ascmearc.wulfrun.service_name.identify".into()),
             price: Some(100),
             items: Some(items),
             ware: None,
@@ -513,7 +512,7 @@ mod tests {
         let mut talk = last_talk(&outcome).expect("talked").clone();
         talk.topics.push(ascmearc_core::world::TopicView {
             id: "decurse".into(),
-            name: "Freedom from a curse".into(),
+            name: TopicName::Line("dialogue:ascmearc.hild.service_name.decurse".into()),
             price: Some(500),
             items: Some(2),
             ware: None,
@@ -542,7 +541,7 @@ mod tests {
         let mut talk = last_talk(&outcome).expect("talked").clone();
         talk.topics.push(ascmearc_core::world::TopicView {
             id: "wares".into(),
-            name: "Your wares".into(),
+            name: TopicName::Line("dialogue:ascmearc.pedlar.offer_name".into()),
             price: Some(340),
             items: None,
             ware: Some(Arg::text(

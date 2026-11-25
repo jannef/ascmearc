@@ -26,7 +26,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - The level curve is written in kills of the player's own level. The early levels are discounted.
 - Race and class scale how much experience a level needs, never what is earned.
 - A kill pays by the level difference: grey kills pay nothing.
-- The first kill of each kind pays a bonus. Arriving on a new dungeon level pays. Learning a spell from a book pays.
+- The first kill of each kind pays a bonus. Arriving on a new level pays by its danger, never its depth; a level without a danger pays nothing. Learning a spell from a book pays.
 - Only the player's own kills pay: melee, shots, throws, a wound they caused, or a trap they rigged. An ally's kill pays its master at the ally share. A plain trap's kill pays no one.
 - Each class has a level cap that a prestige class raises. Hit points stop growing before the top of the curve, mana later.
 - The player sees their level, their experience, and what the next level needs, and nothing more.

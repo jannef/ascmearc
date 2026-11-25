@@ -184,10 +184,11 @@ name = "The pass"
 reply = "Beorggeat, the mountain gate. You came down it, I expect, like everyone. It closes with the first snow and doesn't open till the thaw, and this year the snow came early. You're one of us now, for the winter at least. Welcome."
 route = [[18, 28], [12, 28]]
 
-# Reeve Leofric: the town's peace and its coin.
+# Reeve Leofric: the town's peace and its coin. The town's first man, so posh.
 [[dialogue]]
 npc = "leofric"
 name = "Reeve Leofric"
+register = "posh"
 greet = "A newcomer. I am the reeve here. Keep the peace, and we shall get on."
 greet_evil = [
     "I know trouble when I see it. Keep the peace, or kindly leave.",
@@ -211,10 +212,11 @@ id = "barrow"
 name = "Cealdhlāw"
 reply = "The cold barrow, east along the road in the downs. Old as the hills, and the dead in it don't lie quiet. Things come up out of it at night now, more each year. One day I'll need someone to go down there and see why."
 
-# Factor Wulfrun: the old mines and their trade.
+# Factor Wulfrun: the old mines and their trade. A person of means, so posh.
 [[dialogue]]
 npc = "wulfrun"
 name = "Factor Wulfrun"
+register = "posh"
 greet = "Yes? I am frightfully busy. Well, no, but I like to look it."
 lines = [
     "Ore by the cartload, once. Now I keep ledgers of carts that never came.",

@@ -345,14 +345,14 @@ fn whatever_becomes_of_the_wall_takes_the_secret_with_it() {
 }
 
 #[test]
-fn hidden_features_are_harder_deeper_down() {
+fn hidden_features_are_harder_the_more_dangerous_the_floor() {
     let content = builtin();
     let def = content.dungeon("depths").expect("depths");
-    assert_eq!(def.hidden_at(1), 0);
-    assert_eq!(
-        def.hidden_at(8),
-        7 * i32::from(def.plan(8).expect("a floor").hidden_per_depth)
-    );
+    assert_eq!(def.plan(8).expect("a floor").hidden_danger_percent, 90);
+    // Its percent of the danger, rounded down, whatever the depth.
+    assert_eq!(def.hidden_at(1, 1), 0);
+    assert_eq!(def.hidden_at(8, 8), 7);
+    assert_eq!(def.hidden_at(1, 20), 18, "the danger, not the depth");
     let w = World::new(content, "depths", None).expect("world");
     assert_eq!(w.difficulty_of(super::search::Hidden::Door(14)), 14);
 }

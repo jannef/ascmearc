@@ -1,6 +1,7 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: "render(case, content.clone())"
+assertion_line: 181
+expression: shown
 ---
- You gain 5 experience for finding your way here.
+ You notice a pressure plate: an arrow trap.
  You set off the arrow trap! An arrow shoots out of the wall! The arrow stabs you.

@@ -1,0 +1,24 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: shown
+---
+ Avaat oven.
+ Wat Yksisilmä sanoo: "Taas yks solalta? Istu jos haluut. Seisominen maksaa saman verran."
+
+
+
+
+
+
+
+                  ┌─ Wat Yksisilmä ──────────────────────────────────────────────┐
+                  │                                                              │
+                  │ ”Taas yks solalta? Istu jos haluut. Seisominen maksaa saman  │
+                  │ verran.”                                                     │
+                  │                                                              │
+                  │ > 1  Palkkio                                                 │
+                  │   2  Kilta                                                   │
+                  │   3  Ilmoitustaulu                                           │
+                  │                                                              │
+                  │ 1-3 tai Enter  kysy    Esc  lähde                            │
+                  └──────────────────────────────────────────────────────────────┘

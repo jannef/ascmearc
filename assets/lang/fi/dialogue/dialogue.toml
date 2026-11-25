@@ -2,16 +2,16 @@
 # Stadin slangi, kept light (lang.toml `[race_registers]`).
 
 [data.shopkeeper]
-greet = { text = "Kattele rauhas, ota aikaa. Mitä nostat, siit maksat ovel.", of = "f02da2" }
+greet = { text = "Kattele rauhassa, ota aikaa. Mitä nostat, siitä maksat ovella.", of = "f02da2" }
 greet_evil = [
     { text = "Sun sorttisille hinnat on kovemmat. Ota tai jätä.", of = "b3fa08" },
-    { text = "Kato vaan, mut pidä tassut siel mis mä nään ne.", of = "3fc812" },
+    { text = "Kato vaan, mut pidä tassut siellä, missä mä nään ne.", of = "3fc812" },
 ]
 lines = [
-    { text = "Kaikki mitä lattial on, on myynnis. Ihan kaikki.", of = "0f73b4" },
-    { text = "Maksa ovel, ni pysytään frendeinä.", of = "522486" },
-    { text = "Tuo mulle mitä löydät. Mä maksan reilusti, puodiks.", of = "7da976" },
-    { text = "Vaan kultarahaa. Lupauksii mä en ota.", of = "222f60" },
+    { text = "Kaikki, mitä lattialla on, on myynnissä. Ihan kaikki.", of = "0f73b4" },
+    { text = "Maksa ovella, ni pysytään frendeinä.", of = "522486" },
+    { text = "Tuo mulle, mitä löydät. Mä maksan reilusti, lafkaks.", of = "7da976" },
+    { text = "Vaan kultarahaa. Lupauksia mä en ota.", of = "222f60" },
     { text = "Se viimene, joka häipy maksamatta? En mä nää sitä täällä, näätsä?", of = "a4959b" },
     { text = "Hinnat on hinnat. Mut ystävällinen naama auttaa, kyl.", of = "4ce86b" },
 ]
