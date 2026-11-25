@@ -1466,7 +1466,7 @@ a dialogue's register are checked names.
 - A speech of several lines (a one-liner and a stake's worth) is one entry with a list in the
   `lines` form, not two entries.
 - `register` is set where a speaker's race's register is not theirs (the human patron and
-  partner, Sigeric, Ælfswīð, Ordgar: `posh`; Gimmwīc's people: `cornish`). English's overrides and race map came
+  partner, Sigeric, Ælfswīð, Ordgar, Reeve Leofric, Factor Wulfrun: `posh`; Gimmwīc's people: `cornish`). English's overrides and race map came
   with L14 ("Registers").
 
 ## Decisions L1 made where the design left them open
