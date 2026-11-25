@@ -5,20 +5,20 @@
 # Humans, half-elves, and half-orcs: Stadin slangi.
 [ascmearc.servant]
 lines = [
-    { text = "Ilo nähdä teit, {player:address}. Koko kaupunki kirkastuu, kato.", of = "1496e9" },
+    { text = "Ilo nähdä teitä, {player:address}. Koko kaupunki kirkastuu, kato.", of = "1496e9" },
     { text = "Noi saappaat, {player:address}! Kelpais kuninkaallekin.", of = "cb8d70" },
-    { text = "Kuulin et te kaadoitte kaks kertaa teit isomman pedon, {player:address}. Mähän sanoin.", of = "26dab8" },
-    { text = "Mä sanon kaikille Gæsthūsis, {player:address}: rajamaalla ei oo ketään hienompaa ku te.", of = "5b8ca0" },
+    { text = "Kuulin, et te kaadoitte kaks kertaa teitä isomman pedon, {player:address}. Mähän sanoin.", of = "26dab8" },
+    { text = "Mä sanon kaikille Gæsthūsissa, {player:address}: rajamaalla ei oo ketään fiinimpää ku te.", of = "5b8ca0" },
     { text = "Se ryhti, {player:address}! Veri ei valehtele. Ei sitä fyrkalla osteta.", of = "98736b" },
     { by = "player.gender", male = "Jos saan sanoo, {player:address}, te näytätte joka kerta komeemmalta.", female = "Jos saan sanoo, {player:address}, te näytätte joka kerta kauniimmalta.", else = "Jos saan sanoo, {player:address}, te näytätte joka kerta hienommalta.", of = "7e1c90" },
-    { text = "Teijän suku ois teist ylpee, {player:address}. Ylpee ku mikä.", of = "0c82e4" },
+    { text = "Teijän suku ois teistä ylpeä, {player:address}. Ylpeä ku mikä.", of = "0c82e4" },
     { text = "Mä pidän teijän kamat valmiina, {player:address}, niinku aina. Vaan parasta teille.", of = "e478ba" },
-    { text = "Tää rahvas ei tunnista laatuu, {player:address}. Mä tunnistan.", of = "65cb5d" },
+    { text = "Tää rahvas ei tunnista laatua, {player:address}. Mä tunnistan.", of = "65cb5d" },
 ]
 address = { male = "herra", female = "rouva", other = "pomo", of = "40c67c" }
 
 [ascmearc.servant.stipend]
-handover = { text = "Teijän suku lähetti teijän elatusrahat, {player:address}, kaikki laskettu kunnolla. Täs on, joka penni.", of = "474493" }
+handover = { text = "Teijän suku lähetti teijän elatusrahat, {player:address}, kaikki laskettu kunnolla. Tässä on, joka penni.", of = "474493" }
 
 # Dwarves and duergar: pohjalaismurre.
 [ascmearc.servant_dwarf]
