@@ -1,5 +1,5 @@
-# The Masterpiece (#2100, the owner's design): a mithril chain mail shirt for the drop pool to come
-# (#196; placed nowhere yet but the test world's quarry), item level 40 as the pool's uniques are
+# The Masterpiece (#2100, the owner's design): a mithril chain mail shirt for the drop pool
+# (#2103; placed nowhere else but the test world's quarry), item level 40 as the pool's uniques are
 # (docs/design/item-level-40.md §10). Very light: Featherweight 70 stacked on mithril's own half,
 # 15% of a steel shirt (1,650 g of 11,000). +5 Defence (of Warding's Deflection) and +5
 # Protection, both past their affixes' top tiers; Mage-wrought 10 takes off all of the shirt's
@@ -9,6 +9,8 @@
 [[unique]]
 id = "masterpiece"
 name = "the Masterpiece"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
 object = "chain_mail"
 affixes = ["featherweight=70", "hardened=5", "mage_wrought=10", "of_warding=5"]
 level = 40

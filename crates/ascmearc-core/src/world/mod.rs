@@ -353,6 +353,10 @@ pub struct WorldState {
     /// The unique items traders' offers have made in the run (`world/people/wares.rs`): each once.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub(crate) uniques_offered: BTreeSet<String>,
+    /// The drop pool's uniques the run has found, wherever they came (`magic/unique_pool.rs`):
+    /// each once. Left out while empty.
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub(crate) uniques_dropped: BTreeSet<String>,
     /// Every profane gift the player has ever taken, by talent id, held or lost since: none is
     /// given twice (`world/character/profane.rs`, #1805).
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
@@ -870,6 +874,7 @@ impl World {
             parties: Vec::new(),
             wares: BTreeMap::new(),
             uniques_offered: BTreeSet::new(),
+            uniques_dropped: BTreeSet::new(),
             gifts_received: BTreeSet::new(),
             stipend: classes::stipend::Stipend::default(),
             fund: classes::invest::Fund::default(),

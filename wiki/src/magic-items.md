@@ -17,8 +17,8 @@ magic crystals: see [Enchanting](enchanting.md).
 | Unique | set by hand, at most three prefixes and three suffixes | "Widowmaker, stiletto" | golden orange |
 
 The color is the color of the item's name, in your pack, on the equipment screen, and in its
-description. The item's glyph keeps its own color. Loot is never unique: see
-[Unique items](#unique-items).
+description. The item's glyph keeps its own color. Loot never rolls a unique, but a rare find
+may now and then be one instead: see [The drop pool](#the-drop-pool).
 
 How often loot is normal, magic, or rare, and how many affixes magic and rare items have:
 
@@ -320,12 +320,10 @@ others name their tier. No random item, shop's ware, or enchantment ever gets on
 
 It is found unidentified like any magic item, but its rarity shows ("a stiletto (unique)"). Its
 affixes work as a rare item's do. A [shop](shops.md#magic-items) prices it as a rare item, but by its own item level instead of its affixes' tiers. Once identified, it shows its
-name, its affixes, its power in words, and a line of lore. Each one lies in one place in the
-world, so a character finds each at most once, and loot never makes one. Most are carried by
-those who own them. Three are only ever offered, very rarely, by a
-[pedlar](npcs.md#the-pedlars-offer). Seven more, the Grandmother, Silverstrike, the Radiant,
-Demonsoul, Deep Night, the Cracked Resurrection Stone, and the Masterpiece, are not yet found
-anywhere in the world.
+name, its affixes, its power in words, and a line of lore. A character finds each at most once.
+Some are carried by those who own them, and one is a quest's pay. Three are only ever offered,
+very rarely, by a [pedlar](npcs.md#the-pedlars-offer). The rest come only from
+[the drop pool](#the-drop-pool). The table's last but one column says where each comes from.
 
 Nothing harms it: no [item damage](materials.md#protected-items), no spell's ruin, and no
 [chest](chests.md) smashed or blown apart.
@@ -379,6 +377,26 @@ that many cells of you gives no light, the lamps, the fires, and the lights othe
 own too. Nothing is used up: the lights shine again once you are gone or take it off.
 
 {{#include generated/uniques.md}}
+
+### The drop pool
+
+Some uniques are never placed anywhere. Instead, any [rare](#rarity) item you find may turn out to be
+one of them: **1 in 50** rare finds is a unique of the pool in its place.
+
+- **Where**: anything found as loot. Items lying on a floor or in a vault, in a [chest](chests.md) (or the
+  [mimic](mimics.md) in its place), in a treasure room or a creature's hoard, what a creature drops when it
+  dies, and what a feature such as an altar leaves you. What creatures wear, shops sell, traders
+  offer, and quests pay never is.
+- **Which**: only a unique whose own item level the find's [item level](affixes.md#base-items)
+  reaches. A find's item level follows the [danger](dungeons.md#who-lives-there-and-how-many) of where it lies or of the creature that
+  dropped it, never the depth alone. With more than one open to the find, each is as likely.
+- **Once**: each comes at most once in a game. One you have found, or left lying, never comes
+  again. With none left that the find reaches, a rare find stays as it is.
+- **As it is**: it comes whole, unidentified, with its affixes, its power, and any curse it
+  carries, like any find.
+
+Which uniques are in the pool, and the item level each needs: the "Carried by" column above
+("a rare find of item level ... or more").
 
 See also: [Prefixes and suffixes](affixes.md), [Enchanting](enchanting.md), and
 [Equipment](equipment.md).

@@ -25,6 +25,7 @@ use crate::geom::{Dir, Pos};
 use crate::hunger::Hunger;
 use crate::lang::Msg;
 use crate::magic::loot::{self, LootGrade};
+use crate::magic::unique_pool;
 use crate::msg;
 use crate::object::{Stack, add_to_pile};
 use crate::rng::draw;
@@ -418,7 +419,8 @@ impl World {
     }
 
     /// An item of loot at the floor's item level plus `bonus`, at least of `grade` (a relic's
-    /// `rare`: the top rarity its base allows), at the feature's foot.
+    /// `rare`: the top rarity its base allows), at the feature's foot; a rare one perhaps a unique
+    /// of the drop pool instead (`magic/unique_pool.rs`).
     fn leave_loot(&mut self, bonus: u8, grade: LootGrade, feature: Pos) {
         let content = self.content.clone();
         let level = content
@@ -427,6 +429,12 @@ impl World {
         let luck = loot::Luck::of(&self.state.player().talent_mods(&content));
         let mut rng = draw!(self, "outcome/loot/{},{}", feature.x, feature.y);
         let item = loot::roll_with(&content, &mut rng, level, grade, Source::Loot, luck);
+        // A rare one may be a unique of the drop pool instead, on the same stream after it.
+        let item = item.map(|s| {
+            let found = &self.state.uniques_dropped;
+            unique_pool::instead(&content, &mut rng, &s, found).unwrap_or(s)
+        });
+        unique_pool::note(&content, &item, &mut self.state.uniques_dropped);
         if let Some(stack) = item {
             let at = self.foot_of(feature);
             self.lay(at, stack);

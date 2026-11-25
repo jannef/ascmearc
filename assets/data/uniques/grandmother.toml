@@ -1,5 +1,5 @@
-# The Grandmother (#1976, #2091): a mithril great sword for the drop pool to come (#196; placed
-# nowhere yet but the test world's quarry). Raw weight past any rare great sword's at item level
+# The Grandmother (#1976, #2091): a mithril great sword for the drop pool (#2103; placed
+# nowhere else but the test world's quarry). Raw weight past any rare great sword's at item level
 # 40 (docs/design/item-level-40.md §10): +10 damage and six more d6 (Sharp and Heavy far above
 # their top tiers, +7 and 2d10), a sure, strong arm (+6 to hit, +6 Strength), and a blade so
 # heavy it drags its wielder down (−2 to Dodge, so −2 Defence against every attack: a penalty
@@ -8,6 +8,8 @@
 [[unique]]
 id = "grandmother"
 name = "the Grandmother"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
 object = "great_sword"
 affixes = ["sharp=10", "heavy=6d6", "nimble=-2", "of_precision=6", "of_the_bear=6"]
 level = 40

@@ -68,5 +68,6 @@ cfg_if! {
         mod parts_tests;
         mod quiver_tests;
         mod siphon_tests;
+        mod unique_pool_tests;
     }
 }

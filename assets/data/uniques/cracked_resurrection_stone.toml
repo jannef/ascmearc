@@ -1,5 +1,5 @@
-# The Cracked Resurrection Stone (#2098): a cursed iron ring for the drop pool to come (#196;
-# placed nowhere yet but the test world's quarry), item level 30. Whatever dies within 10 cells of
+# The Cracked Resurrection Stone (#2098): a cursed iron ring for the drop pool (#2103;
+# placed nowhere else but the test world's quarry), item level 30. Whatever dies within 10 cells of
 # its wearer, the wearer, their allies, and their foes alike, is restored to full health instead
 # half the time (its Restore power, `world/health/restore.rs`), each death rolled anew; never the
 # undead. Its wearer's hit points come back three times as fast (of Mending past its last tier);
@@ -9,6 +9,8 @@
 [[unique]]
 id = "cracked_resurrection_stone"
 name = "the Cracked Resurrection Stone"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
 object = "iron_ring"
 affixes = ["of_mending=200", "of_hunger=25"]
 level = 30

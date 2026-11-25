@@ -1,4 +1,4 @@
-# Deep Night (#2097): a wool cloak for the drop pool to come (#196; placed nowhere yet but the
+# Deep Night (#2097): a wool cloak for the drop pool (#2103; placed nowhere else but the
 # test world's quarry), item level 40 as the pool's uniques are (docs/design/item-level-40.md
 # §10). Worn, it hides its wearer (invisible, as the Invisible status hides one) and puts out
 # every light within ten cells of them while it is worn (`douse`: lamps, fires, and lights carried,
@@ -8,6 +8,8 @@
 [[unique]]
 id = "deep_night"
 name = "Deep Night"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
 object = "wool_cloak"
 affixes = ["of_the_lynx=4"]
 level = 40

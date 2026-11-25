@@ -1,5 +1,5 @@
-# The Radiant (#1976, #2091): a war hammer for the drop pool to come (#196; placed nowhere yet
-# but the test world's quarry). A warden's hammer more than a slaughterer's: +4 to hit, +2 to
+# The Radiant (#1976, #2091): a war hammer for the drop pool (#2103; placed nowhere
+# else but the test world's quarry). A warden's hammer more than a slaughterer's: +4 to hit, +2 to
 # Dodge (its light shows every blow coming: +2 Defence against every attack, and Dodge adds up)
 # and +2 Protection (no affix rolls either on a weapon; a unique may set them), +10
 # Toughness and +30 hit points (past the top tiers at item level 40, +7 and +28), and above all
@@ -9,6 +9,8 @@
 [[unique]]
 id = "radiant"
 name = "the Radiant"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
 object = "war_hammer"
 affixes = ["nimble=2", "hardened=2", "of_precision=4", "of_the_ox=10", "of_vitality=30"]
 level = 40

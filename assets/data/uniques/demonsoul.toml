@@ -1,4 +1,4 @@
-# Demonsoul (#2095): a large shield for the drop pool to come (#196; placed nowhere yet but the
+# Demonsoul (#2095): a large shield for the drop pool (#2103; placed nowhere else but the
 # test world's quarry), item level 40 as the pool's uniques are (docs/design/item-level-40.md
 # §10). Its Defence is an ordinary good shield's at 40 (Sturdy +3, the ladder's top), and it
 # breathes fire: a free Burning hands, stronger than any caster's (a cone 4 cells long, 6d6
@@ -8,6 +8,8 @@
 [[unique]]
 id = "demonsoul"
 name = "Demonsoul"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
 object = "large_shield"
 affixes = ["sturdy=3"]
 level = 40

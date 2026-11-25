@@ -387,23 +387,23 @@ id on another rarity than unique, and a unique without its id.
   Steady 6), and the Radiant (a Masterwork war hammer: Light `radiant_hammer`, radius 20,
   `data/lights.toml`; +4 to hit, +2 to Dodge, +2 Protection, +10 Toughness, +30 hit points), in
   the shared `data/uniques/`, item level 40 (docs/design/item-level-40.md §10: at or above
-  §5.8's best roll), every affix written with its value. They are meant for the low-chance drop
-  pool (#196) and placed nowhere yet but the test world's quarry
-  (`campaigns/showcase/levels/quarry.toml`), so tests and captures reach them. Two more join
+  §5.8's best roll), every affix written with its value, each `pool = true` (the drop pool, below). Placed
+  nowhere but the test world's quarry (`campaigns/showcase/levels/quarry.toml`, a showcase),
+  so tests and captures reach them. Two more join
   them at the same item level, in the same quarry: **Demonsoul** (#2095, a large
   shield: Sturdy +3, a Cast power of Burning hands, 4 cells and 6d6, on 25 % of the blows it
   blocks from beside and 33 % of its bashes; `bash = 6`, `immune = ["fire"]`, `resist = { cold
   = -50 }`) and **Deep Night** (#2097, a wool cloak: of the Lynx +4, a Vision power of
-  darkvision, `invisible = true`, `douse = 10`).
+  darkvision, `invisible = true`, `douse = 10`), both `pool = true`.
 - **The Cracked Resurrection Stone** (#2098, `data/uniques/cracked_resurrection_stone.toml`): a
-  iron ring, item level 30, for the same drop pool (it drops by danger and item level, never
-  depth; placed nowhere yet but the quarry). Its Restore power (below, `{ restore = 50, radius =
+  iron ring, item level 30, of the same drop pool (`pool = true`; it drops by danger and item
+  level, never depth; placed nowhere but the quarry), and drops cursed as it is. Its Restore power (below, `{ restore = 50, radius =
   10 }`); of Mending at 200 (its wearer's hit points come back three times as fast, past the
   ladder's top of 50); and of Hunger at 25, the curse that binds it ("Curses": a temple's
   `decurse` frees it).
 - **The Masterpiece** (#2100, the owner's design): a mithril chain mail shirt in the
-  shared `data/uniques/`, item level 40 (the drop pool's, as #2091 moves the three above), placed
-  nowhere yet but the quarry. Its four affixes fit mithril's binding (no make). Featherweight 70 stacks on mithril's own half (`Stack::weight`:
+  shared `data/uniques/`, item level 40 (the drop pool's, as #2091 moves the three above), of the
+  drop pool (`pool = true`), placed nowhere but the quarry. Its four affixes fit mithril's binding (no make). Featherweight 70 stacks on mithril's own half (`Stack::weight`:
   `variant::weight`, then the affix), so it weighs 1,650 g, 15% of a steel shirt's 11,000;
   of Warding 5 (+5 Defence, as Deflection) and Hardened 5 (+5 Protection), both past their
   ladders; Mage-wrought 10 takes all of chain mail's `spell_cost_percent` 10 off
@@ -426,6 +426,33 @@ id on another rarity than unique, and a unique without its id.
   Defence against every attack, missiles too (Parry counts against melee only), and the one
   kind that adds up (`Category::stacks`), so it always counts in full; Deflection keeps only
   the best, so a +2 there would be lost beside a better ring and a −2 beside any.
+- **The drop pool** (#2103, `magic/unique_pool.rs`): a unique whose data says `pool = true`
+  (`UniqueDef::pool`; opt-in, so a new unique joins by its own line) may stand in for a **rare**
+  find. The placed ones (the outlaws' four, Sigeric's Star, the pedlar's three, the test world's
+  Stonebiter) never say it (`magic/unique_pool_tests.rs` holds them out). `unique_pool::instead`
+  asks of a find that came out `Rarity::Rare`: the open uniques (`open`: of the pool, own item
+  level at most the find's `Magic::level`, not in `WorldState::uniques_dropped`, by id); none
+  open, no draw; else one `below(10_000)` against `rare.unique` of `data/affixes.toml` (200: 1 in
+  50 rare finds) and on a hit one `index` among them. The unique comes as its template stack
+  (unidentified, its curse and all, as any find): no affix or power of it enters a rollable
+  pool. The paths: a generated level's `unique_pool::fill` (branch levels after
+  `treasury::fill` and before `gear::arm`, local areas after `place_loot`), over the piles by
+  cell, the chests' holds by cell, and the spawns' carry (a mimic's chest; gear is not rolled
+  yet), from the level's own stream `unique_pool/<level id>` and none twice on the level
+  (`mapgen::Visit::dropped` is the run's set); `World::loot_of` (a creature's drop, on its
+  `drop/` stream after the roll) and `World::leave_loot` (a feature's loot, on its
+  `outcome/loot` draw after the roll). Never asked: creatures' gear, shops, a trader's offer,
+  quest pay, a quarrel's hoard, a stipend. **Once a run**: `WorldState::uniques_dropped`
+  (saved, left out while empty, so other saves and replays hash as before) takes every pool
+  unique a made level holds (`instantiate_level`: its piles, chests, and spawns' carry, so the
+  quarry's showcase counts) and each creature drop (`World::creature_dies`, after `loot_of`) and feature loot. A level whose
+  generation the pool changes depends on what the run found before, as a unique creature's lair
+  does (`Visit::uniques`). One left on an endless floor that is let go is lost with it. Tests:
+  `magic/unique_pool_tests.rs` (who is in, the item-level gate, no draw for what is not rare or
+  with all found, the odds over 20,000 draws, a level's pass each once and none found),
+  `world/items/unique_pool_tests.rs` (the quarry counts, a creature's drop and none once found).
+  The wiki: the pool's line in "Carried by" (`xtask/src/wiki/uniques.rs::pooled`) and
+  `wiki/src/magic-items.md` "The drop pool".
 - **Powers**, a variant each, read in one place each: `Power::Inflict { hit, added }` rides
   `Mods::local` of the weapon into `Profile::on_hit` (`sharpen`), which `World::resolve` hands
   to `after_blow` after the natural attack's `on_hit` (`Mods::worn` never carries it: it is the

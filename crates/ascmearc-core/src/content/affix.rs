@@ -771,6 +771,9 @@ pub struct Affixes {
     pub magic_affixes: [u32; 3],
     /// How many affixes a rare item rolls, each with its weight.
     pub rare_counts: Vec<(u8, u32)>,
+    /// Of every 10,000 rare finds, how many are a unique of the drop pool instead (`rare.unique`,
+    /// [`crate::magic::unique_pool`]).
+    pub unique_pool: u32,
     /// The first words of rare names ("Grim").
     pub first_names: Vec<String>,
     /// The second words of rare names, by kind of item ("Bite" for weapons, "Tooth" for tools).
@@ -868,6 +871,9 @@ struct MagicSpec {
 struct RareSpec {
     /// `[[affixes, weight], ...]`.
     affixes: Vec<[u32; 2]>,
+    /// In 10,000 rare finds, how many are a unique of the drop pool instead (none unset).
+    #[serde(default)]
+    unique: u32,
 }
 
 #[derive(Deserialize)]
@@ -963,6 +969,13 @@ pub(super) fn parse<'a>(
     // More than a rare may hold would split into more prefixes or suffixes than
     // `Magic::check` (the saves' guard) allows.
     let most = 2 * MAX_PER_KIND as u32;
+    if rare_spec.unique > 10_000 {
+        return Err(err(format!(
+            "`rare.unique`: at most 10000 in 10,000, not {}",
+            rare_spec.unique
+        )));
+    }
+    let unique_pool = rare_spec.unique;
     let mut rare_counts = Vec::new();
     for [count, weight] in rare_spec.affixes {
         if count > most {
@@ -985,6 +998,7 @@ pub(super) fn parse<'a>(
         rarity,
         magic_affixes,
         rare_counts,
+        unique_pool,
         first_names: names_spec.first,
         second_names,
         ..Affixes::default()

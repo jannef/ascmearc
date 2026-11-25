@@ -1454,7 +1454,10 @@ impl World {
         // An animated thing's body falls whole or not at all.
         let (mut dropped, broken) = self.remains(&actor);
         let mut lines: Vec<Msg> = self.break_lines(&actor.level, actor.pos, &broken);
-        dropped.extend(self.loot_of(&actor));
+        let loot = self.loot_of(&actor);
+        let content = self.content.clone();
+        crate::magic::unique_pool::note(&content, &loot, &mut self.state.uniques_dropped);
+        dropped.extend(loot);
         // Struck dead by Soulglass, its body is crystals (`crystal.rs`).
         let glass = (!stoned).then(|| self.crystallise(&actor)).flatten();
         // Its body's crafting stock, unless it is stone or glass now (`material_drops.rs`).

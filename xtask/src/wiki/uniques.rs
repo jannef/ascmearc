@@ -52,8 +52,8 @@ pub(super) fn uniques(content: &Content) -> String {
 }
 
 /// The creature types whose gear always or sometimes gives them unique `u` ("Black Wystan"), the
-/// traders who may offer it, and the quests that pay it, or "-" when it lies elsewhere (a level's
-/// pile or legend).
+/// traders who may offer it, the quests that pay it, and the drop pool, or "-" when it lies
+/// elsewhere (a level's pile or legend).
 fn carried_by(content: &Content, u: &UniqueDef) -> String {
     let who: Vec<String> = (content.creature_defs().iter())
         .filter(|c| order::described(content, c.campaign.as_deref()))
@@ -66,6 +66,7 @@ fn carried_by(content: &Content, u: &UniqueDef) -> String {
         .map(|c| c.name.to_string())
         .chain(offered_by(content, u))
         .chain(rewarded_by(content, u))
+        .chain(pooled(content, u))
         .collect();
     if who.is_empty() {
         "-".into()
@@ -90,6 +91,27 @@ fn offered_by(content: &Content, u: &UniqueDef) -> Vec<String> {
             ))
         })
         .collect()
+}
+
+/// The drop pool's line for unique `u` (#2103), if it is of the pool: "a rare find of item level
+/// 40 or more (1 in 50; once a run)".
+fn pooled(content: &Content, u: &UniqueDef) -> Option<String> {
+    let chance = content.affixes().unique_pool;
+    (u.pool && chance > 0).then(|| {
+        format!(
+            "a rare find of item level {} or more ({}; once a run)",
+            u.magic().level,
+            one_in(chance)
+        )
+    })
+}
+
+/// A chance in 10,000 in words: "1 in 50", else "2.5%".
+fn one_in(chance: u32) -> String {
+    match 10_000 % chance {
+        0 => format!("1 in {}", 10_000 / chance),
+        _ => format!("{}%", f64::from(chance) / 100.0),
+    }
 }
 
 /// The quests whose reward is unique `u`, or a taker's reward (#1787): "Master Sigeric's pay in

@@ -68,7 +68,7 @@ use crate::content::{
 use crate::door::Lock;
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
-use crate::magic::{LootGrade, LootPool, loot, loot::Luck};
+use crate::magic::{LootGrade, LootPool, loot, loot::Luck, unique_pool};
 use crate::object::{Stack, add_to_pile};
 use crate::rng::Rng;
 use std::collections::BTreeMap;
@@ -484,6 +484,8 @@ pub struct Visit<'a> {
     pub player_level: u8,
     pub uniques: Option<&'a std::collections::BTreeSet<String>>,
     pub slain: Option<&'a std::collections::BTreeSet<String>>,
+    /// The drop pool's uniques the run has found (none comes twice; `magic/unique_pool.rs`).
+    pub dropped: Option<&'a std::collections::BTreeSet<String>>,
 }
 
 /// [`generate_with`] for the player `visit` describes.
@@ -496,7 +498,7 @@ pub fn generate_for(
 ) -> Result<LevelTemplate, GenError> {
     let luck = visit.luck;
     if content.local_area(campaign, id).is_some() {
-        return local::generate(content, (campaign, seed), id, luck);
+        return local::generate(content, (campaign, seed), id, visit);
     }
     let (def, depth) = content
         .branch_level(id)
@@ -728,6 +730,7 @@ pub fn generate_for(
                 &canvas.stamped,
             );
             treasury::fill(&mut template, content, (seed, luck), (pal, plan));
+            unique_pool::fill(&mut template, content, seed, visit.dropped);
             crate::gear::arm(&mut template, content, seed);
             crate::animated::arm(&mut template, content, seed);
             // Last, from its own stream: only walls change (`vein.rs`).

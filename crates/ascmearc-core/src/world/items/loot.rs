@@ -19,7 +19,7 @@ use crate::action::Positions;
 use crate::content::{Content, MAX_ITEM_LEVEL, ObjectId};
 use crate::gem;
 use crate::lang::Msg;
-use crate::magic::{LootGrade, loot};
+use crate::magic::{LootGrade, loot, unique_pool};
 use crate::msg;
 use crate::object::Stack;
 use crate::rng::Rng;
@@ -95,7 +95,8 @@ impl World {
 
     /// What `actor`, a creature that just died, drops besides what it carried: by its type's
     /// `loot` chance, a loose gem (by the gems' chance) or else a magic or rare item at its
-    /// [`drop_level`], of a material by the creature's level (its gear), from its own stream.
+    /// [`drop_level`], of a material by the creature's level (its gear), from its own stream; a
+    /// rare one perhaps a unique of the drop pool instead (`magic/unique_pool.rs`).
     pub(in crate::world) fn loot_of(&self, actor: &Actor) -> Option<Stack> {
         let chance = content_loot(self, actor)?;
         let mut rng = Rng::stream(self.state.seed, &format!("drop/{}", actor.id.0));
@@ -112,9 +113,13 @@ impl World {
         let talents = self.state.player().talent_mods(&self.content);
         let luck = loot::Luck::of(&talents);
         let gem = gem::find_with(&self.content, &mut rng, level, luck.gems);
-        gem.or_else(|| {
+        let item = gem.or_else(|| {
             loot::roll_with(&self.content, &mut rng, level, LootGrade::Magic, gear, luck)
-        })
+        })?;
+        // A rare one may be a unique of the drop pool instead, on the same stream after it
+        // (`magic/unique_pool.rs`); its caller notes it found.
+        let found = &self.state.uniques_dropped;
+        Some(unique_pool::instead(&self.content, &mut rng, &item, found).unwrap_or(item))
     }
 
     /// Keeps actor `id`'s hit points within its maximum, which falls when it takes off something

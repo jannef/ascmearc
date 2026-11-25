@@ -6,7 +6,8 @@
 //! scenario's `carry`, a quest reward's `items`); [`Uniques::place`] makes it. Content places
 //! each once, so with pinned vaults and unique creatures a run holds it at most once with no
 //! save state (the data author's promise: a load does not count placements). Loot never rolls
-//! one. A trader's offer may name uniques instead (`content/offer.rs`, #808): those are made at
+//! one, but a unique of the drop pool (`pool = true`, [`UniqueDef::pool`]) may stand in for a
+//! rare find, once a run each ([`crate::magic::unique_pool`], #2103). A trader's offer may name uniques instead (`content/offer.rs`, #808): those are made at
 //! run time, once a run each (`WorldState::uniques_offered`).
 //!
 //! The item is [`Magic`] of rarity unique with its name, plus [`Magic::unique`] (its id, saved),
@@ -132,6 +133,9 @@ pub struct UniqueDef {
     pub lore: Option<String>,
     /// The campaign whose table it is in (`None`: shared, `data/uniques/`).
     pub campaign: Option<String>,
+    /// Whether it is of the drop pool (`pool = true`): a rare find may be it instead, once a run
+    /// ([`crate::magic::unique_pool`]).
+    pub pool: bool,
     /// Its dice families that roll more dice than any tier (`"heavy=6d6"`, #2091), by affix id
     /// with the count: the item's affix holds the sides on the last tier, and this the count.
     dice: Vec<(String, u8)>,
@@ -191,6 +195,9 @@ struct UniqueFile {
 struct UniqueSpec {
     id: String,
     name: String,
+    /// Of the drop pool (#2103).
+    #[serde(default)]
+    pool: bool,
     object: String,
     affixes: Vec<String>,
     #[serde(default)]
@@ -345,6 +352,7 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
         phrase,
         lore,
         campaign: None,
+        pool: spec.pool,
         dice,
     })
 }

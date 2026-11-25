@@ -1,5 +1,5 @@
-# Silverstrike (#1976, #2091): a long war bow for the drop pool to come (#196; placed nowhere yet
-# but the test world's quarry). It shoots twice as far as any long bow (its Range power, a
+# Silverstrike (#1976, #2091): a long war bow for the drop pool (#2103; placed nowhere
+# else but the test world's quarry). It shoots twice as far as any long bow (its Range power, a
 # multiplier on its range), and surely: +6 to hit, a critical threat six wider, and a draw
 # easier by 6, each past its affix's top tier at item level 40 (+4, +2, +4). Every value set
 # by hand (`=`), so a regrade of the tiers leaves it as it is (docs/dev/magic-items.md "Unique
@@ -7,6 +7,8 @@
 [[unique]]
 id = "silverstrike"
 name = "Silverstrike"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
 object = "long_bow"
 affixes = ["keen=6", "steady=6", "of_precision=6"]
 level = 40
