@@ -9,8 +9,9 @@
 //!
 //! **Discovery** (`[discovery]`): the player's first kill of each creature type is worth the
 //! type's XP once more, unscaled ("You learn something of kobolds."), and their first arrival on
-//! a level `arrival` × its item level ("You gain 20 experience for finding your way here."); the
-//! level a run starts on, the overworld, and local areas give none. Neither draws anything at
+//! a level `arrival` × its danger ([`Content::floor_danger`], read directly, never the depth;
+//! #2086: "You gain 20 experience for finding your way here."); the level a run starts on, the
+//! overworld, local areas, and every level without a danger (a town, a crypt) give none. Neither draws anything at
 //! random. The creature types are remembered in [`Progress`]; a level is new when this arrival
 //! made its state.
 
@@ -176,15 +177,17 @@ impl World {
         self.grant_xp(gain);
     }
 
-    /// The player has arrived on level `id` for the first time: a level of a dungeon branch or
-    /// a hand-made one is worth `arrival` × its item level; the overworld and its local areas
-    /// nothing. Said after the arrival's own messages, as the turn is perceived.
+    /// The player has arrived on level `id` for the first time: it is worth `arrival` × its
+    /// danger for a player of their level ([`Content::floor_danger`]: still rising on an endless
+    /// branch); a level without a danger, the overworld, and its local areas nothing. Said after
+    /// the arrival's own messages, as the turn is perceived.
     pub(in crate::world) fn discover_level(&mut self, id: &str) {
         let overworld = self.state.levels.get(id).map(|l| l.kind) == Some(LevelKind::Overworld);
         if overworld || parse_local_area(id).is_some() {
             return;
         }
-        let gain = (self.content.experience()).arrival_xp(self.content.item_level(id));
+        let danger = self.content.floor_danger(id, self.player_level());
+        let gain = (self.content.experience()).arrival_xp(danger);
         if gain == 0 {
             return;
         }

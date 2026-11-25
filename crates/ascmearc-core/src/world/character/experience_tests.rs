@@ -472,7 +472,7 @@ fn the_overworld_and_its_local_areas_give_nothing() {
         w.state.current_level
     );
     assert_eq!(w.player_xp(), 0);
-    // Beside the Hall: the Hub below it is a hand-made level, worth 5 × 1.
+    // Beside the Hall: the Hub below it is a hand-made level without a danger, worth nothing.
     let mut w = World::new(BUILTIN.clone(), "world", None).expect("world");
     let hall = (w.state.current().stairs.iter())
         .find(|s| s.to.as_deref() == Some("hub"))
@@ -481,8 +481,9 @@ fn the_overworld_and_its_local_areas_give_nothing() {
     w.state.actors.get_mut(&w.state.player).expect("player").pos = hall;
     w.apply(&Action::Descend);
     assert_eq!(w.state.current_level, "hub");
-    assert_eq!(w.player_xp(), 5);
-    // Back out to the overworld: known.
+    assert_eq!(w.player_xp(), 0);
+    assert!(!said(&w).iter().any(|m| m.contains("finding your way")));
+    // Back out to the overworld: nothing either.
     let out = (w.state.current().stairs.iter())
         .find(|s| s.to.as_deref() == Some("overworld"))
         .map(|s| s.pos)
@@ -490,7 +491,7 @@ fn the_overworld_and_its_local_areas_give_nothing() {
     w.state.actors.get_mut(&w.state.player).expect("player").pos = out;
     w.apply(&Action::Ascend);
     assert_eq!(w.state.current_level, "overworld");
-    assert_eq!(w.player_xp(), 5);
+    assert_eq!(w.player_xp(), 0);
 }
 
 #[test]

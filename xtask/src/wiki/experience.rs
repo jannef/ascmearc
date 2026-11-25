@@ -121,33 +121,27 @@ pub(super) fn experience_discovery(content: &Content) -> String {
         p => format!("{p} % of its XP once more, whatever your levels"),
     };
     let _ = writeln!(out, "| Your first kill of each kind of creature | {kill} |");
-    let arrival = |item_level: u8| rules.arrival_xp(item_level);
-    let depths = if found.arrival == 0 {
+    let arrival = |danger: u32| rules.arrival_xp(danger);
+    let dangerous = if found.arrival == 0 {
         "nothing".to_string()
     } else {
         format!(
-            "{} × its [item level](magic-items.md#finding-them) (its danger): {} at danger 1, {} at \
-             danger 5, {} at danger 10",
+            "{} × its danger: {} at danger 1, {} at \
+             danger 5, {} at danger 10, {} at danger 20",
             found.arrival,
             arrival(1),
             arrival(5),
-            arrival(10)
-        )
-    };
-    let _ = writeln!(out, "| Your first arrival on a dungeon level | {depths} |");
-    let hand_made = if found.arrival == 0 {
-        "nothing".to_string()
-    } else {
-        format!(
-            "{} × its item level: {} on most, {} in the arena",
-            found.arrival,
-            arrival(1),
-            arrival(content.item_level("arena"))
+            arrival(10),
+            arrival(20)
         )
     };
     let _ = writeln!(
         out,
-        "| Your first arrival on another level, made by hand | {hand_made} |"
+        "| Your first arrival on a level with a danger | {dangerous} |"
+    );
+    let _ = writeln!(
+        out,
+        "| Your first arrival on a level without one (a town, a crypt) | nothing |"
     );
     let _ = writeln!(
         out,
