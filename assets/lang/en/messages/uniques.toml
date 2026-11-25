@@ -1,5 +1,9 @@
 # Unique items (#1975; `content/unique.rs`, docs/dev/magic-items.md "Unique items"): what the
 # rules say of one. Ids alphabetical.
 
+# A unique shield's Cast power goes off (Demonsoul, #2095; `world/combat/unique_spell.rs`),
+# before the spell's own lines. `who`: a bearer the player sees.
+flames_from_shield = "Flames leap from {who:poss} shield!"
+flames_from_your_shield = "Flames leap from your shield!"
 # A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.
 no_craft = "It is unique: no craft of yours will change it."

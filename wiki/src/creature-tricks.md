@@ -78,7 +78,9 @@ scent comes to you wherever you are on its level.
 
 The potion of the unseen makes you [Invisible](status-list.md#status-invisible) for two
 minutes, and so does a [duergar](races.md#race-duergar)'s own
-[Invisibility](abilities.md#ability-fade) (see [Racial magic](races.md#racial-magic)). No creature sees you then, however near and however bright the light, unless it is
+[Invisibility](abilities.md#ability-fade) (see [Racial magic](races.md#racial-magic)). Deep
+Night, a [unique](magic-items.md#unique-items) cloak, makes you invisible for as long as you wear
+it. No creature sees you then, however near and however bright the light, unless it is
 [Seeing](status-list.md#status-seeing) or has no eyes at all (oozes, worms, and the like). The
 same goes for an invisible creature and your allies: they do not see it either.
 

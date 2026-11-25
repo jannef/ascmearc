@@ -322,8 +322,19 @@ impl LevelLights {
                 });
             }
         }
-        // Nor does one in a darkness (`world/magic/zone.rs`).
-        sources.retain(|s| !level.is_opaque(content, s.pos) && !level.darkened(s.pos, state.time));
+        // Nor does one in a darkness (`world/magic/zone.rs`), nor one a unique worn near it
+        // douses (Deep Night's, #2097).
+        let dousers: Vec<(Pos, i32)> = (state.actors.on_level(&level.id))
+            .filter(|a| !a.equipment.is_empty())
+            .filter_map(|a| {
+                let most = a.worn_uniques(content).map(|u| u.douse).max()?;
+                (most > 0).then_some((a.pos, i32::from(most)))
+            })
+            .collect();
+        let doused = |p: Pos| dousers.iter().any(|&(at, r)| at.chebyshev(p) <= r);
+        sources.retain(|s| {
+            !level.is_opaque(content, s.pos) && !level.darkened(s.pos, state.time) && !doused(s.pos)
+        });
         sources
     }
 }
