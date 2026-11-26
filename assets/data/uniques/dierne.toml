@@ -1,0 +1,16 @@
+# The Dierne (#2143): a mace for the drop pool (#2103; placed nowhere else but the test world's
+# quarry), item level 40. *Dierne* is secret, hidden. Its blows make no noise (nothing is woken
+# or drawn by the fight) and spill no blood: no stain, no spatter (its Silent power, read in
+# `World::resolve`). Sneak attacks add their dice with any weapon, so it needs nothing for them.
+# Sharp 5, Heavy 2d8, of Precision 4, of the Sage 4 (Willpower), Featherweight 40. Every value
+# set by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "dierne"
+name = "the Dierne"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "mace"
+affixes = ["sharp=5", "heavy=2d8", "of_precision=4", "of_the_sage=4", "featherweight=40"]
+level = 40
+power = { silent = true, blood = false, phrase = "Its blows make no sound and draw no blood." }
+lore = "Nobody heard a thing. That was rather the point."

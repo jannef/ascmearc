@@ -374,7 +374,8 @@ and are **dev-only**.
 
 ### Map layers
 
-- `view`: what the player sees.
+- `view`: what the player sees, and what they sense through stone (the Fyrwit's Sense power,
+  `perception/sensed.rs`): `*` an object or a magic item worn, a chest by its glyph.
 - `fov`: `*` visible.
 - `memory`: seen terrain, remembered objects (the top object of each known pile), and known
   traps over them.

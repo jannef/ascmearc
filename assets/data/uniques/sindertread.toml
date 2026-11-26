@@ -1,0 +1,21 @@
+# Sindertread (#2142): hobnailed boots for the drop pool (#2103; placed nowhere else but the
+# test world's quarry), item level 40. *Sinder* is slag, the smith's cinder. Its wearer walks
+# on lava as on floor and takes no harm from fire on the ground, burning terrain or a fire zone
+# (a spell's fire still burns, less for the Salamander); their every kick burns (2d6 fire), a
+# door kicked catches fire, and every cell they step off is left a weak fire (2 harm, 2 turns;
+# its Firewalk power, `world/levels/firewalk.rs`). The boots are clothing, so they name the kind
+# their affixes work as (`kind = "boots"`, docs/dev/magic-items.md "A unique on clothing").
+# Hardened 3, Hobnailed 4 (door kicks), of the Salamander 60 (fire), of the Ox 4, and 30%
+# heavier (Featherweight −30: the issue's "Leaden" is a curse that binds, which the design
+# never asks for). Every value set by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "sindertread"
+name = "Sindertread"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "hobnailed_boots"
+kind = "boots"
+affixes = ["hardened=3", "hobnailed=4", "of_the_salamander=60", "of_the_ox=4", "featherweight=-30"]
+level = 40
+power = { firewalk = ["lava"], kick = { type = "fire", damage = "2d6" }, trail = 2, turns = 2, phrase = "Its wearer walks on lava and through fire unburnt. Their kicks burn, and the ground they step off is left burning." }
+lore = "Howay, it's only a bit warm."

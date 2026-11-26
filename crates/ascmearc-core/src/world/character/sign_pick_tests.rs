@@ -471,14 +471,14 @@ fn deep_roots_eats_rot_unharmed_drawing_nothing() {
     let mut rooted = with("hydra", "wood", "deep_roots");
     let rng = draws(&rooted);
     let mut events = Vec::new();
-    rooted.eat_rotten(100, bread, &mut events);
+    rooted.eat_rotten((100, bread, false), &mut events);
     assert_eq!(draws(&rooted), rng, "no draw");
     assert_eq!(
         last(&rooted),
         "The loaf of bread was rotten, but your stomach does not mind."
     );
     let mut plain = born("hydra", "wood");
-    plain.eat_rotten(100, bread, &mut events);
+    plain.eat_rotten((100, bread, false), &mut events);
     assert!(said(&plain, "Ugh! The loaf of bread was rotten."));
     assert_eq!(mods(&rooted).defence.dodge, mods(&plain).defence.dodge + 1);
 }

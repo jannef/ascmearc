@@ -45,9 +45,11 @@ pub(super) fn perceived_glyph(view: &PerceptionView<'_>, layer: Layer, p: Pos) -
         (None, None) => terrain_glyph(cell),
     };
     match layer {
-        Layer::View => match view.actor_at(p) {
-            Some(actor) => actor.glyph(content),
-            None => known_glyph(cell),
+        Layer::View => match (view.actor_at(p), view.sensed_at(p)) {
+            (Some(actor), _) => actor.glyph(content),
+            // Sensed through stone (the Fyrwit's Sense power): a chest's glyph, else `*`.
+            (None, Some(sensed)) => sensed.chest.map_or('*', |t| content.terrain(t).glyph),
+            (None, None) => known_glyph(cell),
         },
         Layer::Fov => {
             if view.is_visible(p) {

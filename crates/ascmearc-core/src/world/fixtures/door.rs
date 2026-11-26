@@ -191,6 +191,9 @@ impl World {
         }
         self.make_noise(player, Act::Kick(p));
         self.spring_trap(p, player, events);
+        // Sindertread's kick sets it alight: it burns rather than breaks
+        // (`world/levels/firewalk.rs`).
+        let broken = broken.filter(|_| !self.kick_alight(p));
         match broken {
             Some(to) => {
                 self.set_terrain(p, to);

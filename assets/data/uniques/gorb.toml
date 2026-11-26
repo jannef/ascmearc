@@ -1,0 +1,16 @@
+# Gorb (#2144): a dagger for the drop pool (#2103; placed nowhere else but the test world's
+# quarry), item level 40. *Gorb* is a greedy eater. A creature its wielder kills with it is
+# eaten at once, whole, with everything a meal of its corpse does (the Second Law, the craving,
+# poison, the stats' gifts, rot's harm), but it never makes them vomit (its Devour power,
+# `world/combat/devour.rs`). Sharp 5, of Celerity 22, of the Lynx 4, of Sustenance 25 (25% less
+# hunger). Every value set by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "gorb"
+name = "Gorb"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "dagger"
+affixes = ["sharp=5", "of_celerity=22", "of_the_lynx=4", "of_sustenance=25"]
+level = 40
+power = { devour = true, phrase = "Whatever it kills, its wielder eats at once, whole, and never brings it up." }
+lore = "Sure, it's only a little bite."

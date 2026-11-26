@@ -1,6 +1,13 @@
 # Unique items (#1975; `content/unique.rs`, docs/dev/magic-items.md "Unique items"): what the
 # rules say of one. Ids alphabetical.
 
+# Gorb's Devour power (#2144, `world/combat/devour.rs`): the player eats what they just killed,
+# whole. `what`: the corpse.
+devours = "You eat {what:the} whole, there and then."
+# Sindertread's Firewalk power (#2142, `world/levels/firewalk.rs`): the door the player kicked
+# catches fire.
+door_catches = "The door catches fire!"
+
 # A unique shield's Cast power goes off (Demonsoul, #2095; `world/combat/unique_spell.rs`),
 # before the spell's own lines. `who`: a bearer the player sees.
 flames_from_shield = "Flames leap from {who:poss} shield!"

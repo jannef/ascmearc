@@ -100,10 +100,10 @@ impl World {
         (self.state.actors.get(&id)).is_some_and(|a| self.content.creature(a.creature).swims)
     }
 
-    /// Whether terrain `def` is open to the steps of creature `id`: walkable, or deep water for
-    /// one that swims. Incorporeal creatures and doors are their callers' business.
+    /// Whether terrain `def` is open to the steps of creature `id`: walkable, deep water for
+    /// one that swims, or lava for a firewalker (`firewalk.rs`). Incorporeal creatures and doors are their callers' business.
     pub(in crate::world) fn open_to(&self, id: ActorId, def: &TerrainDef) -> bool {
-        def.walkable || (def.swim && self.swims(id))
+        def.walkable || (def.swim && self.swims(id)) || self.walks_on(id, def)
     }
 
     /// `said`, with no time, if the player is in deep water. Whether they are.

@@ -157,7 +157,7 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     // The drop pool's of level 12 or more (#1976, #2095, #2097, #2098, #2100, #2109, #2115,
     // #2117, #2123, #2124, #2125, #2127, #2131, #2132, #2133, #2137, #2139, #2141, the shared
     // table first, #2110, #2111, #2113, #2114, #2116, #2118, #2121, #2122, #2128, #2129, #2130,
-    // #2134, #2136, #2140), the criminals' four, the pedlar's three (#808), and Sigeric's (#1787), each with its power (Swīge, #2112, has
+    // #2134, #2135, #2136, #2140, #2142, #2143, #2144), the criminals' four, the pedlar's three (#808), and Sigeric's (#1787), each with its power (Swīge, #2112, has
     // none: its rules are fields).
     let powers: Vec<(&str, &str)> = (content.uniques())
         .filter(|u| u.stack.magic().is_some_and(|m| m.level >= 12))
@@ -203,6 +203,10 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
                     Power::Momentum { .. } => "momentum",
                     Power::Gather => "gather",
                     Power::Parley(_) => "parley",
+                    Power::Sense { .. } => "sense",
+                    Power::Silent { .. } => "silent",
+                    Power::Devour => "devour",
+                    Power::Firewalk(_) => "firewalk",
                 },
             };
             (u.id.as_str(), power)
@@ -215,6 +219,7 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
             ("cracked_resurrection_stone", "restore"),
             ("deep_night", "vision"),
             ("demonsoul", "cast"),
+            ("dierne", "silent"),
             ("domgeorn", "credit"),
             ("entbana", "feller"),
             ("eorthfaest", "plant"),
@@ -222,7 +227,9 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
             ("fambles", "pilfer"),
             ("feolaga", "quarry"),
             ("frithwebbe", "parley"),
+            ("fyrwit", "sense"),
             ("gar", "thrust"),
+            ("gorb", "devour"),
             ("gorthak", "roar"),
             ("grandmother", "inflict"),
             ("haersceorp", "pain"),
@@ -238,6 +245,7 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
             ("scarhide", "scars"),
             ("scrift", "shrive"),
             ("silverstrike", "range"),
+            ("sindertread", "firewalk"),
             ("smitte", "spread"),
             ("smoulder", "zone"),
             ("snaffle", "pilfer"),
@@ -830,8 +838,8 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
     // (#2110), Gorthak (#2136), and the Dōmgeorn (#2130); the three launchers (#2114, #2134,
     // #2118); the Fambles, the Stampers, and Snaffle (#2119, #2120, #2138); Twifeald, Smitte,
     // and the Sonneles (#2121, #2122, #2140); Lēohtfōt, Fǣgerfōt, and the Friþwebbe (#2116,
-    // #2128, #2129).
-    assert_eq!(ids.len(), 48, "{ids:?}");
+    // #2128, #2129); the Fyrwit, Sindertread, the Dierne, and Gorb (#2135, #2142, #2143, #2144).
+    assert_eq!(ids.len(), 52, "{ids:?}");
     let widowmaker = unique(&w, "widowmaker");
     let magic = widowmaker.magic().expect("magic");
     let stiletto = content.object(widowmaker.object);

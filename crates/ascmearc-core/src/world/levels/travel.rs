@@ -136,7 +136,7 @@ impl World {
         if def.is_closed_door() || def.is_shut_chest() {
             return self.open_door(to, events);
         }
-        if !def.walkable && !def.swim {
+        if !def.walkable && !def.swim && !self.walks_on(self.state.player, def) {
             // An anvil, untrained in its Metalcraft, says what it needs (`temper.rs`).
             if let Some(text) = self.anvil_needs(terrain) {
                 self.say(text);

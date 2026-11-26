@@ -465,6 +465,25 @@ Its power works while it is worn or wielded, identified or not:
 - **Scars**: every critical hit you suffer leaves a scar on it, chosen at random: +1 Armour, +1
   maximum hit point, or +1 Toughness. The scars stay on it for whoever wears it next, and there
   is no limit to them. Its description counts them once you have identified it.
+- **Sense**: you feel the objects near you, through walls, doors, and darkness. Every cell
+  within the table's number of cells that you do not see, and that holds a pile, a chest, or a
+  creature wearing or wielding a magic item, shows a mark on your map: a `*`, pale yellow where a
+  magic item lies or is worn, or a chest's own sign. A mimic shows as the chest it seems. You
+  never sense a creature itself, nor what it keeps in its pack. Besides, any
+  [unidentified](#unidentified-items) magic item or wand you carry for 200 turns becomes known.
+- **Silent**: its blows make no noise at all, so nothing hears
+  the fight, and they spill no [blood](hit-points.md#blood): no stain, no spatter.
+- **Devour**: whatever you kill with it, you [eat](food.md#corpses) at once, whole, and it does
+  everything eating its corpse would do: its gifts, its harm, a rotten one's sickness, and
+  [eating those who think](food.md#eating-those-who-think) counts too. You can never vomit it up,
+  and you never overeat: what does not fit is lost. A creature that leaves no corpse leaves
+  nothing to eat.
+- **Firewalk**: you walk on lava as on floor, and [fire](fire.md) on the ground never burns
+  you, burning grass or a fire left on the floor; a spell's fire still does, less what you
+  resist. Every kick you make adds the table's fire damage, and a
+  [door you kick](doors.md#kicking-a-door-open) catches fire. Every cell you step off is left
+  burning: a small fire for the table's turns that burns anyone else who stands in it, and sets
+  alight what burns there.
 - **Momentum**: boots that turn a run-up into a blow. Every step you take (not a blink) builds a
   point of momentum, up to 3. Anything else you do, even waiting, loses it all. Your next
   bare-handed blow, a punch or a kick with nothing in your hands, spends it, hit or miss: a hit

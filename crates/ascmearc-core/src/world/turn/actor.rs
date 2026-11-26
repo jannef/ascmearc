@@ -1801,7 +1801,8 @@ impl Actor {
     /// the affixes of everything it wears and wields, and its combat
     /// stance. Mighty kick rolls its one bigger die instead of bare
     /// hands'; with Martial arts' die too, the bigger of the two and Mighty kick's bonus
-    /// (`kick_die`'s `bonus`). Crusher adds its penetration.
+    /// (`kick_die`'s `bonus`). Crusher adds its penetration. A Firewalk power's fire rides
+    /// it.
     pub fn kick(&self, content: &Content) -> Profile {
         let skill = content.weapon_skills().of_role(Role::Unarmed);
         let mods = self.mods(content);
@@ -1817,6 +1818,10 @@ impl Actor {
         let mut profile = Profile::melee(&fists, &self.stats_with(content, &mods))
             .with(&self.benefit(content, skill));
         mods.sharpen(&mut profile);
+        // Sindertread's Firewalk: the kick burns (`world/levels/firewalk.rs`).
+        if let Some(walk) = self.firewalk(content) {
+            profile.add_rider(walk.kick);
+        }
         profile.penetration += talents.offence.penetration_for(&profile.kinds);
         self.stanced(content, profile)
     }

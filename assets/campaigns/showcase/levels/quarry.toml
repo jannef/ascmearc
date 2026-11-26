@@ -263,6 +263,25 @@ objects = ["unique:faegerfot"]
 at = [11, 7]
 objects = ["unique:frithwebbe"]
 
+# Four more of the pool (#2135, #2142, #2143, #2144), along the arrival room's top row: the
+# Fyrwit, an amulet that senses objects through stone; Sindertread, boots that walk lava; the
+# Dierne, a silent mace; and Gorb, a dagger that eats what it kills.
+[[pile]]
+at = [4, 4]
+objects = ["unique:fyrwit"]
+
+[[pile]]
+at = [6, 4]
+objects = ["unique:sindertread"]
+
+[[pile]]
+at = [8, 4]
+objects = ["unique:dierne"]
+
+[[pile]]
+at = [10, 4]
+objects = ["unique:gorb"]
+
 # What the sealed chamber keeps.
 [[pile]]
 at = [48, 8]

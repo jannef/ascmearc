@@ -59,7 +59,7 @@ use std::collections::BTreeSet;
 use super::cast::Cast;
 
 /// A player's turn, for a zone's `turns`.
-const TURN_SECONDS: u64 = 6;
+pub(in crate::world) const TURN_SECONDS: u64 = 6;
 /// The dev action's zone: how many turns it lies, and the harm of a fire.
 const DEV_TURNS: u64 = 10;
 const DEV_HARM: i32 = 4;
@@ -225,7 +225,7 @@ impl World {
     }
 
     /// Lays a zone of `(kind, by, harm, spell)` for `seconds` on those of `cells` it may lie on.
-    fn lay_cells(
+    pub(in crate::world) fn lay_cells(
         &mut self,
         (kind, by, harm, spell): (ZoneKind, ActorId, i32, Option<SpellId>),
         cells: Vec<Pos>,
@@ -420,6 +420,10 @@ impl World {
     /// Fire at `at` burns actor `id` as a spell of its caster's: Evasion, resistance, the blow
     /// said, its kill the caster's, then the fire type's rule on one it harmed.
     fn zone_burns(&mut self, id: ActorId, at: Pos, zone: ZoneOf, events: &mut Vec<Event>) {
+        // Fire on the ground never burns a firewalker (`firewalk.rs`).
+        if self.walks_fire(id) {
+            return;
+        }
         let content = self.content.clone();
         let kind = content.damage_type_id(ZoneKind::Fire.damage_type().unwrap_or_default());
         let mut made = Vec::new();

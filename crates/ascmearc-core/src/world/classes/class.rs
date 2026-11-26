@@ -160,20 +160,19 @@ impl World {
         table.bonus_trees(self.content.talents())
     }
 
-    /// `seconds` of carrying pass for the player (Connoisseur): with
-    /// the ability, each unidentified magic item they carry counts them, and one carried long
-    /// enough is identified ("This is ...!"). Nothing without it.
+    /// `seconds` of carrying pass for the player (Connoisseur, or the Fyrwit's Sense power,
+    /// `perception/sensed.rs`): with either, each unidentified magic item they carry counts them,
+    /// and one carried long enough (the sooner of the two) is identified ("This is ...!").
+    /// Nothing without one.
     pub(in crate::world) fn appraise_carried(&mut self, seconds: u64) {
-        let Some(hours) = self
-            .state
-            .player()
-            .talent_mods(&self.content)
-            .fortune
-            .identify_carried
-        else {
+        let me = self.state.player();
+        let hours = (me.talent_mods(&self.content).fortune.identify_carried)
+            .map(|hours| u64::from(hours) * crate::time::HOUR);
+        let turns = crate::perception::sensed::identify_turns(me, &self.content)
+            .map(|turns| turns * crate::world::magic::zone::TURN_SECONDS);
+        let Some(needed) = [hours, turns].into_iter().flatten().min() else {
             return;
         };
-        let needed = u64::from(hours) * crate::time::HOUR;
         let mut known = Vec::new();
         let content = self.content.clone();
         for (i, stack) in self.player_mut().inventory.iter_mut().enumerate() {

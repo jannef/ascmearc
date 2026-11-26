@@ -39,6 +39,17 @@ const UNIQUES: &[Written] = &[
     ("deep_night", 40, &[("of_the_lynx", 4)]),
     ("demonsoul", 40, &[("sturdy", 3)]),
     (
+        "dierne",
+        40,
+        &[
+            ("sharp", 5),
+            ("heavy", 8),
+            ("of_precision", 4),
+            ("of_the_sage", 4),
+            ("featherweight", 40),
+        ],
+    ),
+    (
         "domgeorn",
         40,
         &[("of_the_lion", 4), ("hale", 20), ("of_breath", 20)],
@@ -112,6 +123,15 @@ const UNIQUES: &[Written] = &[
         &[("of_the_lion", 7), ("of_haggling", 40), ("of_health", 4)],
     ),
     (
+        "fyrwit",
+        30,
+        &[
+            ("of_the_owl", 5),
+            ("of_seeking", 40),
+            ("of_the_alchemist", 25),
+        ],
+    ),
+    (
         "gar",
         32,
         &[
@@ -120,6 +140,16 @@ const UNIQUES: &[Written] = &[
             ("guarding", 2),
             ("of_precision", 2),
             ("of_the_bear", 4),
+        ],
+    ),
+    (
+        "gorb",
+        40,
+        &[
+            ("sharp", 5),
+            ("of_celerity", 22),
+            ("of_the_lynx", 4),
+            ("of_sustenance", 25),
         ],
     ),
     (
@@ -301,6 +331,17 @@ const UNIQUES: &[Written] = &[
         "silverstrike",
         40,
         &[("keen", 6), ("steady", 6), ("of_precision", 6)],
+    ),
+    (
+        "sindertread",
+        40,
+        &[
+            ("hardened", 3),
+            ("hobnailed", 4),
+            ("of_the_salamander", 60),
+            ("of_the_ox", 4),
+            ("featherweight", -30),
+        ],
     ),
     (
         "smitte",

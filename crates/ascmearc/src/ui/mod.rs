@@ -73,6 +73,7 @@ mod scorch;
 mod screen_snapshots;
 mod screens;
 mod scribe_screen;
+mod sensed;
 mod settings_screen;
 mod shape_screen;
 mod sign_screen;
@@ -191,6 +192,7 @@ impl Plugin for UiPlugin {
                         effects::emit,
                         rain::emit,
                         sounds::emit,
+                        sensed::emit,
                         glyphs::emit,
                         (missiles::emit, target::emit_path),
                         // Burning terrain's standing flames (`flames.rs`), under the spells.

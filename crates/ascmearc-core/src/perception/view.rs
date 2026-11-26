@@ -472,4 +472,20 @@ impl<'a> PerceptionView<'a> {
             .filter(|s| s.pos == p)
             .max_by_key(|s| s.volume)
     }
+
+    /// What the player senses on the cells they do not see (the Fyrwit's Sense power,
+    /// `perception/sensed.rs`), in position order: empty without one.
+    pub fn sensed(&self) -> &'a [crate::perception::Sensed] {
+        &self.snapshot.sensed
+    }
+
+    /// What the player senses at `p`, if anything ([`PerceptionView::sensed`]).
+    pub fn sensed_at(&self, p: Pos) -> Option<&'a crate::perception::Sensed> {
+        (self
+            .snapshot
+            .sensed
+            .binary_search_by_key(&p, |s| s.pos)
+            .ok())
+        .map(|i| &self.snapshot.sensed[i])
+    }
 }

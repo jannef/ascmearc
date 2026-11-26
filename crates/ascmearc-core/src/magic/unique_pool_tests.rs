@@ -30,6 +30,7 @@ const POOL: &[&str] = &[
     "cracked_resurrection_stone",
     "deep_night",
     "demonsoul",
+    "dierne",
     "domgeorn",
     "entbana",
     "eorthfaest",
@@ -37,7 +38,9 @@ const POOL: &[&str] = &[
     "fambles",
     "feolaga",
     "frithwebbe",
+    "fyrwit",
     "gar",
+    "gorb",
     "gorthak",
     "grandmother",
     "haersceorp",
@@ -53,6 +56,7 @@ const POOL: &[&str] = &[
     "scarhide",
     "scrift",
     "silverstrike",
+    "sindertread",
     "smitte",
     "smoulder",
     "snaffle",
@@ -209,7 +213,7 @@ fn a_level_holds_each_unique_once_and_none_the_run_has_found() {
     let pool = pool_ids(&c);
     let mut base = crate::mapgen::generate(&c, ("showcase", 1), "depths:1", None).expect("level");
     let at = *base.objects.keys().next().expect("a pile");
-    base.objects.insert(at, rares(&c, MAX_ITEM_LEVEL, 40));
+    base.objects.insert(at, rares(&c, MAX_ITEM_LEVEL, 100));
     let pooled = |t: &crate::content::LevelTemplate| -> Vec<String> {
         (t.objects.values().flatten())
             .filter_map(|s| member(&c, s).map(str::to_string))

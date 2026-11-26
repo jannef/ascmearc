@@ -535,6 +535,9 @@ mod tests {
             keeps: None,
             grows: None,
             first_blood: false,
+            silent: false,
+            bloodless: false,
+            devour: false,
             spreads: None,
         };
         let sharp = effects.sharpen(&content, profile);

@@ -1,0 +1,19 @@
+# The Fyrwit (#2135): an amber amulet for the drop pool (#2103; placed nowhere else but the test
+# world's quarry), item level 30. *Fyrwit* is curiosity, the itch to know. Its wearer senses the
+# items within 12 cells through stone, doors, and dark: every pile, every chest, and every magic
+# item worn or wielded in plain view is a mark on their map, the magic ones glinting (its Sense
+# power, `perception/sensed.rs`); a mimic's chest shows as a chest. Never a creature, never what
+# a creature keeps in its pack. And an unidentified item its wearer carries 200 turns is
+# identified, as if read over. +5 Intelligence (of the Owl), +40 Search (of Seeking), 25% of
+# potions kept (of the Alchemist). Every value set by hand (docs/dev/magic-items.md "Unique
+# items").
+[[unique]]
+id = "fyrwit"
+name = "the Fyrwit"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "amber_amulet"
+affixes = ["of_the_owl=5", "of_seeking=40", "of_the_alchemist=25"]
+level = 30
+power = { sense = "items", radius = 12, identify = 200, phrase = "Its wearer feels every object near them, through stone and dark, and learns what they carry by carrying it." }
+lore = "It cannot bear a shut drawer."
