@@ -49,7 +49,7 @@ pub(super) fn fill(
         let spec = Spec::new(Origin::Hoard, level).count(u32::from(items));
         for _ in 0..loot::count(content, &spec, &visit.finder, rng) {
             let p = floor[rng.index(floor.len())];
-            let item = wealth::gem_instead(content, rng, level, visit.gems)
+            let item = wealth::gem_instead(content, rng, level, &visit.finder)
                 .or_else(|| loot::find(content, &spec, &visit.finder, taken, rng));
             if let Some(stack) = item {
                 add_to_pile(template.objects.entry(p).or_default(), &[stack], content);

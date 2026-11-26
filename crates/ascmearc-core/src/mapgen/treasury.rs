@@ -322,9 +322,13 @@ pub(super) fn fill(
             let chest = (&traps[..], visit, &mut *taken);
             super::chest::lay(template, content, &mut rng, (at, shut), chest);
         }
-        // Its purse, after its chests: each heap's and each gem's cell drawn before it.
+        // Its purse, after its chests: each heap's and each gem's cell drawn before it. No
+        // finder yet: it reaches the purse as the seam goes (docs/design/wealth.md §8, W3).
         let spec = PurseSpec::of(content, Source::Treasury, level, Some(&treasure.purse));
-        let laid = wealth::purse_placed(content, &spec, &mut rng, |rng| rng.pick(&free).copied());
+        let none = &crate::magic::loot::Finder::NONE;
+        let laid = wealth::purse_placed(content, &spec, none, &mut rng, |rng| {
+            rng.pick(&free).copied()
+        });
         for (at, stack) in laid {
             add_to_pile(template.objects.entry(at).or_default(), &[stack], content);
         }

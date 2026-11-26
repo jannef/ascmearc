@@ -129,7 +129,7 @@ pub(super) fn fill(
         let Loot { rng: hoard, taken } = &mut *loot;
         for _ in 0..loot::count(content, &spec, &visit.finder, hoard) {
             let p = floor[hoard.index(floor.len())];
-            let item = wealth::gem_instead(content, hoard, level, visit.gems)
+            let item = wealth::gem_instead(content, hoard, level, &visit.finder)
                 .or_else(|| loot::find(content, &spec, &visit.finder, taken, hoard));
             if let Some(stack) = item {
                 add_to_pile(template.objects.entry(p).or_default(), &[stack], content);

@@ -112,12 +112,11 @@ impl World {
         // Treasure hunter, Hoard sense: the player's, whoever made the kill.
         let talents = self.state.player().talent_mods(&self.content);
         let finder = loot::Finder::of(&talents);
-        let gems = talents.fortune.gem_find_percent;
         let mut found = self.state.uniques_dropped.clone();
         (0..loot::count(&self.content, &spec, &finder, &mut rng))
             .filter_map(|_| {
                 // A loose gem instead by the wealth seam, else a find of the drop row.
-                let gem = wealth::gem_instead(&self.content, &mut rng, level, gems);
+                let gem = wealth::gem_instead(&self.content, &mut rng, level, &finder);
                 let finder = &finder;
                 gem.or_else(|| loot::find(&self.content, &spec, finder, &mut found, &mut rng))
             })

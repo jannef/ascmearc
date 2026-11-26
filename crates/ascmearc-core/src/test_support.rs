@@ -196,26 +196,20 @@ pub(crate) fn found(
     level: u8,
     grade: crate::magic::LootGrade,
 ) -> Option<crate::object::Stack> {
-    found_with(
-        content,
-        rng,
-        level,
-        grade,
-        (crate::magic::loot::Finder::NONE, 0),
-    )
+    found_with(content, rng, level, grade, crate::magic::loot::Finder::NONE)
 }
 
-/// [`found`] for `finder` and the wealth seam's `gems` percent.
+/// [`found`] for `finder` (its `gems` the wealth seam's).
 pub(crate) fn found_with(
     content: &Content,
     rng: &mut Rng,
     level: u8,
     grade: crate::magic::LootGrade,
-    (finder, gems): (crate::magic::loot::Finder, i32),
+    finder: crate::magic::loot::Finder,
 ) -> Option<crate::object::Stack> {
     use crate::magic::loot::{self, Origin, Spec};
     let gem = (grade == crate::magic::LootGrade::Any)
-        .then(|| crate::wealth::gem_instead(content, rng, level, gems))
+        .then(|| crate::wealth::gem_instead(content, rng, level, &finder))
         .flatten();
     let spec = Spec::new(Origin::Floor, level).grade(grade);
     let found = &mut pool_found(content);

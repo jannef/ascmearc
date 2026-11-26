@@ -426,28 +426,21 @@ pub fn generate(
     id: &str,
     entered_from: Option<&str>,
 ) -> Result<LevelTemplate, GenError> {
-    generate_with(
-        content,
-        (campaign, seed),
-        id,
-        entered_from,
-        (Finder::NONE, 0),
-    )
+    generate_with(content, (campaign, seed), id, entered_from, Finder::NONE)
 }
 
 /// [`generate`] for a player whose talents give their finds `finder` ([`Finder`]: Treasure
-/// hunter) and the wealth seam's gem percent `gems` (Hoard sense): the same draws from the same
+/// hunter, Hoard sense): the same draws from the same
 /// streams, so the map is the same; only what its loot rolls may differ.
 pub fn generate_with(
     content: &Content,
     (campaign, seed): (&str, u64),
     id: &str,
     entered_from: Option<&str>,
-    (finder, gems): (Finder, i32),
+    finder: Finder,
 ) -> Result<LevelTemplate, GenError> {
     let visit = Visit {
         finder,
-        gems,
         ..Visit::default()
     };
     generate_for(content, (campaign, seed), id, entered_from, &visit)
@@ -486,18 +479,16 @@ fn spaced_vaults<'a>(
 }
 
 /// Whom a level is generated for, as they first come: what their talents give their finds
-/// (`finder`, and the wealth seam's gem percent `gems`), their level (a player-scaled danger reads it), the unique creature types the
+/// (`finder`), their level (a player-scaled danger reads it), the unique creature types the
 /// run has met (none comes twice), and those slain (a slain layer boss's floor has no lair; a
 /// Pit's floor is given its own warden here once the Pit is sealed: its hall is made without it). Only
 /// the loot, the initial population, and a layer boss's lair read it, so the map is otherwise
 /// the same for anyone.
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Visit<'a> {
-    /// The item finder (`magic/finder.rs`).
-    pub finder: Finder,
-    /// The percent more likely a loose gem is where the wealth seam draws one
+    /// The finder (`magic/finder.rs`): its items, and its gems where the wealth seam draws one
     /// ([`crate::wealth::gem_instead`]; Hoard sense).
-    pub gems: i32,
+    pub finder: Finder,
     pub player_level: u8,
     pub uniques: Option<&'a std::collections::BTreeSet<String>>,
     pub slain: Option<&'a std::collections::BTreeSet<String>>,
@@ -981,7 +972,7 @@ pub(crate) fn place_loot(
     markers: &[(Pos, LootCell)],
     (floor, visit): (Option<Floor>, &Visit),
 ) {
-    let finder = (&visit.finder, visit.gems);
+    let finder = &visit.finder;
     let Loot { rng, taken } = loot;
     let level = template.item_level;
     let place = |template: &mut LevelTemplate, p: Pos, stack: Option<Stack>| {
@@ -1017,7 +1008,7 @@ pub(crate) fn place_loot(
         }
         let p = free.remove(rng.index(free.len()));
         // A loose gem instead by the wealth seam, else a find of the floor row.
-        let stack = wealth::gem_instead(content, rng, level, visit.gems)
+        let stack = wealth::gem_instead(content, rng, level, &visit.finder)
             .or_else(|| loot::find(content, &spec, &visit.finder, taken, rng));
         place(template, p, stack);
     }

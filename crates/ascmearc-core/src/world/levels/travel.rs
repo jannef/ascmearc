@@ -505,7 +505,6 @@ impl World {
         let talents = self.state.player().talent_mods(&self.content);
         let visit = crate::mapgen::Visit {
             finder: Finder::of(&talents),
-            gems: talents.fortune.gem_find_percent,
             player_level: self.player_level(),
             uniques: Some(&self.state.progress.uniques),
             slain: Some(pit_slain.as_ref().unwrap_or(self.state.quests.slain_set())),

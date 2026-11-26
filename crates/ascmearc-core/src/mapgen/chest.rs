@@ -96,7 +96,7 @@ pub(super) fn fill_vaults(
     let mut rng = Rng::vault_chests(seed, &template.id);
     for chest in template.chests.values_mut() {
         if chest.holds.is_empty() {
-            let finder = (&visit.finder, visit.gems);
+            let finder = &visit.finder;
             chest.holds = roll_contents(content, &mut rng, chest.level, finder, taken);
         }
     }
@@ -127,7 +127,7 @@ pub(super) fn lay(
             template.traps.insert(at, trap);
         }
     }
-    let holds = roll_contents(content, rng, level, (&visit.finder, visit.gems), taken);
+    let holds = roll_contents(content, rng, level, &visit.finder, taken);
     // The mimic draw (docs/design/chests-and-treasure.md §5.3): a mimic of the floor's level
     // stands in for the chest, carrying what it would have held.
     let mimic = rng.chance(u32::from(band.mimic));

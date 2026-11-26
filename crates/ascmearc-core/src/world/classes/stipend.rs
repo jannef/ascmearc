@@ -5,7 +5,9 @@
 //! too ([`World::grow_stipend`], one line in `experience.rs::rise_from`): one loot roll at the
 //! level as item level with the file's luck (Landed noble's magic odds added), kept when magic
 //! or rare or of a `keep` class, then the gold of `data/rules/stipend.toml`'s `purse`
-//! ([`wealth::purse`], Landed noble's percent more). Each level draws from its own stream,
+//! ([`wealth::purse`]). Both read the stipend's own finder (`loot.finder`), Landed noble's
+//! percents added: its magic odds to `rarity`, its gold to `coins`; the player's own finder
+//! counts for neither. Each level draws from its own stream,
 //! `stipend/<level>`, so nothing else moves. It accumulates in [`WorldState::stipend`] (saved
 //! and hashed; left out while empty).
 //!
@@ -72,9 +74,10 @@ pub(crate) fn of_level(
 ) -> Option<(u32, Vec<Stack>)> {
     let rules = content.stipend()?;
     let mut rng = Rng::stream(seed, &format!("stipend/{level}"));
-    // The stipend's own finder (data), Landed noble's odds added.
+    // The stipend's own finder (data), Landed noble's odds and gold added.
     let finder = Finder {
         rarity: rules.finder.rarity + mods.fortune.stipend_magic_percent,
+        coins: rules.finder.coins + mods.fortune.stipend_gold_percent,
         ..rules.finder
     };
     let item_level = level.clamp(1, MAX_ITEM_LEVEL);
@@ -88,7 +91,7 @@ pub(crate) fn of_level(
         let none = &mut std::collections::BTreeSet::new();
         for _ in 0..loot::count(content, &spec, &finder, &mut rng) {
             // A loose gem instead by the wealth seam, else a find of the stipend row.
-            let find = crate::wealth::gem_instead(content, &mut rng, item_level, rules.gems)
+            let find = crate::wealth::gem_instead(content, &mut rng, item_level, &finder)
                 .or_else(|| loot::find(content, &spec, &finder, none, &mut rng));
             let find = find.filter(|s| {
                 s.rarity() != Rarity::Normal || rules.keep.contains(&content.object(s.object).class)
@@ -99,14 +102,13 @@ pub(crate) fn of_level(
             }
         }
     }
-    // Its purse, after the item roll: the coins, Landed noble's percent more.
+    // Its purse, after the item roll: the coins, by the finder's `coins` (Landed noble's).
     let spec = PurseSpec::of(content, Source::Stipend, item_level, Some(&rules.purse));
     let currency = wealth::currency(content);
-    let rolled: u64 = (wealth::purse(content, &spec, &mut rng).iter())
+    let gold: u64 = (wealth::purse(content, &spec, &finder, &mut rng).iter())
         .filter(|s| Some(s.object) == currency)
         .map(|s| u64::from(s.count))
         .sum();
-    let gold = rolled * u64::try_from(100 + mods.fortune.stipend_gold_percent).unwrap_or(0) / 100;
     Some((u32::try_from(gold).unwrap_or(u32::MAX), kept))
 }
 

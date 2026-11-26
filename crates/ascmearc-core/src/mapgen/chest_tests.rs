@@ -294,7 +294,7 @@ fn means(c: &Content, level: u8, n: u32) -> (f64, f64, f64) {
             c,
             &mut rng,
             level,
-            (&crate::magic::loot::Finder::NONE, 0),
+            &crate::magic::loot::Finder::NONE,
             &mut std::collections::BTreeSet::new(),
         ) {
             match stack.object {
@@ -333,7 +333,7 @@ fn chest_loot_is_magic_as_often_as_the_table_says() {
             &c,
             &mut rng,
             5,
-            (&crate::magic::loot::Finder::NONE, 0),
+            &crate::magic::loot::Finder::NONE,
             &mut std::collections::BTreeSet::new(),
         ) {
             magic += u32::from(stack.rarity() != Rarity::Normal);

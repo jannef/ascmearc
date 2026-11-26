@@ -433,7 +433,7 @@ impl World {
             hoard.item_level,
             Some(&hoard.purse),
         );
-        let purse = wealth::purse(content, &spec, &mut rng);
+        let purse = wealth::purse(content, &spec, &loot::Finder::NONE, &mut rng);
         stacks.splice(0..0, purse);
         stacks
     }

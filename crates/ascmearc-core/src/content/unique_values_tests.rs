@@ -566,7 +566,7 @@ fn what_only_a_unique_sets_never_rolls() {
                 &mut rng,
                 level,
                 (
-                    (&Finder::NONE, 0),
+                    &Finder::NONE,
                     &mut crate::test_support::pool_found(&content),
                 ),
             ))
