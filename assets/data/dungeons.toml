@@ -104,7 +104,9 @@
 #              every ore of the table)
 #   loot       [fewest, most] items of loot on the floor of each level, rolled at the floor's
 #              item level (its danger) (default none)
-#   chests     `{ chance, count }`: percent of its floors with chests and how many such
+#   purse      its floor's coins and loose gems, one purse a level rolled after the floor
+#              loot, a gem on a free floor cell (purses.toml gives the shape; default none)
+#   chests    `{ chance, count }`: percent of its floors with chests and how many such
 #              a floor gets, `[least, most]`, each of the floor's level, locked,
 #              trapped, and filled by its band in data/chests.toml (default
 #              `{ chance = 20, count = [1, 1] }`: one floor in five has one)

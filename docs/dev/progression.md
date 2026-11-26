@@ -238,7 +238,7 @@ wiki's effect text appends "while raging".
 | `read_percent`, `scroll_kept` | `read.rs`: `read_price`; `use_up` (one keyed draw a read, only with the talent; "The writing does not fade from the scroll.") |
 | `spares_self` | `World::cast_burst` (the caster is never caught); `PerceptionView::bursts_spare_me`, so `Aim::catches_reader` asks nothing |
 | `loot_magic_percent` | `magic::finder::Finder::rarity` (`Finder::of(talents)`), read by `magic::loot`'s rarity step alone (`roll_rarity`, for a row that takes the finder: the weights of the rarities above the find's least grade); the finder reaches it through `mapgen::Visit` from `level_template` (as a level is first made), `World::loot_of` (drops), `leave_loot` (features), and the quarrel's hoard. The same draws, so maps never change |
-| `loot_quantity_percent` | `magic::finder::Finder::quantity`, read by `magic::loot::count` alone (the count of every source whose row takes the finder scaled, the fraction by one `below(100)`; no draw at 0): `finds`, and the sources that draw the wealth seam's gem before each find (floor, vault cells, chests, hoards, dens, drops, features, the stipend). No talent has it yet |
+| `loot_quantity_percent` | `magic::finder::Finder::quantity`, read by `magic::loot::count` alone (the count of every source whose row takes the finder scaled, the fraction by one `below(100)`; no draw at 0): `finds`, and the sources that draw something of their own between finds (floor, vault cells, chests, hoards, dens, drops, features, the stipend). It never reaches a purse. No talent has it yet |
 | `loot_unique_percent` | `magic::finder::Finder::unique`, read by `magic::drop_pool::draw` alone (step 3b of `loot::find`, for a row that takes the finder: `rare.unique` scaled). No talent has it yet |
 | `skill_rolls` | `World::level_rolls` |
 | `extra_pick` | `creation_count` (level 1: the race's granted talents' picks, from data alone) and `World::level_up` (`GrowthMods::extra_picks_at`, added to the level's talent pick) |
@@ -262,8 +262,8 @@ wiki's effect text appends "while raging".
 | `favour_percent` | `world::people::shop::favour` (before the cap, `MAX_FAVOUR`) |
 | `gem_worth` | `PerceptionView::appraisal` → `magic::describe::appraised` (the describe screen) |
 | `identify_carried` | `World::appraise_carried` from `live`: `Magic::carried` counts the seconds (saved, left out while 0) |
-| `coin_find_percent` | `magic::finder::Finder::coins` (`Finder::of`), read by `wealth::purse` alone (the coins' chance, then past certain their amount, by `wealth::scale`), for a row whose `finder` is true. No talent has it yet, and the player's finder reaches no purse until the wealth seam goes (docs/design/wealth.md §8) |
-| `gem_find_percent` | `magic::finder::Finder::gems` (`Finder::of`), read by `wealth::gem_instead` (the gems' chance scaled by `wealth::scale`, at most 100) and `wealth::purse` (the gems' chance, then their count); the finder reaches the seam through `mapgen::Visit` from `level_template`, `World::loot_of`, `leave_loot` |
+| `coin_find_percent` | `magic::finder::Finder::coins` (`Finder::of`), read by `wealth::purse` alone (the coins' chance, then past certain their amount, by `wealth::scale`), for a row whose `finder` is true. No talent has it yet |
+| `gem_find_percent` | `magic::finder::Finder::gems` (`Finder::of`), read by `wealth::purse` alone (the gems' chance, then past certain their count, by `wealth::scale`), for a row whose `finder` is true: every purse a player finds (`docs/dev/wealth.md`); the finder reaches it through `mapgen::Visit` from `level_template`, `World::loot_of`, `leave_loot` |
 | `skill` (its `skill` left out: the chosen one, Skill focus) | `Actor::skill_effect`, as magic items' skill bonuses |
 | `distrusted` | `World::refusal`: no one budges (Trusted by none) |
 | `checks` | the stat checks: `disease.rs` (both), `search_modifier`, `lockpick.rs`, `disarm_modifier`, `steps_lightly` |

@@ -24,10 +24,11 @@ can wear five in all.
 
 <a id="stipend"></a>**The aristocrat's stipend** ([Stipend](#talent-stipend), from level
 1) is money from home. Every time the aristocrat gains a [level](experience.md), their family puts
-by 150 + 10d10 gold (about 200). With an 85 % chance it also adds one
+by 150 + 10d10 gold (about 200), and 4 times in 100 a loose [gem](gems.md) as well. With an 85 %
+chance it also adds one
 [loot roll](magic-items.md) at that level, with [magic and rare](magic-items.md) items twice as
-likely as usual. The find is kept if it is magic or rare, a [potion](potions.md), a
-[scroll](scrolls.md), or a [gem](gems.md), and thrown away otherwise. About 38 % of level-ups
+likely as usual. The find is kept if it is magic or rare, a [potion](potions.md), or a
+[scroll](scrolls.md), and thrown away otherwise. About 38 % of level-ups
 bring a find. Every level counts, a [prestige class](prestige-classes.md)'s too, and levels gained
 far from town count as well.
 

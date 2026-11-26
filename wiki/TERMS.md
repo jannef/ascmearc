@@ -191,6 +191,8 @@ above.
 | Signature gift (a keeper's own, sure) | `profane-gifts.md#each-keepers-own-gift` |
 | Shop, buying, selling, prices | `shops.md#buying`, `shops.md#selling`, `shops.md#prices` |
 | Gold, money | `shops.md#money` |
+| Purse, coins and gems found, finding more gems or coins | `wealth.md`, `wealth.md#every-places-purse`, `wealth.md#talents-that-find-more` |
+| Loot on a dungeon floor, items a floor | `dungeons.md#loot-on-the-floor` |
 | A magic item's worth, its price in shops | `shops.md#magic-items` |
 | Theft from a shop | `shops.md#theft` |
 | A shop's new goods (restocking), a town's trade | `shops.md#new-goods` |

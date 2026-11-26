@@ -18,6 +18,7 @@ secret_doors = [1, 2]
 hidden_danger_percent = 85
 locks_danger_percent = 85
 loot = [2, 4]
+purse = { gems = { chance = 15 } }
 key = "rusty_key"
 # Cold, as a barrow is.
 temperature = 8

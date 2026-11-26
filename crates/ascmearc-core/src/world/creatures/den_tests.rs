@@ -111,7 +111,7 @@ fn asleep_is_a_status_that_sleeps_and_a_den_is_data() {
 fn bad_swarms_are_refused() {
     let shipped = ContentFiles::builtin().table_text("room_effects");
     let good = "swarm = { per_cells = 4, min = 4, max = 16, wake = 200, cry = 60, loot_level = 1, per_sleepers = 4, \
-                themes = { kind = 10, faction = 20 } }";
+                themes = { kind = 10, faction = 20 }, purse = { gems = { chance = 12 } } }";
     assert!(shipped.contains(good), "the shipped den");
     for bad in [
         "swarm = { per_cells = 0, min = 4, max = 16, wake = 200, cry = 60, loot_level = 1, per_sleepers = 4 }",

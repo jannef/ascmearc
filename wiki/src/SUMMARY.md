@@ -117,6 +117,7 @@
 - [Your pipe](pipe.md)
 - [Materials](materials.md)
 - [Gems](gems.md)
+- [Coins and gems](wealth.md)
 - [Shops](shops.md)
 
 # Making things

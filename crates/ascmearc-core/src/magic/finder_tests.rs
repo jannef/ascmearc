@@ -1,17 +1,18 @@
 //! The finder (`magic/finder.rs`): each modifier is read at its one step, and none takes from
 //! another's kind (docs/design/loot-pipeline.md R5's invariant, docs/design/wealth.md §3.5's):
-//! more finds take no rarity, likelier rarities take no finds, the wealth fields take no item,
-//! and the item fields take no coins or gems on average. The purse's own exact half is in
+//! more finds take no rarity, likelier rarities take no finds, and no modifier of one kind
+//! (items, coins, gems) changes another kind at all. The purse's own half is in
 //! `wealth/purse_tests.rs`.
 
 use super::finder::Finder;
 use super::loot::{self, Origin, Spec};
 use crate::content::Rarity;
+use crate::object::Stack;
 use crate::rng::Rng;
 use crate::talent::{FortuneMods, TalentMods};
 use crate::test_support::CONTENT;
-use crate::wealth::{self, Coins, Gems, Purse, PurseSpec, Source};
-use std::collections::BTreeSet;
+use crate::wealth;
+use std::collections::{BTreeMap, BTreeSet};
 
 /// A finder with only `rarity` and `unique`, of `value` each.
 fn quality(value: i32) -> Finder {
@@ -190,67 +191,119 @@ fn no_item_step_reads_coins_or_gems() {
     }
 }
 
-/// A source rolled as every source rolls once the wealth seam is gone: its items, then its purse,
-/// on one stream. The counts of items, coins, and gems.
-fn items_then_purse(finder: &Finder, seed: u64) -> (u32, u32, u32) {
-    let spec = Spec::new(Origin::Floor, 9).count(2);
-    let purse = PurseSpec {
-        source: Source::Chest,
-        level: 9,
-        purse: Purse {
-            coins: Some(Coins {
-                chance: 60,
-                heaps: "1".parse().expect("dice"),
-                dice: "2d6".parse().expect("dice"),
-                each: 3,
-            }),
-            gems: Some(Gems {
-                chance: 30,
-                dice: "1d2".parse().expect("dice"),
-            }),
-        },
-        only: None,
-    };
-    let mut rng = Rng::stream(seed, "finder-test");
-    let items = loot::finds(&CONTENT, &spec, finder, &mut BTreeSet::new(), &mut rng);
-    let wealth = wealth::purse(&CONTENT, &purse, finder, &mut rng);
+/// What a roll gave, by kind: its items, its coins, its loose gems, each counted by what the
+/// stack is (all but its count), so stacks joined on a cell count the same as apart.
+type Kinds = [BTreeMap<String, u32>; 3];
+
+fn kinds<'a>(stacks: impl IntoIterator<Item = &'a Stack>) -> Kinds {
+    let coin = wealth::currency(&CONTENT);
     let gem = CONTENT.gems().expect("gems").object;
-    let count = |gems: bool| -> u32 {
-        (wealth.iter())
-            .filter(|s| (s.object == gem) == gems)
-            .map(|s| s.count)
-            .sum()
-    };
-    (items.len() as u32, count(false), count(true))
+    let mut out: Kinds = Default::default();
+    for stack in stacks {
+        let kind = match stack.object {
+            o if Some(o) == coin => 1,
+            o if o == gem => 2,
+            _ => 0,
+        };
+        let mut one = stack.clone();
+        one.count = 1;
+        *out[kind].entry(format!("{one:?}")).or_default() += stack.count;
+    }
+    out
 }
 
-/// The invariant across kinds, by expectation (docs/design/wealth.md §3.5): an item modifier
-/// never lowers the coins or the gems (it moves the purse's draws, which come after the items on
-/// the same stream, so it holds on average, not seed for seed), and a wealth modifier never
-/// lowers the items (exactly: the items come first and read neither field). Exact across kinds
-/// once W3 forks each find's stream into one for its items and one for its purse (§8).
-#[test]
-fn no_modifier_lowers_another_kinds_expected_quantity() {
-    let totals = |finder: Finder| {
-        (0..3000).fold((0, 0, 0), |(i, c, g), seed| {
-            let (di, dc, dg) = items_then_purse(&finder, seed);
-            (i + di, c + dc, g + dg)
-        })
-    };
-    let (items, coins, gems) = totals(Finder::NONE);
-    for finder in [quantity(100), quality(200), quantity(-50)] {
-        let (_, c, g) = totals(finder);
-        // Within the noise of 3000 rolls (a few percent).
-        assert!(c * 100 >= coins * 95, "{finder:?}: coins {c} of {coins}");
-        assert!(g * 100 >= gems * 92, "{finder:?}: gems {g} of {gems}");
+/// Finders that differ from `NONE` in one kind's fields alone: the items', the coins', the
+/// gems'; each of either sign.
+fn of_kind(kind: usize) -> Vec<Finder> {
+    match kind {
+        0 => vec![quantity(100), quality(200), quantity(-50), quality(-50)],
+        1 => vec![
+            WEALTHY[0],
+            Finder {
+                coins: -50,
+                ..Finder::NONE
+            },
+        ],
+        _ => vec![
+            WEALTHY[1],
+            Finder {
+                gems: -50,
+                ..Finder::NONE
+            },
+        ],
     }
-    for wealth in WEALTHY {
-        for seed in 0..3000 {
-            let none = items_then_purse(&Finder::NONE, seed).0;
-            assert_eq!(items_then_purse(&wealth, seed).0, none, "{wealth:?}");
+}
+
+/// That over `roll`, a modifier of one kind leaves every other kind exactly as with none.
+fn each_kind_alone(what: &str, roll: impl Fn(&Finder) -> Kinds) {
+    let none = roll(&Finder::NONE);
+    for kind in 0..3 {
+        for finder in of_kind(kind) {
+            let with = roll(&finder);
+            for other in (0..3).filter(|&k| k != kind) {
+                assert_eq!(
+                    with[other], none[other],
+                    "{what}: {finder:?} moved kind {other}"
+                );
+            }
         }
     }
-    let (i, c, g) = totals(WEALTHY[3]);
+}
+
+/// The invariant across kinds, exact (docs/design/wealth.md §3.5): every source draws one fork
+/// of its stream and its items, its coins, and its gems each from a generator of their own, so
+/// no modifier of one kind changes another kind at all, seed for seed. Over the chests of every
+/// band, and over whole generated levels (the floor, its vault cells, hoards, dens, chests,
+/// and treasure rooms).
+#[test]
+fn no_modifier_of_one_kind_changes_another_kind() {
+    for level in (1..=crate::content::MAX_ITEM_LEVEL).step_by(3) {
+        for seed in 0..40 {
+            each_kind_alone(&format!("chest {level}, seed {seed}"), |finder| {
+                let mut rng = Rng::stream(seed, "finder-test");
+                let taken = &mut BTreeSet::new();
+                kinds(&crate::chest::roll_contents(
+                    &CONTENT, &mut rng, level, finder, taken,
+                ))
+            });
+        }
+    }
+    for id in ["wyrtholm:2", "fennmynster:3", "skeul_hir:1"] {
+        for seed in 0..6 {
+            each_kind_alone(&format!("{id}, seed {seed}"), |finder| {
+                let visit = crate::mapgen::Visit {
+                    finder: *finder,
+                    ..Default::default()
+                };
+                let t = crate::mapgen::generate_for(&CONTENT, ("ascmearc", seed), id, None, &visit)
+                    .expect("level");
+                let held = t.chests.values().flat_map(|c| c.holds.iter());
+                kinds(t.objects.values().flatten().chain(held))
+            });
+        }
+    }
+}
+
+/// More of a kind's own field never lowers that kind, and a wealth field brings more of its
+/// kind on the whole (a chest's purse, over many seeds).
+#[test]
+fn a_wealth_field_brings_more_of_its_own_kind() {
+    let totals = |finder: Finder| {
+        let mut sums = [0u32; 3];
+        for seed in 0..2000 {
+            let mut rng = Rng::stream(seed, "finder-test");
+            let taken = &mut BTreeSet::new();
+            let got = kinds(&crate::chest::roll_contents(
+                &CONTENT, &mut rng, 9, &finder, taken,
+            ));
+            for (sum, kind) in sums.iter_mut().zip(got) {
+                *sum += kind.values().sum::<u32>();
+            }
+        }
+        sums
+    };
+    let [items, coins, gems] = totals(Finder::NONE);
+    let [i, c, g] = totals(WEALTHY[3]);
     assert_eq!(i, items);
     assert!(
         c > coins && g > gems,

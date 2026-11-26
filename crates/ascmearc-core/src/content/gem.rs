@@ -3,7 +3,7 @@
 //! A gem is a material of its own (`assets/data/materials/emerald.toml`) with a `gem` table: its
 //! colour, what a plain one is worth in gold, and how often loot finds it ([`GemDef`]). What
 //! every gem shares lives in `assets/data/gems.toml` ([`Gems`]): the object a loose gem is, the
-//! chance that a find is one, the sizes and cuts (ordered, each a value multiplier; sizes weigh
+//! sizes and cuts (ordered, each a value multiplier; sizes weigh
 //! something, and both shift up with the item level in loot), and where items of each class are set with a
 //! gem (an ornament: a part of the item, [`Ornament`]).
 //!
@@ -109,8 +109,6 @@ pub struct Ornament {
 pub struct Gems {
     /// The object a loose gem is: what it is made of is its gem, with a size and cut.
     pub object: ObjectId,
-    /// Percent of finds (floor loot, `any` vault loot, creature drops) that are a loose gem.
-    pub chance: u8,
     sizes: Vec<GemSize>,
     cuts: Vec<Cut>,
     plain: Cutting,
@@ -121,7 +119,6 @@ pub struct Gems {
 #[serde(deny_unknown_fields)]
 struct GemsFile {
     object: String,
-    chance: u8,
     size: Vec<SizeSpec>,
     cut: Vec<CutSpec>,
     #[serde(default)]
@@ -270,7 +267,6 @@ impl Gems {
         }
         Ok(Self {
             object,
-            chance: parsed.chance,
             sizes,
             cuts,
             plain,

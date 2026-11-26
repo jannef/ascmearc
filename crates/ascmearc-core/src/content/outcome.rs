@@ -35,6 +35,7 @@ use crate::dice::Dice;
 use crate::magic::loot::LootGrade;
 use crate::rng::{WEIGHTS_OVERFLOW, weight_sum};
 use crate::stats::Stat;
+use crate::wealth::Purse;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
@@ -157,6 +158,9 @@ pub struct OutcomeEffect {
     pub objects: Vec<(ObjectId, Dice, u32)>,
     /// An item of loot at the floor's item level plus this, at the feature's foot.
     pub loot: Option<u8>,
+    /// Coins and loose gems after the loot, at the feature's foot (the purse table's `feature`
+    /// row, `data/purses.toml`; only beside `loot`); none: none.
+    pub purse: Option<Purse>,
     /// Every trap within this many cells becomes known.
     pub know_traps: Option<i32>,
     /// One unidentified item carried is identified.
@@ -344,6 +348,7 @@ struct EffectSpec {
     #[serde(default)]
     objects: Vec<ObjectSpec>,
     loot: Option<u8>,
+    purse: Option<Purse>,
     know_traps: Option<i32>,
     #[serde(default)]
     identify: bool,
@@ -694,6 +699,11 @@ fn resolve_effect(e: EffectSpec, content: &Content) -> Result<OutcomeEffect, Str
         Some("rare") => LootGrade::Rare,
         Some(other) => return Err(format!("`rarity` is `magic` or `rare`, not `{other}`")),
     };
+    match e.purse.map(|p| p.check()) {
+        Some(_) if e.loot.is_none() => return Err("`purse` is for `loot`".into()),
+        Some(Err(m)) => return Err(format!("`purse`: {m}")),
+        _ => {}
+    }
     for (name, dice) in [("gift", e.gift), ("wrath", e.wrath)] {
         if dice.is_some_and(|d| d.min() < 0) {
             return Err(format!("`{name}` dice never roll below 0"));
@@ -710,6 +720,7 @@ fn resolve_effect(e: EffectSpec, content: &Content) -> Result<OutcomeEffect, Str
         hunger: e.hunger,
         objects,
         loot: e.loot,
+        purse: e.purse,
         know_traps: e.know_traps,
         identify: e.identify,
         forget: e.forget,

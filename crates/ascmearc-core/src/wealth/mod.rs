@@ -1,19 +1,15 @@
 //! Wealth: coins and loose gems, found by their own rules beside the items of the loot pipeline
-//! (docs/design/wealth.md). Every source of wealth has a row of the purse table
-//! (`data/purses.toml`, [`Source`], `content/purse.rs`), and what a source's purse holds is one
-//! pure function, [`purse`] (`wealth/purse.rs`), rolled on the source's own stream after its
-//! items.
+//! (docs/dev/wealth.md; the design, docs/design/wealth.md). Every source of wealth has a row of
+//! the purse table (`data/purses.toml`, [`Source`], `content/purse.rs`), and what a source's
+//! purse holds is one pure function, [`purse`] (`wealth/purse.rs`).
 //!
-//! The chests, the treasure rooms, a vault's coins and gems cells, the stipend's gold, and a
-//! quarrel's gold roll their purse; the other sources still find a loose gem by the seam: where
-//! a source finds one in place of an item, its caller draws [`gem_instead`] first, on the same
-//! stream at the same point the item roll once drew it, and finds an item
-//! ([`crate::magic::loot::find`]) only when no gem came.
+//! Every source rolls its items and its purse apart: each find draws one fork from its source's
+//! stream ([`crate::rng::Rng::fork`]) and its items, its coins, and its gems each draw from a
+//! generator of their own seeded from it. So a find's items never take from its purse, nor its
+//! purse from its items, and no modifier of one kind changes another kind at all.
 //!
 //! The finder's `coins` and `gems` ([`Finder`]) are the only modifiers of wealth, each applied by
-//! the one rule [`scale`]. The seam reads `gems`; the purse reads both, for a row that takes the
-//! finder, and for now only the stipend's finder reaches it (the other callers pass
-//! [`Finder::NONE`] until the seam goes: docs/design/wealth.md §8, W3).
+//! the one rule [`scale`], for a row that takes the finder.
 
 mod purse;
 #[cfg(test)]
@@ -22,10 +18,6 @@ mod purse_tests;
 pub use purse::{Coins, Gems, Kind, Purse, PurseSpec, Source, purse, purse_placed};
 
 use crate::content::{Content, GOLD, ObjectId};
-use crate::gem;
-use crate::magic::finder::Finder;
-use crate::object::Stack;
-use crate::rng::Rng;
 
 /// What coins are: the shops' currency, else `gold_coin`.
 pub fn currency(content: &Content) -> Option<ObjectId> {
@@ -64,16 +56,4 @@ pub fn scale(chance: u8, percent: i32) -> Scaled {
         chance: u8::try_from(raised.min(100)).unwrap_or(100),
         amount: raised.max(100),
     }
-}
-
-/// Whether a find at item level `level` is a loose gem instead of an item: one draw against the
-/// gems' `chance`, scaled by the finder's `gems` ([`scale`]'s chance; Hoard sense); on a hit the
-/// gem ([`gem::loose`]), a stack of one. No draw without gems or at a chance of 0.
-pub fn gem_instead(content: &Content, rng: &mut Rng, level: u8, finder: &Finder) -> Option<Stack> {
-    let gems = content.gems()?;
-    let chance = scale(gems.chance, finder.gems).chance;
-    if gems.chance == 0 || !rng.chance(u32::from(chance)) {
-        return None;
-    }
-    gem::loose(content, rng, level.max(1))
 }

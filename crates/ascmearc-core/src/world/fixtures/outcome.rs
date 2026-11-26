@@ -172,7 +172,7 @@ impl World {
             done = true;
         }
         if let Some(bonus) = effect.loot {
-            self.leave_loot(bonus, effect.rarity, feature);
+            self.leave_loot(bonus, (effect.rarity, effect.purse.as_ref()), feature);
             done = true;
         }
         if let Some(reach) = effect.know_traps {
@@ -418,29 +418,39 @@ impl World {
 
     /// An item of loot at the floor's item level plus `bonus`, at least of `grade` (a relic's
     /// `rare`: the top rarity its base allows), at the feature's foot; a rare one perhaps a unique
-    /// of the drop pool none the run has found (`magic/drop_pool.rs`), found from now on.
-    fn leave_loot(&mut self, bonus: u8, grade: LootGrade, feature: Pos) {
+    /// of the drop pool none the run has found (`magic/drop_pool.rs`), found from now on. Then,
+    /// apart from it, the outcome's `purse` (the `feature` row's; none without one) at the same
+    /// level, laid there too: the items and the purse each on their own generators of one fork
+    /// of the draw ([`crate::rng::Rng::fork`]).
+    fn leave_loot(
+        &mut self,
+        bonus: u8,
+        (grade, purse): (LootGrade, Option<&crate::wealth::Purse>),
+        feature: Pos,
+    ) {
         let content = self.content.clone();
         let level = content
             .item_level(&self.state.current_level)
             .saturating_add(bonus);
         let talents = self.state.player().talent_mods(&content);
         let finder = loot::Finder::of(&talents);
-        let mut rng = draw!(self, "outcome/loot/{},{}", feature.x, feature.y);
+        let fork = draw!(self, "outcome/loot/{},{}", feature.x, feature.y).fork();
+        let rng = &mut fork.items();
         let spec = loot::Spec::new(loot::Origin::Feature, level).grade(grade);
-        for _ in 0..loot::count(&content, &spec, &finder, &mut rng) {
-            // At grade any a loose gem instead, by the wealth seam; else a find of the feature
-            // row.
-            let gem = (grade == LootGrade::Any)
-                .then(|| crate::wealth::gem_instead(&content, &mut rng, level, &finder))
-                .flatten();
+        for _ in 0..loot::count(&content, &spec, &finder, rng) {
             let mut found = self.state.uniques_dropped.clone();
-            let item = gem.or_else(|| loot::find(&content, &spec, &finder, &mut found, &mut rng));
+            let item = loot::find(&content, &spec, &finder, &mut found, rng);
             self.state.note_dropped(&content, &item);
             if let Some(stack) = item {
                 let at = self.foot_of(feature);
                 self.lay(at, stack);
             }
+        }
+        let source = crate::wealth::Source::Feature;
+        let purse = crate::wealth::PurseSpec::of(&content, source, level, purse);
+        for stack in crate::wealth::purse(&content, &purse, &finder, fork) {
+            let at = self.foot_of(feature);
+            self.lay(at, stack);
         }
     }
 

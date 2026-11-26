@@ -47,13 +47,9 @@ place for one (see [Setting a gem](gem-cutting.md#setting-a-gem)).
 
 ## Finding gems
 
-Gems are rare. In some places a loose gem comes instead of an item: on a level's floor, in a
-tempting hoard or a den's hoard, in a vault, a chest, or from a feature that may give anything
-(not one sure to be [magic](magic-items.md#rarity)), from the aristocrat's stipend, and from what
-a [creature](creatures.md) drops when it dies. How often is under [The odds of a
-find](magic-items.md#the-odds-of-a-find). Some talents make it more often, and then fewer of
-those finds are items. [Chests](chests.md) hold gems of their own besides their items, and
-[dungeons](dungeons.md) also hide gems in their vaults and secret rooms.
+Loose gems are found beside items, never in their place: every place that gives loot has a
+purse of coins and gems of its own. Where they come and how often, and the talents that find more,
+are under [Coins and gems](wealth.md).
 
 ## Items set with a gem
 

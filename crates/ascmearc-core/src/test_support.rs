@@ -187,7 +187,6 @@ pub(crate) fn pool_found(content: &Content) -> std::collections::BTreeSet<String
 }
 
 /// A find as a level's floor rolls one at item level `level`, at least of `grade`, with no luck:
-/// at grade any a loose gem instead by the wealth seam ([`crate::wealth::gem_instead`]), else
 /// [`crate::magic::loot::find`] of the floor row, never a unique of the drop pool
 /// ([`pool_found`]): always a rolled item.
 pub(crate) fn found(
@@ -199,7 +198,7 @@ pub(crate) fn found(
     found_with(content, rng, level, grade, crate::magic::loot::Finder::NONE)
 }
 
-/// [`found`] for `finder` (its `gems` the wealth seam's).
+/// [`found`] for `finder` (its item fields).
 pub(crate) fn found_with(
     content: &Content,
     rng: &mut Rng,
@@ -208,12 +207,9 @@ pub(crate) fn found_with(
     finder: crate::magic::loot::Finder,
 ) -> Option<crate::object::Stack> {
     use crate::magic::loot::{self, Origin, Spec};
-    let gem = (grade == crate::magic::LootGrade::Any)
-        .then(|| crate::wealth::gem_instead(content, rng, level, &finder))
-        .flatten();
     let spec = Spec::new(Origin::Floor, level).grade(grade);
     let found = &mut pool_found(content);
-    gem.or_else(|| loot::find(content, &spec, &finder, found, rng))
+    loot::find(content, &spec, &finder, found, rng)
 }
 
 /// `count` of `object` made as a kit's magic line makes it ([`crate::magic::loot::make`] of the

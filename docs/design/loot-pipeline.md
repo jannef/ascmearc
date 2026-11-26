@@ -5,8 +5,8 @@
 the step list in the module docs of `magic/loot.rs` and the source table's columns in the header
 of `data/loot_sources.toml`; the wiki's "Finding them" (`wiki/src/magic-items.md`) states the
 odds. Built in five PRs, S1–S4 (#2163–#2166) and S5–S6 together, with D1–D4 at their defaults
-and D5 the owner's. The wealth seam (§3.7, `wealth::gem_instead`) stays until the wealth design
-replaces it.
+and D5 the owner's. The wealth seam (§3.7, `wealth::gem_instead`) is gone: the wealth design
+(`wealth.md`, built, #2168) replaced it with each source's purse (`docs/dev/wealth.md`).
 
 Approved (2026-11-26): D1–D4 take their defaults, D5 is the owner's own (one loot stream per
 level), and §9's questions the assumptions written here. Written against `origin/main` at

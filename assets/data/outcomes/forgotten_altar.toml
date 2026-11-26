@@ -91,7 +91,7 @@ kind = "boon"
 tier = "minor"
 id = "trinket"
 weight = 7
-effect = { loot = 0 }
+effect = { loot = 0, purse = { gems = { chance = 5 } } }
 message = "Something lies at the foot of the altar."
 
 [[outcome]]
@@ -173,7 +173,7 @@ kind = "boon"
 tier = "moderate"
 id = "offering"
 weight = 3
-effect = { loot = 3 }
+effect = { loot = 3, purse = { gems = { chance = 5 } } }
 message = "Something lies at the foot of the altar that was not there before."
 
 [[outcome]]

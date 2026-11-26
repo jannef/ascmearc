@@ -100,6 +100,9 @@ fn does(content: &Content, effect: &OutcomeEffect) -> String {
         out.push(format!(
             "an item of loot at {level}{floor} at the altar's foot"
         ));
+        if let Some(purse) = &effect.purse {
+            out.push(format!("beside it {}", super::purses::purse_words(purse)));
+        }
     }
     if let Some(reach) = effect.know_traps {
         out.push(format!("every trap within {reach} cells known"));

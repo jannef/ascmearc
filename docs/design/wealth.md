@@ -1,5 +1,12 @@
 # Ascmearc — Wealth: coins and loose gems as the contents of a purse
 
+**Built; this file is history.** Current behaviour is in spec §11 "Magic items" (the loot
+bullet), `docs/dev/wealth.md` (the purse, its table, the callers, the finder, the streams), the
+module docs of `wealth/purse.rs`, and the header of `data/purses.toml`; the wiki's "Coins and
+gems" (`wiki/src/wealth.md`) states the rules and the numbers. Built in three PRs, W1–W3
+(#2172, #2175, and W3), every owner decision at its default; §8 notes what each built
+differently.
+
 Design for #2168, written against `origin/main` at 4f87135fa (version 0.23.1). It follows the
 loot pipeline (`docs/design/loot-pipeline.md`, built, #2161), which made every item find one pure
 function with a source table and a `Finder`, took coins and loose gems out of it, and left the
@@ -235,9 +242,12 @@ any `gems`, or any `quantity`, `rarity`, or `unique`, the coins are identical to
 `gems` the gem count is never fewer, with a positive `coins` the coins never fewer. (a)–(c) are
 exact equalities, not statistics, which the order of §3.3 and the no-draw coin rounding make
 possible. The existing `the_gem_percent_is_no_part_of_the_finder` turns into (a): the percent
-*is* a field now, and no item step reads it. (W2 found (b) and (c) exact only for the purse
-alone and statistical across kinds while the purse shares the items' stream; §8's W2 notes say
-what holds, and W3's fork makes it exact.)
+*is* a field now, and no item step reads it. As built (W3), (a)–(c) hold exactly across kinds,
+not only for the purse alone: each find draws one fork of its source's stream and its items,
+its coins, and its gems each draw from a generator of their own (§8, W3), so no modifier of one
+kind changes another kind at all, seed for seed (`magic/finder_tests.rs`, over every chest band
+and whole generated levels; `wealth/purse_tests.rs`, for any sign of `coins` and `gems`). W2's
+statistical cross-kind test and its coins-to-gems caveat are gone with it.
 
 ### 3.6 What leaves code and data
 
@@ -406,7 +416,7 @@ new stream. Each moved snapshot is reviewed in its PR (`cargo insta review`), ne
 |---|---|---|
 | W1 (the function and the table; chests, treasuries, vault class cells, the stipend's and the quarrel's gold routed through it) | chests and treasuries: none (coins then gems after the items, as today; a `chance` of 100 draws nothing). The stipend's gold moves from before its item roll to after it; the quarrel's from before its rares to after its grimoires | `stipend_tests` (statistical bands, expected to hold), the quarrel's tests if any pin its hoard (one-shot streams, nothing else moves); no mapgen snapshot |
 | W2 (the finder's fields, the rule, the invariant) | none: the seam reads `finder.gems` where it read the loose percent | `finder_tests` gains the invariant; nothing moves |
-| W3 (the seam gone; floors, cells, hoards, dens, drops, features, the stipend given their purses) | one `chance` draw per grade-`any` find and per drop vanishes, and the purse's draws come after the finds instead | every mapgen snapshot with floor loot or a chest (most of the 28 + 6: the chest streams lose the per-item draw too); `gem_tests::loot_finds_gems_rarely_and_larger_and_finer_at_higher_item_levels` and `creatures_drop_gems_now_and_then_from_their_own_stream` (rewritten against the purse), `cell_tests::the_flooded_cell_holds_money_or_jewellery_differing_by_run` (unchanged odds, moved draws), `chest_tests`, `treasury_tests`, the hoard and den tests, `finder_tests::the_gem_percent_is_no_part_of_the_finder` (becomes the invariant's (a)); the talent tests that name `gem_find_percent` (`sign_pick_tests`, `racial_tests`, `stars_roc_tests`) keep passing; the `quarrel_tests` pin that gold is in the hoard, not how much; no dump snapshot expected (the four showcase scenes stand on hand-made levels, no kill in them); no golden expected (every walk is on a hand-made level; `overworld-noon` passes ruins whose loot markers are few: run `cargo xtask golden --local` and look) |
+| W3 (the seam gone; floors, cells, hoards, dens, drops, features, the stipend given their purses) | one `chance` draw per grade-`any` find and per drop vanishes, and the purse's draws come after the finds instead. As built: every find draws one fork of its stream instead (§8, W3), so every item, coin, and gem draw of a loot source moves, and the stream past each find stands still whatever is found | As built: three mapgen snapshots moved (`lairs_tests__wulfeshol_seed_1_depth_4`, `tunnels_tests__passage_skeul_hir_1_seed_1`, `tunnels_tests__tunnels_cealdhlaw_3_seed_1`), floor items only, layout and creatures unchanged; no dump snapshot, no golden. Planned: every mapgen snapshot with floor loot or a chest (most of the 28 + 6: the chest streams lose the per-item draw too); `gem_tests::loot_finds_gems_rarely_and_larger_and_finer_at_higher_item_levels` and `creatures_drop_gems_now_and_then_from_their_own_stream` (rewritten against the purse), `cell_tests::the_flooded_cell_holds_money_or_jewellery_differing_by_run` (unchanged odds, moved draws), `chest_tests`, `treasury_tests`, the hoard and den tests, `finder_tests::the_gem_percent_is_no_part_of_the_finder` (becomes the invariant's (a)); the talent tests that name `gem_find_percent` (`sign_pick_tests`, `racial_tests`, `stars_roc_tests`) keep passing; the `quarrel_tests` pin that gold is in the hoard, not how much; no dump snapshot expected (the four showcase scenes stand on hand-made levels, no kill in them); no golden expected (every walk is on a hand-made level; `overworld-noon` passes ruins whose loot markers are few: run `cargo xtask golden --local` and look) |
 
 ## 8. Migration, one PR each
 
@@ -462,7 +472,25 @@ new stream. Each moved snapshot is reviewed in its PR (`cargo insta review`), ne
   call `purse` after their finds; `test_support::found_with` loses its gem argument. The wiki
   page, the generated table, the dungeons' column, `gems.md`, `chests.md`, `magic-items.md`, the
   spec bullet, `docs/dev/wealth.md`, the stream docs, in the same PR (a gameplay change updates
-  the wiki with it). The snapshots of §7 reviewed one by one.
+  the wiki with it). The snapshots of §7 reviewed one by one. Built (#2168's third PR), with
+  these notes:
+  - **Forks** (the integrator's decision): each find draws one `u64` from its source's stream
+    (`Rng::fork`) and keys three generators from it, `items`, `coins`, and `gems`, as a stream
+    is keyed from the run seed; the purse takes the fork (`purse(content, spec, finder, fork)`),
+    its coins and its gems each on their own generator. No named stream is added. A find is a
+    vault cell, a floor, a hoard, a den's hoard, a chest, a treasure room's purse (after its
+    chests, each its own fork), a drop (after its `loot` chance), a feature's loot, a stipend
+    level, a quarrel's hoard. A vault class cell draws its class on the stream, then the fork.
+  - The chests, treasure rooms, and vault coins and gems cells take the player's finder: a gem
+    talent now reaches them (D9).
+  - A cell without classes rolls the `vault_cell` row's gems alone (no coins: D8) after its
+    find, at grade `any` only; a floor's and a hoard's gems lie on a free cell drawn on the gems'
+    generator; a corpse den draws a fork only when its effect names a purse (none does: D6).
+  - A stipend's gem is kept with its items (it comes apart from the item roll now).
+  - Hellegeat (the Pits' branch, `loot = [2, 5]`, not in §4) got `{ chance = 18 }` by D1's rule.
+  - The wiki's purse table lists the rooms, dens, and features one row each, from their data,
+    with the floor's and the chest's pointing at their own tables (`dungeons.md`'s "Loot on the
+    floor", `chests.md`'s "What a chest holds").
 
 W1 before W2 so the fields land on one function; W3 last so the seam dies in one place with its
 replacement already in. W1 and W2 are reviewed by their unchanged outputs (W1's two one-shot

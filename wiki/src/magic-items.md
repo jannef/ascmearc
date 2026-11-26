@@ -135,8 +135,8 @@ way in every place they count. The tables at the end of this section give the nu
   [kobold](creatures.md#creature-kobold) does now and then, a [kobold
   archer](creatures.md#creature-kobold-archer) a little more often, and a [kobold
   shaman](creatures.md#creature-kobold-shaman) one time in two (see [Creatures](creatures.md)).
-- Loot is sometimes set with a gem, and in some places a loose gem comes instead of an item
-  (see [Finding gems](gems.md#finding-gems)).
+- Loot is sometimes set with a gem. Loose gems and coins come beside the items, never in their
+  place (see [Coins and gems](wealth.md)).
 
 The more dangerous the floor, the better the loot. An item's **item level** is the
 [danger](dungeons.md#who-lives-there-and-how-many) of the dungeon floor it was found on:

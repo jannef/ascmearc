@@ -5,4 +5,4 @@ mark = "T"
 near = "Something glitters ahead."
 enter = "Treasure lies here, unguarded."
 weight = 5
-hoard = { items = 3, loot_level = 3, guardians = [2, 4], danger = 1 }
+hoard = { items = 3, loot_level = 3, guardians = [2, 4], danger = 1, purse = { gems = { chance = 15 } } }

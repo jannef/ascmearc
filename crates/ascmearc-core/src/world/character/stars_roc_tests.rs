@@ -141,13 +141,12 @@ fn hoard_sense_finds_magic_and_gems_more_often_from_the_same_draws() {
         }
     );
     let content = &*BUILTIN;
+    // A creature's drop purse (a gem 5 times in 100): twice as often with Hoard sense.
     let gems = |luck: Finder| {
         let mut rng = Rng::stream(3, "stars-test");
+        let spec = crate::wealth::PurseSpec::of(content, crate::wealth::Source::Drop, 6, None);
         (0..4000)
-            .filter_map(|_| {
-                let any = crate::magic::LootGrade::Any;
-                crate::test_support::found_with(content, &mut rng, 6, any, luck)
-            })
+            .flat_map(|_| crate::wealth::purse(content, &spec, &luck, rng.fork()))
             .filter(|s| s.gem(content).is_some())
             .count()
     };

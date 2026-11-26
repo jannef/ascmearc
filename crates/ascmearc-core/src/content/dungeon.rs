@@ -64,6 +64,7 @@
 //! hidden_danger_percent = 50    # hidden features harder to find by this percent of the danger
 //! locks_danger_percent = 50     # locks harder to pick by this percent of the floor's danger
 //! loot = [2, 4]                 # items of loot on each level's floor; default none
+//! purse = { gems = { chance = 15 } } # its floor's coins and loose gems (data/purses.toml); default none
 //! chests = { chance = 20, count = [1, 1] } # chests a floor gets; the default
 //! ambient = [0, 0, 0, 0]        # optional
 //! temperature = 9               # °C; default the dungeon default (10)
@@ -149,6 +150,7 @@ use super::tower::{self, BranchKind, Tower};
 use super::trap::TrapId;
 use crate::light::Light;
 use crate::temperature::Temperature;
+use crate::wealth::Purse;
 use serde::Deserialize;
 use serde::de::Error as _;
 use std::collections::BTreeMap;
@@ -213,6 +215,9 @@ struct LevelSpec {
     creatures: Option<Vec<String>>,
     /// How many items of loot lie on the floor of each level, `[fewest, most]`.
     loot: Option<[u8; 2]>,
+    /// Its floor's coins and loose gems, rolled once a level after the floor loot (the purse
+    /// table's `floor` row, `data/purses.toml`); none: none.
+    purse: Option<Purse>,
     /// How often its floors get chests; default one floor in five, one chest.
     chests: Option<ChestOddsSpec>,
     /// The temperature on its levels, in °C; default the dungeon default.
@@ -269,6 +274,7 @@ impl LevelSpec {
             ambient: self.ambient.or(under.ambient),
             creatures: self.creatures.clone().or_else(|| under.creatures.clone()),
             loot: self.loot.or(under.loot),
+            purse: self.purse.or(under.purse),
             chests: match (self.chests, under.chests) {
                 (Some(a), Some(b)) => Some(a.over(&b)),
                 (a, b) => a.or(b),
@@ -648,6 +654,8 @@ pub struct LevelPlan {
     /// How many items of loot lie on its floor, fewest and most (item level: its danger,
     /// `Content::item_level`).
     pub loot: [u8; 2],
+    /// Its floor's coins and loose gems (the purse table's `floor` row); `None`: none.
+    pub purse: Option<Purse>,
     /// How often it gets chests.
     pub chests: ChestOdds,
     /// The key to the rooms its generator locks: it locks them with the
@@ -1066,6 +1074,9 @@ impl LevelSpec {
         if loot[0] > loot[1] {
             return Err("`loot` is [fewest, most]".into());
         }
+        if let Some(Err(m)) = self.purse.map(|p| p.check()) {
+            return Err(format!("`purse`: {m}"));
+        }
         let chests = self.chests.unwrap_or_default().resolve();
         if chests.count[0] > chests.count[1] {
             return Err("`chests.count` is [least, most]".into());
@@ -1118,6 +1129,7 @@ impl LevelSpec {
                 self.ores.clone()
             },
             loot,
+            purse: self.purse,
             chests,
             key,
             danger,

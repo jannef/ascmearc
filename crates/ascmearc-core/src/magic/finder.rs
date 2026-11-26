@@ -6,11 +6,12 @@
 //! procedure, `quantity` at the count ([`super::loot::count`]), `rarity` at the rarity draw
 //! (step 3), `unique` at the drop pool's check (step 3b, [`super::drop_pool::draw`]); of wealth's
 //! (docs/design/wealth.md §3.5), `coins` and `gems` at their kind's chance and amount in the purse
-//! ([`crate::wealth::purse`], by [`crate::wealth::scale`]), and `gems` at the wealth seam's chance
-//! ([`crate::wealth::gem_instead`]). The item steps never read `coins` or `gems`, and the purse
-//! never reads the item fields. So a modifier changes only the quantity or quality it names:
-//! more finds take no rarity, likelier rarities take no finds, and the item fields touch no
-//! coins or gems. A new modifier is one field here, one effect kind of the fortune talents
+//! ([`crate::wealth::purse`], by [`crate::wealth::scale`]). The item steps never read `coins` or
+//! `gems`, and the purse never reads the item fields; and each source draws its items, its
+//! coins, and its gems from generators of their own ([`crate::rng::Rng::fork`]). So a modifier
+//! changes only the quantity or quality it names: more finds take no rarity, likelier rarities
+//! take no finds, and no modifier of one kind (items, coins, gems) changes another kind at all
+//! (`magic/finder_tests.rs`). A new modifier is one field here, one effect kind of the fortune talents
 //! (`talent/fortune.rs`, `data/talents/README.toml`), one line in [`Finder::of`], and its one
 //! step.
 
@@ -34,7 +35,7 @@ pub struct Finder {
     /// ([`crate::wealth::scale`]).
     pub coins: i32,
     /// Percent more loose gems: the gems' chance scaled, and past certain their count
-    /// ([`crate::wealth::scale`]); the wealth seam's chance too.
+    /// ([`crate::wealth::scale`]).
     pub gems: i32,
 }
 

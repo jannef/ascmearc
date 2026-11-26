@@ -1,13 +1,14 @@
 //! A vault's `loot` cell (`content/vault.rs`, a [`LootCell`]): what it holds, rolled by
 //! [`LootCell::roll`] from the level's loot stream as `place_loot` reaches it.
 //!
-//! With no classes named, the cell is a find of the vault-cell row at its grade
-//! ([`loot::find`], as many as [`loot::count`] gives: one without the finder's `quantity`), at
-//! grade `any` each a loose gem instead by the wealth seam
-//! ([`wealth::gem_instead`], drawn first). With classes, one draw among those that hold
-//! something at the item level, then what the class is: coins or a loose gem (the vault-cell
-//! row's purse asking that kind alone, [`wealth::purse`]: the coins of a chest of that level,
-//! one gem), or a find among the class's objects (no gem instead).
+//! Each cell draws one fork of the stream ([`Rng::fork`]) and rolls its items and its purse each
+//! on the fork's own generators. With no classes named, the cell is a find of the vault-cell
+//! row at its grade ([`loot::find`], as many as [`loot::count`] gives: one without the finder's
+//! `quantity`), and at grade `any` the vault-cell row's gems apart from it ([`wealth::purse`]:
+//! by its chance, no coins). With classes, one draw among those that hold something at the item
+//! level (before the fork), then what the class is: coins or a loose gem (the vault-cell row's
+//! purse asking that kind alone: the coins of a chest of that level, one gem), or a find among
+//! the class's objects.
 
 use crate::content::{Content, ItemClassId, ObjectId};
 use crate::magic::loot::{self, Finder, Origin, Spec};
@@ -77,15 +78,19 @@ impl LootCell {
     ) -> Vec<Stack> {
         let grade = self.grade;
         if self.classes.is_empty() {
+            let fork = rng.fork();
+            let items = &mut fork.items();
             let spec = spec(level, grade, &[]);
-            return (0..loot::count(content, &spec, finder, rng))
-                .filter_map(|_| {
-                    let gem = (grade == LootGrade::Any)
-                        .then(|| wealth::gem_instead(content, rng, level, finder))
-                        .flatten();
-                    gem.or_else(|| loot::find(content, &spec, finder, taken, rng))
-                })
+            let mut found: Vec<Stack> = (0..loot::count(content, &spec, finder, items))
+                .filter_map(|_| loot::find(content, &spec, finder, taken, items))
                 .collect();
+            if grade == LootGrade::Any {
+                // The row's gems alone: a cell without classes gives no coins.
+                let mut purse = PurseSpec::of(content, Source::VaultCell, level.max(1), None);
+                purse.purse.coins = None;
+                found.extend(wealth::purse(content, &purse, finder, fork));
+            }
+            return found;
         }
         let level = level.max(1);
         let open: Vec<ItemClassId> = (self.classes.iter().copied())
@@ -94,21 +99,25 @@ impl LootCell {
         let Some(&class) = rng.pick(&open) else {
             return Vec::new();
         };
+        let fork = rng.fork();
         match kind_of(content, class) {
-            // No finder yet: it reaches the purse as the seam goes (docs/design/wealth.md §8).
             Kind::Coins => wealth::purse(
                 content,
                 &purse(content, level, wealth::Kind::Coins),
-                &Finder::NONE,
-                rng,
+                finder,
+                fork,
             ),
             Kind::Gem => wealth::purse(
                 content,
                 &purse(content, level, wealth::Kind::Gems),
-                &Finder::NONE,
-                rng,
+                finder,
+                fork,
             ),
-            Kind::Item => loot::finds(content, &spec(level, grade, &[class]), finder, taken, rng),
+            Kind::Item => {
+                let classes = [class];
+                let spec = spec(level, grade, &classes);
+                loot::finds(content, &spec, finder, taken, &mut fork.items())
+            }
         }
     }
 }

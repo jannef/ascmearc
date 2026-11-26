@@ -105,7 +105,8 @@ fn the_tempting_hoard_is_data() {
 #[test]
 fn a_hoard_needs_a_range_of_guardians() {
     let shipped = ContentFiles::builtin().table_text("room_effects");
-    let line = "hoard = { items = 3, loot_level = 3, guardians = [2, 4], danger = 1 }";
+    let line = "hoard = { items = 3, loot_level = 3, guardians = [2, 4], danger = 1, \
+                purse = { gems = { chance = 15 } } }";
     assert!(shipped.contains(line));
     for (what, text) in [
         (
@@ -320,11 +321,17 @@ fn a_generated_hoard_holds_its_items_and_no_one() {
             continue;
         };
         found += 1;
-        let items: usize = (level.objects.iter())
+        // Its three items, and now and then a loose gem beside them (its purse).
+        let gem = content.gems().expect("gems").object;
+        let (gems, items): (Vec<_>, Vec<_>) = (level.objects.iter())
             .filter(|(p, _)| room.contains(**p))
-            .map(|(_, pile)| pile.len())
-            .sum();
-        assert!((1..=3).contains(&items), "seed {seed}: {items} items");
+            .flat_map(|(_, pile)| pile.iter())
+            .partition(|s| s.object == gem);
+        assert!(
+            (1..=3).contains(&items.len()),
+            "seed {seed}: {items:?} items"
+        );
+        assert!(gems.len() <= 1, "seed {seed}: {gems:?}");
         assert!(
             !level.creatures.iter().any(|c| room.contains(c.pos)),
             "seed {seed}: unguarded"

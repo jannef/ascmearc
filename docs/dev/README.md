@@ -37,6 +37,7 @@ here, in its group.
 - [objects.md](objects.md): objects and materials, stacks, piles, inventories, weight
 - [equipment.md](equipment.md): slots, wielding and wearing
 - [magic-items.md](magic-items.md): affixes, rarities, loot, identification
+- [wealth.md](wealth.md): coins and loose gems as loot gives them: the purse, its table, its streams
 - [enchanting.md](enchanting.md): affix capacity, the trim, the enchanting recipes
 - [potions.md](potions.md): drinks, their words and colours, sources
 - [scrolls.md](scrolls.md): reading, spell scrolls, identify

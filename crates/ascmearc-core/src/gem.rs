@@ -7,11 +7,10 @@
 //! emerald-pommelled long sword", "a gold and sapphire amulet", [`crate::content::Part`]), and
 //! with its size and cut in the item's description ([`phrase`]).
 //!
-//! **Loot** draws from the stream it is given (a level's `loot/<level id>`, a creature's
-//! `drop/<actor id>`), so maps never change:
+//! **Loot** draws from the generator it is given (a find's items' or its gems', `rng.rs`
+//! [`crate::rng::Fork`]), so maps never change:
 //!
-//! - [`crate::wealth::gem_instead`]: one draw against the gems' `chance`; on a hit, a loose gem
-//!   ([`loose`]).
+//! - [`loose`]: a loose gem, as a purse finds it ([`crate::wealth::purse`], docs/dev/wealth.md).
 //! - [`ornament`]: for an item whose class is set with gems, one draw against its `chance`; on a
 //!   hit, a gem (never a rough one) as the class's part, or the object's own `ornament` part.
 //! - [`roll`]: one draw for the gem among the gem materials by `rarity` (by material id), one

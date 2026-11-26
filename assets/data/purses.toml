@@ -1,7 +1,8 @@
-# The purse table (docs/design/wealth.md §3.4; crates/ascmearc-core/src/wealth/): every place
+# The purse table (docs/dev/wealth.md; crates/ascmearc-core/src/wealth/): every place
 # that gives coins or loose gems, one row each, and its purse. Coins and loose gems are found by
-# their own rule, apart from items: a place's purse is rolled after its items, on the same
-# stream, and never takes from them. The sources are fixed in code (`Source` in wealth/purse.rs):
+# their own rule, apart from items: a place's purse is rolled after its items, each kind on a
+# generator of its own (docs/dev/wealth.md "Streams"), and never takes from them. The sources
+# are fixed in code (`Source` in wealth/purse.rs):
 # every source has exactly one row here, and a row names a source (a load error either way).
 # Fields:
 #   purse    the purse; or, for a source whose own data gives it, that data's name: a dungeon's
@@ -17,12 +18,9 @@
 #            "band"`: the coins of a chest of the item level (chests.toml)
 #   gems     by `chance` percent (default 100), `dice` loose gems (default 1; a roll of 0 or
 #            less: none) at the item level; left out: no gems
-# Coins come before gems. A chance of 100 draws nothing.
-#
-# Until the wealth seam goes (docs/design/wealth.md §8), the floor, a vault cell without
-# classes, the hoards, the drops, and the features still find a loose gem in place of an item by
-# gems.toml's `chance`, and roll no purse of their own; a vault cell with classes takes the kind
-# its class draw named from its row, certain.
+# Coins come before gems. A chance of 100 draws nothing. A vault cell with classes takes the
+# kind its class draw named from its row, certain; one without classes, at rarity `any`, the
+# row's gems alone, after its item.
 
 [source]
 # A level's floor.

@@ -41,13 +41,14 @@ all but a [mimic](mimics.md), which is never locked or trapped:
 
 ## What a chest holds
 
-A chest holds a few things rolled by dice, a purse of [gold coins](shops.md#money), and now and
-then loose [gems](gems.md). Its items are found as [loot](magic-items.md#finding-them) is anywhere,
-so some may turn out to be gems. They are of the floor's level, or a few levels above it for the
-greater chests, and a share of them is sure to be [magic](magic-items.md) or
-[rare](magic-items.md#rarity). Talents that make your finds richer
-([Treasure hunter](talents-mind.md#talent-treasure-hunter), [Hoard sense](horoscope.md#talent-hoard-sense))
-count for what is in a chest too.
+A chest holds a few things rolled by dice, and apart from them a purse of
+[gold coins](shops.md#money) and now and then loose [gems](gems.md) (see
+[Coins and gems](wealth.md)). Its items are found as [loot](magic-items.md#finding-them) is
+anywhere. They are of the floor's level, or a few levels above it for the greater chests, and a
+share of them is sure to be [magic](magic-items.md) or [rare](magic-items.md#rarity). Talents that
+make your finds richer ([Treasure hunter](talents-mind.md#talent-treasure-hunter),
+[Hoard sense](horoscope.md#talent-hoard-sense)) count for what is in a chest too: an item talent
+for its items, a gem talent for its gems.
 
 {{#include generated/chest-loot.md}}
 

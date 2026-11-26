@@ -118,11 +118,7 @@ pub(super) fn chest_loot(content: &Content) -> String {
             likely(c.chance) * mean(c.heaps) * mean(c.dice) * f64::from(c.each)
         });
         let mean_gems = gems.map_or(0.0, |g| likely(g.chance) * mean(g.dice));
-        let gems = match gems {
-            None => "none".to_string(),
-            Some(g) if g.chance == 100 => g.dice.to_string(),
-            Some(g) => format!("{} % {}", g.chance, g.dice),
-        };
+        let gems = super::purses::gems_text(gems);
         let _ = writeln!(
             out,
             "| {} | {} | {level} | {}% / {}% | {gold} | {gems} | {items:.1} items, \

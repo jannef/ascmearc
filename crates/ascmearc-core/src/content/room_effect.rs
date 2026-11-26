@@ -55,6 +55,7 @@ use crate::light::Light;
 use crate::skills::SkillId;
 use crate::temperature::Temperature;
 use crate::time::Duration;
+use crate::wealth::Purse;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
@@ -266,6 +267,10 @@ pub struct Treasure {
     pub guardians: [u8; 2],
     /// The guardians are of the level's danger plus this.
     pub danger: u8,
+    /// Its coins and loose gems, rolled after its items (the purse table's `hoard` row,
+    /// `data/purses.toml`); none: none.
+    #[serde(default)]
+    pub purse: Option<Purse>,
 }
 
 impl Treasure {
@@ -275,6 +280,9 @@ impl Treasure {
         let [least, most] = self.guardians;
         if least > most {
             return Err("hoard: guardians are [least, most]".into());
+        }
+        if let Some(Err(m)) = self.purse.map(|p| p.check()) {
+            return Err(format!("hoard.purse: {m}"));
         }
         Ok(())
     }
@@ -311,6 +319,10 @@ pub struct Swarm {
     pub hoard: Hoard,
     /// Its hoard holds one thing for this many sleepers, at least one.
     pub per_sleepers: u16,
+    /// Its hoard's coins and loose gems, rolled after its items (the purse table's `den` row,
+    /// `data/purses.toml`); none: none.
+    #[serde(default)]
+    pub purse: Option<Purse>,
     /// The den's own population (creature ids, families by their own id: an armoury's
     /// `animated_blade`): its sleepers are drawn only among these, whatever the branch's
     /// population, hostile or not, and no stray; empty: the branch's. Resolved once the
@@ -371,6 +383,9 @@ impl Swarm {
         }
         if !self.population.is_empty() && !self.factions.is_empty() {
             return Err("swarm: a `population` and `factions` do not go together".into());
+        }
+        if let Some(Err(m)) = self.purse.map(|p| p.check()) {
+            return Err(format!("swarm.purse: {m}"));
         }
         Ok(())
     }

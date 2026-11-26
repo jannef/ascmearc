@@ -17,7 +17,6 @@ How far a design's slices have come is tracked in its issues, not here.
 ## Approved, being built
 
 - `profane-gifts.md` (#1471): the layer bosses' corpses and the gift table.
-- `wealth.md` (#2168): coins and loose gems as one purse roll, apart from items.
 
 ## Built
 
@@ -30,4 +29,4 @@ How far a design's slices have come is tracked in its issues, not here.
 `priest.md`, `professions.md`, `progression.md`, `ranger-companion.md`, `recipes.md`,
 `skill-uses.md`, `special-rooms.md`, `spell-scaling.md`, `spell-types-and-new-spells.md`,
 `stat-training.md`, `surprise-and-sneak-attacks.md`, `talent-ranks.md`, `thief-openings.md`,
-`witch-and-wizard.md`, `witch-familiar.md`.
+`wealth.md`, `witch-and-wizard.md`, `witch-familiar.md`.

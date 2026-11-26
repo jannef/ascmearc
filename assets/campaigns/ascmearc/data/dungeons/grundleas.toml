@@ -16,6 +16,7 @@ secret_doors = [1, 2]
 hidden_danger_percent = 100
 locks_danger_percent = 100
 loot = [2, 4]
+purse = { gems = { chance = 15 } }
 key = "rusty_key"
 temperature = 6
 # Danger 1 on the first floor, 1 more each floor down, without end. No folk of its own: every draw

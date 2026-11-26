@@ -137,21 +137,27 @@ fn a_grade_alone_rolls_as_it_always_did() {
     let c = content();
     for grade in [LootGrade::Any, LootGrade::Magic, LootGrade::Rare] {
         for seed in 0..100 {
-            let mut plain = Rng::stream(seed, "pool");
+            // The cell's find is a floor find on its fork's items' generator, its gems apart.
+            let mut stream = Rng::stream(seed, "pool");
+            let mut plain = stream.fork().items();
             let mut celled = Rng::stream(seed, "pool");
             let none = Finder::NONE;
+            let gem = c.gems().expect("gems").object;
+            let rolled = LootCell::from(grade).roll(
+                &c,
+                &mut celled,
+                7,
+                (&none, &mut crate::test_support::pool_found(&c)),
+            );
+            let (gems, items): (Vec<Stack>, Vec<Stack>) =
+                rolled.into_iter().partition(|s| s.object == gem);
             assert_eq!(
                 crate::test_support::found_with(&c, &mut plain, 7, grade, none),
-                LootCell::from(grade)
-                    .roll(
-                        &c,
-                        &mut celled,
-                        7,
-                        (&none, &mut crate::test_support::pool_found(&c))
-                    )
-                    .pop(),
+                items.into_iter().next(),
             );
-            assert_eq!(plain.below(1 << 30), celled.below(1 << 30));
+            assert!(gems.len() <= usize::from(grade == LootGrade::Any));
+            // The cell drew one fork of the stream and nothing more.
+            assert_eq!(stream.below(1 << 30), celled.below(1 << 30));
         }
     }
 }

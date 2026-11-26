@@ -69,6 +69,7 @@ mod overworld;
 mod potions;
 mod prayer;
 mod profane;
+mod purses;
 mod recipes;
 mod resources;
 mod rooms;
@@ -495,6 +496,8 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("magic-rarity.md", magic::magic_rarity),
         ("loot-sources.md", loot_sources::loot_sources),
         ("loot-odds.md", loot_sources::loot_odds),
+        ("purses.md", purses::purses),
+        ("floor-purses.md", purses::floor_purses),
         ("magic-bases.md", magic::magic_bases),
         ("magic-prefixes.md", magic::prefixes),
         ("magic-suffixes.md", magic::suffixes),
