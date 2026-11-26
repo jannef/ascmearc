@@ -9,5 +9,8 @@ name = "the Eorcanstān"
 object = "gold_ring"
 affixes = ["potent=3", "hale=8", "of_the_scholar=29", "of_clarity=50", "of_thrift=25"]
 level = 12
+# Its name is its stone (#2159): a flawless sapphire, the dark stone of its lore, set in the gold
+# band; it carries no affix rule (a unique follows none).
+parts = [{ part = "setting", of = "sapphire", cut = "flawless" }]
 power = { ward = "silenced", message = "The silence cannot still your voice.", phrase = "No silence stills its wearer's voice." }
 lore = "The stone is dark until a spell is spoken near it; then it is darker."
