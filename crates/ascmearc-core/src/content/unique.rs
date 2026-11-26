@@ -78,6 +78,18 @@ pub enum Power {
     /// Defence are untouched. The player wearing it is told `message` (a line of data, said by its
     /// key: [`super::data_line::ward`]).
     Negate { chance: u8, message: String },
+    /// From the dark it strikes at the lit, and strong light never dazzles its wearer (`{
+    /// nightside = 12, lit_from = 250, to_hit = 3 }`, the Sonneles', #2140): while the light on
+    /// its wearer's cell is below `dark_below`, every attack they make that rolls to hit (a blow,
+    /// a shot, a throw, a spell) on a creature whose cell's light is `lit_from` or more gets
+    /// `to_hit` and finds it flat-footed (no Dexterity or Dodge; sneak dice). Read where an
+    /// attack meets its target (`world/combat/nightside.rs`), where light-blindness is asked
+    /// (`WorldState::light_blind`), and where a Flare's flash is seen (`World::sees_flash`).
+    Nightside {
+        dark_below: u16,
+        lit_from: u16,
+        to_hit: i32,
+    },
     /// A creature its shot strikes becomes its wielder's companion's quarry, set on at once as
     /// by Sic 'em, for nothing, and each bite the companion lands on its quarry gives the wielder
     /// `per_bite` of `resource` (`{ quarry = { resource = "focus", per_bite = 1 } }`, Fēolaga's,
@@ -149,6 +161,11 @@ pub enum Power {
     /// (`world/combat/struck.rs`); the scars are [`crate::object::Stack`]'s, read with its
     /// affixes ([`crate::magic::Mods`]).
     Scars,
+    /// Each hit made with it on a creature carrying hexes of its wielder's spreads every one of
+    /// them to every creature within this many cells of the one hit, allies too, never the
+    /// wielder (`{ spread = 3 }`, Smitte's, #2122); her familiar's touch counts while it is beside
+    /// her. Read where a blow lands (`world/combat/spread.rs`, `World::resolve`).
+    Spread(u8),
     /// Its wearer sees with this vision profile (an index into
     /// [`Content::vision_profiles`]) where it is better than their own (`{ vision =
     /// "darkvision" }`): read where an actor's eyes are chosen.
@@ -190,6 +207,11 @@ pub enum Power {
     /// Satisfaction's, #2125): read where a blow made with it meets its target
     /// (`world/combat/first_blood.rs`, `World::resolve`).
     FirstBlood,
+    /// Every harmful spell its wielder casts at one target (a ray, a bolt, a touch) strikes a
+    /// second too: the hostile creature nearest the first within `cells` of it, for `percent` of
+    /// the damage, rolled to hit on its own (`{ fork = 3, percent = 50 }`, Twifeald's, #2121).
+    /// Read where a single-target spell strikes (`world/magic/fork.rs`, `cast_single`).
+    Fork { cells: u8, percent: u8 },
     /// Its bearer plants it: each turn that ends where it began adds `per_turn` to their
     /// Protection, with no cap, and a step takes it all away; planted at all, they are never
     /// driven from their cell nor caught flat-footed unawares (`{ plant = 1 }`, the Eorðfæst's,
@@ -617,6 +639,19 @@ struct PowerSpec {
     first_blood: Option<bool>,
     /// The Protection each turn planted adds.
     plant: Option<u8>,
+    /// How far from the one a single-target spell struck its fork leaps (with `percent`).
+    fork: Option<u8>,
+    /// The share of the spell's damage the fork does, in percent (`fork` only).
+    percent: Option<u8>,
+    /// How far from the one hit its wielder's hexes spread.
+    spread: Option<u8>,
+    /// The light on its wearer's cell below which they strike from the dark (with `lit_from`
+    /// and `to_hit`).
+    nightside: Option<u16>,
+    /// The light on a target's cell from which it counts as lit (`nightside` only).
+    lit_from: Option<u16>,
+    /// What an attack from the dark adds to hit (`nightside` only).
+    to_hit: Option<i32>,
     /// The percent of its wearer's hit points below which the rage wakes in them.
     wakes: Option<u8>,
     /// The rage's pool (`wakes` only).
@@ -872,8 +907,9 @@ fn off_tier(
 /// `hp_per_point`), each on a weapon, `root` (with a `renew`), `shrive` (perhaps with a
 /// `critical`, on a weapon), `wakes` (with `every` and a `resource`), `roar` (with `status`,
 /// `turns`, and `noise`, on a weapon), `credit`, `burst`, `feller`, and `quarry` (each on a
-/// launcher), `pilfer` (perhaps with `contest`, `disarm`, `skill`, and `opening`), and
-/// `approach`.
+/// launcher), `pilfer` (perhaps with `contest`, `disarm`, `skill`, and `opening`), `approach`,
+/// `fork` (with `percent`, on a weapon), `spread` (on a weapon), and `nightside` (with
+/// `lit_from` and `to_hit`).
 fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, String> {
     let named = [
         p.inflict.is_some(),
@@ -908,10 +944,13 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         p.quarry.is_some(),
         p.pilfer.is_some(),
         p.approach.is_some(),
+        p.fork.is_some(),
+        p.spread.is_some(),
+        p.nightside.is_some(),
     ];
     if named.iter().filter(|&&n| n).count() != 1 {
         return Err(
-            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `grows`, `first_blood`, `plant`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, `scars`, `onset`, `thrust`, `tally`, `grudge`, `oath`, `root`, `shrive`, `wakes`, `roar`, `credit`, `burst`, `feller`, `quarry`, `pilfer`, and `approach`"
+            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `grows`, `first_blood`, `plant`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, `scars`, `onset`, `thrust`, `tally`, `grudge`, `oath`, `root`, `shrive`, `wakes`, `roar`, `credit`, `burst`, `feller`, `quarry`, `pilfer`, `approach`, `fork`, `spread`, and `nightside`"
                 .into(),
         );
     }
@@ -953,6 +992,12 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     }
     if p.pain.is_none() && p.shrive.is_none() && p.critical.is_some() {
         return Err("power: `critical` belongs to `pain` and `shrive`".into());
+    }
+    if p.fork.is_none() && p.percent.is_some() {
+        return Err("power: `percent` belongs to `fork`".into());
+    }
+    if p.nightside.is_none() && (p.lit_from.is_some() || p.to_hit.is_some()) {
+        return Err("power: `lit_from` and `to_hit` belong to `nightside`".into());
     }
     if p.ring.is_none() && (p.stagger.is_some() || p.difficulty.is_some()) {
         return Err("power: `stagger` and `difficulty` belong to `ring`".into());
@@ -1178,6 +1223,31 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         }
         return Ok(Power::Scars);
     }
+    if let Some(cells) = p.fork {
+        return fork(p, cells, def);
+    }
+    if let Some(cells) = p.spread {
+        if cells == 0 || def.attack.is_none() {
+            return Err(
+                "power: `spread` (1 cell or more) needs a base that attacks (a weapon)".into(),
+            );
+        }
+        return Ok(Power::Spread(cells));
+    }
+    if let Some(dark_below) = p.nightside {
+        let lit_from = p.lit_from.ok_or("power: `nightside` needs a `lit_from`")?;
+        if dark_below == 0 || lit_from < dark_below {
+            return Err(
+                "power: `nightside` (1 or more) is the dark below which, `lit_from` at least that"
+                    .into(),
+            );
+        }
+        return Ok(Power::Nightside {
+            dark_below,
+            lit_from,
+            to_hit: p.to_hit.unwrap_or(0),
+        });
+    }
     if let Some(vision) = &p.vision {
         let index = (content.vision_index(vision))
             .ok_or_else(|| format!("power: unknown vision profile `{vision}`"))?;
@@ -1192,6 +1262,20 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         status,
         message: message.into(),
     })
+}
+
+/// A `fork` power reaching `cells` on base item `def`: something held (a weapon, a staff), 1
+/// cell or more, and a `percent` of the damage, 1 to 100.
+fn fork(p: &PowerSpec, cells: u8, def: &ObjectDef) -> Result<Power, String> {
+    if cells == 0 {
+        return Err("power: `fork` is how far it leaps, 1 cell or more".into());
+    }
+    if def.attack.is_none() {
+        return Err("power: `fork` needs a base that is wielded (a weapon, a staff)".into());
+    }
+    let percent = (p.percent.filter(|n| (1..=100).contains(n)))
+        .ok_or("power: `fork` needs a `percent` of the damage (1 to 100)")?;
+    Ok(Power::Fork { cells, percent })
 }
 
 /// A `grows` power of rungs `steps` on base item `def`: a weapon, one rung or more, each a roll

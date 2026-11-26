@@ -134,6 +134,10 @@ message = { text = "Mikään ei vangitse katsettasi kauaksi aikaa.", of = "124df
 lore = { text = "Sen jänne, niin jousentekijät vannoivat, oli kehrätty kuun hiuksesta.", of = "87875c" }
 phrase = { text = "Sen nuolet lentävät kaksi kertaa niin kauas kuin tavallisen jousen.", of = "7eb75c" }
 
+[smitte]
+lore = { text = "Mitä yhdellä on, se on pian kaikilla. Hänen tarvitsee koskettaa vain ensimmäistä.", of = "630b73" }
+phrase = { text = "Kun se viiltää, sen kantajan kiroukset tarttuvat viillellystä kaikkiin lähellä oleviin, ystäviin ja vihollisiin.", of = "f593a1" }
+
 [stick]
 lore = { text = "Se oli keppi, kun he lähtivät matkaan. Kukaan ei muista, milloin se lakkasi olemasta.", of = "65158f" }
 phrase = { text = "Se tuntuu käyneen painavammaksi.", of = "875914" }
@@ -145,6 +149,10 @@ phrase = { text = "Sen nuolet savuavat siellä, mihin ne pysähtyvät, osuivat t
 [snaffle]
 lore = { text = "Pistin häntä kahdesti ja sain mukaani hänen kukkaronsa, hänen hattunsa ja hyvin huonon käsityksen hänestä.", of = "f431ee" }
 phrase = { text = "Sen iskut tyhjentävät taskuja ja silloin tällöin kädenkin aseesta.", of = "984b46" }
+
+[sonneles]
+lore = { text = "Sinä seisot päiwän paistes ia luulet itzes turwas olewan. Cuca näke kenen?", of = "bdb3e6" }
+phrase = { text = "Sen kantajaa ei valo koskaan häikäise, ja pimeästä hän iskee varmasti niihin, jotka seisovat valossa.", of = "bd8050" }
 
 [stampers]
 lore = { text = "Ne eivät jättäneet jälkiä. Eivät myöskään todistajia, mutta se oli kantajan ansiota.", of = "839ee2" }
@@ -168,6 +176,10 @@ phrase = { text = "Sen kantaja ei tunne pelkoa.", of = "ff336e" }
 
 [turncoat.power]
 message = { text = "Pelko ei saa sinusta otetta.", of = "345b88" }
+
+[twifeald]
+lore = { text = "Yksi sana, ja kaksi kaatui.", of = "10f46e" }
+phrase = { text = "Jokainen loitsu, jonka sen kantaja langettaa yhteen viholliseen, haarautuu: puolet siitä loikkaa lähimpään viholliseen.", of = "162dde" }
 
 [unhalwed_bedes]
 lore = { text = "Jokainen helmi on rystyluu, eikä yksikään niistä pyhimyksen.", of = "93ec1f" }

@@ -1,0 +1,20 @@
+# Smitte (#2122, from *smittian*, to smear or infect): a knife for the drop pool (#2103; placed
+# nowhere else but the test world's quarry), item level 26, the witch's. Its Spread power: when
+# it hits a creature carrying hexes of its wielder's, every one of them spreads to every creature
+# within 3 cells of the one cut, allies too (never the wielder), at the same degrees; one already
+# carrying that hex keeps the longer of the two. Her familiar's touch counts as a cut while it is
+# beside her (`world/combat/spread.rs`). Keen 2, 1d4 poison on every hit, +4 Willpower, her
+# spells' statuses longer, attacks 8% quicker. Every value set by hand (docs/dev/magic-items.md
+# "Unique items"). The design's "of_the_adder=1d4 (poison)" is poison damage, which is Venomous
+# (of the Adder is poison resistance), and its "of_the_owl=4 (Willpower)" is of the Sage (of the
+# Owl is Intelligence).
+[[unique]]
+id = "smitte"
+name = "Smitte"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "knife"
+affixes = ["keen=2", "venomous=1d4", "of_celerity=8", "of_lingering=1", "of_the_sage=4"]
+level = 26
+power = { spread = 3, phrase = "What it cuts shares its wielder's hexes with everyone near it, friend or foe." }
+lore = "What one has, soon all have. She only has to touch the first."

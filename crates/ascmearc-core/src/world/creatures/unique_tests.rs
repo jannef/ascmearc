@@ -156,7 +156,8 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert!(other.check(content.object(bedes.object), &content).is_err());
     // The drop pool's of level 12 or more (#1976, #2095, #2097, #2098, #2100, #2109, #2115,
     // #2117, #2123, #2124, #2125, #2127, #2131, #2132, #2133, #2137, #2139, #2141, the shared
-    // table first, #2110, #2111, #2113, #2114, #2118, #2130, #2134, #2136), the criminals' four,
+    // table first, #2110, #2111, #2113, #2114, #2118, #2121, #2122, #2130, #2134, #2136, #2140),
+    // the criminals' four,
     // the pedlar's three (#808), and Sigeric's (#1787), each with its power (Swīge, #2112, has
     // none: its rules are fields).
     let powers: Vec<(&str, &str)> = (content.uniques())
@@ -197,6 +198,9 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
                     Power::Quarry { .. } => "quarry",
                     Power::Pilfer(_) => "pilfer",
                     Power::Approach(_) => "approach",
+                    Power::Fork { .. } => "fork",
+                    Power::Spread(_) => "spread",
+                    Power::Nightside { .. } => "nightside",
                 },
             };
             (u.id.as_str(), power)
@@ -229,11 +233,14 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
             ("scarhide", "scars"),
             ("scrift", "shrive"),
             ("silverstrike", "range"),
+            ("smitte", "spread"),
             ("smoulder", "zone"),
             ("snaffle", "pilfer"),
+            ("sonneles", "nightside"),
             ("stampers", "approach"),
             ("swige", "none"),
             ("tiptoe", "trapwise"),
+            ("twifeald", "fork"),
             ("wergild", "tally"),
             ("wrecend", "grudge"),
             ("wyrtruma", "root"),
@@ -816,8 +823,9 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
     // Hushfoot (#2139, #2141, #2133); Wergild, the Oath, and the Wrecend (#2109, #2117, #2131);
     // Onrǣs (#2123) and Gār (#2124); Scrift, Swīge, and Wyrtruma (#2111-#2113); Beornhama
     // (#2110), Gorthak (#2136), and the Dōmgeorn (#2130); the three launchers (#2114, #2134,
-    // #2118); the Fambles, the Stampers, and Snaffle (#2119, #2120, #2138).
-    assert_eq!(ids.len(), 42, "{ids:?}");
+    // #2118); the Fambles, the Stampers, and Snaffle (#2119, #2120, #2138); Twifeald, Smitte,
+    // and the Sonneles (#2121, #2122, #2140).
+    assert_eq!(ids.len(), 45, "{ids:?}");
     let widowmaker = unique(&w, "widowmaker");
     let magic = widowmaker.magic().expect("magic");
     let stiletto = content.object(widowmaker.object);

@@ -490,6 +490,18 @@ id on another rarity than unique, and a unique without its id.
   `world/skills/trapwise_tests.rs` (the traps found within 5, a door's too; none sprung by the
   player or a creature, the trap left armed; Hushfoot's bare feet against shoes: noise, Dodge,
   the traps beside found but not a door's; the load's refusals; nothing rolled).
+- **Twifeald, Smitte, and the Sonneles** (#2121, #2122, #2140), in the shared `data/uniques/`,
+  each `pool = true`, placed nowhere but the quarry. **Twifeald** (a Marvellous quarterstaff with
+  a flawless sapphire in its tip, item level 40): Mystic 20, Potent 3, of Farcasting 2 (on a
+  weapon by a unique's hand), of the Magus 2 (the issue's "spell rungs": no affix gives rungs,
+  so the named affix, +2 to hit with spells, stands), of the Sage 4; the staff's own Parry 1; its
+  Fork power. **Smitte** (a knife, item level 26): Keen 2, Venomous 1d4 (the issue's
+  "`of_the_adder=1d4` (poison)": of the Adder is poison resistance, so the poison-damage affix
+  stands in), of Celerity 8, of Lingering 1 (on a weapon by a unique's hand), of the Sage 4 (the
+  issue's "`of_the_owl=4` (Willpower)": of the Owl is Intelligence); its Spread power. **The
+  Sonneles** (a bone amulet, item level 40): Mystic 16, of Shadows 40, of the Adder 40, of the
+  Lynx 4; its Nightside power. Tests: `world/magic/fork_tests.rs`,
+  `world/combat/spread_tests.rs`, `world/combat/nightside_tests.rs`.
 - **A unique on clothing** (#2141, #2133): clothing has no `kind` and is never magic
   (docs/dev/equipment.md), so a unique on it names the kind its affixes work as (`kind =
   "boots"`, `UniqueDef::kind`: an armour kind, a ring, or an amulet, on a worn base without a
@@ -760,6 +772,34 @@ id on another rarity than unique, and a unique without its id.
   Barefoot's `noise` (a percent of a step's loudness, after stealth and talents) is read in
   `noise::noise` for `Act::Step`, its `dodge` with the magic Dodge in `Actor::defence`, both
   through `Actor::barefoot`. No bare-feet harm exists yet for Hushfoot's drawback to read.
+  `Power::Fork { cells, percent }` (`{ fork = 3, percent = 50 }`, on a base that attacks;
+  #2121): read once, in `cast.rs::cast_single` after its strike, for a damage spell
+  (`world/magic/fork.rs`, its module docs): the wielder's Fork strikes the hostile creature
+  nearest the first within `cells` in a clear line, never the caster, the first, or an ally,
+  through `World::spell_attack` from the first's cell with the shot as cast but `Shot::share`
+  (`percent` of the rolled harm; 100 for every other strike) and no skills (no marks, no
+  triggers). Its events join the cast's, so `spell_lands` lays the spell's status and riders and
+  its type's rule on both, once each. A ray, a bolt, a touch only (cones, bursts, lines, hexes
+  never reach `cast_single`), a scroll's, a wand's, and a creature's too; a spell turned back
+  (`reflect.rs::turn_back`) calls `spell_attack` directly, so it never forks. No draw of its
+  own. `Power::Spread(cells)` (`{ spread = 3 }`, on a base that attacks; #2122): `Mods::local`
+  marks the profile (`Profile::spreads`); read once in `World::resolve` beside the familiar's
+  touch, for a hit that leaves the target alive (`world/combat/spread.rs`): every hex
+  (`Content::hex_statuses`) on it whose giver is the wielder goes, through `World::afflict`
+  with the wielder the giver, to every actor on the level within `cells` (Chebyshev, no line of
+  sight; never the wielder, the one cut, or the retinue), only where it has fewer degrees
+  (`Stacking::Add` adds the difference); `uniques.hexes_spread` tells the player wielding it. A
+  familiar's melee hit counts as its master's cut while it stands beside her (the master's worn
+  Spread). `Power::Nightside { dark_below, lit_from, to_hit }` (`{ nightside = 12, lit_from =
+  250, to_hit = 3 }`, #2140; `world/combat/nightside.rs`): `WorldState::light_blind` (the race's
+  `light_blind`, none while one is worn) is what the perception's sight, `glare.rs`, and the
+  rest's watch read, and `World::sees_flash` passes the wearer by (Flare's `only_sighted`).
+  `World::out_of_the_dark` (the wearer's and the target's cells on the current level, by
+  `sight::light` with the normal eye, bounce too) is asked in `World::resolve` (a fair blow, shot,
+  or throw) and `cast.rs::spell_attack` (`attack` and `touch` resolutions): `to_hit` added,
+  `World::caught_in_light` takes Dexterity and Dodge off the target's Defence (`surprise.rs`'s
+  `FLAT_FOOTED`), and `sneaks` is asked as if unaware; no initiative check, no Surprised. No
+  draw.
   `Power::Tally { cap_per_level }` (`{ tally = 3 }`, a weapon; #2109) and `Power::Grudge {
   per_hit }` (`{ grudge = 2 }`, a weapon; #2131) share one record and one module,
   `world/combat/tally.rs`: `Actor::tallies` (`Tallies { owed, grudges }`, saved, left out

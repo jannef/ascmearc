@@ -50,8 +50,10 @@ const POOL: &[&str] = &[
     "scarhide",
     "scrift",
     "silverstrike",
+    "smitte",
     "smoulder",
     "snaffle",
+    "sonneles",
     "stampers",
     "stick",
     "swige",
@@ -59,6 +61,7 @@ const POOL: &[&str] = &[
     "wergild",
     "wrecend",
     "wyrtruma",
+    "twifeald",
 ];
 
 /// The built-in content with its every rare find a unique of the pool (`rare.unique` 10,000).

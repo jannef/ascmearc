@@ -73,6 +73,9 @@ pub struct Mods {
     /// Whether its hits on a foe at full health are sure criticals, from a unique weapon's
     /// FirstBlood power (local; `world/combat/first_blood.rs`).
     first_blood: bool,
+    /// How far its wielder's hexes spread from the one it hits, from a unique weapon's Spread
+    /// power (local; `world/combat/spread.rs`).
+    spreads: Option<u8>,
 }
 
 impl Default for Mods {
@@ -94,6 +97,7 @@ impl Default for Mods {
             keeps: None,
             grows: None,
             first_blood: false,
+            spreads: None,
         }
     }
 }
@@ -315,6 +319,7 @@ impl Mods {
                 // The Stick's dice and to-hit, the wielder's level read where it strikes.
                 Some(Power::Grows(growth)) => mods.grows = Some(growth.clone()),
                 Some(Power::FirstBlood) => mods.first_blood = true,
+                Some(&Power::Spread(cells)) => mods.spreads = Some(cells),
                 _ => {}
             }
         }
@@ -429,6 +434,9 @@ impl Mods {
             profile.grows.clone_from(&self.grows);
         }
         profile.first_blood |= self.first_blood;
+        if self.spreads.is_some() {
+            profile.spreads = self.spreads;
+        }
     }
 
     /// Every effect with a value, in [`Effect::all`] order, and the light.

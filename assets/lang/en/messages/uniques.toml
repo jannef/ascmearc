@@ -5,6 +5,9 @@
 # before the spell's own lines. `who`: a bearer the player sees.
 flames_from_shield = "Flames leap from {who:poss} shield!"
 flames_from_your_shield = "Flames leap from your shield!"
+# The Spread power (#2122, Smitte; `world/combat/spread.rs`): the player's hexes on the one
+# they hit spread to those near it. `who`: the one hit.
+hexes_spread = "Your hexes spread from {who:the} to everyone near!"
 # A unique sling's hail falls where its stone stopped (Hagolscūr, #2114; `world/combat/hail.rs`),
 # before the spell's own lines; said when the player sees the cell.
 hail_falls = "Hail hammers down!"

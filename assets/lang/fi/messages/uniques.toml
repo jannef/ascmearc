@@ -3,6 +3,8 @@
 # A unique shield's Cast power goes off (Demonsoul, #2095).
 flames_from_shield = { text = "{who:Gen} kilvestä leimahtaa liekkejä!", of = "929475" }
 flames_from_your_shield = { text = "Kilvestäsi leimahtaa liekkejä!", of = "e3fd55" }
+# The Spread power (#2122, Smitte): the player's hexes spread from the one they hit.
+hexes_spread = { text = "Kirouksesi tarttuvat {who:Gen} lähellä oleviin!", of = "f06c92" }
 # A unique sling's hail falls where its stone stopped (Hagolscūr, #2114).
 hail_falls = { text = "Rakeita sataa rajusti!", of = "da3adc" }
 # A spell or a scroll refused in a unique's silence (Swīge, #2112).

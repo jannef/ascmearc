@@ -278,6 +278,17 @@ const UNIQUES: &[Written] = &[
         &[("keen", 6), ("steady", 6), ("of_precision", 6)],
     ),
     (
+        "smitte",
+        26,
+        &[
+            ("keen", 2),
+            ("venomous", 4),
+            ("of_celerity", 8),
+            ("of_lingering", 1),
+            ("of_the_sage", 4),
+        ],
+    ),
+    (
         "smoulder",
         40,
         &[
@@ -295,6 +306,16 @@ const UNIQUES: &[Written] = &[
             ("of_celerity", 22),
             ("of_the_lynx", 4),
             ("of_the_cutpurse", 40),
+        ],
+    ),
+    (
+        "sonneles",
+        40,
+        &[
+            ("mystic", 16),
+            ("of_shadows", 40),
+            ("of_the_adder", 40),
+            ("of_the_lynx", 4),
         ],
     ),
     (
@@ -332,6 +353,17 @@ const UNIQUES: &[Written] = &[
             ("hardened", 3),
             ("hale", 9),
             ("of_the_ox", 2),
+        ],
+    ),
+    (
+        "twifeald",
+        40,
+        &[
+            ("mystic", 20),
+            ("potent", 3),
+            ("of_farcasting", 2),
+            ("of_the_magus", 2),
+            ("of_the_sage", 4),
         ],
     ),
     (
