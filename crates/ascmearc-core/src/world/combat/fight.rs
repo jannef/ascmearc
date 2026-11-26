@@ -122,6 +122,9 @@ pub enum Cause {
     Altar,
     /// The thirteenth profane gift they received took them (`world/character/profane_taken.rs`).
     Profane,
+    /// They paid an oath in blood, and it took the last of it (the Oath's power,
+    /// `world/classes/oath_paid.rs`).
+    Oath,
 }
 
 impl Cause {
@@ -156,6 +159,7 @@ impl Cause {
             }
             Cause::Altar => msg::health::EPITAPH_ALTAR.into(),
             Cause::Profane => msg::health::EPITAPH_PROFANE.into(),
+            Cause::Oath => msg::health::EPITAPH_OATH.into(),
         }
     }
 
@@ -176,6 +180,7 @@ impl Cause {
             | Cause::Spell(_)
             | Cause::Miscast(_)
             | Cause::Altar
+            | Cause::Oath
             | Cause::Fall
             | Cause::Fire => msg::health::DIE.into(),
         }
@@ -920,12 +925,18 @@ impl World {
         noisy: bool,
         events: &mut Vec<Event>,
     ) -> Option<Blow> {
+        // The thrust-through under way, its share of the damage (`thrust.rs`).
+        let share = self.thrusting.take();
         let (Some(from), Some(to)) = (
             self.state.actors.get(&attacker).map(|a| a.pos),
             self.state.actors.get(&target).map(|a| a.pos),
         ) else {
             return None;
         };
+        // A unique weapon's thrust-through strikes on with the profile as it came (`thrust.rs`).
+        let thrust = profile.as_ref().filter(|p| p.thrust.is_some()).cloned();
+        // A unique weapon's Grows (`grows.rs`) and FirstBlood (`first_blood.rs`).
+        let profile = profile.map(|p| self.first_blood(target, self.grown_blow(attacker, p)));
         // A thrown exploit's ladder, on the creature it is aimed at only (`openings.rs`).
         let profile = profile.map(|p| self.thrown_exploit_profile(attacker, target, p));
         let profile = profile.map(|p| self.glared(attacker, p));
@@ -939,6 +950,9 @@ impl World {
         let profile = profile.map(|p| self.baned(target, p));
         // A unique launcher's Feller: a bane by size (`bane.rs`).
         let profile = profile.map(|p| self.felled((attacker, target), kind, p));
+        // A unique weapon's debt or grudges (`tally.rs`).
+        let profile = profile.map(|p| self.tallied(attacker, target, p));
+        let debt = profile.as_ref().and_then(|p| p.keeps) == Some(crate::content::Keeps::Debt);
         // Favoured prey and a sneak attack.
         let profile = profile.map(|p| self.favoured(attacker, target, p));
         // An ally's master's gifts to it (Beast-bond).
@@ -997,6 +1011,7 @@ impl World {
         });
         // What a hit causes besides its damage (a unique weapon's Inflict power).
         let made = profile.as_ref().map_or_else(Vec::new, |p| p.on_hit.clone());
+        let shrive = profile.as_ref().and_then(|p| p.shrive);
         // The blow's dice: the strike's own stream (`fight/strike/<attacker>/<target>`); an
         // intent (no profile) draws nothing.
         let blow = profile.map(|profile| {
@@ -1015,6 +1030,10 @@ impl World {
         let blow = blow.map(|b| self.holy_wrathed(attacker, target, b));
         // A unique armour's Negate (`negate.rs`): the hit comes to nothing, before anything comes of it.
         let blow = blow.map(|b| self.negated(target, b));
+        let blow = blow.map(|b| Self::thrust_share(b, share));
+        if let Some(b) = blow {
+            self.tally_paid(attacker, debt, b);
+        }
         if blow.is_some_and(|b| b.strike.is_hit()) {
             self.savage_spent(attacker, events);
             // A companion's bite on its quarry pays a Quarry power (`quarry.rs`).
@@ -1080,8 +1099,10 @@ impl World {
                 self.gain_resource(attacker, Build::Critical);
             }
         }
-        if blow.is_some_and(|b| b.strike.is_hit()) {
+        if let Some(blow) = blow.filter(|b| b.strike.is_hit()) {
             self.gain_resource(target, Build::Struck);
+            // A unique armour's Pain, Scars, and Ring powers (`struck.rs`).
+            self.struck(target, blow, events);
         }
         // Weapon abilities (`weapon_ability.rs`) fire on the same events, and on a melee
         // attack's miss by the target's Shield, Dexterity, or Dodge.
@@ -1107,6 +1128,8 @@ impl World {
                     blow: Some(blow),
                 };
                 self.weapon_trigger(attacker, crate::content::Trigger::Kill, fired, events);
+                // A roaring weapon's kill frightens the foes who see it (`roar.rs`).
+                self.roar(attacker, (kind, with, skills), events);
             }
             // A sneak attack that kills: Vanishing act (`thief.rs`).
             if died && unseen {
@@ -1124,6 +1147,8 @@ impl World {
                 self.knock_away(attacker, target, kind);
             }
         }
+        // Scrift's penance by blows: the wielder's prayer strain (`shrive.rs`).
+        self.shriven(attacker, target, shrive, blow);
         // A familiar's touch is its master's hex (`familiar.rs`), on a hit that leaves it alive.
         if blow.is_some_and(|b| b.strike.is_hit()) {
             self.familiar_touch(attacker, target, kind, events);
@@ -1134,6 +1159,11 @@ impl World {
         self.grip(attacker, target, kind, blow.as_ref(), events);
         // A unique shield's free spell, on a block beside or a bash (`unique_spell.rs`).
         self.unique_spell((attacker, target), (kind, with), (from, to), blow, events);
+        // A unique weapon's thrust-through: the one behind (`thrust.rs`).
+        if let Some(profile) = thrust {
+            let made = (kind, with, skills);
+            self.thrust_through(attacker, (from, to), made, (profile, blow), events);
+        }
         blow
     }
 
@@ -1276,6 +1306,10 @@ impl World {
         if matches!(harm, Harm::Actor(_)) && self.unstoppable(id, damage, events) {
             return false;
         }
+        // What a unique weapon keeps of it (`tally.rs`).
+        if let Harm::Actor(by) = harm {
+            self.tally_harm(id, by, damage);
+        }
         let Some(actor) = self.state.actors.get_mut(&id) else {
             return false;
         };
@@ -1286,6 +1320,8 @@ impl World {
         }
         actor.hp -= damage;
         if actor.hp > 0 {
+            // Near death, the rage of a Wakes power it wears wakes (`wakes.rs`).
+            self.rage_wakes(id, events);
             // A blow, or any harm, wakes a sleeper (`den.rs`).
             self.wake(id);
             return false;
@@ -1362,6 +1398,7 @@ impl World {
             return;
         };
         events.push(Event::Died { actor: id, at, of });
+        self.grudges_end(id);
         if id == self.state.player {
             // A blow's dealer, if the player saw it (settled as the turn is perceived); a status
             // names itself instead.
@@ -1382,7 +1419,10 @@ impl World {
             // An ally's kill is its master's (`ally.rs`).
             let player = self.state.player;
             let master = by.and_then(|b| self.master_of(b)).filter(|&m| m == player);
-            let credited = by == Some(player) || master.is_some();
+            // A death the player sees, by any hand, is theirs in full by a Credit power
+            // (`credit.rs`).
+            let glory = by != Some(player) && self.glory(at, &level);
+            let credited = by == Some(player) || master.is_some() || glory;
             // A kill builds the killer's resources.
             if let Some(by) = master.or(by) {
                 self.gain_resource(by, Build::Kill);
@@ -1390,7 +1430,10 @@ impl World {
             // The mark's death: its killer's own kill builds `mark_kill`; cleared (`mark.rs`).
             self.mark_dies(id, by);
             if credited {
-                let percent = master.map_or(100, |_| self.ally_share());
+                let percent = match master {
+                    Some(_) if !glory => self.ally_share(),
+                    _ => 100,
+                };
                 // A half, or what crawled out of a corpse, pays less and counts for no quest.
                 let (percent, counts) = self.offspring_share(id, percent);
                 self.earn_kill_at(creature, percent);
@@ -1400,7 +1443,7 @@ impl World {
                 if counts {
                     self.tally_kill(creature, &level);
                     // An oath is kept by the player's own hand (`oath.rs`).
-                    if master.is_none() {
+                    if master.is_none() || glory {
                         self.oath_kill(creature);
                     }
                 }
@@ -1513,7 +1556,7 @@ impl World {
         target: ActorId,
         seen: bool,
         events: &mut Vec<Event>,
-    ) {
+    ) -> bool {
         let player = self.state.player;
         self.choose_mark(target);
         let first = self.player_blow(target, seen, None, events);
@@ -1528,6 +1571,7 @@ impl World {
         let first_hit = first.is_some_and(|b| b.strike.is_hit());
         parried |= self.extra_limbs(player, target, first_hit, events).0;
         self.after_attack(player, target, parried, events);
+        first_hit
     }
 
     /// The player strikes `target` in melee: the first blow of an attack (`None`: with what
@@ -1697,7 +1741,9 @@ impl World {
                 _ => None,
             })
             .unwrap_or_default();
-        let died = made.iter().any(|e| matches!(e, Event::Died { .. }));
+        // Its own target's death (a thrust-through may kill another, `thrust.rs`).
+        let died =
+            (made.iter()).any(|e| matches!(e, Event::Died { actor, .. } if *actor == target));
         // How the blow found the one it struck at, in its words (`surprise.rs`).
         let struck_at = end
             .clone()

@@ -160,6 +160,10 @@ text = "Tässä oli muistaaksesi {trap:counted_nom} {ground:bare}."
 of = "7349aa"
 text = "vastustuskykyinen {kinds:all}"
 
+[rooted]
+of = "f855c7"
+text = "juurtunut"
+
 [room]
 of = "b592c8"
 text = " {room:bare}"

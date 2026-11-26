@@ -126,6 +126,8 @@ pub enum SoundKind {
     Explosion,
     /// A thunderclap: a lightning trap.
     Thunder,
+    /// A clang: a blow ringing a unique helm (the Kettle Hat's Ring power, #2127).
+    Clang,
 }
 
 impl SoundKind {
@@ -154,6 +156,7 @@ impl SoundKind {
             SoundKind::Bell => "bell",
             SoundKind::Explosion => "explosion",
             SoundKind::Thunder => "thunder",
+            SoundKind::Clang => "clang",
         }
     }
 
@@ -199,6 +202,7 @@ impl SoundKind {
             SoundKind::Bell => msg::noise::HEARD_BELL,
             SoundKind::Explosion => msg::noise::HEARD_EXPLOSION,
             SoundKind::Thunder => msg::noise::HEARD_THUNDER,
+            SoundKind::Clang => msg::noise::HEARD_CLANG,
         }
     }
 }
@@ -262,6 +266,9 @@ pub enum Act {
     /// Calls an order to its allies, where it stands: a voice, as loud as
     /// `[orders] noise` of `data/allies.toml` says.
     Order,
+    /// Its helm rings where it stands, this loud (the Kettle Hat's Ring power,
+    /// `world/combat/struck.rs`): a clang, which no stealth quietens.
+    Clang(u16),
 }
 
 /// A noise made by an actor, or by a trap going off.
@@ -371,6 +378,7 @@ pub fn noise(
             | Act::Cry(_)
             | Act::Sing
             | Act::Order
+            | Act::Clang(_)
     ) {
         return Some(plain);
     }
@@ -385,7 +393,10 @@ pub fn noise(
         Act::Step(_) => {
             let quieter = actor.mods(content).get(ItemEffect::Stealth);
             let loudness = crate::magic::mods::less(u64::from(loudness), quieter);
-            TalentMods::scaled(loudness, talents.stealth.footsteps_percent) as u32
+            let loudness = TalentMods::scaled(loudness, talents.stealth.footsteps_percent);
+            // Bare feet under a unique's Barefoot power (Hushfoot's: silent, #2133).
+            let bare = actor.barefoot(content).map_or(100, |b| u64::from(b.noise));
+            (loudness * bare / 100) as u32
         }
         Act::OpenDoor(_) | Act::CloseDoor(_) if talents.stealth.silent_doors => 0,
         Act::Kick(_) => {
@@ -468,6 +479,7 @@ pub fn plain_noise(
             (SoundKind::Voice, actor.pos, u32::from(loudness))
         }
         Act::Kick(p) => (SoundKind::Banging, p, u32::from(KICK_NOISE)),
+        Act::Clang(loudness) => (SoundKind::Clang, actor.pos, u32::from(loudness)),
         Act::Dig => (SoundKind::Digging, actor.pos, u32::from(DIG_NOISE)),
     };
     // A special room scales every noise made inside it: an echoing

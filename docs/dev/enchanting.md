@@ -58,7 +58,12 @@ after its material, ornament, wand rung, and (for creature gear) its condition:
 - Hand-made items are trimmed too, at load (`content/level.rs::hand_made`, for a level's
   `[[item]]` and a unique item), from the stream `trim/<key>` of seed 0 (`<key>` the unique's id,
   or `<object>@x,y` for an `[[item]]`). The shipped ones are given the make their affixes need, so
-  it never fires on them: `magic/capacity_tests.rs::hand_made_items_are_never_trimmed` reads the
+  it never fires on them. A unique item is never trimmed (#2115) and follows no affix rule at all
+  (#2152, docs/dev/magic-items.md "Unique items"): it holds every affix its table sets, whatever
+  its make's capacity (Hǣrsceorp's six on a plain padded coat, the Brosinga Mene's six on a plain
+  gold amulet), so no unique is given a make, a material, or a gem for room, and identified,
+  Appraise says "It bears all it can." of one past its capacity; nothing else reads a unique's
+  capacity (it is never enchanted). `magic/capacity_tests.rs::hand_made_items_are_never_trimmed` reads the
   affixes written in every asset file's `[[unique]]` and `[[item]]` and fails with the item and
   its shortfall, and checks the heirloom (every race's weapon at the effect's `max`).
 
@@ -100,11 +105,10 @@ ones. From there, the make's draws come after the item's other draws on the loot
 `magic::Quality` (`fine`, `marvellous`, `masterwork`) is a data key on a unique
 (`data/uniques/`), a level's `[[item]]`, and the `heirloom` talent effect. `Quality::worked(def)`
 gives the item that many improvements in its aspects in turn (the first first, round again), each
-one attempt, with no draw; refused at load for an item with no aspect (a ring). The shipped
-changes (design §4.1): the Brosinga Mene (a mithril chain, a flawless ruby setting), the
-Eorcanstān (a mithril band, a flawless sapphire setting), Grendles Grāpe (Masterwork mithril),
-High Toby (Fine, a flawless amethyst inlay), the Turncoat (Masterwork), the Unhalwed Bedes (a flawless
-smokestone setting), Widowmaker (Marvellous); in the test world Rune Song (Masterwork, a topaz tip), Ash Coat (Masterwork), the hub's Dread
+one attempt, with no draw; refused at load for an item with no aspect (a ring). A unique's make
+is its design's alone (the Grandmother's Masterwork mithril, #1976), never one for room: the makes,
+materials, and gems once given the Ascmearc's uniques for their capacity (design §4.1) are gone
+with #2152. The shipped `[[item]]`s with a make: in the test world Rune Song (Masterwork, a topaz tip), Ash Coat (Masterwork), the hub's Dread
 Visage (Masterwork) and Storm Song (Marvellous). Father's sword's heirloom is Masterwork
 (`quality = "masterwork"` in `data/talents/fathers_sword.toml`: capacity 4 on every race's
 weapon, #1444, its 2 to 4 affixes never trimmed). With the base at 2 and quality +0/+1/+2

@@ -206,7 +206,7 @@ fn three_weapons_strike_three_blows_in_twin_blades() {
     assert_eq!(made.get("knife"), Some(&5), "{made:?}");
     // The third hand's blow is at the off hand's penalty, and the character screen lists it.
     let me = w.state.player();
-    let attacks = me.known_attacks(&w.content);
+    let attacks = me.known_attacks(&w.content, u32::from(w.player_level()));
     let third = (attacks.iter())
         .find(|a| a.source == AttackSource::ThirdHand)
         .expect("a third hand row");
@@ -343,7 +343,10 @@ fn the_tail_holds_a_light_weapon_and_nothing_else() {
     assert_eq!(styles(&w), both);
     let made = bump(&mut w, 4);
     assert_eq!(made.get("knife"), Some(&4), "{made:?}");
-    let attacks = w.state.player().known_attacks(&w.content);
+    let attacks = w
+        .state
+        .player()
+        .known_attacks(&w.content, u32::from(w.player_level()));
     assert!(attacks.iter().any(|a| a.source == AttackSource::Tail));
 }
 

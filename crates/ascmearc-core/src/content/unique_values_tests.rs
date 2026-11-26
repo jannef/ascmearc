@@ -10,6 +10,16 @@ type Written = (&'static str, u8, &'static [(&'static str, i32)]);
 /// Every unique, by id.
 const UNIQUES: &[Written] = &[
     (
+        "beornhama",
+        28,
+        &[
+            ("of_warmth", 45),
+            ("of_vitality", 20),
+            ("hardened", 2),
+            ("of_mending", 100),
+        ],
+    ),
+    (
         "brosinga_mene",
         12,
         &[
@@ -29,9 +39,19 @@ const UNIQUES: &[Written] = &[
     ("deep_night", 40, &[("of_the_lynx", 4)]),
     ("demonsoul", 40, &[("sturdy", 3)]),
     (
+        "domgeorn",
+        40,
+        &[("of_the_lion", 4), ("hale", 20), ("of_breath", 20)],
+    ),
+    (
         "entbana",
         40,
-        &[("sharp", 5), ("of_precision", 4), ("hunters", 4)],
+        &[
+            ("sharp", 5),
+            ("of_precision", 4),
+            ("hunters", 4),
+            ("steady", 4),
+        ],
     ),
     (
         "eorcanstan",
@@ -45,6 +65,17 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "eorthfaest",
+        40,
+        &[
+            ("featherweight", -30),
+            ("hardened", 3),
+            ("sturdy", 3),
+            ("of_the_ox", 4),
+            ("of_the_tortoise", 3),
+        ],
+    ),
+    (
         "feolaga",
         28,
         &[
@@ -53,6 +84,28 @@ const UNIQUES: &[Written] = &[
             ("hunters", 4),
             ("of_the_hunt", 4),
             ("keen", 2),
+        ],
+    ),
+    (
+        "gar",
+        32,
+        &[
+            ("sharp", 4),
+            ("heavy", 6),
+            ("guarding", 2),
+            ("of_precision", 2),
+            ("of_the_bear", 4),
+        ],
+    ),
+    (
+        "gorthak",
+        40,
+        &[
+            ("sharp", 6),
+            ("heavy", 10),
+            ("brutal", 1),
+            ("featherweight", -20),
+            ("of_the_bear", 6),
         ],
     ),
     (
@@ -79,11 +132,24 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "haersceorp",
+        24,
+        &[
+            ("featherweight", 50),
+            ("nimble", 4),
+            ("reinforced", -1),
+            ("of_the_ox", 4),
+            ("of_vitality", 12),
+            ("of_stillness", 4),
+        ],
+    ),
+    (
         "hagolscur",
         22,
         &[
             ("of_precision", 4),
             ("of_reach", 2),
+            ("of_the_eagle", 4),
             ("of_warmth", 30),
         ],
     ),
@@ -98,6 +164,21 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "hushfoot",
+        30,
+        &[
+            ("hale", 12),
+            ("of_the_fox", 40),
+            ("of_shadows", 40),
+            ("of_sustenance", 25),
+        ],
+    ),
+    (
+        "kettle_hat",
+        12,
+        &[("featherweight", -67), ("hardened", 3), ("of_the_ox", 4)],
+    ),
+    (
         "masterpiece",
         40,
         &[
@@ -105,6 +186,28 @@ const UNIQUES: &[Written] = &[
             ("hardened", 5),
             ("mage_wrought", 10),
             ("of_warding", 5),
+        ],
+    ),
+    (
+        "oath",
+        34,
+        &[
+            ("sharp", 4),
+            ("keen", 2),
+            ("heavy", 8),
+            ("of_the_lion", 4),
+            ("of_vitality", 20),
+            ("of_undead_bane", 2),
+        ],
+    ),
+    (
+        "onraes",
+        30,
+        &[
+            ("fleet", 10),
+            ("hardened", 2),
+            ("of_steadiness", 4),
+            ("of_the_ox", 4),
         ],
     ),
     (
@@ -116,6 +219,37 @@ const UNIQUES: &[Written] = &[
             ("of_precision", 4),
             ("of_the_ox", 10),
             ("of_vitality", 30),
+        ],
+    ),
+    (
+        "satisfaction",
+        32,
+        &[
+            ("guarding", 2),
+            ("keen", 4),
+            ("of_celerity", 12),
+            ("of_precision", 4),
+            ("of_the_lynx", 2),
+        ],
+    ),
+    (
+        "scarhide",
+        30,
+        &[
+            ("reinforced", 2),
+            ("hale", 20),
+            ("of_the_ox", 4),
+            ("of_health", 3),
+        ],
+    ),
+    (
+        "scrift",
+        26,
+        &[
+            ("sharp", 4),
+            ("of_undead_bane", 4),
+            ("of_the_sage", 4),
+            ("of_the_lion", 4),
         ],
     ),
     (
@@ -133,7 +267,33 @@ const UNIQUES: &[Written] = &[
         40,
         &[("keen", 6), ("steady", 6), ("of_precision", 6)],
     ),
+    (
+        "smoulder",
+        40,
+        &[
+            ("sharp", 5),
+            ("keen", 4),
+            ("steady", 6),
+            ("of_precision", 4),
+        ],
+    ),
+    ("stick", 6, &[]),
     ("stonebiter", 6, &[("sharp", 2), ("of_the_ox", 2)]),
+    (
+        "swige",
+        32,
+        &[("of_warding", 4), ("of_the_sage", 6), ("of_clarity", 30)],
+    ),
+    (
+        "tiptoe",
+        20,
+        &[
+            ("nimble", 3),
+            ("fleet", 11),
+            ("of_wariness", 60),
+            ("of_shadows", 30),
+        ],
+    ),
     (
         "turncoat",
         12,
@@ -150,9 +310,41 @@ const UNIQUES: &[Written] = &[
         &[("mystic", 30), ("of_the_owl", 2), ("of_shadows", 21)],
     ),
     (
+        "wergild",
+        36,
+        &[
+            ("sharp", 6),
+            ("heavy", 8),
+            ("nimble", -1),
+            ("of_the_bear", 4),
+        ],
+    ),
+    (
         "widowmaker",
         12,
         &[("of_celerity", 16), ("of_the_lynx", 2), ("of_precision", 2)],
+    ),
+    (
+        "wrecend",
+        40,
+        &[
+            ("sharp", 6),
+            ("heavy", 8),
+            ("of_precision", 4),
+            ("of_the_ox", 6),
+            ("of_fury", 20),
+        ],
+    ),
+    (
+        "wyrtruma",
+        30,
+        &[
+            ("guarding", 2),
+            ("oaken", 3),
+            ("of_balance", 30),
+            ("of_lingering", 2),
+            ("of_the_wanderer", 30),
+        ],
     ),
 ];
 

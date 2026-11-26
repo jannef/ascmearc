@@ -1185,7 +1185,7 @@ impl Ability {
         let own = match self {
             Ability::Class(active) => {
                 (class_cooldown(actor, content, active).map(Unavailable::While))
-                    .or_else(|| short_of(actor, class_cost(actor, content, active)?))
+                    .or_else(|| class_short(actor, content, class_cost(actor, content, active)?))
                     .or_else(|| still(actor, content, active))
                     .or_else(|| {
                         // A song costs one thing (a Virtuoso's nothing): its resource
@@ -1424,6 +1424,10 @@ pub(crate) fn class_cost(
     active: ClassActive,
 ) -> Option<ResourceCost> {
     let mut cost = content.class_active(active)?.resource?;
+    // Onrǣs' onset: a charge costs nothing (`world/classes/onset.rs`).
+    if active == ClassActive::Charge && actor.onset(content).is_some() {
+        return None;
+    }
     if active == ClassActive::LayOnHands
         && let Some(percent) = actor.talent_mods(content).faith.avatar
     {
@@ -1442,6 +1446,15 @@ pub(crate) fn class_cost(
 fn short_of(actor: &Actor, cost: ResourceCost) -> Option<Unavailable> {
     let held = actor.resources.get(cost.resource).map(|p| p.value);
     (held.is_none_or(|v| v < cost.amount)).then_some(Unavailable::Short(cost.resource))
+}
+
+/// [`short_of`] for a class active: an Oath its wielder holds pays the shortfall of its
+/// resource in hit points (`world/classes/oath_paid.rs`), so they are never short of that one.
+fn class_short(actor: &Actor, content: &Content, cost: ResourceCost) -> Option<Unavailable> {
+    if actor.oath_pays(content, cost) {
+        return None;
+    }
+    short_of(actor, cost)
 }
 
 /// One of the player's abilities, as they know it: for the abilities menu.

@@ -41,7 +41,9 @@ impl World {
     /// Whether the player avoids a known trap at `at` (module docs); says so if they do.
     fn sidesteps(&mut self, at: Pos) -> bool {
         let level = self.state.current();
-        if level.is_door(&self.content, at) {
+        // Feet no trap springs under need no sidestep, nor its draw (`trapwise.rs`).
+        if level.is_door(&self.content, at) || self.state.player().treads_over_traps(&self.content)
+        {
             return false;
         }
         let Some(kind) = (level.traps.get(&at)).filter(|t| t.known).map(|t| t.kind) else {

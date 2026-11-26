@@ -101,8 +101,12 @@ you never choose them, they work by themselves as you fight. They have their own
 - **[Charge](abilities.md#ability-charge)**, the [warrior](class-warrior.md)'s at level 1, rushes a foe you see.
   Aim it like a shot, at the creature. You run along the straight line to it, stop in the cell
   before it, and strike it once, as an ordinary [melee attack](combat.md).
-  - It costs 1 [stamina](resources.md#resource-stamina), plus 1 for every cell you run. It takes the time
-    of those steps; the blow is free.
+  - It costs 1 [stamina](resources.md#resource-stamina), plus more for every cell you run, and each
+    cell costs one more than the last: 1 for the first, 2 for the second, 3 for the third, and
+    so on. A run of 1 cell costs 2 in all, 2 cells 4, 3 cells 7, 4 cells 11, 5 cells 16. It
+    takes the time of those steps; the blow is free.
+  - Onrǣs, a pair of [unique](magic-items.md#unique-items) boots, makes every charge free, however
+    far, and its blow drives the foe back.
   - You must gain at least one cell, so it is refused when you already stand beside the foe.
   - A wall, a closed door, deep water, ice, a [trap](traps.md) you know of, or anyone you see on
     the line refuses it before you move. So does too little stamina for the whole run, or a run out of a

@@ -1,0 +1,18 @@
+# The Oath (#2117): a long sword for the drop pool (#2103; placed nowhere else but the test world's
+# quarry), item level 34. The paladin's: while it is wielded, an ability paid in zeal may be used
+# with too little, each point short paid with 5 of the wielder's hit points once it is done, which
+# may kill them (an Oath, `world/classes/oath_paid.rs`), and its melee hits build a second point
+# of zeal (`resource_build`). +4 damage, Keen 2, two more d8, +4 Presence (a bigger pool), +20 hit
+# points, and of undead-bane 2. Every value set by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "oath"
+name = "the Oath"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "long_sword"
+affixes = ["sharp=4", "keen=2", "heavy=2d8", "of_the_lion=4", "of_vitality=20", "of_undead_bane=2"]
+level = 34
+quality = "masterwork"
+resource_build = { resource = "zeal", on = "melee_hit", amount = 1 }
+power = { oath = "zeal", hp_per_point = 5, phrase = "Its wielder may pay in blood for the zeal they lack, and its blows kindle zeal twice over." }
+lore = "Sworn once. Kept since, whatever it cost."

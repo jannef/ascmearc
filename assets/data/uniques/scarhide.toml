@@ -1,0 +1,17 @@
+# Scarhide (#2137), the half-orc's tunic: a leather jerkin for the drop pool (#2103; placed
+# nowhere else but the test world's quarry), item level 30. Every critical hit its wearer suffers
+# scars it: +1 Armour, +1 maximum hit point, or +1 Toughness, chosen at random and kept on the
+# jerkin for whoever wears it, without end (its Scars power, `world/combat/struck.rs`,
+# `magic/scars.rs`). Reinforced 2, Hale 20, of the Ox 4 (Toughness), of Health 3 (disease
+# checks). Every value set by hand (`=`), so a regrade of the tiers leaves it as it is
+# (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "scarhide"
+name = "Scarhide"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "leather_jerkin"
+affixes = ["reinforced=2", "hale=20", "of_the_ox=4", "of_health=3"]
+level = 30
+power = { scars = true, phrase = "Every grievous wound its wearer takes hardens it a little more." }
+lore = "Every mark on it its first owner wore first."

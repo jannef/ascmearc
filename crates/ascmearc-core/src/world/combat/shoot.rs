@@ -519,6 +519,10 @@ impl World {
             self.shot_hail(shooter, end, events);
         }
         events.extend(fell);
+        // A shot's zone where it stopped (Smoulder's smoke: `shot_zone.rs`).
+        if flight.kind == AttackKind::Ranged {
+            self.shot_zone(shooter, end, events);
+        }
     }
 
     /// Where a missile that did not break ends on cell `p` of the current level (module docs):

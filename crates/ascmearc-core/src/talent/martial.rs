@@ -38,8 +38,8 @@ pub enum MartialEffect {
     Unstoppable { statuses: Vec<String>, cost: u16 },
     /// The class active Charge (the warrior's, `world/classes/charge.rs`): a rush along the line to a
     /// hostile the player sees, ending beside it with a blow, provoking no free blows on the
-    /// way: it costs the talent's `resource` (Stamina) and `per_cell` more for every cell
-    /// moved.
+    /// way: it costs the talent's `resource` (Stamina) and `per_cell` times 1 for the first
+    /// cell moved, 2 for the second, 3 for the third, and so on (#2108).
     Charge { per_cell: u16 },
     /// Charge also strikes every hostile beside a cell it passes, each once, a free blow (the
     /// warrior's Whirling charge, `world/classes/charge.rs`); the one charged at gets only its own.
@@ -131,8 +131,9 @@ pub struct MartialMods {
     /// While raging, the statuses that tick nothing, and what of the rage holding on to the
     /// last hit point costs; `None` without Unstoppable.
     pub unstoppable: Option<Unstoppable>,
-    /// The active Charge (`world/classes/charge.rs`): what each cell moved costs on top of its
-    /// talent's `resource`, if it has it.
+    /// The active Charge (`world/classes/charge.rs`): what the first cell moved costs on top of
+    /// its talent's `resource` (the second twice that, the third three times, #2108), if it has
+    /// it.
     pub charge: Option<u16>,
     /// Whirling charge: Charge strikes the hostiles beside its way (`world/classes/charge.rs`).
     pub whirling_charge: bool,
