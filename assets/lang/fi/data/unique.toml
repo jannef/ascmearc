@@ -71,6 +71,9 @@ phrase = { text = "Moni sen tavoittanut isku raukeaa tyhjiin.", of = "75ac3a" }
 [masterpiece.power]
 message = { text = "Isku raukeaa tyhjiin rengaspaitaasi vasten.", of = "5a42d8" }
 
+[oath]
+lore = { text = "Kerran vannottu. Siitä asti pidetty, maksoi mitä maksoi.", of = "038086" }
+phrase = { text = "Sen kantaja voi maksaa verellään puuttuvan intonsa, ja sen iskut sytyttävät intoa kaksin verroin.", of = "1e9a8b" }
 [onraes]
 lore = { text = "Rivi piti. Hän ei.", of = "9806da" }
 phrase = { text = "Sen kantajan rynnäkkö ei vie henkeä, kantaa minkä matkan tahansa ja ajaa vihollisen taaksepäin. Sen askel on raskas ja kuuluva.", of = "e8eb81" }
@@ -125,6 +128,14 @@ message = { text = "Pelko ei saa sinusta otetta.", of = "345b88" }
 lore = { text = "Jokainen helmi on rystyluu, eikä yksikään niistä pyhimyksen.", of = "93ec1f" }
 phrase = { text = "Sen kantaja näkee pimeässä.", of = "8a8773" }
 
+[wergild]
+lore = { text = "Jokainen pisara kirjataan, ja jokainen velka maksetaan täysimääräisenä.", of = "fca7ae" }
+phrase = { text = "Kun sen kantaja raivoaa, jokainen hänen saamansa haava kirjataan siihen, ja sen seuraava isku perii velan.", of = "3d823c" }
+
 [widowmaker]
 lore = { text = "Ohut kuin hattuneula, eikä koskaan aivan puhdas.", of = "a463c4" }
 phrase = { text = "Sen jokainen viilto myrkyttää.", of = "1649e4" }
+
+[wrecend]
+lore = { text = "Sitä kantoi seitsemän veljestä, ja jokainen veisti siihen loven edellisen muistoksi.", of = "33acfb" }
+phrase = { text = "Se muistaa jokaisen iskun, jonka sen kantaja saa, ja maksaa kunkin takaisin sille, joka löi.", of = "48e441" }

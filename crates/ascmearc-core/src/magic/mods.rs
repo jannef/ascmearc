@@ -62,6 +62,8 @@ pub struct Mods {
     /// How many times as far it shoots or is thrown, from a unique item's Range power (local;
     /// 1 without one: [`Mods::range`]).
     range_times: u8,
+    /// What a unique weapon's Tally or Grudge power keeps of the blows its bearer takes (local).
+    keeps: Option<crate::content::Keeps>,
     /// Its damage dice and to-hit by its wielder's level, from a unique weapon's Grows power
     /// (local: the weapon that hits; `world/combat/grows.rs`).
     grows: Option<WeaponGrowth>,
@@ -85,6 +87,7 @@ impl Default for Mods {
             thrust: None,
             banes: Vec::new(),
             range_times: 1,
+            keeps: None,
             grows: None,
             first_blood: false,
         }
@@ -300,6 +303,10 @@ impl Mods {
                     mods.added.extend(*added);
                 }
                 Some(&Power::Range(times)) => mods.range_times = times,
+                Some(Power::Tally { .. }) => mods.keeps = Some(crate::content::Keeps::Debt),
+                Some(&Power::Grudge { per_hit }) => {
+                    mods.keeps = Some(crate::content::Keeps::Grudges(per_hit));
+                }
                 Some(&Power::Thrust(percent)) => mods.thrust = Some(percent),
                 // The Stick's dice and to-hit, the wielder's level read where it strikes.
                 Some(Power::Grows(growth)) => mods.grows = Some(growth.clone()),
@@ -409,6 +416,9 @@ impl Mods {
         profile.thrust = profile.thrust.or(self.thrust);
         for (tag, value) in &self.banes {
             add_bane(&mut profile.banes, tag, *value);
+        }
+        if self.keeps.is_some() {
+            profile.keeps = self.keeps;
         }
         if self.grows.is_some() {
             profile.grows.clone_from(&self.grows);

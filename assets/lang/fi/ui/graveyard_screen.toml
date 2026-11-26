@@ -32,6 +32,10 @@ text = "{who:Counted_gen} surmaama"
 of = "090ede"
 text = "Kuoli {name:ill}"
 
+[cause_oath]
+of = "538308"
+text = "Maksoi valansa verellä"
+
 # "Oman tulipallonsa surmaama".
 [cause_own]
 of = "a68eab"

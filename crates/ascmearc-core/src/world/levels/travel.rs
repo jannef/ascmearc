@@ -751,6 +751,7 @@ pub(in crate::world) fn make_creature(
         npc: spawn.npc.clone(),
         talk: Talk::default(),
         home: None,
+        tallies: Default::default(),
         planted: None,
         spells: Default::default(),
         streak: None,

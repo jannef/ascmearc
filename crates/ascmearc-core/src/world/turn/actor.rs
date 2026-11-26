@@ -313,6 +313,13 @@ pub struct Actor {
     /// never followed.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub home: Option<String>,
+    /// What its unique weapons keep of the blows it took: a Tally's debt, a Grudge's grudges
+    /// (`world/combat/tally.rs`). Left out of saves and hashes while empty.
+    #[serde(
+        default,
+        skip_serializing_if = "crate::world::combat::tally::Tallies::is_empty"
+    )]
+    pub tallies: crate::world::combat::tally::Tallies,
     /// Where it stood as its last turn ended and how many turns in a row ended there, while it
     /// bears a unique shield with the Plant power (the Eorðfæst, `world/combat/plant.rs`); `None`
     /// for everyone else.

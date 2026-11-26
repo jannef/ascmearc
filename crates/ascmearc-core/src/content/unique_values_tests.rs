@@ -132,6 +132,18 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "oath",
+        34,
+        &[
+            ("sharp", 4),
+            ("keen", 2),
+            ("heavy", 8),
+            ("of_the_lion", 4),
+            ("of_vitality", 20),
+            ("of_undead_bane", 2),
+        ],
+    ),
+    (
         "onraes",
         30,
         &[
@@ -221,9 +233,30 @@ const UNIQUES: &[Written] = &[
         &[("mystic", 30), ("of_the_owl", 2), ("of_shadows", 21)],
     ),
     (
+        "wergild",
+        36,
+        &[
+            ("sharp", 6),
+            ("heavy", 8),
+            ("nimble", -1),
+            ("of_the_bear", 4),
+        ],
+    ),
+    (
         "widowmaker",
         12,
         &[("of_celerity", 16), ("of_the_lynx", 2), ("of_precision", 2)],
+    ),
+    (
+        "wrecend",
+        40,
+        &[
+            ("sharp", 6),
+            ("heavy", 8),
+            ("of_precision", 4),
+            ("of_the_ox", 6),
+            ("of_fury", 20),
+        ],
     ),
 ];
 
