@@ -1,25 +1,26 @@
 //! An affix written with its value (#2008, #2044): `"mystic=30"`, a dice family's die
-//! `"heavy=1d8"` or dice `"heavy=2d8"`, a light's light `"of_light=item_glow"`. A unique item's affixes are always
-//! written so, never by a tier's index, so a regrade of the ladders that renumbers the tiers never
-//! moves a unique's numbers; a level's `[[item]]` may be. The affix takes the first tier whose
-//! range holds the value (a dice family's: of as many dice; a light's: the tier of that light), which prices it
-//! ([`super::MagicWorth`]) and counts toward the item level; a unique's value may lie past its
-//! affix's last tier (`Tier::passed_by`; of as many dice), be a penalty (`Tier::opposed_by`:
-//! the Grandmother's `"nimble=-2"`), or roll more dice than any tier (`"heavy=6d6"`, its
-//! count kept by [`super::UniqueDef::dice`]), which then takes the last tier, or as many as a
-//! tier but of fewer sides (`"heavy=2d6"`, Gār's: the first tier of fewer dice that rolls the
-//! sides, the count kept the same way), and a unique may set an affix on
-//! any base its effect works on (the affix's bases say only where loot rolls it).
-//! [`crate::magic::Magic::check`] holds the same.
+//! `"heavy=1d8"` or dice `"heavy=2d8"`, a light's light `"of_light=item_glow"`. A unique item's
+//! affixes are always written so, never by a tier's index, so a regrade of the ladders that
+//! renumbers the tiers never moves a unique's numbers; a level's `[[item]]` may be. The affix
+//! takes the first tier whose range holds the value (a dice family's: of as many dice; a light's:
+//! the tier of that light), which prices it ([`super::MagicWorth`]) and counts toward the item
+//! level.
+//!
+//! A unique follows no rule but that its affixes exist (the owner, #2152): its value may be any
+//! number (past the last tier, below the first, a penalty: the Grandmother's `"nimble=-2"`), any
+//! dice (`"heavy=6d6"`, `"heavy=2d6"`), any light, on any base, and then takes the tier nearest it
+//! (`nearest`); what the tier does not say, its dice and its light, is kept by
+//! [`super::UniqueDef::dice`] and [`super::UniqueDef::light`]. [`crate::magic::Magic::check`]
+//! holds the same.
 
 use super::Content;
-use super::affix::{AffixDef, Effect, ItemKind};
+use super::affix::{AffixDef, Effect, Tier};
 use crate::magic::Affix;
 
-/// The affix `id` written with `value` (the text after its `=`) on an item of `def`, with its
-/// tier's level; `unique` for a unique item's.
+/// The affix `id` written with `value` (the text after its `=`), with its tier's level;
+/// `unique` for a unique item's, which follows no rule but that the affix exists (#2152): any
+/// value, any dice, any light, on any base.
 pub(super) fn valued(
-    def: &super::ObjectDef,
     id: &str,
     value: &str,
     unique: bool,
@@ -37,56 +38,54 @@ pub(super) fn valued(
         Value::Light(_) => (0, 1),
         Value::Number(v, dice) => (v, dice),
     };
-    let fewer = (a.effect.is_dice())
-        .then(|| (a.tiers.iter()).position(|t| t.dice < dice && t.holds(value)))
-        .flatten();
     let index = match found {
         Some(i) => i,
-        None if unique && last.dice == dice && last.set_past(value) => a.tiers.len() - 1,
-        // More dice than any tier rolls (#2091: the Grandmother's 6d6).
-        None if unique && dice > last.dice => a.tiers.len() - 1,
-        // As many dice as a tier rolls but smaller ones (#2124: Gār's 2d6 where the tiers of two
-        // dice roll d8 and d10): the first tier of fewer dice whose range holds the sides, the
-        // count kept as above.
-        None if unique && fewer.is_some() => fewer.unwrap_or_default(),
+        None if unique => nearest(a, value, dice),
         None => {
-            let first = &a.tiers[0];
-            let past = if unique {
-                ", and a unique's may lie past the last"
-            } else {
-                ""
-            };
             return Err(match a.effect {
                 Effect::Light => format!("`{text}`: no tier of `{id}` gives that light"),
                 _ => format!(
-                    "`{text}`: no tier of `{id}` rolls it (they roll {} to {}{past})",
-                    first.min, last.max
+                    "`{text}`: no tier of `{id}` rolls it (they roll {} to {})",
+                    a.tiers[0].min, last.max
                 ),
             });
         }
     };
     let tier = u8::try_from(index + 1).map_err(|_| format!("`{id}` has too many tiers"))?;
-    if unique {
-        let kind = (def.kind).ok_or_else(|| format!("`{}` cannot be magic", def.id))?;
-        // Protection counts on whatever is worn or wielded (`Actor::protection`), so a unique
-        // weapon or shield may add it (#2091: the Radiant's +2; #2132: the Eorðfæst's +3); no
-        // affix rolls it on one (its bases).
-        let held_protection =
-            a.effect == Effect::Protection && matches!(kind, ItemKind::Weapon | ItemKind::Shield);
-        let works = a.effect.allowed_on(kind) || held_protection;
-        if !works || !crate::magic::may_roll_on(a, def) {
-            return Err(format!(
-                "`{text}`: its effect does nothing on {}",
-                def.plural
-            ));
-        }
-    }
     let affix = Affix {
         id: id.to_string(),
         tier,
         value,
     };
     Ok((affix, a.tiers[index].level))
+}
+
+/// The tier a unique's value that no tier rolls is counted on (its price, its item level): the
+/// last for a value past its top or against it, more dice than any, or a light no tier gives
+/// (#2044, #2091); dice of sides a tier of fewer dice rolls, that tier (#2124: Gār's 2d6 where
+/// the tiers of two dice roll d8 and d10); else the tier nearest it, by dice first, then by value
+/// (#2152).
+fn nearest(a: &AffixDef, value: i32, dice: u8) -> usize {
+    let last = a.tiers.len() - 1;
+    let top = &a.tiers[last];
+    if (top.dice == dice && top.set_past(value)) || dice > top.dice || a.effect == Effect::Light {
+        return last;
+    }
+    let fewer = (a.tiers.iter()).position(|t| t.dice < dice && t.holds(value));
+    if let Some(i) = fewer.filter(|_| a.effect.is_dice()) {
+        return i;
+    }
+    let off = |t: &Tier| {
+        let by = if value < t.min {
+            t.min.saturating_sub(value)
+        } else {
+            value.saturating_sub(t.max).max(0)
+        };
+        (t.dice.abs_diff(dice), by)
+    };
+    (a.tiers.iter().enumerate())
+        .min_by_key(|&(i, t)| (off(t), std::cmp::Reverse(i)))
+        .map_or(last, |(i, _)| i)
 }
 
 /// What the text after an affix's `=` names.
@@ -97,7 +96,7 @@ enum Value {
 }
 
 /// Reads `text` as `a`'s value: a light's light id, a dice family's dice (`1d8`, `2d8`: the
-/// count a tier's `dice`, a `unique`'s past the last tier's too), else a whole number.
+/// count a tier's `dice`, a `unique`'s any count), else a whole number.
 fn read(a: &AffixDef, text: &str, unique: bool, content: &Content) -> Result<Value, String> {
     if a.effect == Effect::Light {
         let light = (content.light_id(text))
@@ -109,8 +108,7 @@ fn read(a: &AffixDef, text: &str, unique: bool, content: &Content) -> Result<Val
             .and_then(|(n, m)| Some((n.parse::<u8>().ok()?, m.parse::<i32>().ok()?)))
             .filter(|&(count, _)| count >= 1)
             .ok_or_else(|| format!("the value is dice, e.g. `{}=1d8`", a.id))?;
-        let past = unique && a.tiers.last().is_some_and(|t| count > t.dice);
-        if !past && !a.tiers.iter().any(|t| t.dice == count) {
+        if !unique && !a.tiers.iter().any(|t| t.dice == count) {
             return Err(format!("no tier of `{}` rolls {count} dice", a.id));
         }
         return Ok(Value::Number(sides, count));

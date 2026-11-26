@@ -15,7 +15,7 @@ pool = true
 object = "iron_shod_boots"
 affixes = ["fleet=10", "hardened=2", "of_steadiness=4", "of_the_ox=4"]
 level = 30
-# Four enchantments need its make (docs/dev/enchanting.md): Masterwork.
+# The design's make: Masterwork.
 quality = "masterwork"
 power = { onset = true, knockback = 1, noise = 200, phrase = "Its wearer's charge costs no breath, carries any distance, and drives the foe back. Its tread is loud." }
 lore = "The line held. He didn't."

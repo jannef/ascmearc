@@ -651,8 +651,7 @@ pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> Msg {
         Effect::DiseaseCheck => by(msg::describe::DOES_DISEASE_CHECK),
         Effect::PotionKept => by(msg::describe::DOES_POTION_KEPT),
         Effect::Light => {
-            let tier = rolled.def.tier(rolled.tier);
-            let radius = (tier.and_then(|t| t.light)).map_or(0, |id| content.light(id).radius);
+            let radius = (rolled.light).map_or(0, |id| content.light(id).radius);
             match radius {
                 ..=2 => msg::describe::DOES_GLOWS_FAINTLY,
                 3 => msg::describe::DOES_GLOWS,

@@ -12,8 +12,8 @@ pool = true
 object = "rapier"
 affixes = ["guarding=2", "keen=4", "of_celerity=12", "of_precision=4", "of_the_lynx=2"]
 level = 32
-# Five enchantments need its make (docs/dev/enchanting.md): Marvellous and a ruby in the pommel.
+# The design's make: Marvellous, a ruby in the pommel.
 quality = "marvellous"
-parts = [{ part = "pommel", of = "ruby", cut = "flawless" }]
+parts = [{ part = "pommel", of = "ruby" }]
 power = { first_blood = true, phrase = "Its first touch on a foe unhurt is always telling." }
 lore = "He only ever needed the one."

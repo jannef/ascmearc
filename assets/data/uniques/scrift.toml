@@ -13,7 +13,7 @@ pool = true
 object = "mace"
 affixes = ["sharp=4", "of_undead_bane=4", "of_the_sage=4", "of_the_lion=4"]
 level = 26
-# Four enchantments need its make (docs/dev/enchanting.md).
+# Masterwork, as its design names it.
 quality = "masterwork"
 power = { shrive = 40, critical = 120, phrase = "Every blow it lands is a penance done." }
 lore = "Say your prayers. Then make sure."
