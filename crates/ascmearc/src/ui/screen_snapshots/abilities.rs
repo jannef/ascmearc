@@ -48,7 +48,7 @@ cases! {
         scenario: "quarry",
         character: Some("human,male,warrior"),
         kit: true,
-        actions: "move:S move:S move:S move:S move:W move:W move:W pickup equip:feet:j",
+        actions: "move:S move:S move:S move:S move:E move:E move:E pickup equip:feet:j",
         screen: Some("abilities"),
         ..BASE
     },
