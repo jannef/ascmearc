@@ -380,6 +380,23 @@ Its power works while it is worn or wielded, identified or not:
 - **Scars**: every critical hit you suffer leaves a scar on it, chosen at random: +1 Armour, +1
   maximum hit point, or +1 Toughness. The scars stay on it for whoever wears it next, and there
   is no limit to them. Its description counts them once you have identified it.
+- **Tally** (Wergild): while you [rage](rage.md), every hit point a creature's attack takes from
+  you is owed to the axe, up to 3 × your level (90 at level 30). Your next blow with it that
+  lands adds the whole debt to its damage, once. [Armour](combat.md#protection) soaks it as it
+  soaks the axe's own damage, and a critical does not multiply it. Then the debt is paid. A miss keeps it, and so
+  does a kick. When the rage ends, the debt is forgiven. While you rage, its description says
+  how much it is owed: a little (a third of the most or less), much (two thirds or less), or a
+  fortune.
+- **Grudge** (the Wrecend): every time a creature's attack costs you hit points while you carry
+  it, wielded or in your pack, is a grudge against that one creature, not its kind. Its blows
+  deal +2 damage to that creature for each grudge, with no cap, for as long as you both live, on
+  any level. A [critical hit](combat.md#criticals) multiplies it with the rest. Ten hits from a
+  troll is +20 against that troll. Its description counts the grudges: "It bears three grudges
+  against the troll."
+- **Oath** (the Oath): while you wield it, a class ability paid in [zeal](zeal.md) (a smite, Lay
+  on hands) can be used with too little. You spend what you have, and each point short costs
+  you 5 hit points once the ability is done: a smite costing 3 with no zeal takes 15. You are
+  told "You pay the rest of your oath in blood." Nothing protects you: the price can kill you.
 
 Some give more besides their power, as the table says: an immunity or a weakness to a kind of
 [damage](damage-types.md#armour-and-resistance), damage added to a shield's
@@ -388,6 +405,7 @@ that many cells of you gives no light, the lamps, the fires, and the lights othe
 own too. Nothing is used up: the lights shine again once you are gone or take it off.
 Hǣrsceorp counts as no body armour at all, so [Mage armour](class-wizard.md#talent-mage-armour)
 and [Step of the wind](class-ascetic.md#talent-step-of-the-wind) work in it.
+The Oath's melee hits also build a second point of zeal, 2 a hit in place of 1.
 
 {{#include generated/uniques.md}}
 

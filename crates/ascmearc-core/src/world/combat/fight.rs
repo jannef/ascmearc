@@ -122,6 +122,9 @@ pub enum Cause {
     Altar,
     /// The thirteenth profane gift they received took them (`world/character/profane_taken.rs`).
     Profane,
+    /// They paid an oath in blood, and it took the last of it (the Oath's power,
+    /// `world/classes/oath_paid.rs`).
+    Oath,
 }
 
 impl Cause {
@@ -156,6 +159,7 @@ impl Cause {
             }
             Cause::Altar => msg::health::EPITAPH_ALTAR.into(),
             Cause::Profane => msg::health::EPITAPH_PROFANE.into(),
+            Cause::Oath => msg::health::EPITAPH_OATH.into(),
         }
     }
 
@@ -176,6 +180,7 @@ impl Cause {
             | Cause::Spell(_)
             | Cause::Miscast(_)
             | Cause::Altar
+            | Cause::Oath
             | Cause::Fall
             | Cause::Fire => msg::health::DIE.into(),
         }
@@ -934,6 +939,9 @@ impl World {
         let profile = profile.map(|p| self.season_threat(attacker, p));
         // Its banes, against a creature of their tags (`bane.rs`).
         let profile = profile.map(|p| self.baned(target, p));
+        // A unique weapon's debt or grudges (`tally.rs`).
+        let profile = profile.map(|p| self.tallied(attacker, target, p));
+        let debt = profile.as_ref().and_then(|p| p.keeps) == Some(crate::content::Keeps::Debt);
         // Favoured prey and a sneak attack.
         let profile = profile.map(|p| self.favoured(attacker, target, p));
         // An ally's master's gifts to it (Beast-bond).
@@ -1010,6 +1018,9 @@ impl World {
         let blow = blow.map(|b| self.holy_wrathed(attacker, target, b));
         // A unique armour's Negate (`negate.rs`): the hit comes to nothing, before anything comes of it.
         let blow = blow.map(|b| self.negated(target, b));
+        if let Some(b) = blow {
+            self.tally_paid(attacker, debt, b);
+        }
         if blow.is_some_and(|b| b.strike.is_hit()) {
             self.savage_spent(attacker, events);
         }
@@ -1271,6 +1282,10 @@ impl World {
         if matches!(harm, Harm::Actor(_)) && self.unstoppable(id, damage, events) {
             return false;
         }
+        // What a unique weapon keeps of it (`tally.rs`).
+        if let Harm::Actor(by) = harm {
+            self.tally_harm(id, by, damage);
+        }
         let Some(actor) = self.state.actors.get_mut(&id) else {
             return false;
         };
@@ -1357,6 +1372,7 @@ impl World {
             return;
         };
         events.push(Event::Died { actor: id, at, of });
+        self.grudges_end(id);
         if id == self.state.player {
             // A blow's dealer, if the player saw it (settled as the turn is perceived); a status
             // names itself instead.

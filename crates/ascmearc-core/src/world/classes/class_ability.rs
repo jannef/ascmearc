@@ -89,14 +89,18 @@ impl World {
         let player = self.state.player;
         let content = self.content.clone();
         let mut spent = 0;
+        // What an Oath takes in blood for what is short, once the ability is done (`oath_paid.rs`).
+        let mut blood = 0;
         if let Some(cost) = crate::ability::class_cost(self.state.player(), &content, active) {
             if active.holy() && !self.answered(active) {
                 return self.unanswered(active);
             }
-            self.spend_resource(player, cost.resource, cost.amount, events);
+            let (paid, hp) = self.oath_short(cost);
+            self.spend_resource(player, cost.resource, paid, events);
             spent = cost.amount;
+            blood = hp;
         }
-        match (active, dir) {
+        let done = match (active, dir) {
             (ClassActive::Rage, _) => self.rage(events),
             (ClassActive::WarCry, _) => self.war_cry(events),
             (ClassActive::VeteransWind, _) => self.veterans_wind(events),
@@ -159,7 +163,9 @@ impl World {
                 self.say(msg::classes::WRITE_WHICH_SPELL);
                 Spent::Nothing
             }
-        }
+        };
+        self.pay_in_blood(blood, events);
+        done
     }
 
     /// Whether the player may use class active `active` now: they have it, and it is available

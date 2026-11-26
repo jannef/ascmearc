@@ -288,6 +288,12 @@ pub struct Profile {
     /// arrows of undead-bane), by tag in the order first met: added where the attack meets its
     /// target (`World::resolve`), only when the target's type carries the tag.
     pub banes: Vec<(String, i32)>,
+    /// Damage added once to a hit's roll, after a critical has multiplied it and before the
+    /// soak (a Tally's debt paid: `world/combat/tally.rs`).
+    pub once: i32,
+    /// What the unique weapon it is made with keeps of the blows its bearer takes (a Tally's
+    /// debt, a Grudge's): read where the attack meets its target (`World::resolve`).
+    pub keeps: Option<crate::content::Keeps>,
 }
 
 /// What an attack is made with, as data gives it: a weapon (`data/objects.toml`) or a creature's
@@ -415,6 +421,8 @@ impl Profile {
             riders: Vec::new(),
             on_hit: Vec::new(),
             banes: Vec::new(),
+            once: 0,
+            keeps: None,
         }
     }
 
@@ -583,7 +591,8 @@ pub fn strike_with(profile: &Profile, target: &Target, rng: &mut Rng, reroll_fum
     let mut riders = Vec::new();
     let damage: i32 = (0..times)
         .map(|_| profile.roll_damage(rng, &mut riders))
-        .sum();
+        .sum::<i32>()
+        + profile.once;
     // The critical multiplied the damage first; the soak comes off once, so criticals punch
     // through armour. An element meets no armour: the Protection against it is 0.
     let pv = target.protection.against(kind);
@@ -736,6 +745,8 @@ mod tests {
             riders: Vec::new(),
             on_hit: Vec::new(),
             banes: Vec::new(),
+            once: 0,
+            keeps: None,
         }
     }
 

@@ -313,6 +313,13 @@ pub struct Actor {
     /// never followed.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub home: Option<String>,
+    /// What its unique weapons keep of the blows it took: a Tally's debt, a Grudge's grudges
+    /// (`world/combat/tally.rs`). Left out of saves and hashes while empty.
+    #[serde(
+        default,
+        skip_serializing_if = "crate::world::combat::tally::Tallies::is_empty"
+    )]
+    pub tallies: crate::world::combat::tally::Tallies,
 }
 
 fn is_ungraded(n: &i8) -> bool {

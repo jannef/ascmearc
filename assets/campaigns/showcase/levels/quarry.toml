@@ -121,6 +121,20 @@ objects = ["unique:kettle_hat"]
 at = [9, 12]
 objects = ["unique:scarhide"]
 
+# Three more of the pool (#2109, #2117, #2131), along the arrival room's north side: Wergild, the
+# Oath, and the Wrecend.
+[[pile]]
+at = [5, 6]
+objects = ["unique:wergild"]
+
+[[pile]]
+at = [7, 6]
+objects = ["unique:oath"]
+
+[[pile]]
+at = [9, 6]
+objects = ["unique:wrecend"]
+
 # What the sealed chamber keeps.
 [[pile]]
 at = [48, 8]

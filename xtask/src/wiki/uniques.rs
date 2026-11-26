@@ -153,6 +153,13 @@ fn power_text(content: &Content, u: &UniqueDef) -> String {
     if u.invisible {
         all.push("its wearer is invisible, as the Invisible status makes one".into());
     }
+    if let Some((resource, on, amount)) = u.resource_build {
+        all.push(format!(
+            "while it is wielded, {} builds {amount} more {}",
+            on.words(),
+            content.resource(resource).name.to_lowercase()
+        ));
+    }
     if u.douse > 0 {
         all.push(format!(
             "every light source within {} cells of its wearer gives no light (lamps, torches, \
@@ -244,6 +251,34 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
              {chance}% of the time, rolled anew at every death; never the undead. A creature \
              brought back did not die: no experience, no loot, no corpse, no kill counted"
         ),
+        Some(Power::Tally { cap_per_level }) => format!(
+            "while its wielder is Raging, every hit point a creature's attack takes from them is \
+             owed to it, up to {cap_per_level} × their level ({} at level 30); the next blow \
+             struck with it that lands (a hit, soaked or resisted too) adds the whole debt to \
+             its damage once (after a critical multiplies the rest; soaked by armour as its own \
+             damage is), and the debt is paid. A miss keeps it; the rage's end forgives it. \
+             Its description says how much it is owed while you rage: a little (a third of the \
+             most or less), much (two thirds or less), a fortune (more)",
+            u32::from(*cap_per_level) * 30
+        ),
+        Some(Power::Grudge { per_hit }) => format!(
+            "every attack of a creature's that costs one who carries it (wielded or in the pack) \
+             hit points is a grudge against that one creature, not its kind: its blows deal \
+             +{per_hit} damage to that creature for each grudge (a critical multiplies it with the \
+             rest), without a cap, for as long as both live (across levels too). Its description \
+             counts the grudges"
+        ),
+        Some(Power::Oath {
+            resource,
+            hp_per_point,
+        }) => {
+            let name = content.resource(*resource).name.to_lowercase();
+            format!(
+                "while it is wielded, a class ability paid in {name} may be used with too \
+                 little: what you hold is spent, and each point short costs you {hp_per_point} \
+                 hit points once the ability is done. Nothing protects you: it may kill you"
+            )
+        }
         Some(Power::Cast(cast)) => {
             let def = content.spell(cast.spell);
             let kind = (def.damage_type).map_or(String::new(), |k| {

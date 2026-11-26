@@ -60,6 +60,8 @@ pub struct Mods {
     /// How many times as far it shoots or is thrown, from a unique item's Range power (local;
     /// 1 without one: [`Mods::range`]).
     range_times: u8,
+    /// What a unique weapon's Tally or Grudge power keeps of the blows its bearer takes (local).
+    keeps: Option<crate::content::Keeps>,
 }
 
 impl Default for Mods {
@@ -76,6 +78,7 @@ impl Default for Mods {
             added: Vec::new(),
             banes: Vec::new(),
             range_times: 1,
+            keeps: None,
         }
     }
 }
@@ -289,6 +292,10 @@ impl Mods {
                     mods.added.extend(*added);
                 }
                 Some(&Power::Range(times)) => mods.range_times = times,
+                Some(Power::Tally { .. }) => mods.keeps = Some(crate::content::Keeps::Debt),
+                Some(&Power::Grudge { per_hit }) => {
+                    mods.keeps = Some(crate::content::Keeps::Grudges(per_hit));
+                }
                 _ => {}
             }
         }
@@ -392,6 +399,9 @@ impl Mods {
         profile.on_hit.extend_from_slice(&self.on_hit);
         for (tag, value) in &self.banes {
             add_bane(&mut profile.banes, tag, *value);
+        }
+        if self.keeps.is_some() {
+            profile.keeps = self.keeps;
         }
     }
 

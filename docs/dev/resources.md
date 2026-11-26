@@ -192,6 +192,9 @@ statuses).
   `resource`, with Avatar's `hands_cost_percent` of it for Lay on hands, `percent_of`, at least
   1), by `Ability::unavailable` and by `use_class`, which, for a holy gift (`ClassActive::holy`),
   asks `World::answered` before it spends, so an unanswered smite or heal spends nothing.
+  A unique sword's Oath power (#2117) lets its wielder use these with too little zeal, the rest
+  paid in hit points, and its `resource_build` adds a second zeal a melee hit
+  (docs/dev/magic-items.md "Unique items").
   Retribution (P3, #912, the paladin's at 25) spends 4 a blow it answers:
   `FaithEffect::Retribution { resource, cost }` (`FaithMods::retribution`), read in one place,
   `World::retribution` (`world/classes/smite.rs`), after its other checks (the attack hit, the attacker

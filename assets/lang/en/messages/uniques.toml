@@ -8,6 +8,16 @@ flames_from_your_shield = "Flames leap from your shield!"
 # A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.
 no_craft = "It is unique: no craft of yours will change it."
 
+# An Oath pays what its wielder's zeal is short in hit points (the Oath, #2117;
+# `world/classes/oath_paid.rs`), said once the ability is done.
+oath_paid = "You pay the rest of your oath in blood."
+
+# A Tally's debt (Wergild, #2109; `world/combat/tally.rs`), on its description after its power
+# while its wielder rages: a third of what it may hold or less, two thirds or less, more.
+owed_a_fortune = "It is owed a fortune."
+owed_a_little = "It is owed a little."
+owed_much = "It is owed much."
+
 # The Restore power (#2098, `world/health/restore.rs`): a death near the stone's wearer undone.
 # `who`: a creature the player sees restored.
 restored = "{who:The} fall{who:s}, and rise{who:s} whole again!"
@@ -25,6 +35,13 @@ rings_your_helm = "Your helm rings like a struck kettle!"
 # The Scars power (#2137, Scarhide; `world/combat/struck.rs`): a critical hit on the player scars
 # what they wear.
 scarred = "The blow leaves its scar on your armour."
+
+# A Grudge's grudges (the Wrecend, #2131; `world/combat/tally.rs`), on its description after its
+# power: `n`, the hits the creature `who` (`creature:<id>`) landed on its bearer.
+[grudges]
+by = "n.number"
+one = "It bears a grudge against {who:the}."
+many = "It bears {n:num} grudges against {who:the}."
 
 # The scars a Scars power's item bears, on its description (`magic/describe.rs`): `n`, how many.
 [scars]
