@@ -166,7 +166,9 @@ fn capacity_line(stack: &Stack, content: &Content) -> Option<Line> {
     let room = usize::from(super::capacity(stack, content));
     let said = match stack.known_magic().map(|m| m.affixes.len()) {
         None => Msg::new(msg::describe::CAPACITY_CAN).role("room", enchantments(room)),
-        Some(n) if n > room => msg::describe::CAPACITY_OVER.into(),
+        // A unique holds what its table sets, past its make's capacity too (#2115).
+        Some(n) if n > room && !stack.is_unique() => msg::describe::CAPACITY_OVER.into(),
+        Some(n) if n > room => msg::describe::CAPACITY_ALL.into(),
         Some(n) if n == room => msg::describe::CAPACITY_ALL.into(),
         Some(n) => (Msg::new(msg::describe::CAPACITY_MORE).role("has", enchantments(n)))
             .role("n", num(room - n)),
@@ -518,6 +520,11 @@ fn lines_named(stack: &Stack, content: &Content, name: Phrase, maker: Option<&st
                     let said = data_line::said(data_line::unique_phrase(&unique.id));
                     out.push(line(LineKind::Power, said));
                 }
+                // A Scars power's scars (`scars.rs`), counted, never what each gave.
+                if let Some(n) = stack.scars().map(|s| s.count()).filter(|&n| n > 0) {
+                    let said = Msg::new(msg::uniques::SCARS).role("n", num(n));
+                    out.push(line(LineKind::Note, said));
+                }
                 if unique.lore.is_some() {
                     let said = data_line::said(data_line::unique_lore(&unique.id));
                     out.push(line(LineKind::Lore, said));
@@ -588,10 +595,14 @@ pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> Msg {
         Effect::Durability => by(msg::describe::DOES_DURABILITY),
         Effect::Bane => by(msg::describe::DOES_BANE).role("bane", bane_of(rolled)),
         Effect::Parry => by(msg::describe::DOES_PARRY),
+        // A unique's penalty (#2115: Hǣrsceorp's −1).
+        Effect::Armour if v < 0 => Msg::new(msg::describe::DOES_ARMOUR_LESS).role("v", num(-v)),
         Effect::Armour => by(msg::describe::DOES_ARMOUR),
         Effect::Protection => by(msg::describe::DOES_PROTECTION),
         Effect::Shield => by(msg::describe::DOES_SHIELD),
         Effect::MaxDex => by(msg::describe::DOES_MAX_DEX),
+        // A unique's penalty (#2127: the Kettle Hat's, a heavy pot).
+        Effect::Weight if v < 0 => Msg::new(msg::describe::DOES_HEAVIER).role("v", num(-v)),
         Effect::Weight => by(msg::describe::DOES_LIGHTER),
         Effect::Proof => msg::describe::DOES_PROOF.into(),
         // A unique's penalty (#2091: the Grandmother's −2).

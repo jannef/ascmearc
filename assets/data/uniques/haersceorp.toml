@@ -1,0 +1,20 @@
+# Hǣrsceorp (#2115), the ascetic's hair shirt: a padded coat for the drop pool (#2103; placed
+# nowhere else but the test world's quarry), item level 24. A hair shirt turns nothing: its Armour
+# is written down to 0 (Reinforced −1 on the coat's 1) and it gives no Protection, so it counts as
+# no body armour at all (`counts_as_unarmoured`: Mage armour, Step of the wind). Every blow that
+# lands on its wearer and does damage pays 1 ki, a critical 2, up to the pool's maximum (its Pain
+# power, `world/combat/struck.rs`); a wearer without ki gains nothing. Light (Featherweight 50),
+# +4 Dodge, +4 Toughness, +12 hit points, and +4 to the ki pool, Dodge and ki past their ladders.
+# Every value set by hand (`=`), so a regrade of the tiers leaves it as it is
+# (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "haersceorp"
+name = "Hǣrsceorp"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "padded_coat"
+affixes = ["featherweight=50", "nimble=4", "reinforced=-1", "of_the_ox=4", "of_vitality=12", "of_stillness=4"]
+level = 24
+counts_as_unarmoured = true
+power = { pain = "ki", gain = 1, critical = 2, phrase = "The pain of every blow that lands on its wearer gathers as ki." }
+lore = "It itches. That is the point."

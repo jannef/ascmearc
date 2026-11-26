@@ -21,6 +21,7 @@ pub(in crate::world) mod reflect;
 mod sear;
 pub(in crate::world) mod shoot;
 pub(in crate::world) mod slip;
+mod struck;
 pub(crate) mod surprise;
 mod two_shields;
 mod unique_spell;
@@ -51,6 +52,7 @@ cfg_if! {
         mod shot_range_tests;
         mod silent_tests;
         mod slip_tests;
+        mod struck_tests;
         mod stunning_strike_tests;
         mod style_tests;
         mod surprise_tests;

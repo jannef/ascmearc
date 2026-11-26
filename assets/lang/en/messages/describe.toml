@@ -63,6 +63,8 @@ damage_shot = "Damage {dice:bare} a shot; criticals on {critical:bare}, ×{crit:
 # `dig`: its digging power.
 digs = "Digs at {dig:bare}"
 does_armour = "+{v:bare} to Armour"
+# A unique's penalty (#2115: Hǣrsceorp's −1).
+does_armour_less = "−{v:bare} to Armour"
 does_attack_speed = "attacks {speed:bare}"
 does_attack_speed_all = "all your attacks are {speed:bare}"
 does_bane = "+{v:bare} to hit and damage against {bane:plural}"

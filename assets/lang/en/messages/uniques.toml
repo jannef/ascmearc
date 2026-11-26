@@ -15,3 +15,19 @@ restored = "{who:The} fall{who:s}, and rise{who:s} whole again!"
 restored_unseen = "The stone on your finger grows warm."
 # The player restored.
 restored_you = "Death lets go of you: you rise whole again!"
+
+# The Ring power (#2127, the Kettle Hat; `world/combat/struck.rs`): a blow lands on the helm's
+# wearer. `who`: a wearer the player sees.
+rings_helm = "{who:poss} helm rings like a struck kettle!"
+# The player wears it.
+rings_your_helm = "Your helm rings like a struck kettle!"
+
+# The Scars power (#2137, Scarhide; `world/combat/struck.rs`): a critical hit on the player scars
+# what they wear.
+scarred = "The blow leaves its scar on your armour."
+
+# The scars a Scars power's item bears, on its description (`magic/describe.rs`): `n`, how many.
+[scars]
+by = "n.number"
+one = "It bears {n:num} scar."
+many = "It bears {n:num} scars."
