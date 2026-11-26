@@ -412,6 +412,22 @@ id on another rarity than unique, and a unique without its id.
   four are the rollable ones with a unique's hand-set values, so no rollable pool changes.
   Tests: `world/combat/negate_tests.rs` (the weight, Defence and Protection, casting, a negated
   hit, a miss never rolling, loot never making one).
+- **Hǣrsceorp, the Kettle Hat, and Scarhide** (#2115, #2127, #2137; the class and race uniques'
+  first three), in the shared `data/uniques/`, each `pool = true`, placed nowhere but the quarry.
+  **Hǣrsceorp** (`haersceorp`, a padded coat, item level 24): Featherweight 50, Nimble 4 (+4
+  Dodge), Reinforced −1 (a penalty, `describe.does_armour_less`: the coat's Armour 1 written to
+  0), of the Ox 4 (the issue's "`of_the_tortoise` (Toughness)": that affix is Natural armour, so
+  Toughness's own affix stands in), of Vitality 12, of Stillness 4 (ki); its Pain power, and
+  `counts_as_unarmoured`. **The Kettle Hat** (`kettle_hat`, an iron helm, item level 12):
+  Featherweight −67 (a penalty, said "67% heavier": 2,505 g, the design's 2.5 kg), Hardened 3,
+  of the Ox 4; its Ring power, no ward. **Scarhide** (`scarhide`, item level 30): the issue's
+  hide tunic is clothing (no `kind`, #1173), which no magic may sit on (`Magic::check`,
+  `Mods::add_magic`), so it is a leather jerkin, the lightest hide armour with a kind: Reinforced
+  2, Hale 20, of the Ox 4, of Health 3 (disease checks); its Scars power. All three are plain
+  makes holding more than a plain base's capacity: a unique is never trimmed
+  (`content/level.rs::hand_made`, docs/dev/enchanting.md), so the owner's numbers stand as
+  written, and no make adds Armour or Protection they did not ask for. Tests:
+  `world/combat/struck_tests.rs`.
 - **What only a unique sets** (#2091), each refused to any other item by `Magic::check` and
   never rolled (`content/unique_values_tests.rs::what_only_a_unique_sets_never_rolls`: every
   random affix, loot's, a vault's, a shop's, enchanting's and its recast's, comes of
@@ -507,6 +523,26 @@ id on another rarity than unique, and a unique without its id.
   cell, never holding it), its lines held into the news so they follow the blow's ("Flames leap
   from your shield!", `uniques.flames_from_*`). The spell's data is untouched.
   `magic::worn_powers` lists the powers of what an actor has equipped.
+  `Power::Pain { resource, gain, critical }` (`{ pain = "ki", gain = 1, critical = 2 }`, #2115),
+  `Power::Ring { cells, stagger, difficulty }` (`{ ring = 20, stagger = 1, difficulty = 15 }`,
+  worn armour only, #2127), and `Power::Scars` (`{ scars = true }`, worn armour only, #2137) are
+  read in one place, `world/combat/struck.rs::World::struck`, which `World::resolve` calls for
+  a hit (after Negate, before the damage is taken; so a blow, a shot, a throw, never a spell,
+  breath, blast, or trap). Pain: a hit that does damage adds `gain` (a critical `critical`) to
+  that pool, up to `World::resource_max`; none to one without it. Scars: a critical makes one
+  draw (`unique/scar/<wearer>`) among `magic::scars::Scar::ALL` and adds it to the worn stack's
+  `Stack::scars` (saved with the stack, left out while none; `Stack::is_valid_for` allows it on
+  a unique only), which `Mods::add_magic` reads as the affixes of those effects (Armour local
+  on armour, maximum hit points and Toughness global), without end; the player is told
+  `uniques.scarred`, and the description counts them (`uniques.scars`, only once identified).
+  Ring: any hit, soaked to nothing too, makes `noise::Act::Clang` (a new `SoundKind::Clang`, `n`
+  in the dump's sound layer) at the wearer, `cells × STEP_LOSS` loud (a critical's twice,
+  capped at `MAX_LOUDNESS`: 30 cells), says `uniques.rings_your_helm` or `rings_helm` (seen),
+  and every actor beside the wearer (not in the retinue), friend or foe, that fails
+  `World::resists` (Toughness against `difficulty`; `drain/resist/<key>`'s two draws) gets
+  `stagger` degrees of Staggered (a critical's twice; Staggered's `max = 1` keeps it one slowed
+  action). **`counts_as_unarmoured`** (a body piece only): `Actor::wears_body_armour` says no
+  for it (Mage armour, Fleet, Step of the wind).
 - **Rules beside the power** (#2095, #2097), fields of the unique's table read where the rule
   is, never affixes (so no pool can roll them; `unique_spell_tests.rs::nothing_unique_only_is_ever_rolled`):
   `immune` (kinds; `Actor::resistances` adds them to the immunities) and `resist` (kind to

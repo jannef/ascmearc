@@ -63,6 +63,18 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "haersceorp",
+        24,
+        &[
+            ("featherweight", 50),
+            ("nimble", 4),
+            ("reinforced", -1),
+            ("of_the_ox", 4),
+            ("of_vitality", 12),
+            ("of_stillness", 4),
+        ],
+    ),
+    (
         "high_toby",
         12,
         &[
@@ -71,6 +83,11 @@ const UNIQUES: &[Written] = &[
             ("steady", 4),
             ("of_precision", 4),
         ],
+    ),
+    (
+        "kettle_hat",
+        12,
+        &[("featherweight", -67), ("hardened", 3), ("of_the_ox", 4)],
     ),
     (
         "masterpiece",
@@ -91,6 +108,16 @@ const UNIQUES: &[Written] = &[
             ("of_precision", 4),
             ("of_the_ox", 10),
             ("of_vitality", 30),
+        ],
+    ),
+    (
+        "scarhide",
+        30,
+        &[
+            ("reinforced", 2),
+            ("hale", 20),
+            ("of_the_ox", 4),
+            ("of_health", 3),
         ],
     ),
     (
