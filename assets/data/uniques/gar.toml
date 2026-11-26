@@ -1,0 +1,22 @@
+# Gār (#2124): a spear for the drop pool (#2103; placed nowhere else but the test world's
+# quarry), item level 32, the shield wall's weapon: one-handed beside a shield. A blow of it that
+# lands also strikes whoever stands right behind the one struck (the next cell along the line
+# from its wielder), friend or foe, rolled to hit on its own, for half the damage (its Thrust
+# power, `world/combat/thrust.rs`); it has no reach of its own, and thrown it is a spear. +4
+# damage, 2d6 more, +2 to hit, +4 Strength, and +2 Parry (Guarding; Parry keeps the best, and a
+# shield's Defence is Shield, so both count). Every value set by hand (docs/dev/magic-items.md
+# "Unique items").
+[[unique]]
+id = "gar"
+name = "Gār"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "spear"
+affixes = ["sharp=4", "heavy=2d6", "guarding=2", "of_precision=2", "of_the_bear=4"]
+level = 32
+# Five enchantments need its make (docs/dev/enchanting.md): Masterwork (4) and a set gem, a
+# garnet inlaid in its socket (+1).
+quality = "masterwork"
+parts = [{ part = "inlay", of = "garnet", cut = "fine" }]
+power = { thrust = 50, phrase = "Its thrust goes through: whoever stands behind the one it strikes is struck too, friend or foe." }
+lore = "Behind every shield wall is a row of these, and behind every row, a row."

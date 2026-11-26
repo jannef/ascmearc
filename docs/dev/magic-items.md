@@ -412,6 +412,16 @@ id on another rarity than unique, and a unique without its id.
   four are the rollable ones with a unique's hand-set values, so no rollable pool changes.
   Tests: `world/combat/negate_tests.rs` (the weight, Defence and Protection, casting, a negated
   hit, a miss never rolling, loot never making one).
+- **Onrǣs** (#2123, `data/uniques/onraes.toml`): iron-shod boots, item level 30, Masterwork, of
+  the drop pool, placed nowhere but the quarry: Fleet 10 (steps 10% faster), Hardened 2, of
+  Steadiness 4, of the Ox 4, and its Onset power (below). The issue's `of_the_hare=10 (steps 10%
+  faster)` is Fleet: of the Hare is Tumble, Fleet the boots' step speed.
+- **Gār** (#2124, `data/uniques/gar.toml`): a spear, item level 32, Masterwork with a fine garnet
+  inlaid (five enchantments), of the drop pool, placed nowhere but the quarry: Sharp 4, Heavy
+  2d6, Guarding 2 (+2 Parry), of Precision 2, of the Bear 4, and its Thrust power (below). Its
+  2d6 is as many dice as Heavy's two-dice tiers but fewer sides than they roll: `affix_value::valued`
+  takes the first tier of fewer dice whose range holds the sides (a tier of one die, 6), and
+  `UniqueDef::dice` keeps the count (`more_dice` compares with the tier taken), as for 6d6.
 - **What only a unique sets** (#2091), each refused to any other item by `Magic::check` and
   never rolled (`content/unique_values_tests.rs::what_only_a_unique_sets_never_rolls`: every
   random affix, loot's, a vault's, a shop's, enchanting's and its recast's, comes of
@@ -506,6 +516,26 @@ id on another rarity than unique, and a unique without its id.
   `World::creature_spell_does`, the spell's own code for any caster (a cone from the bearer's
   cell, never holding it), its lines held into the news so they follow the blow's ("Flames leap
   from your shield!", `uniques.flames_from_*`). The spell's data is untouched.
+  `Power::Onset { knockback, noise }` (`{ onset = true, knockback = 1, noise = 200 }`, worn
+  armour only; Onrǣs, #2123): read in the Charge (`world/classes/onset.rs`, `Actor::onset`):
+  the charge costs nothing (`charge.rs` spends nothing, `ability::class_cost` has no cost for it,
+  so it is never short of breath, and `PerceptionView::own_charge_free` makes the menu say "no
+  stamina"), its steps make `noise` percent of a step's noise (`Entry::noise` in `enter.rs`,
+  `make_noise_at`), and once its blow's first strike hits (`player_attacks` returns that), the
+  foe is driven back along the line `knockback` cells (`World::drive_back`), Staggered on the
+  first cell it cannot be moved into (a wall, another creature, ice, a trap, a rooted one).
+  Nothing is drawn. Tests: `world/classes/charge_tests.rs` (free, the menu, the knockback and
+  the stagger, the noise heard 8 cells past a plain step's reach).
+  `Power::Thrust(percent)` (`{ thrust = 50 }`, a melee weapon only; Gār, #2124): `Mods::local`
+  carries it into `Profile::thrust` (`sharpen`; a kick or a bash builds none, and a throw is no
+  melee blow). At the end of `World::resolve` (`world/combat/thrust.rs`), a melee blow from
+  beside that hits strikes the actor on the next cell along the line from the attacker (friend or
+  foe, the player too) with `resolve` again: the same profile as it came in, its `thrust`
+  cleared so it goes no farther, and `World::thrusting` set, which the inner `resolve` takes at
+  its start and applies after Negate (`thrust_share`: the percent of the damage, at least 1).
+  The player's thrust is said through `player_strikes`, held into the news so it follows the
+  first blow's line, whose `died` now asks for its own target's death only; a creature's is said
+  by its event. Tests: `world/combat/thrust_tests.rs`.
   `magic::worn_powers` lists the powers of what an actor has equipped.
 - **Rules beside the power** (#2095, #2097), fields of the unique's table read where the rule
   is, never affixes (so no pool can roll them; `unique_spell_tests.rs::nothing_unique_only_is_ever_rolled`):

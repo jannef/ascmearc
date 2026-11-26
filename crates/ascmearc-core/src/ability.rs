@@ -1424,6 +1424,10 @@ pub(crate) fn class_cost(
     active: ClassActive,
 ) -> Option<ResourceCost> {
     let mut cost = content.class_active(active)?.resource?;
+    // Onrǣs' onset: a charge costs nothing (`world/classes/onset.rs`).
+    if active == ClassActive::Charge && actor.onset(content).is_some() {
+        return None;
+    }
     if active == ClassActive::LayOnHands
         && let Some(percent) = actor.talent_mods(content).faith.avatar
     {

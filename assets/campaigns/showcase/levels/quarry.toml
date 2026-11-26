@@ -106,6 +106,16 @@ objects = ["rock*4"]
 at = [3, 12]
 objects = ["unique:masterpiece"]
 
+# Two more of the pool beside it (#2123, #2124): Onrǣs, boots that make a charge free, and Gār,
+# a spear that thrusts through to the one behind.
+[[pile]]
+at = [5, 12]
+objects = ["unique:onraes"]
+
+[[pile]]
+at = [7, 12]
+objects = ["unique:gar"]
+
 # What the sealed chamber keeps.
 [[pile]]
 at = [48, 8]

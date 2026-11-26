@@ -56,6 +56,12 @@ pub enum Power {
     /// Defence are untouched. The player wearing it is told `message` (a line of data, said by its
     /// key: [`super::data_line::ward`]).
     Negate { chance: u8, message: String },
+    /// The onset (Onrǣs', #2123; `{ onset = true, knockback = 1, noise = 200 }`, on worn
+    /// armour): its wearer's Charge costs nothing and goes as far as they see, a charge's blow
+    /// that hits drives the one struck back `knockback` cells (Staggered when it cannot be
+    /// moved), and the charge's steps make `noise` percent of a step's noise. Read in the Charge
+    /// (`world/classes/onset.rs`).
+    Onset { knockback: u8, noise: u16 },
     /// It shoots (or is thrown) this many times as far (`{ range = 2 }`, #1976): a multiplier on
     /// its range and what its affixes add, read where its reach is computed
     /// ([`crate::magic::Mods::local`], `Mods::range`); only on a base with a `range`.
@@ -66,6 +72,11 @@ pub enum Power {
     /// #2098): read where a death is decided ([`crate::world::World`]'s `restored`, from
     /// `World::hurt` and the deaths that skip it).
     Restore { chance: u8, radius: u8 },
+    /// A melee blow of it that hits also strikes whoever stands right behind the one struck
+    /// (the next cell along the line from the wielder), friend or foe, rolled to hit on its
+    /// own, for this percent of the damage (`{ thrust = 50 }`, Gār's, #2124; a melee weapon):
+    /// read at the end of `World::resolve` (`world/combat/thrust.rs`).
+    Thrust(u8),
     /// Its wearer sees with this vision profile (an index into
     /// [`Content::vision_profiles`]) where it is better than their own (`{ vision =
     /// "darkvision" }`): read where an actor's eyes are chosen.
@@ -245,6 +256,14 @@ struct PowerSpec {
     restore: Option<u8>,
     /// How far from its wearer a death is undone (`restore` only).
     radius: Option<u8>,
+    /// The onset: a Charge free, as far as its wearer sees (`true`).
+    onset: Option<bool>,
+    /// How many cells the onset's blow drives the one struck back (`onset` only).
+    knockback: Option<u8>,
+    /// The onset's steps' noise, in percent of a step's (`onset` only).
+    noise: Option<u16>,
+    /// The percent of a blow's damage the thrust-through deals the one behind.
+    thrust: Option<u8>,
     /// A damage spell its bearer casts free from a shield, by `on_block` and `on_bash`.
     cast: Option<String>,
     /// The cast's reach in cells.
@@ -337,7 +356,7 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
     if spec.bash.is_some() && def.bash.is_none() {
         return Err("`bash` needs a base that bashes (a shield)".into());
     }
-    let dice = more_dice(&spec.affixes, content);
+    let dice = more_dice(&spec.affixes, magic_affixes(&stack), content);
     Ok(UniqueDef {
         id: spec.id,
         name: name.into(),
@@ -357,16 +376,26 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
     })
 }
 
-/// The affixes of `written` (already read, `magic_of`) whose dice are more than their affix's
-/// last tier rolls, with the count: `"heavy=6d6"` is `("heavy", 6)`.
-fn more_dice(written: &[String], content: &Content) -> Vec<(String, u8)> {
+/// The affixes `stack` was made with.
+fn magic_affixes(stack: &Stack) -> &[crate::magic::Affix] {
+    stack.magic().map_or(&[], |m| m.affixes.as_slice())
+}
+
+/// The affixes of `written` (already read into `made`, `magic_of`) whose dice are more than the
+/// tier they took rolls, with the count: `"heavy=6d6"` is `("heavy", 6)` (past the last tier),
+/// and `"heavy=2d6"` `("heavy", 2)` (a tier of one die).
+fn more_dice(
+    written: &[String],
+    made: &[crate::magic::Affix],
+    content: &Content,
+) -> Vec<(String, u8)> {
     (written.iter())
         .filter_map(|text| {
             let (id, value) = text.split_once('=')?;
             let a = content.affixes().get(id)?;
             let count = value.trim().split_once('d')?.0.parse::<u8>().ok()?;
-            let last = a.tiers.last()?;
-            (a.effect.is_dice() && count > last.dice).then(|| (id.to_string(), count))
+            let tier = a.tier(made.iter().find(|m| m.id == id)?.tier)?;
+            (a.effect.is_dice() && count > tier.dice).then(|| (id.to_string(), count))
         })
         .collect()
 }
@@ -374,7 +403,8 @@ fn more_dice(written: &[String], content: &Content) -> Vec<(String, u8)> {
 /// The power a `power` table names on base item `def`: exactly one of `inflict` (with `chance`
 /// and `severity`, and perhaps `added`), `vision`, `ward` (with a `message`), `negate` (1 to 99,
 /// with a `message`, on worn armour), `light`, `range` (2 or more, on a base with a range),
-/// `restore` (with a `radius`), and `cast` (on a shield).
+/// `restore` (with a `radius`), `cast` (on a shield), `onset` (with a `knockback` and a `noise`,
+/// on worn armour), and `thrust` (1 to 100, on a melee weapon).
 fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, String> {
     let named = [
         p.inflict.is_some(),
@@ -385,10 +415,12 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         p.range.is_some(),
         p.restore.is_some(),
         p.cast.is_some(),
+        p.onset.is_some(),
+        p.thrust.is_some(),
     ];
     if named.iter().filter(|&&n| n).count() != 1 {
         return Err(
-            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, and `cast`"
+            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `onset`, and `thrust`"
                 .into(),
         );
     }
@@ -399,6 +431,9 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     let chances = [p.on_block.is_some(), p.on_bash.is_some()];
     if p.cast.is_none() && cast_fields.iter().chain(&chances).any(|&n| n) {
         return Err("power: `length`, `damage`, `on_block`, and `on_bash` belong to `cast`".into());
+    }
+    if p.onset.is_none() && (p.knockback.is_some() || p.noise.is_some()) {
+        return Err("power: `knockback` and `noise` belong to `onset`".into());
     }
     if p.inflict.is_none() && (p.chance.is_some() || p.severity.is_some() || p.added.is_some()) {
         return Err("power: `chance`, `severity`, and `added` belong to `inflict`".into());
@@ -467,6 +502,29 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     }
     if let Some(spell) = &p.cast {
         return cast(p, spell, def, content).map(Power::Cast);
+    }
+    if let Some(onset) = p.onset {
+        if !onset {
+            return Err("power: `onset` is `true` or left out".into());
+        }
+        if !def.kind.is_some_and(|k| k.is_armour()) {
+            return Err("power: `onset` needs a base that is worn armour".into());
+        }
+        let knockback = p.knockback.unwrap_or(0);
+        let noise = p.noise.unwrap_or(100);
+        if noise == 0 {
+            return Err("power: `noise` is a percent of a step's noise, 1 or more".into());
+        }
+        return Ok(Power::Onset { knockback, noise });
+    }
+    if let Some(percent) = p.thrust {
+        if !(1..=100).contains(&percent) {
+            return Err("power: `thrust` is a percent of the blow's damage, 1 to 100".into());
+        }
+        if def.kind != Some(super::ItemKind::Weapon) {
+            return Err("power: `thrust` needs a melee weapon".into());
+        }
+        return Ok(Power::Thrust(percent));
     }
     if let Some(vision) = &p.vision {
         let index = (content.vision_index(vision))

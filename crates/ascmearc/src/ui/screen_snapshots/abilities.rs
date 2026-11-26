@@ -42,6 +42,16 @@ cases! {
         screen: Some("abilities"),
         ..BASE
     },
+    // The same warrior in the quarry wearing Onrǣs (#2123): Charge costs no stamina.
+    abilities_menu_charge_free: Case {
+        name: "abilities-menu-charge-free",
+        scenario: "quarry",
+        character: Some("human,male,warrior"),
+        kit: true,
+        actions: "move:S move:S move:S move:S move:W move:W move:W pickup equip:feet:j",
+        screen: Some("abilities"),
+        ..BASE
+    },
     // A berserker at level 25 (#844): War cry under Rage among the class abilities, greyed
     // while no rage is held.
     abilities_menu_war_cry: Case {

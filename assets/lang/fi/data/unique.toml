@@ -29,6 +29,10 @@ phrase = { text = "Mikään hiljaisuus ei vaienna sen kantajan ääntä.", of = 
 [eorcanstan.power]
 message = { text = "Hiljaisuus ei saa ääntäsi vaikenemaan.", of = "3bc6d2" }
 
+[gar]
+lore = { text = "Jokaisen kilpimuurin takana on rivi näitä, ja jokaisen rivin takana rivi.", of = "1a6fc5" }
+phrase = { text = "Sen pisto menee läpi: sekin, joka seisoo lyödyn takana, saa iskun, oli ystävä tai vihollinen.", of = "f0a260" }
+
 [grandmother]
 lore = { text = "Hän on elänyt kauemmin kuin kolme sukua ja haudannut jokaisen pojan, joka häntä kantoi.", of = "3ccae1" }
 phrase = { text = "Sen viiltämät haavat umpeutuvat hitaasti.", of = "64f657" }
@@ -50,6 +54,10 @@ phrase = { text = "Moni sen tavoittanut isku raukeaa tyhjiin.", of = "75ac3a" }
 
 [masterpiece.power]
 message = { text = "Isku raukeaa tyhjiin rengaspaitaasi vasten.", of = "5a42d8" }
+
+[onraes]
+lore = { text = "Rivi piti. Hän ei.", of = "9806da" }
+phrase = { text = "Sen kantajan rynnäkkö ei vie henkeä, kantaa minkä matkan tahansa ja ajaa vihollisen taaksepäin. Sen askel on raskas ja kuuluva.", of = "e8eb81" }
 
 [radiant]
 lore = { text = "Se taottiin pyhän lähteen äärellä, eikä se ole sen jälkeen pimennyt, vaikka moni on yrittänyt sitä sammuttaa.", of = "1f3284" }

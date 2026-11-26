@@ -284,6 +284,10 @@ pub struct Profile {
     /// power of the unique weapon it is made with (Inflict; a natural
     /// attack's `on_hit` is read from its creature).
     pub on_hit: Vec<crate::content::OnHit>,
+    /// A hit also strikes whoever stands right behind the one struck, for this percent of the
+    /// damage: the thrust-through of the unique weapon it is made with (Gār's Thrust power,
+    /// `world/combat/thrust.rs`); `None` for every other attack.
+    pub thrust: Option<u8>,
     /// To hit and damage against creatures of a tag, from bane affixes (a bow of orc-bane,
     /// arrows of undead-bane), by tag in the order first met: added where the attack meets its
     /// target (`World::resolve`), only when the target's type carries the tag.
@@ -414,6 +418,7 @@ impl Profile {
             kinds: attack.kinds,
             riders: Vec::new(),
             on_hit: Vec::new(),
+            thrust: None,
             banes: Vec::new(),
         }
     }
@@ -735,6 +740,7 @@ mod tests {
             kinds: Kinds::NONE,
             riders: Vec::new(),
             on_hit: Vec::new(),
+            thrust: None,
             banes: Vec::new(),
         }
     }

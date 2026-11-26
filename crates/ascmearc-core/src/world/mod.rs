@@ -569,6 +569,9 @@ pub struct World {
     /// The creature a spell with `crystal` is striking now (not saved; Soulglass, `crystal.rs`):
     /// if it dies of the blow it leaves crystals, not a corpse.
     glassing: Option<ActorId>,
+    /// The thrust-through under way (not saved; Gār's, `thrust.rs`): its percent of the blow's
+    /// damage, taken by the next `World::resolve`.
+    thrusting: Option<u8>,
     /// Traps sprung since this world was created or loaded (not saved): a rest perceives every
     /// turn in which one went off (a teleport moves someone farther than a step).
     sprung: u64,
@@ -1144,6 +1147,7 @@ impl World {
             sleeper_struck: None,
             caught: false,
             glassing: None,
+            thrusting: None,
             sprung: 0,
             rigger: None,
             spawned: 0,
