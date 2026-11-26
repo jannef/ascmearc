@@ -29,8 +29,8 @@ start and flow) and leave out what is put on it, creatures, objects, traps, and 
 churn with every loot or roster change (#1526); `describe` checks those instead
 (`nothing_on_a_wall_in`: on walkable ground, one creature to a cell, chests and traps where they
 may be). Loot (`mapgen::place_loot`: floor
-items by the branch's `loot`, vault `loot` cells, each a grade or a pool of item classes,
-`mapgen/loot_cell.rs::roll` at the floor's item level, `docs/dev/magic-items.md`) is rolled once a
+items by the branch's `loot`, vault `loot` cells, each a grade, perhaps among item classes,
+`LootCell::roll` in `mapgen/loot_cell.rs` at the floor's item level, `docs/dev/magic-items.md`) is rolled once a
 map is valid, from its own stream `loot/<level id>`, so adding loot never changes the terrain of a
 generated level. The stream goes on, never restarted, through the dens' hoards, the tempting
 hoards, and the special rooms' own loot, in that order (`mapgen::Loot`, one loot stream a level,

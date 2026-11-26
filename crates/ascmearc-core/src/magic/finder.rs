@@ -1,4 +1,4 @@
-//! The finder (docs/design/loot-pipeline.md §3.5): what whoever finds an item brings to every
+//! The finder (docs/dev/magic-items.md "Loot"): what whoever finds an item brings to every
 //! find of a row that takes the finder (`finder = true` in `data/loot_sources.toml`), from their
 //! talents ([`Finder::of`]) or, for the stipend, its own data (`data/rules/stipend.toml`).
 //!

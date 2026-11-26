@@ -1,5 +1,5 @@
-//! The finder (`magic/finder.rs`, docs/design/loot-pipeline.md §3.5): each modifier is read at
-//! its one step, and none takes from another's kind (R5's invariant): more finds take no
+//! The finder (`magic/finder.rs`): each modifier is read at its one step, and none takes from
+//! another's kind (docs/design/loot-pipeline.md R5's invariant): more finds take no
 //! rarity, likelier rarities take no finds, and the gem percent is no part of it.
 
 use super::finder::Finder;

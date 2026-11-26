@@ -6,7 +6,7 @@
 //! its objects may be (`kinds`, [`ItemKind`]), and each kind belongs to one class at most, so an
 //! object's class and its kind cannot say different things. Corpses are of the class that
 //! takes them (`corpses = true`). A class may belong to a `group` (`armour`, `jewellery`), a word
-//! a vault's loot pool names several classes by (`magic/loot.rs`, [`super::Content::pool_classes`]).
+//! a vault's loot cell names several classes by (`magic/loot.rs`, [`super::Content::cell_classes`]).
 
 use super::ContentError;
 use super::affix::ItemKind;
@@ -55,7 +55,7 @@ pub struct ItemClassDef {
     pub kinds: Vec<ItemKind>,
     /// Corpses are of this class.
     pub corpses: bool,
-    /// The word a vault's loot pool names it by with its fellows: `armour`, never a class's id.
+    /// The word a vault's loot cell names it by with its fellows: `armour`, never a class's id.
     pub group: Option<String>,
 }
 

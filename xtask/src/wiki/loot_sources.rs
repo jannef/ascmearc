@@ -1,9 +1,11 @@
-//! The loot sources (`data/loot_sources.toml`, docs/design/loot-pipeline.md §3.4): every place
+//! The loot sources (`data/loot_sources.toml`, docs/dev/magic-items.md "Loot"): every place
 //! an item is found or made, the least rarity of what it gives, whether the finder's talents
 //! count, whether a curse may roll, and whether arms and armour may come Fine or better; then
-//! which of them may give a unique of the drop pool.
+//! which of them may give a unique of the drop pool. And the odds of one find by its least
+//! rarity, the drop pool's included, with the loose gem found in an item's place.
 
-use ascmearc_core::content::Content;
+use super::util::{percent_of, thousands};
+use ascmearc_core::content::{Content, Rarity};
 use ascmearc_core::magic::LootGrade;
 use ascmearc_core::magic::loot::Origin;
 use std::fmt::Write as _;
@@ -120,6 +122,75 @@ pub(super) fn loot_sources(content: &Content) -> String {
     out
 }
 
+/// "1 in N" for a chance of `part` in `of`, when N is whole; else the percent.
+fn one_in(part: u64, of: u64) -> String {
+    match (part, of) {
+        (0, _) => "never".to_string(),
+        (p, o) if o % p == 0 => format!(
+            "1 in {}",
+            thousands(u32::try_from(o / p).unwrap_or(u32::MAX))
+        ),
+        (p, o) => super::util::percent(p as f64 * 100.0 / o as f64),
+    }
+}
+
+/// The odds of one item found, by the least rarity of its place, with no talents: normal,
+/// magic, or rare, and a unique of the drop pool (where the place gives one and a unique is
+/// open to the find's item level); then how often a loose gem comes in an item's place.
+pub(super) fn loot_odds(content: &Content) -> String {
+    let affixes = content.affixes();
+    let unique = u64::from(affixes.unique_pool);
+    let mut out = String::from(
+        "| Rarity at least | Normal | Magic | Rare | A unique of the drop pool |\n\
+         |---|:---:|:---:|:---:|:---:|\n",
+    );
+    for (word, least) in [
+        ("any", Rarity::Normal),
+        ("magic", Rarity::Magic),
+        ("rare", Rarity::Rare),
+    ] {
+        let kept: Vec<(Rarity, u32)> = (Rarity::ROLLED.iter())
+            .map(|&r| {
+                (
+                    r,
+                    if r >= least {
+                        affixes.rarity_weight(r)
+                    } else {
+                        0
+                    },
+                )
+            })
+            .collect();
+        let total: u32 = kept.iter().map(|(_, w)| w).sum();
+        let cell = |r: Rarity| {
+            let w = kept.iter().find(|(k, _)| *k == r).map_or(0, |(_, w)| *w);
+            if w == 0 {
+                "-".to_string()
+            } else {
+                percent_of(w, total.max(1))
+            }
+        };
+        let rare = u64::from(affixes.rarity_weight(Rarity::Rare));
+        let _ = writeln!(
+            out,
+            "| {word} | {} | {} | {} | {} |",
+            cell(Rarity::Normal),
+            cell(Rarity::Magic),
+            cell(Rarity::Rare),
+            one_in(rare * unique, u64::from(total.max(1)) * 10_000),
+        );
+    }
+    let gems = content.gems().map_or(0, |g| g.chance);
+    let _ = write!(
+        out,
+        "\nIn some places a loose [gem](gems.md) comes instead of an item {gems} times in 100: \
+         on a floor, in a tempting hoard or a den's hoard, from the stipend, from what a creature \
+         drops, and in a vault, a chest, or from a feature whose rarity at least is any. The odds \
+         above are of the items that come.\n"
+    );
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -137,5 +208,21 @@ mod tests {
         assert!(text.contains("dropped by a creature, or left by a feature may be a unique"));
         assert!(text.contains("One of the stipend, of the quarrel's hoard,"));
         assert!(text.contains("holds 8 to 20"));
+    }
+
+    #[test]
+    fn the_odds_are_the_data() {
+        let content = ascmearc_assets::content().expect("content loads");
+        let text = loot_odds(&content);
+        assert!(
+            text.contains("| any | 96.2% | 3.2% | 0.5% | 1 in 10,000 |"),
+            "{text}"
+        );
+        assert!(
+            text.contains("| magic | - | 86.7% | 13.3% | 1 in 375 |"),
+            "{text}"
+        );
+        assert!(text.contains("| rare | - | - | 100% | 1 in 50 |"), "{text}");
+        assert!(text.contains("instead of an item 5 times in 100"));
     }
 }

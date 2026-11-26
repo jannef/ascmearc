@@ -63,7 +63,7 @@ use crate::grid::Grid;
 use crate::item_parts::{self, ItemPart};
 use crate::lang::Arg;
 use crate::light::Light;
-use crate::magic::{Affix, LootGrade, LootPool, Magic, Quality};
+use crate::magic::{Affix, LootCell, LootGrade, Magic, Quality};
 use crate::object::{Stack, add_to_pile};
 use crate::temperature::Temperature;
 use serde::{Deserialize, Serialize};
@@ -334,7 +334,7 @@ pub(super) struct LegendDetail {
     /// Objects lying on this cell, top first, e.g. `["dagger", "arrow*12"]`.
     objects: Option<Vec<String>>,
     /// Vaults only: an item of loot rolled here when a level is generated: at least of a grade
-    /// (`any`, `magic`, `rare`), or from a pool of item classes.
+    /// (`any`, `magic`, `rare`), or among item classes ([`LootCell`]).
     loot: Option<LootSpec>,
     /// Vaults only: a cell of a pool of monsters drawn when a level is generated
     /// (`monsters = { pool = "level", count = 20 }`, [`MonsterPoolSpec`]).
@@ -440,29 +440,29 @@ pub(super) struct HiddenSpec {
     opens: Option<String>,
 }
 
-/// A legend's `loot`: a grade, or a pool.
+/// A legend's `loot`: a grade, or a grade among classes.
 #[derive(Clone, Debug, Deserialize)]
 #[serde(untagged)]
 enum LootSpec {
     Grade(LootGrade),
-    Pool(LootPoolSpec),
+    Classes(LootCellSpec),
 }
 
 /// `loot = { pool = "jewellery", grade = "magic" }`: item class ids and class groups
 /// (`data/item_classes.toml`), and the least it may be (default `any`).
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct LootPoolSpec {
+struct LootCellSpec {
     pool: OneOrMany,
     #[serde(default)]
     grade: LootGrade,
 }
 
 impl LootSpec {
-    fn resolve(&self, content: &Content) -> Result<LootPool, String> {
+    fn resolve(&self, content: &Content) -> Result<LootCell, String> {
         match self {
             LootSpec::Grade(grade) => Ok((*grade).into()),
-            LootSpec::Pool(spec) => LootPool::named(content, spec.pool.ids(), spec.grade),
+            LootSpec::Classes(spec) => LootCell::named(content, spec.pool.ids(), spec.grade),
         }
     }
 }
@@ -656,7 +656,7 @@ pub struct LevelTemplate {
     pub item_level: u8,
     /// Vaults: cells where loot is rolled when they are stamped into a generated level, each
     /// with what it may be. Empty on levels.
-    pub loot: Vec<(Pos, LootPool)>,
+    pub loot: Vec<(Pos, LootCell)>,
     /// Vaults: the monster pools its legend names, each with its cells; a generated level: its
     /// vaults' until they are drawn (`mapgen/population.rs`). Empty on levels.
     pub monsters: Vec<VaultMonsters>,
@@ -932,10 +932,10 @@ pub(super) fn parse_level(
                 traps.insert(pos, trap);
             }
             if let Some(spec) = &detail.loot {
-                let pool = spec
+                let cell = spec
                     .resolve(content)
                     .map_err(|m| err(format!("legend `{ch}`: {m}")))?;
-                loot.push((pos, pool));
+                loot.push((pos, cell));
             }
             if let Some(spec) = &detail.monsters {
                 if detail.creature.is_some() || detail.trap.is_some() {

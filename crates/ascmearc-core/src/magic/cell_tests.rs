@@ -1,11 +1,10 @@
-//! A vault's loot pools: what they roll, and what is refused.
+//! A vault's loot cells (`LootCell`): what they roll, and what is refused.
 
 use super::loot::{self, Finder};
-use super::{LootGrade, LootPool, Rarity};
+use super::{LootCell, LootGrade, Rarity};
 use crate::chest;
 use crate::content::{Content, ContentFiles, MAX_ITEM_LEVEL};
 use crate::geom::Pos;
-use crate::mapgen::loot_cell;
 use crate::object::Stack;
 use crate::rng::Rng;
 use std::collections::BTreeSet;
@@ -14,20 +13,19 @@ fn content() -> Content {
     Content::builtin().expect("built-in content")
 }
 
-fn pool(c: &Content, names: &[&str], grade: LootGrade) -> LootPool {
+fn cell(c: &Content, names: &[&str], grade: LootGrade) -> LootCell {
     let names: Vec<String> = names.iter().map(|n| n.to_string()).collect();
-    LootPool::named(c, &names, grade).expect("a pool")
+    LootCell::named(c, &names, grade).expect("a cell")
 }
 
-fn roll_many(c: &Content, pool: &LootPool, level: u8, n: u64) -> Vec<Stack> {
+fn roll_many(c: &Content, cell: &LootCell, level: u8, n: u64) -> Vec<Stack> {
     (0..n)
         .filter_map(|seed| {
             let mut rng = Rng::stream(seed, "pool");
-            loot_cell::roll(
+            cell.roll(
                 c,
                 &mut rng,
                 level,
-                pool,
                 ((&Finder::NONE, 0), &mut crate::test_support::pool_found(c)),
             )
             .pop()
@@ -61,24 +59,24 @@ fn a_group_rolls_all_of_its_classes_and_nothing_else() {
         ("money", &["coins", "gems"]),
     ];
     for (group, want) in cases {
-        let rolled = roll_many(&c, &pool(&c, &[group], LootGrade::Any), 12, 300);
+        let rolled = roll_many(&c, &cell(&c, &[group], LootGrade::Any), 12, 300);
         let want: BTreeSet<String> = want.iter().map(|s| s.to_string()).collect();
         assert_eq!(classes(&c, &rolled), want, "{group}");
     }
 }
 
 #[test]
-fn a_pool_names_classes_and_groups_together_each_class_once() {
+fn a_cell_names_classes_and_groups_together_each_class_once() {
     let c = content();
-    let both = pool(&c, &["rings", "jewellery", "potions"], LootGrade::Any);
+    let both = cell(&c, &["rings", "jewellery", "potions"], LootGrade::Any);
     let id = |name| c.item_class_id(name).expect(name);
     assert_eq!(both.classes, [id("rings"), id("amulets"), id("potions")]);
 }
 
 #[test]
-fn a_pool_s_finds_fit_the_item_level() {
+fn a_cell_s_finds_fit_the_item_level() {
     let c = content();
-    let armour = pool(&c, &["armour", "weapons"], LootGrade::Magic);
+    let armour = cell(&c, &["armour", "weapons"], LootGrade::Magic);
     for level in [1, 3, 8] {
         for stack in roll_many(&c, &armour, level, 200) {
             let def = c.object(stack.object);
@@ -94,7 +92,7 @@ fn a_pool_s_finds_fit_the_item_level() {
         }
     }
     // The purse is a chest's of the same level: a higher item level pays more.
-    let money = pool(&c, &["coins"], LootGrade::Any);
+    let money = cell(&c, &["coins"], LootGrade::Any);
     let total = |level| -> u32 {
         (roll_many(&c, &money, level, 200).iter())
             .map(|s| s.count)
@@ -110,9 +108,9 @@ fn a_pool_s_finds_fit_the_item_level() {
 }
 
 #[test]
-fn a_pool_s_grade_is_the_least_it_rolls() {
+fn a_cell_s_grade_is_the_least_it_rolls() {
     let c = content();
-    let rare = pool(&c, &["jewellery", "armour"], LootGrade::Rare);
+    let rare = cell(&c, &["jewellery", "armour"], LootGrade::Rare);
     let rolled = roll_many(&c, &rare, 12, 200);
     assert!(!rolled.is_empty());
     for stack in rolled {
@@ -123,13 +121,13 @@ fn a_pool_s_grade_is_the_least_it_rolls() {
 
 #[test]
 fn a_shallow_floor_rolls_only_the_classes_found_there() {
-    // Rods are first found at item level 3: alone a pool of them is empty above that, and beside
+    // Rods are first found at item level 3: alone a cell of them is empty above that, and beside
     // what is found everywhere only that is drawn.
     let c = content();
-    let rods = pool(&c, &["rods"], LootGrade::Any);
+    let rods = cell(&c, &["rods"], LootGrade::Any);
     assert!(roll_many(&c, &rods, 2, 50).is_empty());
     assert_eq!(roll_many(&c, &rods, 3, 50).len(), 50);
-    let beside = pool(&c, &["rods", "rings"], LootGrade::Any);
+    let beside = cell(&c, &["rods", "rings"], LootGrade::Any);
     let shallow = roll_many(&c, &beside, 2, 50);
     assert_eq!(shallow.len(), 50);
     assert_eq!(classes(&c, &shallow), BTreeSet::from(["rings".to_string()]));
@@ -141,20 +139,20 @@ fn a_grade_alone_rolls_as_it_always_did() {
     for grade in [LootGrade::Any, LootGrade::Magic, LootGrade::Rare] {
         for seed in 0..100 {
             let mut plain = Rng::stream(seed, "pool");
-            let mut pooled = Rng::stream(seed, "pool");
+            let mut celled = Rng::stream(seed, "pool");
             let none = Finder::NONE;
             assert_eq!(
                 crate::test_support::found_with(&c, &mut plain, 7, grade, (none, 0)),
-                loot_cell::roll(
-                    &c,
-                    &mut pooled,
-                    7,
-                    &grade.into(),
-                    ((&none, 0), &mut crate::test_support::pool_found(&c))
-                )
-                .pop(),
+                LootCell::from(grade)
+                    .roll(
+                        &c,
+                        &mut celled,
+                        7,
+                        ((&none, 0), &mut crate::test_support::pool_found(&c))
+                    )
+                    .pop(),
             );
-            assert_eq!(plain.below(1 << 30), pooled.below(1 << 30));
+            assert_eq!(plain.below(1 << 30), celled.below(1 << 30));
         }
     }
 }
@@ -197,7 +195,7 @@ fn the_flooded_cell_holds_money_or_jewellery_differing_by_run() {
     }
     let want = ["amulets", "coins", "gems", "rings"].map(String::from);
     assert_eq!(found, BTreeSet::from(want));
-    // Its pool leaves it bare on no floor, however shallow or deep.
+    // Its classes leave it bare on no floor, however shallow or deep.
     assert!(!flooded_cell(&c, 7, 1).is_empty());
     assert!(!flooded_cell(&c, 7, MAX_ITEM_LEVEL).is_empty());
 }
@@ -212,7 +210,7 @@ fn vault_with(legend: &str) -> Result<Content, String> {
 }
 
 #[test]
-fn a_vault_s_legend_takes_a_grade_or_a_pool() {
+fn a_vault_s_legend_takes_a_grade_or_classes() {
     for loot in [
         "\"magic\"",
         "{ pool = \"jewellery\" }",
@@ -225,22 +223,22 @@ fn a_vault_s_legend_takes_a_grade_or_a_pool() {
 }
 
 #[test]
-fn an_unknown_pool_is_refused_and_an_empty_one_loads() {
+fn an_unknown_class_is_refused_and_an_empty_one_loads() {
     let legend = "\"m\" = { terrain = \"floor\", loot = { pool = \"swords\" } }";
     let err = vault_with(legend).expect_err("swords");
     assert!(err.contains("`swords` is no item class"), "{err}");
-    // A pool that can hold nothing of its grade leaves its cell bare.
+    // A cell that can hold nothing of its grade leaves its cell bare.
     for loot in ["{ pool = [] }", "{ pool = \"coins\", grade = \"rare\" }"] {
         let legend = format!("\"m\" = {{ terrain = \"floor\", loot = {loot} }}");
         assert!(vault_with(&legend).is_ok(), "{loot}");
     }
     let c = content();
-    let coins = pool(&c, &["coins"], LootGrade::Rare);
+    let coins = cell(&c, &["coins"], LootGrade::Rare);
     assert!(roll_many(&c, &coins, MAX_ITEM_LEVEL, 50).is_empty());
 }
 
 #[test]
-fn a_level_file_may_not_roll_a_pool() {
+fn a_level_file_may_not_roll_a_cell_of_classes() {
     let mut files = ContentFiles::builtin();
     files.insert(
         "levels/pooled.toml",
@@ -248,7 +246,7 @@ fn a_level_file_may_not_roll_a_pool() {
          \"m\" = { terrain = \"floor\", loot = { pool = \"rings\" } }\n",
     );
     let err = Content::load(&files)
-        .expect_err("a level with a pool")
+        .expect_err("a level with a cell of classes")
         .message;
     assert!(err.contains("rolled only in vaults"), "{err}");
 }
@@ -257,12 +255,12 @@ fn a_level_file_may_not_roll_a_pool() {
 fn full_plate_rolls_from_item_level_20_and_not_below() {
     let c = content();
     let plate = c.object_id("full_plate").expect("full plate");
-    let body = pool(&c, &["body_armour"], LootGrade::Any);
+    let body = cell(&c, &["body_armour"], LootGrade::Any);
     let found = |level| (roll_many(&c, &body, level, 600).iter()).any(|s| s.object == plate);
     assert!(!found(19), "never below its level");
     assert!(found(20), "a suit of full plate at item level 20");
     assert!(found(MAX_ITEM_LEVEL));
-    // Nor below it from loot of any class, not only from a pool of body armour.
+    // Nor below it from loot of any class, not only from a cell of body armour.
     let mut rng = Rng::stream(3, "full_plate");
     assert!(
         (0..4000)

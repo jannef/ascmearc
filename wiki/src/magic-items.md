@@ -119,6 +119,13 @@ enchantments.", or how many more it could bear.
 
 ## Finding them
 
+Items are found in a few places: on the floor, in vaults, in chests and treasure rooms, in
+hoards and dens, dropped by creatures, and left by features. Each place has its own number of
+items and the least [rarity](#rarity) they may be. Every item then rolls its rarity by the same
+odds everywhere, with the rarities below the place's least left out, and a rare item may be a
+unique of [the drop pool](#the-drop-pool) instead. Talents that make finds better work the same
+way in every place they count. The tables at the end of this section give the numbers.
+
 - **On the floor** of every level of a generated dungeon (see [Dungeons and danger](dungeons.md))
   lie a few items of loot. Now and then one is a [scroll](scrolls.md), which is never magic.
 - **Vaults** hold a reward of the floor's item level. The guard post's store room holds something
@@ -128,8 +135,8 @@ enchantments.", or how many more it could bear.
   [kobold](creatures.md#creature-kobold) does now and then, a [kobold
   archer](creatures.md#creature-kobold-archer) a little more often, and a [kobold
   shaman](creatures.md#creature-kobold-shaman) one time in two (see [Creatures](creatures.md)).
-- Loot is sometimes set with a gem, and now and then a find is a loose gem instead (see
-  [Gems](gems.md#finding-gems)).
+- Loot is sometimes set with a gem, and in some places a loose gem comes instead of an item
+  (see [Finding gems](gems.md#finding-gems)).
 
 The more dangerous the floor, the better the loot. An item's **item level** is the
 [danger](dungeons.md#who-lives-there-and-how-many) of the dungeon floor it was found on:
@@ -156,6 +163,15 @@ its own [condition](creature-gear.md#condition) instead. Below the table: which 
 unique instead of a rare item.
 
 {{#include generated/loot-sources.md}}
+
+### The odds of a find
+
+How likely one item is to be normal, magic, or rare, and to be a unique of [the drop
+pool](#the-drop-pool), by the least rarity of the place it comes from. The unique column counts
+only where the place can give one and a unique is open to the find's [item
+level](#finding-them). These are the odds without talents.
+
+{{#include generated/loot-odds.md}}
 
 ## Unidentified items
 

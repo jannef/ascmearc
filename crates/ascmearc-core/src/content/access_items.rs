@@ -37,9 +37,9 @@ impl Content {
         (self.item_classes.iter().position(|c| c.id == name)).map(|i| ItemClassId(i as u8))
     }
 
-    /// The classes a loot pool's `name` stands for: the class of that id, or every class of that
+    /// The classes a vault loot cell's `name` stands for: the class of that id, or every class of that
     /// `group`, in list order. Empty for neither.
-    pub fn pool_classes(&self, name: &str) -> Vec<ItemClassId> {
+    pub fn cell_classes(&self, name: &str) -> Vec<ItemClassId> {
         (self.item_classes.iter().enumerate())
             .filter(|(_, c)| c.id == name || c.group.as_deref() == Some(name))
             .map(|(i, _)| ItemClassId(i as u8))

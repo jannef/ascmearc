@@ -1,4 +1,4 @@
-# The loot sources (docs/design/loot-pipeline.md §3.4): every place an item is found or made, one
+# The loot sources (docs/dev/magic-items.md "Loot"): every place an item is found or made, one
 # row each, and what every item it yields shares. The sources are fixed in code (`Origin` in
 # magic/loot.rs): every source has exactly one row here, and a row names a source (a load error
 # either way). How many a source yields is its own data (a level's `loot`, a chest band's

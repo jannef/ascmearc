@@ -1,4 +1,5 @@
-//! Loot: finding and making an item at an item level (docs/design/loot-pipeline.md).
+//! Loot: finding and making an item at an item level (docs/dev/magic-items.md "Loot"; the
+//! design's history is docs/design/loot-pipeline.md).
 //!
 //! Every item a source yields comes from one pure function of a stated parameter set: the
 //! content, a [`Spec`] (the source's [`Origin`], the item level, the least grade, the classes it
@@ -69,7 +70,7 @@
 //! What is found is unidentified (its gems and material show at once: materials are not
 //! hidden). A find is always an item: a loose gem found in place of one is the wealth seam's
 //! ([`crate::wealth::gem_instead`]), drawn by the callers before the find, and a vault cell's
-//! coins and gems are the cell's own ([`crate::mapgen`]'s `loot_cell`).
+//! coins and gems are the cell's own ([`LootCell`], rolled in [`crate::mapgen`]'s `loot_cell`).
 
 use super::drop_pool;
 pub use super::finder::Finder;
@@ -108,27 +109,27 @@ impl LootGrade {
 }
 
 /// What a vault's `loot` cell may hold: `loot = "magic"`, or
-/// `loot = { pool = ["armour", "rings"], grade = "magic" }`. Rolled by the cell
-/// (`mapgen/loot_cell.rs`).
+/// `loot = { pool = ["armour", "rings"], grade = "magic" }` (the legend's key; a cell's classes,
+/// not the drop pool). Rolled by [`LootCell::roll`] (`mapgen/loot_cell.rs`).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
-pub struct LootPool {
+pub struct LootCell {
     /// The least it may be.
     pub grade: LootGrade,
     /// The classes it is drawn from, evenly, in the order named; empty: anything.
     pub classes: Vec<ItemClassId>,
 }
 
-impl LootPool {
-    /// The pool `names` (class ids and class groups) name at `grade`. Refused when one names
-    /// nothing. A class named twice counts once; a pool that can hold nothing of its grade
-    /// leaves its cell bare.
+impl LootCell {
+    /// The cell `names` (class ids and class groups) name at `grade`. Refused when one names
+    /// nothing. A class named twice counts once; a cell that can hold nothing of its grade is
+    /// left bare.
     pub fn named(content: &Content, names: &[String], grade: LootGrade) -> Result<Self, String> {
         let mut classes = Vec::new();
         for name in names {
-            let named = content.pool_classes(name);
+            let named = content.cell_classes(name);
             if named.is_empty() {
                 return Err(format!(
-                    "loot pool: `{name}` is no item class or class group"
+                    "loot cell: `{name}` is no item class or class group"
                 ));
             }
             for class in named {
@@ -141,7 +142,7 @@ impl LootPool {
     }
 }
 
-impl From<LootGrade> for LootPool {
+impl From<LootGrade> for LootCell {
     fn from(grade: LootGrade) -> Self {
         Self {
             grade,
@@ -151,7 +152,7 @@ impl From<LootGrade> for LootPool {
 }
 
 /// Where an item is found or made: a row of the source table ([`Origin::rule`],
-/// `data/loot_sources.toml`, docs/design/loot-pipeline.md §3.4).
+/// `data/loot_sources.toml`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Origin {
     /// A level's floor loot (`mapgen::place_loot`).

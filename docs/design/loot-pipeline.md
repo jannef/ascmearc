@@ -1,12 +1,19 @@
 # Ascmearc — The loot pipeline: one find procedure for every item source
 
-**Status: approved, being built (#2161)**: D1–D4 take their defaults, D5 is the owner's own (one
-loot stream per level, 2026-11-26), and §9's questions the assumptions written here. Written
-against `origin/main` at 88699d6f6 (version 0.23.1); §8 maps it onto implementation slices, one
-PR each (S1, the function, S2, the table, S3, the finder, and S4, the pool inside the find, are
-built). It answers the owner's question (2026-11-26): "it seems like quite convoluted
-system in total, built piecemeal. Is there room to make it more elegant, standardized and
-consolidated?" — about how loot is generated, the drop pool of uniques included.
+**Built; this file is history.** Current behaviour is in spec §11 "Magic items", and
+`docs/dev/magic-items.md` (its loot paragraph, the vault's loot cell, and "The drop pool"), with
+the step list in the module docs of `magic/loot.rs` and the source table's columns in the header
+of `data/loot_sources.toml`; the wiki's "Finding them" (`wiki/src/magic-items.md`) states the
+odds. Built in five PRs, S1–S4 (#2163–#2166) and S5–S6 together, with D1–D4 at their defaults
+and D5 the owner's. The wealth seam (§3.7, `wealth::gem_instead`) stays until the wealth design
+replaces it.
+
+Approved (2026-11-26): D1–D4 take their defaults, D5 is the owner's own (one loot stream per
+level), and §9's questions the assumptions written here. Written against `origin/main` at
+88699d6f6 (version 0.23.1). It answers the owner's question (2026-11-26): "it seems like quite
+convoluted system in total, built piecemeal. Is there room to make it more elegant,
+standardized and consolidated?" — about how loot is generated, the drop pool of uniques
+included.
 
 **Scope: items.** Coins and loose gems are a separate **wealth** system, the subject of a later
 design; §3.7 lists where they are made today and what this design does at the seam. The item
@@ -434,7 +441,9 @@ Each moved snapshot is reviewed in its PR (`cargo insta review`), never bulk-acc
   `unique_pool/<level>` removed; `Visit::dropped` cloned into generation's `taken`; the module
   renamed `drop_pool`; the `pool` column; D5's one loot stream. The moved snapshots of §7
   reviewed.
-- **S5 — The rename.** `LootPool` → `LootCell`. No draw moves.
+- **S5 — The rename.** `LootPool` → `LootCell`. No draw moves. As built (with S6): the cell rolls
+  itself, `LootCell::roll` (`mapgen/loot_cell.rs`); a legend still names its classes by the key
+  `pool` (`loot = { pool = "rings" }`), unchanged in the vaults' data.
 - **S6 — Docs.** `docs/dev/magic-items.md`, `rng.rs`'s table, `wiki/src/magic-items.md`,
   `gems.md`; this file gets its "Built" line.
 
