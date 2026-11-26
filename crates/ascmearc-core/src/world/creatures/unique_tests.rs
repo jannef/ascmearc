@@ -154,8 +154,8 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     let mut other = bedes.magic().clone();
     other.unique = None;
     assert!(other.check(content.object(bedes.object), &content).is_err());
-    // The drop pool's of level 12 or more (#1976, #2095, #2097, #2098, #2100, #2115, #2125,
-    // #2127, #2132, #2133, #2137, #2139, #2141, the shared table first), the criminals' four,
+    // The drop pool's of level 12 or more (#1976, #2095, #2097, #2098, #2100, #2115, #2123,
+    // #2124, #2125, #2127, #2132, #2133, #2137, #2139, #2141, the shared table first), the criminals' four,
     // the pedlar's three (#808), and Sigeric's (#1787), each with its power.
     let powers: Vec<(&str, &str)> = (content.uniques())
         .filter(|u| u.stack.magic().is_some_and(|m| m.level >= 12))
@@ -178,6 +178,8 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
                 Power::Pain { .. } => "pain",
                 Power::Ring { .. } => "ring",
                 Power::Scars => "scars",
+                Power::Onset { .. } => "onset",
+                Power::Thrust(_) => "thrust",
             };
             (u.id.as_str(), power)
         })
@@ -189,11 +191,13 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
             ("deep_night", "vision"),
             ("demonsoul", "cast"),
             ("eorthfaest", "plant"),
+            ("gar", "thrust"),
             ("grandmother", "inflict"),
             ("haersceorp", "pain"),
             ("hushfoot", "barefoot"),
             ("kettle_hat", "ring"),
             ("masterpiece", "negate"),
+            ("onraes", "onset"),
             ("radiant", "light"),
             ("satisfaction", "first_blood"),
             ("scarhide", "scars"),
@@ -315,9 +319,10 @@ fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
         ("gold_ring", "\"mystic\"", "not a tier"),
         ("gold_ring", "\"nothing=3\"", "unknown affix"),
         ("dagger", "\"heavy=8\"", "the value is dice"),
-        // More dice than a tier (`heavy=3d8`, #2091) are a unique's to set; fewer sides not.
+        // More dice than a tier (`heavy=3d8`, #2091) are a unique's to set, and as many as a
+        // tier of sides a tier of fewer dice rolls (`heavy=2d6`, #2124); sides no tier rolls not.
         ("dagger", "\"heavy=1d1\"", "no tier of `heavy` rolls it"),
-        ("dagger", "\"heavy=2d6\"", "no tier of `heavy` rolls it"),
+        ("dagger", "\"heavy=2d1\"", "no tier of `heavy` rolls it"),
         ("dagger", "\"sharp=1d4\"", "must be a number"),
         ("gold_ring", "\"of_light=3\"", "a light's value is a light"),
         // Range on a ring does nothing, set by hand or not.
@@ -327,6 +332,16 @@ fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
         let e = load(object, affixes).expect_err(affixes).to_string();
         assert!(e.contains(needle), "{affixes}: {e}");
     }
+    // Two dice of six sides (Gār's, #2124): a tier of one die that rolls 6, the count kept.
+    let content = load("dagger", "\"heavy=2d6\"").expect("two dice of a tier of one");
+    let unique = content.unique("test_set").expect("loaded");
+    assert_eq!(unique.dice("heavy"), Some(2));
+    let heavy = &unique.magic().affixes[0];
+    let tier = content
+        .affixes()
+        .get("heavy")
+        .and_then(|a| a.tier(heavy.tier));
+    assert_eq!((heavy.value, tier.map(|t| t.dice)), (6, Some(1)));
     // The save's check: a value past the top on the last tier alone, the unique's alone.
     let content = load("gold_ring", "\"mystic=40\"").expect("past the top");
     let unique = content.unique("test_set").expect("loaded");
@@ -719,8 +734,8 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
     // #2097), the Cracked Resurrection Stone (#2098), the test world's Stonebiter, and the
     // Masterpiece (#2100), the Stick (#2126), Satisfaction (#2125), and the Eorðfæst (#2132);
     // Hǣrsceorp, the Kettle Hat, and Scarhide (#2115, #2127, #2137); Smoulder, Tiptoe, and
-    // Hushfoot (#2139, #2141, #2133).
-    assert_eq!(ids.len(), 25, "{ids:?}");
+    // Hushfoot (#2139, #2141, #2133); Onrǣs (#2123) and Gār (#2124).
+    assert_eq!(ids.len(), 27, "{ids:?}");
     let widowmaker = unique(&w, "widowmaker");
     let magic = widowmaker.magic().expect("magic");
     let stiletto = content.object(widowmaker.object);

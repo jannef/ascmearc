@@ -489,7 +489,8 @@
 #   charge { per_cell }           the active Charge (`use:charge:12,5`): a rush along the line to a
 #                                 hostile the player sees, ending beside it with a blow, provoking
 #                                 no free blows on the way; it costs the talent's `resource`
-#                                 (Stamina) and `per_cell` more for every cell moved
+#                                 (Stamina) and `per_cell` times 1 for the first cell moved, 2 for
+#                                 the second, 3 for the third, and so on (#2108)
 #   whirling_charge               Charge strikes every hostile beside a cell it passes, each once
 #                                 (a free blow; the one charged at not twice)
 #   lay_on_hands { per_level }    the active Lay on hands: hit points back by the level (its

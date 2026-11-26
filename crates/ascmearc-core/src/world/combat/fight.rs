@@ -917,12 +917,16 @@ impl World {
         noisy: bool,
         events: &mut Vec<Event>,
     ) -> Option<Blow> {
+        // The thrust-through under way, its share of the damage (`thrust.rs`).
+        let share = self.thrusting.take();
         let (Some(from), Some(to)) = (
             self.state.actors.get(&attacker).map(|a| a.pos),
             self.state.actors.get(&target).map(|a| a.pos),
         ) else {
             return None;
         };
+        // A unique weapon's thrust-through strikes on with the profile as it came (`thrust.rs`).
+        let thrust = profile.as_ref().filter(|p| p.thrust.is_some()).cloned();
         // A unique weapon's Grows (`grows.rs`) and FirstBlood (`first_blood.rs`).
         let profile = profile.map(|p| self.first_blood(target, self.grown_blow(attacker, p)));
         // A thrown exploit's ladder, on the creature it is aimed at only (`openings.rs`).
@@ -1012,6 +1016,7 @@ impl World {
         let blow = blow.map(|b| self.holy_wrathed(attacker, target, b));
         // A unique armour's Negate (`negate.rs`): the hit comes to nothing, before anything comes of it.
         let blow = blow.map(|b| self.negated(target, b));
+        let blow = blow.map(|b| Self::thrust_share(b, share));
         if blow.is_some_and(|b| b.strike.is_hit()) {
             self.savage_spent(attacker, events);
         }
@@ -1131,6 +1136,11 @@ impl World {
         self.grip(attacker, target, kind, blow.as_ref(), events);
         // A unique shield's free spell, on a block beside or a bash (`unique_spell.rs`).
         self.unique_spell((attacker, target), (kind, with), (from, to), blow, events);
+        // A unique weapon's thrust-through: the one behind (`thrust.rs`).
+        if let Some(profile) = thrust {
+            let made = (kind, with, skills);
+            self.thrust_through(attacker, (from, to), made, (profile, blow), events);
+        }
         blow
     }
 
@@ -1510,7 +1520,7 @@ impl World {
         target: ActorId,
         seen: bool,
         events: &mut Vec<Event>,
-    ) {
+    ) -> bool {
         let player = self.state.player;
         self.choose_mark(target);
         let first = self.player_blow(target, seen, None, events);
@@ -1525,6 +1535,7 @@ impl World {
         let first_hit = first.is_some_and(|b| b.strike.is_hit());
         parried |= self.extra_limbs(player, target, first_hit, events).0;
         self.after_attack(player, target, parried, events);
+        first_hit
     }
 
     /// The player strikes `target` in melee: the first blow of an attack (`None`: with what
@@ -1694,7 +1705,9 @@ impl World {
                 _ => None,
             })
             .unwrap_or_default();
-        let died = made.iter().any(|e| matches!(e, Event::Died { .. }));
+        // Its own target's death (a thrust-through may kill another, `thrust.rs`).
+        let died =
+            (made.iter()).any(|e| matches!(e, Event::Died { actor, .. } if *actor == target));
         // How the blow found the one it struck at, in its words (`surprise.rs`).
         let struck_at = end
             .clone()

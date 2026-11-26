@@ -231,6 +231,7 @@ impl World {
             to,
             footing,
             fleeing,
+            noise: 100,
             price: step,
             willing,
             swap,
