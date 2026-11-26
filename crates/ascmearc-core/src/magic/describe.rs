@@ -592,6 +592,8 @@ pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> Msg {
         Effect::Protection => by(msg::describe::DOES_PROTECTION),
         Effect::Shield => by(msg::describe::DOES_SHIELD),
         Effect::MaxDex => by(msg::describe::DOES_MAX_DEX),
+        // A unique's penalty (#2132: the Eorðfæst's −30, heavier and no curse).
+        Effect::Weight if v < 0 => hindrance(Effect::Weight, -v),
         Effect::Weight => by(msg::describe::DOES_LIGHTER),
         Effect::Proof => msg::describe::DOES_PROOF.into(),
         // A unique's penalty (#2091: the Grandmother's −2).

@@ -1639,8 +1639,11 @@ pub(super) fn magic_of(
         curse_known: false,
         unique: None,
     };
-    let set = if unique { &magic.affixes[..] } else { &[] };
-    magic.check_set(def, content, set)?;
+    // A unique may have no affix at all, its power its magic (#2126, the Stick).
+    if !(unique && magic.affixes.is_empty()) {
+        let set = if unique { &magic.affixes[..] } else { &[] };
+        magic.check_set(def, content, set)?;
+    }
     Ok(magic)
 }
 

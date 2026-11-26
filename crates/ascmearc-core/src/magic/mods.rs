@@ -21,7 +21,7 @@ use super::{Effect, Magic};
 use crate::combat::{CRITS, Profile, THREATS};
 use crate::content::{
     COSTS, Content, DamageTypeId, Group, LightId, MAX_HINDRANCE, MAX_SPEED, OnHit, Power,
-    ResourceId,
+    ResourceId, WeaponGrowth,
 };
 use crate::damage::Rider;
 use crate::dice::Dice;
@@ -60,6 +60,12 @@ pub struct Mods {
     /// How many times as far it shoots or is thrown, from a unique item's Range power (local;
     /// 1 without one: [`Mods::range`]).
     range_times: u8,
+    /// Its damage dice and to-hit by its wielder's level, from a unique weapon's Grows power
+    /// (local: the weapon that hits; `world/combat/grows.rs`).
+    grows: Option<WeaponGrowth>,
+    /// Whether its hits on a foe at full health are sure criticals, from a unique weapon's
+    /// FirstBlood power (local; `world/combat/first_blood.rs`).
+    first_blood: bool,
 }
 
 impl Default for Mods {
@@ -76,6 +82,8 @@ impl Default for Mods {
             added: Vec::new(),
             banes: Vec::new(),
             range_times: 1,
+            grows: None,
+            first_blood: false,
         }
     }
 }
@@ -275,6 +283,9 @@ impl Mods {
                     mods.added.extend(*added);
                 }
                 Some(&Power::Range(times)) => mods.range_times = times,
+                // The Stick's dice and to-hit, the wielder's level read where it strikes.
+                Some(Power::Grows(growth)) => mods.grows = Some(growth.clone()),
+                Some(Power::FirstBlood) => mods.first_blood = true,
                 _ => {}
             }
         }
@@ -379,6 +390,10 @@ impl Mods {
         for (tag, value) in &self.banes {
             add_bane(&mut profile.banes, tag, *value);
         }
+        if self.grows.is_some() {
+            profile.grows.clone_from(&self.grows);
+        }
+        profile.first_blood |= self.first_blood;
     }
 
     /// Every effect with a value, in [`Effect::all`] order, and the light.

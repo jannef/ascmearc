@@ -15,3 +15,7 @@ restored = "{who:The} fall{who:s}, and rise{who:s} whole again!"
 restored_unseen = "The stone on your finger grows warm."
 # The player restored.
 restored_you = "Death lets go of you: you rise whole again!"
+
+# The Plant power (#2132, the Eorðfæst; `world/combat/plant.rs`): the planted player is not
+# driven from their cell (a knockback, a shove, a spell's push).
+stand_fast = "You stand fast."

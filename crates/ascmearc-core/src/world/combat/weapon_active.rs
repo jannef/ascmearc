@@ -411,8 +411,14 @@ impl World {
             return None;
         }
         let from = self.state.actors.get(&target)?.pos;
-        // A rooted one is never driven (`rooted.rs`).
+        // A rooted one is never driven (`rooted.rs`), nor one planted (`plant.rs`).
         if self.is_rooted(target) {
+            return None;
+        }
+        if self.stands_fast(target) {
+            if target == self.state.player {
+                self.say(msg::uniques::STAND_FAST);
+            }
             return None;
         }
         let to = from.step(dir);

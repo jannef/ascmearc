@@ -313,6 +313,11 @@ pub struct Actor {
     /// never followed.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub home: Option<String>,
+    /// Where it stood as its last turn ended and how many turns in a row ended there, while it
+    /// bears a unique shield with the Plant power (the Eorðfæst, `world/combat/plant.rs`); `None`
+    /// for everyone else.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub planted: Option<crate::world::Planted>,
 }
 
 fn is_ungraded(n: &i8) -> bool {
@@ -853,7 +858,8 @@ impl Actor {
         // A companion's body at its grade, when that is more than its type's own (`companion.rs`).
         let natural = (self.hide(content, race).map_or(0, |h| h.protection))
             .max(self.growth_protection(content));
-        let base = base + self.talent_protection(content) + more;
+        // A planted shield's turns (`plant.rs`).
+        let base = base + self.talent_protection(content) + self.planted_protection(content) + more;
         let adjustments = (worn.iter()).flat_map(|s| s.protects(content).iter().copied());
         if content.damage_types().is_empty() {
             return Protection::plain(base + natural);

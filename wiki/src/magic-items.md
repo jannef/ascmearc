@@ -369,6 +369,20 @@ Its power works while it is worn or wielded, identified or not:
   it off. When you bash with it, hit or miss, the spell goes at the one you bashed. The spell
   works as it always does, with the reach and damage the table gives, whatever your own magic.
   A cone never reaches you.
+- **Grows**: a weapon whose damage dice and to-hit come from the wielder's character level, not
+  from the weapon. Every five levels its dice go up a step, and every ten levels it gets +1 to
+  hit, as the table says. Everything else that adds to its damage, such as Strength and your
+  skill, adds as usual. A creature that picks it up strikes at its own level. Its description
+  shows its first step; your [character screen](the-screen.md#character) shows the blow you strike now.
+- **First blood**: every hit with it on a foe that has all its hit points is a sure
+  [critical](combat.md#criticals), with no roll to confirm it. The weapon's own multiplier
+  counts as usual. A foe that is already hurt takes an ordinary blow.
+- **Plant**: a shield that sinks in while you stand. Every turn you end in the cell you began it
+  in (fighting, waiting, casting, shooting, drinking: anything but a step) adds 1 to your
+  [Protection](combat.md#protection), with no limit. Any step, or anything else that moves you,
+  takes it all away. While it adds at least 1, nothing pushes you from your cell: no knockback,
+  no shove, no spell's push. You are told "You stand fast." And you are never caught
+  [flat-footed](surprise.md#caught-unawares) because you did not see the attacker coming.
 
 Some give more besides their power, as the table says: an immunity or a weakness to a kind of
 [damage](damage-types.md#armour-and-resistance), damage added to a shield's
