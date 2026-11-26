@@ -8,7 +8,7 @@ use crate::character::CharacterSpec;
 use crate::combat::{Blow, Strike};
 use crate::content::{CreatureSpawn, Power, StatusId};
 use crate::geom::Pos;
-use crate::magic::{LootGrade, loot};
+use crate::magic::LootGrade;
 use crate::perception::Perception;
 use crate::rng::Rng;
 use crate::test_support::CONTENT as BUILTIN;
@@ -256,7 +256,7 @@ fn nothing_of_it_is_ever_rolled() {
     for seed in 0..400 {
         let mut rng = Rng::stream(seed, "n2118");
         for grade in [LootGrade::Any, LootGrade::Rare] {
-            let stack = loot::make(&BUILTIN, &mut rng, object, 1, 40, grade);
+            let stack = crate::test_support::made(&BUILTIN, &mut rng, object, 1, 40, grade);
             assert!(!stack.is_unique(), "{stack:?}");
         }
     }

@@ -6,7 +6,7 @@
 //! [`roll`] goes through the lines in order. Per line: one draw for its `chance`; one to pick
 //! among its alternatives when it has several; for a line with a `magic` chance, one draw for
 //! it; for a spell scroll one draw for its grimoire ([`Content::grimoire_or`]); for a magic
-//! piece the loot draws that make it ([`loot::make_as`]: at least magic, at
+//! piece the loot draws that make it ([`loot::make_unfinished`]: at least magic, at
 //! the floor's item level, with nobody's luck; finished after its condition, [`finish`]) with its material; for a plain one only its
 //! material, by the materials' `gear` weights at the creature's level and its type's faction's
 //! favoured materials ([`variant::draw`]; none
@@ -24,7 +24,7 @@
 use crate::burden;
 use crate::content::{Content, CreatureId, Keep, LevelTemplate};
 use crate::kit::Pack;
-use crate::magic::{LootGrade, loot};
+use crate::magic::loot::{self, Luck, Origin, Spec};
 use crate::object::{self, Stack};
 use crate::rng::Rng;
 use crate::stats::Stat;
@@ -114,8 +114,13 @@ fn make_piece(
         return stack.clone();
     }
     if magic {
-        let grade = (item_level, LootGrade::Magic);
-        return loot::make_as_unfinished(content, rng, stack.object, stack.count, grade, source);
+        let spec = Spec::new(Origin::Gear, item_level);
+        let spec = match source {
+            Source::Gear { level, faction } => spec.wearer(level, faction),
+            Source::Loot => spec,
+        };
+        let (object, count) = (stack.object, stack.count);
+        return loot::make_unfinished(content, &spec, object, count, &Luck::NONE, rng);
     }
     if stack.own_parts().is_some() {
         return stack.clone();

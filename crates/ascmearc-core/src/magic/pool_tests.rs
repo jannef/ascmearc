@@ -5,6 +5,7 @@ use super::{LootGrade, LootPool, Rarity};
 use crate::chest;
 use crate::content::{Content, ContentFiles, MAX_ITEM_LEVEL};
 use crate::geom::Pos;
+use crate::mapgen::loot_cell;
 use crate::object::Stack;
 use crate::rng::Rng;
 use std::collections::BTreeSet;
@@ -22,7 +23,7 @@ fn roll_many(c: &Content, pool: &LootPool, level: u8, n: u64) -> Vec<Stack> {
     (0..n)
         .filter_map(|seed| {
             let mut rng = Rng::stream(seed, "pool");
-            loot::roll_pool(c, &mut rng, level, pool, Luck::default())
+            loot_cell::roll(c, &mut rng, level, pool, Luck::NONE)
         })
         .collect()
 }
@@ -134,11 +135,10 @@ fn a_grade_alone_rolls_as_it_always_did() {
         for seed in 0..100 {
             let mut plain = Rng::stream(seed, "pool");
             let mut pooled = Rng::stream(seed, "pool");
-            let source = crate::variant::Source::Loot;
-            let luck = Luck::default();
+            let luck = Luck::NONE;
             assert_eq!(
-                loot::roll_with(&c, &mut plain, 7, grade, source, luck),
-                loot::roll_pool(&c, &mut pooled, 7, &grade.into(), luck),
+                crate::test_support::found_with(&c, &mut plain, 7, grade, luck),
+                loot_cell::roll(&c, &mut pooled, 7, &grade.into(), luck),
             );
             assert_eq!(plain.below(1 << 30), pooled.below(1 << 30));
         }
@@ -244,7 +244,7 @@ fn full_plate_rolls_from_item_level_20_and_not_below() {
     let mut rng = Rng::stream(3, "full_plate");
     assert!(
         (0..4000)
-            .filter_map(|_| loot::roll(&c, &mut rng, 19, LootGrade::Any))
+            .filter_map(|_| crate::test_support::found(&c, &mut rng, 19, LootGrade::Any))
             .all(|s| s.object != plate)
     );
 }

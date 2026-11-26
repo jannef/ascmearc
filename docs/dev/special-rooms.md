@@ -135,7 +135,7 @@ a tribe one `danger::draw` for the first type. Per sleeper: `Theme::draw` (mixed
 a warren: the type; a tribe: `danger::draw` over the faction's candidates, else the first type),
 then a cell (`swap_remove` of a drawn index). Each is a `CreatureSpawn` with `asleep: true`, no
 route, `rolls_gear: true` (so `gear::arm` rolls it after the population, in spawn order). The
-hoard: `loot::roll_with` at the item level + `loot_level` (`LootGrade::Any`, the visit's luck), each
+hoard: a loose gem by the wealth seam (`wealth::gem_instead`) or else `loot::find` of the den row at the item level + `loot_level` (the visit's luck), each
 on a plain floor cell of the room (stairs and lights left out) drawn anew. `population.rs` keeps
 its creatures and their routes out of a den (as out of a sanctuary), and `special::make` refuses a
 den where a generator patrol walks. `travel.rs::make_creature` gives a spawn with `asleep` the
@@ -210,8 +210,8 @@ danger 3 and 30, and Fyrdelf's bottom floor).
 
 Items (`mapgen/hoard.rs`, `hoard::fill`, called in `mapgen::generate_with` right after
 `den::fill`, only on a branch level with a danger): every special room whose effect has a
-`hoard` gets `hoard.items` items, `loot::roll_with` at the item level + `loot_level`
-(`LootGrade::Any`, the visit's luck), each on a plain floor cell of the room (the palette's floor,
+`hoard` gets `hoard.items` items, a loose gem by the wealth seam (`wealth::gem_instead`) or else
+`loot::find` of the hoard row at the item level + `loot_level` (the visit's luck), each on a plain floor cell of the room (the palette's floor,
 no stairs, light, or trap) drawn anew, from `Rng::swarm` (`swarm/<level id>`; a level with a den
 and a hoard starts the stream afresh for each, which only happens with `per_level` above 1).
 `population.rs` keeps its creatures out of a hoard and `special::make` refuses one where a
@@ -324,8 +324,8 @@ out while 0/false, so other rooms hash as before. The `rooms` dev layer adds `, 
 walkable, transparent, a `description`), placed by `special.rs` as any `feature` is (no side, no
 light). Loot (`mapgen/room_loot.rs`, `room_loot::fill`, called in `mapgen::generate_with` after
 the danger block, so on every generated branch level): every special room whose effect has a
-`loot` gets `rng.range(least, most)` items, each `loot::base_in` of the class at the floor's
-item level then `loot::make_as` (`LootGrade::Any`, `Source::Loot`), on a cell of the room's plain
+`loot` gets `rng.range(least, most)` items, each `loot::find` of the room-loot row among the class at the
+floor's item level (no finder's luck), on a cell of the room's plain
 floor (no stairs, light, or trap) drawn after it, all from `Rng::swarm` started afresh (as the den
 and the hoard do). The test `mapgen/scriptorium_tests.rs` checks the level is otherwise the same
 without the loot.
@@ -417,7 +417,7 @@ floor `DRAIN_FLOOR`, then stat damage clamped and `keep_hp_within_max`), `levels
 drawn, `bestow`: `Talents::take`, `class::hand_out`, and pushed to
 `Actor::boons`), and `flaw` (Forsaken: the `flaw` talents not held, by id, one drawn, given
 likewise); `rarity` (`magic`/`rare`, only with `loot`) is the relic's floor, the `LootGrade`
-`loot::roll_with` takes. No outcome grants a wish. `Actor::boons` (saved, left out while empty) is read by
+of the feature row's `loot::find` (at `any` a loose gem by the wealth seam first). No outcome grants a wish. `Actor::boons` (saved, left out while empty) is read by
 `stars::grant`, which passes its ids to `Talents::regrant` beside the race's and the sign's
 (the flaws, being granted, are dropped and put back there) and `Talents::take`s the rest.
 `World::lose_level` takes the experience to `threshold_for(level - 1)`, the level's

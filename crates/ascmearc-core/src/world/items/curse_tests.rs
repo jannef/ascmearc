@@ -364,7 +364,9 @@ fn curses_are_rare_in_found_loot_and_never_in_shops_or_kits() {
     for level in [1u8, 4, 8, 12] {
         let mut rng = Rng::stream(5, &format!("curses/{level}"));
         for _ in 0..20_000 {
-            let Some(stack) = loot::roll(&content, &mut rng, level, LootGrade::Magic) else {
+            let Some(stack) =
+                crate::test_support::found(&content, &mut rng, level, LootGrade::Magic)
+            else {
                 continue;
             };
             found += 1;
@@ -381,7 +383,8 @@ fn curses_are_rare_in_found_loot_and_never_in_shops_or_kits() {
         .collect();
     for _ in 0..200 {
         for &object in &objects {
-            let made = loot::make(&content, &mut rng, object, 1, 12, LootGrade::Rare);
+            let made =
+                crate::test_support::made(&content, &mut rng, object, 1, 12, LootGrade::Rare);
             assert!(!made.is_cursed(&content), "a shop's or a kit's");
             let heirloom = loot::heirloom(&content, &mut rng, object, 6, (12, None));
             assert!(!heirloom.is_cursed(&content), "an heirloom");

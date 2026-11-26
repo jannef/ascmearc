@@ -30,7 +30,6 @@ use crate::msg;
 use crate::object::{Stack, add_to_pile};
 use crate::rng::draw;
 use crate::stats::Stat;
-use crate::variant::Source;
 use crate::world::combat::fight::Harm;
 use crate::world::levels::travel::make_creature;
 use crate::world::magic::spell::Caster;
@@ -428,7 +427,12 @@ impl World {
             .saturating_add(bonus);
         let luck = loot::Luck::of(&self.state.player().talent_mods(&content));
         let mut rng = draw!(self, "outcome/loot/{},{}", feature.x, feature.y);
-        let item = loot::roll_with(&content, &mut rng, level, grade, Source::Loot, luck);
+        // At grade any a loose gem instead, by the wealth seam; else a find of the feature row.
+        let gem = (grade == LootGrade::Any)
+            .then(|| crate::wealth::gem_instead(&content, &mut rng, level, luck.gems))
+            .flatten();
+        let spec = loot::Spec::new(loot::Origin::Feature, level).grade(grade);
+        let item = gem.or_else(|| loot::find(&content, &spec, &luck, &mut rng));
         // A rare one may be a unique of the drop pool instead, on the same stream after it.
         let item = item.map(|s| {
             let found = &self.state.uniques_dropped;

@@ -41,7 +41,8 @@ fn shares_follow_the_weights_and_tiers_roll_flat() {
         let mut tiers: BTreeMap<&str, Vec<u32>> = BTreeMap::new();
         let mut items = 0;
         while items < ITEMS {
-            let Some(stack) = loot::roll(&c, &mut rng, level, LootGrade::Magic) else {
+            let Some(stack) = crate::test_support::found(&c, &mut rng, level, LootGrade::Magic)
+            else {
                 continue;
             };
             let Some(magic) = stack.magic().filter(|m| m.rarity == Rarity::Magic) else {
@@ -127,11 +128,13 @@ fn trim_shares_hold_every_find_to_its_capacity() {
             let mut untrimmed = 0;
             let mut items = 0;
             while items < N {
-                let Some(base) = loot::base_in(&c, &mut rng, &classes, level) else {
+                let spec = loot::Spec::new(loot::Origin::Floor, level).classes(&classes);
+                let Some(base) = loot::base(&c, &spec, &mut rng) else {
                     continue;
                 };
-                let source = crate::variant::Source::Loot;
-                let made = loot::make_as_unfinished(&c, &mut rng, base, 1, (level, grade), source);
+                let spec = spec.grade(grade);
+                let none = &loot::Luck::NONE;
+                let made = loot::make_unfinished(&c, &spec, base, 1, none, &mut rng);
                 let Some(before) = made.magic().map(|m| m.affixes.len()) else {
                     continue;
                 };

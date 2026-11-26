@@ -6,9 +6,9 @@
 //!   (a silver candlestick is rare), carried first and in no slot ([`compose`]).
 //! - A family's creature (a blade) is its slot lines' pieces ([`compose_slots`]), each line in
 //!   order: one draw for its `chance`; one for its base item among the line's classes of level
-//!   at most the type's ([`loot::base_in`]); one for its grade (rare by the tier's `rare`, else
-//!   magic by its `magic`, else plain); then the piece made by [`loot::make_as`] at item level
-//!   L with a creature's materials (`Source::gear(L)`), put in the pack and in its slot. No
+//!   at most the type's ([`loot::base`]); one for its grade (rare by the tier's `rare`, else
+//!   magic by its `magic`, else plain); then the piece made by [`loot::make`] of the animated
+//!   row at item level L (a creature's materials: `Source::gear(L)`), put in the pack and in its slot. No
 //!   burden check: it carries itself. Its rank in the wielded weapon's skill is set as it is
 //!   placed ([`weapon_skills`]; no draws).
 //!
@@ -22,7 +22,8 @@
 use crate::content::{Content, CreatureId, Grip, LevelTemplate, ObjectDef, WeaponSkillId};
 use crate::equipment::{self, Equipment};
 use crate::kit::Pack;
-use crate::magic::{LootGrade, loot};
+use crate::magic::LootGrade;
+use crate::magic::loot::{self, Luck, Origin, Spec};
 use crate::object::Stack;
 use crate::rng::Rng;
 use crate::variant::{self, Source};
@@ -99,7 +100,8 @@ fn piece(
     if !rng.chance(u32::from(line.chance)) {
         return;
     }
-    let Some(object) = loot::base_in(content, rng, &line.classes, level) else {
+    let spec = Spec::new(Origin::Animated, level).classes(&line.classes);
+    let Some(object) = loot::base(content, &spec, rng) else {
         return;
     };
     let roll = rng.below(100);
@@ -111,7 +113,7 @@ fn piece(
         None
     };
     let piece = match grade {
-        Some(grade) => loot::make_as(content, rng, object, 1, (level, grade), Source::gear(level)),
+        Some(grade) => loot::make(content, &spec.grade(grade), object, 1, &Luck::NONE, rng),
         None => {
             let stack = Stack::new(object, 1);
             let def = content.object(object);

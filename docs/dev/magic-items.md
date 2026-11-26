@@ -44,13 +44,20 @@ and ` (numbers)`, which the object screens, the equipment screen and its choice,
 choices, and the `inventory` dump layer render; look mode's piles tag the phrase with `words`;
 messages keep the phrase), `lines` the description's (`describe::lines` adds them after the
 base stats); `dice_text` is the one damage-dice form, which `OwnAttack::damage_text` uses too).
-`loot::roll` first lets a find of grade `any` be a loose gem (`gem::find`), then sets an item
-of a class with an `[[ornament]]` with a gem (`gem::ornament`), and last draws its material
-(`variant::draw`, step 8: by the materials' `rarity` at the item level; `loot::roll_from` takes
-a `variant::Source`, and creature drops pass `Source::Gear(creature level)`, at the item level
+Every item a source yields is one pure function (`magic/loot.rs`, docs/design/loot-pipeline.md):
+`loot::find`/`finds` of a `Spec` (the source's `Origin`, the item level, the grade, the classes,
+the count) for a finder's `Luck`, and `loot::make`/`make_unfinished` for a base chosen already;
+`Origin::rule` is the source table (in code until it moves to data: the default grade, whether
+the finder counts, curses, how the material is drawn, a make). A find is always an item: where a
+source still finds a loose gem in its place (floor loot, vault cells and chest items at grade
+`any`, hoards, dens, features at `any`, the stipend, drops), the caller draws it first by the
+wealth seam (`wealth::gem_instead`). The find sets an item of a class with an `[[ornament]]`
+with a gem (`gem::ornament`), and last draws its material (`variant::draw`, step 8: by the
+materials' `rarity` at the item level, or for the drop, gear, and animated rows by their `gear`
+weights at the creature's level, `Spec::wearer`; drops at the item level
 `world/items/loot.rs::drop_level` gives them, below); its own parts are
-the material first, then the gem. Creature drops try `gem::find` before the magic item
-(`docs/dev/objects.md`, "Gems" and "Materials and variants"). A wand made by `make_from` draws
+the material first, then the gem. Creature drops try the wealth seam's gem before the magic item
+(`docs/dev/objects.md`, "Gems" and "Materials and variants"). A wand made by `make_unfinished` draws
 its rung last (`Stack::draw_wand_rung`, `Stack::wand_rung`, S5 #752: one draw, a wand's only;
 the other makers of wands and the fallback streams are docs/dev/spells.md "Wands").
 `world/items/loot.rs` has `World::identify` (the API the scroll of identify calls from its read action,
@@ -201,13 +208,13 @@ past a ladder's last tier the whole ladder, so a find of level 60 rolls as one o
 same draw serves everything that rolls through loot's pick: floor loot, drops, creature gear,
 shops' goods, and enchanting (`roll_affix_within`) (`magic/tests.rs`,
 `tiers_roll_flat_over_every_tier_the_item_level_reaches`). **A vault's loot pool**
-(`magic/loot.rs`: `LootPool`, `roll_pool`; the legend's syntax in `docs/dev/content.md`): a cell's
-pool is a grade and item classes. With no classes (`loot = "magic"`) it is `roll_with`, the same
-draws. With classes: one draw among those that hold something at the item level (`holds`), then
+(`magic/loot.rs`: `LootPool`; rolled by `mapgen/loot_cell.rs::roll`; the legend's syntax in
+`docs/dev/content.md`): a cell's pool is a grade and item classes. With no classes (`loot =
+"magic"`) it is a find of the vault-cell row at its grade (at `any` the wealth seam's gem first),
+the same draws as a floor find. With classes: one draw among those that hold something at the item level (`holds`), then
 coins (`chest::purse`, the purse of a chest of that level), a loose gem (`gem::loose`; which
 classes these are comes from the currency's and the gem object's `class`, never `Luck::gems`), or
-the base and the rest of `roll_with`'s draws among the class's objects, with the finder's
-`Luck::magic`. Tests: `magic/pool_tests.rs`. The aristocrat's stipend (`world/classes/stipend.rs`, #1405) rolls `roll_with` once a level-up, by `data/rules/stipend.toml`'s chance, at the level, with its `Luck` from data (plus Landed noble's), on the stream `stipend/<level>`, keeping only magic and rare finds and the `keep` classes. **A drop's item level**
+`loot::find` among the class's objects (no gem instead), with the finder's `Luck::magic`. Tests: `magic/pool_tests.rs`. The aristocrat's stipend (`world/classes/stipend.rs`, #1405) rolls a find of the stipend row (the wealth seam's gem first) once a level-up, by `data/rules/stipend.toml`'s chance, at the level, with its `Luck` from data (plus Landed noble's), on the stream `stipend/<level>`, keeping only magic and rare finds and the `keep` classes. **A drop's item level**
 (`world/items/loot.rs::drop_level`): the creature type's level, at least the floor's item level, at
 most `MAX_ITEM_LEVEL`; floor loot keeps the floor's (`world/magic/magic_tests.rs`,
 `a_drop_rolls_at_the_creatures_level_at_least_the_floors`). **The floor's item level**
@@ -276,9 +283,10 @@ adds a curse's value negated, so each reader takes it the other way with no read
 through `mods::faster`, both taking a negative percent as that much more, at most
 `MAX_HINDRANCE` (100: double). A creature's slower steps keep `World::out_of_view_for` exact (it
 reads each creature's own step cost; only a hastening would break the rest batching).
-**Rolling**: only what is found: `make_from` lets curses in when it has a `Source` (floor and vault
-loot, creature gear, animated things), never for `loot::make` (a shop's `lay_out`, starting kits,
-the background's gifts, the crafting trade), `heirloom`/`favoured` (`affixed` with curses off),
+**Rolling**: only what is found: `make_unfinished` lets curses in when the source's row `curses`
+(`Origin::rule`: floor and vault loot, drops, creature gear, animated things), never for the
+goods and kit rows (a shop's `lay_out`, starting kits, the background's gifts, the crafting
+trade), `heirloom`/`favoured` (`affixed` with curses off),
 or enchanting (`roll_affix_within` and `rolls_within` leave curses out; `roll_affix` is loot's).
 About 0.4% of magic-or-rare finds carry one (`world/items/curse_tests.rs` measures it).
 **Knowledge**: `Magic::cursed` is the truth (`Stack::is_cursed`, crate-private); `Magic::curse_known`
@@ -297,7 +305,7 @@ the main hand (`slots_taken`), what held it back to the pack, for the throw's pr
 for nothing while a bound thing holds the hand. **Decursing**: `ServiceKind::Decurse`
 (docs/dev/npcs.md "Services"), `World::cursed_worn` and `World::decurse` (every bound stack off
 and onto the player's cell, still cursed, as `shed_unworn` drops). Shops never stock one
-(`lay_out` is `loot::make`). Tests: `world/items/curse_tests.rs`.
+(`lay_out` is `loot::make` of the goods row). Tests: `world/items/curse_tests.rs`.
 
 ## Unique items
 

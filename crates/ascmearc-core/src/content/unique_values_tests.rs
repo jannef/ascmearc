@@ -561,7 +561,8 @@ fn what_only_a_unique_sets_never_rolls() {
     for level in [12, 40, 60] {
         for seed in 0..400 {
             let mut rng = Rng::stream(seed, "unique-only-pool");
-            let Some(stack) = loot::roll_pool(&content, &mut rng, level, &pool, Luck::default())
+            let Some(stack) =
+                crate::mapgen::loot_cell::roll(&content, &mut rng, level, &pool, Luck::NONE)
             else {
                 continue;
             };

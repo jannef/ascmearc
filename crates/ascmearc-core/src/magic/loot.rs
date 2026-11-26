@@ -1,29 +1,38 @@
-//! Loot: rolling a random item at an item level.
+//! Loot: finding and making an item at an item level (docs/design/loot-pipeline.md).
 //!
-//! [`roll`] draws, in this order, from the stream it is given (a level's `loot/<level id>` while
-//! it is generated, `drop/<actor id>` for what a creature drops):
+//! Every item a source yields comes from one pure function of a stated parameter set: the
+//! content, a [`Spec`] (the source's [`Origin`], the item level, the least grade, the classes it
+//! is drawn from, how many), the finder's [`Luck`], and the stream. Nothing inside reads the
+//! world. [`find`] makes one item, [`finds`] the spec's count of them; [`make`] (and
+//! [`make_unfinished`], creature gear's, short of the trim) makes a base chosen already from step
+//! 3 on; [`heirloom`] and [`favoured`] make one with a fixed count of affixes. What differs
+//! between sources is their row of the source table ([`Origin::rule`]): the grade when the
+//! caller's data gives none, whether the finder's luck counts, whether a curse may roll, how the
+//! material is drawn, and whether it gets a make.
 //!
-//! 0. **a loose gem**: a find that may be anything (grade `any`) is a gem by the gems' `chance`
-//!    (one draw, then the gem's draws: [`crate::gem::find`]), and that is all;
-//! 1. **the base item**: one draw among the objects that are loot (base items, with a `kind`,
-//!    and scrolls, which are never magic and so left out when the grade asks for magic or
-//!    better) whose `level` is at most the item level, weighted by their `frequency`; a scroll
-//!    of a spell is its grimoire instead by the grimoires' `chance` (one draw, a spell scroll's
-//!    only: [`Content::grimoire_or`]);
+//! [`find`] draws, in this order, from the stream it is given (a level's `loot/<level id>` while
+//! it is generated, `drop/<actor id>` for what a creature drops, ...):
+//!
+//! 1. **the base item** ([`base`]): one draw among the objects that are loot (base items, with a
+//!    `kind`, and scrolls, which are never magic and so left out when the grade asks for magic or
+//!    better) of the spec's classes (any when it names none) whose `level` is at most the item
+//!    level, weighted by their `frequency`; a scroll of a spell is its grimoire instead by the
+//!    grimoires' `chance` (one draw, a spell scroll's only: [`Content::grimoire_or`]);
 //! 2. **the count**: ammunition comes in stacks of [`AMMO`] (one draw); anything else is one;
 //! 3. **the rarity**: one draw over the weights of `[rarity]` in `data/affixes.toml` (those below
-//!    the grade asked for left out); none for what is never magic (a scroll), which is normal;
+//!    the grade asked for left out; the finder's `Luck::magic` scales those above it, for a row
+//!    that takes the finder); none for what is never magic (a scroll), which is normal;
 //! 4. **how many affixes**: a magic item has a prefix, a suffix, or one of each by the weights
 //!    of `[magic]` (one draw); a rare one draws its count from `rare.affixes` (one draw) and how
 //!    many of them are prefixes (one draw, evenly among the splits that keep at most three of
 //!    each, so prefixes and suffixes are alike);
 //! 5. **each affix**, prefixes first: one draw among those that may roll on the item (its kind
 //!    in the affix's `bases`, something for the effect to change, a tier at the item level, and
-//!    a `category` the item has no affix of yet; a curse, #1754, only for what is found: loot and
-//!    creature gear, never a shop's goods, a starting kit, an heirloom, a trader's offer, or
-//!    enchanting), weighted by their `weight`; one draw for the tier, evenly among all those the
-//!    item level reaches ([`tiers_rolled`]: tier 1 to the highest whose level is at most the
-//!    item level, so a find of level 40 or more may roll any tier of the ladder; the flat roll,
+//!    a `category` the item has no affix of yet; a curse, #1754, only for a row that `curses`:
+//!    what is found, never a shop's goods, a kit, an heirloom, a trader's offer, or enchanting),
+//!    weighted by their `weight`; one draw for the tier, evenly among all those the item level
+//!    reaches ([`tiers_rolled`]: tier 1 to the highest whose level is at most the item level, so
+//!    a find of level 40 or more may roll any tier of the ladder; the flat roll,
 //!    docs/design/item-level-40.md §4); one draw for the value in the tier's range (none when the
 //!    range is a single value). With nothing left to roll, the item has fewer affixes; with
 //!    none at all it is normal;
@@ -31,31 +40,27 @@
 //!    with the kind of item ("Bite" for weapons, "Loop" for rings);
 //! 7. **an ornament**: an item of a class set with gems is set with one by its class's chance
 //!    (one draw, then the gem's draws: [`crate::gem::ornament`]);
-//! 8. **its material** (#193, #194): an item its construction list lets be made of other
-//!    materials is made of one by their `rarity` at the item level, or by their `gear` at the
-//!    creature's level for what a creature drops (one draw: [`crate::variant::draw`]); none for
-//!    one made only of its own;
-//! 9. **a wand's rung** (one draw, a wand's only), then **its make** (#1436), loot's only
-//!    (`Source::Loot`): arms and armour are Fine, Marvellous, or Masterwork by the `[[item_level]]`
-//!    row of `data/gear_condition.toml` at the item level (one draw, then one per improvement;
-//!    none where the row gives nothing or for what takes no make:
-//!    [`super::make::make`]); the same row adds its `ornament` percent to step
-//!    7's chance;
+//! 8. **its material** (#193, #194), by the row's [`Material`]: an item its construction list
+//!    lets be made of other materials is made of one by their `rarity` at the item level (loot),
+//!    or by their `gear` at the creature's level (a creature's gear and drops) (one draw:
+//!    [`crate::variant::draw`]); none for one made only of its own, or for a row that keeps its
+//!    own;
+//! 9. **a wand's rung** (one draw, a wand's only), then **its make** (#1436), for a row with a
+//!    make: arms and armour are Fine, Marvellous, or Masterwork by the `[[item_level]]` row of
+//!    `data/gear_condition.toml` at the item level (one draw, then one per improvement; none
+//!    where the row gives nothing or for what takes no make: [`super::make::make`]); the same
+//!    row adds its `ornament` percent to step 7's chance;
 //! 10. **the trim** ([`finished`], the very last step of every path that completes an item,
 //!     creature gear's after its condition): an item with more affixes than its capacity
 //!     ([`super::capacity`]) loses them one at a time, one `index` draw each; none when it fits.
 //!
-//! What is rolled is unidentified (its gems and material show at once: materials are not
-//! hidden).
-//!
-//! A vault's `loot` cell rolls from a [`LootPool`] ([`roll_pool`]): with no classes named exactly
-//! [`roll_with`]; with classes, one draw among those that hold something at the item level, then
-//! the find: coins (the purse of a chest of that level, [`crate::chest::purse`]), a loose gem
-//! ([`gem::loose`]), or step 1's draw among the class's objects and steps 2 to 8.
+//! What is found is unidentified (its gems and material show at once: materials are not
+//! hidden). A find is always an item: a loose gem found in place of one is the wealth seam's
+//! ([`crate::wealth::gem_instead`]), drawn by the callers before the find, and a vault cell's
+//! coins and gems are the cell's own ([`crate::mapgen`]'s `loot_cell`).
 
 use super::{Affix, AffixKind, Magic, Quality, Rarity, may_roll};
-use crate::chest;
-use crate::content::{AffixDef, Content, ItemClassId, ItemKind, ObjectDef, ObjectId};
+use crate::content::{AffixDef, Content, FactionId, ItemClassId, ItemKind, ObjectDef, ObjectId};
 use crate::gem;
 use crate::object::Stack;
 use crate::rng::Rng;
@@ -91,7 +96,8 @@ impl LootGrade {
 }
 
 /// What a vault's `loot` cell may hold: `loot = "magic"`, or
-/// `loot = { pool = ["armour", "rings"], grade = "magic" }`.
+/// `loot = { pool = ["armour", "rings"], grade = "magic" }`. Rolled by the cell
+/// (`mapgen/loot_cell.rs`).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct LootPool {
     /// The least it may be.
@@ -103,7 +109,7 @@ pub struct LootPool {
 impl LootPool {
     /// The pool `names` (class ids and class groups) name at `grade`. Refused when one names
     /// nothing. A class named twice counts once; a pool that can hold nothing of its grade
-    /// leaves its cell bare ([`roll_pool`]).
+    /// leaves its cell bare.
     pub fn named(content: &Content, names: &[String], grade: LootGrade) -> Result<Self, String> {
         let mut classes = Vec::new();
         for name in names {
@@ -134,7 +140,8 @@ impl From<LootGrade> for LootPool {
 
 /// A finder's luck: their talents make the magic and rare
 /// rarities `magic` percent more likely (Treasure hunter), and a loose gem `gems` percent more
-/// likely (Hoard sense). The same draws either way.
+/// likely (Hoard sense, through the wealth seam: [`crate::wealth::gem_instead`]). The same draws
+/// either way.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Luck {
     pub magic: i32,
@@ -142,6 +149,9 @@ pub struct Luck {
 }
 
 impl Luck {
+    /// No luck: what a row that takes no finder finds with.
+    pub const NONE: Luck = Luck { magic: 0, gems: 0 };
+
     /// The luck of a finder with `talents`.
     pub fn of(talents: &crate::talent::TalentMods) -> Self {
         Self {
@@ -151,56 +161,218 @@ impl Luck {
     }
 }
 
-/// Rolls an item of loot at item level `level`, at least of `grade`, from `rng` (the module docs
-/// give the draws). `None` when content has no base item found at that level.
-pub fn roll(content: &Content, rng: &mut Rng, level: u8, grade: LootGrade) -> Option<Stack> {
-    roll_with(content, rng, level, grade, Source::Loot, Luck::default())
+/// Where an item is found or made: a row of the source table ([`Origin::rule`],
+/// docs/design/loot-pipeline.md §3.4).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Origin {
+    /// A level's floor loot (`mapgen::place_loot`).
+    Floor,
+    /// A vault's `loot` cell (`mapgen/loot_cell.rs`); its grade is the legend's.
+    VaultCell,
+    /// An item in a chest (`chest::roll_contents`); its grade is the band's.
+    Chest,
+    /// A tempting hoard (`mapgen/hoard.rs`).
+    Hoard,
+    /// A teeming den's hoard (`mapgen/den.rs`).
+    Den,
+    /// A special room's own loot, of its class (`mapgen/room_loot.rs`).
+    RoomLoot,
+    /// What a creature drops when it dies (`World::loot_of`).
+    Drop,
+    /// What a feature leaves (`world/fixtures/outcome.rs`); its grade is the outcome's.
+    Feature,
+    /// The aristocrat's stipend (`world/classes/stipend.rs`).
+    Stipend,
+    /// A quarrel's hoard (`world/people/quarrel.rs`).
+    Quarrel,
+    /// A creature's magic gear (`gear.rs`).
+    Gear,
+    /// A shop's goods (`content/shop.rs`).
+    Goods,
+    /// A kit's magic line: a starting kit, a trade's, a background's gift; its grade is the
+    /// line's.
+    Kit,
+    /// An animated thing's piece (`animated.rs`); its grade is the line's.
+    Animated,
 }
 
-/// [`roll`], its material drawn as `source` has it: loot's by the item level, a creature's
-/// gear by the creature's level.
-pub fn roll_from(
-    content: &Content,
-    rng: &mut Rng,
-    level: u8,
-    grade: LootGrade,
-    source: Source,
-) -> Option<Stack> {
-    roll_with(content, rng, level, grade, source, Luck::default())
+/// How a row draws an item's material (step 8).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Material {
+    /// By the materials' `rarity` at the item level.
+    Loot,
+    /// By their `gear` weights at the creature's level ([`Spec::wearer`]; the item level
+    /// without one), its faction's favoured ones too.
+    Gear,
+    /// None drawn: it keeps the material it is listed with.
+    Own,
 }
 
-/// [`roll_from`] for a finder with `luck` ([`Luck`]): the rarity weights and the gems' chance
-/// scaled, the same draws.
-pub fn roll_with(
-    content: &Content,
-    rng: &mut Rng,
-    level: u8,
-    grade: LootGrade,
-    source: Source,
-    luck: Luck,
-) -> Option<Stack> {
-    let level = level.max(1);
-    if grade == LootGrade::Any
-        && let Some(gem) = gem::find_with(content, rng, level, luck.gems)
-    {
-        return Some(gem);
+/// A source's row of the source table: what every item it yields shares.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Rule {
+    /// The least grade when the spec gives none.
+    pub grade: LootGrade,
+    /// Whether the finder's luck counts (step 3).
+    pub finder: bool,
+    /// Whether a curse may roll (step 5).
+    pub curses: bool,
+    /// How the material is drawn (step 8).
+    pub material: Material,
+    /// Whether it gets a make and the make row's ornament percent (steps 7 and 9).
+    pub make: bool,
+}
+
+impl Origin {
+    /// The row of the source table: today's rules, in code until the table moves to data.
+    pub const fn rule(self) -> Rule {
+        use LootGrade::{Any, Magic, Rare};
+        use Material::{Gear, Loot, Own};
+        let (grade, finder, curses, material, make) = match self {
+            Origin::Floor => (Any, true, true, Loot, true),
+            Origin::VaultCell => (Any, true, true, Loot, true),
+            Origin::Chest => (Any, true, true, Loot, true),
+            Origin::Hoard => (Any, true, true, Loot, true),
+            Origin::Den => (Any, true, true, Loot, true),
+            Origin::RoomLoot => (Any, false, true, Loot, true),
+            Origin::Drop => (Magic, true, true, Gear, false),
+            Origin::Feature => (Any, true, true, Loot, true),
+            Origin::Stipend => (Any, true, true, Loot, true),
+            Origin::Quarrel => (Rare, true, true, Loot, true),
+            Origin::Gear => (Magic, false, true, Gear, false),
+            Origin::Goods => (Any, false, false, Own, false),
+            Origin::Kit => (Any, false, false, Own, false),
+            Origin::Animated => (Any, false, true, Gear, false),
+        };
+        Rule {
+            grade,
+            finder,
+            curses,
+            material,
+            make,
+        }
     }
-    let bases = loot_bases(content, level, grade, |_| true);
-    drawn(content, rng, &bases, (level, grade, luck), source)
 }
 
-/// The objects that are loot at item level `level` for `grade` among those `within` allows, by
-/// id (the string), never by load order: a draw picks the same base however the object files are
-/// laid out (docs/dev/content.md).
-fn loot_bases(
-    content: &Content,
-    level: u8,
-    grade: LootGrade,
-    within: impl Fn(&ObjectDef) -> bool,
-) -> Vec<(ObjectId, u32)> {
-    let magic_only = grade != LootGrade::Any;
+/// What one source yields: the parameter set of [`find`], [`finds`], and [`make`] besides the
+/// content, the finder, and the stream.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Spec<'a> {
+    /// The row of the source table.
+    pub origin: Origin,
+    /// The item level (danger, never depth).
+    pub level: u8,
+    /// The least grade, when the caller's data says (a band, a legend, an outcome, a line);
+    /// `None`: the row's.
+    pub grade: Option<LootGrade>,
+    /// The classes the base is drawn from; empty: anything.
+    pub classes: &'a [ItemClassId],
+    /// How many [`finds`] makes.
+    pub count: u32,
+    /// The creature whose gear it is, by its level and faction, for a row whose material is a
+    /// creature's ([`Material::Gear`]); `None`: one of the item level and no faction.
+    pub wearer: Option<(u8, Option<FactionId>)>,
+}
+
+impl<'a> Spec<'a> {
+    /// One find of `origin` at item level `level`, of the row's grade, of any class.
+    pub const fn new(origin: Origin, level: u8) -> Self {
+        Self {
+            origin,
+            level,
+            grade: None,
+            classes: &[],
+            count: 1,
+            wearer: None,
+        }
+    }
+
+    /// At least of `grade`.
+    pub const fn grade(self, grade: LootGrade) -> Self {
+        Self {
+            grade: Some(grade),
+            ..self
+        }
+    }
+
+    /// Of one of `classes`.
+    pub const fn classes(self, classes: &'a [ItemClassId]) -> Self {
+        Self { classes, ..self }
+    }
+
+    /// `count` finds.
+    pub const fn count(self, count: u32) -> Self {
+        Self { count, ..self }
+    }
+
+    /// The gear of a creature of `level` and `faction`.
+    pub const fn wearer(self, level: u8, faction: Option<FactionId>) -> Self {
+        Self {
+            wearer: Some((level, faction)),
+            ..self
+        }
+    }
+
+    /// The least grade: the spec's, else the row's.
+    pub const fn least(&self) -> LootGrade {
+        match self.grade {
+            Some(grade) => grade,
+            None => self.origin.rule().grade,
+        }
+    }
+
+    /// How the material is drawn ([`variant::draw`]'s source): `None` for a row that keeps
+    /// its own.
+    fn source(&self) -> Option<Source> {
+        match self.origin.rule().material {
+            Material::Loot => Some(Source::Loot),
+            Material::Gear => Some(match self.wearer {
+                Some((level, faction)) => Source::Gear { level, faction },
+                None => Source::gear(self.level),
+            }),
+            Material::Own => None,
+        }
+    }
+}
+
+/// One item `spec` yields for a finder with `finder`'s luck, from `rng` (the module docs give the
+/// draws). `None` when content has no base item found at that level.
+pub fn find(content: &Content, spec: &Spec, finder: &Luck, rng: &mut Rng) -> Option<Stack> {
+    let object = base(content, spec, rng)?;
+    // A spell scroll may be its grimoire: one draw, a scroll's.
+    let object = content.grimoire_or(rng, object);
+    let count = if content.object(object).kind == Some(ItemKind::Ammo) {
+        u32::try_from(rng.range(*AMMO.start(), *AMMO.end())).unwrap_or(1)
+    } else {
+        1
+    };
+    Some(make(content, spec, object, count, finder, rng))
+}
+
+/// The spec's `count` items ([`find`] each, those found), in order.
+pub fn finds(content: &Content, spec: &Spec, finder: &Luck, rng: &mut Rng) -> Vec<Stack> {
+    (0..spec.count)
+        .filter_map(|_| find(content, spec, finder, rng))
+        .collect()
+}
+
+/// Step 1 of [`find`] alone: a base item of `spec` (its classes, its grade, its item level), by
+/// frequency, ordered by object id, one draw; no grimoire draw. `None` when there is none. For a
+/// source that draws something between the base and the rest (an animated blade's grade).
+pub fn base(content: &Content, spec: &Spec, rng: &mut Rng) -> Option<ObjectId> {
+    pick_weighted(rng, &bases(content, spec)).copied()
+}
+
+/// The objects [`base`] draws among, with their frequencies, by id (the string), never by load
+/// order: a draw picks the same base however the object files are laid out
+/// (docs/dev/content.md). Empty when `spec` holds nothing at its item level.
+pub(crate) fn bases(content: &Content, spec: &Spec) -> Vec<(ObjectId, u32)> {
+    let level = spec.level.max(1);
+    let magic_only = spec.least() != LootGrade::Any;
+    let classes = spec.classes;
     let mut bases: Vec<(ObjectId, u32)> = (content.object_defs().iter().enumerate())
-        .filter(|(_, o)| o.frequency > 0 && o.level <= level && within(o))
+        .filter(|(_, o)| o.frequency > 0 && o.level <= level)
+        .filter(|(_, o)| classes.is_empty() || classes.contains(&o.class))
         .filter(|(_, o)| !magic_only || can_be_magic(content, o, level))
         .map(|(i, o)| (ObjectId(i as u16), o.frequency))
         .collect();
@@ -208,192 +380,50 @@ fn loot_bases(
     bases
 }
 
-/// Steps 1 to 8 of the module docs: one of `bases`, and what is made of it.
-fn drawn(
-    content: &Content,
-    rng: &mut Rng,
-    bases: &[(ObjectId, u32)],
-    (level, grade, luck): (u8, LootGrade, Luck),
-    source: Source,
-) -> Option<Stack> {
-    // A spell scroll may be its grimoire: one draw, a scroll's.
-    let object = *pick_weighted(rng, bases)?;
-    let object = content.grimoire_or(rng, object);
-    let count = if content.object(object).kind == Some(ItemKind::Ammo) {
-        u32::try_from(rng.range(*AMMO.start(), *AMMO.end())).unwrap_or(1)
-    } else {
-        1
-    };
-    let made = make_from(
-        content,
-        rng,
-        object,
-        count,
-        (level, grade, luck.magic),
-        Some(source),
-    );
-    Some(finished(content, rng, made))
-}
-
-/// What a class is found as: coins and gems have no `frequency`, and are found by the purse and
-/// the gem's own draws.
-#[derive(Clone, Copy, PartialEq, Eq)]
-enum Find {
-    Coins,
-    Gem,
-    Item,
-}
-
-fn find_of(content: &Content, class: ItemClassId) -> Find {
-    let of = |object: ObjectId| content.object(object).class == class;
-    if chest::currency(content).is_some_and(of) {
-        Find::Coins
-    } else if content.gems().is_some_and(|g| of(g.object)) {
-        Find::Gem
-    } else {
-        Find::Item
-    }
-}
-
-/// Whether class `class` holds anything of `grade` at item level `level`: what is never magic
-/// (coins, gems, a potion) holds nothing that must be.
-fn holds(content: &Content, class: ItemClassId, level: u8, grade: LootGrade) -> bool {
-    match find_of(content, class) {
-        Find::Coins => {
-            let band = content.chests().band_of(level);
-            grade == LootGrade::Any
-                && band.is_some_and(|b| b.loot.gold.dice.max() > 0 && b.loot.gold.each > 0)
-        }
-        Find::Gem => grade == LootGrade::Any,
-        Find::Item => !loot_bases(content, level, grade, |o| o.class == class).is_empty(),
-    }
-}
-
-/// Rolls an item of `pool` at item level `level` for a finder with `luck` (the module docs give
-/// the draws). `None` when none of its classes holds anything there yet: a low item level may
-/// leave a pool of things found only higher empty.
-pub fn roll_pool(
-    content: &Content,
-    rng: &mut Rng,
-    level: u8,
-    pool: &LootPool,
-    luck: Luck,
-) -> Option<Stack> {
-    let grade = pool.grade;
-    if pool.classes.is_empty() {
-        return roll_with(content, rng, level, grade, Source::Loot, luck);
-    }
-    let level = level.max(1);
-    let open: Vec<ItemClassId> = (pool.classes.iter().copied())
-        .filter(|c| holds(content, *c, level, grade))
-        .collect();
-    let class = *rng.pick(&open)?;
-    match find_of(content, class) {
-        Find::Coins => chest::purse(content, rng, level),
-        Find::Gem => gem::loose(content, rng, level),
-        Find::Item => {
-            let bases = loot_bases(content, level, grade, |o| o.class == class);
-            drawn(content, rng, &bases, (level, grade, luck), Source::Loot)
-        }
-    }
-}
-
-/// A base item of one of `classes` that is loot at item level `level` (its `level` at most it,
-/// a `frequency`), by frequency, ordered by object id as [`roll`]'s are: one draw of `rng`.
-/// `None` when there is none. An animated blade's weapon is drawn so.
-pub fn base_in(
-    content: &Content,
-    rng: &mut Rng,
-    classes: &[ItemClassId],
-    level: u8,
-) -> Option<ObjectId> {
-    let mut bases: Vec<(ObjectId, u32)> = (content.object_defs().iter().enumerate())
-        .filter(|(_, o)| o.frequency > 0 && o.level <= level.max(1) && classes.contains(&o.class))
-        .map(|(i, o)| (ObjectId(i as u16), o.frequency))
-        .collect();
-    bases.sort_by(|a, b| content.object(a.0).id.cmp(&content.object(b.0).id));
-    pick_weighted(rng, &bases).copied()
-}
-
-/// `count` of `object` made as loot makes its base item at item level `level`, at least of
-/// `grade`: draws 3 to 7 of [`roll`] (the rarity, the affixes, a rare item's name, an ornament),
-/// then 9 and 10 (a wand's rung, the trim), unidentified. What is never magic (no `kind`) draws no rarity and stays normal. A starting
-/// kit's magic items are made so.
+/// `count` of `object` made as `spec`'s row makes it, from step 3 on: the rarity, the affixes,
+/// a rare item's name, an ornament, the material, a wand's rung, the make, and the trim,
+/// unidentified. What is never magic (no `kind`) draws no rarity and stays normal. A kit's magic
+/// items, a shop's goods, and a room's loot are made so.
 pub fn make(
     content: &Content,
-    rng: &mut Rng,
+    spec: &Spec,
     object: ObjectId,
     count: u32,
-    level: u8,
-    grade: LootGrade,
+    finder: &Luck,
+    rng: &mut Rng,
 ) -> Stack {
-    let made = make_from(content, rng, object, count, (level, grade, 0), None);
+    let made = make_unfinished(content, spec, object, count, finder, rng);
     finished(content, rng, made)
 }
 
-/// [`make`] for a creature's gear: its material drawn as `source` has
-/// it (a creature's, by its level) after the rest.
-pub fn make_as(
-    content: &Content,
-    rng: &mut Rng,
-    object: ObjectId,
-    count: u32,
-    (level, grade): (u8, LootGrade),
-    source: Source,
-) -> Stack {
-    let made = make_as_unfinished(content, rng, object, count, (level, grade), source);
-    finished(content, rng, made)
-}
-
-/// [`make_as`] short of its trim: creature gear's ([`crate::gear`]), which draws its condition
+/// [`make`] short of its trim: creature gear's ([`crate::gear`]), which draws its condition
 /// first and then finishes each piece ([`finished`]).
-pub(crate) fn make_as_unfinished(
+pub fn make_unfinished(
     content: &Content,
-    rng: &mut Rng,
+    spec: &Spec,
     object: ObjectId,
     count: u32,
-    (level, grade): (u8, LootGrade),
-    source: Source,
-) -> Stack {
-    make_from(content, rng, object, count, (level, grade, 0), Some(source))
-}
-
-/// `stack` finished: trimmed to its capacity from `rng` ([`super::capacity::trim`]; no draw
-/// when it fits). The very last step of every path that makes an item (the module docs' 10).
-pub fn finished(content: &Content, rng: &mut Rng, stack: Stack) -> Stack {
-    super::capacity::trimmed(content, rng, stack)
-}
-
-/// [`make`] at `(level, grade, luck)` ([`roll_with`]), its material drawn as `source` has it
-/// (none for `None`: a starting kit's items keep the material they are listed with).
-fn make_from(
-    content: &Content,
+    finder: &Luck,
     rng: &mut Rng,
-    object: ObjectId,
-    count: u32,
-    (level, grade, luck): (u8, LootGrade, i32),
-    source: Option<Source>,
 ) -> Stack {
-    let level = level.max(1);
+    let rule = spec.origin.rule();
+    let level = spec.level.max(1);
     let def = content.object(object);
+    let luck = if rule.finder { finder.magic } else { 0 };
     let rarity = match def.kind {
-        Some(_) => roll_rarity(content, rng, grade, luck),
+        Some(_) => roll_rarity(content, rng, spec.least(), luck),
         None => Rarity::Normal,
     };
-    // Only what is found may be cursed (#1754): made with a source (loot, a creature's gear),
-    // never plainly (a shop's goods, a starting kit).
-    let curses = source.is_some();
     let magic = match rarity {
         Rarity::Normal => None,
-        rarity => roll_magic(content, rng, def, (level, curses), rarity),
+        rarity => roll_magic(content, rng, def, (level, rule.curses), rarity),
     };
     let stack = match magic {
         Some(magic) => Stack::with_magic(object, count, magic),
         None => Stack::new(object, count),
     };
     // Loot of a higher item level is set with a gem more often, and better made (#1436).
-    let loot = source == Some(Source::Loot);
-    let more = if loot {
+    let more = if rule.make {
         content.gear_condition().at_item_level(level).ornament
     } else {
         0
@@ -401,7 +431,8 @@ fn make_from(
     let ornament = gem::ornament(content, rng, def, (level, more));
     // Its own parts in its base parts' order: the main part's material, then the gem it is set
     // with.
-    let material = source.and_then(|source| variant::draw(content, rng, def, source, level));
+    let material =
+        (spec.source()).and_then(|source| variant::draw(content, rng, def, source, level));
     let own: Vec<_> = material.into_iter().chain(ornament).collect();
     let mut stack = if own.is_empty() {
         stack
@@ -410,10 +441,16 @@ fn make_from(
     };
     // A wand's rung (the spell scaling design §7.4): one draw, a wand's only.
     stack.draw_wand_rung(content, rng);
-    if loot {
+    if rule.make {
         super::make::make(content, rng, level, &mut stack);
     }
     stack
+}
+
+/// `stack` finished: trimmed to its capacity from `rng` ([`super::capacity::trim`]; no draw
+/// when it fits). The very last step of every path that makes an item (the module docs' 10).
+pub fn finished(content: &Content, rng: &mut Rng, stack: Stack) -> Stack {
+    super::capacity::trimmed(content, rng, stack)
 }
 
 /// A rarity by the weights in content, leaving out those below `grade`; the weights of those
@@ -563,7 +600,7 @@ pub fn heirloom(
 
 /// A favoured find (the pedlar's offer, #808): a base item
 /// that can be magic at item level `level` (not ammunition: one item), by frequency, ordered by
-/// object id as [`roll`]'s are (one draw); how many affixes it has by `counts`' weights (one
+/// object id as [`base`]'s are (one draw); how many affixes it has by `counts`' weights (one
 /// draw); then it is made as an [`heirloom`] of that many at `level`. Better than loot: never
 /// normal, and never fewer affixes than `counts` names. `None` when no base can be magic there.
 pub fn favoured(

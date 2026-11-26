@@ -113,7 +113,7 @@ generated shop's first stock. A restock's `gone` stacks come first from what the
 outgrown (a good of a stocked class it no longer draws at the restock's item level), so a town
 shop sheds its first goods as the player rises. The wiki's band table is
 `xtask/src/wiki/objects.rs::shop_levels`. They are made by
-`Shops::lay_out` (`magic::loot::make`: magic and an ornament, never another material,
+`Shops::lay_out` (`magic::loot::make` of the goods row: magic and an ornament, never another material,
 spec/06-content.md). The townsfolk's talk of it
 is `[dialogue.economy]` (docs/dev/npcs.md). The wiki's table is `xtask/src/wiki/objects.rs::restock`.
 Tests: `world/people/restock_tests.rs`, `content/restock.rs`.

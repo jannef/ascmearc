@@ -71,6 +71,7 @@ pub mod text;
 pub mod time;
 mod unhashed;
 pub mod variant;
+pub mod wealth;
 pub mod weapon_skills;
 pub mod weather;
 pub mod world;

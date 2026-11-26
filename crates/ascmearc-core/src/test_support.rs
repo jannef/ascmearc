@@ -178,6 +178,49 @@ pub(crate) fn draws(world: &World) -> u64 {
     world.state().draws.total()
 }
 
+/// A find as a level's floor rolls one at item level `level`, at least of `grade`, with no luck:
+/// at grade any a loose gem instead by the wealth seam ([`crate::wealth::gem_instead`]), else
+/// [`crate::magic::loot::find`] of the floor row.
+pub(crate) fn found(
+    content: &Content,
+    rng: &mut Rng,
+    level: u8,
+    grade: crate::magic::LootGrade,
+) -> Option<crate::object::Stack> {
+    found_with(content, rng, level, grade, crate::magic::loot::Luck::NONE)
+}
+
+/// [`found`] for a finder with `luck`.
+pub(crate) fn found_with(
+    content: &Content,
+    rng: &mut Rng,
+    level: u8,
+    grade: crate::magic::LootGrade,
+    luck: crate::magic::loot::Luck,
+) -> Option<crate::object::Stack> {
+    use crate::magic::loot::{self, Origin, Spec};
+    let gem = (grade == crate::magic::LootGrade::Any)
+        .then(|| crate::wealth::gem_instead(content, rng, level, luck.gems))
+        .flatten();
+    let spec = Spec::new(Origin::Floor, level).grade(grade);
+    gem.or_else(|| loot::find(content, &spec, &luck, rng))
+}
+
+/// `count` of `object` made as a kit's magic line makes it ([`crate::magic::loot::make`] of the
+/// kit row) at item level `level`, at least of `grade`.
+pub(crate) fn made(
+    content: &Content,
+    rng: &mut Rng,
+    object: crate::content::ObjectId,
+    count: u32,
+    level: u8,
+    grade: crate::magic::LootGrade,
+) -> crate::object::Stack {
+    use crate::magic::loot::{self, Luck, Origin, Spec};
+    let spec = Spec::new(Origin::Kit, level).grade(grade);
+    loot::make(content, &spec, object, count, &Luck::NONE, rng)
+}
+
 /// `docs/dev/cli.md`, the command-line reference (#1667).
 const CLI_DOC: &str = include_str!("../../../docs/dev/cli.md");
 

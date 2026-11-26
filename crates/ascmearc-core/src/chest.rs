@@ -23,10 +23,9 @@
 
 use crate::content::{Content, GOLD, MAX_ITEM_LEVEL, ObjectId};
 use crate::magic::LootGrade;
-use crate::magic::loot::{self, Luck};
+use crate::magic::loot::{self, Luck, Origin, Spec};
 use crate::object::{Stack, add_to_pile};
 use crate::rng::Rng;
-use crate::variant::Source;
 use serde::{Deserialize, Serialize};
 
 /// A chest on a cell (ground truth).
@@ -135,7 +134,8 @@ pub fn destroyed(
 /// What a generated chest of `level` holds, rolled from its band's loot
 /// table with the finder's `luck`, as a pile (the last rolled on top, like stacks joined). Draws, in order: the `items` dice; per item one
 /// `below(100)` for its grade (under `rare` rare, under `magic` at least magic, else any) and
-/// [`loot::roll_with`]'s own at `level + loot_level` (nothing found rolls nothing more); the
+/// at `level + loot_level`, at grade any a loose gem by the wealth seam
+/// ([`crate::wealth::gem_instead`]), else [`loot::find`]'s own (nothing found rolls nothing more); the
 /// purse's dice (`dice` × `each` coins of the shops' currency, else `gold_coin`; none at 0);
 /// the `gems` dice (0 or less: none) and per gem [`crate::gem::roll`]'s. A mimic standing in
 /// for the chest carries the same stacks from the same draws. Empty without bands.
@@ -154,7 +154,12 @@ pub fn roll_contents(content: &Content, rng: &mut Rng, level: u8, luck: Luck) ->
             g if g < u32::from(table.magic) => LootGrade::Magic,
             _ => LootGrade::Any,
         };
-        if let Some(stack) = loot::roll_with(content, rng, at, grade, Source::Loot, luck) {
+        // At grade any a loose gem instead, by the wealth seam; else a find of the chest row.
+        let gem = (grade == LootGrade::Any)
+            .then(|| crate::wealth::gem_instead(content, rng, at, luck.gems))
+            .flatten();
+        let spec = Spec::new(Origin::Chest, at).grade(grade);
+        if let Some(stack) = gem.or_else(|| loot::find(content, &spec, &luck, rng)) {
             add_to_pile(&mut holds, &[stack], content);
         }
     }

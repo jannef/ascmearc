@@ -309,7 +309,7 @@ impl Shops {
         object: ObjectId,
         level: u8,
     ) -> Stack {
-        use crate::magic::loot::{LootGrade, make};
+        use crate::magic::loot::{Luck, Origin, Spec, make};
         let object = content.grimoire_or(rng, object);
         let count = if content.object(object).stackable {
             let (lo, hi) = self.bundle;
@@ -317,7 +317,14 @@ impl Shops {
         } else {
             1
         };
-        make(content, rng, object, count, level, LootGrade::Any)
+        make(
+            content,
+            &Spec::new(Origin::Goods, level),
+            object,
+            count,
+            &Luck::NONE,
+            rng,
+        )
     }
 
     /// Whether a shop of kind `kind` buys `stack`.

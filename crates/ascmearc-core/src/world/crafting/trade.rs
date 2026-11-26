@@ -20,7 +20,7 @@
 
 use crate::content::{Content, KitLineSpec};
 use crate::dice::Dice;
-use crate::magic::loot;
+use crate::magic::loot::{self, Luck, Origin, Spec};
 use crate::rng::Rng;
 use crate::world::World;
 
@@ -53,8 +53,8 @@ impl World {
                 let stack = match line.magic {
                     Some(grade) => {
                         let (object, count) = (stack.object, stack.count);
-                        let level = crate::kit::ITEM_LEVEL;
-                        loot::make(content, &mut rng, object, count, level, grade)
+                        let spec = Spec::new(Origin::Kit, crate::kit::ITEM_LEVEL).grade(grade);
+                        loot::make(content, &spec, object, count, &Luck::NONE, &mut rng)
                     }
                     None => {
                         let mut plain = stack.clone();

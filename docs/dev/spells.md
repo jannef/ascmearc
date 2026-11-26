@@ -593,8 +593,8 @@ cast path shares.
     `frequency`), and the scroll reading code never sees it. `Content::grimoires()`
     (`Grimoires { chance, of }`, scroll → grimoire) and `Content::grimoire_or(rng, object)`: one
     draw, only for a spell scroll, by `chance` (10) percent, its grimoire. Called where a spell
-    scroll is made at random: `magic/loot.rs::drawn` (loot, chests, hoards, dens, vault pools,
-    drops), `mapgen/room_loot.rs`, `mapgen/shop.rs` (a drawn good; `Shops::stocks` leaves
+    scroll is made at random: `magic/loot.rs::find` (loot, chests, hoards, dens, vault pools,
+    drops, room loot), `mapgen/shop.rs` (a drawn good; `Shops::stocks` leaves
     grimoires out, so one is stocked only so), `gear.rs::make` (a creature's gear line), and
     `kit.rs` (`with_grimoires`, one draw a scroll of a line's stack, and the random scrolls'). A
     scroll a level, a shop's `always`, a scenario, or a background story names stays a scroll.
@@ -725,7 +725,7 @@ cast path shares.
     saved and hashed, left out while `None`; saves change): drawn by
     `Stack::draw_wand_rung(content, rng)` evenly in `min_rung..=max_rung` (one `Rng::range`,
     no draw for a one-rung range or a non-wand, nothing drawn twice) wherever a wand is made,
-    from the maker's own stream: `magic::loot::make_from` (last, after the ornament and
+    from the maker's own stream: `magic::loot::make_unfinished` (last, after the ornament and
     material: loot, drops, chests, hoards, room loot, kits' and gear's magic lines), `kit::roll`'s
     plain lines, `gear::make`, `mapgen/shop.rs`'s stock, `World::leave_objects` (outcomes,
     `outcome/objects/<cell>`), and as a fallback for wands that come from content without one: a level's piles

@@ -8,7 +8,6 @@ use crate::combat::{Blow, Category, Strike};
 use crate::content::{ContentFiles, Power};
 use crate::geom::{Dir, Pos};
 use crate::magic::LootGrade;
-use crate::magic::loot;
 use crate::object::Stack;
 use crate::rng::Rng;
 use crate::test_support::said;
@@ -391,7 +390,7 @@ fn nothing_unique_only_is_ever_rolled() {
         for seed in 0..400 {
             let mut rng = Rng::stream(seed, "n2095");
             for grade in [LootGrade::Any, LootGrade::Rare] {
-                let stack = loot::make(&content, &mut rng, object, 1, 40, grade);
+                let stack = crate::test_support::made(&content, &mut rng, object, 1, 40, grade);
                 let magic = stack.magic();
                 assert!(
                     magic.is_none_or(|m| m.unique.is_none()),

@@ -92,10 +92,10 @@ places must not move), in no slot, unless the creature carries its body already.
 A family's creature: `animated::compose_slots` goes through its tier's lines in order, those
 whose `from` its level reaches, each `count` times; a try whose `Line::slots` are all taken
 (the off hand beside a two-handed weapon, both ring slots) ends the line with nothing drawn (so
-A3's blade streams are unchanged). A try (`animated::piece`): one draw for `chance`; one for the base item (`loot::base_in`: the loot objects of the line's
+A3's blade streams are unchanged). A try (`animated::piece`): one draw for `chance`; one for the base item (`loot::base` of the animated row: the loot objects of the line's
 classes with `level ≤ L` and a `frequency`, by frequency, ordered by object id); one `below(100)`
 for the grade (under `rare` rare, under `max(rare, magic)` at least magic, else plain); then
-`loot::make_as` at item level L with `Source::Gear(L)` (or, plain, one `variant::draw` for the
+`loot::make` of the animated row at item level L (materials as `Source::gear(L)`) (or, plain, one `variant::draw` for the
 material), put in the pack and in the first free slot of the line's (a two-handed weapon in
 every hand). `animated::kit` is the one entry (household
 body or family pieces; a family creature that carries anything already is not rolled), called

@@ -1,8 +1,8 @@
 //! A room's own loot (`docs/dev/special-rooms.md`): a generated
 //! floor's special room whose effect has a `loot` (a scriptorium's scrolls) gets between its
 //! fewest and its most items of that class on its plain floor (no stairs, light, or trap), each
-//! a base item of the class that is loot at the floor's item level, by frequency, made as loot
-//! is (unidentified), on a cell drawn anew.
+//! a find of the room-loot row among the class at the floor's item level (`loot::find`: no
+//! finder's luck; unidentified), on a cell drawn anew.
 //!
 //! The items come from the level's swarm stream [`Rng::swarm`] (`swarm/<level id>`), as a den's
 //! and a hoard's do, so the rest of the level is the same with or without such a room; each
@@ -12,10 +12,9 @@
 use super::Palette;
 use crate::content::{Content, LevelTemplate};
 use crate::geom::Pos;
-use crate::magic::{LootGrade, loot};
+use crate::magic::loot::{self, Luck, Origin, Spec};
 use crate::object::add_to_pile;
 use crate::rng::Rng;
-use crate::variant::Source;
 
 /// Lays the loot of every special room of generated level `template` whose effect has one (see
 /// the module docs).
@@ -41,18 +40,11 @@ pub(super) fn fill(template: &mut LevelTemplate, content: &Content, seed: u64, p
         let [least, most] = room_loot.count;
         let count = rng.range(i32::from(least), i32::from(most));
         for _ in 0..count {
-            let Some(base) = loot::base_in(content, &mut rng, &[room_loot.class], level) else {
+            let classes = [room_loot.class];
+            let spec = Spec::new(Origin::RoomLoot, level).classes(&classes);
+            let Some(stack) = loot::find(content, &spec, &Luck::NONE, &mut rng) else {
                 break;
             };
-            let base = content.grimoire_or(&mut rng, base);
-            let stack = loot::make_as(
-                content,
-                &mut rng,
-                base,
-                1,
-                (level, LootGrade::Any),
-                Source::Loot,
-            );
             let p = floor[rng.index(floor.len())];
             add_to_pile(template.objects.entry(p).or_default(), &[stack], content);
         }

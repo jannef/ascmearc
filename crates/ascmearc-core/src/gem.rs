@@ -10,7 +10,8 @@
 //! **Loot** draws from the stream it is given (a level's `loot/<level id>`, a creature's
 //! `drop/<actor id>`), so maps never change:
 //!
-//! - [`find`]: one draw against the gems' `chance`; on a hit, a loose gem ([`roll`]).
+//! - [`crate::wealth::gem_instead`]: one draw against the gems' `chance`; on a hit, a loose gem
+//!   ([`loose`]).
 //! - [`ornament`]: for an item whose class is set with gems, one draw against its `chance`; on a
 //!   hit, a gem (never a rough one) as the class's part, or the object's own `ornament` part.
 //! - [`roll`]: one draw for the gem among the gem materials by `rarity` (by material id), one
@@ -106,23 +107,6 @@ fn by_rarity(content: &Content, rng: &mut Rng) -> Option<MaterialId> {
         .collect();
     found.sort_by(|a, b| content.material(a.0).id.cmp(&content.material(b.0).id));
     pick_weighted(rng, &found).copied()
-}
-
-/// Whether a find at item level `level` is a loose gem, by the gems' `chance` (one draw), and
-/// if so the gem: a stack of one.
-pub fn find(content: &Content, rng: &mut Rng, level: u8) -> Option<Stack> {
-    find_with(content, rng, level, 0)
-}
-
-/// [`find`] for a finder whose gems' chance is `more` percent higher (Hoard sense), never above
-/// certain: the same draws.
-pub fn find_with(content: &Content, rng: &mut Rng, level: u8, more: i32) -> Option<Stack> {
-    let gems = content.gems()?;
-    let chance = crate::talent::TalentMods::scaled(u64::from(gems.chance), more).min(100);
-    if gems.chance == 0 || !rng.chance(chance as u32) {
-        return None;
-    }
-    loose(content, rng, level)
 }
 
 /// A loose gem at item level `level` ([`roll`]'s draws): a stack of one. `None` without gems to

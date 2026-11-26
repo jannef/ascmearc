@@ -6,7 +6,7 @@ use crate::action::AttackKind;
 use crate::combat::{Blow, Category, Strike};
 use crate::content::{ContentFiles, Power};
 use crate::item_parts::ItemPart;
-use crate::magic::loot::{self, LootGrade};
+use crate::magic::loot::LootGrade;
 use crate::magic::{Rarity, worn_powers};
 use crate::object::Stack;
 use crate::rng::Rng;
@@ -282,7 +282,8 @@ fn nothing_rolled_is_ever_the_masterpiece() {
         e
     };
     for _ in 0..2_000 {
-        let made = loot::make(&CONTENT, &mut rng, chain_mail, 1, 40, LootGrade::Rare);
+        let made =
+            crate::test_support::made(&CONTENT, &mut rng, chain_mail, 1, 40, LootGrade::Rare);
         let magic = made.magic().expect("a rare");
         assert!(magic.rarity != Rarity::Unique && magic.unique.is_none());
         (magic.check(object, &CONTENT)).expect("within its tiers");

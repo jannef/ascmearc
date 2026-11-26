@@ -118,12 +118,11 @@ fn treasure_hunter_finds_magic_more_often_from_the_same_draws() {
         let mut rng = Rng::stream(11, "wits-test");
         let mut rarities = [0u32; 3];
         for _ in 0..3000 {
-            let source = crate::variant::Source::Loot;
             let luck = loot::Luck {
                 magic: luck,
                 gems: 0,
             };
-            if let Some(s) = loot::roll_with(content, &mut rng, 6, grade, source, luck) {
+            if let Some(s) = crate::test_support::found_with(content, &mut rng, 6, grade, luck) {
                 rarities[s.rarity() as usize] += 1;
             }
         }

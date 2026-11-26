@@ -4,7 +4,7 @@
 use crate::content::{ContentFiles, Keep, LevelTemplate, ObjectId, Rarity};
 use crate::gear;
 use crate::kit::Pack;
-use crate::magic::{LootGrade, loot};
+use crate::magic::LootGrade;
 use crate::object::weight_of;
 use crate::rng::Rng;
 use crate::test_support::draws;
@@ -404,7 +404,8 @@ fn kill_in_the_den() -> World {
     let mut w = World::new(CONTENT.clone(), "den", None).expect("den");
     let id = w.state.actor_at("den", Pos::new(2, 1)).expect("kobold").id;
     let mut rng = Rng::stream(1, "test");
-    let dagger = loot::make(&CONTENT, &mut rng, object("dagger"), 1, 3, LootGrade::Magic);
+    let dagger =
+        crate::test_support::made(&CONTENT, &mut rng, object("dagger"), 1, 3, LootGrade::Magic);
     assert!(dagger.rarity() >= Rarity::Magic && !dagger.is_identified());
     w.state.actors.get_mut(&id).expect("kobold").inventory = vec![dagger];
     let (player, time) = (w.state.player, w.state.time);

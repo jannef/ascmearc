@@ -33,11 +33,10 @@ use crate::content::{
 use crate::equipment::Equipment;
 use crate::geom::Pos;
 use crate::lang::{Arg, Msg};
-use crate::magic::loot::{self, LootGrade, Luck};
+use crate::magic::loot::{self, Luck, Origin, Spec};
 use crate::msg;
 use crate::object::{self, Stack};
 use crate::rng::Rng;
-use crate::variant::Source;
 use crate::world::{ActorId, Spent, World, WorldState};
 use serde::{Deserialize, Serialize};
 
@@ -86,14 +85,10 @@ pub(crate) fn of_level(
         .min(100);
     let find = (rng.chance(chance))
         .then(|| {
-            loot::roll_with(
-                content,
-                &mut rng,
-                item_level,
-                LootGrade::Any,
-                Source::Loot,
-                luck,
-            )
+            // A loose gem instead by the wealth seam, else a find of the stipend row.
+            let spec = Spec::new(Origin::Stipend, item_level);
+            crate::wealth::gem_instead(content, &mut rng, item_level, luck.gems)
+                .or_else(|| loot::find(content, &spec, &luck, &mut rng))
         })
         .flatten();
     let kept = find.filter(|s| {

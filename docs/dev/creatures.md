@@ -524,7 +524,7 @@ as written, kept on `CreatureDef::gear_spec` until objects load, then `Content::
 resolves `CreatureDef::gear`: the racial weapon's line first, `Keep` defaults by the slot an
 object fits; what fits no slot as kept is carried, `Pack::equip`).
 The rolls are `gear.rs`: `gear::roll(content, rng, creature, item_level) -> kit::Pack` (the
-kit's `Pack::put`/`equip`, `loot::make_as` for a magic piece, `variant::draw` with
+kit's `Pack::put`/`equip`, `loot::make_unfinished` of the gear row for a magic piece, `variant::draw` with
 `Source::Gear { level, faction }` (the type's level and faction: a faction's `gear`
 favourites, `data/factions/`, #1191, `docs/dev/objects.md` "Materials and variants") for a
 plain one, the burden guard against `burden::limit` of the

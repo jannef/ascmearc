@@ -23,7 +23,7 @@ in the content, so a scroll left without a reading fails it. The traps' bursts a
 (`content/spell.rs`: `Burst`, `Bolt`, `BurstIce`, `SpellFields`, `Burst::new`/`Bolt::new`) are
 no scroll's any more; the cast path shares their structs for its bursts and lines. A scroll's
 `level` and `frequency` make it loot (`ObjectDef::frequency` > 0 for base items and scrolls;
-`magic::loot::roll` draws among both, leaves objects without a `kind` out of loot that must be
+`magic::loot::find` draws among both, leaves objects without a `kind` out of loot that must be
 magic, and draws no rarity for them).
 
 The rules are `world/magic/read.rs`: `Action::Read { item, target: Option<ReadTarget> }` (`read:b`,

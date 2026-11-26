@@ -12,7 +12,7 @@ use crate::character::CharacterSpec;
 use crate::content::{ContentFiles, ItemKind};
 use crate::damage::Damage;
 use crate::magic::describe;
-use crate::magic::{Affix, LootGrade, Magic, Numbers, Rarity, loot, may_roll};
+use crate::magic::{Affix, LootGrade, Magic, Numbers, Rarity, may_roll};
 use crate::rng::Rng;
 use crate::stats::Stat;
 use crate::world::creatures::fixture_factions::make_peace;
@@ -330,7 +330,7 @@ fn the_pick_axe_is_a_tool_rolled_magic_from_item_level_3() {
     let rolled = |level: u8| {
         (0..4000u64).find_map(|seed| {
             let mut rng = Rng::stream(seed, "affix_utility");
-            loot::roll(&CONTENT, &mut rng, level, LootGrade::Magic)
+            crate::test_support::found(&CONTENT, &mut rng, level, LootGrade::Magic)
                 .filter(|s| s.object == pick && digs(s))
         })
     };
@@ -384,7 +384,7 @@ fn loot_finds_the_pick_axe_plain_and_magic() {
     let pick = builtin.object_id("pick_axe").expect("pick");
     let roll = |seed: u64, grade| {
         let mut rng = Rng::stream(seed, "affix_utility");
-        loot::roll(&builtin, &mut rng, 3, grade)
+        crate::test_support::found(&builtin, &mut rng, 3, grade)
     };
     let found: Vec<Stack> = (0..3000).filter_map(|s| roll(s, LootGrade::Any)).collect();
     let picks: Vec<&Stack> = found.iter().filter(|s| s.object == pick).collect();

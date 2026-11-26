@@ -8,7 +8,7 @@ use crate::action::{Action, Event};
 use crate::combat::Category;
 use crate::content::{ContentFiles, Power};
 use crate::geom::{Dir, Pos};
-use crate::magic::{LootGrade, loot};
+use crate::magic::LootGrade;
 use crate::noise::Act;
 use crate::rng::Rng;
 use crate::test_support::{run, said};
@@ -310,7 +310,7 @@ fn nothing_of_the_three_is_ever_rolled() {
         for seed in 0..200 {
             let mut rng = Rng::stream(seed, "n2139");
             for grade in [LootGrade::Any, LootGrade::Rare] {
-                let stack = loot::make(&content, &mut rng, object, 1, 40, grade);
+                let stack = crate::test_support::made(&content, &mut rng, object, 1, 40, grade);
                 assert!(!stack.is_unique(), "{base}: {stack:?}");
                 if base != "heavy_crossbow" {
                     assert!(

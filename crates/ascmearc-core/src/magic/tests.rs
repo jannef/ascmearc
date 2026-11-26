@@ -46,7 +46,7 @@ fn item(c: &Content, id: &str, affixes: &[(&str, u8, i32)], name: Option<&str>) 
 fn roll_many(c: &Content, n: usize, level: u8, grade: LootGrade) -> Vec<Stack> {
     let mut rng = Rng::stream(7, "magic-test");
     (0..n)
-        .filter_map(|_| loot::roll(c, &mut rng, level, grade))
+        .filter_map(|_| crate::test_support::found(c, &mut rng, level, grade))
         .collect()
 }
 
@@ -60,18 +60,13 @@ fn roll_untrimmed(c: &Content, n: usize, level: u8, grade: LootGrade) -> Vec<Sta
         .collect();
     classes.sort();
     classes.dedup();
-    let source = crate::variant::Source::Loot;
+    let spec = loot::Spec::new(loot::Origin::Floor, level).classes(&classes);
     (0..n)
         .filter_map(|_| {
-            let base = loot::base_in(c, &mut rng, &classes, level)?;
-            Some(loot::make_as_unfinished(
-                c,
-                &mut rng,
-                base,
-                1,
-                (level, grade),
-                source,
-            ))
+            let base = loot::base(c, &spec, &mut rng)?;
+            let spec = spec.grade(grade);
+            let none = &loot::Luck::NONE;
+            Some(loot::make_unfinished(c, &spec, base, 1, none, &mut rng))
         })
         .filter(|s| s.magic().is_some())
         .collect()

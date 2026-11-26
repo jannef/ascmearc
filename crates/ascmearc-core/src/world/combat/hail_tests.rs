@@ -6,7 +6,7 @@
 use crate::action::{Action, AttackKind, Event};
 use crate::content::{ContentFiles, Power, ZoneKind};
 use crate::geom::Pos;
-use crate::magic::{LootGrade, loot};
+use crate::magic::LootGrade;
 use crate::rng::Rng;
 use crate::test_support::said;
 use crate::time::Duration;
@@ -244,7 +244,7 @@ fn no_hail_is_ever_rolled() {
     for seed in 0..400 {
         let mut rng = Rng::stream(seed, "n2114");
         for grade in [LootGrade::Any, LootGrade::Rare] {
-            let stack = loot::make(&content, &mut rng, object, 1, 40, grade);
+            let stack = crate::test_support::made(&content, &mut rng, object, 1, 40, grade);
             assert!(!stack.is_unique(), "{stack:?}");
         }
     }

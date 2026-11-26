@@ -517,7 +517,7 @@ fn magic_sword(content: &Content) -> Stack {
     let mut rng = Rng::stream(3, "connoisseur");
     (0..200)
         .map(|_| {
-            crate::magic::loot::make(
+            crate::test_support::made(
                 content,
                 &mut rng,
                 sword,

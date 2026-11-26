@@ -1,7 +1,7 @@
 //! Tempting hoards (`docs/dev/special-rooms.md`): a generated floor's
 //! special room whose effect has a `hoard` gets its items on the floor: `hoard.items` of them at
-//! the floor's item level + `hoard.loot_level`, with the finder's luck, each on a cell of the
-//! room's plain floor drawn anew (no stairs, light, or trap). Lifting them is what seals the room
+//! the floor's item level + `hoard.loot_level`, with the finder's luck (each a loose gem by the
+//! wealth seam, else a find of the hoard row), each on a cell of the room's plain floor drawn anew (no stairs, light, or trap). Lifting them is what seals the room
 //! (`world/fixtures/hoard.rs`).
 //!
 //! The items come from the level's swarm stream [`Rng::swarm`] (`swarm/<level id>`), as a den's
@@ -12,10 +12,10 @@
 use super::{Palette, Visit};
 use crate::content::{Content, LevelTemplate};
 use crate::geom::Pos;
-use crate::magic::{LootGrade, loot};
+use crate::magic::loot::{self, Origin, Spec};
 use crate::object::add_to_pile;
 use crate::rng::Rng;
-use crate::variant::Source;
+use crate::wealth;
 
 /// Lays the items of every tempting hoard of generated level `template` (see the module docs):
 /// `danger` its danger, `visit` whom it is made for (the finder's luck).
@@ -49,14 +49,9 @@ pub(super) fn fill(
         let level = template.item_level.saturating_add(loot_level);
         for _ in 0..items {
             let p = floor[rng.index(floor.len())];
-            let item = loot::roll_with(
-                content,
-                &mut rng,
-                level,
-                LootGrade::Any,
-                Source::Loot,
-                visit.luck,
-            );
+            let luck = &visit.luck;
+            let item = wealth::gem_instead(content, &mut rng, level, luck.gems)
+                .or_else(|| loot::find(content, &Spec::new(Origin::Hoard, level), luck, &mut rng));
             if let Some(stack) = item {
                 add_to_pile(template.objects.entry(p).or_default(), &[stack], content);
             }

@@ -109,7 +109,7 @@ use crate::content::{
 };
 use crate::damage::Kinds;
 use crate::dice::{Dice, Roll};
-use crate::magic::{LootGrade, loot};
+use crate::magic::LootGrade;
 use crate::object::Stack;
 use crate::rng::Rng;
 use crate::stats::Stat;
@@ -997,10 +997,10 @@ fn dress(w: &mut World, build: &Build, level: u8, gear: Gear, seed: u64) {
         let mut rng = Rng::stream(seed * 1000 + u64::from(level), name);
         let mut stack = match gear {
             _ if magic && level >= 30 => {
-                loot::make(&content, &mut rng, object, 1, level, LootGrade::Rare)
+                crate::test_support::made(&content, &mut rng, object, 1, level, LootGrade::Rare)
             }
             _ if magic && level >= 3 => {
-                loot::make(&content, &mut rng, object, 1, level, LootGrade::Magic)
+                crate::test_support::made(&content, &mut rng, object, 1, level, LootGrade::Magic)
             }
             _ => Stack::new(object, 1),
         };

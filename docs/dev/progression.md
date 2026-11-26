@@ -237,7 +237,7 @@ wiki's effect text appends "while raging".
 | `spell_damage_percent` | `World::evaded` in `spell_hurts` (bursts and bolts, before resistances) |
 | `read_percent`, `scroll_kept` | `read.rs`: `read_price`; `use_up` (one keyed draw a read, only with the talent; "The writing does not fade from the scroll.") |
 | `spares_self` | `World::cast_burst` (the caster is never caught); `PerceptionView::bursts_spare_me`, so `Aim::catches_reader` asks nothing |
-| `loot_magic_percent` | `magic::loot::roll_with` (`roll_rarity`: the weights of the rarities above the find's least grade); `mapgen::generate_with` from `level_template` (the player's luck as a level is first made), `World::loot_of` (drops). The same draws, so maps never change |
+| `loot_magic_percent` | `magic::loot::find` (`roll_rarity`, for a row that takes the finder: the weights of the rarities above the find's least grade); `mapgen::generate_with` from `level_template` (the player's luck as a level is first made), `World::loot_of` (drops). The same draws, so maps never change |
 | `skill_rolls` | `World::level_rolls` |
 | `extra_pick` | `creation_count` (level 1: the race's granted talents' picks, from data alone) and `World::level_up` (`GrowthMods::extra_picks_at`, added to the level's talent pick) |
 | `free_pick` | `creation_free` (level 1, from data alone, as `extra_pick`) and `World::level_up` (`GrowthMods::free_picks_at`: `Due::free`, spent on `free_talents_at` only; the dwarves' Old grudges, docs/dev/oaths.md) |
@@ -260,7 +260,7 @@ wiki's effect text appends "while raging".
 | `favour_percent` | `world::people::shop::favour` (before the cap, `MAX_FAVOUR`) |
 | `gem_worth` | `PerceptionView::appraisal` → `magic::describe::appraised` (the describe screen) |
 | `identify_carried` | `World::appraise_carried` from `live`: `Magic::carried` counts the seconds (saved, left out while 0) |
-| `gem_find_percent` | `gem::find_with` (the gems' chance scaled, at most 100) through `magic::loot::Luck` (`Luck::of(talents)`: with `loot_magic_percent`, from `level_template` and `World::loot_of`) |
+| `gem_find_percent` | `wealth::gem_instead` (the gems' chance scaled, at most 100) through `magic::loot::Luck` (`Luck::of(talents)`: with `loot_magic_percent`, from `level_template` and `World::loot_of`) |
 | `skill` (its `skill` left out: the chosen one, Skill focus) | `Actor::skill_effect`, as magic items' skill bonuses |
 | `distrusted` | `World::refusal`: no one budges (Trusted by none) |
 | `checks` | the stat checks: `disease.rs` (both), `search_modifier`, `lockpick.rs`, `disarm_modifier`, `steps_lightly` |

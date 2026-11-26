@@ -3,14 +3,14 @@
 //! the same way at one quality; stacks join only their like; the grade is in the name and the
 //! worth.
 
+use super::loot::{self, Luck, Origin, Spec};
 use super::make::make;
 use super::worked::{Aspect, Worked, ammunition, ammunition_make};
-use super::{LootGrade, Quality, loot};
+use super::{LootGrade, Quality};
 use crate::content::{ObjectId, PER_MILLE};
 use crate::object::{Stack, add_to_inventory};
 use crate::rng::Rng;
 use crate::test_support::CONTENT;
-use crate::variant::Source;
 
 fn object(id: &str) -> ObjectId {
     CONTENT.object_id(id).expect(id)
@@ -111,26 +111,24 @@ fn ammunition_of_a_high_item_level_is_better_made_and_a_low_one_draws_nothing() 
 /// them are made finer. A creature's gear (not loot) stays as it was.
 #[test]
 fn loot_arrows_take_a_make_by_their_level() {
-    let finer = |level: u8, source: Source| {
+    let finer = |level: u8, origin: Origin| {
         (0..400u64)
             .filter(|&seed| {
                 let mut rng = Rng::stream(seed, "ammo");
                 let grade = LootGrade::default();
-                let made = loot::make_as(
-                    &CONTENT,
-                    &mut rng,
-                    object("arrow"),
-                    12,
-                    (level, grade),
-                    source,
-                );
+                let spec = Spec::new(origin, level).grade(grade);
+                let made = loot::make(&CONTENT, &spec, object("arrow"), 12, &Luck::NONE, &mut rng);
                 made.worked().is_some_and(|w| w.improvements() > 0)
             })
             .count()
     };
-    assert_eq!(finer(1, Source::Loot), 0);
-    assert!(finer(20, Source::Loot) > 100, "{}", finer(20, Source::Loot));
-    assert_eq!(finer(20, Source::gear(20)), 0);
+    assert_eq!(finer(1, Origin::Floor), 0);
+    assert!(
+        finer(20, Origin::Floor) > 100,
+        "{}",
+        finer(20, Origin::Floor)
+    );
+    assert_eq!(finer(20, Origin::Gear), 0);
 }
 
 #[test]
