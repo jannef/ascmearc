@@ -531,6 +531,7 @@ mod tests {
             banes: Vec::new(),
             grows: None,
             first_blood: false,
+            spreads: None,
         };
         let sharp = effects.sharpen(&content, profile);
         assert_eq!((sharp.to_hit, sharp.bonus), (5, 0));

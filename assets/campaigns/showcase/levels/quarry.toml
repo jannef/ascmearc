@@ -150,6 +150,21 @@ objects = ["unique:kettle_hat"]
 at = [9, 12]
 objects = ["unique:scarhide"]
 
+# Three more of the pool across the arrival room below the start (#2121, #2122, #2140): Twifeald,
+# a staff whose single-target spells fork; Smitte, a knife whose cut spreads its wielder's hexes;
+# and the Sonneles, an amulet with which the dark strikes surely at the lit.
+[[pile]]
+at = [5, 9]
+objects = ["unique:twifeald"]
+
+[[pile]]
+at = [7, 9]
+objects = ["unique:smitte"]
+
+[[pile]]
+at = [9, 9]
+objects = ["unique:sonneles"]
+
 # What the sealed chamber keeps.
 [[pile]]
 at = [48, 8]

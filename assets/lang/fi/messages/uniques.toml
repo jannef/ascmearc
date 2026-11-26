@@ -3,6 +3,8 @@
 # A unique shield's Cast power goes off (Demonsoul, #2095).
 flames_from_shield = { text = "{who:Gen} kilvestä leimahtaa liekkejä!", of = "929475" }
 flames_from_your_shield = { text = "Kilvestäsi leimahtaa liekkejä!", of = "e3fd55" }
+# The Spread power (#2122, Smitte): the player's hexes spread from the one they hit.
+hexes_spread = { text = "Kirouksesi tarttuvat {who:Gen} lähellä oleviin!", of = "f06c92" }
 # A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.
 no_craft = { text = "Se on ainutlaatuinen: mikään taitosi ei muuta sitä.", of = "749215" }
 

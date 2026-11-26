@@ -295,6 +295,9 @@ pub struct Profile {
     /// A hit on a foe at full health is a sure critical (Satisfaction's FirstBlood), decided
     /// where it meets its target (`World::resolve`, `world/combat/first_blood.rs`).
     pub first_blood: bool,
+    /// How far its wielder's hexes on the one it hits spread (Smitte's Spread), in cells: read
+    /// where a blow lands (`World::resolve`, `world/combat/spread.rs`).
+    pub spreads: Option<u8>,
 }
 
 /// What an attack is made with, as data gives it: a weapon (`data/objects.toml`) or a creature's
@@ -424,6 +427,7 @@ impl Profile {
             banes: Vec::new(),
             grows: None,
             first_blood: false,
+            spreads: None,
         }
     }
 
@@ -747,6 +751,7 @@ mod tests {
             banes: Vec::new(),
             grows: None,
             first_blood: false,
+            spreads: None,
         }
     }
 

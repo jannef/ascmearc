@@ -5,6 +5,9 @@
 # before the spell's own lines. `who`: a bearer the player sees.
 flames_from_shield = "Flames leap from {who:poss} shield!"
 flames_from_your_shield = "Flames leap from your shield!"
+# The Spread power (#2122, Smitte; `world/combat/spread.rs`): the player's hexes on the one
+# they hit spread to those near it. `who`: the one hit.
+hexes_spread = "Your hexes spread from {who:the} to everyone near!"
 # A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.
 no_craft = "It is unique: no craft of yours will change it."
 

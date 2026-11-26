@@ -207,8 +207,8 @@ impl Seeing {
         let (width, height) = (level.width(), level.height());
         // Light-blind eyes in glare: strong light on the viewer's own cell dazzles them, and
         // they see nothing farther than their race says.
-        let dazzled = (state.race_of(content, state.player()))
-            .and_then(|race| race.light_blind)
+        // Never with a Nightside unique on (`world/combat/nightside.rs`).
+        let dazzled = (state.light_blind(content, state.player()))
             .filter(|blind| blind.dazzled_by(light[viewer]));
         let range = los.range;
         let mut seeing = Seeing {

@@ -408,6 +408,25 @@ Its power works while it is worn or wielded, identified or not:
 - **Scars**: every critical hit you suffer leaves a scar on it, chosen at random: +1 Armour, +1
   maximum hit point, or +1 Toughness. The scars stay on it for whoever wears it next, and there
   is no limit to them. Its description counts them once you have identified it.
+- **Fork**: a staff whose wielder's harmful spells at one target leap on. A
+  [ray, a bolt, or a touch](spellcasting.md#shapes) that does damage, hit or miss, also strikes
+  the foe nearest the first within the number of cells the table gives, in a clear line from it,
+  for half the damage. The second rolls to hit on its own where the spell rolls one, and the
+  spell's status falls on it too. It never strikes you or an ally, and with no foe there it
+  does nothing. A cone, a burst, a line, and a hex never fork.
+- **Spread**: a knife that passes on its wielder's [hexes](buffs.md#hexes). When it hits a
+  creature and leaves it alive, every hex you laid on that creature spreads to every creature
+  within 3 cells of it, at the same strength: foes, your allies, and your
+  [familiar](familiars.md#familiars) alike, but never you. No line of sight is needed. One that
+  has that hex already keeps whichever is longer. Your familiar's
+  [touch](familiars.md#the-touch) counts as a hit with the knife while it stands beside you.
+- **Nightside**: its wearer is never [dazzled](races.md#race-drow) by strong light, and a
+  [Flare](spell-rules.md) never stuns them. While the [light](light.md#what-light-is) on your own
+  cell is below 12 (too dark for normal eyes), every attack you make that rolls to hit, a blow,
+  a shot, a throw, or a spell, on a creature whose cell's light is 250 or more (a bright fire
+  close by, or the sun well up) gets +3 to hit, and finds it
+  [flat-footed](surprise.md#caught-unawares): its Dexterity and Dodge count for nothing, and
+  your [sneak attack](surprise.md#sneak-attacks) dice apply.
 
 Some uniques are made of clothing, such as footwraps or a waistcoat. Ordinary clothing is never
 magic, but these work as the boots or body armour they are worn as.

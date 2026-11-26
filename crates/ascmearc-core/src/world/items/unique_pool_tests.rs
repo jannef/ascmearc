@@ -31,9 +31,12 @@ fn a_level_s_uniques_of_the_pool_are_found_once_it_is_made() {
             "satisfaction",
             "scarhide",
             "silverstrike",
+            "smitte",
             "smoulder",
+            "sonneles",
             "stick",
             "tiptoe",
+            "twifeald",
         ])
     );
 }

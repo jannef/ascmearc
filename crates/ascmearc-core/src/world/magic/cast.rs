@@ -1022,10 +1022,16 @@ impl World {
             to_hit,
             threat,
             skills,
+            share: 100,
         };
         let source = (here, def.shape != Shape::Touch);
+        let first = self.state.actors[&target].pos;
         let (strike, rolled) = self.spell_attack(caster, target, source, shot, made);
         self.spell_type_cell(def.damage_type, last, made);
+        // A unique staff's Fork (`fork.rs`): a harmful one leaps on to a second foe.
+        if def.kind == SpellPurpose::Damage {
+            self.fork(caster, (target, first), shot, made);
+        }
         if strike
             != (Strike::Missed {
                 by: Some(Category::Shield),
@@ -1051,9 +1057,11 @@ impl World {
         let def = shot.def;
         let (amount, strike, sneak, caught) = match def.resolution {
             Resolution::Attack | Resolution::Touch => {
+                // From the dark at the lit (a Nightside unique, `nightside.rs`).
+                let dark = self.out_of_the_dark(by, target);
                 let attack = Attack {
                     damage: shot.dice,
-                    to_hit: shot.to_hit,
+                    to_hit: shot.to_hit + dark.unwrap_or(0),
                     threat: shot.threat,
                     crit: combat::DEFAULT_CRIT,
                     strength: None,
@@ -1086,7 +1094,7 @@ impl World {
                 // Caught unawares (`surprise.rs`): the initiative check, before the roll; a
                 // sneak attack within reach (`ambush.rs`), its dice after it.
                 let unaware = self.unaware(target, by);
-                let unseen = self.sneaks(by, target, unaware, missile);
+                let unseen = self.sneaks(by, target, unaware || dark.is_some(), missile);
                 // Hair trigger's blow may cut the caster down before the spell lands; how the
                 // spell found its target is told in its words (`surprise.rs`).
                 let Some(caught) = self.caught_by(by, target, unaware, made) else {
@@ -1096,6 +1104,7 @@ impl World {
                 let struck = self.target_against(target, missile);
                 let struck = self.vitals(target, struck);
                 let struck = self.flat_footed(target, unaware, struck);
+                let struck = World::caught_in_light(dark, struck);
                 let against = combat::Target {
                     no_criticals: struck.no_criticals,
                     ..combat::Target::bare(struck.defence)
@@ -1136,6 +1145,8 @@ impl World {
                 None,
             ),
         };
+        // A fork's share of the harm (`fork.rs`): the dice's, the sneak dice whole.
+        let amount = amount * i32::from(shot.share) / 100;
         let damage = Damage::new(amount + sneak, def.damage_type);
         let start = made.len();
         // Soulglass: a kill of this blow leaves crystals (`crystal.rs`).

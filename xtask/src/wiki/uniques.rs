@@ -298,6 +298,31 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
              any, its bearer is never driven from their cell (knockback, a shove, a spell's \
              push) nor caught flat-footed by an attacker they did not see"
         ),
+        Some(Power::Fork { cells, percent }) => format!(
+            "every damage spell its wielder casts at one target (a ray, a bolt, a touch; never a \
+             cone, a burst, a line, or a hex), hit or miss, also strikes the hostile creature \
+             nearest the first within {cells} cells of it, in a clear line, for {percent}% of the \
+             damage it rolls, with its own roll to hit where the spell rolls one; never the caster \
+             or an ally, and none with no foe there"
+        ),
+        Some(Power::Spread(cells)) => format!(
+            "every hit with it on a creature it leaves alive spreads each hex its wielder laid on \
+             that creature to every creature within {cells} cells of it (no line of sight needed), \
+             friend or foe but never the wielder, at the same degrees; one that has that hex \
+             already keeps the longer. A hit of its wielder's familiar counts while the familiar \
+             stands beside them"
+        ),
+        Some(Power::Nightside {
+            dark_below,
+            lit_from,
+            to_hit,
+        }) => format!(
+            "its wearer is never dazzled by strong light and never stunned by a Flare's flash. \
+             While the light on their own cell is below {dark_below}, every attack they make that \
+             rolls to hit (a blow, a shot, a throw, a spell) on a creature whose cell's light is \
+             {lit_from} or more gets {to_hit:+} to hit and finds it flat-footed: no Dexterity or \
+             Dodge counts, and sneak attack dice apply"
+        ),
         Some(Power::Barefoot(bare)) => {
             let slot = content.slot(bare.slot).name.to_lowercase();
             let mut gives = Vec::new();

@@ -954,7 +954,16 @@ impl World {
         // exploit is a sneak attack whatever the target knows (`openings.rs`).
         let unaware = fair && (self.unaware(target, attacker) || self.lurked(attacker, target));
         let low = profile.is_some() && self.sneak_taken(attacker, target) && !dummy;
-        let unseen = fair && self.sneaks(attacker, target, unaware || low, missile);
+        // From the dark at the lit (a Nightside unique, `nightside.rs`): surer, and flat-footed.
+        let dark = fair
+            .then(|| self.out_of_the_dark(attacker, target))
+            .flatten();
+        let profile = profile.map(|mut p| {
+            p.to_hit += dark.unwrap_or(0);
+            p
+        });
+        let unseen =
+            fair && self.sneaks(attacker, target, unaware || low || dark.is_some(), missile);
         // Hair trigger's blow may cut the attacker down before it strikes (`free_blow.rs`); how
         // the blow found its target is told in its words (`surprise.rs`).
         let caught = match profile {
@@ -984,6 +993,7 @@ impl World {
         let struck = self.target_shot(target, missile, close);
         let struck = self.vitals(target, struck);
         let struck = self.flat_footed(target, unaware, struck);
+        let struck = World::caught_in_light(dark, struck);
         let struck = self.small_target(attacker, target, struck);
         // False lead (a weapon active, `weapon_active.rs`): rolled without the categories it ignores.
         let struck = self.misled(attacker, struck);
@@ -994,6 +1004,8 @@ impl World {
         });
         // What a hit causes besides its damage (a unique weapon's Inflict power).
         let made = profile.as_ref().map_or_else(Vec::new, |p| p.on_hit.clone());
+        // A unique weapon's Spread (`spread.rs`).
+        let spreads = profile.as_ref().and_then(|p| p.spreads);
         // The blow's dice: the strike's own stream (`fight/strike/<attacker>/<target>`); an
         // intent (no profile) draws nothing.
         let blow = profile.map(|profile| {
@@ -1124,6 +1136,8 @@ impl World {
         // A familiar's touch is its master's hex (`familiar.rs`), on a hit that leaves it alive.
         if blow.is_some_and(|b| b.strike.is_hit()) {
             self.familiar_touch(attacker, target, kind, events);
+            // A unique weapon's Spread: the wielder's hexes on it spread (`spread.rs`).
+            self.spread_hexes((attacker, target), (kind, spreads), events);
             // Acid on gear, either way round (`corrode.rs`).
             self.corrode((attacker, target), (kind, with));
         }

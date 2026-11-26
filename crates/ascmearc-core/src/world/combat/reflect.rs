@@ -64,6 +64,8 @@ pub(in crate::world) struct Shot<'s> {
     /// The spell attack skill and caster style it is cast with (the caster's own cast of a
     /// spell that rolls to hit; none for a scroll, a wand, or a reflected flight).
     pub(in crate::world) skills: AttackSkills,
+    /// The percent of its rolled harm it does: 100, a fork's less (`world/magic/fork.rs`).
+    pub(in crate::world) share: u8,
 }
 
 /// A spell turned back: by whom, at whom, the way back, and the spell.
