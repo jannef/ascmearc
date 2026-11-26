@@ -1,0 +1,19 @@
+# The Friþwebbe (#2129), the half-elves' amulet: a jade amulet for the drop pool (#2103; placed
+# nowhere else but the test world's quarry), item level 30. The issue's silver amulet is no base
+# the game has; it allows a jade one. A hostile thinking creature (`sapient`, never a fiend, the
+# undead, or a construct) that first becomes aware of its wearer checks its Willpower against
+# 10 + their Presence modifier + what Bluff adds, and failing it holds its hand: neutral to them
+# and their allies until one of them strikes it, steals from it, or casts at it (its Parley
+# power, `world/creatures/parley.rs`). +7 Presence (of the Lion), +40 Haggling, of Health 4
+# (disease checks, past its ladder's 3). Every value set by hand (docs/dev/magic-items.md
+# "Unique items").
+[[unique]]
+id = "frithwebbe"
+name = "the Friþwebbe"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "jade_amulet"
+affixes = ["of_the_lion=7", "of_haggling=40", "of_health=4"]
+level = 30
+power = { parley = "presence", difficulty = 10, tag = "sapient", unless = ["fiend", "undead", "construct"], phrase = "A thinking foe that first meets its wearer may hold its hand." }
+lore = "It was a wedding gift, and the wedding held. The war did not come."

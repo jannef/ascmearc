@@ -726,6 +726,8 @@ fn search_the_last_seen_spot_then_go_back_and_patrol_on() {
             rage_sleeps: None,
             tallies: Default::default(),
             planted: None,
+            gathered: None,
+            truce: None,
             spells: Default::default(),
             streak: None,
             satiation: None,

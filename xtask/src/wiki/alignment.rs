@@ -108,6 +108,10 @@ pub(super) fn alignment_deeds(content: &Content) -> String {
         ),
         ("Consecrating a cursed or draining place", s.consecrate),
         (
+            "A thinking creature holding back from you, by the [Friþwebbe](magic-items.md#unique-items)",
+            s.make_peace,
+        ),
+        (
             "Praying at a good forgotten altar (gold glow)",
             s.prayed_good,
         ),

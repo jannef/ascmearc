@@ -242,6 +242,7 @@ mod town;
 mod trap;
 mod tuning;
 mod unique;
+mod unique_parley;
 #[cfg(test)]
 mod unique_values_tests;
 mod unseen;
@@ -476,6 +477,7 @@ pub use unique::{
     Barefoot, CastPower, Keeps, Pilfer, Power, RoarPower, Shrive, UNIQUE, UniqueDef, Uniques,
     WeaponGrowth,
 };
+pub use unique_parley::Parley;
 pub(crate) use unseen::fading;
 pub use unseen::{Fading, Invisible};
 pub use vault::{DangerRange, Vault};

@@ -750,6 +750,8 @@ impl World {
     /// The player attacked actor `target`: a keeper of an open shop on the current level is
     /// outraged (said after the attack's own messages), and a quarrel's wizard turns on them.
     pub(in crate::world) fn provoke(&mut self, target: ActorId) {
+        // A Parley's truce is broken (`parley.rs`).
+        self.break_truce(self.state.player, target);
         // A quarrel's wizard decides against the player (`quarrel.rs`).
         self.wizard_attacked(target);
         let shops = &self.state.current().shops;

@@ -465,6 +465,29 @@ Its power works while it is worn or wielded, identified or not:
 - **Scars**: every critical hit you suffer leaves a scar on it, chosen at random: +1 Armour, +1
   maximum hit point, or +1 Toughness. The scars stay on it for whoever wears it next, and there
   is no limit to them. Its description counts them once you have identified it.
+- **Momentum**: boots that turn a run-up into a blow. Every step you take (not a blink) builds a
+  point of momentum, up to 3. Anything else you do, even waiting, loses it all. Your next
+  bare-handed blow, a punch or a kick with nothing in your hands, spends it, hit or miss: a hit
+  does 1d6 more damage for each point. At 3 points the one you hit is knocked a cell back once
+  the attack is over, and a [Flurry](class-ascetic.md#talent-flurry)'s second blow in that
+  attack costs no ki. A blow with a weapon gets nothing. The status bar shows "One step", "Two
+  steps", or "Full tilt".
+- **Gather**: boots that get harder to hit the more you are missed. Every blow, shot, or thrown
+  thing that misses you gives +1 Dodge, with no limit. The first one that hits, even one your
+  armour soaks whole, loses it all. Spells, breath, blasts, and traps neither add to it nor
+  break it. It lasts between fights, but taking the boots off or being caught
+  [Surprised](status-list.md#status-surprised) loses it. The status bar shows "Gathered" and the
+  count.
+- **Parley**: an amulet that lets you speak before the first blow. When a hostile thinking
+  creature first notices you, it makes a [Willpower](stats.md#stat-willpower) check against 10 +
+  your [Presence](stats.md#stat-presence) modifier + what your Bluff adds to a
+  [feint](skill-uses.md#feinting). If it fails, it holds back: it is neutral to you and your
+  allies, as a townsperson is, and you are told so. Fiends, the undead, constructs, beasts, and
+  anything else that does not think never check. Attack it, cast at it, or try to steal from it
+  (you or an ally), and it is hostile again for good. Each creature checks once, on its own. Ones
+  already hunting you when you put the amulet on never check. Making peace this way is a little
+  good. A creature holding back still blocks a corridor, and
+  gives no experience or loot unless you break the peace.
 - **Fork**: a staff whose wielder's harmful spells at one target leap on. A
   [ray, a bolt, or a touch](spellcasting.md#shapes) that does damage, hit or miss, also strikes
   the foe nearest the first within the number of cells the table gives, in a clear line from it,

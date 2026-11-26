@@ -13,6 +13,7 @@ pub(in crate::world) mod fight;
 mod first_blood;
 pub(in crate::world) mod free_blow;
 mod frenzy;
+pub(in crate::world) mod gather;
 mod grows;
 mod hail;
 pub(in crate::world) mod hurl;
@@ -56,6 +57,7 @@ cfg_if! {
         mod fight_tests;
         mod free_blow_tests;
         mod frenzy_tests;
+        mod gather_tests;
         mod grows_tests;
         mod hail_tests;
         mod hurl_tests;

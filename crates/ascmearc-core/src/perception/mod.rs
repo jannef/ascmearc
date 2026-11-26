@@ -103,6 +103,7 @@ mod truth;
 mod view;
 
 pub use below::{BelowActor, BelowCell, BelowView};
+pub use own::OwnGathered;
 pub use own::{
     Freshness, NeedView, OwnResource, OwnScribe, OwnSkill, OwnStudy, OwnTalent, Progress,
     TalentView,

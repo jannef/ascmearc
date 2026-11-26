@@ -76,6 +76,16 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "faegerfot",
+        40,
+        &[
+            ("of_the_lynx", 6),
+            ("of_evasion", 3),
+            ("of_the_hare", 40),
+            ("featherweight", 50),
+        ],
+    ),
+    (
         "fambles",
         24,
         &[
@@ -95,6 +105,11 @@ const UNIQUES: &[Written] = &[
             ("of_the_hunt", 4),
             ("keen", 2),
         ],
+    ),
+    (
+        "frithwebbe",
+        30,
+        &[("of_the_lion", 7), ("of_haggling", 40), ("of_health", 4)],
     ),
     (
         "gar",
@@ -187,6 +202,16 @@ const UNIQUES: &[Written] = &[
         "kettle_hat",
         12,
         &[("featherweight", -67), ("hardened", 3), ("of_the_ox", 4)],
+    ),
+    (
+        "leohtfot",
+        20,
+        &[
+            ("fleet", 15),
+            ("nimble", 2),
+            ("of_balance", 6),
+            ("of_the_hare", 4),
+        ],
     ),
     (
         "masterpiece",

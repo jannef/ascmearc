@@ -993,6 +993,8 @@ impl World {
         if !dummy {
             self.attacked_near(attacker, target);
         }
+        // A blow of the player's side breaks a Parley's truce (`parley.rs`).
+        self.break_truce(attacker, target);
         // The player strikes from hallowed ground: the peace is broken (`sanctuary.rs`).
         if attacker == self.state.player {
             self.break_hallow();
@@ -1044,6 +1046,8 @@ impl World {
         let blow = blow.map(|b| self.lore_blow(attacker, target, b));
         // Holy wrath's die (`smite.rs`).
         let blow = blow.map(|b| self.holy_wrathed(attacker, target, b));
+        // Lēohtfōt's momentum, on a bare-handed blow (`gather.rs`).
+        let blow = blow.map(|b| self.momentum_blow((attacker, target), (kind, with), b));
         // A unique armour's Negate (`negate.rs`): the hit comes to nothing, before anything comes of it.
         let blow = blow.map(|b| self.negated(target, b));
         let blow = blow.map(|b| Self::thrust_share(b, share));
@@ -1059,6 +1063,8 @@ impl World {
         // Diamond soul's catch (`ascetic.rs`): a missile's hit undone for a point of ki.
         let blow = self.caught_shot(target, (missile, with), blow, events);
         let blow = self.plain_miss_dodged(attacker, target, blow);
+        // Fǣgerfōt's gathered Dodge: a miss adds, a hit empties (`gather.rs`).
+        self.gather_on(target, kind, blow);
         events.push(Event::Attacked {
             attacker,
             target,

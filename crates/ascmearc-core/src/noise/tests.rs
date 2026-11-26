@@ -149,6 +149,8 @@ fn actor(content: &Content, creature: &str) -> Actor {
         rage_sleeps: None,
         tallies: Default::default(),
         planted: None,
+        gathered: None,
+        truce: None,
         spells: Default::default(),
         streak: None,
         satiation: None,

@@ -45,6 +45,10 @@ message = { text = "Hiljaisuus ei saa ääntäsi vaikenemaan.", of = "3bc6d2" }
 lore = { text = "Nojaa siihen selkäsi, niin vuori on takanasi. Lähde kävelemään, niin se on pelkkää puuta ja rautaa.", of = "5ef9f3" }
 phrase = { text = "Mitä kauemmin sen kantaja seisoo, sitä vaikeampi häntä on haavoittaa, eikä mikään liikuta häntä.", of = "826bf0" }
 
+[faegerfot]
+lore = { text = "Ne eivät ole koskaan koskettaneet maata kahdesti samassa kohdassa.", of = "7a62c0" }
+phrase = { text = "Jokainen kantajansa ohi mennyt isku tekee seuraavasta vaikeamman osua.", of = "eeff6c" }
+
 [fambles]
 lore = { text = "Tuollaiset kädet ovat joko siunaus tai todiste.", of = "98350d" }
 phrase = { text = "Jokainen viilto, jonka sen kantaja veitsellä tekee, tyhjentää viillettävän taskuja.", of = "48cc55" }
@@ -52,6 +56,10 @@ phrase = { text = "Jokainen viilto, jonka sen kantaja veitsellä tekee, tyhjent�
 [feolaga]
 lore = { text = "Toinen heistä valitsi saaliin. Kukaan ei ole koskaan ollut varma, kumpi.", of = "90ff17" }
 phrase = { text = "Mihin sen nuoli osuu, sen kimppuun kumppanisi syöksyy heti, ja jokainen puraisu, jonka se saaliiseen saa, terävöittää keskittymistäsi.", of = "ddb90b" }
+
+[frithwebbe]
+lore = { text = "Se oli häälahja, ja liitto kesti. Sotaa ei tullut.", of = "06898e" }
+phrase = { text = "Ajatteleva vihollinen, joka ensi kertaa kohtaa sen kantajan, saattaa pidättäytyä.", of = "eac6be" }
 
 [gar]
 lore = { text = "Jokaisen kilpimuurin takana on rivi näitä, ja jokaisen rivin takana rivi.", of = "1a6fc5" }
@@ -91,6 +99,10 @@ phrase = { text = "Paljain jaloin sen kantaja kulkee äänettä, väistää kett
 [kettle_hat]
 lore = { text = "Se piti sateen poissa ja keiton sisällä. Sitten tuli sota, ja se piti miekankin poissa.", of = "d2d11a" }
 phrase = { text = "Jokainen siihen osuva isku kumahtaa kauas, ja meteli horjuttaa jokaista sen kantajan vieressä seisovaa.", of = "6e7327" }
+
+[leohtfot]
+lore = { text = "Ensimmäinen askel on askel. Kolmas on jo isku.", of = "461f8b" }
+phrase = { text = "Jokainen kantajan askel kertyy hänen seuraavaan paljain käsin lyötyyn iskuunsa.", of = "0609ac" }
 
 [masterpiece]
 lore = { text = "Sen tehnyt seppä laski vasaransa sen jälkeen, sillä parannettavaa ei enää ollut.", of = "98c4d7" }

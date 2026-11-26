@@ -30,6 +30,16 @@ text = "Mihin suuntaan kaivat? (Esc peruu)"
 of = "2a9f5d"
 text = "Mihin suuntaan purat ansan? (Esc peruu)"
 
+# Status bar: Lēohtfōt's momentum at its most (#2116).
+[full_tilt]
+of = "0236ac"
+text = "Täysi vauhti"
+
+# Status bar: misses gathered into Dodge (Fǣgerfōt, #2128).
+[gathered]
+of = "e2f192"
+text = "Kertynyt {count:bare}"
+
 [give_way]
 of = "5d3e45"
 text = "Mihin suuntaan annat? (Esc peruu)"
@@ -61,6 +71,15 @@ text = "Katselet: suuntanäppäimet liikuttavat, Esc tai {own:bare} lopettaa."
 [look_hint_esc]
 of = "a66d31"
 text = "Katselet: suuntanäppäimet liikuttavat, Esc lopettaa."
+
+# Status bar: Lēohtfōt's momentum (#2116), one step and two.
+[momentum_one]
+of = "915931"
+text = "Yksi askel"
+
+[momentum_two]
+of = "bec2e3"
+text = "Kaksi askelta"
 
 [mp]
 of = "3b760e"

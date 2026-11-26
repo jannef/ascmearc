@@ -156,9 +156,8 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert!(other.check(content.object(bedes.object), &content).is_err());
     // The drop pool's of level 12 or more (#1976, #2095, #2097, #2098, #2100, #2109, #2115,
     // #2117, #2123, #2124, #2125, #2127, #2131, #2132, #2133, #2137, #2139, #2141, the shared
-    // table first, #2110, #2111, #2113, #2114, #2118, #2121, #2122, #2130, #2134, #2136, #2140),
-    // the criminals' four,
-    // the pedlar's three (#808), and Sigeric's (#1787), each with its power (Swīge, #2112, has
+    // table first, #2110, #2111, #2113, #2114, #2116, #2118, #2121, #2122, #2128, #2129, #2130,
+    // #2134, #2136, #2140), the criminals' four, the pedlar's three (#808), and Sigeric's (#1787), each with its power (Swīge, #2112, has
     // none: its rules are fields).
     let powers: Vec<(&str, &str)> = (content.uniques())
         .filter(|u| u.stack.magic().is_some_and(|m| m.level >= 12))
@@ -201,6 +200,9 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
                     Power::Fork { .. } => "fork",
                     Power::Spread(_) => "spread",
                     Power::Nightside { .. } => "nightside",
+                    Power::Momentum { .. } => "momentum",
+                    Power::Gather => "gather",
+                    Power::Parley(_) => "parley",
                 },
             };
             (u.id.as_str(), power)
@@ -216,8 +218,10 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
             ("domgeorn", "credit"),
             ("entbana", "feller"),
             ("eorthfaest", "plant"),
+            ("faegerfot", "gather"),
             ("fambles", "pilfer"),
             ("feolaga", "quarry"),
+            ("frithwebbe", "parley"),
             ("gar", "thrust"),
             ("gorthak", "roar"),
             ("grandmother", "inflict"),
@@ -225,6 +229,7 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
             ("hagolscur", "burst"),
             ("hushfoot", "barefoot"),
             ("kettle_hat", "ring"),
+            ("leohtfot", "momentum"),
             ("masterpiece", "negate"),
             ("oath", "oath"),
             ("onraes", "onset"),
@@ -824,8 +829,9 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
     // Onrǣs (#2123) and Gār (#2124); Scrift, Swīge, and Wyrtruma (#2111-#2113); Beornhama
     // (#2110), Gorthak (#2136), and the Dōmgeorn (#2130); the three launchers (#2114, #2134,
     // #2118); the Fambles, the Stampers, and Snaffle (#2119, #2120, #2138); Twifeald, Smitte,
-    // and the Sonneles (#2121, #2122, #2140).
-    assert_eq!(ids.len(), 45, "{ids:?}");
+    // and the Sonneles (#2121, #2122, #2140); Lēohtfōt, Fǣgerfōt, and the Friþwebbe (#2116,
+    // #2128, #2129).
+    assert_eq!(ids.len(), 48, "{ids:?}");
     let widowmaker = unique(&w, "widowmaker");
     let magic = widowmaker.magic().expect("magic");
     let stiletto = content.object(widowmaker.object);

@@ -168,6 +168,7 @@ pub use classes::spirit_weapon::{gift as spirit_gift, pierces_all, shapes as wea
 pub use combat::attacks::{AttackSource, OwnAttack};
 pub use combat::fight::{Cause, Death};
 pub use combat::free_blow::FreeBlows;
+pub use combat::gather::Gathered;
 pub(crate) use combat::item_damage::protected_in;
 pub use combat::plant::Planted;
 pub(crate) use crafting::craft::recipe_rows;
@@ -189,6 +190,7 @@ pub use crafting::salvage::{chipped, salvage_percent, salvageable};
 pub use crafting::seal::MOST_SEALS;
 pub use crafting::set::{SetBand, set_band, settable};
 pub use crafting::temper::{temperable, whittleable, workable, workable_wood};
+pub use creatures::parley::Truce;
 pub use creatures::statue::Statue;
 pub(crate) use creatures::unseen::{Concealed, fade_refused, unseen_by_player};
 pub use fixtures::curse::{Rising, rise_candidates, rises_as};
@@ -628,6 +630,8 @@ pub struct World {
     /// The player's weapon active under way (not saved): what its attack does beyond a plain
     /// one, read where that is resolved (`weapon_active.rs`).
     technique: combat::weapon_active::Technique,
+    /// What the action under way did toward a unique's momentum (not saved: `gather.rs`).
+    footwork: combat::gather::Underway,
     /// What an overworld encounter has under way within the action (not saved:
     /// `encounter.rs`).
     encounter: levels::encounter::Underway,
@@ -945,6 +949,8 @@ impl World {
             rage_sleeps: None,
             tallies: Default::default(),
             planted: None,
+            gathered: None,
+            truce: None,
             // The scenario's spells, known from the start (a test world's fixture).
             spells: def.spells.iter().map(|&s| (s, 1)).collect(),
             streak: None,
@@ -1177,6 +1183,7 @@ impl World {
             fresh: Vec::new(),
             reflection: Default::default(),
             technique: combat::weapon_active::Technique::default(),
+            footwork: combat::gather::Underway::default(),
             encounter: Default::default(),
         }
     }
@@ -1685,6 +1692,10 @@ pub(crate) fn stance_between(
 ) -> Stance {
     // A faction friendly to nothing is hostile to its own, never to itself.
     if a.id == b.id || allies::beast_friend::befriended(state, content, a, b) {
+        return Stance::Neutral;
+    }
+    // A creature holding its hand under a Parley (`parley.rs`).
+    if creatures::parley::holds_hand(state, a, b) {
         return Stance::Neutral;
     }
     content.stance_of(a.faction(content), b.faction(content))

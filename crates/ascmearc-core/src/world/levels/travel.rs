@@ -754,6 +754,8 @@ pub(in crate::world) fn make_creature(
         rage_sleeps: None,
         tallies: Default::default(),
         planted: None,
+        gathered: None,
+        truce: None,
         spells: Default::default(),
         streak: None,
         satiation: None,

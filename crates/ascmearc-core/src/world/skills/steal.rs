@@ -76,6 +76,8 @@ impl World {
         }
         // Priced before anything changes hands.
         let price = self.price_of(player, ActionKind::Steal);
+        // A Parley's truce is broken by the try (`parley.rs`).
+        self.break_truce(player, victim);
         let mut rng = draw!(self, "steal/{}", self.state.actors.key(victim));
         if self.steal_contest(victim, &mut rng) {
             self.lift(victim);

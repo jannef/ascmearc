@@ -16,6 +16,7 @@
 use super::level::{ItemPartSpec, hand_made, item_part, magic_of};
 use super::object::AddedSpec;
 use super::status::{OnHit, OnHitSpec};
+use super::unique_parley::Parley;
 use super::{
     Build, Content, ContentError, DamageTypeId, ItemKind, LightId, ObjectDef, ObjectId, Rarity,
     ResourceId, SlotId, SpellId, StatusId, WeaponSkillId, ZoneKind,
@@ -57,6 +58,12 @@ pub enum Power {
     /// in `noise::noise` (a step), `Actor::defence` (Dodge), and `world/skills/trapwise.rs` (no
     /// trap springs under them; the traps beside them found).
     Barefoot(Barefoot),
+    /// Every melee or missile attack that misses its wearer adds +1 to their Dodge, without a
+    /// cap, until one lands; being Surprised or taking it off loses it all (`{ gather = "dodge"
+    /// }`, Fǣgerfōt's, #2128). The count is the wearer's [`crate::world::Gathered`], read where
+    /// Dodge is summed (`Actor::defence`) and kept where a blow is resolved
+    /// (`world/combat/gather.rs`).
+    Gather,
     /// Its hits cause a status, by a chance (`{ inflict = "poisoned", chance = 100, severity =
     /// 1 }`): read where a natural attack's `on_hit` is applied (`World::after_blow`), for the
     /// weapon that hit (a launcher's for its shots), through the attack's
@@ -70,6 +77,12 @@ pub enum Power {
     /// ([`crate::magic::Mods::worn`]), where it counts as a glowing affix's light does (the
     /// brightest, by radius).
     Light(LightId),
+    /// Each step its wearer takes builds a point of momentum, to `max`, and any other action
+    /// empties it; their next bare-handed blow adds a `die`-sided die a point, and at `max` it
+    /// knocks the one struck back a cell and a flurry's blow costs no ki (`{ momentum = 3, die =
+    /// 6 }`, Lēohtfōt's, #2116). The count is the wearer's [`crate::world::Gathered`], kept
+    /// where an action ends and read where a blow is resolved (`world/combat/gather.rs`).
+    Momentum { max: u8, die: u8 },
     /// A hit on its wearer comes to nothing by this chance in a hundred (`{ negate = 50,
     /// message = "..." }`, #2100; worn armour only): read where an attack rolled against
     /// Defence has hit and before anything comes of it (`world/combat/negate.rs`, `World::resolve`
@@ -111,6 +124,13 @@ pub enum Power {
         gain: u16,
         critical: u16,
     },
+    /// A hostile thinking creature that first becomes aware of its wearer, the player, checks
+    /// its Willpower against their Presence and, failing, holds its hand: it stands neutral
+    /// toward them until they or an ally strike it, steal from it, or cast at it (`{ parley =
+    /// "presence", difficulty = 10, tag = "sapient", unless = [...] }`, the Friþwebbe's, #2129).
+    /// Read where a creature's turn begins and where stances are decided
+    /// (`world/creatures/parley.rs`).
+    Parley(Parley),
     /// Its wielder's or wearer's blows take from what their target carries (`{ pilfer = 30,
     /// disarm = 10 }`, Snaffle's, #2138; `{ pilfer = 100, contest = true, skill = "daggers",
     /// opening = true }`, the Fambles', #2119): read where a blow lands (`world/combat/pilfer.rs`,
@@ -560,6 +580,19 @@ struct PowerSpec {
     difficulty: Option<i32>,
     /// Whether criticals suffered scar it.
     scars: Option<bool>,
+    /// The most momentum its wearer's steps build.
+    momentum: Option<u8>,
+    /// The sides of each momentum point's die (`momentum` only).
+    die: Option<u8>,
+    /// What misses against its wearer gather (`"dodge"`).
+    gather: Option<String>,
+    /// The stat a creature's Willpower is checked against as it first becomes aware of its
+    /// wearer (with `difficulty`, `tag`, and `unless`).
+    parley: Option<String>,
+    /// The tag a creature's type must carry to parley (`parley` only).
+    tag: Option<String>,
+    /// The tags of types that never parley (`parley` only).
+    unless: Option<Vec<String>>,
     /// The chance in a hundred that a hit takes from its target's pack.
     pilfer: Option<u8>,
     /// Whether a take must win the Steal contest (`pilfer` only).
@@ -908,8 +941,9 @@ fn off_tier(
 /// `critical`, on a weapon), `wakes` (with `every` and a `resource`), `roar` (with `status`,
 /// `turns`, and `noise`, on a weapon), `credit`, `burst`, `feller`, and `quarry` (each on a
 /// launcher), `pilfer` (perhaps with `contest`, `disarm`, `skill`, and `opening`), `approach`,
-/// `fork` (with `percent`, on a weapon), `spread` (on a weapon), and `nightside` (with
-/// `lit_from` and `to_hit`).
+/// `fork` (with `percent`, on a weapon), `spread` (on a weapon), `nightside` (with `lit_from`
+/// and `to_hit`), `momentum` (with `die`, on worn armour), `gather`, and `parley` (with `difficulty`,
+/// `tag`, and `unless`).
 fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, String> {
     let named = [
         p.inflict.is_some(),
@@ -947,10 +981,13 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         p.fork.is_some(),
         p.spread.is_some(),
         p.nightside.is_some(),
+        p.momentum.is_some(),
+        p.gather.is_some(),
+        p.parley.is_some(),
     ];
     if named.iter().filter(|&&n| n).count() != 1 {
         return Err(
-            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `grows`, `first_blood`, `plant`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, `scars`, `onset`, `thrust`, `tally`, `grudge`, `oath`, `root`, `shrive`, `wakes`, `roar`, `credit`, `burst`, `feller`, `quarry`, `pilfer`, `approach`, `fork`, `spread`, and `nightside`"
+            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `grows`, `first_blood`, `plant`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, `scars`, `onset`, `thrust`, `tally`, `grudge`, `oath`, `root`, `shrive`, `wakes`, `roar`, `credit`, `burst`, `feller`, `quarry`, `pilfer`, `approach`, `fork`, `spread`, `nightside`, `momentum`, `gather`, and `parley`"
                 .into(),
         );
     }
@@ -999,8 +1036,17 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     if p.nightside.is_none() && (p.lit_from.is_some() || p.to_hit.is_some()) {
         return Err("power: `lit_from` and `to_hit` belong to `nightside`".into());
     }
-    if p.ring.is_none() && (p.stagger.is_some() || p.difficulty.is_some()) {
-        return Err("power: `stagger` and `difficulty` belong to `ring`".into());
+    if p.ring.is_none() && p.stagger.is_some() {
+        return Err("power: `stagger` belongs to `ring`".into());
+    }
+    if p.ring.is_none() && p.parley.is_none() && p.difficulty.is_some() {
+        return Err("power: `difficulty` belongs to `ring` and `parley`".into());
+    }
+    if p.momentum.is_none() && p.die.is_some() {
+        return Err("power: `die` belongs to `momentum`".into());
+    }
+    if p.parley.is_none() && (p.tag.is_some() || p.unless.is_some()) {
+        return Err("power: `tag` and `unless` belong to `parley`".into());
     }
     if p.oath.is_none() && p.hp_per_point.is_some() {
         return Err("power: `hp_per_point` belongs to `oath`".into());
@@ -1222,6 +1268,17 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
             return Err("power: `scars` needs a base that is worn armour".into());
         }
         return Ok(Power::Scars);
+    }
+    if let Some(max) = p.momentum {
+        return super::unique_parley::momentum(max, p.die, def);
+    }
+    if let Some(what) = &p.gather {
+        return super::unique_parley::gather(what, def);
+    }
+    if let Some(stat) = &p.parley {
+        let (tag, unless) = (p.tag.as_deref(), p.unless.as_deref().unwrap_or_default());
+        return super::unique_parley::parley(stat, p.difficulty, (tag, unless), def)
+            .map(Power::Parley);
     }
     if let Some(cells) = p.fork {
         return fork(p, cells, def);
