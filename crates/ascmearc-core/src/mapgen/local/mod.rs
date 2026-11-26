@@ -233,8 +233,8 @@ pub(super) fn generate(
         };
         if reach::validate(&template, content).is_ok() {
             // Ruins may hold loot; the land holds none of its own.
-            super::place_loot(&mut template, content, seed, &land.loot, (None, visit));
-            crate::magic::unique_pool::fill(&mut template, content, seed, visit.dropped);
+            let mut loot = super::Loot::new(seed, &template.id, visit);
+            super::place_loot(&mut template, content, &mut loot, &land.loot, (None, visit));
             crate::gear::arm(&mut template, content, seed);
             crate::animated::arm(&mut template, content, seed);
             return Ok(template);

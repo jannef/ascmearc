@@ -7,7 +7,7 @@
 //! each once, so with pinned vaults and unique creatures a run holds it at most once with no
 //! save state (the data author's promise: a load does not count placements). Loot never rolls
 //! one, but a unique of the drop pool (`pool = true`, [`UniqueDef::pool`]) may stand in for a
-//! rare find, once a run each ([`crate::magic::unique_pool`], #2103). A trader's offer may name uniques instead (`content/offer.rs`, #808): those are made at
+//! rare find, once a run each ([`crate::magic::drop_pool`], #2103). A trader's offer may name uniques instead (`content/offer.rs`, #808): those are made at
 //! run time, once a run each (`WorldState::uniques_offered`).
 //!
 //! The item is [`Magic`] of rarity unique with its name, plus [`Magic::unique`] (its id, saved),
@@ -459,7 +459,7 @@ pub struct UniqueDef {
     /// The campaign whose table it is in (`None`: shared, `data/uniques/`).
     pub campaign: Option<String>,
     /// Whether it is of the drop pool (`pool = true`): a rare find may be it instead, once a run
-    /// ([`crate::magic::unique_pool`]).
+    /// ([`crate::magic::drop_pool`]).
     pub pool: bool,
     /// Its dice families that roll other dice than their tier (`"heavy=6d6"`, #2091;
     /// `"heavy=2d6"`, #2152), by affix id with the count: the item's affix holds the sides, and

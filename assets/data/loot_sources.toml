@@ -10,6 +10,9 @@
 #   finder     whether the finder counts (magic/finder.rs): their talents' loot effects, each at
 #              its one step: more finds at the count, magic and rare likelier at the rarity
 #              (Treasure hunter), a rare likelier a unique of the drop pool
+#   pool       whether a rare find may be a unique of the drop pool (data/uniques; one in
+#              `rare.unique` of data/affixes.toml, none the run has found). A find's only: what
+#              is made of a base chosen already (gear, goods, kits, an animated piece) never is
 #   curses     whether a curse may roll among its affixes
 #   material   how its material is drawn: `loot` (by the materials' `rarity` at the item level),
 #              `gear` (by their `gear` weights at the creature's level, its faction's favoured
@@ -24,31 +27,31 @@ ammo = [8, 20]
 
 [source]
 # A level's floor loot.
-floor = { grade = "any", finder = true, curses = true, material = "loot", make = true }
+floor = { grade = "any", finder = true, pool = true, curses = true, material = "loot", make = true }
 # A vault's loot cell.
-vault_cell = { grade = "legend", finder = true, curses = true, material = "loot", make = true }
+vault_cell = { grade = "legend", finder = true, pool = true, curses = true, material = "loot", make = true }
 # An item in a chest (a treasure room's chests too).
-chest = { grade = "band", finder = true, curses = true, material = "loot", make = true }
+chest = { grade = "band", finder = true, pool = true, curses = true, material = "loot", make = true }
 # A tempting hoard.
-hoard = { grade = "any", finder = true, curses = true, material = "loot", make = true }
+hoard = { grade = "any", finder = true, pool = true, curses = true, material = "loot", make = true }
 # A teeming den's hoard.
-den = { grade = "any", finder = true, curses = true, material = "loot", make = true }
+den = { grade = "any", finder = true, pool = true, curses = true, material = "loot", make = true }
 # A special room's own loot, of its class (a scriptorium's).
-room_loot = { grade = "any", finder = false, curses = true, material = "loot", make = true }
+room_loot = { grade = "any", finder = false, pool = true, curses = true, material = "loot", make = true }
 # What a creature drops when it dies, by its type's `loot` percent.
-drop = { grade = "magic", finder = true, curses = true, material = "gear", make = false }
+drop = { grade = "magic", finder = true, pool = true, curses = true, material = "gear", make = false }
 # What a feature leaves.
-feature = { grade = "outcome", finder = true, curses = true, material = "loot", make = true }
+feature = { grade = "outcome", finder = true, pool = true, curses = true, material = "loot", make = true }
 # The aristocrat's stipend (data/stipend.toml).
-stipend = { grade = "any", finder = true, curses = true, material = "loot", make = true }
+stipend = { grade = "any", finder = true, pool = false, curses = true, material = "loot", make = true }
 # A quarrel's hoard.
-quarrel = { grade = "rare", finder = true, curses = true, material = "loot", make = true }
+quarrel = { grade = "rare", finder = true, pool = false, curses = true, material = "loot", make = true }
 # A creature's magic gear.
-gear = { grade = "magic", finder = false, curses = true, material = "gear", make = false }
+gear = { grade = "magic", finder = false, pool = false, curses = true, material = "gear", make = false }
 # A shop's goods.
-goods = { grade = "any", finder = false, curses = false, material = "own", make = false }
+goods = { grade = "any", finder = false, pool = false, curses = false, material = "own", make = false }
 # A kit's magic line: a starting kit's, a trade's, a background's gift.
-kit = { grade = "line", finder = false, curses = false, material = "own", make = false }
+kit = { grade = "line", finder = false, pool = false, curses = false, material = "own", make = false }
 # An animated thing's piece: its base drawn at any grade, then magic or rare by its line's
 # percents (data/animated.toml).
-animated = { grade = "any", finder = false, curses = true, material = "gear", make = false }
+animated = { grade = "any", finder = false, pool = false, curses = true, material = "gear", make = false }

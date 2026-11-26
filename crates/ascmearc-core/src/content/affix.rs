@@ -774,7 +774,7 @@ pub struct Affixes {
     /// without the table).
     pub most_per_kind: u8,
     /// Of every 10,000 rare finds, how many are a unique of the drop pool instead (`rare.unique`,
-    /// [`crate::magic::unique_pool`]).
+    /// [`crate::magic::drop_pool`]).
     pub unique_pool: u32,
     /// The first words of rare names ("Grim").
     pub first_names: Vec<String>,

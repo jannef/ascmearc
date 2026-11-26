@@ -23,7 +23,14 @@ fn roll_many(c: &Content, pool: &LootPool, level: u8, n: u64) -> Vec<Stack> {
     (0..n)
         .filter_map(|seed| {
             let mut rng = Rng::stream(seed, "pool");
-            loot_cell::roll(c, &mut rng, level, pool, (&Finder::NONE, 0)).pop()
+            loot_cell::roll(
+                c,
+                &mut rng,
+                level,
+                pool,
+                ((&Finder::NONE, 0), &mut crate::test_support::pool_found(c)),
+            )
+            .pop()
         })
         .collect()
 }
@@ -138,7 +145,14 @@ fn a_grade_alone_rolls_as_it_always_did() {
             let none = Finder::NONE;
             assert_eq!(
                 crate::test_support::found_with(&c, &mut plain, 7, grade, (none, 0)),
-                loot_cell::roll(&c, &mut pooled, 7, &grade.into(), (&none, 0)).pop(),
+                loot_cell::roll(
+                    &c,
+                    &mut pooled,
+                    7,
+                    &grade.into(),
+                    ((&none, 0), &mut crate::test_support::pool_found(&c))
+                )
+                .pop(),
             );
             assert_eq!(plain.below(1 << 30), pooled.below(1 << 30));
         }
@@ -153,10 +167,12 @@ fn flooded_cell(c: &Content, seed: u64, level: u8) -> Vec<Stack> {
     let mut template = vault.template.clone();
     template.item_level = level;
     let markers = template.loot.clone();
+    let visit = crate::mapgen::Visit::default();
+    let mut loot = crate::mapgen::Loot::new(seed, &template.id, &visit);
     crate::mapgen::place_loot(
         &mut template,
         c,
-        seed,
+        &mut loot,
         &markers,
         (None, &crate::mapgen::Visit::default()),
     );

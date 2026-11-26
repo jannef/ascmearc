@@ -356,8 +356,8 @@ pub struct WorldState {
     /// The unique items traders' offers have made in the run (`world/people/wares.rs`): each once.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub(crate) uniques_offered: BTreeSet<String>,
-    /// The drop pool's uniques the run has found, wherever they came (`magic/unique_pool.rs`):
-    /// each once. Left out while empty.
+    /// The drop pool's uniques the run has found, wherever they came (`magic/drop_pool.rs`):
+    /// each once. Left out while empty. Written only by [`WorldState::note_dropped`].
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub(crate) uniques_dropped: BTreeSet<String>,
     /// The player's steps in a row unseen by any hostile, while they wear an Approach power
@@ -443,6 +443,17 @@ fn is_zero_steps(n: &u8) -> bool {
 impl WorldState {
     pub(crate) fn player(&self) -> &Actor {
         &self.actors[&self.player]
+    }
+
+    /// Notes the drop pool's uniques among `stacks` found by the run, so none comes again: what
+    /// a level's loot holds as it is first made, what a creature drops, what a feature leaves.
+    /// The one place [`WorldState::uniques_dropped`] is written.
+    pub(crate) fn note_dropped<'a>(
+        &mut self,
+        content: &Content,
+        stacks: impl IntoIterator<Item = &'a Stack>,
+    ) {
+        crate::magic::drop_pool::note(content, stacks, &mut self.uniques_dropped);
     }
 
     /// The sky over the current level now, under the weather of the moment (the dev override

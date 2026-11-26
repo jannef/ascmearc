@@ -4,9 +4,8 @@
 //!
 //! Each modifier is applied at exactly one step of [`super::loot`]'s procedure and read nowhere
 //! else: `quantity` at the count ([`super::loot::count`]), `rarity` at the rarity draw (step 3),
-//! `unique` at the drop pool's check (step 3b, which the pool's own pass still makes until it
-//! moves into the find: #2161 S4). So a modifier changes only the quantity or quality it names:
-//! more finds take no rarity, likelier rarities take no finds, and none of them touches coins or
+//! `unique` at the drop pool's check (step 3b, [`super::drop_pool::draw`]). So a modifier
+//! changes only the quantity or quality it names: more finds take no rarity, likelier rarities take no finds, and none of them touches coins or
 //! gems, which are wealth's ([`crate::wealth`]; a finder's gem percent is the wealth seam's own
 //! argument, never a field here). A new modifier is one field here, one effect kind of the
 //! fortune talents (`talent/fortune.rs`, `data/talents/README.toml`), one line in
@@ -26,8 +25,7 @@ pub struct Finder {
     /// Percent more likely the rarities better than a find's least grade are: their weights
     /// scaled (Treasure hunter).
     pub rarity: i32,
-    /// Percent more likely a rare find is a unique of the drop pool: `rare.unique` scaled
-    /// (applied from #2161 S4, when the pool's check moves into the find).
+    /// Percent more likely a rare find is a unique of the drop pool: `rare.unique` scaled.
     pub unique: i32,
 }
 

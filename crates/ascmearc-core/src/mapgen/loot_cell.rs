@@ -17,6 +17,7 @@ use crate::magic::{LootGrade, LootPool};
 use crate::object::Stack;
 use crate::rng::Rng;
 use crate::wealth;
+use std::collections::BTreeSet;
 
 /// What a class is found as: coins and gems have no `frequency`, and are found by the purse and
 /// the gem's own draws.
@@ -62,13 +63,14 @@ fn holds(content: &Content, class: ItemClassId, level: u8, grade: LootGrade) -> 
 /// What a cell of `pool` holds at item level `level` for `finder` and the wealth seam's `gems`
 /// percent (the module docs give the draws): one stack, or none when none of its classes holds
 /// anything there yet (a low item level may leave a pool of things found only higher empty); an
-/// item find's count is the finder's ([`loot::count`]: one, more by its `quantity`).
+/// item find's count is the finder's ([`loot::count`]: one, more by its `quantity`); a rare
+/// find perhaps a unique of the drop pool none of `taken` ([`loot::find`]).
 pub(crate) fn roll(
     content: &Content,
     rng: &mut Rng,
     level: u8,
     pool: &LootPool,
-    (finder, gems): (&Finder, i32),
+    ((finder, gems), taken): ((&Finder, i32), &mut BTreeSet<String>),
 ) -> Vec<Stack> {
     let grade = pool.grade;
     if pool.classes.is_empty() {
@@ -78,7 +80,7 @@ pub(crate) fn roll(
                 let gem = (grade == LootGrade::Any)
                     .then(|| wealth::gem_instead(content, rng, level, gems))
                     .flatten();
-                gem.or_else(|| loot::find(content, &spec, finder, rng))
+                gem.or_else(|| loot::find(content, &spec, finder, taken, rng))
             })
             .collect();
     }
@@ -92,6 +94,6 @@ pub(crate) fn roll(
     match kind_of(content, class) {
         Kind::Coins => chest::purse(content, rng, level).into_iter().collect(),
         Kind::Gem => gem::loose(content, rng, level).into_iter().collect(),
-        Kind::Item => loot::finds(content, &spec(level, grade, &[class]), finder, rng),
+        Kind::Item => loot::finds(content, &spec(level, grade, &[class]), finder, taken, rng),
     }
 }

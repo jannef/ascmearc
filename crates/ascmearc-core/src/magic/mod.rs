@@ -26,6 +26,7 @@
 
 pub mod capacity;
 pub mod describe;
+pub mod drop_pool;
 pub mod finder;
 pub mod loot;
 pub(crate) mod make;
@@ -33,7 +34,6 @@ pub mod mods;
 pub(crate) mod name;
 pub mod numbers;
 pub mod scars;
-pub mod unique_pool;
 pub mod worked;
 
 pub use crate::content::{AffixKind, Effect, ItemKind, Rarity};
@@ -310,6 +310,8 @@ mod ammo_magic_tests;
 #[cfg(test)]
 mod ammo_make_tests;
 #[cfg(test)]
+pub(crate) mod drop_pool_tests;
+#[cfg(test)]
 mod finder_tests;
 #[cfg(test)]
 mod pool_tests;
@@ -317,5 +319,3 @@ mod pool_tests;
 mod shares_tests;
 #[cfg(test)]
 mod tests;
-#[cfg(test)]
-pub(crate) mod unique_pool_tests;

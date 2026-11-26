@@ -152,7 +152,8 @@ rarity its items have, whether your talents (such as [Treasure
 hunter](talents-mind.md#talent-treasure-hunter)) make magic and rare items likelier there, whether
 a [curse](#cursed-items) can roll on them, and whether arms and armour can come
 [Fine or better](altars-forges-springs.md#forges) by the item level. A creature's gear comes in
-its own [condition](creature-gear.md#condition) instead.
+its own [condition](creature-gear.md#condition) instead. Below the table: which places can give a
+unique instead of a rare item.
 
 {{#include generated/loot-sources.md}}
 

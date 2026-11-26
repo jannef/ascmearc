@@ -8,6 +8,7 @@ use crate::content::Rarity;
 use crate::rng::Rng;
 use crate::talent::{FortuneMods, TalentMods};
 use crate::test_support::CONTENT;
+use std::collections::BTreeSet;
 
 /// A finder with only `rarity` and `unique`, of `value` each.
 fn quality(value: i32) -> Finder {
@@ -50,9 +51,10 @@ fn a_find_never_reads_quantity() {
                 quantity: 200,
                 ..finder
             };
+            let (mut a, mut b) = (BTreeSet::new(), BTreeSet::new());
             assert_eq!(
-                loot::find(&CONTENT, &spec, &finder, &mut plain),
-                loot::find(&CONTENT, &spec, &with, &mut more),
+                loot::find(&CONTENT, &spec, &finder, &mut a, &mut plain),
+                loot::find(&CONTENT, &spec, &with, &mut b, &mut more),
                 "the same item"
             );
             assert_eq!(plain, more, "from the same draws");
@@ -85,12 +87,24 @@ fn more_quantity_is_never_fewer_finds() {
 #[test]
 fn likelier_rarities_never_change_how_many_are_found() {
     let spec = Spec::new(Origin::Floor, 6).count(3);
-    let (mut plain, mut better) = ([0u32; 3], [0u32; 3]);
+    let (mut plain, mut better) = ([0u32; 4], [0u32; 4]);
     for seed in 0..1500 {
         let mut rng = Rng::stream(seed, "finder-test");
-        let none = loot::finds(&CONTENT, &spec, &Finder::NONE, &mut rng);
+        let none = loot::finds(
+            &CONTENT,
+            &spec,
+            &Finder::NONE,
+            &mut BTreeSet::new(),
+            &mut rng,
+        );
         let mut rng = Rng::stream(seed, "finder-test");
-        let lucky = loot::finds(&CONTENT, &spec, &quality(100), &mut rng);
+        let lucky = loot::finds(
+            &CONTENT,
+            &spec,
+            &quality(100),
+            &mut BTreeSet::new(),
+            &mut rng,
+        );
         assert_eq!(none.len(), lucky.len(), "the same count");
         for s in none {
             plain[s.rarity() as usize] += 1;
@@ -99,7 +113,8 @@ fn likelier_rarities_never_change_how_many_are_found() {
             better[s.rarity() as usize] += 1;
         }
     }
-    let magic_or_rare = |r: [u32; 3]| r[Rarity::Magic as usize] + r[Rarity::Rare as usize];
+    // A unique of the drop pool is the better rare (`unique` trades one for the other).
+    let magic_or_rare = |r: [u32; 4]| r[Rarity::Magic as usize..].iter().sum::<u32>();
     assert!(
         magic_or_rare(better) > magic_or_rare(plain),
         "{plain:?} {better:?}"

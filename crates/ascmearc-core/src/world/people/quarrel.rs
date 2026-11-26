@@ -420,7 +420,9 @@ impl World {
         }
         let finder = loot::Finder::of(&self.state.player().talent_mods(content));
         let spec = Spec::new(Origin::Quarrel, hoard.item_level).count(u32::from(hoard.rare));
-        stacks.extend(loot::finds(content, &spec, &finder, &mut rng));
+        // Its row asks no drop pool: nothing is found of it.
+        let none = &mut std::collections::BTreeSet::new();
+        stacks.extend(loot::finds(content, &spec, &finder, none, &mut rng));
         let grimoires = content.grimoires().all();
         for _ in 0..hoard.grimoires {
             if grimoires.is_empty() {

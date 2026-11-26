@@ -52,6 +52,7 @@ struct ItemSpec {
 struct RowSpec {
     grade: String,
     finder: bool,
+    pool: bool,
     curses: bool,
     material: Material,
     make: bool,
@@ -80,6 +81,7 @@ impl RowSpec {
         Ok(Rule {
             grade,
             finder: self.finder,
+            pool: self.pool,
             curses: self.curses,
             material: self.material,
             make: self.make,
@@ -143,8 +145,10 @@ mod tests {
         let drop = sources.rule(Origin::Drop);
         assert_eq!(drop.grade, Some(LootGrade::Magic));
         assert_eq!(drop.material, Material::Gear);
-        assert!(drop.finder && drop.curses && !drop.make);
-        assert_eq!(sources.rule(Origin::Quarrel).grade, Some(LootGrade::Rare));
+        assert!(drop.finder && drop.pool && drop.curses && !drop.make);
+        let quarrel = sources.rule(Origin::Quarrel);
+        assert_eq!(quarrel.grade, Some(LootGrade::Rare));
+        assert!(!quarrel.pool, "a quarrel's hoard is never of the drop pool");
         for origin in Origin::ALL {
             let given = sources.rule(origin).grade.is_none();
             assert_eq!(given, origin.given().is_some(), "{origin:?}");
@@ -166,7 +170,7 @@ mod tests {
         );
         let unknown = load(|t| {
             format!(
-                "{t}\nmimic = {{ grade = \"any\", finder = true, curses = true, material = \"loot\", make = true }}\n"
+                "{t}\nmimic = {{ grade = \"any\", finder = true, pool = true, curses = true, material = \"loot\", make = true }}\n"
             )
         });
         assert!(

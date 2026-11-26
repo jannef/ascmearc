@@ -22,12 +22,15 @@
 //! type drawn from the branch's population at large (its prey, any faction, by the same draw;
 //! a type that leaves none leaves nothing) and a pile of bones, each on a cell drawn anew.
 //!
-//! Everything comes from the level's own stream [`Rng::swarm`] (`swarm/<level id>`), drawn after
-//! its population, so the rest of the level is the same with or without a den; the sleepers roll
-//! their gear after the population's, with the rest ([`crate::gear::arm`]). The population and
-//! the generator's patrols keep out of a den (`population.rs`, `special::make`).
+//! The sleepers come from the level's own stream [`Rng::swarm`] (`swarm/<level id>`), drawn
+//! after its population, and the hoards (items or corpses, and their cells) from the level's loot
+//! stream ([`super::Loot`], `loot/<level id>`), going on after its floor loot and before the
+//! tempting hoards' (`hoard.rs`), so the rest of the level is the same with or without a den; a
+//! rare item of a hoard may be a unique of the drop pool, none the level has laid already. The
+//! sleepers roll their gear after the population's, with the rest ([`crate::gear::arm`]). The
+//! population and the generator's patrols keep out of a den (`population.rs`, `special::make`).
 
-use super::{Palette, Visit};
+use super::{Loot, Palette, Visit};
 use crate::content::danger::{self, Candidate, Spawning};
 use crate::content::{Content, CreatureId, CreatureSpawn, Hoard, LevelTemplate, Stance, Swarm};
 use crate::geom::Pos;
@@ -37,13 +40,14 @@ use crate::rng::Rng;
 use crate::wealth;
 
 /// Fills every teeming den of generated level `template` (see the module docs): `danger` its
-/// danger, `spawning` its branch's rules, `visit` whom it is made for (the finder's talents).
+/// danger, `spawning` its branch's rules, `visit` whom it is made for (the finder's talents),
+/// `loot` the level's loot as laid so far (its hoards').
 pub(super) fn fill(
     template: &mut LevelTemplate,
     content: &Content,
     seed: u64,
     (pal, danger, spawning): (Palette, u8, &Spawning),
-    visit: &Visit,
+    (visit, loot): (&Visit, &mut Loot),
 ) {
     let dens: Vec<(usize, &Swarm)> = (template.rooms.iter().enumerate())
         .filter_map(|(i, r)| content.room_effect(r.effect).swarm.as_ref().map(|s| (i, s)))
@@ -112,7 +116,7 @@ pub(super) fn fill(
             corpses(
                 template,
                 content,
-                &mut rng,
+                &mut loot.rng,
                 &floor,
                 (swarm.hoard(placed), prey, danger, spawning),
             );
@@ -121,10 +125,12 @@ pub(super) fn fill(
         let level = template.item_level.saturating_add(swarm.loot_level);
         let spec = Spec::new(Origin::Den, level)
             .count(u32::try_from(swarm.hoard(placed)).unwrap_or(u32::MAX));
-        for _ in 0..loot::count(content, &spec, &visit.finder, &mut rng) {
-            let p = floor[rng.index(floor.len())];
-            let item = wealth::gem_instead(content, &mut rng, level, visit.gems)
-                .or_else(|| loot::find(content, &spec, &visit.finder, &mut rng));
+        // The hoard from the loot stream, never the sleepers'.
+        let Loot { rng: hoard, taken } = &mut *loot;
+        for _ in 0..loot::count(content, &spec, &visit.finder, hoard) {
+            let p = floor[hoard.index(floor.len())];
+            let item = wealth::gem_instead(content, hoard, level, visit.gems)
+                .or_else(|| loot::find(content, &spec, &visit.finder, taken, hoard));
             if let Some(stack) = item {
                 add_to_pile(template.objects.entry(p).or_default(), &[stack], content);
             }
