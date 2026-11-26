@@ -238,8 +238,7 @@ impl Mods {
         };
         for rolled in magic.rolled(content) {
             if rolled.def.effect.is_local_on(kind) == local {
-                let tier = rolled.def.tier(rolled.tier);
-                let light = tier.and_then(|t| t.light);
+                let light = rolled.light;
                 let dice = rolled.dice;
                 // A curse works its effect the other way (#1754): hunger faster, heavier, slower.
                 let value = match rolled.def.cursed {

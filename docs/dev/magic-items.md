@@ -105,7 +105,7 @@ it by group, never at the end), its reader in one rule, a
 `describe.does_*` message (`messages/describe.toml`) in `describe.rs::phrase`, and a wiki word
 and tier form in `xtask/src/wiki/magic.rs` (`effect_words`, `tier_value`). Affixes are saved by id, so
 adding affixes keeps saves; their values and tiers are checked on load, strictly
-(`Magic::check`: each tier one the affix has, each value within its tier's range, but a unique's past its last tier and off its bases, "Unique items"). The lenient
+(`Magic::check`: each tier one the affix has, each value within its tier's range; a unique's follow no rule but that each affix exists, "Unique items"). The lenient
 read of #637 (re-tiering a save's affixes after a ladder was
 regraded) is gone with #840: saves are pinned to the version that wrote them
 (docs/dev/saves.md), so a regraded ladder needs nothing for saves.
@@ -349,18 +349,27 @@ id on another rarity than unique, and a unique without its id.
   unique written with a tier (`"mystic:2"`) is a content error. `content/affix_value.rs::valued`
   reads it at load: the affix takes the **first tier whose range holds the value** (a light's:
   the tier of that light), whose level counts toward the item level when `level` is unset (that item
-  level, not the tier's, prices it: `MagicWorth::add`); a unique's value may lie **past the last tier** (away from
-  zero, `Tier::passed_by`), which it then takes; any other value no tier rolls is an error. A
-  unique may set an affix whose bases leave out its base, on an effect that works there
-  (`Effect::allowed_on`, `magic::may_roll_on`: High Toby's `"sharp=2"`, no flat-damage affix
-  rolls on a launcher); the category and per-kind limits hold as ever. `Magic::check_set`
-  holds the unique's affixes (the load passes them; `Magic::check`, the saves' guard, passes
-  those equal to the unique's own table's) to their tier's range but past the last tier's top,
-  and leaves out the bases, so such a value is valid on that unique alone. A level's
-  `[[item]]` may write the same form (`magic_of`), held within the ladder and the bases as a
-  rolled affix is; the showcase's keep their tiers. The wiki table marks a value past the
-  ladder or off the bases `set` in place of a tier. `content/unique_values_tests.rs` writes
-  down every unique's item level and values: a change there is a change to a unique.
+  level, not the tier's, prices it: `MagicWorth::add`). A level's `[[item]]` may write the same
+  form (`magic_of`), held within the ladder and the bases as a rolled affix is; the showcase's
+  keep their tiers. The wiki table marks a unique's value no tier rolls, or off the affix's
+  bases, `set` in place of a tier. `content/unique_values_tests.rs` writes down every unique's
+  item level and values: a change there is a change to a unique.
+- **A unique follows no affix rule** (the owner, #2152: "Uniques should have no rules what
+  affixes they have. absolutely none."): its table is taken exactly as written, and the one
+  check left is that each affix exists. Any value (past the last tier, below the first, a
+  penalty against the ladder: `"nimble=-2"`, `"reinforced=-1"`), any dice (`"heavy=6d6"`,
+  `"heavy=2d6"`), any light, any number of affixes of a kind or of one category, on any base
+  (an affix whose effect has nothing to change there, Smoulder's Steady on a crossbow, simply
+  does nothing), and never trimmed to its capacity (`content/level.rs::hand_made`,
+  docs/dev/enchanting.md), so no make, material, or gem is ever needed for room. A value no tier
+  rolls takes the tier nearest it (`affix_value::nearest`: the last for one past the top,
+  against the ladder, of more dice than any, or a light no tier gives; else the nearest by dice,
+  then by value), which prices it and counts toward the item level; what that tier does not say
+  is kept on the unique: `UniqueDef::dice` (a dice count not its tier's) and `UniqueDef::light`
+  (a light no tier gives), which `Magic::rolled` puts in `Rolled::dice` and `Rolled::light` for
+  `Mods` and the description. `Magic::check` (the saves' guard) holds an item with a unique's id
+  to that alone (`Magic::check_set`'s `unique`); every other item, rolled, crafted, salvaged,
+  recast, or placed by a level's `[[item]]`, keeps every rule.
 - **Placement**: `parse_stacks` (`content/object.rs`) makes `unique:ID` through
   `Content::place_unique` (`Uniques::place`). Content places each unique once (the data
   author's promise, not counted at load, #1205). `level::equip_ids` takes `unique:ID` in
@@ -403,7 +412,7 @@ id on another rarity than unique, and a unique without its id.
   `decurse` frees it).
 - **The Masterpiece** (#2100, the owner's design): a mithril chain mail shirt in the
   shared `data/uniques/`, item level 40 (the drop pool's, as #2091 moves the three above), of the
-  drop pool (`pool = true`), placed nowhere but the quarry. Its four affixes fit mithril's binding (no make). Featherweight 70 stacks on mithril's own half (`Stack::weight`:
+  drop pool (`pool = true`), placed nowhere but the quarry. Mithril, of no better make (a make would add Defence and Protection past the owner's). Featherweight 70 stacks on mithril's own half (`Stack::weight`:
   `variant::weight`, then the affix), so it weighs 1,650 g, 15% of a steel shirt's 11,000;
   of Warding 5 (+5 Defence, as Deflection) and Hardened 5 (+5 Protection), both past their
   ladders; Mage-wrought 10 takes all of chain mail's `spell_cost_percent` 10 off
@@ -415,9 +424,8 @@ id on another rarity than unique, and a unique without its id.
 - **Smoulder, Tiptoe, Hushfoot** (#2139, #2141, #2133), in the shared `data/uniques/`, each of
   the drop pool (`pool = true`) and placed nowhere but the quarry. **Smoulder**: a Masterwork
   heavy crossbow, item level 40: Sharp 5 (on a launcher by a unique's hand), Keen 4 (past the
-  ladder), of Precision 4, and the Zone power (smoke, radius 1, 8 turns). The owner's Steady +6
-  is left out: Steady lowers a bow's Strength to draw and a crossbow has none, so the load
-  refuses it ("its effect does nothing"). **Tiptoe**: footwraps, item level 20: Nimble 3, Fleet
+  ladder), Steady 6 (the owner's; it lowers a bow's Strength to draw, and a crossbow has none,
+  so it does nothing), of Precision 4, and the Zone power (smoke, radius 1, 8 turns). **Tiptoe**: footwraps, item level 20: Nimble 3, Fleet
   11, of Wariness 60, of Shadows 30, and the Trapwise power (radius 5). **Hushfoot**: a
   waistcoat, item level 30: Hale 12, of the Fox 40, of Shadows 40, of Sustenance 25, and the
   Barefoot power (the feet; noise 0, Dodge 3, `feel_traps`). Tests:
@@ -446,23 +454,24 @@ id on another rarity than unique, and a unique without its id.
   Toughness's own affix stands in), of Vitality 12, of Stillness 4 (ki); its Pain power, and
   `counts_as_unarmoured`. **The Kettle Hat** (`kettle_hat`, an iron helm, item level 12):
   Featherweight −67 (a penalty, said "67% heavier": 2,505 g, the design's 2.5 kg), Hardened 3,
-  of the Ox 4; its Ring power, no ward. **Scarhide** (`scarhide`, item level 30): the issue's
-  hide tunic is clothing (no `kind`, #1173), which no magic may sit on (`Magic::check`,
-  `Mods::add_magic`), so it is a leather jerkin, the lightest hide armour with a kind: Reinforced
-  2, Hale 20, of the Ox 4, of Health 3 (disease checks); its Scars power. All three are plain
-  makes holding more than a plain base's capacity: a unique is never trimmed
-  (`content/level.rs::hand_made`, docs/dev/enchanting.md), so the owner's numbers stand as
-  written, and no make adds Armour or Protection they did not ask for. Tests:
+  of the Ox 4; its Ring power, no ward (the Leaden curse would add the weight too, but would bind
+  the helm to its wearer's head, which the design does not ask). **Scarhide** (`scarhide`, item level 30): the
+  issue's hide tunic is clothing (no `kind`, #1173), so it is a leather jerkin, the lightest hide
+  armour with a kind, which counts as body armour (a hide tunic made `kind = "body"` would not:
+  `Actor::wears_body_armour`): Reinforced 2, Hale 20, of the Ox 4, of Health 3 (disease checks);
+  its Scars power. All three
+  are plain makes holding more than a plain base's capacity: a unique follows no affix rule
+  (above), so the owner's numbers stand as written, and no make adds Armour or Protection they
+  did not ask for. Tests:
   `world/combat/struck_tests.rs`.
-- **What only a unique sets** (#2091), each refused to any other item by `Magic::check` and
+- **What only a unique sets** (#2091, #2152) is refused to any other item by `Magic::check` and
   never rolled (`content/unique_values_tests.rs::what_only_a_unique_sets_never_rolls`: every
   random affix, loot's, a vault's, a shop's, enchanting's and its recast's, comes of
-  `loot::pick`, among affixes whose `bases` hold the item's kind, at a value within a tier):
-  a **penalty**, a value against its ladder (`Tier::opposed_by`: `"nimble=-2"`, said "−2 to
-  Dodge", `describe.does_dodge_less`); **more dice than any tier** (`"heavy=6d6"`: the affix
-  takes the last tier with the sides as its value, and `UniqueDef::dice` keeps the count, which
-  `Magic::rolled` puts in `Rolled::dice` for `Mods` and the description); and **Protection on a
-  weapon** (`"hardened=2"`: `Actor::protection` sums every worn and wielded piece's, but only
+  `loot::pick`, among affixes whose `bases` hold the item's kind, at a value within a tier;
+  salvage only takes affixes off): a **penalty** (`"nimble=-2"`, said "−2 to Dodge",
+  `describe.does_dodge_less`); **dice no tier rolls** (`"heavy=6d6"`); and an affix **off its
+  bases** such as **Protection on a weapon** (`"hardened=2"`: `Actor::protection` sums every
+  worn and wielded piece's, but only
   armour counts as a piece for the body-armour talents and names what soaks a blow). The
   owner's "+2 DV" and "−2 DV" are Dodge (`"nimble=±2"`, on a weapon only by a unique's hand):
   Defence against every attack, missiles too (Parry counts against melee only), and the one

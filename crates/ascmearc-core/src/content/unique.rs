@@ -200,9 +200,12 @@ pub struct UniqueDef {
     /// Whether it is of the drop pool (`pool = true`): a rare find may be it instead, once a run
     /// ([`crate::magic::unique_pool`]).
     pub pool: bool,
-    /// Its dice families that roll more dice than any tier (`"heavy=6d6"`, #2091), by affix id
-    /// with the count: the item's affix holds the sides on the last tier, and this the count.
+    /// Its dice families that roll other dice than their tier (`"heavy=6d6"`, #2091;
+    /// `"heavy=2d6"`, #2152), by affix id with the count: the item's affix holds the sides, and
+    /// this the count.
     dice: Vec<(String, u8)>,
+    /// Its lights that no tier of their affix gives (#2152), by affix id.
+    lights: Vec<(String, LightId)>,
 }
 
 impl UniqueDef {
@@ -212,10 +215,16 @@ impl UniqueDef {
         self.stack.magic().expect("a unique item is magic")
     }
 
-    /// How many dice its affix `id` rolls when its table sets more than any tier
+    /// How many dice its affix `id` rolls when its table sets other dice than its tier
     /// ([`crate::magic::Rolled::dice`]); `None` for every other affix.
     pub fn dice(&self, id: &str) -> Option<u8> {
         (self.dice.iter()).find(|(a, _)| a == id).map(|&(_, n)| n)
+    }
+
+    /// The light its affix `id` gives when its table sets one no tier gives
+    /// ([`crate::magic::Rolled::light`]); `None` for every other affix.
+    pub fn light(&self, id: &str) -> Option<LightId> {
+        (self.lights.iter()).find(|(a, _)| a == id).map(|&(_, l)| l)
     }
 
     /// Its name as a list or a table says it, without its own "the": "Brosinga Mene".
@@ -452,7 +461,7 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
     if spec.bash.is_some() && def.bash.is_none() {
         return Err("`bash` needs a base that bashes (a shield)".into());
     }
-    let dice = more_dice(&spec.affixes, content);
+    let (dice, lights) = off_tier(&spec.affixes, &stack, content);
     Ok(UniqueDef {
         id: spec.id,
         name: name.into(),
@@ -471,6 +480,7 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
         campaign: None,
         pool: spec.pool,
         dice,
+        lights,
     })
 }
 
@@ -495,18 +505,43 @@ fn clothed_kind(id: &str, def: &ObjectDef) -> Result<ItemKind, String> {
     Ok(kind)
 }
 
-/// The affixes of `written` (already read, `magic_of`) whose dice are more than their affix's
-/// last tier rolls, with the count: `"heavy=6d6"` is `("heavy", 6)`.
-fn more_dice(written: &[String], content: &Content) -> Vec<(String, u8)> {
-    (written.iter())
-        .filter_map(|text| {
-            let (id, value) = text.split_once('=')?;
-            let a = content.affixes().get(id)?;
-            let count = value.trim().split_once('d')?.0.parse::<u8>().ok()?;
-            let last = a.tiers.last()?;
-            (a.effect.is_dice() && count > last.dice).then(|| (id.to_string(), count))
-        })
-        .collect()
+/// What of `written` (already read, `magic_of`, into `stack`'s affixes, in order) its tier does
+/// not say: the dice counts that are not their tier's (`"heavy=6d6"` is `("heavy", 6)`), and the
+/// lights no tier gives.
+#[allow(clippy::type_complexity)]
+fn off_tier(
+    written: &[String],
+    stack: &Stack,
+    content: &Content,
+) -> (Vec<(String, u8)>, Vec<(String, LightId)>) {
+    let (mut dice, mut lights) = (Vec::new(), Vec::new());
+    let affixes = stack.magic().map_or(&[][..], |m| &m.affixes[..]);
+    for (text, affix) in written.iter().zip(affixes) {
+        let Some((_, value)) = text.split_once('=') else {
+            continue;
+        };
+        let Some(a) = content.affixes().get(&affix.id) else {
+            continue;
+        };
+        let Some(tier) = a.tier(affix.tier) else {
+            continue;
+        };
+        let value = value.trim();
+        if a.effect.is_dice() {
+            let count = value
+                .split_once('d')
+                .and_then(|(n, _)| n.parse::<u8>().ok());
+            if let Some(count) = count.filter(|&n| n != tier.dice) {
+                dice.push((affix.id.clone(), count));
+            }
+        } else if let Some(light) = content.light_id(value)
+            && tier.light.is_some()
+            && tier.light != Some(light)
+        {
+            lights.push((affix.id.clone(), light));
+        }
+    }
+    (dice, lights)
 }
 
 /// The power a `power` table names on base item `def`: exactly one of `inflict` (with `chance`

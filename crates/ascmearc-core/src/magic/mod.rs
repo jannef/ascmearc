@@ -99,18 +99,23 @@ pub struct Rolled<'a> {
     pub tier: u8,
     pub value: i32,
     /// How many dice a dice family's value is the sides of: its tier's `dice`, or what a
-    /// unique's table sets past the ladder ([`crate::content::UniqueDef::dice`]); 1 for the rest.
+    /// unique's table sets off the ladder ([`crate::content::UniqueDef::dice`]); 1 for the rest.
     pub dice: u8,
+    /// A light's light: its tier's, or what a unique's table sets that no tier gives
+    /// ([`crate::content::UniqueDef::light`]); `None` for the rest.
+    pub light: Option<crate::content::LightId>,
 }
 
 impl<'a> Rolled<'a> {
     /// `affix` of `def` as its tier rolls it.
     pub fn of(def: &'a AffixDef, affix: &Affix) -> Self {
+        let tier = def.tier(affix.tier);
         Rolled {
             def,
             tier: affix.tier,
             value: affix.value,
-            dice: def.tier(affix.tier).map_or(1, |t| t.dice),
+            dice: tier.map_or(1, |t| t.dice),
+            light: tier.and_then(|t| t.light),
         }
     }
 }
@@ -151,6 +156,9 @@ impl Magic {
                 if let Some(dice) = unique.and_then(|u| u.dice(&a.id)) {
                     rolled.dice = dice;
                 }
+                if let Some(light) = unique.and_then(|u| u.light(&a.id)) {
+                    rolled.light = Some(light);
+                }
                 Some(rolled)
             })
             .collect();
@@ -163,24 +171,19 @@ impl Magic {
     /// when unique (of its base), known affixes that may roll on it (each tier one the affix
     /// has, each value within the tier's range, no two of one category), and no more prefixes
     /// or suffixes than its rarity allows (at least one affix).
-    /// A unique item's affixes as its table sets them may lie past their affix's last tier and
-    /// off its bases ([`Magic::check_set`]).
+    /// A unique item's affixes follow no rule but that each is known ([`Magic::check_set`]).
     pub fn check(&self, def: &ObjectDef, content: &Content) -> Result<(), String> {
-        let unique = (self.unique.as_deref()).and_then(|id| content.unique(id));
-        let set = unique.map_or(&[][..], |u| &u.magic().affixes[..]);
-        self.check_set(def, content, set)
+        self.check_set(def, content, self.unique.is_some())
     }
 
-    /// [`Magic::check`], but the affixes in `set` (a unique item's, written with their values,
-    /// `"mystic=30"`, #2001, #2044, checked where its table is read) are not held to the affix's
-    /// bases, and on the affix's last tier one may lie past its top or be a penalty
-    /// (`Tier::set_past`), or roll more dice than the tier (a rolled item's is held within its
-    /// tier).
+    /// [`Magic::check`], with `unique` for a unique item's affixes (#2152: set by its table,
+    /// checked where the table is read): they follow no rule but that each affix exists and its
+    /// tier with it. Any value, any number of one kind or category, on any base, in any number.
     pub(crate) fn check_set(
         &self,
         def: &ObjectDef,
         content: &Content,
-        set: &[Affix],
+        unique: bool,
     ) -> Result<(), String> {
         // A unique on clothing works as the kind its table names (#2141).
         let clothed = (self.unique.as_deref()).and_then(|id| content.unique(id)?.kind);
@@ -210,11 +213,20 @@ impl Magic {
             }
             None => {}
         }
-        if self.affixes.is_empty() {
-            return Err("a magic or rare item has an affix at least".into());
-        }
         if self.level == 0 || self.level > crate::content::MAX_ITEM_LEVEL {
             return Err(format!("item level {} is out of range", self.level));
+        }
+        if unique {
+            for affix in &self.affixes {
+                let a = (content.affixes().get(&affix.id))
+                    .ok_or_else(|| format!("unknown affix `{}`", affix.id))?;
+                a.tier(affix.tier)
+                    .ok_or_else(|| format!("`{}` has no tier {}", a.id, affix.tier))?;
+            }
+            return Ok(());
+        }
+        if self.affixes.is_empty() {
+            return Err("a magic or rare item has an affix at least".into());
         }
         let mut categories: Vec<&str> = Vec::new();
         let mut per_kind = [0usize; 2];
@@ -223,19 +235,13 @@ impl Magic {
                 .affixes()
                 .get(&affix.id)
                 .ok_or_else(|| format!("unknown affix `{}`", affix.id))?;
-            let hand_set = set.contains(affix);
-            if !hand_set && !may_roll(a, kind, def) {
+            if !may_roll(a, kind, def) {
                 return Err(format!("`{}` does not roll on {}", a.id, def.plural));
             }
             let tier = a
                 .tier(affix.tier)
                 .ok_or_else(|| format!("`{}` has no tier {}", a.id, affix.tier))?;
-            let last = usize::from(affix.tier) == a.tiers.len();
-            // A unique's dice past the ladder's (`"heavy=6d6"`, its count in its table) were
-            // read at load (`content::affix_value`), on the last tier.
-            let more_dice = a.effect.is_dice();
-            let past = hand_set && last && (tier.set_past(affix.value) || more_dice);
-            if !tier.holds(affix.value) && !past {
+            if !tier.holds(affix.value) {
                 return Err(format!(
                     "`{}` tier {} rolls {} to {}, not {}",
                     a.id, affix.tier, tier.min, tier.max, affix.value
