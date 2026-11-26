@@ -494,6 +494,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("risings.md", rooms::risings),
         ("magic-rarity.md", magic::magic_rarity),
         ("loot-sources.md", loot_sources::loot_sources),
+        ("loot-odds.md", loot_sources::loot_odds),
         ("magic-bases.md", magic::magic_bases),
         ("magic-prefixes.md", magic::prefixes),
         ("magic-suffixes.md", magic::suffixes),

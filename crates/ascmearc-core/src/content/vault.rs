@@ -10,11 +10,11 @@
 //! [`Vault::down`], which the stamp lays as plain floor and the level keeps hidden until the boss
 //! dies (`world/levels/layer_boss.rs`); only a vault an endless branch's boss row names may have it.
 //! Its author places the keys to its locks. A legend's `loot` is
-//! rolled when it is stamped: a grade, or a pool of item classes (`magic/loot.rs`, [`LootPool`]),
+//! rolled when it is stamped: a grade, or a grade among item classes (`magic/loot.rs`, [`LootCell`]),
 //! at the floor's item level. A legend's `monsters` draws creatures at the floor's danger
 //! ([`VaultMonsters`], `mapgen/population.rs`), on top of its population and outside the cap.
 //!
-//! [`LootPool`]: crate::magic::LootPool
+//! [`LootCell`]: crate::magic::LootCell
 //! [`VaultMonsters`]: super::VaultMonsters
 //!
 //! A vault of kind `outdoor` (ruins for the local areas of the overworld) is stamped onto open

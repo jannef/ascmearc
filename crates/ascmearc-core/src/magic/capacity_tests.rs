@@ -3,7 +3,7 @@
 use super::*;
 use crate::content::{Cutting, ItemHarm, TalentEffect};
 use crate::item_parts::ItemPart;
-use crate::magic::{Affix, LootGrade, LootPool, Quality, Rarity, Worked, loot};
+use crate::magic::{Affix, LootCell, LootGrade, Quality, Rarity, Worked, loot};
 use crate::talent::FortuneEffect;
 
 fn content() -> Content {
@@ -336,12 +336,11 @@ fn every_loot_path_holds_its_items_to_their_capacity() {
                     fits(&s, "roll");
                 }
             }
-            let pool = LootPool::from(LootGrade::Rare);
-            if let Some(s) = (crate::mapgen::loot_cell::roll(
+            let cell = LootCell::from(LootGrade::Rare);
+            if let Some(s) = (cell.roll(
                 &c,
                 &mut rng,
                 level,
-                &pool,
                 (
                     (&loot::Finder::NONE, 0),
                     &mut crate::test_support::pool_found(&c),

@@ -91,6 +91,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 ## Magic items
 
 - After Path of Exile: base items (weapons, armour, jewellery, tools) roll a rarity (normal, magic, rare) and prefixes and suffixes by item level. Uniques are rares with a set name, a power, and lore.
+- Every item found comes of one procedure, wherever it is found (#2161): the place gives how many and the least rarity, and its row in one table of sources (data) says the rest: whether the finder's talents count, whether a rare find may be a unique of the drop pool, whether curses may roll, how the material is drawn, and whether arms and armour get a make. What a finder's talents add to finds applies at fixed steps the same way everywhere and never touches coins or loose gems, which are wealth, found by their own rules.
 - Only base items with a magic kind are ever magic. An item never has two affixes of one category. An affix's tier is drawn evenly among those its item level reaches.
 - An item holds a limited number of affixes, its capacity: 2 for a plain base (the owner), more for jewellery, quality, material, a gem, and a maker's mark, one less for ammunition. Every item made is trimmed to it as the last step.
 - A stack of ammunition is magic as a whole: every missile shares its affixes, stacks of different magic never join, and it takes only what betters a shot (to hit, damage, typed damage, criticals, banes), never a stat. A shot adds the ammunition's magic to the launcher's.

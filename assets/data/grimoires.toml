@@ -7,7 +7,7 @@
 # on sight and never labelled. It is kept after it teaches, and may be read again after a failure.
 #
 # A grimoire is never loot by itself: whenever a scroll of a spell is made at random (loot, a
-# chest, a hoard, a vault's loot pool, a shop's stock, a creature's gear, a starting kit, scroll by
+# chest, a hoard, a vault's loot cell, a shop's stock, a creature's gear, a starting kit, scroll by
 # scroll), it is its grimoire instead with `chance` in a hundred. A scroll that a level, a shop, or
 # a scenario names by hand stays a scroll.
 chance = 10

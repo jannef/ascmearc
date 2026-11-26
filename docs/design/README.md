@@ -16,8 +16,6 @@ How far a design's slices have come is tracked in its issues, not here.
 
 ## Approved, being built
 
-- `loot-pipeline.md` (#2161): one find procedure for every item source; the source table and the
-  finder.
 - `profane-gifts.md` (#1471): the layer bosses' corpses and the gift table.
 
 ## Built
@@ -25,10 +23,10 @@ How far a design's slices have come is tracked in its issues, not here.
 `adventurers-guild.md`, `affixes-systems.md`, `animated-objects.md`, `background-story.md`,
 `bard-jack-of-all-trades.md`, `berserker.md`, `buff-circles.md`, `campaign.md`,
 `chests-and-treasure.md`, `combat-progression.md`, `craftsperson.md`, `druid-and-summons.md`,
-`enchanting.md`, `generic-vaults.md`, `horoscope.md`, `ki-tricks.md`, `localization.md`, `magic.md`,
-`miscasts-review.md`, `monster-dread.md`, `no-caster-level.md`, `overworld-encounters.md`,
-`paladin-smites.md`, `potions-wave-2.md`, `prestige-classes.md`, `priest.md`, `professions.md`,
-`progression.md`, `ranger-companion.md`, `recipes.md`, `skill-uses.md`, `special-rooms.md`,
-`spell-scaling.md`, `spell-types-and-new-spells.md`, `stat-training.md`,
-`surprise-and-sneak-attacks.md`, `talent-ranks.md`, `thief-openings.md`, `witch-and-wizard.md`,
-`witch-familiar.md`.
+`enchanting.md`, `generic-vaults.md`, `horoscope.md`, `ki-tricks.md`, `localization.md`,
+`loot-pipeline.md`, `magic.md`, `miscasts-review.md`, `monster-dread.md`, `no-caster-level.md`,
+`overworld-encounters.md`, `paladin-smites.md`, `potions-wave-2.md`, `prestige-classes.md`,
+`priest.md`, `professions.md`, `progression.md`, `ranger-companion.md`, `recipes.md`,
+`skill-uses.md`, `special-rooms.md`, `spell-scaling.md`, `spell-types-and-new-spells.md`,
+`stat-training.md`, `surprise-and-sneak-attacks.md`, `talent-ranks.md`, `thief-openings.md`,
+`witch-and-wizard.md`, `witch-familiar.md`.

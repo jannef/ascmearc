@@ -72,7 +72,7 @@ use crate::content::{
 use crate::door::Lock;
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
-use crate::magic::LootPool;
+use crate::magic::LootCell;
 use crate::magic::loot::{self, Finder, Origin, Spec};
 use crate::object::{Stack, add_to_pile};
 use crate::rng::Rng;
@@ -211,7 +211,7 @@ pub(crate) struct Canvas<'a> {
     /// Traps stamped from vaults.
     pub traps: BTreeMap<Pos, Trap>,
     /// Where vaults stamped loot to roll, and what it may be.
-    pub loot: Vec<(Pos, LootPool)>,
+    pub loot: Vec<(Pos, LootCell)>,
     /// Where vaults stamped monster pools to draw, and who may come.
     pub monsters: Vec<VaultMonsters>,
     /// Locks on closed doors: stamped from vaults, and on locked rooms.
@@ -969,16 +969,16 @@ impl Loot {
 
 /// Rolls a generated level's loot at its item level, from its loot stream (`loot`, so that the
 /// map is the same with or without it): first an item on each of `markers` (vaults' loot
-/// cells, from their pools), then the floor loot, one draw for how many (between the fewest and
+/// cells), then the floor loot, one draw for how many (between the fewest and
 /// the most) and, for each, one for a cell of `floor` terrain where nothing lies, stands,
 /// shines, or leads away (in row order), then the item, for the finder `visit` describes (a
-/// cell by [`loot_cell::roll`]; the floor's count by [`loot::count`], each by
+/// cell by [`LootCell::roll`]; the floor's count by [`loot::count`], each by
 /// [`wealth::gem_instead`], then [`loot::find`]).
 pub(crate) fn place_loot(
     template: &mut LevelTemplate,
     content: &Content,
     loot: &mut Loot,
-    markers: &[(Pos, LootPool)],
+    markers: &[(Pos, LootCell)],
     (floor, visit): (Option<Floor>, &Visit),
 ) {
     let finder = (&visit.finder, visit.gems);
@@ -989,8 +989,8 @@ pub(crate) fn place_loot(
             add_to_pile(template.objects.entry(p).or_default(), &[stack], content);
         }
     };
-    for (p, pool) in markers {
-        for stack in loot_cell::roll(content, rng, level, pool, (finder, taken)) {
+    for (p, cell) in markers {
+        for stack in cell.roll(content, rng, level, (finder, taken)) {
             place(template, *p, Some(stack));
         }
     }

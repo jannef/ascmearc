@@ -6,7 +6,7 @@ use crate::content::{Content, CreatureSpawn, Flow, LightId, TerrainId};
 use crate::door::Lock;
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
-use crate::magic::LootPool;
+use crate::magic::LootCell;
 use crate::object::Stack;
 use crate::rng::Rng;
 use std::collections::BTreeMap;
@@ -37,7 +37,7 @@ pub(super) struct Land<'a> {
     /// Objects stamped from ruins.
     pub objects: BTreeMap<Pos, Vec<Stack>>,
     /// Where ruins stamped loot to roll, and what it may be.
-    pub loot: Vec<(Pos, LootPool)>,
+    pub loot: Vec<(Pos, LootCell)>,
     /// Locks on doors stamped from ruins.
     pub locks: BTreeMap<Pos, Lock>,
     pub creatures: Vec<CreatureSpawn>,

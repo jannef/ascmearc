@@ -38,7 +38,7 @@ pub mod worked;
 
 pub use crate::content::{AffixKind, Effect, ItemKind, Rarity};
 pub use capacity::capacity;
-pub use loot::{LootGrade, LootPool};
+pub use loot::{LootCell, LootGrade};
 pub use mods::Mods;
 pub use numbers::Numbers;
 pub use worked::{Aspect, Quality, Worked};
@@ -310,11 +310,11 @@ mod ammo_magic_tests;
 #[cfg(test)]
 mod ammo_make_tests;
 #[cfg(test)]
+mod cell_tests;
+#[cfg(test)]
 pub(crate) mod drop_pool_tests;
 #[cfg(test)]
 mod finder_tests;
-#[cfg(test)]
-mod pool_tests;
 #[cfg(test)]
 mod shares_tests;
 #[cfg(test)]

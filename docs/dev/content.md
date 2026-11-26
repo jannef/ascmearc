@@ -48,12 +48,13 @@ outdoor level of the same size and campaign, checked at load). A legend entry's 
 its cell (`docs/dev/overworld.md`, "Named places"); a vault's are stamped with it
 (`docs/dev/mapgen.md`). A burial ground's `[burial]` table and its legend's `epitaph`,
 `statue_place`, and `burial_stairs` are `docs/dev/graves.md`'s. A vault's legend entry may roll `loot` when the level is generated: a
-grade (`loot = "magic"`: `any`, `magic`, or `rare`, anything of at least that) or a pool (`loot = {
-pool = ["armour", "rings"], grade = "magic" }`, `grade` optional, default `any`; `pool` one name or
-a list). A pool's names are item class ids or the `group`s of `data/item_classes.toml` (`weapons`,
-`armour`, `jewellery`, `money`); `LootPool::named` refuses at load a name that is neither; a pool
-that can hold nothing of its grade leaves its cell bare (`magic/pool_tests.rs`). Use one
-cell per find; prefer a pool to a static `[[pile]]` in a generic vault. A vault's legend entry may
+grade (`loot = "magic"`: `any`, `magic`, or `rare`, anything of at least that) or a grade among
+item classes (`loot = { pool = ["armour", "rings"], grade = "magic" }`, `grade` optional, default
+`any`; the key `pool` one name or a list: the cell's classes, not the drop pool), a `LootCell`.
+Its names are item class ids or the `group`s of `data/item_classes.toml` (`weapons`, `armour`,
+`jewellery`, `money`); `LootCell::named` refuses at load a name that is neither; a cell that can
+hold nothing of its grade is left bare (`magic/cell_tests.rs`). Use one cell per find; prefer a
+loot cell to a static `[[pile]]` in a generic vault. A vault's legend entry may
 draw `monsters` too (`content/monster_pool.rs`): `monsters = { pool = "level", count = 20 }`
 (`"level"` the floor's population, or tags: `pool = "goblin"`, `pool = ["orc", "troll"]`; `count`
 over the entry's marked cells, default one on each, never more than they hold; refused at load:

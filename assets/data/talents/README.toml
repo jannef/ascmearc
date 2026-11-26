@@ -270,8 +270,7 @@
 #                                 percent more items, the fraction by chance (the finder's
 #                                 `quantity`; the same rows)
 #   loot_unique_percent { value } a rare find is a unique of the drop pool that percent more often
-#                                 (the finder's `unique`; read once the pool's check moves into
-#                                 the find, docs/design/loot-pipeline.md S4)
+#                                 (the finder's `unique`, read at the pool's check in the find)
 #   read_percent { value }        reading a scroll takes that percent more time (negative: less)
 #   scroll_kept { chance }        a scroll it reads is not used up, by that chance in percent
 #   potion_kept { chance }        a potion it drinks is not used up, by that chance in percent

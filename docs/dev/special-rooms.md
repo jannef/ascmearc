@@ -137,7 +137,7 @@ a tribe one `danger::draw` for the first type. Per sleeper: `Theme::draw` (mixed
 a warren: the type; a tribe: `danger::draw` over the faction's candidates, else the first type),
 then a cell (`swap_remove` of a drawn index). Each is a `CreatureSpawn` with `asleep: true`, no
 route, `rolls_gear: true` (so `gear::arm` rolls it after the population, in spawn order). The
-hoard: a loose gem by the wealth seam (`wealth::gem_instead`) or else `loot::find` of the den row at the item level + `loot_level` (the visit's luck), each
+hoard: a loose gem by the wealth seam (`wealth::gem_instead`) or else `loot::find` of the den row at the item level + `loot_level` (the visit's finder), each
 on a plain floor cell of the room (stairs and lights left out) drawn anew. `population.rs` keeps
 its creatures and their routes out of a den (as out of a sanctuary), and `special::make` refuses a
 den where a generator patrol walks. `travel.rs::make_creature` gives a spawn with `asleep` the
@@ -213,7 +213,7 @@ danger 3 and 30, and Fyrdelf's bottom floor).
 Items (`mapgen/hoard.rs`, `hoard::fill`, called in `mapgen::generate_with` right after
 `den::fill`, only on a branch level with a danger): every special room whose effect has a
 `hoard` gets `hoard.items` items, a loose gem by the wealth seam (`wealth::gem_instead`) or else
-`loot::find` of the hoard row at the item level + `loot_level` (the visit's luck), each on a plain floor cell of the room (the palette's floor,
+`loot::find` of the hoard row at the item level + `loot_level` (the visit's finder), each on a plain floor cell of the room (the palette's floor,
 no stairs, light, or trap) drawn anew, from the level's loot stream (`mapgen::Loot`,
 `loot/<level id>`), going on after the dens' hoards and before the rooms' own loot, never
 restarted.
@@ -328,7 +328,7 @@ walkable, transparent, a `description`), placed by `special.rs` as any `feature`
 light). Loot (`mapgen/room_loot.rs`, `room_loot::fill`, called in `mapgen::generate_with` after
 the danger block, so on every generated branch level): every special room whose effect has a
 `loot` gets `rng.range(least, most)` items, each `loot::find` of the room-loot row among the class at the
-floor's item level (no finder's luck), on a cell of the room's plain
+floor's item level (the row takes no finder), on a cell of the room's plain
 floor (no stairs, light, or trap) drawn after it, all from the level's loot stream
 (`mapgen::Loot`, `loot/<level id>`) going on after the hoards. The test
 `mapgen/scriptorium_tests.rs` checks the level is otherwise the same without the loot, and that
@@ -770,7 +770,7 @@ player still stands there, the cell is the room's laid `floor` (cracked floor; a
 cells never give way), the level has a down staircase whose `to` is set (`level_below`), and
 the player lacks Old delver (`DelvingMods::collapse_proof`). Then one keyed draw at
 `chance`, doubled while `load_of(player).penalty() >= Burdened` (capped at 100). On a fall:
-`World::visit` makes the level below (as stairs would, with the visit's luck and level),
+`World::visit` makes the level below (as stairs would, with the visit's finder and level),
 `landing` lists its cells (a flood fill from `start`, else the first staircase, through
 walkable cells and doors without a lock; then walkable, no door, stairs, trap, ice, actor, or
 shop floor), a second keyed draw picks one, "The floor gives way beneath you!",

@@ -25,7 +25,7 @@ time in ten, `Content::grimoire_or`, docs/dev/spells.md "Learning"), and
 and wields, global), the one aggregation every rule reads (attack speed, `Effect::AttackSpeed`,
 is summed from the worn things and the attack's own object and applied by `mods::faster` in
 `World::attack_cost`: together at most `affix::MAX_SPEED` 50 % off, and never below `COSTS.start()`
-100, the cheapest action); `loot.rs`: `roll`, its draw order;
+100, the cheapest action); `loot.rs`: `find`, its draw order (below);
 `name.rs`: the names around `Stack::names`, the item as it is made (its gems, #191, and its
 material, #193), so the order is [prefix] [ornament] [material] base [suffix] and a rare item's
 base shows its gem; `describe.rs`: base
@@ -44,26 +44,28 @@ and ` (numbers)`, which the object screens, the equipment screen and its choice,
 choices, and the `inventory` dump layer render; look mode's piles tag the phrase with `words`;
 messages keep the phrase), `lines` the description's (`describe::lines` adds them after the
 base stats); `dice_text` is the one damage-dice form, which `OwnAttack::damage_text` uses too).
-Every item a source yields is one pure function (`magic/loot.rs`, docs/design/loot-pipeline.md):
-`loot::find`/`finds` of a `Spec` (the source's `Origin`, the item level, the grade, the classes,
-the count) for a `Finder` (`magic/finder.rs`: `quantity` read at the count, `loot::count`;
-`rarity` at the rarity draw; `unique` at the drop pool's check, step 3b; `Finder::of(talents)`,
-`Finder::NONE` for a row that takes none; the wealth seam's gem percent is passed beside it,
-never in it), and `loot::make`/`make_unfinished` for a base chosen already;
-`Origin::rule` is the source table, `data/loot_sources.toml` (`Content::loot_sources`, one row a
-source: the default grade or the caller's data that gives it, whether the finder counts, the
-drop pool, curses,
-how the material is drawn, a make; the loader refuses a missing row, a row of no source, and a
-grade a source cannot take; without the file every row is `Rule::PLAIN`), and its `[item] ammo`
-the size of a stack of ammunition found. A find is always an item: where a
-source still finds a loose gem in its place (floor loot, vault cells and chest items at grade
-`any`, hoards, dens, features at `any`, the stipend, drops), the caller draws it first by the
-wealth seam (`wealth::gem_instead`). The find sets an item of a class with an `[[ornament]]`
-with a gem (`gem::ornament`), and last draws its material (`variant::draw`, step 8: by the
-materials' `rarity` at the item level, or for the drop, gear, and animated rows by their `gear`
-weights at the creature's level, `Spec::wearer`; drops at the item level
-`world/items/loot.rs::drop_level` gives them, below); its own parts are
-the material first, then the gem. Creature drops try the wealth seam's gem before the magic item
+**Loot** (#2161; the history is docs/design/loot-pipeline.md): every item a source yields is
+one pure function of a stated parameter set, with no world access inside: `loot::find` (one) and
+`loot::finds` (the count) of a `Spec` (the source's `Origin`, the item level, the grade, the
+classes, the count) for a `Finder`, with the drop pool's uniques found so far and the stream;
+`loot::make`/`make_unfinished` make a base chosen already (creature gear, goods, kits, an animated piece), and
+`heirloom`/`favoured` one with a fixed count of affixes. **The step list**, every draw in order
+(base, count, rarity, 3b the drop pool, affix count, affixes, a rare's name, ornament, material,
+a wand's rung and the make, the trim), is the module docs of `magic/loot.rs`, its one home.
+**The source table** is `data/loot_sources.toml` (`Content::loot_sources`, `Origin::rule`; the
+wiki's table is generated from it, `xtask/src/wiki/loot_sources.rs`), one row a source; its
+columns (`grade`, `finder`, `pool`, `curses`, `material`, `make`) are explained in the file's
+header, their one home (`material = "gear"` draws at the creature's level, `Spec::wearer`; a
+drop's item level is `world/items/loot.rs::drop_level`'s, below). The loader refuses a missing
+row, a row of no source, and a grade a source cannot take; without the file every row is
+`Rule::PLAIN`. Its `[item] ammo` is the size of a stack of ammunition found. **The finder**
+(`magic/finder.rs`, `Finder::of(talents)`): `quantity` read at the count (`loot::count`),
+`rarity` at the rarity draw, `unique` at step 3b, each only there; `Finder::NONE` for a row that
+takes none. **A find is always an item**: where a source still finds a loose gem in its place
+(floor loot, vault cells and chest items at grade `any`, hoards, dens, features at `any`, the
+stipend, drops), the caller draws it first by the wealth seam (`wealth::gem_instead`, its gem
+percent passed beside the finder, never in it). An item's own parts are the material first, then
+the gem (`gem::ornament`)
 (`docs/dev/objects.md`, "Gems" and "Materials and variants"). A wand made by `make_unfinished` draws
 its rung last (`Stack::draw_wand_rung`, `Stack::wand_rung`, S5 #752: one draw, a wand's only;
 the other makers of wands and the fallback streams are docs/dev/spells.md "Wands").
@@ -214,14 +216,14 @@ level reaches, tier 1 to the highest whose level is at most the item level, one 
 past a ladder's last tier the whole ladder, so a find of level 60 rolls as one of 40 does. The
 same draw serves everything that rolls through loot's pick: floor loot, drops, creature gear,
 shops' goods, and enchanting (`roll_affix_within`) (`magic/tests.rs`,
-`tiers_roll_flat_over_every_tier_the_item_level_reaches`). **A vault's loot pool**
-(`magic/loot.rs`: `LootPool`; rolled by `mapgen/loot_cell.rs::roll`; the legend's syntax in
-`docs/dev/content.md`): a cell's pool is a grade and item classes. With no classes (`loot =
+`tiers_roll_flat_over_every_tier_the_item_level_reaches`). **A vault's loot cell**
+(`magic/loot.rs`: `LootCell`; rolled by `LootCell::roll` in `mapgen/loot_cell.rs`; the legend's
+syntax in `docs/dev/content.md`): a grade and item classes. With no classes (`loot =
 "magic"`) it is a find of the vault-cell row at its grade (at `any` the wealth seam's gem first),
 the same draws as a floor find. With classes: one draw among those that hold something at the item level (`holds`), then
 coins (`chest::purse`, the purse of a chest of that level), a loose gem (`gem::loose`; which
 classes these are comes from the currency's and the gem object's `class`, never the finder's gem percent), or
-`loot::finds` among the class's objects (no gem instead), for the finder. Tests: `magic/pool_tests.rs`. The aristocrat's stipend (`world/classes/stipend.rs`, #1405) rolls a find of the stipend row (the wealth seam's gem first) once a level-up, by `data/rules/stipend.toml`'s chance, at the level, with its own `finder` from data (`loot.finder = { rarity = 100 }`, plus Landed noble's; not the player's), on the stream `stipend/<level>`, keeping only magic and rare finds and the `keep` classes. **A drop's item level**
+`loot::finds` among the class's objects (no gem instead), for the finder. Tests: `magic/cell_tests.rs`. The aristocrat's stipend (`world/classes/stipend.rs`, #1405) rolls a find of the stipend row (the wealth seam's gem first) once a level-up, by `data/rules/stipend.toml`'s chance, at the level, with its own `finder` from data (`loot.finder = { rarity = 100 }`, plus Landed noble's; not the player's), on the stream `stipend/<level>`, keeping only magic and rare finds and the `keep` classes. **A drop's item level**
 (`world/items/loot.rs::drop_level`): the creature type's level, at least the floor's item level, at
 most `MAX_ITEM_LEVEL`; floor loot keeps the floor's (`world/magic/magic_tests.rs`,
 `a_drop_rolls_at_the_creatures_level_at_least_the_floors`). **The floor's item level**

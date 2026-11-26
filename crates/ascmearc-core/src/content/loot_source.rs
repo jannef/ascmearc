@@ -1,4 +1,4 @@
-//! The loot sources (`assets/data/loot_sources.toml`, docs/design/loot-pipeline.md §3.4): the
+//! The loot sources (`assets/data/loot_sources.toml`, docs/dev/magic-items.md "Loot"): the
 //! row of each [`Origin`], what every item it yields shares ([`Rule`]), and the numbers of a
 //! find that belong to no source (`[item]`). Read by [`crate::magic::loot`].
 
