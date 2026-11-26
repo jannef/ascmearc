@@ -25,7 +25,7 @@ to override its type's alignment the same way (`Actor::alignment_override`, read
 `Actor::nature`; `docs/dev/alignment.md`), and `status = ["blessed", "weakened*2"]` to place it
 with statuses (`CreatureSpawn::status`, `level.rs::parse_statuses`: a status id, `*N` degrees,
 default one; unknown or over its `max` refused; added in `travel.rs::make_creature`
-beside a den's `asleep`; the test world's `circles` hall). The showcase (hub, vast, courtyard) is safe
+beside a den's `asleep`; the test world's `glow` hall). The showcase (hub, vast, courtyard) is safe
 this way: `xtask/src/vast.rs` emits it for its rats and kobolds; fighting is the arena's and the Depths'.
 **Objects in level files**: a legend entry places a pile with `objects = ["dagger", "arrow*12"]`
 (top first; `*N` places N, one stack if the object is stackable, else N stacks of one; a loose
@@ -166,9 +166,7 @@ whole table in one file is still accepted, so test fixtures that insert it keep 
 no table: the shared file, then each campaign's `data/plurals.toml`, merged into one, read
 first so creature, object, and gem names without a `plural` take theirs from it. Ids (`CreatureId`, `ObjectId`, `MaterialId`, an affix's
 index) are indices in that order and feed the content fingerprint, so moving entries between
-files changes ids and invalidates saves (the release bump covers it). Besides ids, one group of
-pairs feeds it: `data/circles.toml`'s rows as status and school (a school decides the light a
-circled status sheds, `circles::shed_lights`; docs/dev/status-effects.md). Each file is parsed on its
+files changes ids and invalidates saves (the release bump covers it). Each file is parsed on its
 own, so an error names the file the bad entry is in; **a duplicate id across files is a
 `ContentError` naming both** (`content::duplicate_id`). For affixes the scalar tables (`[rarity]`,
 `[magic]`, `[rare]`, `[names]`) stay in the settings file `data/affixes.toml`, each set in

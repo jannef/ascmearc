@@ -208,7 +208,7 @@ room's rising; blood is spilled as any.
 `AllyEffect::AllyMod` gains `count`, `duration_percent`, `lasting`, `most` (`AllyMods`, summed;
 `lasting` any), read only in `cast_summon`; the wiki's talent text says each.
 
-Tests: `world/magic/summon_spell_tests.rs` on the built-in content's spell-circle hall with fixture
+Tests: `world/magic/summon_spell_tests.rs` on the built-in content's buffs and hexes hall with fixture
 spells (rats; a rat or a bat) and talents: the call beside the caster on their side with its
 `until`, the words and the noise; the oldest giving way past `most`; the clock; the refusals
 (the global cap, with and without one giving way; the overworld) costing nothing; `ally_mod`'s

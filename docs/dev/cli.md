@@ -89,15 +89,14 @@ metadata`'s `target_directory`) for the build output it reads and the files it w
   captures to `target/xtask/golden/*.local.png`, no compare; `--update` rewrites references
   (CLAUDE.md "Golden screenshots").
 - **Frame-time benchmark**, `cargo xtask bench-frames [WxH]`: release, offscreen; the hub, again
-  with the Flicker switch off (`steady`), the vast level, and fifty spell circles with the switch
-  on and off, `xtask/src/bench_circles.rs`; method and results in `docs/perf.md`.
+  with the Flicker switch off (`steady`), the vast level, and fifty glowing actors with the spell glow
+  on and off (`glow`, `g-off`), `xtask/src/bench_glow.rs`; method and results in `docs/perf.md`.
 - **Turn-time benchmark**, `cargo xtask bench-turns [ROW...]`: re-runs itself in release (rows
   named by label run alone, `bench-turns l-1 long`). Budgets: hub
   5 ms, vast 16 ms, generated depths level 5 ms, sunlit courtyard at dawn 5 ms, overworld 5 ms,
   generated forest area at dawn 5 ms, courtyard and forest area at full-moon midnight 5 ms, arena
   5 ms, a generated 120×60 cave floor at full population (a fixture branch of danger 8 with a
-  teeming den, `delf`), the same floor with all but its kobolds shedding a spell circle's light
-  (`d-hex`; its rest is shown, not judged: `bench.rs::UNJUDGED_REST`), and the same floor of
+  teeming den, `delf`), and the same floor of
   animated panoplies at danger 40 (`panop`) 16 ms per turn, and that floor with a high-level
   ranger and their companion beside them (`d-pet`, 16 ms), and the deepest floor of a 40-floor
   cave branch, fresh (`l-1`) and after visiting the other 39 (`long`: a long run, #1507), 16 ms
@@ -184,8 +183,8 @@ The test world (`assets/campaigns/showcase/`, the `showcase` feature):
 - `shrine`: before three forgotten altars, good, neutral, and evil, to pray at.
 - `forge`: beside a forge's anvil with arms and armour to temper.
 - `spring`: below a cave room with a healing spring to drink at.
-- `circles`: in a hall of peaceful kobolds already buffed and hexed, knowing every buff and hex
-  spell with 300 mana, for the spell circles.
+- `glow`: in a hall of peaceful kobolds already buffed and hexed, knowing every buff and hex
+  spell with 300 mana, for the spell glow.
 - `vast`: the 420×300 cavern level (scrolling camera, river, rooms, peaceful patrols, many
   lights), for captures and perf checks (`cargo xtask gen-vast` makes it).
 

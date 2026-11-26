@@ -1,6 +1,9 @@
-//! Spell circles (docs/design/buff-circles.md): a slowly turning
-//! circle of thin rings and a regular polygon about every actor the player sees with a buff's or
-//! a hex's status, the actor's own glyph glowing and glinting within it.
+//! The circle renderer (docs/dev/rendering.md "The circle renderer"): a slowly turning circle of
+//! thin rings and a regular polygon about an actor, the actor's own glyph glowing and glinting
+//! within it. Today it draws the **spell glow** alone (`ui/spell_glow.rs`): its lines are off
+//! ([`Circles::lines`]), so a buffed or hexed actor's glyph glows and glints and no circle is
+//! drawn. The rings and the polygon are kept, tested, for a later use (a summoning circle):
+//! turning them on is setting `lines` and pushing instances.
 //!
 //! **The rule** ([`layout`]): the effects of one kind (buffs, or hexes) on one actor, in status
 //! order, make a regular polygon of `n × ⌈3 / n⌉` corners (a triangle for one effect, a square for
@@ -9,7 +12,7 @@
 //! an actor with both the buffs' circle is the inner one and the hexes' the outer, a lone hex as
 //! compact as a lone buff. The rings and sides are drawn in the first effect's school's colour.
 //!
-//! **The draw**: `ui/circles.rs` pushes a [`CircleInstance`] per circled actor each frame; here
+//! **The draw**: `ui/spell_glow.rs` pushes a [`CircleInstance`] per glowing actor each frame; here
 //! they become one dynamic mesh of one quad each, every vertex carrying the instance as flat
 //! attributes, drawn with [`CircleMaterial`] (`circles.wesl`: signed distances for the rings and
 //! the polygon, with a faint glow; the actor's glyph's halo from [`GlyphGlow`]) in one draw call,
@@ -151,8 +154,8 @@ pub fn under(instances: &[CircleInstance], h: f32) -> Vec<[f32; 4]> {
         .collect()
 }
 
-/// One effect on a circle: which circled status it is (its row in `data/circles.toml`), and
-/// its school (by `School::ALL` position).
+/// One effect on a circle: which status it is (its row in `data/spell_glow.toml`), and its
+/// school (by `School::ALL` position).
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Mark {
     pub slot: u8,
@@ -352,11 +355,14 @@ pub struct Circles {
     pub glyph_px: f32,
     /// Visual time, for the glints and the shimmer.
     pub time: f32,
-    /// Whether the glints and the shimmer move (`motion`), whether anything glows (not with
-    /// reduced effects), and whether the glints bloom (the `glow` switch).
+    /// Whether the glints and the shimmer move (`motion`), whether anything glows, and whether
+    /// the glints bloom (the `glow` switch).
     pub motion: bool,
     pub halo: bool,
     pub bloom: bool,
+    /// Whether the rings and the polygon are drawn: off, only the actors' glyphs glow and glint
+    /// (the spell glow, the one use today).
+    pub lines: bool,
 }
 
 impl Circles {
@@ -405,6 +411,8 @@ pub struct CircleParams {
     /// 1 for the pass over the free-glyph layer, which draws the actors' glyphs' glints alone;
     /// 0 for the circles under it.
     pub top: u32,
+    /// 1: the rings and the polygon are drawn ([`Circles::lines`]); 0: the glyph's glow alone.
+    pub lines: u32,
     pub schools: [Vec4; 8],
 }
 
@@ -559,6 +567,7 @@ fn spawn_layer(
         h: 1.0,
         time: 0.0,
         motion: false,
+        lines: false,
     };
     let mesh = meshes.add(circle_mesh(&[], &frame, &|_| None));
     let new = |top: u32| CircleMaterial {
@@ -634,6 +643,7 @@ fn build_mesh(
         halo: on(circles.halo),
         bloom: on(circles.bloom),
         top: 0,
+        lines: u32::from(circles.lines),
         schools: colors.0,
     };
     for (handle, top) in [(&handles.material, 0), (&handles.top, 1)] {
@@ -650,6 +660,7 @@ fn build_mesh(
         h,
         time: if circles.motion { circles.time } else { 0.0 },
         motion: circles.motion,
+        lines: circles.lines,
     };
     let key = (circles.instances.clone(), [h, frame.time].map(f32::to_bits));
     if built.as_ref() == Some(&key) {
@@ -661,16 +672,18 @@ fn build_mesh(
     *built = Some(key);
 }
 
-/// What every circle of a frame shares: the cell height, the visual time, and whether things
-/// move.
+/// What every circle of a frame shares: the cell height, the visual time, whether things move,
+/// and whether the lines are drawn.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Frame {
     pub h: f32,
     pub time: f32,
     pub motion: bool,
+    pub lines: bool,
 }
 
-/// One quad per circle, `2 × extent` square about its centre (and a pixel more). An empty
+/// One quad per circle, `2 × extent` square about its centre (and a pixel more); without lines
+/// only the glyph's square (a cell height, rounded up, its glow and glints inside). An empty
 /// layer gets a single quad with no circle, so the mesh is never empty. `glyphs` gives an
 /// actor's glyph's slot in the [`GlyphGlow`] atlas.
 fn circle_mesh(
@@ -706,7 +719,11 @@ fn circle_mesh(
     let mut indices = Vec::with_capacity(n * 6);
     let motion = if frame.motion { 1.0 } else { 0.0 };
     for (i, c) in instances.iter().enumerate() {
-        let half = (c.extent() + quad_margin()) * h + 1.0;
+        let half = if frame.lines {
+            (c.extent() + quad_margin()) * h + 1.0
+        } else {
+            h.ceil() + 1.0
+        };
         let kinds = c.kinds.map(|k| pack_shown(k.as_ref()));
         let mut under = under[i];
         under[3] = pack_glyph(c.glyph.and_then(glyphs), c.seed);
@@ -947,6 +964,7 @@ mod tests {
             h: 18.0,
             time: 2.5,
             motion: true,
+            lines: true,
         };
         let mesh = circle_mesh(&[one, both], &frame, &|_| Some(3));
         assert_eq!(mesh.count_vertices(), 8);
@@ -989,6 +1007,18 @@ mod tests {
         assert_eq!(pack_glyph(None, 7) as u32, NO_GLYPH << 16 | 7);
         let none = circle_mesh(&[], &frame, &|_| None);
         assert_eq!(none.count_vertices(), 4, "never empty");
+        // Without lines (the spell glow) a quad is the glyph's square, all the shader reads.
+        let glow = Frame {
+            lines: false,
+            ..frame
+        };
+        let mesh = circle_mesh(&[one], &glow, &|_| Some(3));
+        let Some(bevy::mesh::VertexAttributeValues::Float32x2(local)) =
+            mesh.attribute(Mesh::ATTRIBUTE_UV_0)
+        else {
+            panic!("locals are Float32x2");
+        };
+        assert_eq!(local[0][0].abs(), 19.0);
     }
 
     fn at(center: Vec2, c: Circle) -> CircleInstance {

@@ -419,7 +419,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("spell-armour.md", spells::armour),
         ("wands.md", spells::wands),
         ("rods.md", spells::rods),
-        ("spell-circles.md", spells::circles),
+        ("spell-glow.md", spells::glow),
         ("ally-rules.md", allies::rules),
         ("summon-spells.md", allies::summon_spells),
         ("rise-spells.md", allies::rise_spells),
@@ -624,15 +624,14 @@ mod tests {
         }
     }
 
-    /// Only a status with a light (its own in data/status/, or its spell circle's in
-    /// data/circles.toml) says it sheds one, and a circle's is named as the circle's.
+    /// Only a status with a light (data/status/) says it sheds one.
     #[test]
     fn only_statuses_with_a_light_shed_one() {
         let content = ascmearc_assets::content().expect("content loads");
         let table = healing::status_effects(&content);
         let rows = (table.lines()).filter(|l| l.starts_with("| <a id="));
         assert_eq!(rows.count(), content.status_defs().len());
-        for (i, def) in content.status_defs().iter().enumerate() {
+        for def in content.status_defs() {
             // The tables group the statuses (#1558): each row found by its anchor.
             let start = format!(
                 "| {} |",
@@ -641,11 +640,12 @@ mod tests {
             let row = (table.lines())
                 .find(|l| l.starts_with(&start))
                 .unwrap_or_else(|| panic!("no row {start}"));
-            let sheds = row.contains("shed light") || row.contains("sheds a faint light");
-            assert_eq!(sheds, def.light.is_some(), "{}", def.id);
-            let circled = (content.circles().rows().iter())
-                .any(|c| usize::from(c.status.0) == i && Some(c.light) == def.light);
-            assert_eq!(row.contains("spell circle sheds"), circled, "{}", def.id);
+            assert_eq!(
+                row.contains("shed light"),
+                def.light.is_some(),
+                "{}",
+                def.id
+            );
         }
     }
 
@@ -1015,13 +1015,7 @@ mod tests {
             text("lights.md")
                 .contains("| You, while Lit | 6 cells | visible | 235, 235, 250, 0 | 236 |")
         );
-        assert!(text("lights.md").contains(
-            "| Spell circle, abjuration (anyone blessed, silenced) | 1 cell | visible and UV | 32, 48, 68, 90 | 46 |"
-        ));
-        assert!(
-            text("status-effects.md")
-                .contains("to hit +1; its abjuration spell circle sheds a faint light on your cell and the cells beside you")
-        );
+        assert!(!text("lights.md").contains("Spell circle"));
         assert!(text("status-effects.md").contains("You shed light 6 cells around you"));
         assert!(
             text("moons.md").contains(

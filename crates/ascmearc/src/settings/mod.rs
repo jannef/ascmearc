@@ -21,7 +21,7 @@
 //! glow = true             # bloom and glyph glow
 //! distortion = true       # heat haze; the depth blur of a tower window's view
 //! particles = true
-//! circles = true          # spell circles about buffed and hexed creatures; still, not off, with reduced effects
+//! spell_glow = true       # the glow of buffed and hexed creatures' glyphs; still, not off, with reduced effects
 //! screen_fades = true     # level-change fade, flashes, and spell effects darkening the view
 //! screen_shake = true     # the view shakes when a spell effect lands near the player
 //! weather = true          # rain falling, splashing, and rings on water
@@ -147,10 +147,10 @@ pub struct EffectSwitches {
     /// Heat haze, and the depth blur of a tower window's view of the ground.
     pub distortion: bool,
     pub particles: bool,
-    /// Spell circles: a turning circle about every seen
-    /// actor with a buff's or a hex's status. Information, not decoration: reduced effects only
-    /// stills it (as `motion` off does), so it stays as set, as blood does.
-    pub circles: bool,
+    /// Spell glow: the glyph of every seen actor with a buff's or a hex's status glows and
+    /// glints. Information, not decoration: reduced effects only stills it (no glints), so it
+    /// stays as set, as blood does.
+    pub spell_glow: bool,
     /// The level-change fade, screen flashes, and bright spell effects darkening the rest of the
     /// view while they peak.
     pub screen_fades: bool,
@@ -173,7 +173,7 @@ impl EffectSwitches {
         glow: true,
         distortion: true,
         particles: true,
-        circles: true,
+        spell_glow: true,
         screen_fades: true,
         screen_shake: true,
         weather: true,
@@ -186,7 +186,7 @@ impl EffectSwitches {
         glow: false,
         distortion: false,
         particles: false,
-        circles: false,
+        spell_glow: false,
         screen_fades: false,
         screen_shake: false,
         weather: false,
@@ -194,13 +194,13 @@ impl EffectSwitches {
     };
 
     /// The effective switches: each as set, and when `reduced` every effect off; blood stays
-    /// as set (it is a content preference, not an effect), and so do spell circles (information:
+    /// as set (it is a content preference, not an effect), and so does the spell glow (information:
     /// still, without `motion`).
     pub fn effective(self, reduced: bool) -> Self {
         if reduced {
             Self {
                 blood: self.blood,
-                circles: self.circles,
+                spell_glow: self.spell_glow,
                 ..Self::ALL_OFF
             }
         } else {
@@ -216,7 +216,7 @@ impl EffectSwitches {
         "glow",
         "distortion",
         "particles",
-        "circles",
+        "spell_glow",
         "screen_fades",
         "screen_shake",
         "weather",
@@ -239,7 +239,7 @@ impl EffectSwitches {
             "glow" => &mut self.glow,
             "distortion" => &mut self.distortion,
             "particles" => &mut self.particles,
-            "circles" => &mut self.circles,
+            "spell_glow" => &mut self.spell_glow,
             "screen_fades" => &mut self.screen_fades,
             "screen_shake" => &mut self.screen_shake,
             "weather" => &mut self.weather,
@@ -651,7 +651,7 @@ mod tests {
             reduced_effects: true,
             effects: EffectSwitches {
                 particles: false,
-                circles: false,
+                spell_glow: false,
                 flicker: false,
                 screen_shake: false,
                 weather: false,
@@ -741,10 +741,10 @@ mod tests {
         s.effects.particles = false;
         let e = s.effective_effects(false);
         assert!(!e.particles && e.glow && e.flicker);
-        // Reduced effects turns every effect off, but blood and spell circles stay as set.
+        // Reduced effects turns every effect off, but blood and the spell glow stay as set.
         let reduced = EffectSwitches {
             blood: true,
-            circles: true,
+            spell_glow: true,
             ..EffectSwitches::ALL_OFF
         };
         s.reduced_effects = true;

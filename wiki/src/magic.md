@@ -19,7 +19,7 @@ More about magic:
   styles you cast in.
 - [Miscasts](miscasts.md): what can go wrong when you cast, and the miscast table.
 - [Wands and rods](wands-and-rods.md): magic anyone can use.
-- [Spell circles](spell-circles.md): the rings that show buffs and hexes on the map.
+- [Spell glow](spell-glow.md): how buffs and hexes show on the map.
 
 ## What your class gives
 
@@ -150,4 +150,4 @@ another.
 {{#include generated/spell-armour.md}}
 
 See also: [Miscasts](miscasts.md), [Wands and rods](wands-and-rods.md), and
-[Spell circles](spell-circles.md).
+[Spell glow](spell-glow.md).

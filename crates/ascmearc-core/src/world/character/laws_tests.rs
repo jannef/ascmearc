@@ -102,7 +102,7 @@ fn every_sapient_corpse_eaten_is_counted_and_the_first_is_felt() {
 
 #[test]
 fn every_fiend_the_player_summons_is_counted_and_the_first_is_witnessed() {
-    let mut w = world_of(&files(), "circles");
+    let mut w = world_of(&files(), "glow");
     run(&mut w, "use:zz_call_rat");
     assert_eq!(w.laws_broken().summoned(), 0, "a rat is no fiend");
     assert!(told(&w, WITNESSED).is_empty());

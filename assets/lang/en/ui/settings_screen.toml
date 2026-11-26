@@ -26,11 +26,11 @@ text = "Blood"
 [effect_blood_help]
 text = "Blood stains from big hits and kills (not part of the preset)."
 
-[effect_circles]
-text = "Spell circles"
+[effect_spell_glow]
+text = "Spell glow"
 
-[effect_circles_help]
-text = "Circles about the buffed and hexed (still with the preset)."
+[effect_spell_glow_help]
+text = "The buffed and hexed glow (still with the preset)."
 
 [effect_distortion]
 text = "Heat haze"

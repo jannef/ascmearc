@@ -14,7 +14,7 @@
 //! - `light` (`Rgba32Float`): red, green, and blue light (1.0 = fully lit, more = overbright)
 //!   and color saturation;
 //! - `light_flags` (`Rgba8Uint`): [`LIT`] on visible cells, [`OPAQUE`] on walls, and
-//!   [`OCCUPIED`] on cells with a glyph of their own (red, [`cell_flags`]; the spell circles'
+//!   [`OCCUPIED`] on cells with a glyph of their own (red, [`cell_flags`]; the circle renderer's
 //!   shader reads it too), and the intensity gain (green, see [`gain_byte`]).
 //!
 //! Transient lights ([`Transients`], visual only too) add light that is in no snapshot: a burning
@@ -1123,11 +1123,11 @@ mod tests {
         assert_eq!(light.sample(Vec2::new(5.5, 10.5)), None);
     }
 
-    // The per-cell mask the spell circles' shader reads (#786): visible, opaque, occupied.
+    // The per-cell mask the circle renderer's shader reads (#786): visible, opaque, occupied.
     #[test]
     fn cells_are_flagged_visible_opaque_and_occupied() {
         let content = Arc::new(ascmearc_assets::content().expect("builtin content"));
-        let world = World::new(content, "circles", None).expect("world");
+        let world = World::new(content, "glow", None).expect("world");
         let view = world.perception();
         let light = composite_level(&view, &Shadows::default(), None);
         let cases = [
@@ -1136,11 +1136,7 @@ mod tests {
             ((11, 4), LIT | OCCUPIED, "a kobold"),
             ((13, 4), LIT | OCCUPIED, "a wall torch"),
             ((17, 0), LIT | OPAQUE, "a wall"),
-            (
-                (3, 6),
-                LIT | OCCUPIED,
-                "the alcove's kobold, seen by its glow",
-            ),
+            ((3, 6), 0, "the alcove's kobold, unseen in the dark"),
             ((5, 6), 0, "the dark corridor to it"),
             ((2, 2), 0, "the room behind the wall"),
         ];

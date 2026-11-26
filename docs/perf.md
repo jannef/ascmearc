@@ -89,7 +89,7 @@ Its rest is cut short at once (the panoplies see the player), so the row times t
 
 Spell circles (#779, 2026-11-01, same machine): `bench-frames` has two more rows, `circle`, a
 hall of 48 peaceful kobolds each buffed, hexed, or both and the player with a buffs' and a
-hexes' circle, fifty circles in view (`xtask/src/bench_circles.rs`, the design's stress case,
+hexes' circle, fifty circles in view (then `xtask/src/bench_circles.rs`, the design's stress case,
 docs/design/buff-circles.md §10.3), and `c-off`, the same hall with the Spell circles switch off;
 their difference is the circles' own cost, printed after the table and not judged (it is the
 difference of two best-of-five runs, whose noise is of the budget's size).
@@ -118,6 +118,12 @@ owner, #797): the shader does strictly less per pixel (no rune loop, no atlas ta
 glyph's) and the CPU no masks or crowding. Two runs after it on the same machine under a load
 average of 20 to 30 (other builds) printed 0.247 and 0.225 ms, with the hub row itself swinging
 from 0.97 to 1.54 ms: not a measurement; rerun on an idle machine.
+
+The spell circles were taken off buffs and hexes (#2173): the same hall now draws the spell glow
+alone, the glyphs' halo and glints with the circle renderer's lines off, in quads a cell height
+square instead of the circles' extent. The rows are `glow` and `g-off` (the Spell glow switch),
+the fixture `xtask/src/bench_glow.rs`; the shader does strictly less per pixel (no rings, no
+polygon). Not re-measured in that PR.
 
 Visual light skip (#785, 2026-11-02, same machine, load average 8 to 49 from other builds):
 `lighting::update` skips a frame whose composite would repeat the last (docs/dev/rendering.md).

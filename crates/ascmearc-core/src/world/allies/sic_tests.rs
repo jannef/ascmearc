@@ -133,10 +133,10 @@ fn the_ranger_gains_it_at_level_40_as_the_design_prices_it() {
     let status = BUILTIN.status(BUILTIN.status_id("savage").expect("savage"));
     assert!(status.auto_critical && status.tick.is_none() && status.eases == Some(60));
     assert_eq!((status.max, status.cost), (3, 67));
-    // No buff spell's, so Hunter's bond never carries it (`bond.rs::is_buff`) nor do the circles.
+    // No buff spell's, so Hunter's bond never carries it (`bond.rs::is_buff`), nor does it glow.
     assert!(
         BUILTIN
-            .circles()
+            .spell_glow()
             .of(BUILTIN.status_id("savage").unwrap())
             .is_none()
     );

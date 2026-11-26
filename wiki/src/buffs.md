@@ -79,5 +79,5 @@ less clever, and cannot read or spend [mana](mana.md#spending-it). When it runs 
 **Exhausted** for two and a half minutes: a little weaker, and with no rage
 until it passes.
 
-See also: [Status effects](status-effects.md), [Spell circles](spell-circles.md), and
+See also: [Status effects](status-effects.md), [Spell glow](spell-glow.md), and
 [Potions](potions.md).

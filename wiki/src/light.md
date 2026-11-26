@@ -25,9 +25,9 @@ own.
 ## Light sources
 
 Light comes from [wall torches](terrain.md#terrain-sconce), [braziers](terrain.md#terrain-brazier), lamps, magical [crystals](terrain.md#terrain-crystal), glowing [fungus](terrain.md#terrain-fungus), [runes](terrain.md#terrain-uv-rune), [lava](terrain.md#terrain-lava), the
-[altar](terrain.md#terrain-altar), [creatures](creatures.md) that carry a torch, your own [lantern](lantern.md), and the faint
-[light of a spell circle](spell-circles.md#the-circles-light) around anyone with a buff or a hex on
-them. Each source has a color (its red, green, blue, and UV at the source), a brightness there (as
+[altar](terrain.md#terrain-altar), [creatures](creatures.md) that carry a torch, and your own [lantern](lantern.md).
+The [glow](spell-glow.md) of someone with a buff or a hex is only for show and lights nothing.
+Each source has a color (its red, green, blue, and UV at the source), a brightness there (as
 normal eyes see it; see [vision](vision.md#the-four-types)), and a reach in cells:
 
 {{#include generated/lights.md}}

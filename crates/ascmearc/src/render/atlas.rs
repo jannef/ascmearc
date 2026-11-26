@@ -160,7 +160,7 @@ fn cap_rows(font: &fontdue::Font, px: f32) -> Vec2 {
 
 /// The box of `c`'s ink in its 1:1 cell at `px`, in pixels from the cell's top-left, as
 /// [`rasterize`] places it (a character the font lacks is drawn as `?`); `None` for a blank.
-/// Where a spell circle centres on its actor's glyph.
+/// Where the circle renderer (the spell glow) centres on its actor's glyph.
 pub fn ink_box(font: &fontdue::Font, px: f32, c: char) -> Option<Rect> {
     let c = if font.lookup_glyph_index(c) == 0 {
         '?'
@@ -279,7 +279,7 @@ mod tests {
         assert_eq!(slot_ink(' '), 0);
     }
 
-    // A spell circle centres on its actor's ink (#786): the box `ink_box` gives is where the
+    // The circle renderer centres on its actor's ink (#786): the box `ink_box` gives is where the
     // atlas drew the glyph, and it is not the cell's middle.
     #[test]
     fn ink_boxes_are_where_the_atlas_draws_the_ink() {

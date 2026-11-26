@@ -28,7 +28,7 @@ These help whoever has them. Some cost something besides, as a rage does.
 
 These do nothing by themselves. A cooldown only waits to wear off, and keeps the ability that
 caused it from being used again. A mark matters to something else: a light, a smite, a
-[spell circle](magic.md).
+[spell glow](spell-glow.md).
 
 {{#include generated/status-effects.md:cooldowns}}
 
