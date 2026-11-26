@@ -372,6 +372,20 @@ Its power works while it is worn or wielded, identified or not:
   it off. When you bash with it, hit or miss, the spell goes at the one you bashed. The spell
   works as it always does, with the reach and damage the table gives, whatever your own magic.
   A cone never reaches you.
+- **Grows**: a weapon whose damage dice and to-hit come from the wielder's character level, not
+  from the weapon. Every five levels its dice go up a step, and every ten levels it gets +1 to
+  hit, as the table says. Everything else that adds to its damage, such as Strength and your
+  skill, adds as usual. A creature that picks it up strikes at its own level. Its description
+  shows its first step; your [character screen](the-screen.md#character) shows the blow you strike now.
+- **First blood**: every hit with it on a foe that has all its hit points is a sure
+  [critical](combat.md#criticals), with no roll to confirm it. The weapon's own multiplier
+  counts as usual. A foe that is already hurt takes an ordinary blow.
+- **Plant**: a shield that sinks in while you stand. Every turn you end in the cell you began it
+  in (fighting, waiting, casting, shooting, drinking: anything but a step) adds 1 to your
+  [Protection](combat.md#protection), with no limit. Any step, or anything else that moves you,
+  takes it all away. While it adds at least 1, nothing pushes you from your cell: no knockback,
+  no shove, no spell's push. You are told "You stand fast." And you are never caught
+  [flat-footed](surprise.md#caught-unawares) because you did not see the attacker coming.
 - **Zone**: a missile weapon whose every shot, hit or miss, leaves the
   [Fume](magic.md#spell-fume) spell's smoke around the cell where the missile stops, for the
   turns the table gives. Nobody sees into the smoke or through it, and that includes you. A
@@ -387,7 +401,7 @@ Its power works while it is worn or wielded, identified or not:
   you is found as you pass, with no roll (not one on a door or a chest), and no trap springs when
   you step on it. Put on boots and it is just a waistcoat.
 - **Pain**: every blow, shot, or thrown thing that hits you and does damage gives you
-  [ki](ki.md): 1 point, or 2 for a [critical hit](combat.md#criticals), up to your most. With no
+  [ki](ki.md): 1 point, or 2 for a critical hit, up to your most. With no
   ki of your own, it gives nothing. A hit your armour soaks to nothing gives none.
 - **Ring**: every blow, shot, or thrown thing that hits you rings your helm, even one your
   armour soaks whole. The clang [carries](hearing.md#how-loud) up to 20 cells, a critical hit's twice

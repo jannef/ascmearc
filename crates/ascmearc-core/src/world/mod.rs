@@ -169,6 +169,7 @@ pub use combat::attacks::{AttackSource, OwnAttack};
 pub use combat::fight::{Cause, Death};
 pub use combat::free_blow::FreeBlows;
 pub(crate) use combat::item_damage::protected_in;
+pub use combat::plant::Planted;
 pub(crate) use crafting::craft::recipe_rows;
 pub use crafting::craft::{RecipeLack, RecipeRow};
 #[cfg(test)]
@@ -929,6 +930,7 @@ impl World {
             npc: None,
             talk: Talk::default(),
             home: None,
+            planted: None,
             // The scenario's spells, known from the start (a test world's fixture).
             spells: def.spells.iter().map(|&s| (s, 1)).collect(),
             streak: None,

@@ -421,6 +421,21 @@ id on another rarity than unique, and a unique without its id.
   four are the rollable ones with a unique's hand-set values, so no rollable pool changes.
   Tests: `world/combat/negate_tests.rs` (the weight, Defence and Protection, casting, a negated
   hit, a miss never rolling, loot never making one).
+- **The Stick, Satisfaction, and the Eorðfæst** (#2126, #2125, #2132; the owner's numbers), of
+  the drop pool (`pool = true`), placed nowhere but the quarry. **The Stick**
+  (`data/uniques/stick.toml`), a club of item level 6 with no affixes at all: its Grows power
+  (below) gives it 1d4 below level 5, a rung every five levels (1d6, 1d8, 1d10, 1d12, 2d8,
+  2d10, 2d12, 3d10, 3d12, 4d12, 5d12) to 6d12 at 60, and +1 to hit every ten. **Satisfaction**
+  (`satisfaction.toml`), a Marvellous rapier with a ruby in its pommel (the design's make), item level 32:
+  Keen 4 (past the ladder), of Precision 4, of Celerity 12, of the Lynx 2, and Guarding 2 (the
+  issue's "the rapier's own Parry written up by 2": the rapier has none, and Parry keeps the
+  best, so the rollable Parry prefix does it), and its FirstBlood power. **The Eorðfæst**
+  (`eorthfaest.toml`), a plain tower shield (its five past a plain shield's capacity: a unique
+  follows no affix rule), item level 40: Sturdy 3, Hardened 3 (Protection on a shield, a
+  unique's hand), of the Ox 4, of the Tortoise 3, and Featherweight −30 (a
+  penalty: 30% heavier; the issue's "Leaden" is a curse that binds, which the design never
+  asks for), and its Plant power. Tests: `world/combat/grows_tests.rs`,
+  `first_blood_tests.rs`, `plant_tests.rs`.
 - **Smoulder, Tiptoe, Hushfoot** (#2139, #2141, #2133), in the shared `data/uniques/`, each of
   the drop pool (`pool = true`) and placed nowhere but the quarry. **Smoulder**: a Masterwork
   heavy crossbow, item level 40: Sharp 5 (on a launcher by a unique's hand), Keen 4 (past the
@@ -557,6 +572,30 @@ id on another rarity than unique, and a unique without its id.
   `World::creature_spell_does`, the spell's own code for any caster (a cone from the bearer's
   cell, never holding it), its lines held into the news so they follow the blow's ("Flames leap
   from your shield!", `uniques.flames_from_*`). The spell's data is untouched.
+  `Power::Grows(WeaponGrowth)` (`{ grows = ["1d4", ...], every = 5, to_hit_every = 10 }`, only
+  on a base that attacks; #2126): `Mods::local` marks every profile made with the weapon
+  (`Profile::grows`, through `sharpen`), and `Profile::grown(level)` (`world/combat/grows.rs`)
+  puts the rung of that level in place of its dice and adds `level / to_hit_every` to hit. Read
+  first in `World::resolve` (`grown_blow`, by `World::level_of`: the player's level, a
+  creature's type's), in `Actor::known_attacks` (the character screen, by the player's level,
+  which `PerceptionView::own_experience` gives), and in `Numbers::of` at level 0 (the item's
+  card shows the first rung). The base's dice are replaced, so its material, an anvil's work, or
+  a companion's grown dice never reach it; to-hit and damage bonuses (Strength, Big hands, the
+  Maces skill) add as ever.
+  `Power::FirstBlood` (`{ first_blood = true }`, only on a base that attacks; #2125): the same
+  marking (`Profile::first_blood`), read first in `World::resolve` (`world/combat/first_blood.rs`):
+  a target with `hp` at its `max_hp` makes the profile `sure_critical` (no confirmation roll;
+  the multiplier, Peerless, and Champion count as ever). No saved state.
+  `Power::Plant { per_turn }` (`{ plant = 1 }`, only on a shield or armour; #2132,
+  `world/combat/plant.rs`): `Actor::planted` (`Planted { at, turns }`, saved, `None` and left
+  out for anyone without the power) is kept by `World::plant_turn` after each actor's action in
+  `run_turn` (beside `spend_actions`): ended in `at`, one more turn; elsewhere, 0 at the new
+  cell; without the power, `None`. `Actor::planted_protection` (turns × `per_turn`, no cap) is
+  added in `Actor::protection_plus`. `World::stands_fast` (planted by 1 or more) refuses
+  `World::drive_back` (every push: knockback, a shove, a spell's push; "You stand fast.",
+  `uniques.stand_fast`, to the player) and drops `unaware` in `World::flat_footed` (a
+  flat-footed status still counts). Teleports, swaps, and stairs are no push, and reset the
+  count by the cell.
   `Power::Zone { kind, radius, turns }` (`{ zone = "smoke", radius = 1, turns = 8 }`, only on
   a missile weapon and never fire, which has no harm to roll; #2139): read once a flight is
   over (`World::fly`, for a shot, never a throw; `world/combat/shot_zone.rs`): the zone, by the

@@ -117,6 +117,21 @@ pub enum Power {
     /// its own code (its shape, damage type, messages, and every immunity), with this power's
     /// reach and roll in place of the caster's.
     Cast(CastPower),
+    /// Its damage dice and to-hit grow with its wielder's level (`{ grows = ["1d4", "1d6",
+    /// ...], every = 5, to_hit_every = 10 }`, the Stick's, #2126): read where a blow made with
+    /// it meets its target (`world/combat/grows.rs`, `World::resolve`) and where the player's own
+    /// attacks are shown, by the wielder's level (the player's, a creature's type's).
+    Grows(WeaponGrowth),
+    /// Its every hit on a foe at full health is a sure critical (`{ first_blood = true }`,
+    /// Satisfaction's, #2125): read where a blow made with it meets its target
+    /// (`world/combat/first_blood.rs`, `World::resolve`).
+    FirstBlood,
+    /// Its bearer plants it: each turn that ends where it began adds `per_turn` to their
+    /// Protection, with no cap, and a step takes it all away; planted at all, they are never
+    /// driven from their cell nor caught flat-footed unawares (`{ plant = 1 }`, the Eorðfæst's,
+    /// #2132). Read where a turn ends, where Protection is summed, where an actor is driven,
+    /// and where Defence is caught unawares (`world/combat/plant.rs`).
+    Plant { per_turn: u8 },
     /// Every shot it looses leaves a zone of this kind where the missile stops, hit or miss
     /// (`{ zone = "smoke", radius = 1, turns = 8 }`, Smoulder's, #2139; on a launcher): read where
     /// a missile's flight ends (`world/combat/shoot.rs`, `World::fly`), laid as a miscast's zone is.
@@ -125,6 +140,25 @@ pub enum Power {
         radius: u8,
         turns: u8,
     },
+}
+
+/// A [`Power::Grows`]: the damage dice by the wielder's level, a rung each `every` levels from
+/// level 0 (the last rung from there on), and +1 to hit each `to_hit_every` levels.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct WeaponGrowth {
+    pub steps: Vec<Roll>,
+    pub every: u8,
+    pub to_hit_every: u8,
+}
+
+impl WeaponGrowth {
+    /// The damage dice and the to-hit it gives a wielder of `level`.
+    pub fn at(&self, level: u32) -> (Roll, i32) {
+        let rung = usize::try_from(level / u32::from(self.every)).unwrap_or(usize::MAX);
+        let dice = self.steps[rung.min(self.steps.len() - 1)];
+        let to_hit = i32::try_from(level / u32::from(self.to_hit_every)).unwrap_or(i32::MAX);
+        (dice, to_hit)
+    }
 }
 
 /// A [`Power::Barefoot`]: the slot that must be empty, and what bare feet give.
@@ -361,6 +395,16 @@ struct PowerSpec {
     on_block: Option<u8>,
     /// The chance, in percent, a bash casts it.
     on_bash: Option<u8>,
+    /// The damage dice by its wielder's level, a rung each `every` levels.
+    grows: Option<Vec<String>>,
+    /// How many levels a rung of `grows` lasts.
+    every: Option<u8>,
+    /// How many levels each +1 to hit of `grows` takes.
+    to_hit_every: Option<u8>,
+    /// Its hits on a foe at full health are sure criticals.
+    first_blood: Option<bool>,
+    /// The Protection each turn planted adds.
+    plant: Option<u8>,
     phrase: String,
 }
 
@@ -547,8 +591,10 @@ fn off_tier(
 /// The power a `power` table names on base item `def`: exactly one of `inflict` (with `chance`
 /// and `severity`, and perhaps `added`), `vision`, `ward` (with a `message`), `negate` (1 to 99,
 /// with a `message`, on worn armour), `light`, `range` (2 or more, on a base with a range),
-/// `restore` (with a `radius`), `cast` (on a shield), `pain` (with `gain` and `critical`),
-/// `ring` (with `stagger` and `difficulty`), and `scars` (on worn armour).
+/// `restore` (with a `radius`), `cast` (on a shield), `grows` (with `every` and `to_hit_every`,
+/// on a weapon), `first_blood` (on a weapon), `plant` (on a shield or armour), `barefoot`,
+/// `trapwise`, `zone`, `pain` (with `gain` and `critical`), `ring` (with `stagger` and
+/// `difficulty`), and `scars` (on worn armour).
 fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, String> {
     let named = [
         p.inflict.is_some(),
@@ -559,6 +605,9 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         p.range.is_some(),
         p.restore.is_some(),
         p.cast.is_some(),
+        p.grows.is_some(),
+        p.first_blood.is_some(),
+        p.plant.is_some(),
         p.barefoot.is_some(),
         p.trapwise.is_some(),
         p.zone.is_some(),
@@ -568,9 +617,12 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     ];
     if named.iter().filter(|&&n| n).count() != 1 {
         return Err(
-            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, and `scars`"
+            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `grows`, `first_blood`, `plant`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, and `scars`"
                 .into(),
         );
+    }
+    if p.grows.is_none() && (p.every.is_some() || p.to_hit_every.is_some()) {
+        return Err("power: `every` and `to_hit_every` belong to `grows`".into());
     }
     if p.restore.is_none() && p.zone.is_none() && p.radius.is_some() {
         return Err("power: `radius` belongs to `restore` and `zone`".into());
@@ -661,6 +713,24 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     if let Some(spell) = &p.cast {
         return cast(p, spell, def, content).map(Power::Cast);
     }
+    if let Some(steps) = &p.grows {
+        return grows(p, steps, def).map(Power::Grows);
+    }
+    if let Some(first) = p.first_blood {
+        if !first || def.attack.is_none() {
+            return Err("power: `first_blood = true` needs a base that attacks (a weapon)".into());
+        }
+        return Ok(Power::FirstBlood);
+    }
+    if let Some(per_turn) = p.plant {
+        let worn = def
+            .kind
+            .is_some_and(|k| k.is_armour() || k == ItemKind::Shield);
+        if per_turn == 0 || !worn {
+            return Err("power: `plant` (1 or more) needs a shield or a piece of armour".into());
+        }
+        return Ok(Power::Plant { per_turn });
+    }
     if let Some(slot) = &p.barefoot {
         return barefoot(p, slot, def, content).map(Power::Barefoot);
     }
@@ -727,6 +797,32 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     Ok(Power::Ward {
         status,
         message: message.into(),
+    })
+}
+
+/// A `grows` power of rungs `steps` on base item `def`: a weapon, one rung or more, each a roll
+/// of dice, with `every` and `to_hit_every` (1 or more each).
+fn grows(p: &PowerSpec, steps: &[String], def: &ObjectDef) -> Result<WeaponGrowth, String> {
+    if def.attack.is_none() {
+        return Err("power: `grows` needs a base that attacks (a weapon)".into());
+    }
+    let steps = (steps.iter())
+        .map(|s| {
+            s.parse::<Roll>()
+                .map_err(|e| format!("power: `grows`: {e}"))
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    if steps.is_empty() {
+        return Err("power: `grows` needs one rung or more".into());
+    }
+    let every =
+        (p.every.filter(|&n| n > 0)).ok_or("power: `grows` needs an `every` (1 or more)")?;
+    let to_hit_every = (p.to_hit_every.filter(|&n| n > 0))
+        .ok_or("power: `grows` needs a `to_hit_every` (1 or more)")?;
+    Ok(WeaponGrowth {
+        steps,
+        every,
+        to_hit_every,
     })
 }
 
