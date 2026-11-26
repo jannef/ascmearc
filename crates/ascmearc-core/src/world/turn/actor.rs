@@ -88,6 +88,11 @@ pub struct Mind {
     /// player sees it for that turn. Not part of its routine: [`Mind::is_calm`] ignores it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub glimpsed: Option<u64>,
+    /// It quailed at a roaring weapon's kill (`world/combat/roar.rs`): it is not checked again
+    /// until it goes back to its routine, the fight over for it. Not part of its routine:
+    /// [`Mind::is_calm`] ignores it.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub heard_roar: bool,
 }
 
 impl Mind {
@@ -313,6 +318,10 @@ pub struct Actor {
     /// never followed.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub home: Option<String>,
+    /// Until when the rage of a unique's Wakes power it wears sleeps, once it woke in it
+    /// (Beornhama's, `world/health/wakes.rs`); `None` before it ever woke.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub rage_sleeps: Option<GameTime>,
     /// What its unique weapons keep of the blows it took: a Tally's debt, a Grudge's grudges
     /// (`world/combat/tally.rs`). Left out of saves and hashes while empty.
     #[serde(

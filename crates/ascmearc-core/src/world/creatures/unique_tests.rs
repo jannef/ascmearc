@@ -156,7 +156,7 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert!(other.check(content.object(bedes.object), &content).is_err());
     // The drop pool's of level 12 or more (#1976, #2095, #2097, #2098, #2100, #2109, #2115,
     // #2117, #2123, #2124, #2125, #2127, #2131, #2132, #2133, #2137, #2139, #2141, the shared
-    // table first, #2111, #2113), the criminals' four, the pedlar's three (#808), and Sigeric's
+    // table first, #2110, #2111, #2113, #2130, #2136), the criminals' four, the pedlar's three (#808), and Sigeric's
     // (#1787), each with its power (Swīge, #2112, has none: its rules are fields).
     let powers: Vec<(&str, &str)> = (content.uniques())
         .filter(|u| u.stack.magic().is_some_and(|m| m.level >= 12))
@@ -188,6 +188,9 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
                     Power::Thrust(_) => "thrust",
                     Power::Root { .. } => "root",
                     Power::Shrive(_) => "shrive",
+                    Power::Wakes { .. } => "wakes",
+                    Power::Roar(_) => "roar",
+                    Power::Credit => "credit",
                 },
             };
             (u.id.as_str(), power)
@@ -196,11 +199,14 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert_eq!(
         powers,
         [
+            ("beornhama", "wakes"),
             ("cracked_resurrection_stone", "restore"),
             ("deep_night", "vision"),
             ("demonsoul", "cast"),
+            ("domgeorn", "credit"),
             ("eorthfaest", "plant"),
             ("gar", "thrust"),
+            ("gorthak", "roar"),
             ("grandmother", "inflict"),
             ("haersceorp", "pain"),
             ("hushfoot", "barefoot"),
@@ -796,8 +802,9 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
     // Masterpiece (#2100), the Stick (#2126), Satisfaction (#2125), and the Eorðfæst (#2132);
     // Hǣrsceorp, the Kettle Hat, and Scarhide (#2115, #2127, #2137); Smoulder, Tiptoe, and
     // Hushfoot (#2139, #2141, #2133); Wergild, the Oath, and the Wrecend (#2109, #2117, #2131);
-    // Onrǣs (#2123) and Gār (#2124); Scrift, Swīge, and Wyrtruma (#2111-#2113).
-    assert_eq!(ids.len(), 33, "{ids:?}");
+    // Onrǣs (#2123) and Gār (#2124); Scrift, Swīge, and Wyrtruma (#2111-#2113); Beornhama
+    // (#2110), Gorthak (#2136), and the Dōmgeorn (#2130).
+    assert_eq!(ids.len(), 36, "{ids:?}");
     let widowmaker = unique(&w, "widowmaker");
     let magic = widowmaker.magic().expect("magic");
     let stiletto = content.object(widowmaker.object);

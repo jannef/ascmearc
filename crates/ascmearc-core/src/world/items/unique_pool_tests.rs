@@ -13,16 +13,19 @@ fn a_level_s_uniques_of_the_pool_are_found_once_it_is_made() {
     let mut w = world("showcase");
     assert!(!w.state.uniques_dropped.contains("grandmother"));
     w.visit("quarry", None).expect("the quarry");
-    // The quarry's showcase: the twenty-one of the pool, never Stonebiter.
+    // The quarry's showcase: the twenty-four of the pool, never Stonebiter.
     let found: BTreeSet<&str> = w.state.uniques_dropped.iter().map(String::as_str).collect();
     assert_eq!(
         found,
         BTreeSet::from([
+            "beornhama",
             "cracked_resurrection_stone",
             "deep_night",
             "demonsoul",
+            "domgeorn",
             "eorthfaest",
             "gar",
+            "gorthak",
             "grandmother",
             "haersceorp",
             "hushfoot",

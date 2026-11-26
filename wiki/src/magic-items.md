@@ -372,6 +372,29 @@ Its power works while it is worn or wielded, identified or not:
   it off. When you bash with it, hit or miss, the spell goes at the one you bashed. The spell
   works as it always does, with the reach and damage the table gives, whatever your own magic.
   A cone never reaches you.
+- **Wakes**: when anything leaves you alive below the share of your hit points the table gives,
+  and you are not [raging](status-list.md#status-raging), you fly into a rage at once, free. It
+  comes even while you are [Exhausted](status-list.md#status-exhausted): that ends first. A
+  berserker's own [Rage](rage.md) is filled to its maximum. Anyone else gets a rage of 12 that only
+  runs down: no blow, critical, or kill adds to it, and it brings no frenzy. The rage ends as any
+  does, in Exhausted. Then the power sleeps for the number of turns the table gives, and the
+  cloak's description says "The bear in it sleeps." until it wakes. While raging you cannot read
+  or cast, so the rage may cost you a quiet potion or scroll.
+- **Roar**: every kill you make with a blow of the weapon is a roar. Each foe within the table's
+  cells that sees you checks its nerve, just as against your
+  [Intimidate](skill-uses.md#intimidating): your Strength and Intimidate against its
+  Willpower. One that fails is [frightened](status-list.md#status-frightened) and flees, and is not
+  checked again until the fight is over for it (it goes back to what it was doing). The undead,
+  creatures with no vitals, and those that cannot be frightened pay no heed. The roar is also a
+  [noise](hearing.md#what-makes-noise) as loud as the table says. A kick, or a blow with
+  anything else, never roars.
+- **Credit**: whatever dies where its wearer can see it counts as their own kill, whoever or
+  whatever killed it: a monster, an ally, a trap, bleeding, a fall, or fire. You get the full
+  [experience](experience.md) (and the bonus for the first of its kind), it counts for
+  [quests](quests.md) and the dwarves' [oaths](races.md#the-dwarves-oaths), and your
+  [alignment](alignment.md#what-moves-you) moves as if you had done it. That includes a peaceful
+  townsperson a monster kills in front of you, or a friend. An ally's kill pays you in full
+  rather than your usual share. A creature that comes back and dies again counts again.
 - **Shrive**: every blow it lands takes some of its wielder's prayer
   [strain](prayer.md#strain) away, a critical hit more, and a blow that kills one of the
   [undead](spell-rules.md#healing-harms-the-undead) or a fiend takes all of it. Strain never goes
@@ -413,7 +436,7 @@ Its power works while it is worn or wielded, identified or not:
   to see it, on a door or a chest too. A trap set off another way still strikes you: a door you
   open, a chest, or a blast that someone else set off.
 - **Barefoot**: it works only while nothing is on your feet. Your
-  [footsteps](hearing.md#what-makes-noise) make no sound at all, on any ground. You get the
+  footsteps make no sound at all, on any ground. You get the
   [Dodge](combat.md#defence) the table gives. Every hidden trap on the floor beside you or under
   you is found as you pass, with no roll (not one on a door or a chest), and no trap springs when
   you step on it. Put on boots and it is just a waistcoat.
@@ -428,7 +451,7 @@ Its power works while it is worn or wielded, identified or not:
 - **Scars**: every critical hit you suffer leaves a scar on it, chosen at random: +1 Armour, +1
   maximum hit point, or +1 Toughness. The scars stay on it for whoever wears it next, and there
   is no limit to them. Its description counts them once you have identified it.
-- **Tally** (Wergild): while you [rage](rage.md), every hit point a creature's attack takes from
+- **Tally** (Wergild): while you rage, every hit point a creature's attack takes from
   you is owed to the axe, up to 3 × your level (90 at level 30). Your next blow with it that
   lands adds the whole debt to its damage, once. [Armour](combat.md#protection) soaks it as it
   soaks the axe's own damage, and a critical does not multiply it. Then the debt is paid. A miss keeps it, and so
@@ -463,7 +486,7 @@ within two cells of you, you and your allies too, can cast a [spell](magic.md) o
 [scroll](scrolls.md) ("No word will come in this silence."). Nothing else is stopped: you can
 still [pray](prayer.md), use a wand or a rod, and use any ability that is not a spell, and a spell
 already cast goes on. To cast, take it off (a turn) or have the caster step out of the square.
-It also lets your prayer [strain](prayer.md#strain) pass twice as fast.
+It also lets your prayer strain pass twice as fast.
 
 {{#include generated/uniques.md}}
 

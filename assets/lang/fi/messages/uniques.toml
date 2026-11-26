@@ -16,11 +16,21 @@ oath_paid = { text = "Maksat loput valastasi verelläsi.", of = "0a11e0" }
 owed_a_fortune = { text = "Sille ollaan velkaa omaisuus.", of = "4c2744" }
 owed_a_little = { text = "Sille ollaan velkaa vähän.", of = "c9e5e3" }
 owed_much = { text = "Sille ollaan velkaa paljon.", of = "1900ce" }
+# The Wakes power (#2110, Beornhama's): its rage sleeps; it wakes in its wearer.
+rage_sleeps = { text = "Karhu nukkuu siinä.", of = "624e87" }
+rage_wakes = { text = "Karhu herää: {who:Nom} raivostuu!", of = "4fdb11" }
+rage_wakes_you = { text = "Sinussa herää karhu!", of = "1f6e0a" }
 
 # The Restore power (#2098): a death near the stone's wearer undone.
 restored = { text = "{who:Nom} kaatuu ja nousee jälleen eheänä!", of = "15db52" }
 restored_unseen = { text = "Sormesi kivi lämpenee.", of = "621eab" }
 restored_you = { text = "Kuolema päästää sinusta irti: nouset jälleen eheänä!", of = "50e146" }
+
+# The Roar power (#2136, Gorthak's): a kill with the weapon, and the foes who heard it.
+roar = { text = "{who:Gen} iskun mukana kajahtaa mahtava huuto!", of = "3cb0ec" }
+roar_quails = { text = "{who:Nom} kavahtaa ja pakenee.", of = "e64334" }
+roar_stands = { text = "{who:Nom} ei hätkähdäkään.", of = "ed6dd9" }
+roar_yours = { text = "Iskusi mukana kajahtaa mahtava huuto!", of = "57ebf3" }
 
 # The Plant power (#2132): the planted player is not driven from their cell.
 stand_fast = { text = "Seisot lujana paikallasi.", of = "0121fd" }

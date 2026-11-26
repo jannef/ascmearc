@@ -21,6 +21,7 @@ mod natural;
 mod negate;
 pub(in crate::world) mod plant;
 pub(in crate::world) mod reflect;
+mod roar;
 mod sear;
 pub(in crate::world) mod shoot;
 mod shot_zone;
@@ -57,6 +58,7 @@ cfg_if! {
         mod negate_tests;
         mod plant_tests;
         mod protection_tests;
+        mod roar_tests;
         mod sear_tests;
         pub(in crate::world) mod shoot_tests;
         mod shrive_tests;

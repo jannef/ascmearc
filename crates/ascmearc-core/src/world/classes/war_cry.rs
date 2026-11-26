@@ -23,7 +23,7 @@
 
 use crate::action::Event;
 use crate::check;
-use crate::content::{ActionKind, Stance, StatusId};
+use crate::content::{ActionKind, Content, Stance, StatusId};
 use crate::lang::Msg;
 use crate::msg;
 use crate::noise::{self, Act};
@@ -65,10 +65,7 @@ impl World {
     /// The difficulty of a threat of the player's (War cry's, Intimidate's): `base` + their
     /// Strength modifier + their Intimidate ([`Effect::Intimidate`], read here and nowhere else).
     pub(in crate::world) fn threat_difficulty(&self, base: i32) -> i32 {
-        let content = &self.content;
-        let me = self.state.player();
-        base + me.effective_stats(content).modifier(Stat::Strength)
-            + me.skill_effect(content, Effect::Intimidate)
+        threat(self.state.player(), &self.content, base)
     }
 
     /// Who would hear the noise of the player's `act`, asked before it is made: in actor-id
@@ -125,4 +122,12 @@ impl World {
         }
         quails
     }
+}
+
+/// The difficulty of a threat of `me`'s: `base` + their Strength modifier + their Intimidate
+/// ([`Effect::Intimidate`], read here and nowhere else): the player's ([`World::threat_difficulty`])
+/// and a roaring weapon's wielder's (`world/combat/roar.rs`).
+pub(in crate::world) fn threat(me: &crate::world::Actor, content: &Content, base: i32) -> i32 {
+    base + me.effective_stats(content).modifier(Stat::Strength)
+        + me.skill_effect(content, Effect::Intimidate)
 }

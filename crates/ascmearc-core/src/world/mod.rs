@@ -933,6 +933,7 @@ impl World {
             npc: None,
             talk: Talk::default(),
             home: None,
+            rage_sleeps: None,
             tallies: Default::default(),
             planted: None,
             // The scenario's spells, known from the start (a test world's fixture).

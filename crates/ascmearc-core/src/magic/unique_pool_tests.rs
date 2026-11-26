@@ -26,11 +26,14 @@ const PLACED: [&str; 9] = [
 
 /// The uniques of the drop pool, every one `pool = true` in its data.
 const POOL: &[&str] = &[
+    "beornhama",
     "cracked_resurrection_stone",
     "deep_night",
     "demonsoul",
+    "domgeorn",
     "eorthfaest",
     "gar",
+    "gorthak",
     "grandmother",
     "haersceorp",
     "hushfoot",

@@ -146,6 +146,7 @@ fn actor(content: &Content, creature: &str) -> Actor {
         npc: None,
         talk: Default::default(),
         home: None,
+        rage_sleeps: None,
         tallies: Default::default(),
         planted: None,
         spells: Default::default(),

@@ -10,6 +10,16 @@ type Written = (&'static str, u8, &'static [(&'static str, i32)]);
 /// Every unique, by id.
 const UNIQUES: &[Written] = &[
     (
+        "beornhama",
+        28,
+        &[
+            ("of_warmth", 45),
+            ("of_vitality", 20),
+            ("hardened", 2),
+            ("of_mending", 100),
+        ],
+    ),
+    (
         "brosinga_mene",
         12,
         &[
@@ -28,6 +38,11 @@ const UNIQUES: &[Written] = &[
     ),
     ("deep_night", 40, &[("of_the_lynx", 4)]),
     ("demonsoul", 40, &[("sturdy", 3)]),
+    (
+        "domgeorn",
+        40,
+        &[("of_the_lion", 4), ("hale", 20), ("of_breath", 20)],
+    ),
     (
         "eorcanstan",
         12,
@@ -59,6 +74,17 @@ const UNIQUES: &[Written] = &[
             ("guarding", 2),
             ("of_precision", 2),
             ("of_the_bear", 4),
+        ],
+    ),
+    (
+        "gorthak",
+        40,
+        &[
+            ("sharp", 6),
+            ("heavy", 10),
+            ("brutal", 1),
+            ("featherweight", -20),
+            ("of_the_bear", 6),
         ],
     ),
     (

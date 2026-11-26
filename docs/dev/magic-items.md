@@ -421,6 +421,17 @@ id on another rarity than unique, and a unique without its id.
   four are the rollable ones with a unique's hand-set values, so no rollable pool changes.
   Tests: `world/combat/negate_tests.rs` (the weight, Defence and Protection, casting, a negated
   hit, a miss never rolling, loot never making one).
+- **Beornhama, Gorthak, and the Dōmgeorn** (#2110, #2136, #2130), in the shared
+  `data/uniques/`, of the drop pool (`pool = true`), placed nowhere but the quarry (its arrival
+  room's north wall). **Beornhama**, a fur cloak, item level 28: of Warmth 45, of Vitality 20 (a
+  weapon's affix, set on a cloak by hand), Hardened 2, of Mending 100 (past its ladder), and the
+  Wakes power `{ wakes = 25, every = 1000, resource = "rage" }`. **Gorthak**, a Fine great axe,
+  item level 40: Sharp 6, Heavy 2d10, Brutal 1, of the Bear 6, Featherweight −20 (the design's
+  Leaden −20 %: 20% heavier, a penalty that does not bind, as the Eorðfæst's), and the Roar
+  power `{ roar = 6, status = "frightened", turns = "2d4", noise = 40 }`. **The Dōmgeorn**, a gold amulet, item
+  level 40: of the Lion 4, Hale 20, of Breath 20, and the Credit power `{ credit = true }`. No
+  new affix; the powers are the unique tables' alone. Tests: `world/health/wakes_tests.rs`,
+  `world/combat/roar_tests.rs`, `world/character/credit_tests.rs`.
 - **Scrift, Swīge, and Wyrtruma** (#2111, #2112, #2113): three of the drop pool (`pool = true`;
   placed nowhere but the quarry), each for a class. **Scrift**, the priest's Masterwork mace,
   item level 26: Sharp 4, of undead-bane 4, of the Sage 4 (Willpower), of the Lion 4 (Presence),
@@ -604,6 +615,37 @@ id on another rarity than unique, and a unique without its id.
   `World::creature_spell_does`, the spell's own code for any caster (a cone from the bearer's
   cell, never holding it), its lines held into the news so they follow the blow's ("Flames leap
   from your shield!", `uniques.flames_from_*`). The spell's data is untouched.
+  `Power::Wakes { below, every, resource }` (`{ wakes = 25, every = 1000, resource = "rage" }`,
+  #2110; the resource must bring a status): `World::rage_wakes` (`world/health/wakes.rs`), from
+  `World::hurt` once the hit points are down and the actor still lives (before a sleeper wakes):
+  below `below` % of its maximum, not in the pool's status (Raging), and past
+  `Actor::rage_sleeps` (saved, left out while `None`), the status's `follows` (Exhausted) is
+  taken off through `World::ended`, then `grant_resource_with_status` grants the pool and
+  Raging, free; one whose own Rage it is (`martial.rage`) has it set to `resource_max`, anyone
+  else holds it at its `start` (12), and `World::build_resources` never builds such a lent pool
+  (`Actor::lent_pool`), while frenzy and Headlong read the actor's own Rage and so never come of
+  it. `rage_sleeps` is set to `every` base turns on; `PerceptionView::describe_item` adds
+  `uniques.rage_sleeps` after the identified power while it sleeps on its wearer
+  (`Actor::rage_asleep`). Said: `uniques.rage_wakes_you`, `rage_wakes` (seen); no draw.
+  `Power::Roar(RoarPower)` (`{ roar = 6, status = "frightened", turns = "2d4", noise = 40 }`,
+  on a weapon; #2136): `World::roar` (`world/combat/roar.rs`), from `World::resolve` where a
+  blow's kill is settled, for a melee blow with the wielded weapon itself (`with` none, the
+  attack skills the weapon's: a kick's are unarmed fighting's). A Roar noise of `noise` (the
+  room scaling it) through `spread_noise`; then each actor on the level within `radius` (the
+  fov's round radius), hostile to the wielder, in actor-id order, unless it pays no heed
+  (`Mind::heard_roar`, undead, no vitals, the status in its type's or talents' `immune`, or a
+  Ward) or does not see the wielder now (`sees_now`), checks Willpower against the Intimidate
+  rules' `difficulty` + the wielder's Strength modifier + Intimidate (`war_cry.rs::threat`,
+  shared with War cry and Intimidate) on `unique/roar/<key>`; failed, `turns` degrees (clamped
+  to the status's `max`) by the wielder, and `Mind::heard_roar` is set, cleared when its AI goes
+  back to its routine (`search_or_return`'s patrol). Said: `uniques.roar_yours`, `roar` (seen),
+  `roar_quails`, `roar_stands`. `Power::Credit` (`{ credit = true }`, #2130): `World::glory`
+  (`world/character/credit.rs`), asked in `World::dies` of a death the player did not deal:
+  the player lives, stands on that level, wears it, and their perception sees the cell; then the
+  death is credited (`earn_kill_at` at 100 %, an ally's kill too, `tally_kill`, `oath_kill`,
+  `judge_kill`), as their own blow's, by any hand or harm (a trap, a fall, starving). The
+  killer's own resources and the mark are untouched. A rising or the stone's second death passes
+  `dies` again and counts again.
   `Power::Shrive(Shrive { per_hit, per_crit })` (`{ shrive = 40, critical = 120 }`, a weapon
   only; #2111): `Mods::local` carries it into `Profile::shrive` (as Inflict's `on_hit`), and
   `World::resolve` hands it to `world/combat/shrive.rs::World::shriven` once the blow is done:

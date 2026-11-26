@@ -24,7 +24,7 @@ pub(in crate::world) mod spirit_weapon;
 pub(in crate::world) mod stipend;
 mod thief;
 mod volley;
-mod war_cry;
+pub(in crate::world) mod war_cry;
 mod witch;
 cfg_if! {
     if #[cfg(test)] {

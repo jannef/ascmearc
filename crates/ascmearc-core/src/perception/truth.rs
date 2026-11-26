@@ -443,6 +443,21 @@ impl<'a> PerceptionView<'a> {
                 .map_or(lines.len(), |i| i + 1);
             lines.splice(at..at, make);
         }
+        // A Wakes power's rage, asleep in what the player wears, says so after its power
+        // (`world/health/wakes.rs`).
+        let wakes = (stack.known_magic().and_then(|m| m.unique.as_deref()))
+            .and_then(|id| self.content.unique(id))
+            .is_some_and(|u| matches!(u.power, Some(crate::content::Power::Wakes { .. })));
+        if wakes && self.player.rage_asleep(self.content, self.time) {
+            let at = (lines.iter())
+                .rposition(|l| l.kind == LineKind::Power)
+                .map_or(lines.len(), |i| i + 1);
+            let line = describe::Line {
+                kind: LineKind::Note,
+                msg: crate::msg::uniques::RAGE_SLEEPS.into(),
+            };
+            lines.insert(at, line);
+        }
         lines
     }
 
