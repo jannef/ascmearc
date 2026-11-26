@@ -17,7 +17,7 @@ use super::level::{ItemPartSpec, hand_made, item_part, magic_of};
 use super::object::AddedSpec;
 use super::status::{OnHit, OnHitSpec};
 use super::{
-    Content, ContentError, DamageTypeId, ItemKind, LightId, ObjectDef, ObjectId, Rarity,
+    Build, Content, ContentError, DamageTypeId, ItemKind, LightId, ObjectDef, ObjectId, Rarity,
     ResourceId, SlotId, SpellId, StatusId, ZoneKind,
 };
 use crate::damage::Rider;
@@ -128,6 +128,23 @@ pub enum Power {
     /// its own code (its shape, damage type, messages, and every immunity), with this power's
     /// reach and roll in place of the caster's.
     Cast(CastPower),
+    /// While its wielder is Raging, every hit point a creature's attack takes from them is
+    /// owed to it, up to `cap_per_level` times their level (`{ tally = 3 }`, Wergild, #2109);
+    /// its next blow that lands adds the whole debt, then it is paid. Read where a blow is made
+    /// and where harm is taken (`world/combat/tally.rs`); forgiven when the rage ends.
+    Tally { cap_per_level: u8 },
+    /// Each hit a creature lands on its bearer (carried or wielded) makes its blows deal
+    /// `per_hit` more damage to that one creature, uncapped, for as long as both live (`{ grudge
+    /// = 2 }`, the Wrecend, #2131). Read with the Tally (`world/combat/tally.rs`).
+    Grudge { per_hit: u8 },
+    /// While it is wielded, an ability paid in `resource` may be used with too little of it:
+    /// each point short costs its wielder `hp_per_point` hit points once the ability is done,
+    /// and that may kill them (`{ oath = "zeal", hp_per_point = 5 }`, the Oath, #2117). Read
+    /// where a class ability's cost is checked and paid (`world/classes/oath_paid.rs`).
+    Oath {
+        resource: ResourceId,
+        hp_per_point: u8,
+    },
     /// Its damage dice and to-hit grow with its wielder's level (`{ grows = ["1d4", "1d6",
     /// ...], every = 5, to_hit_every = 10 }`, the Stick's, #2126): read where a blow made with
     /// it meets its target (`world/combat/grows.rs`, `World::resolve`) and where the player's own
@@ -151,6 +168,17 @@ pub enum Power {
         radius: u8,
         turns: u8,
     },
+}
+
+/// What a weapon's Tally or Grudge power makes of the blows struck with it: carried by the
+/// attacks made with it ([`crate::combat::Profile::keeps`]), so a kick or a bash beside it never
+/// pays the debt or bears the grudge.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Keeps {
+    /// The Tally: its bearer's debt is paid by its next blow that lands.
+    Debt,
+    /// The Grudge: this much more damage for each hit the one struck landed on its bearer.
+    Grudges(u8),
 }
 
 /// A [`Power::Grows`]: the damage dice by the wielder's level, a rung each `every` levels from
@@ -232,6 +260,10 @@ pub struct UniqueDef {
     /// (`douse = 10`, Deep Night's, #2097). Read where a level's light sources are gathered
     /// (`light/cache.rs`); nothing is put out or used up.
     pub douse: u8,
+    /// What its wielder's events build besides, while it is wielded: `(resource, on, amount)`
+    /// (`resource_build = { resource = "zeal", on = "melee_hit", amount = 1 }`, the Oath's,
+    /// #2117), as a talent's `resource_build` (read in `World::build_resources`).
+    pub resource_build: Option<(ResourceId, Build, u16)>,
     /// The power in words, for the item description ("Its every cut poisons.").
     pub phrase: Option<String>,
     /// The item description's last line.
@@ -343,7 +375,18 @@ struct UniqueSpec {
     /// Whether its wearer counts as wearing no body armour.
     #[serde(default)]
     counts_as_unarmoured: bool,
+    /// What its wielder's events build besides (a talent's `resource_build`).
+    resource_build: Option<BuildSpec>,
     lore: Option<String>,
+}
+
+/// A unique's `resource_build`: `{ resource = "zeal", on = "melee_hit", amount = 1 }`.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct BuildSpec {
+    resource: String,
+    on: Build,
+    amount: u16,
 }
 
 #[derive(Deserialize)]
@@ -413,6 +456,14 @@ struct PowerSpec {
     on_block: Option<u8>,
     /// The chance, in percent, a bash casts it.
     on_bash: Option<u8>,
+    /// How many times its wielder's level the debt it keeps may reach (a Tally).
+    tally: Option<u8>,
+    /// What each hit taken from a creature adds to its damage against that creature (a Grudge).
+    grudge: Option<u8>,
+    /// The resource whose shortfall its wielder may pay in hit points (an Oath).
+    oath: Option<String>,
+    /// The hit points a point of that resource costs (`oath` only).
+    hp_per_point: Option<u8>,
     /// The damage dice by its wielder's level, a rung each `every` levels.
     grows: Option<Vec<String>>,
     /// How many levels a rung of `grows` lasts.
@@ -524,6 +575,19 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
         return Err("`bash` needs a base that bashes (a shield)".into());
     }
     let (dice, lights) = off_tier(&spec.affixes, &stack, content);
+    let resource_build = (spec.resource_build)
+        .map(|b| {
+            let id = (content.resource_id(&b.resource))
+                .ok_or_else(|| format!("resource_build: unknown resource `{}`", b.resource))?;
+            if b.amount == 0 {
+                return Err("resource_build: `amount` is 1 or more".to_string());
+            }
+            if def.attack.is_none() {
+                return Err("resource_build: needs a weapon (it builds while wielded)".into());
+            }
+            Ok((id, b.on, b.amount))
+        })
+        .transpose()?;
     Ok(UniqueDef {
         id: spec.id,
         name: name.into(),
@@ -537,6 +601,7 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
         invisible: spec.invisible,
         douse: spec.douse,
         unarmoured: spec.counts_as_unarmoured,
+        resource_build,
         phrase,
         lore,
         campaign: None,
@@ -613,7 +678,8 @@ fn off_tier(
 /// on a weapon), `first_blood` (on a weapon), `plant` (on a shield or armour), `barefoot`,
 /// `trapwise`, `zone`, `pain` (with `gain` and `critical`), `ring` (with `stagger` and
 /// `difficulty`), `scars` (on worn armour), `onset` (with a `knockback` and a `noise`, on worn
-/// armour), and `thrust` (1 to 100, on a melee weapon).
+/// armour), `thrust` (1 to 100, on a melee weapon), and `tally`, `grudge`, and `oath` (with
+/// `hp_per_point`), each on a weapon.
 fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, String> {
     let named = [
         p.inflict.is_some(),
@@ -633,12 +699,15 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         p.pain.is_some(),
         p.ring.is_some(),
         p.scars.is_some(),
+        p.tally.is_some(),
+        p.grudge.is_some(),
+        p.oath.is_some(),
         p.onset.is_some(),
         p.thrust.is_some(),
     ];
     if named.iter().filter(|&&n| n).count() != 1 {
         return Err(
-            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `grows`, `first_blood`, `plant`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, `scars`, `onset`, and `thrust`"
+            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `grows`, `first_blood`, `plant`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, `scars`, `onset`, `thrust`, `tally`, `grudge`, and `oath`"
                 .into(),
         );
     }
@@ -662,6 +731,12 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     }
     if p.ring.is_none() && (p.stagger.is_some() || p.difficulty.is_some()) {
         return Err("power: `stagger` and `difficulty` belong to `ring`".into());
+    }
+    if p.oath.is_none() && p.hp_per_point.is_some() {
+        return Err("power: `hp_per_point` belongs to `oath`".into());
+    }
+    if let Some(power) = wielded_power(p, def, content)? {
+        return Ok(power);
     }
     let cast_fields = [p.length.is_some(), p.damage.is_some()];
     let chances = [p.on_block.is_some(), p.on_bash.is_some()];
@@ -873,6 +948,41 @@ fn grows(p: &PowerSpec, steps: &[String], def: &ObjectDef) -> Result<WeaponGrowt
         every,
         to_hit_every,
     })
+}
+
+/// The power of a `tally`, `grudge`, or `oath` table (each on a weapon), if it is one.
+fn wielded_power(
+    p: &PowerSpec,
+    def: &ObjectDef,
+    content: &Content,
+) -> Result<Option<Power>, String> {
+    let wielded = p.tally.is_some() || p.grudge.is_some() || p.oath.is_some();
+    if wielded && def.attack.is_none() {
+        return Err("power: `tally`, `grudge`, and `oath` need a weapon".into());
+    }
+    if let Some(cap_per_level) = p.tally {
+        if cap_per_level == 0 {
+            return Err("power: `tally` is how many times the level it holds, 1 or more".into());
+        }
+        return Ok(Some(Power::Tally { cap_per_level }));
+    }
+    if let Some(per_hit) = p.grudge {
+        if per_hit == 0 {
+            return Err("power: `grudge` is the damage a hit taken adds, 1 or more".into());
+        }
+        return Ok(Some(Power::Grudge { per_hit }));
+    }
+    let Some(oath) = &p.oath else {
+        return Ok(None);
+    };
+    let resource =
+        (content.resource_id(oath)).ok_or_else(|| format!("power: unknown resource `{oath}`"))?;
+    let hp_per_point = (p.hp_per_point.filter(|&n| n > 0))
+        .ok_or("power: `oath` needs an `hp_per_point` (1 or more)")?;
+    Ok(Some(Power::Oath {
+        resource,
+        hp_per_point,
+    }))
 }
 
 /// A `cast` power naming `spell` on base item `def`: a damage spell, on a shield, with its

@@ -530,6 +530,8 @@ mod tests {
             on_hit: Vec::new(),
             thrust: None,
             banes: Vec::new(),
+            once: 0,
+            keeps: None,
             grows: None,
             first_blood: false,
         };

@@ -25,7 +25,7 @@ const PLACED: [&str; 9] = [
 ];
 
 /// The uniques of the drop pool, every one `pool = true` in its data.
-const POOL: [&str; 18] = [
+const POOL: &[&str] = &[
     "cracked_resurrection_stone",
     "deep_night",
     "demonsoul",
@@ -36,6 +36,7 @@ const POOL: [&str; 18] = [
     "hushfoot",
     "kettle_hat",
     "masterpiece",
+    "oath",
     "onraes",
     "radiant",
     "satisfaction",
@@ -44,6 +45,8 @@ const POOL: [&str; 18] = [
     "smoulder",
     "stick",
     "tiptoe",
+    "wergild",
+    "wrecend",
 ];
 
 /// The built-in content with its every rare find a unique of the pool (`rare.unique` 10,000).
@@ -87,7 +90,8 @@ fn the_placed_uniques_never_join_the_pool() {
         assert!(!def.pool, "{id} is placed, never of the pool");
         assert_eq!(member(c, &def.stack), None);
     }
-    assert_eq!(pool_ids(c), BTreeSet::from(POOL.map(String::from)));
+    let listed: BTreeSet<String> = POOL.iter().map(|id| id.to_string()).collect();
+    assert_eq!(pool_ids(c), listed);
     let pool = pool_ids(c);
     // At the top item level every unique of the pool is open, and nothing else.
     let open: BTreeSet<String> = (open(c, MAX_ITEM_LEVEL, &BTreeSet::new()).into_iter())

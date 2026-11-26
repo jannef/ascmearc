@@ -489,6 +489,18 @@ id on another rarity than unique, and a unique without its id.
   (above), so the owner's numbers stand as written, and no make adds Armour or Protection they
   did not ask for. Tests:
   `world/combat/struck_tests.rs`.
+- **Wergild, the Oath, and the Wrecend** (#2109, #2117, #2131): three weapons of the drop pool
+  (`pool = true`) in the shared `data/uniques/`, each Masterwork, placed nowhere but the quarry.
+  Wergild, a great axe of item level 36: Sharp 6, Heavy 2d8, of the Bear 4, Nimble −1 (a
+  penalty), and a Tally power of 3. The Oath, a long sword of item level 34: Sharp 4, Keen 2,
+  Heavy 2d8, of the Lion 4, of Vitality 20, of undead-bane 2, an Oath power (zeal, 5 hit points
+  a point), and a `resource_build` of 1 zeal on `melee_hit` (its melee hits build 2). The
+  Wrecend, a steel battle axe of item level 40: Sharp 6, Heavy 2d8, of Precision 4, of the Ox 6,
+  of Fury 20 (off its bases: a Rage maximum, no weapon rolls it), and a Grudge power of 2. Tests:
+  `world/combat/tally_tests.rs` (the debt only while raging, its cap by level, paid once by a
+  hit and kept by a miss, forgiven at the rage's end, its words; grudges carried in the pack,
+  per creature, their damage and words, ended by a death; saves), `world/classes/oath_paid_tests.rs`
+  (unavailable without it, the blood after the ability, a death by it, the second zeal).
 - **What only a unique sets** (#2091, #2152) is refused to any other item by `Magic::check` and
   never rolled (`content/unique_values_tests.rs::what_only_a_unique_sets_never_rolls`: every
   random affix, loot's, a vault's, a shop's, enchanting's and its recast's, comes of
@@ -644,6 +656,33 @@ id on another rarity than unique, and a unique without its id.
   Barefoot's `noise` (a percent of a step's loudness, after stealth and talents) is read in
   `noise::noise` for `Act::Step`, its `dodge` with the magic Dodge in `Actor::defence`, both
   through `Actor::barefoot`. No bare-feet harm exists yet for Hushfoot's drawback to read.
+  `Power::Tally { cap_per_level }` (`{ tally = 3 }`, a weapon; #2109) and `Power::Grudge {
+  per_hit }` (`{ grudge = 2 }`, a weapon; #2131) share one record and one module,
+  `world/combat/tally.rs`: `Actor::tallies` (`Tallies { owed, grudges }`, saved, left out
+  while empty), fed in `World::hurt` (`tally_harm`, after Immune to pain and Unstoppable, for a
+  `Harm::Actor` by a creature: the hit points lost are owed to a wielded Tally while its wielder
+  rages with their own Rage, `frenzy::raging`, capped at `cap_per_level` × `holder_level`; a
+  carried Grudge, wielded or not, counts one hit against that actor id with its creature type,
+  for the words). `Mods::local` marks the weapon's attacks (`Profile::keeps`, `Keeps::Debt` or
+  `Keeps::Grudges(per_hit)`: a kick or a bash beside it keeps nothing), and `World::resolve`
+  reads it after the banes (`tallied`): the debt goes to `Profile::once` (added once to the
+  hit's roll after a critical multiplies it, before the soak and resistance:
+  `combat::strike_with`), a grudge's `per_hit` × hits to `Profile::bonus` against that target.
+  After Negate, a blow with the debt that `is_hit()` (soaked and resisted too) pays it
+  (`tally_paid`); a miss keeps it. `World::ended` forgives the debt once its holder no longer
+  rages (`debt_forgiven`), and `World::dies` ends every grudge against the dead
+  (`grudges_end`). The description (`PerceptionView::describe_item`, `Actor::tally_lines`)
+  adds after the power line the debt as a word while raging (`uniques.owed_a_little`, a third of
+  the cap or less; `owed_much`, two thirds; `owed_a_fortune`) and each grudge with its count, the
+  most first (`uniques.grudges`).
+  `Power::Oath { resource, hp_per_point }` (`{ oath = "zeal", hp_per_point = 5 }`, a weapon;
+  #2117), `world/classes/oath_paid.rs`: while it is wielded, `Ability::unavailable` never finds
+  a class active short of that resource while its pool is held (`class_short`,
+  `Actor::oath_pays`), and `World::use_class` spends what is held (`oath_short`) and, once the
+  ability is done, `pay_in_blood`: `uniques.oath_paid`, then `World::hurt` by the points short ×
+  `hp_per_point` as a `Harm::Status` of nothing (no easing, no refusal), a death by it
+  `Cause::Oath` ("Paid an oath in blood"). Only class actives' costs (`ability::class_cost`):
+  Retribution's own spend is not one.
   `magic::worn_powers` lists the powers of what an actor has equipped.
   `Power::Pain { resource, gain, critical }` (`{ pain = "ki", gain = 1, critical = 2 }`, #2115),
   `Power::Ring { cells, stagger, difficulty }` (`{ ring = 20, stagger = 1, difficulty = 15 }`,
@@ -675,7 +714,9 @@ id on another rarity than unique, and a unique without its id.
   source within that Chebyshev distance of the wearer gives no light while it is worn, placed
   lights, fires, fire zones, and every carried light, the wearer's own too, dropped where
   `light/cache.rs`'s `sources` drops a darkened one, so the light map, sight, and the perception
-  snapshot follow; nothing is put out or used up).
+  snapshot follow; nothing is put out or used up); and `resource_build` (`{ resource, on, amount
+  }`, a weapon's, #2117: a talent's `resource_build` while it is wielded, added to the talents'
+  in `World::build_resources` through `Actor::worn_uniques`).
 - **Description**: `describe::lines` adds `LineKind::Power` (the `phrase`) and
   `LineKind::Lore` after the affixes, only through `known_magic`; the UI labels the first
   "Power" and dims the lore in a section of its own. A spirit weapon (`Stack::spirit`, the

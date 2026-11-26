@@ -27,6 +27,7 @@ mod shot_zone;
 pub(in crate::world) mod slip;
 mod struck;
 pub(crate) mod surprise;
+pub(crate) mod tally;
 mod thrust;
 mod two_shields;
 mod unique_spell;
@@ -66,6 +67,7 @@ cfg_if! {
         mod style_tests;
         mod surprise_tests;
         mod surprise_words_tests;
+        mod tally_tests;
         mod thrown_exploit_tests;
         mod thrust_tests;
         mod two_shield_tests;

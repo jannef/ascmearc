@@ -1,0 +1,18 @@
+# Wergild (#2109): a great axe for the drop pool (#2103; placed nowhere else but the test world's
+# quarry), item level 36. The berserker's: while its wielder rages, every hit point a creature's
+# attack takes from them is written on the axe, up to three times their level, and its next blow
+# that lands adds the whole debt to its damage, once (soaked as its own damage is); a miss keeps
+# it, and the rage's end forgives it (a Tally, `world/combat/tally.rs`). +6 damage, two more d8,
+# +4 Strength, and −1 to Dodge, a penalty only a unique carries. Every value set by hand
+# (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "wergild"
+name = "Wergild"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "great_axe"
+affixes = ["sharp=6", "heavy=2d8", "nimble=-1", "of_the_bear=4"]
+level = 36
+quality = "masterwork"
+power = { tally = 3, phrase = "While its wielder rages, every wound they take is written on it, and its next blow collects the debt." }
+lore = "Every drop is written down, and every debt is paid in full."
