@@ -120,6 +120,7 @@ mod load_status;
 mod load_world;
 #[cfg(test)]
 mod loader_check_tests;
+mod loot_source;
 mod magic_word;
 mod magic_worth;
 mod material;
@@ -260,7 +261,7 @@ mod webs;
 pub use action::{ActionCosts, ActionKind, BASE_TURN, COSTS, NORMAL_COST, price};
 pub use affix::{
     AffixDef, AffixKind, Affixes, Effect, Group, ItemKind, MAX_HINDRANCE, MAX_ITEM_LEVEL,
-    MAX_PER_KIND, MAX_SPEED, Rarity, Tier,
+    MAX_SPEED, Rarity, Tier,
 };
 pub use alignment::{AlignmentRules, BandDef, ByAlignment, Shifts};
 pub use ally::AllyRules;
@@ -363,6 +364,7 @@ pub use level::{
     parse_route,
 };
 pub use light::{Dips, Drift, HueDrift, LightId, LightPreset, Stability};
+pub use loot_source::LootSources;
 pub use magic_worth::{AffixWorth, MagicWorth, RarityWorth};
 pub use material::{
     ANY, Fit, Fits, Found, ItemHarm, MaterialDef, MaterialId, ODD, POOR, Resists, VERY_RARE,
@@ -656,6 +658,8 @@ pub struct Content {
     /// The condition creature gear spawns in (`data/gear_condition.toml`); without the file, as
     /// made.
     gear_condition: GearConditions,
+    /// The loot sources (`data/loot_sources.toml`); without the file, every source plain.
+    loot_sources: LootSources,
     /// Material drops by creature tag (`data/drops/`, `content/drops.rs`); each creature type's
     /// resolved rows are on it ([`CreatureDef::drops`]).
     drops: Vec<TagDrops>,
@@ -1040,6 +1044,8 @@ impl Content {
             };
             content.affixes = affix::parse(files.table("affixes"), &lookups)?;
         }
+        // The loot sources, which name nothing: every item found or made reads its row.
+        content.loot_sources = content.load_or_default(files)?;
         content.check_follows_end()?;
         // Spells after damage types and statuses, which they name.
         let path = "data/spells.toml";

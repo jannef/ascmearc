@@ -411,12 +411,14 @@ pub(super) fn teeming_dens(content: &Content) -> String {
         };
         let hoard = match s.hoard {
             Hoard::Items => format!(
-                "one item per 4 sleepers (at least 1), item level +{}",
-                s.loot_level
+                "one item per {} sleepers (at least 1), item level +{}",
+                s.per_sleepers, s.loot_level
             ),
-            Hoard::Corpses => "per 4 sleepers (at least 1), a pile of bones and a fresh corpse \
-                               of a creature of the branch"
-                .to_string(),
+            Hoard::Corpses => format!(
+                "per {} sleepers (at least 1), a pile of bones and a fresh corpse of a creature \
+                 of the branch",
+                s.per_sleepers
+            ),
         };
         let _ = writeln!(
             out,

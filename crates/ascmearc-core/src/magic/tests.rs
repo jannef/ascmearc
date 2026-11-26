@@ -249,7 +249,11 @@ fn loot_is_mostly_normal_and_rolls_the_same_from_the_same_stream() {
         .filter(|s| c.object(s.object).kind == Some(ItemKind::Ammo))
         .collect();
     assert!(!ammo.is_empty());
-    assert!(ammo.iter().all(|s| loot::AMMO.contains(&(s.count as i32))));
+    let [least, most] = c.loot_sources().ammo;
+    assert!(
+        ammo.iter()
+            .all(|s| (least..=most).contains(&(s.count as i32)))
+    );
 }
 
 #[test]

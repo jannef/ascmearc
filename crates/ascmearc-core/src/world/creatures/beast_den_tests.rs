@@ -2,7 +2,7 @@
 //! of its factions (wildlife, vermin, marsh), drawn only where the branch's population holds one,
 //! with a hoard of bones and fresh corpses instead of items.
 
-use crate::content::{Content, ContentFiles, Hoard, SpecialRoom, Swarm};
+use crate::content::{Content, ContentFiles, Hoard, SpecialRoom};
 use crate::geom::Pos;
 use crate::test_support::builtin;
 
@@ -104,7 +104,8 @@ fn a_generated_beast_den_holds_only_beasts_and_their_kills() {
             .filter(|(_, s)| s.object == bones)
             .map(|(_, s)| s.count)
             .sum();
-        let hoard = Swarm::hoard(inside.len());
+        let swarm = content.room_effect(den).swarm.as_ref().expect("swarm");
+        let hoard = swarm.hoard(inside.len());
         assert_eq!(piles as usize, hoard, "seed {seed}: bones per piece");
         let kills: usize = here.iter().filter(|(_, s)| corpse(s.object)).count();
         assert!(kills <= hoard, "seed {seed}: at most a corpse a piece");

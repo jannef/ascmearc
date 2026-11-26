@@ -19,7 +19,7 @@ affixes, prefixes and suffixes together, an item can hold:
 | Quality | Fine +0, Marvellous +1, Masterwork +2 (#1444; first +1/+2/+3) | `Worked::improvements()` − 1, never below 0 (none while damaged) |
 | Material | −2 to +2 | `MaterialDef::binding` of the main part's material (`Stack::parts(content)[0]`, a variant's own) |
 | The set gem | +1, the finest cut (flawless, the last `[[cut]]` of `gems.toml`) +2 | the part of `gem::ornament_part` whose material is a gem; a base item's own gem part (the gold amulet's ruby setting) has no cut and counts +1 |
-| Clamp | 1 to `MOST` (6) | `MAX_PER_KIND × 2` |
+| Clamp | 1 to `capacity::most` (6) | `rare.most_per_kind` × 2 (`data/affixes.toml`) |
 
 `binding` is a new optional material field (`data/materials/*.toml`, default 0, steel's; the
 loader refuses one outside −2..=2): silver −2; tin, pewter, zinc, cadmium, bendalloy, lead, stone,
@@ -303,7 +303,7 @@ top; `docs/design/item-level-40.md` §8), and a `craft` mark at 100 %.
   each affix: the n-th of the n-th crystal's families, past the crystals of all their families
   together; a prefix while the split has one left and the families can roll one, else a suffix
   (a slot neither can fill is skipped); then the name (`loot::rare_name`); a fresh rare `Magic`.
-  Ennoble draws the kind evenly (`Rng::index`) among the kinds below `MAX_PER_KIND` that can
+  Ennoble draws the kind evenly (`Rng::index`) among the kinds below `rare.most_per_kind` that can
   roll, the affix, then the name; the rarity becomes rare. Unbind
   draws nothing and clears the `Magic` (`Stack::set_magic(None)`): its `Worked`, parts, rung,
   and charges stay. "The long sword takes the red crystal's glow. It is now a Sharp long sword.",
@@ -351,7 +351,7 @@ E6 (#1432; design §9; `world/crafting/seal.rs`, its tests `world/crafting/seal_
   adds `seal_seconds` (`enchant::work_seconds`, then Quick hands' share). No state is left on the
   item.
 - **The heart-crystal** (`[rare] heart`): Quicken on a rare (`refusal` lets it through below its
-  capacity and with a kind below `MAX_PER_KIND`) takes the first heart-crystal carried ("A rare
+  capacity and with a kind below `rare.most_per_kind`) takes the first heart-crystal carried ("A rare
   takes a heart-crystal beside the crystal, and you have none."); it draws its kind evenly among
   the kinds with room (`Rng::index`, as Ennoble) and keeps the rarity and the name. "The Grim Bite
   takes the red crystal's glow and the heart-crystal's, and holds more." A magic item's Quicken

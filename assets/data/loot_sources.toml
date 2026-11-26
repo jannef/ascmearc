@@ -1,0 +1,52 @@
+# The loot sources (docs/design/loot-pipeline.md §3.4): every place an item is found or made, one
+# row each, and what every item it yields shares. The sources are fixed in code (`Origin` in
+# magic/loot.rs): every source has exactly one row here, and a row names a source (a load error
+# either way). How many a source yields is its own data (a level's `loot`, a chest band's
+# `items`, a room's numbers) or one; magic/loot.rs lists the draws of a find.
+# Fields:
+#   grade      the least rarity of what it yields: `any`, `magic`, or `rare`; or, for a source
+#              whose own data gives the grade, that data's name: a vault's `legend` (its loot
+#              cell), a chest's `band` (data/chests.toml), a feature's `outcome`, a kit's `line`
+#   finder     whether the finder's talents count (Treasure hunter: magic and rare likelier)
+#   curses     whether a curse may roll among its affixes
+#   material   how its material is drawn: `loot` (by the materials' `rarity` at the item level),
+#              `gear` (by their `gear` weights at the creature's level, its faction's favoured
+#              ones too), or `own` (none: it keeps the material it is listed with)
+#   make       whether arms and armour may be Fine, Marvellous, or Masterwork, and set with a gem
+#              more often, by the item level (data/gear_condition.toml's `[[item_level]]`)
+# [item]
+#   ammo       a stack of ammunition found holds this many, [least, most], each as likely
+
+[item]
+ammo = [8, 20]
+
+[source]
+# A level's floor loot.
+floor = { grade = "any", finder = true, curses = true, material = "loot", make = true }
+# A vault's loot cell.
+vault_cell = { grade = "legend", finder = true, curses = true, material = "loot", make = true }
+# An item in a chest (a treasure room's chests too).
+chest = { grade = "band", finder = true, curses = true, material = "loot", make = true }
+# A tempting hoard.
+hoard = { grade = "any", finder = true, curses = true, material = "loot", make = true }
+# A teeming den's hoard.
+den = { grade = "any", finder = true, curses = true, material = "loot", make = true }
+# A special room's own loot, of its class (a scriptorium's).
+room_loot = { grade = "any", finder = false, curses = true, material = "loot", make = true }
+# What a creature drops when it dies, by its type's `loot` percent.
+drop = { grade = "magic", finder = true, curses = true, material = "gear", make = false }
+# What a feature leaves.
+feature = { grade = "outcome", finder = true, curses = true, material = "loot", make = true }
+# The aristocrat's stipend (data/stipend.toml).
+stipend = { grade = "any", finder = true, curses = true, material = "loot", make = true }
+# A quarrel's hoard.
+quarrel = { grade = "rare", finder = true, curses = true, material = "loot", make = true }
+# A creature's magic gear.
+gear = { grade = "magic", finder = false, curses = true, material = "gear", make = false }
+# A shop's goods.
+goods = { grade = "any", finder = false, curses = false, material = "own", make = false }
+# A kit's magic line: a starting kit's, a trade's, a background's gift.
+kit = { grade = "line", finder = false, curses = false, material = "own", make = false }
+# An animated thing's piece: its base drawn at any grade, then magic or rare by its line's
+# percents (data/animated.toml).
+animated = { grade = "any", finder = false, curses = true, material = "gear", make = false }

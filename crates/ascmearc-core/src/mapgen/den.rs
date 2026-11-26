@@ -114,12 +114,12 @@ pub(super) fn fill(
                 content,
                 &mut rng,
                 &floor,
-                (placed, prey, danger, spawning),
+                (swarm.hoard(placed), prey, danger, spawning),
             );
             continue;
         }
         let level = template.item_level.saturating_add(swarm.loot_level);
-        for _ in 0..Swarm::hoard(placed) {
+        for _ in 0..swarm.hoard(placed) {
             let p = floor[rng.index(floor.len())];
             let luck = &visit.luck;
             let item = wealth::gem_instead(content, &mut rng, level, luck.gems)
@@ -190,15 +190,15 @@ fn deeper(danger: u8, swarm: &Swarm) -> u8 {
     danger.saturating_add(swarm.danger).min(danger::MAX_DANGER)
 }
 
-/// A den's corpse hoard (`hoard = "corpses"`) of `placed` sleepers on `floor`: per piece
-/// ([`Swarm::hoard`]), a fresh corpse of prey drawn from `prey` (the branch's population and
+/// A den's corpse hoard (`hoard = "corpses"`) of `pieces` pieces ([`Swarm::hoard`]) on
+/// `floor`: per piece, a fresh corpse of prey drawn from `prey` (the branch's population and
 /// strays, any faction) and a pile of bones, each on a floor cell drawn anew.
 fn corpses(
     template: &mut LevelTemplate,
     content: &Content,
     rng: &mut Rng,
     floor: &[Pos],
-    (placed, (own, generic), danger, spawning): (
+    (pieces, (own, generic), danger, spawning): (
         usize,
         (&[Candidate], &[Candidate]),
         u8,
@@ -206,7 +206,7 @@ fn corpses(
     ),
 ) {
     let bones = content.ids().bones;
-    for _ in 0..Swarm::hoard(placed) {
+    for _ in 0..pieces {
         let kill = danger::draw(rng, own, generic, danger, &spawning.odds);
         if let Some(corpse) = kill.and_then(|c| content.corpse_of(c)) {
             let p = floor[rng.index(floor.len())];

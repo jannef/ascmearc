@@ -5,7 +5,7 @@
 use super::{RoomEffectId, RoomEffects};
 use crate::test_support::CONTENT;
 
-const DEN: &str = "swarm = { per_cells = 4, min = 1, max = 4, wake = 200, cry = 0, loot_level = 0";
+const DEN: &str = "swarm = { per_cells = 4, min = 1, max = 4, wake = 200, cry = 0, loot_level = 0, per_sleepers = 4";
 
 fn effect(extra: &str) -> String {
     format!("[[effect]]\nid = \"home\"\nname = \"home\"\nmark = \"H\"\nenter = \"In.\"\n{extra}\n")

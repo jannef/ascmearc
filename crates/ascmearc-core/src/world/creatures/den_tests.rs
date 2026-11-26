@@ -3,7 +3,7 @@
 //! their cries the rest, a blow wakes, sneak attacks land on sleepers, Hush-foot, sleepers count
 //! toward the spawn cap, and a generated den's sleepers and hoard.
 
-use crate::content::{ContentFiles, StatusId, Swarm};
+use crate::content::{ContentFiles, StatusId};
 use crate::noise::{Noise, SoundKind};
 use crate::world::combat::fight::Harm;
 use crate::world::*;
@@ -102,20 +102,22 @@ fn asleep_is_a_status_that_sleeps_and_a_den_is_data() {
     assert_eq!(swarm.sleepers(36), 9);
     assert_eq!(swarm.sleepers(10), 4, "at least four");
     assert_eq!(swarm.sleepers(200), 16, "at most sixteen");
-    assert_eq!(Swarm::hoard(9), 2);
-    assert_eq!(Swarm::hoard(3), 1);
+    assert_eq!(swarm.per_sleepers, 4);
+    assert_eq!(swarm.hoard(9), 2);
+    assert_eq!(swarm.hoard(3), 1);
 }
 
 #[test]
 fn bad_swarms_are_refused() {
     let shipped = ContentFiles::builtin().table_text("room_effects");
-    let good = "swarm = { per_cells = 4, min = 4, max = 16, wake = 200, cry = 60, loot_level = 1, \
+    let good = "swarm = { per_cells = 4, min = 4, max = 16, wake = 200, cry = 60, loot_level = 1, per_sleepers = 4, \
                 themes = { kind = 10, faction = 20 } }";
     assert!(shipped.contains(good), "the shipped den");
     for bad in [
-        "swarm = { per_cells = 0, min = 4, max = 16, wake = 200, cry = 60, loot_level = 1 }",
-        "swarm = { per_cells = 4, min = 8, max = 4, wake = 200, cry = 60, loot_level = 1 }",
-        "swarm = { per_cells = 4, min = 4, max = 16, wake = 200, cry = 900, loot_level = 1 }",
+        "swarm = { per_cells = 0, min = 4, max = 16, wake = 200, cry = 60, loot_level = 1, per_sleepers = 4 }",
+        "swarm = { per_cells = 4, min = 8, max = 4, wake = 200, cry = 60, loot_level = 1, per_sleepers = 4 }",
+        "swarm = { per_cells = 4, min = 4, max = 16, wake = 200, cry = 900, loot_level = 1, per_sleepers = 4 }",
+        "swarm = { per_cells = 4, min = 4, max = 16, wake = 200, cry = 60, loot_level = 1, per_sleepers = 0 }",
     ] {
         let mut files = ContentFiles::builtin();
         files.replace_table("room_effects", &shipped.replace(good, bad));

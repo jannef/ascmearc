@@ -29,8 +29,6 @@ use std::collections::BTreeMap;
 
 /// The highest item level (`Content::item_level`: a floor's danger gives it).
 pub const MAX_ITEM_LEVEL: u8 = 99;
-/// The most prefixes, and the most suffixes, an item may have (a rare: three of each).
-pub const MAX_PER_KIND: usize = 3;
 /// The most an item's attack speed or its wearer's moving speed may be raised, in percent off
 /// the cost.
 pub const MAX_SPEED: i32 = 50;
@@ -743,12 +741,13 @@ impl Rarity {
         }
     }
 
-    /// The most prefixes and suffixes (each) it may have.
-    pub const fn most_per_kind(self) -> usize {
+    /// The most prefixes and suffixes (each) it may have: a rare's by `rare.most_per_kind` in
+    /// `data/affixes.toml` ([`Affixes::most_per_kind`]).
+    pub fn most_per_kind(self, affixes: &Affixes) -> usize {
         match self {
             Rarity::Normal => 0,
             Rarity::Magic => 1,
-            Rarity::Rare | Rarity::Unique => MAX_PER_KIND,
+            Rarity::Rare | Rarity::Unique => usize::from(affixes.most_per_kind),
         }
     }
 
@@ -771,6 +770,9 @@ pub struct Affixes {
     pub magic_affixes: [u32; 3],
     /// How many affixes a rare item rolls, each with its weight.
     pub rare_counts: Vec<(u8, u32)>,
+    /// The most prefixes, and the most suffixes, an item may have (`rare.most_per_kind`; none
+    /// without the table).
+    pub most_per_kind: u8,
     /// Of every 10,000 rare finds, how many are a unique of the drop pool instead (`rare.unique`,
     /// [`crate::magic::unique_pool`]).
     pub unique_pool: u32,
@@ -871,6 +873,8 @@ struct MagicSpec {
 struct RareSpec {
     /// `[[affixes, weight], ...]`.
     affixes: Vec<[u32; 2]>,
+    /// The most prefixes, and the most suffixes, an item may have.
+    most_per_kind: u8,
     /// In 10,000 rare finds, how many are a unique of the drop pool instead (none unset).
     #[serde(default)]
     unique: u32,
@@ -968,7 +972,11 @@ pub(super) fn parse<'a>(
     let err = |m: String| ContentError::new(file, m);
     // More than a rare may hold would split into more prefixes or suffixes than
     // `Magic::check` (the saves' guard) allows.
-    let most = 2 * MAX_PER_KIND as u32;
+    let most_per_kind = rare_spec.most_per_kind;
+    if most_per_kind == 0 {
+        return Err(err("`rare.most_per_kind`: at least 1".into()));
+    }
+    let most = 2 * u32::from(most_per_kind);
     if rare_spec.unique > 10_000 {
         return Err(err(format!(
             "`rare.unique`: at most 10000 in 10,000, not {}",
@@ -998,6 +1006,7 @@ pub(super) fn parse<'a>(
         rarity,
         magic_affixes,
         rare_counts,
+        most_per_kind,
         unique_pool,
         first_names: names_spec.first,
         second_names,
@@ -1200,6 +1209,7 @@ suffix = 40
 both = 20
 [rare]
 affixes = [[3, 40], [4, 35]]
+most_per_kind = 3
 [names]
 first = ["Grim"]
 [names.second]

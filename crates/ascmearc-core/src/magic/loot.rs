@@ -6,9 +6,9 @@
 //! world. [`find`] makes one item, [`finds`] the spec's count of them; [`make`] (and
 //! [`make_unfinished`], creature gear's, short of the trim) makes a base chosen already from step
 //! 3 on; [`heirloom`] and [`favoured`] make one with a fixed count of affixes. What differs
-//! between sources is their row of the source table ([`Origin::rule`]): the grade when the
-//! caller's data gives none, whether the finder's luck counts, whether a curse may roll, how the
-//! material is drawn, and whether it gets a make.
+//! between sources is their row of the source table ([`Origin::rule`], `data/loot_sources.toml`):
+//! the grade when the caller's data gives none, whether the finder's luck counts, whether a curse
+//! may roll, how the material is drawn, and whether it gets a make.
 //!
 //! [`find`] draws, in this order, from the stream it is given (a level's `loot/<level id>` while
 //! it is generated, `drop/<actor id>` for what a creature drops, ...):
@@ -18,14 +18,15 @@
 //!    better) of the spec's classes (any when it names none) whose `level` is at most the item
 //!    level, weighted by their `frequency`; a scroll of a spell is its grimoire instead by the
 //!    grimoires' `chance` (one draw, a spell scroll's only: [`Content::grimoire_or`]);
-//! 2. **the count**: ammunition comes in stacks of [`AMMO`] (one draw); anything else is one;
+//! 2. **the count**: ammunition comes in stacks of `[item] ammo` in `data/loot_sources.toml`
+//!    (one draw); anything else is one;
 //! 3. **the rarity**: one draw over the weights of `[rarity]` in `data/affixes.toml` (those below
 //!    the grade asked for left out; the finder's `Luck::magic` scales those above it, for a row
 //!    that takes the finder); none for what is never magic (a scroll), which is normal;
 //! 4. **how many affixes**: a magic item has a prefix, a suffix, or one of each by the weights
 //!    of `[magic]` (one draw); a rare one draws its count from `rare.affixes` (one draw) and how
-//!    many of them are prefixes (one draw, evenly among the splits that keep at most three of
-//!    each, so prefixes and suffixes are alike);
+//!    many of them are prefixes (one draw, evenly among the splits that keep at most
+//!    `rare.most_per_kind` of each, so prefixes and suffixes are alike);
 //! 5. **each affix**, prefixes first: one draw among those that may roll on the item (its kind
 //!    in the affix's `bases`, something for the effect to change, a tier at the item level, and
 //!    a `category` the item has no affix of yet; a curse, #1754, only for a row that `curses`:
@@ -66,10 +67,7 @@ use crate::object::Stack;
 use crate::rng::Rng;
 use crate::variant::{self, Source};
 use serde::{Deserialize, Serialize};
-use std::ops::{Range, RangeInclusive};
-
-/// How many arrows, bolts, or stones a stack of loot ammunition holds.
-pub const AMMO: RangeInclusive<i32> = 8..=20;
+use std::ops::Range;
 
 /// The least an item of loot may be: anything, magic or better, or rare (a vault's `loot`, what
 /// creatures drop).
@@ -162,8 +160,8 @@ impl Luck {
 }
 
 /// Where an item is found or made: a row of the source table ([`Origin::rule`],
-/// docs/design/loot-pipeline.md §3.4).
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+/// `data/loot_sources.toml`, docs/design/loot-pipeline.md §3.4).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Origin {
     /// A level's floor loot (`mapgen::place_loot`).
     Floor,
@@ -197,7 +195,8 @@ pub enum Origin {
 }
 
 /// How a row draws an item's material (step 8).
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Material {
     /// By the materials' `rarity` at the item level.
     Loot,
@@ -211,8 +210,9 @@ pub enum Material {
 /// A source's row of the source table: what every item it yields shares.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Rule {
-    /// The least grade when the spec gives none.
-    pub grade: LootGrade,
+    /// The least grade when the spec gives none; `None`: the caller's data gives it (a legend,
+    /// a band, an outcome, a line).
+    pub grade: Option<LootGrade>,
     /// Whether the finder's luck counts (step 3).
     pub finder: bool,
     /// Whether a curse may roll (step 5).
@@ -223,34 +223,73 @@ pub struct Rule {
     pub make: bool,
 }
 
+impl Rule {
+    /// The row of every source in content without `data/loot_sources.toml`: anything, the
+    /// finder's luck and curses left out, its own material, no make.
+    pub const PLAIN: Rule = Rule {
+        grade: Some(LootGrade::Any),
+        finder: false,
+        curses: false,
+        material: Material::Own,
+        make: false,
+    };
+}
+
 impl Origin {
-    /// The row of the source table: today's rules, in code until the table moves to data.
-    pub const fn rule(self) -> Rule {
-        use LootGrade::{Any, Magic, Rare};
-        use Material::{Gear, Loot, Own};
-        let (grade, finder, curses, material, make) = match self {
-            Origin::Floor => (Any, true, true, Loot, true),
-            Origin::VaultCell => (Any, true, true, Loot, true),
-            Origin::Chest => (Any, true, true, Loot, true),
-            Origin::Hoard => (Any, true, true, Loot, true),
-            Origin::Den => (Any, true, true, Loot, true),
-            Origin::RoomLoot => (Any, false, true, Loot, true),
-            Origin::Drop => (Magic, true, true, Gear, false),
-            Origin::Feature => (Any, true, true, Loot, true),
-            Origin::Stipend => (Any, true, true, Loot, true),
-            Origin::Quarrel => (Rare, true, true, Loot, true),
-            Origin::Gear => (Magic, false, true, Gear, false),
-            Origin::Goods => (Any, false, false, Own, false),
-            Origin::Kit => (Any, false, false, Own, false),
-            Origin::Animated => (Any, false, true, Gear, false),
-        };
-        Rule {
-            grade,
-            finder,
-            curses,
-            material,
-            make,
+    /// Every source, in the order of the table's rows.
+    pub const ALL: [Origin; 14] = [
+        Origin::Floor,
+        Origin::VaultCell,
+        Origin::Chest,
+        Origin::Hoard,
+        Origin::Den,
+        Origin::RoomLoot,
+        Origin::Drop,
+        Origin::Feature,
+        Origin::Stipend,
+        Origin::Quarrel,
+        Origin::Gear,
+        Origin::Goods,
+        Origin::Kit,
+        Origin::Animated,
+    ];
+
+    /// Its row's key in `data/loot_sources.toml`.
+    pub const fn id(self) -> &'static str {
+        match self {
+            Origin::Floor => "floor",
+            Origin::VaultCell => "vault_cell",
+            Origin::Chest => "chest",
+            Origin::Hoard => "hoard",
+            Origin::Den => "den",
+            Origin::RoomLoot => "room_loot",
+            Origin::Drop => "drop",
+            Origin::Feature => "feature",
+            Origin::Stipend => "stipend",
+            Origin::Quarrel => "quarrel",
+            Origin::Gear => "gear",
+            Origin::Goods => "goods",
+            Origin::Kit => "kit",
+            Origin::Animated => "animated",
         }
+    }
+
+    /// The name of the caller's data that gives its grade (a vault's `legend`, a chest's `band`,
+    /// a feature's `outcome`, a kit's `line`), for a source whose every caller gives one; its
+    /// row's `grade` is then that name.
+    pub const fn given(self) -> Option<&'static str> {
+        match self {
+            Origin::VaultCell => Some("legend"),
+            Origin::Chest => Some("band"),
+            Origin::Feature => Some("outcome"),
+            Origin::Kit => Some("line"),
+            _ => None,
+        }
+    }
+
+    /// Its row of the source table (`data/loot_sources.toml`; [`Rule::PLAIN`] without it).
+    pub fn rule(self, content: &Content) -> Rule {
+        content.loot_sources().rule(self)
     }
 }
 
@@ -313,18 +352,18 @@ impl<'a> Spec<'a> {
         }
     }
 
-    /// The least grade: the spec's, else the row's.
-    pub const fn least(&self) -> LootGrade {
-        match self.grade {
-            Some(grade) => grade,
-            None => self.origin.rule().grade,
-        }
+    /// The least grade: the spec's, else the row's (anything for a row whose grade the caller's
+    /// data gives, when it gives none).
+    pub fn least(&self, content: &Content) -> LootGrade {
+        (self.grade)
+            .or(self.origin.rule(content).grade)
+            .unwrap_or_default()
     }
 
     /// How the material is drawn ([`variant::draw`]'s source): `None` for a row that keeps
     /// its own.
-    fn source(&self) -> Option<Source> {
-        match self.origin.rule().material {
+    fn source(&self, content: &Content) -> Option<Source> {
+        match self.origin.rule(content).material {
             Material::Loot => Some(Source::Loot),
             Material::Gear => Some(match self.wearer {
                 Some((level, faction)) => Source::Gear { level, faction },
@@ -342,7 +381,8 @@ pub fn find(content: &Content, spec: &Spec, finder: &Luck, rng: &mut Rng) -> Opt
     // A spell scroll may be its grimoire: one draw, a scroll's.
     let object = content.grimoire_or(rng, object);
     let count = if content.object(object).kind == Some(ItemKind::Ammo) {
-        u32::try_from(rng.range(*AMMO.start(), *AMMO.end())).unwrap_or(1)
+        let [least, most] = content.loot_sources().ammo;
+        u32::try_from(rng.range(least, most)).unwrap_or(1)
     } else {
         1
     };
@@ -368,7 +408,7 @@ pub fn base(content: &Content, spec: &Spec, rng: &mut Rng) -> Option<ObjectId> {
 /// (docs/dev/content.md). Empty when `spec` holds nothing at its item level.
 pub(crate) fn bases(content: &Content, spec: &Spec) -> Vec<(ObjectId, u32)> {
     let level = spec.level.max(1);
-    let magic_only = spec.least() != LootGrade::Any;
+    let magic_only = spec.least(content) != LootGrade::Any;
     let classes = spec.classes;
     let mut bases: Vec<(ObjectId, u32)> = (content.object_defs().iter().enumerate())
         .filter(|(_, o)| o.frequency > 0 && o.level <= level)
@@ -406,12 +446,12 @@ pub fn make_unfinished(
     finder: &Luck,
     rng: &mut Rng,
 ) -> Stack {
-    let rule = spec.origin.rule();
+    let rule = spec.origin.rule(content);
     let level = spec.level.max(1);
     let def = content.object(object);
     let luck = if rule.finder { finder.magic } else { 0 };
     let rarity = match def.kind {
-        Some(_) => roll_rarity(content, rng, spec.least(), luck),
+        Some(_) => roll_rarity(content, rng, spec.least(content), luck),
         None => Rarity::Normal,
     };
     let magic = match rarity {
@@ -432,7 +472,7 @@ pub fn make_unfinished(
     // Its own parts in its base parts' order: the main part's material, then the gem it is set
     // with.
     let material =
-        (spec.source()).and_then(|source| variant::draw(content, rng, def, source, level));
+        (spec.source(content)).and_then(|source| variant::draw(content, rng, def, source, level));
     let own: Vec<_> = material.into_iter().chain(ornament).collect();
     let mut stack = if own.is_empty() {
         stack
@@ -493,7 +533,7 @@ fn roll_magic(
     let (prefixes, suffixes) = match rarity {
         Rarity::Rare => {
             let count = i32::from(*pick_weighted(rng, &affixes.rare_counts).unwrap_or(&3));
-            rare_split(rng, count)
+            rare_split(content, rng, count)
         }
         _ => {
             let [prefix, suffix, both] = affixes.magic_affixes;
@@ -522,9 +562,9 @@ fn roll_magic(
 }
 
 /// How many of a rare item's `count` affixes are prefixes and how many suffixes: one draw,
-/// evenly among the splits that keep at most [`crate::content::MAX_PER_KIND`] of each.
-pub(crate) fn rare_split(rng: &mut Rng, count: i32) -> (i32, i32) {
-    let most = crate::content::MAX_PER_KIND as i32;
+/// evenly among the splits that keep at most `rare.most_per_kind` of each.
+pub(crate) fn rare_split(content: &Content, rng: &mut Rng, count: i32) -> (i32, i32) {
+    let most = i32::from(content.affixes().most_per_kind);
     let prefixes = rng.range((count - most).max(0), count.min(most));
     (prefixes, count - prefixes)
 }
@@ -586,7 +626,7 @@ pub fn heirloom(
     let (rarity, split) = match count {
         ..=1 => (Rarity::Magic, (1, 0)),
         2 => (Rarity::Magic, (1, 1)),
-        _ => (Rarity::Rare, rare_split(rng, count)),
+        _ => (Rarity::Rare, rare_split(content, rng, count)),
     };
     let mut stack = match affixed(content, rng, def, (level.max(1), false), rarity, split) {
         Some(magic) => Stack::with_magic(object, 1, magic),

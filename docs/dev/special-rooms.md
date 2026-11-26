@@ -125,7 +125,8 @@ eligibility.
 
 Filling (`mapgen/den.rs`, `den::fill`, called in `mapgen::generate_with` right after
 `population::populate`, only on a branch level with a danger): every special room whose effect has
-a `swarm` gets `Swarm::sleepers(free cells)` sleepers and `Swarm::hoard(placed)` items, from the
+a `swarm` gets `Swarm::sleepers(free cells)` sleepers and `Swarm::hoard(placed)` items (one per
+its `per_sleepers`), from the
 level's own stream `Rng::swarm` (`swarm/<level id>`), so nothing else on the level moves. Free
 cells: the room's cells of plain floor (the palette's) with no stairs, light, trap, or creature.
 Candidates: `Content::candidates` of the branch's population and of the generic list, filtered to

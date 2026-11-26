@@ -309,6 +309,8 @@ pub struct Swarm {
     /// What its hoard is: items (`items`, the default) or bones and fresh corpses (`corpses`).
     #[serde(default)]
     pub hoard: Hoard,
+    /// Its hoard holds one thing for this many sleepers, at least one.
+    pub per_sleepers: u16,
     /// The den's own population (creature ids, families by their own id: an armoury's
     /// `animated_blade`): its sleepers are drawn only among these, whatever the branch's
     /// population, hostile or not, and no stray; empty: the branch's. Resolved once the
@@ -353,6 +355,9 @@ impl Swarm {
         if self.per_cells == 0 {
             return Err("swarm: per_cells must be at least 1".into());
         }
+        if self.per_sleepers == 0 {
+            return Err("swarm: per_sleepers must be at least 1".into());
+        }
         // `sleepers` clamps to the range: never empty.
         if self.min > self.max {
             return Err("swarm: min is at most max".into());
@@ -379,9 +384,10 @@ impl Swarm {
             .min(cells)
     }
 
-    /// How many items the hoard of `sleepers` sleepers holds: one per four, at least one.
-    pub fn hoard(sleepers: usize) -> usize {
-        (sleepers / 4).max(1)
+    /// How many things the hoard of `sleepers` sleepers holds: one per `per_sleepers`, at
+    /// least one.
+    pub fn hoard(&self, sleepers: usize) -> usize {
+        (sleepers / usize::from(self.per_sleepers)).max(1)
     }
 }
 

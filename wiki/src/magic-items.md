@@ -145,6 +145,17 @@ dangerous places give. An item rolls any tier its level reaches, each as likely:
 level 40 or more can roll the weakest tier of an affix or its best. The exact rule is under the
 rarity tables above.
 
+### Every place items come from
+
+Every place that gives items makes them the same way. The table shows, for each, the least
+rarity its items have, whether your talents (such as [Treasure
+hunter](talents-mind.md#talent-treasure-hunter)) make magic and rare items likelier there, whether
+a [curse](#cursed-items) can roll on them, and whether arms and armour can come
+[Fine or better](altars-forges-springs.md#forges) by the item level. A creature's gear comes in
+its own [condition](creature-gear.md#condition) instead.
+
+{{#include generated/loot-sources.md}}
+
 ## Unidentified items
 
 Magic, rare, and unique items are **unidentified** when you find them. You see their rarity ("a
