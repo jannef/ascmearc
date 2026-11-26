@@ -106,18 +106,6 @@ fn wood_is_accepted_and_metal_refused() {
 }
 
 #[test]
-fn a_spirit_weapon_is_refused() {
-    let mut w = world(false);
-    give(&mut w, "knife");
-    let bow = object(&w, "short_bow");
-    w.player_mut().inventory.insert(0, Stack::spirit(bow));
-    let before = w.state.time;
-    w.apply(&Action::Whittle { item: 0 });
-    assert!(said(&w, "Only a weapon of wood can be whittled."));
-    assert_eq!(w.state.time, before, "refused, no time");
-}
-
-#[test]
 fn without_a_knife_it_is_refused_with_its_reason() {
     let mut w = world(false);
     give(&mut w, "short_bow");

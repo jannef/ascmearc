@@ -31,9 +31,6 @@ pub struct Summary {
     /// The class, by id (`warrior`), shown as `race` is.
     #[serde(default)]
     pub class: String,
-    /// The prestige class the character was called into, by id; empty for none.
-    #[serde(default, skip_serializing_if = "String::is_empty")]
-    pub prestige: String,
     /// The experience level.
     #[serde(default)]
     pub level: u32,
@@ -60,25 +57,14 @@ impl Summary {
     pub fn of(world: &World, played: u64) -> Self {
         let view = world.perception();
         let content = world.content();
-        let (name, race, class, prestige) = match world.character() {
-            Some(c) => (
-                c.name.clone(),
-                c.spec.race.clone(),
-                c.spec.class.clone(),
-                c.prestige.clone().unwrap_or_default(),
-            ),
-            None => (
-                NAMELESS.to_string(),
-                String::new(),
-                String::new(),
-                String::new(),
-            ),
+        let (name, race, class) = match world.character() {
+            Some(c) => (c.name.clone(), c.spec.race.clone(), c.spec.class.clone()),
+            None => (NAMELESS.to_string(), String::new(), String::new()),
         };
         Self {
             name,
             race,
             class,
-            prestige,
             level: u32::from(view.own_experience().level),
             place: view.level_name().clone(),
             campaign: (content.campaign(world.campaign()))
@@ -110,17 +96,13 @@ impl Summary {
         toml::from_str(text).ok()
     }
 
-    /// Race and class together: `Dwarf Warrior`, `Human Bard 30, Hunter 4` (either may be
-    /// missing), named from `content`.
+    /// Race and class together: `Dwarf Warrior` (either may be missing), named from `content`.
     pub fn race_and_class(&self, content: &Content) -> String {
         let race = (!self.race.is_empty()).then(|| match content.race(&self.race) {
             Some(_) => Arg::from(content.race_phrase(&self.race)),
             None => Arg::text(self.race.as_str()),
         });
-        let prestige = Some(self.prestige.as_str()).filter(|p| !p.is_empty());
-        let level = u8::try_from(self.level).unwrap_or(u8::MAX);
-        let class =
-            (!self.class.is_empty()).then(|| class_arg(content, &self.class, prestige, level));
+        let class = (!self.class.is_empty()).then(|| class_arg(content, &self.class));
         match (race, class) {
             (Some(race), Some(class)) => {
                 ui_with(T::RACE_CLASS, &[("race", race), ("class", class)])
@@ -298,7 +280,6 @@ mod tests {
                 name: id.into(),
                 race: String::new(),
                 class: String::new(),
-                prestige: String::new(),
                 level: 1,
                 place: Arg::Text(String::new()),
                 campaign: String::new(),

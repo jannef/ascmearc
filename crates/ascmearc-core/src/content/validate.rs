@@ -258,7 +258,7 @@ impl Content {
         Ok(())
     }
 
-    /// Checks the classes' and prestige classes' level tables against the talents: what they name
+    /// Checks the classes' level tables against the talents: what they name
     /// resolves; and a class's own slots name a class.
     pub(super) fn check_class_tables(&self) -> Result<(), ContentError> {
         // A slot of one class's (the aristocrat's extra rings) names a class there is.
@@ -277,9 +277,6 @@ impl Content {
         }
         for class in &self.classes {
             class.check_table(&self.talents)?;
-        }
-        for prestige in &self.prestige {
-            prestige.check_table(&self.talents)?;
         }
         Ok(())
     }

@@ -190,7 +190,7 @@ of every profession the player is trained in at its `from` or more, in recipe or
 cheapest, `craft_make::stock_need` for one; each object and stock input, a table's own input
 left out when the table gave stock; never a gem) through `World::receive`; an empty pool says
 `idle`. While one is open it takes the first stack of the work's object that is Fine or better
-(`Worked::improvements` above 0; not a spirit weapon; one not worn first, through
+(`Worked::improvements` above 0; one not worn first, through
 `hand_over_one`), pays `PatronRules::paid` of its `Stack::value` in gold through `receive`, says
 `delivered`, and marks Negotiation (`Use::Deal`); else `plain` (a plain one carried) or
 `waiting`. `WorldState::patron` (`Patron { taken, open: Option<Commission { recipe, giver, offer
@@ -251,26 +251,6 @@ and could drift off the road with any map edit. Godgifu's five topics carry rout
 cell (18, 28). Tests: `world/people/rumour_tests.rs` (marks after the ask and not before, a corridor and
 not the map, idempotent, no time, hidden locations stay hidden while Cealdhlāw shows, the
 `memory` and `locations` layers back on the map, a replay, the validation).
-
-**Callings by topic** (#1174, which removed #878's saying words): a `[[dialogue.topic]]` may have `calls` (a prestige class's calling of the
-dialogue's campaign, or, outside every campaign, one outside every campaign:
-`Content::check_topic_callings`, one line in `Content::load` after the callings) and `departs`
-(a creature type's dialogue only, checked in `dialogue.rs`'s parse). `World::topics` lists such
-a topic only while `World::calling_open`; `World::ask` hands it to `World::ask_calling`
-(`world/classes/calling.rs`), which says the reply (through `World::answer`, or as a message only when
-it departs, so the screen does not reopen on one gone), makes the call (`World::call`), then
-`World::departs` (`world/allies/ally.rs`), and takes a chat's time; not open, it is "knows nothing
-about that" and no time. The level-up's news ("Welcome to level 31.") is said as the action
-ends, after the departure line. In content: the Strange Spirit's oath
-(`campaigns/ascmearc/data/dialogue/spirit.toml`, `calls = "hunter"`, `departs = true`, with
-`speaks_to = { min = "kind" }`) and the test world's hermit (`calls = "hunter"`, no `departs`).
-`speaks_to` lives in `talk.rs`: `World::speaks_to(dialogue)` (the player's band against the
-range); outside it `listens` says `silent` (so `chat` and `ask` refuse alike) and
-`World::topics` is empty. Look mode says ", who waits" after a creature whose dialogue's only
-topics are callings', with no service or offer (`ui/look.rs::waits`: "a strange spirit
-(unhurt), who waits"). Nothing new is saved; nothing is drawn. Tests:
-`world/campaigns/strange_spirit_tests.rs` (the spirit's silence and its topic, the oath asked, a replay
-and a save, the hermit's topic offered to a full bard only), `world/classes/calling_tests.rs`.
 
 ## Speech by race and station (#1392)
 

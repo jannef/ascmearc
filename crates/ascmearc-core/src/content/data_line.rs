@@ -298,11 +298,6 @@ pub fn unique_lore(id: &str) -> String {
     format!("unique:{id}.lore")
 }
 
-/// What talent `id`'s `spirit_weapon` effect says of a spirit weapon's power (its `phrase`).
-pub fn spirit_weapon_phrase(id: &str) -> String {
-    format!("talent:{id}.effects.spirit_weapon.phrase")
-}
-
 /// Spell `id`'s `description`, what a grimoire or a wand says it does.
 pub fn spell_description(id: &str) -> String {
     format!("spell:{id}.description")
@@ -319,8 +314,7 @@ pub fn rod_effect_description(id: &str) -> String {
 }
 
 /// The words an item's description takes from the data: a slot's mark, a unique's power and
-/// lore, a spirit weapon's power, a spell's and a rod effect's description, and a rod effect's
-/// name.
+/// lore, a spell's and a rod effect's description, and a rod effect's name.
 fn describe_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     for slot in content.slots() {
         add(slot_mark(&slot.id), &slot.mark);
@@ -331,17 +325,6 @@ fn describe_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
         }
         if let Some(lore) = &def.lore {
             add(unique_lore(&def.id), lore);
-        }
-    }
-    for (_, def) in content.talents().iter() {
-        for effect in &def.effects {
-            if let super::TalentEffect::Martial(crate::talent::MartialEffect::SpiritWeapon {
-                phrase,
-                ..
-            }) = effect
-            {
-                add(spirit_weapon_phrase(&def.id), phrase);
-            }
         }
     }
     for spell in content.spells() {
@@ -437,14 +420,6 @@ pub fn status_death(id: &str) -> String {
 
 // --- The classes' lines (L4c, #1914) -----------------------------------------------------------
 
-/// Calling `def`'s `message`: `calling:<scope>.<class>.message`, its scope its campaign (`data`
-/// for one outside every campaign, as a dialogue's), since one prestige class may have a calling
-/// in each campaign.
-pub fn calling(def: &super::CallingDef) -> String {
-    let scope = def.campaign.as_deref().unwrap_or("data");
-    format!("calling:{scope}.{}.message", def.class)
-}
-
 /// The `news` of talent `def`'s `weapon_ranks` and `take_up_skills` effects (said when a class
 /// table gives it), each key with its text: `talent:<id>.effects.<kind>.news`.
 pub fn handed_news(def: &TalentDef) -> impl Iterator<Item = (String, &str)> {
@@ -477,12 +452,9 @@ pub fn prayer_use(id: super::PrayerUse, face: super::Face) -> String {
     format!("prayer:use.{}.{}", id.id(), face.id())
 }
 
-/// The classes' lines: the callings' messages, the talents' handed-out news, the resources'
-/// `lacking`, and the prayer's words.
+/// The classes' lines: the talents' handed-out news, the resources' `lacking`, and the prayer's
+/// words.
 fn class_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
-    for def in content.callings() {
-        add(calling(def), &def.message);
-    }
     for (_, def) in content.talents().iter() {
         for (key, text) in handed_news(def) {
             add(key, text);
@@ -753,8 +725,8 @@ fn crafting_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     }
 }
 
-// ----- People (`world/people/`, #1924): what quests' people say, a town's goodwill, a hidden
-// location opening, and a dialogue's `silent` line. -----
+// ----- People (`world/people/`, #1924): what quests' people say, a town's goodwill, and a
+// hidden location opening. -----
 
 /// Quest `quest`'s line at `path` in its `[[quest]]`: `offer`, `variant.<id>.offer`,
 /// `joins`, `binding.words.0`, `taker.<npc>.done`, `side.<npc>.join`, `parting.betray`
@@ -785,14 +757,8 @@ pub fn hidden_opens(level: &str, id: &str) -> String {
     format!("level:{level}.hidden.{id}.opens")
 }
 
-/// Dialogue `d`'s `silent` line: what its speaker does for one outside its `speaks_to`.
-pub fn silent(content: &Content, d: super::DialogueId) -> String {
-    let scope = super::dialogue::scope(content.dialogue(d), content);
-    format!("dialogue:{scope}.silent")
-}
-
 /// The narrator's lines of `world/people/`: a lure quest's binding, a reward's skills, a town's
-/// `told`, a hidden location's `opens`, and a dialogue's `silent`.
+/// `told`, and a hidden location's `opens`.
 fn people_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     for def in content.quests() {
         let id = &def.id;
@@ -830,11 +796,6 @@ fn people_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
             if let Some(line) = &hidden.opens {
                 add(hidden_opens(&level.id, &hidden.id), line);
             }
-        }
-    }
-    for (i, d) in content.dialogues().iter().enumerate() {
-        if let Some(line) = &d.silent {
-            add(silent(content, super::DialogueId(i as u16)), line);
         }
     }
 }

@@ -467,38 +467,21 @@ fn lines_named(stack: &Stack, content: &Content, name: Phrase, maker: Option<&st
         out.push(line(LineKind::Base, said));
     }
     // Its own stats as it is made: another material's damage and Protection (#193), the dice an
-    // anvil's work left it; a spirit weapon's with its gifts' threat and piercing.
-    let gift = crate::world::spirit_gift(content).filter(|_| stack.is_spirit());
-    let spirit = gift.map(|g| Spirit {
-        threat: g.threat,
-        pierces: g.pierces,
-    });
+    // anvil's work left it.
     let (_, damage) = crate::variant::weapon(def, &parts, content);
     let protection = stack.base_protection(content);
     let shield = def.shield + crate::variant::shield(def, &parts, content);
     let attack = stack.attack(content);
     out.extend(
-        stats(
-            def,
-            attack.as_ref(),
-            content,
-            damage,
-            (protection, shield),
-            spirit,
-        )
-        .into_iter()
-        .map(|t| line(LineKind::Stat, t)),
+        stats(def, attack.as_ref(), content, damage, (protection, shield))
+            .into_iter()
+            .map(|t| line(LineKind::Stat, t)),
     );
     // Then what it gives in all, in numbers, as the player knows it (`numbers`): to hit and
     // damage with its material and known affixes, Dv and Pv.
     let numbers = super::Numbers::of(stack, content).lines(content);
     out.extend(numbers.into_iter().map(|t| line(LineKind::Stat, t)));
     out.extend(mark_line(stack, maker));
-    // A spirit weapon's power, as a unique's is said: the data's words.
-    if let Some(gift) = gift {
-        let said = data_line::said(data_line::spirit_weapon_phrase(gift.talent));
-        out.push(line(LineKind::Power, said));
-    }
     if stack.rarity() == Rarity::Normal {
         return out;
     }
@@ -720,16 +703,7 @@ pub fn base_stats(def: &ObjectDef, content: &Content) -> Vec<Msg> {
         content,
         0,
         (def.protection, def.shield),
-        None,
     )
-}
-
-/// What a spirit weapon's gifts change in its own stats: the threat lowered, and whether it
-/// pierces armour.
-#[derive(Clone, Copy)]
-struct Spirit {
-    threat: u8,
-    pierces: bool,
 }
 
 /// [`base_stats`] of one made of another material: `damage` more to its damage dice (its dice
@@ -740,7 +714,6 @@ fn stats(
     content: &Content,
     damage: i32,
     (protection, shield): (i32, i32),
-    spirit: Option<Spirit>,
 ) -> Vec<Msg> {
     let mut out = Vec::new();
     let n = |id: MessageId, n: i32| Msg::new(id).role("n", num(n));
@@ -748,8 +721,7 @@ fn stats(
         out.push(held);
     }
     if let Some(attack) = attack {
-        let less = spirit.map_or(0, |s| i32::from(s.threat));
-        let threat = (i32::from(attack.threat) - less).max(crate::combat::FUMBLE + 1);
+        let threat = i32::from(attack.threat).max(crate::combat::FUMBLE + 1);
         let critical = if threat >= HIGHEST {
             format!("{HIGHEST}")
         } else {
@@ -813,7 +785,7 @@ fn stats(
         );
     }
     // How much armour it ignores stays hidden, as the soak does: only that it does.
-    if def.penetration > 0 || spirit.is_some_and(|s| s.pierces) {
+    if def.penetration > 0 {
         out.push(msg::describe::PIERCES.into());
     }
     if def.parry > 0 {

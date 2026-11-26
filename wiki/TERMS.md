@@ -38,7 +38,7 @@ table on its page, or grep the built page: `grep -o 'id="status-[a-z-]*"' wiki/b
 | A status effect (Staggered, Winded, Raging, Hasted, …) | `status-list.md#status-ID` | `status-list.md#status-staggered` |
 | A disease | `diseases.md#disease-ID` | `diseases.md#disease-filth-fever` |
 | A skill (Stealth, Open lock, Spot, …) | `skills.md#skill-ID` | `skills.md#skill-open-lock` |
-| A talent | its tree group's page, `talents-GROUP.md#talent-ID` (`origins`: Heritage, Crafts, Racial; `body`: Vigour, Might, Finesse, Grit; `fighting`: Weaponcraft, Guard; `exploring`: Shadow, Wayfarer, Delver; `mind`: Scholar, Spellcraft); a birth sign's gift `horoscope.md#talent-ID`; a class ability `class-CLASS.md#talent-ID` (its first class's table, on that class's page; a prestige class's own, `prestige-classes.md#talent-ID`); a profane gift `profane-gifts.md#talent-ID` | `talents-body.md#talent-hardy`, `horoscope.md#talent-fleet-footed`, `class-berserker.md#talent-rage` |
+| A talent | its tree group's page, `talents-GROUP.md#talent-ID` (`origins`: Heritage, Crafts, Racial; `body`: Vigour, Might, Finesse, Grit; `fighting`: Weaponcraft, Guard; `exploring`: Shadow, Wayfarer, Delver; `mind`: Scholar, Spellcraft); a birth sign's gift `horoscope.md#talent-ID`; a class ability `class-CLASS.md#talent-ID` (its first class's table, on that class's page); a profane gift `profane-gifts.md#talent-ID` | `talents-body.md#talent-hardy`, `horoscope.md#talent-fleet-footed`, `class-berserker.md#talent-rage` |
 | An ability in the abilities menu (class abilities, sign actives, spells, skill uses) | `abilities.md#ability-ID` | `abilities.md#ability-lay-on-hands` |
 | A spell | `magic.md#spell-ID` | `magic.md#spell-fireball` |
 | A damage type (fire, slashing, …) | `damage-types.md#damage-ID` | `damage-types.md#damage-fire` |
@@ -227,10 +227,6 @@ above.
 | Class abilities | `classes.md#levels`, `abilities.md` |
 | The bard, a bard's cap at 30, Travelled hands, Jack of all trades | `class-bard.md` |
 | Songs (Inspire, the Lullaby), singing, a song's degrees, shaking a song off, Virtuoso | `abilities.md#songs` |
-| Prestige class, the Hunter, total level, a class's cap (last level) | `prestige-classes.md#prestige-classes` (a prestige class's table: its heading, `prestige-classes.md#hunter`) |
-| A calling, being called | `prestige-classes.md#callings` |
-| Spirit weapon | `abilities.md#ability-spirit-weapon` |
-| The Strange Spirit, the oath | `npcs.md#the-strange-spirit` |
 | The priest's prayer (Orison, Prayer, Litany, Benediction, Miracle), what it answers | `prayer.md`, `prayer.md#what-it-answers` (a use: its row) |
 | Strain, a fizzled prayer | `prayer.md#strain` |
 | The holy and the dark powers, the dark face's twists (Whisper, Invocation, Rite, Pact) | `prayer.md#the-holy-and-the-dark` |

@@ -65,7 +65,6 @@
 - [Abilities](abilities.md)
 - [Weapon skills](weapon-skills.md)
   - [Fighting styles](fighting-styles.md)
-- [Prestige classes](prestige-classes.md)
 
 # Fighting and surviving
 

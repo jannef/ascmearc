@@ -144,7 +144,6 @@ impl fmt::Display for Action {
                 at.x,
                 at.y
             ),
-            Action::Shape(active, shape) => write!(f, "use:{}:{shape}", active.id()),
             Action::Gift(active, None) => write!(f, "use:{}", active.id()),
             Action::Gift(active, Some(at)) => write!(f, "use:{}:{},{}", active.id(), at.x, at.y),
             Action::Talent { id, choice: None } => write!(f, "talent:{id}"),
@@ -155,7 +154,6 @@ impl fmt::Display for Action {
             Action::Advance(skill) => write!(f, "advance:{skill}"),
             Action::LevelUpAuto => f.write_str("levelup:auto"),
             Action::GrantXp(xp) => write!(f, "xp:{xp}"),
-            Action::Call(id) => write!(f, "call:{id}"),
             Action::SetRank { skill, rank } => write!(f, "rank:{skill}:{rank}"),
             Action::SetVision(id) => write!(f, "vision:{id}"),
             Action::SkipTime(d) => write!(f, "skip:{d}"),
@@ -327,7 +325,6 @@ static VERBS: &[(&str, Shape)] = &[
     ("quest_roll", Shape::Own(quest_roll)),
     ("levelup", Shape::Own(level_up)),
     ("xp", Shape::Own(xp)),
-    ("call", Shape::Id(Action::Call, "a prestige class id, e.g. `call:hunter`")),
     ("rank", Shape::Own(rank)),
     ("freeze", Shape::Own(freeze)),
     ("thaw", Shape::Own(thaw)),
@@ -738,16 +735,6 @@ fn use_ability(words: &Words) -> Result<Action, String> {
         let (item, at) = aim.split_once(':').ok_or_else(usage)?;
         let item = parse_position(item).ok_or_else(usage)?;
         return Ok(Action::UseThrow(active, item, parse_cell(at)?));
-    }
-    // One called in a weapon's shape, `use:spirit_weapon:long_sword` (bare, the rules ask for
-    // the shape).
-    if let Some(aim) = aim.filter(|_| active.aims_shape()) {
-        if !plain_id(aim) {
-            return Err(format!(
-                "`use:{id}` needs a weapon's id, e.g. `use:{id}:long_sword`"
-            ));
-        }
-        return Ok(Action::Shape(active, aim.to_string()));
     }
     // One that works on a stack the player carries, `use:merchants_eye:c` (bare, the rules ask
     // for the stack).
@@ -1292,8 +1279,6 @@ mod tests {
             Action::UseThrow(ClassActive::ThrownExploit, 2, Pos::new(12, 5)),
             Action::UseThrow(ClassActive::ThrownExploit, 30, Pos::new(3, 4)),
             Action::UseOn(ClassActive::MerchantsEye, 30),
-            Action::Shape(ClassActive::SpiritWeapon, "long_sword".into()),
-            Action::Shape(ClassActive::SpiritWeapon, "great_axe".into()),
             Action::Gift(SignActive::Blaze, None),
             Action::Cast("blessing".into(), None),
             Action::Cast("arcane_bolt".into(), Some(Pos::new(12, 5))),
@@ -1303,7 +1288,6 @@ mod tests {
             Action::CastOn("identify".into(), 30),
             Action::LevelUpAuto,
             Action::GrantXp(2500),
-            Action::Call("hunter".into()),
             Action::SetRank {
                 skill: "twin_blades".into(),
                 rank: 4,
@@ -1794,8 +1778,6 @@ mod tests {
                         (item(), cell())
                             .prop_map(move |(i, at)| Action::UseThrow(active, i, at))
                             .boxed()
-                    } else if active.aims_shape() {
-                        id().prop_map(move |s| Action::Shape(active, s)).boxed()
                     } else if active.aims_item() {
                         item().prop_map(move |i| Action::UseOn(active, i)).boxed()
                     } else {
@@ -1864,11 +1846,10 @@ mod tests {
             ];
             let by_positions: [fn(Positions) -> Action; 4] =
                 [Action::PickUp, Action::Drop, Action::Sell, Action::Identify];
-            let by_cased: [fn(String) -> Action; 14] = [
+            let by_cased: [fn(String) -> Action; 13] = [
                 Action::Remove,
                 Action::Advance,
                 Action::SetVision,
-                Action::Call,
                 Action::Afflict,
                 Action::Resource,
                 Action::Infect,

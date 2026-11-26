@@ -7,8 +7,8 @@ use super::{AllyView, CellView, Perception, Progress, SeenActor, SeenGear, SeenL
 use crate::character::Character;
 use crate::content::TreeId;
 use crate::content::{
-    Content, DamageTypeId, Factor, ItemClassId, ObjectId, RaceDef, SlotDef, SlotId, Stance,
-    StatusId, VisionProfile,
+    Content, DamageTypeId, Factor, ItemClassId, RaceDef, SlotDef, SlotId, Stance, StatusId,
+    VisionProfile,
 };
 use crate::geom::Pos;
 use crate::light::{Light, Sky, Sun};
@@ -235,13 +235,6 @@ impl<'a> PerceptionView<'a> {
             .map(|(_, s)| *s)
     }
 
-    /// The shapes a spirit weapon may be called in (the Hunter's Spirit weapon,
-    /// `use:spirit_weapon:ID`): every melee weapon there is, by weapon skill then id. They are
-    /// the game's objects, nothing of the run.
-    pub fn weapon_shapes(&self) -> Vec<ObjectId> {
-        crate::world::weapon_shapes(self.content)
-    }
-
     /// What keeps the player from calling a familiar now (`world/allies/familiar.rs`): one alive,
     /// wherever it is (they know their own), or a hostile they see.
     pub(crate) fn calling_barred(&self) -> Option<crate::ability::Unavailable> {
@@ -258,14 +251,11 @@ impl<'a> PerceptionView<'a> {
     pub fn own_experience(&self) -> Progress {
         let rules = self.content.experience();
         let factor = Factor::of(self.content, self.character.map(|c| &c.spec));
-        // The level stops at the classes' cap: no next level
-        // there, as at the curve's top.
-        let cap = (self.character).map_or(rules.class_max(), |c| c.level_cap(self.content));
-        let level = rules.level_for(self.experience, factor, cap);
+        let level = rules.level_for(self.experience, factor);
         Progress {
             level,
             xp: self.experience,
-            next: (level < cap).then(|| rules.threshold_for(level + 1, factor)),
+            next: (level < rules.max_level()).then(|| rules.threshold_for(level + 1, factor)),
         }
     }
 
@@ -287,11 +277,10 @@ impl<'a> PerceptionView<'a> {
         &self.progress.due
     }
 
-    /// The trees the bonus pick due now is of (the `bonus_talents` of the class of the level
-    /// that brought it); `None`: any.
+    /// The trees the bonus pick due now is of (the class's `bonus_talents`); `None`: any.
     pub fn bonus_trees(&self) -> Option<Vec<TreeId>> {
-        let (table, _) = self.character?.class_of(self.content, self.due_level())?;
-        table.bonus_trees(self.content.talents())
+        let class = self.character?.spec.class(self.content).ok()?;
+        class.bonus_trees(self.content.talents())
     }
 
     /// The player's oath kills (the dwarves' oath table, `docs/dev/oaths.md`), once they hold an

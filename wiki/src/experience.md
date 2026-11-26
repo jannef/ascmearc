@@ -29,8 +29,7 @@ Then the **level-up screen** opens by itself, and you make the level's choices i
 
 The screen can't be closed until everything is chosen, and nothing can be saved for later. Your
 [weapon skills](weapon-skills.md#raising-a-weapon-skill) are not part of it: they rise with use,
-not with levels. Later on, some classes can be called into a
-[prestige class](prestige-classes.md#callings).
+not with levels.
 
 ## Earning experience
 
@@ -95,15 +94,11 @@ So a [kobold shaman](creatures.md#creature-kobold-shaman) is worth less every le
 
 ## Levels
 
-Every [class](classes.md) stops at level 60, its last, except the [bard](class-bard.md), who stops
-at 30 (the table below says so for each). The road there is long. A bard at 30 keeps every point of
-XP earned after it. One who becomes a [hunter](prestige-classes.md#prestige-classes) gains at once
-every level that XP buys, from level 31 on. The curve itself runs on to level 100, for levels a
-class does not give.
+Every [class](classes.md) stops at level 60, its last. The road there is long.
 
 Each level costs a number of kills of [creatures](creatures.md) of your own level: 26 for level 2,
-about 110 a level by level 10, and more for every level after that, up to 243 for level 60 and 323
-for level 100. The first levels come faster:
+about 110 a level by level 10, and more for every level after that, up to 243 for level 60. The
+first levels come faster:
 
 | Level | Share of the full price |
 |---:|---:|
@@ -135,8 +130,7 @@ matters:
 
 The XP needed for each level, for a character of 100 % (a [human](races.md#race-human)
 [warrior](class-warrior.md), say) and for the quickest and the slowest race and class. The table
-also shows what each level grows (see [Levelling up](#levelling-up)) and the classes
-that stop there:
+also shows what each level grows (see [Levelling up](#levelling-up)):
 
 {{#include generated/experience-levels.md}}
 
@@ -161,5 +155,4 @@ three for a [thief](class-thief.md) or a [ranger](class-ranger.md), four for a
 before you do anything else. How much each roll adds depends on how much you have used the skill
 since its last roll (see [Skills](skills.md#improving-a-skill)).
 
-See also: [Talents](talents.md), [Skills](skills.md), and
-[Prestige classes](prestige-classes.md).
+See also: [Talents](talents.md) and [Skills](skills.md).

@@ -473,7 +473,7 @@ Metalcraft's screen for the trained; untrained, the step goes to the rules, whic
 "You need Metalcraft to work at the anvil." (`World::anvil_needs`, no time).
 
 `world/crafting/temper.rs`: `temperable` (an item kind of weapon, launcher, shield, or armour, main part of
-`group = "metal"`, not a spirit weapon or a unique, and with an aspect to better), `workable` (and under
+`group = "metal"`, not a unique, and with an aspect to better), `workable` (and under
 `most` improvements); `start_temper` (the refusals, no time; a unique first, "It is unique: no
 craft of yours will change it.", `no_craft` of `assets/lang/en/messages/uniques.toml`, #1975, and Whittle's too),
 `Spent::Temper(Tempering)`,

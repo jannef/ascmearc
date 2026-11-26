@@ -2,7 +2,6 @@
 //! one arm a variant, beside the area's enum and sum in `ascmearc-core/src/talent/martial.rs`.
 
 use super::resource_name;
-use crate::wiki::util::signed;
 use ascmearc_core::content::Content;
 use ascmearc_core::talent::MartialEffect;
 
@@ -132,32 +131,5 @@ pub(super) fn text(content: &Content, effect: &MartialEffect) -> String {
             "active (the time of one shot, one exertion), at a cell: {shots} shots of the readied \
              missile weapon"
         ),
-        MartialEffect::SpiritWeapon {
-            to_hit,
-            threat,
-            ignores_protection,
-            ..
-        } => {
-            let armour = match ignores_protection {
-                true => ", and ignores every point of the target's Protection",
-                false => "",
-            };
-            format!(
-                "active (in the shape of any melee weapon, for the time of wielding one, {} at \
-                 normal pace, with what the hands held put away as any swap; no mana, cooldown, \
-                 or check, as often as you like): a weapon of spirit-stuff of that shape, made \
-                 and weighing as its plain base, is put in your main hand (both, for a two-handed \
-                 one), and one you hold fades first. It strikes {} to hit, threatens criticals \
-                 {threat} lower{armour}; it fades the moment it leaves your hands (put away, \
-                 swapped, dropped, sold) and cannot be thrown",
-                crate::wiki::util::at_normal_pace(ascmearc_core::content::price(
-                    content
-                        .action_costs()
-                        .cost(ascmearc_core::content::ActionKind::Wield),
-                    ascmearc_core::content::BASE_TURN
-                )),
-                signed(to_hit),
-            )
-        }
     }
 }

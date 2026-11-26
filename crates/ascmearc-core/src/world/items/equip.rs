@@ -42,20 +42,14 @@ impl World {
     /// Puts inventory stack `item` on in slot `slot` (an id), taking off first what is in the
     /// slots it takes, and moving it if it is in another slot.
     pub(in crate::world) fn equip(&mut self, slot: &str, item: usize) -> Spent {
-        let spent = self.equip_saying(slot, item, None::<Msg>);
+        let spent = self.put_on_in(slot, item);
         // A light made ready in the water goes out at once (`swim.rs`).
         self.douse_afloat();
         spent
     }
 
-    /// [`World::equip`], saying `put_on` in place of "You wield ..." (a spirit weapon called,
-    /// `spirit_weapon.rs`). A spirit weapon that leaves the hands by it fades.
-    pub(in crate::world) fn equip_saying(
-        &mut self,
-        slot: &str,
-        item: usize,
-        put_on: Option<impl Into<Msg>>,
-    ) -> Spent {
+    /// [`World::equip`] but for the light doused afloat.
+    fn put_on_in(&mut self, slot: &str, item: usize) -> Spent {
         let content = self.content.clone();
         let Some(slot) = self.own_slot(slot) else {
             self.say(Msg::new(msg::items::NO_SLOT).role("slot", Arg::id(slot)));
@@ -110,11 +104,7 @@ impl World {
             .collect();
         let kind = content.slot(slot).action;
         kinds.push(kind);
-        let quiet = put_on.is_some();
-        said.push(match put_on {
-            Some(line) => line.into(),
-            None => put_on_line(kind, taken.len() > 1, what),
-        });
+        said.push(put_on_line(kind, taken.len() > 1, what));
         let worn = &mut self.player_mut().equipment;
         for i in off {
             worn.take_off(i);
@@ -123,10 +113,9 @@ impl World {
         for text in said {
             self.say(text);
         }
-        self.bind_if_cursed(item, quiet);
+        self.bind_if_cursed(item, false);
         // Those already after the player get no Parley check (`parley.rs`).
         self.parley_put_on(item);
-        self.fade_spirit();
         self.price_for(&kinds)
     }
 
@@ -151,7 +140,6 @@ impl World {
         let what = self.lore().phrase(&player.inventory[item]);
         self.player_mut().equipment.take_off(item);
         self.say(take_off_line(kind, what));
-        self.fade_spirit();
         self.price_for(&[kind])
     }
 

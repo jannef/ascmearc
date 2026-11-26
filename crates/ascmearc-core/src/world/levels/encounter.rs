@@ -547,7 +547,6 @@ impl World {
             && (when.hidden.as_ref()).is_none_or(|h| !self.state.revealed.contains(h))
             && when.after_days.is_none_or(|d| here.days >= d)
             && when.before_days.is_none_or(|d| here.days < d)
-            && (when.calling.as_ref()).is_none_or(|c| self.calling_open(c))
     }
 
     /// The ids of the tables that match the player's overworld cell now (dev dumps).

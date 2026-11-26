@@ -513,12 +513,11 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> Arg {
     };
     let moves = (moves(content, actor)).map_or_else(none, |m| clause(T::MOVES, [("moves", m)]));
     let [wielding, wearing, ready] = gear(view, actor.id);
-    let after = |who: Arg, services: Arg, waits: Arg| {
+    let after = |who: Arg, services: Arg| {
         [
             ("who", who),
             ("state", state.clone()),
             ("services", services),
-            ("waits", waits),
             ("writhing", writhing.clone()),
             ("moves", moves.clone()),
             ("wielding", wielding.clone()),
@@ -530,10 +529,7 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> Arg {
         // A unique character the player knows by name: "Sister Hild (unhurt), who
         // cures and mends for gold, on plank floor."; or a named monster by its type's
         // proper name: "Black Wystan (hostile, unhurt), ...".
-        Some(proper) => clause(
-            T::CREATURE,
-            after(proper.into(), services(content, actor), none()),
-        ),
+        Some(proper) => clause(T::CREATURE, after(proper.into(), services(content, actor))),
         // The player's kept beast by its name: "Snel, your hound (unhurt), ...".
         None if actor.companion => {
             let name = (view.kept()).find(|(a, _)| a.id == actor.id).map_or_else(
@@ -569,10 +565,7 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> Arg {
                 true => who.owned_by(you()),
                 false => who,
             };
-            clause(
-                T::CREATURE,
-                after(who.into(), none(), waits(content, actor)),
-            )
+            clause(T::CREATURE, after(who.into(), none()))
         }
     }
 }
@@ -610,21 +603,6 @@ fn services(content: &Content, actor: &SeenActor) -> Arg {
     }
     let verbs = verbs.into_iter().map(|verb| clause(verb, [])).collect();
     clause(T::SERVICES, [("verbs", Arg::List(verbs))])
-}
-
-/// ", who waits" after a seen creature's name when its dialogue's only topics are callings'
-/// (`calls`), with no service or wares (the Strange Spirit: "a strange spirit (unhurt), who
-/// waits"; docs/design/prestige-classes.md §7); nothing for any other.
-fn waits(content: &Content, actor: &SeenActor) -> Arg {
-    let Some(dialogue) = actor.dialogue else {
-        return none();
-    };
-    let d = content.dialogue(dialogue);
-    let callings = !d.topics.is_empty() && d.topics.iter().all(|t| t.calls.is_some());
-    match callings && d.services.is_empty() && d.offer.is_none() {
-        true => clause(T::WAITS, []),
-        false => none(),
-    }
 }
 
 /// What a seen animated thing's body is made of, if it is one.
@@ -988,29 +966,6 @@ mod tests {
             describe(&w.perception(), Pos::new(27, 25), true),
             "Sister Hild (unhurt), who cures, mends, and frees the cursed for gold, on plank floor in a \
              sanctuary."
-        );
-    }
-
-    /// One who knows words and has nothing else to offer waits (the Strange Spirit,
-    /// docs/design/prestige-classes.md §7); the encounter is forced, whoever the player is.
-    #[test]
-    fn one_with_words_and_nothing_to_ask_waits() {
-        let content = Arc::new(ascmearc_assets::content().expect("content"));
-        let mut w = World::new(content.clone(), "ascmearc", None).expect("the Ascmearc");
-        let walk = "move:E*7 skip:4h meet:strange_spirit_roads encounter:hail";
-        for action in ascmearc_core::action::parse_actions(walk).expect("actions") {
-            w.apply(&action);
-        }
-        let spirit = content.creature_id("strange_spirit").expect("the spirit");
-        let view = w.perception();
-        let at = (view.actors().iter())
-            .find(|a| a.creature == spirit)
-            .map(|a| a.pos)
-            .expect("hailed, and in sight");
-        let seen = describe(&w.perception(), at, true);
-        assert!(
-            seen.starts_with("A strange spirit (unhurt), who waits, on "),
-            "{seen}"
         );
     }
 

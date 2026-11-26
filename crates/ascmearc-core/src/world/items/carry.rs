@@ -122,13 +122,8 @@ impl World {
         if chosen.is_empty() {
             return Spent::Nothing;
         }
-        // A spirit weapon is not let go: it fades (`spirit_weapon.rs`).
-        let (chosen, mut kinds) = self.release_spirit(&chosen);
-        if chosen.is_empty() {
-            return self.price_for(&kinds);
-        }
         let inventory = self.state.player().inventory.clone();
-        kinds.extend(self.take_off_before_dropping(chosen.iter()));
+        let mut kinds = self.take_off_before_dropping(chosen.iter());
         kinds.push(ActionKind::Drop);
         // Priced at the load the player has as they begin.
         let spent = self.price_for(&kinds);

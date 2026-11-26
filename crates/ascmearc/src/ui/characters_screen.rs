@@ -241,7 +241,6 @@ mod tests {
                 name: name.into(),
                 race: "dwarf".into(),
                 class: "warrior".into(),
-                prestige: String::new(),
                 level,
                 place: Arg::text("the Hub"),
                 campaign: "The Showcase".into(),

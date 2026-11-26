@@ -161,10 +161,8 @@ pub use character::gifts::Streak;
 pub use character::skill_roll::{RollBonus, RollCount, SkillRoll, roll_count, skill_roll};
 pub(crate) use character::stars::{PROFANE_RISEN, RISEN, RISEN_TWICE};
 pub use character::talent::Due;
-pub use classes::calling::CallingStatus;
 pub use classes::orison::PrayerState;
 pub use classes::sanctuary::Hallow;
-pub use classes::spirit_weapon::{gift as spirit_gift, pierces_all, shapes as weapon_shapes};
 pub use combat::attacks::{AttackSource, OwnAttack};
 pub use combat::fight::{Cause, Death};
 pub use combat::free_blow::FreeBlows;
@@ -1603,7 +1601,6 @@ impl World {
             Action::UseThrow(active, item, at) => {
                 return self.use_class_throw(*active, *item, *at, events);
             }
-            Action::Shape(active, shape) => return self.use_class_shape(*active, shape),
             Action::Gift(active, at) => return self.use_gift(*active, *at, events),
             // A `use:ID` that names no spell but a weapon active is that active.
             Action::Cast(id, at)
@@ -1664,7 +1661,6 @@ impl World {
             Action::QuestRoll { quest, target } => return self.quest_roll_dev(quest, target),
             Action::LevelUpAuto => return self.level_up_auto(),
             Action::GrantXp(xp) => return self.grant_xp_dev(*xp),
-            Action::Call(id) => return self.call_dev(id),
             Action::SetRank { skill, rank } => return self.set_rank_dev(skill, *rank),
         };
         self.took(done, kind)

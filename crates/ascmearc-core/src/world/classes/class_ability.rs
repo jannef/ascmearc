@@ -155,10 +155,6 @@ impl World {
                 self.say(msg::classes::RIG_WHAT_WHERE);
                 Spent::Nothing
             }
-            (ClassActive::SpiritWeapon, _) => {
-                self.say(msg::classes::CALL_IN_WHAT_SHAPE);
-                Spent::Nothing
-            }
             (ClassActive::Scribe, _) => {
                 self.say(msg::classes::WRITE_WHICH_SPELL);
                 Spent::Nothing

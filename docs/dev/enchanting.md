@@ -258,8 +258,8 @@ top; `docs/design/item-level-40.md` §8), and a `craft` mark at 100 %.
   uses the crystals in pick order ("a red crystal"; "a red crystal, a red crystal, and a blue
   crystal"; nothing for Unbind, whose dialog says only its time).
 - **Refused, no time**, in order: untrained (`World::untrained`), below `from`, no item pick, more
-  picks than the work takes, no crystal pick, then `refusal`: no such stack, not a base item or a
-  spirit weapon ("No magic can be bound in that."; ammunition is a base item, the whole stack
+  picks than the work takes, no crystal pick, then `refusal`: no such stack, not a base item ("No
+  magic can be bound in that."; ammunition is a base item, the whole stack
   worked at once at the single cost), magic unidentified ("You must know what is bound in it
   first."), worn or wielded ("Take it off first."), a unique ("It will not take your will.");
   Kindle on magic ("There is magic in it already."), Quicken or Unbind on a plain item ("There is

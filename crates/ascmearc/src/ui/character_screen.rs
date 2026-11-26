@@ -221,12 +221,7 @@ impl CharacterScreen {
                         .map_or(spec.race.clone(), |r| label(content.race_phrase(&r.id))),
                 ),
                 (ui(T::GENDER), gender_text(c)),
-                // `Bard` until the class is full, `Bard 30` at its cap, `Bard 30, Hunter 4` once
-                // called.
-                (
-                    ui(T::CLASS),
-                    label(c.class_arg(content, view.own_experience().level)),
-                ),
+                (ui(T::CLASS), label(c.class_arg(content))),
             ]
         });
         let birth = (view.character()).map_or(Vec::new(), |c| birth_parts(c, content, view.time()));

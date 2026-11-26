@@ -19,7 +19,7 @@ use crate::perception::{BelowView, CellView, PerceivedLight, PerceptionView};
 use crate::stats::Stat;
 use crate::text::article;
 use crate::weather::Weather;
-use crate::world::{CallingStatus, Cause, LevelState, World};
+use crate::world::{Cause, LevelState, World};
 use serde_json::{Value, json};
 use std::fmt::Write;
 use std::str::FromStr;
@@ -261,8 +261,7 @@ mod tests {
             json!({ "name": "Tamsin", "race": "human", "gender": "female", "class": "thief",
                     "raised": "dexterity", "age": 34,
                     "born": { "year": 1410, "month": 5, "day": 29 },
-                    "sign": { "animal": "basilisk", "element": "water" },
-                    "classes": [{ "class": "thief", "level": 1 }] })
+                    "sign": { "animal": "basilisk", "element": "water" } })
         );
         assert_eq!(
             value["stats"],

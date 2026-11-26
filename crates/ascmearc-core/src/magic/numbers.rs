@@ -85,15 +85,8 @@ impl Numbers {
             };
         }
         let known = stack.as_known();
-        let mut attack = attack(&known, content);
-        // A spirit weapon's gift to hit, with its own.
-        if let (Some(attack), Some(gift)) = (attack.as_mut(), crate::world::spirit_gift(content))
-            && stack.is_spirit()
-        {
-            attack.to_hit += gift.to_hit;
-        }
         Self {
-            attack,
+            attack: attack(&known, content),
             defence: defence(&known, content),
         }
     }

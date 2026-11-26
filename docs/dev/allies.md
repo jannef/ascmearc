@@ -353,7 +353,7 @@ does (`called_phrase`). **Give** (`collar.rs`): `collar_wearer` and the "any to 
 beasts or escorts; an escort goes to `World::give_escort` (`escort_slot`: `free_slot`, else the
 first slot it `fits_properly`, its own kind first; `slots_taken` for two hands; what those slots
 held leaves its pack for its cell; priced by `hand_over_one` with the slot's action; refused, no
-time, for what fits no slot or a spirit weapon). The snapshot's `kept_beside` counts escorts
+time, for what fits no slot). The snapshot's `kept_beside` counts escorts
 (the way is asked with two beside), `escort_beside` widens the Give list to `fits_escort`, and
 `Ability::orders`' `kept` is true with an escort. Home (`escorts_home`): `escort_released` puts
 the faction back, the neutral stance, a fresh `Mind` with its post where it stands; then the

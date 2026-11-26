@@ -4,8 +4,8 @@
 use super::util::word;
 use super::util::{Term, anchored, link, signed};
 use ascmearc_core::content::{
-    Content, Faced, Keep, KitLineSpec, Need, PrayerUse, SignActive, SpellData, SpellModSpec,
-    StatusId, Table, TalentDef, TalentEffect, TreeId,
+    ClassDef, Content, Faced, Keep, KitLineSpec, Need, PrayerUse, SignActive, SpellData,
+    SpellModSpec, StatusId, TalentDef, TalentEffect, TreeId,
 };
 use ascmearc_core::talent::{CraftEffect, FortuneEffect, MagicEffect, SignEffect, StealthEffect};
 use std::fmt::Write as _;
@@ -52,8 +52,7 @@ fn tree_page(tree: &str) -> Option<&'static str> {
 }
 
 /// The page a talent's row is on (#1554): a birth sign's gift on the horoscope page, a class
-/// ability in its first class's level table, on that class's page (else its first prestige
-/// class's), a profane gift on the profane gifts page, a craving's talent in the craving's table
+/// ability in its first class's level table, on that class's page, a profane gift on the profane gifts page, a craving's talent in the craving's table
 /// on the food page, an oath band's in the oath table on the races page, any other on its tree group's page.
 fn talent_page(content: &Content, def: &TalentDef) -> String {
     let book = content.talents();
@@ -68,9 +67,8 @@ fn talent_page(content: &Content, def: &TalentDef) -> String {
         // The dwarves' oath table's bands, in its table on the races page.
         "races.md".into()
     } else if book.tree(def.tree).class {
-        match home_table(content, &def.id) {
-            Some(Table::Prestige(_)) => "prestige-classes.md".into(),
-            Some(Table::Class(class)) => super::character::class_page(&class.id),
+        match home_class(content, &def.id) {
+            Some(class) => super::character::class_page(&class.id),
             None => "classes.md".into(),
         }
     } else {
@@ -79,13 +77,10 @@ fn talent_page(content: &Content, def: &TalentDef) -> String {
     }
 }
 
-/// The level table a class ability's row is anchored in: the first class's (in New run's
-/// order) that teaches it, else the first prestige class's.
-fn home_table<'c>(content: &'c Content, id: &str) -> Option<Table<'c>> {
-    let teaches = |t: &Table| t.abilities().iter().any(|(_, a)| a == id);
-    (content.classes().iter().map(Table::Class))
-        .chain(content.prestiges().iter().map(Table::Prestige))
-        .find(teaches)
+/// The class whose level table a class ability's row is anchored in: the first (in New run's
+/// order) that teaches it.
+fn home_class<'c>(content: &'c Content, id: &str) -> Option<&'c ClassDef> {
+    (content.classes().iter()).find(|c| c.abilities.iter().any(|(_, a)| a == id))
 }
 
 /// A link to the row that defines talent `id`, on whichever page it is (#1554): its tree
@@ -346,7 +341,7 @@ pub(super) fn racial(content: &Content) -> String {
 pub(super) fn class_levels(content: &Content) -> String {
     let mut out = String::new();
     for class in content.classes() {
-        level_table(content, Table::Class(class), &mut out);
+        level_table(content, class, &mut out);
     }
     if out.is_empty() {
         out.push_str("No class has a level table yet.\n");
@@ -354,38 +349,20 @@ pub(super) fn class_levels(content: &Content) -> String {
     out
 }
 
-/// Every prestige class's level table, at its own levels, as
-/// [`class_levels`] shows a class's.
-pub(super) fn prestige_levels(content: &Content) -> String {
-    let mut out = String::new();
-    for prestige in content.prestiges() {
-        level_table(content, Table::Prestige(prestige), &mut out);
-    }
-    if out.is_empty() {
-        out.push_str("No prestige class has a level table yet.\n");
-    }
-    out
-}
-
-/// One class's (or prestige class's) table: a prestige class's heading (a class's page has its
-/// own, and its card says what the class is), its bonus picks, then each row's ability with what it does, between mdBook
+/// One class's table (its page has its own heading, and its card says what the class is): its
+/// bonus picks, then each row's ability with what it does, between mdBook
 /// anchors named by its id, so a page can include one class's section
 /// (`{{#include generated/class-levels.md:paladin}}`) and follow it with prose.
-fn level_table(content: &Content, table: Table, out: &mut String) {
+fn level_table(content: &Content, class: &ClassDef, out: &mut String) {
     let book = content.talents();
-    let bonus = table.bonus_talents();
-    if table.abilities().is_empty() && bonus.levels.is_empty() {
+    let bonus = &class.bonus_talents;
+    if class.abilities.is_empty() && bonus.levels.is_empty() {
         return;
     }
-    let _ = writeln!(out, "<!-- ANCHOR: {} -->\n", table.id());
-    // A class's page has its own heading, and what the class is in its card
-    // (`class_guide::cards`).
-    if let Table::Prestige(_) = table {
-        let _ = writeln!(out, "### {}\n", table.name());
-    }
+    let _ = writeln!(out, "<!-- ANCHOR: {} -->\n", class.id);
     if !bonus.levels.is_empty() {
         let levels: Vec<String> = bonus.levels.iter().map(u8::to_string).collect();
-        let trees = match table.bonus_trees(book) {
+        let trees = match class.bonus_trees(book) {
             None => "any tree".to_string(),
             Some(trees) => (trees.iter())
                 .map(|&t| book.tree(t).name.clone())
@@ -398,10 +375,7 @@ fn level_table(content: &Content, table: Table, out: &mut String) {
             levels.join(", ")
         );
     }
-    let creation = match table {
-        Table::Class(class) => (class.creation_bonus.as_ref()).zip(class.creation_trees(book)),
-        Table::Prestige(_) => None,
-    };
+    let creation = (class.creation_bonus.as_ref()).zip(class.creation_trees(book));
     if let Some((bonus, trees)) = creation {
         let trees: Vec<String> = (trees.iter()).map(|&t| book.tree(t).name.clone()).collect();
         let _ = writeln!(
@@ -416,14 +390,14 @@ fn level_table(content: &Content, table: Table, out: &mut String) {
     }
     out.push_str("| Level | Ability | Effect |\n|---:|---|---|\n");
     let mut seen: Vec<&str> = Vec::new();
-    for (level, id) in table.abilities() {
+    for (level, id) in &class.abilities {
         let Some(talent) = book.id(id) else { continue };
         let def = book.get(talent);
         let effects = effects_text(content, def);
         // A class ability's row is defined here, in its first table, at its first level
         // (#1554); a later one links to it.
-        let home = book.tree(def.tree).class
-            && home_table(content, id).is_some_and(|t| t.id() == table.id());
+        let home =
+            book.tree(def.tree).class && home_class(content, id).is_some_and(|c| c.id == class.id);
         let ability = if home && !seen.contains(&id.as_str()) {
             anchored(Term::Talent, &def.id, &def.name)
         } else if home {
@@ -435,7 +409,7 @@ fn level_table(content: &Content, table: Table, out: &mut String) {
         let _ = writeln!(out, "| {level} | {ability} | {effects} |");
     }
     out.push('\n');
-    let _ = writeln!(out, "<!-- ANCHOR_END: {} -->\n", table.id());
+    let _ = writeln!(out, "<!-- ANCHOR_END: {} -->\n", class.id);
 }
 
 /// The talents by system: every system of `data/talents/systems/` with the talents

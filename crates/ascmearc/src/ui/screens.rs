@@ -58,7 +58,6 @@ use super::quest_screen::QuestScreen;
 use super::rig_screen::RigScreen;
 use super::scribe_screen::ScribeScreen;
 use super::settings_screen::SettingsScreen;
-use super::shape_screen::ShapeScreen;
 use super::sign_screen::SignScreen;
 use super::skills_screen::SkillsScreen;
 use super::story_screen::StoryScreen;
@@ -192,9 +191,6 @@ pub enum ScreenName {
     /// The abilities menu (`a` in play): racial, class, skill, weapon skill, and item
     /// abilities, to choose one to use.
     Abilities,
-    /// Choose a weapon's shape to call (the Hunter's Spirit weapon, from the abilities menu):
-    /// every melee weapon, grouped by weapon skill.
-    Shape,
     /// Choose a spell to write a scroll of (the wizard's Scribe, from the abilities menu): the
     /// spells known, grouped by school, each with its price and time.
     Scribe,
@@ -395,8 +391,6 @@ enum Screen {
     Story(StoryScreen),
     Messages(MessagesScreen),
     Abilities(AbilitiesScreen),
-    /// Choosing the shape of a spirit weapon.
-    Shape(ShapeScreen),
     /// Choosing the spell of a scroll to write.
     Scribe(ScribeScreen),
     Rig(RigScreen),
@@ -503,7 +497,6 @@ impl Screen {
                 beneath.item.unwrap_or(0),
             ))),
             ScreenName::Abilities => Screen::Abilities(AbilitiesScreen::new(run, beneath.ability)),
-            ScreenName::Shape => Screen::Shape(ShapeScreen::new(run)),
             ScreenName::Scribe => Screen::Scribe(ScribeScreen::new(run)),
             ScreenName::Rig => Screen::Rig(RigScreen::new(run)),
             ScreenName::Profession(skill) => {
@@ -581,7 +574,6 @@ dispatch!(
     Story,
     Messages,
     Abilities,
-    Shape,
     Scribe,
     Rig,
     Profession,

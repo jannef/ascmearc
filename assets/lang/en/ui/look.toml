@@ -32,10 +32,9 @@ text = "{name:bare}, {who:the} ({state:bare}){writhing:bare}{moves:bare}{wieldin
 # A seen creature: `who`, its kind or its name (with its grade word and what it is made of);
 # `state`, what shows in the brackets (`listed`: `ally`, `hostile`, how hurt it looks, the
 # statuses that show, `unaware`, `your_mark`); then, each empty or its clause: `services`
-# (`services`), `waits` (`waits`), `writhing`, `moves`, and its gear (`wielding`, `wearing`,
-# `ready`).
+# (`services`), `writhing`, `moves`, and its gear (`wielding`, `wearing`, `ready`).
 [creature]
-text = "{who:A} ({state:bare}){services:bare}{waits:bare}{writhing:bare}{moves:bare}{wielding:bare}{wearing:bare}{ready:bare}"
+text = "{who:A} ({state:bare}){services:bare}{writhing:bare}{moves:bare}{wielding:bare}{wearing:bare}{ready:bare}"
 
 # The services a person sells, each said in `services`' list.
 [cures]
@@ -248,10 +247,6 @@ text = "You don't know what is there."
 
 [vulnerable_to]
 text = "vulnerable to {kinds:and}"
-
-# One whose only words are callings, with nothing to sell.
-[waits]
-text = ", who waits"
 
 # What a creature wears: `what`, the stacks.
 [wearing]

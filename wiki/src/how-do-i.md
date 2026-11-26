@@ -19,7 +19,6 @@ Each question links to the place that answers it. New to the game? Start with
 - ...learn a skill I don't have? [Training](npcs.md#services)
 - ...raise a weapon skill? [Raising a weapon skill](weapon-skills.md#raising-a-weapon-skill)
 - ...learn a new spell? [Learning a spell](learning-spells.md#learning-a-spell)
-- ...become a prestige class? [Callings](prestige-classes.md#callings)
 
 ## Staying alive
 

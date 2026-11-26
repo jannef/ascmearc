@@ -34,12 +34,10 @@ it_would_sink = { text = "Se uppoaisi.", of = "74ef1b" }
 # `what`: the light, the player's.
 light = { text = "Sytytät {what:acc}.", of = "6fa933" }
 # A stack as the item lists name it (`Lore::listed`): `what`, the stack; `numbers`,
-# `listed_numbers` or empty; `spirit`, `listed_spirit` or empty.
-listed = { text = "{what:counted}{numbers:bare}{spirit:bare}", of = "983f2d" }
+# `listed_numbers` or empty.
+listed = { text = "{what:counted}{numbers:bare}", of = "d359ed" }
 # What the stack gives in numbers, after its name: `numbers`, the parts (`numbers_listed`).
 listed_numbers = { text = " ({numbers:bare})", of = "f0ae45" }
-# A spirit weapon's mark, after its numbers.
-listed_spirit = { text = " (henkiase)", of = "3f44e3" }
 # `what`: the light, the player's.
 lower_hood = { text = "Lasket {what:gen} suojuksen alas.", of = "0a7d0c" }
 no_light_ready = { text = "Sinulla ei ole valonlähdettä valmiina.", of = "ec21c1" }

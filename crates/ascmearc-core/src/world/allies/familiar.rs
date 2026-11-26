@@ -244,11 +244,8 @@ impl World {
             self.make_familiar(creature, at, Some(name));
             return self.perceive_familiar(events);
         }
-        let total = self.player_level();
+        let level = self.player_level();
         let drawn = self.state.character.clone().and_then(|character| {
-            // Her class's own level, not what a prestige class adds to it.
-            let tables = character.class_levels(&content, total);
-            let level = tables.first().map_or(total, |&(_, level)| level);
             let race = &character.spec.race;
             let mut rng = draw!(self, "familiar/calling/player");
             calling_draw(&content, &mut rng, race, level)

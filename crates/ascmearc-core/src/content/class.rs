@@ -90,7 +90,6 @@ struct ClassSpec {
     #[serde(default)]
     abilities: Vec<AbilitySpec>,
     bonus_talents: Option<BonusSpec>,
-    max_level: Option<u8>,
     ally_share: Option<u8>,
     #[serde(default)]
     races_not: Vec<String>,
@@ -157,16 +156,16 @@ pub(super) struct BonusSpec {
     trees: Vec<String>,
 }
 
-/// The `abilities` rows of a class or prestige table, by level, lowest first (stable: a level's
+/// The `abilities` rows of a class, by level, lowest first (stable: a level's
 /// rows keep their order), as `abilities_to` reads them.
-pub(super) fn table_rows(rows: Vec<AbilitySpec>) -> Vec<(u8, String)> {
+fn table_rows(rows: Vec<AbilitySpec>) -> Vec<(u8, String)> {
     let mut abilities: Vec<(u8, String)> = rows.into_iter().map(|a| (a.level, a.talent)).collect();
     abilities.sort_by_key(|(level, _)| *level);
     abilities
 }
 
-/// The `bonus_talents` of a class or prestige table.
-pub(super) fn bonus_rows(spec: Option<BonusSpec>) -> BonusTalents {
+/// The `bonus_talents` of a class.
+fn bonus_rows(spec: Option<BonusSpec>) -> BonusTalents {
     spec.map_or_else(BonusTalents::default, |b| BonusTalents {
         levels: b.levels,
         trees: b.trees,
@@ -176,7 +175,7 @@ pub(super) fn bonus_rows(spec: Option<BonusSpec>) -> BonusTalents {
 /// Checks a level table (`abilities` and `bonus_talents`) against `book` once the talents are
 /// loaded (nothing to check against a book without a class tree, whose tables give nothing):
 /// every talent and bonus tree named is in the book.
-pub(super) fn check_rows(
+fn check_rows(
     err: &impl Fn(String) -> ContentError,
     abilities: &[(u8, String)],
     bonus: &BonusTalents,
@@ -275,11 +274,6 @@ pub struct ClassDef {
     pub abilities: Vec<(u8, String)>,
     /// Its bonus talent picks.
     pub bonus_talents: BonusTalents,
-    /// The highest level the class reaches: the file's
-    /// `max_level`, else `[levels] class_max` of `data/experience.toml`, filled in by the loader
-    /// ([`ClassDef::settle_cap`]; 0 until then). A character's level stops here until a prestige
-    /// class takes them on.
-    pub max_level: u8,
     /// What an ally's kill pays a character of the class, in percent of their own kill: the pet
     /// classes' 100 (the ranger, the druid); `None` for `[xp] ally_percent` of `data/allies.toml`,
     /// everyone else's.
@@ -443,31 +437,12 @@ impl ClassDef {
             random_scrolls: None,
             abilities,
             bonus_talents,
-            max_level: spec.max_level.unwrap_or(0),
             ally_share: spec.ally_share,
             races_not: spec.races_not,
             only: spec.only,
             hidden: spec.hidden,
             file: file.to_string(),
         })
-    }
-
-    /// Settles its highest level once the experience rules are read: `default` (`[levels]
-    /// class_max`) where the file named none, at most `highest` (the curve's `max_level`), and
-    /// every level of its table within it.
-    pub(super) fn settle_cap(&mut self, default: u8, highest: u8) -> Result<(), ContentError> {
-        let err = |m: String| ContentError::new(&self.file, m);
-        let what = format!("class `{}`", self.id);
-        if self.max_level == 0 {
-            self.max_level = default;
-        }
-        if self.max_level > highest {
-            return Err(err(format!(
-                "{what}: max_level {} is more than the curve's {highest}",
-                self.max_level
-            )));
-        }
-        Ok(())
     }
 
     /// Checks the races its `races_not` and `only` name against `is_race` (once the races are
@@ -529,7 +504,13 @@ impl ClassDef {
     /// The talents its level table gives up to `level`, in table order; none from a book
     /// without a class tree (content whose talents have no class abilities, a fixture's).
     pub fn abilities_to(&self, book: &TalentBook, level: u8) -> Vec<TalentId> {
-        super::prestige::Table::Class(self).abilities_to(book, level)
+        if !book.has_class_tree() {
+            return Vec::new();
+        }
+        (self.abilities.iter())
+            .take_while(|(l, _)| *l <= level)
+            .filter_map(|(_, id)| book.id(id))
+            .collect()
     }
 
     /// The bonus talent picks level `level` brings (0 or 1).
@@ -674,9 +655,6 @@ pub enum ClassActive {
     /// A trap rigged on a cell beside the player, from the rig list then a direction (the
     /// craftsperson's Trapwright, `world/crafting/rig.rs`, `rig:tripwire:E`).
     Rig,
-    /// A weapon of spirit-stuff called into the hand in the shape chosen, as a wield (the
-    /// Hunter's Spirit weapon, `world/classes/spirit_weapon.rs`).
-    SpiritWeapon,
 }
 
 impl ClassActive {
@@ -715,7 +693,6 @@ impl ClassActive {
         ClassActive::FieldForge,
         ClassActive::MakeDo,
         ClassActive::Rig,
-        ClassActive::SpiritWeapon,
     ];
 
     /// Its id: the id of the class ability that has it, and its replay text (`use:rage`).
@@ -754,7 +731,6 @@ impl ClassActive {
             ClassActive::FieldForge => "field_forge",
             ClassActive::MakeDo => "make_do_and_mend",
             ClassActive::Rig => "trapwright",
-            ClassActive::SpiritWeapon => "spirit_weapon",
         }
     }
 
@@ -836,12 +812,6 @@ impl ClassActive {
         matches!(self, ClassActive::ThrownExploit)
     }
 
-    /// Whether it asks for a weapon's shape before it is used, an object id
-    /// (`use:spirit_weapon:long_sword`).
-    pub const fn aims_shape(self) -> bool {
-        matches!(self, ClassActive::SpiritWeapon)
-    }
-
     /// Whether it asks for a rig, then a direction, before it is used (the craftsperson's
     /// Trapwright: [`crate::action::Action::Rig`], `rig:tripwire:E`).
     pub const fn aims_rig(self) -> bool {
@@ -902,8 +872,6 @@ impl ClassActive {
             ClassActive::Scribe => ActionKind::Scribe,
             // A turn of it; the ritual takes `call_turns` of them (`world/allies/familiar.rs`).
             ClassActive::CallFamiliar => ActionKind::CallFamiliar,
-            // A weapon taken in hand, as wielding one is.
-            ClassActive::SpiritWeapon => ActionKind::Wield,
         }
     }
 }
@@ -1133,34 +1101,5 @@ mod tests {
         let aristocrat = content.class("aristocrat").expect("aristocrat");
         let levels: Vec<u8> = aristocrat.abilities.iter().map(|(l, _)| *l).collect();
         assert!(levels.windows(2).all(|w| w[0] <= w[1]), "{levels:?}");
-    }
-
-    /// The highest level a class reaches: the file's `max_level`,
-    /// else the experience file's `class_max`, never past the curve.
-    #[test]
-    fn max_level_defaults_to_the_class_cap() {
-        let content = with_aristocrat(|t| t.to_string()).expect("built-in");
-        // The bard alone ends early (the bard design §5); every other class at the default.
-        for class in content.classes() {
-            let cap = match class.id.as_str() {
-                "bard" => 30,
-                _ => content.experience().class_max(),
-            };
-            assert_eq!(class.max_level, cap, "{}", class.id);
-        }
-        assert_eq!(content.experience().class_max(), 60);
-        // A class capped at 60 names it: the same.
-        let capped = with_aristocrat(|t| format!("{t}max_level = 60\n")).expect("valid");
-        assert_eq!(
-            capped.class("aristocrat").expect("aristocrat").max_level,
-            60
-        );
-        let e = with_aristocrat(|t| format!("{t}max_level = 101\n")).unwrap_err();
-        assert!(
-            e.message
-                .contains("max_level 101 is more than the curve's 100"),
-            "{}",
-            e.message
-        );
     }
 }

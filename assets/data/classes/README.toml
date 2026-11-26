@@ -127,7 +127,3 @@
 #   bonus_talents `{ levels = [10, 20, 30, 45, 55], trees = ["guard", "vigour"] }`: a bonus talent
 #                 pick at each of those levels besides the usual ones, of a talent from those
 #                 trees (no `trees`: any tree, the commoner's gift; default none)
-#   max_level     the class's last level: 2 to the curve's top
-#                 (../experience.toml), default `[levels] class_max` (60); every `abilities` row
-#                 and bonus level within it. Experience past it counts and buys nothing until a
-#                 calling opens a prestige class (the bard's 30)

@@ -282,12 +282,6 @@ fn every_refusal_takes_no_time() {
     w.apply(&Action::Salvage { item: 0 });
     assert!(said(&w, "There is nothing in it worth saving."));
     assert_eq!(w.state.time, before);
-    // A spirit weapon is spirit-stuff.
-    let mut w = world(false, 3);
-    give(&mut w, |w| Stack::spirit(object(w, "long_sword")));
-    w.apply(&Action::Salvage { item: 0 });
-    assert!(said(&w, "There is nothing in it worth saving."));
-    assert_eq!(w.state.time, before);
     // Worn or wielded.
     let mut w = world(false, 3);
     give(&mut w, |w| Stack::one(object(w, "dagger")));
