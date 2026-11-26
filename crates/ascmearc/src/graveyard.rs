@@ -161,6 +161,7 @@ fn cause_id(world: &World, cause: ascmearc_core::world::Cause) -> String {
         Cause::Spell(_) => "own_spell".into(),
         Cause::Miscast(_) => "miscast".into(),
         Cause::Altar => "altar".into(),
+        Cause::Oath => "oath".into(),
         Cause::Profane => PROFANE.into(),
     }
 }

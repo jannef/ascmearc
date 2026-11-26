@@ -131,14 +131,21 @@ impl AbilitiesScreen {
                                 None => aim(head),
                             }
                         }
-                        // Charge says its stamina, a point and a point more a pace.
+                        // Charge says its stamina, a point and 1, 2, 3, ... for the paces
+                        // (#2108); nothing with Onrǣs worn (#2123).
                         Ability::Class(ClassActive::Charge) => {
                             let (base, per) = content.charge_cost().unwrap_or((0, 0));
+                            let pace = |n: u16| Arg::Number(i64::from(per) * i64::from(n));
                             let args = [
                                 ("base", Arg::Number(i64::from(base))),
-                                ("per", Arg::Number(i64::from(per))),
+                                ("first", pace(1)),
+                                ("second", pace(2)),
+                                ("third", pace(3)),
                             ];
-                            let head = ui_with(T::CHARGE_STAMINA, &args);
+                            let head = match view.own_charge_free() {
+                                true => ui_with(T::CHARGE_FREE, &[]),
+                                false => ui_with(T::CHARGE_STAMINA, &args),
+                            };
                             match own.unavailable {
                                 Some(_) => why(head),
                                 None => aim(head),

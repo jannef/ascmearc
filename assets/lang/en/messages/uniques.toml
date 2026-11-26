@@ -5,8 +5,31 @@
 # before the spell's own lines. `who`: a bearer the player sees.
 flames_from_shield = "Flames leap from {who:poss} shield!"
 flames_from_your_shield = "Flames leap from your shield!"
+# A unique sling's hail falls where its stone stopped (Hagolscūr, #2114; `world/combat/hail.rs`),
+# before the spell's own lines; said when the player sees the cell.
+hail_falls = "Hail hammers down!"
+# A spell cast or a scroll read in a unique's silence (Swīge, #2112; `world/magic/hush.rs`),
+# refused.
+hushed = "No word will come in this silence."
 # A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.
 no_craft = "It is unique: no craft of yours will change it."
+
+# An Oath pays what its wielder's zeal is short in hit points (the Oath, #2117;
+# `world/classes/oath_paid.rs`), said once the ability is done.
+oath_paid = "You pay the rest of your oath in blood."
+
+# A Tally's debt (Wergild, #2109; `world/combat/tally.rs`), on its description after its power
+# while its wielder rages: a third of what it may hold or less, two thirds or less, more.
+owed_a_fortune = "It is owed a fortune."
+owed_a_little = "It is owed a little."
+owed_much = "It is owed much."
+
+# The Wakes power (#2110, Beornhama's; `world/health/wakes.rs`): the description's line while the
+# rage sleeps once it woke in its wearer.
+rage_sleeps = "The bear in it sleeps."
+# The rage wakes in its wearer near death. `who`: a wearer the player sees.
+rage_wakes = "The bear wakes in {who:the}!"
+rage_wakes_you = "The bear wakes in you!"
 
 # The Restore power (#2098, `world/health/restore.rs`): a death near the stone's wearer undone.
 # `who`: a creature the player sees restored.
@@ -15,6 +38,19 @@ restored = "{who:The} fall{who:s}, and rise{who:s} whole again!"
 restored_unseen = "The stone on your finger grows warm."
 # The player restored.
 restored_you = "Death lets go of you: you rise whole again!"
+
+# The Roar power (#2136, Gorthak's; `world/combat/roar.rs`): a kill with the weapon. `who`: a
+# wielder the player sees.
+roar = "A great shout goes up as {who:poss} blow falls!"
+# A foe the player sees heard the roar: it quails (Frightened), or it stands.
+roar_quails = "{who:The} quail{who:s} and flee{who:s}."
+roar_stands = "{who:The} {who:does} not flinch."
+# The player's own kill.
+roar_yours = "A great shout goes up as your blow falls!"
+
+# The Plant power (#2132, the Eorðfæst; `world/combat/plant.rs`): the planted player is not
+# driven from their cell (a knockback, a shove, a spell's push).
+stand_fast = "You stand fast."
 
 # Feet that never spring a trap (Tiptoe's Trapwise, Hushfoot's bare feet; #2141, #2133;
 # `world/skills/trapwise.rs`): the player steps onto a trap, which stays armed. `trap`: the trap.
@@ -39,6 +75,13 @@ snaffled = "Your blade comes away with {what:a}!"
 # The blow takes its target's weapon from its hand instead, which falls at its feet. `what`: the
 # weapon; `who`: the one disarmed.
 plucked = "Your blade plucks {what:the} from {who:poss} hand!"
+
+# A Grudge's grudges (the Wrecend, #2131; `world/combat/tally.rs`), on its description after its
+# power: `n`, the hits the creature `who` (`creature:<id>`) landed on its bearer.
+[grudges]
+by = "n.number"
+one = "It bears a grudge against {who:the}."
+many = "It bears {n:num} grudges against {who:the}."
 
 # The scars a Scars power's item bears, on its description (`magic/describe.rs`): `n`, how many.
 [scars]

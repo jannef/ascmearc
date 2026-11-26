@@ -518,6 +518,7 @@ pub(super) fn does(content: &Content, spell: &SpellData) -> String {
         let what = match zone.kind {
             ZoneKind::Fire => "fire that burns",
             ZoneKind::Fouled => "a cloud that poisons",
+            ZoneKind::Rime => "ice that chills",
             ZoneKind::Slick => "slick ground that trips",
             ZoneKind::Dark => "a darkness no light reaches into",
             ZoneKind::Smoke => "smoke no eye sees into or through",
@@ -599,6 +600,7 @@ pub(super) fn does(content: &Content, spell: &SpellData) -> String {
             .map(|k| match k {
                 ZoneKind::Fire => "fire",
                 ZoneKind::Fouled => "foul cloud",
+                ZoneKind::Rime => "rime",
                 ZoneKind::Slick => "slick ground",
                 ZoneKind::Dark => "darkness",
                 ZoneKind::Smoke => "smoke",

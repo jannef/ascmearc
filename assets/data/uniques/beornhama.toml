@@ -1,0 +1,19 @@
+# Beornhama (#2110): a fur cloak for the drop pool (#2103; placed nowhere else but the test
+# world's quarry), item level 28. The bear-shirt rages for its wearer when they cannot: hurt
+# below a quarter of their hit points and not raging, they fly into a rage at once, free, even
+# while Exhausted (which ends), at most once in 1,000 base turns (its Wakes power,
+# `world/health/wakes.rs`). A berserker's own Rage is filled to its maximum; anyone else is lent
+# a rage of 12 points that only decays. Thick fur besides: 45% cold resistance (of Warmth), +20
+# hit points (of Vitality, a weapon's affix set by hand on a cloak), +2 Protection (Hardened),
+# and hit points back twice as fast (of Mending 100, past its ladder's top). Every value set by
+# hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "beornhama"
+name = "Beornhama"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "fur_cloak"
+affixes = ["of_warmth=45", "of_vitality=20", "hardened=2", "of_mending=100"]
+level = 28
+power = { wakes = 25, every = 1000, resource = "rage", phrase = "When its wearer is near death, the bear in it wakes and rages for them, weary or not; then it sleeps a long while." }
+lore = "The bear does not ask whether you are ready."

@@ -95,6 +95,35 @@ objects = ["unique:deep_night"]
 at = [11, 10]
 objects = ["unique:cracked_resurrection_stone"]
 
+# Three more of the pool (#2111, #2112, #2113): Scrift, a priest's mace that eases prayer;
+# Swīge, an amulet of silence; and Wyrtruma, a druid's staff that keeps called beasts.
+[[pile]]
+at = [3, 9]
+objects = ["unique:scrift"]
+
+[[pile]]
+at = [3, 10]
+objects = ["unique:swige"]
+
+[[pile]]
+at = [3, 11]
+objects = ["unique:wyrtruma"]
+
+# Three launchers of the pool (#2114, #2134, #2118), down the arrival room's east wall: Hagolscūr,
+# a sling whose stones bring down hail; Entbana, a sling against all bigger than Small (both with
+# stones to sling); Fēolaga, a bow whose arrows set a ranger's companion on what they strike.
+[[pile]]
+at = [13, 5]
+objects = ["unique:hagolscur", "sling_stone*20"]
+
+[[pile]]
+at = [13, 6]
+objects = ["unique:entbana", "sling_stone*20"]
+
+[[pile]]
+at = [13, 7]
+objects = ["unique:feolaga", "arrow*20"]
+
 # Stones from the old digging, to throw.
 [[pile]]
 at = [23, 4]
@@ -105,6 +134,20 @@ objects = ["rock*4"]
 [[pile]]
 at = [3, 12]
 objects = ["unique:masterpiece"]
+
+# Three more of the drop pool (#2126, #2125, #2132), placed nowhere else: the Stick, Satisfaction,
+# and the Eorðfæst, along the arrival room's north wall.
+[[pile]]
+at = [5, 5]
+objects = ["unique:stick"]
+
+[[pile]]
+at = [7, 5]
+objects = ["unique:satisfaction"]
+
+[[pile]]
+at = [9, 5]
+objects = ["unique:eorthfaest"]
 
 # Three more of the pool (#2139, #2141, #2133), down the arrival room's west wall: Smoulder (with
 # bolts to shoot), whose bolts smoke where they land; Tiptoe and Hushfoot, on whose feet no trap
@@ -135,6 +178,45 @@ objects = ["unique:kettle_hat"]
 [[pile]]
 at = [9, 12]
 objects = ["unique:scarhide"]
+
+# Two more of the pool (#2123, #2124): Onrǣs, boots that make a charge free, at the south wall's
+# east end, and Gār, a spear that thrusts through to the one behind, on the west wall.
+[[pile]]
+at = [11, 12]
+objects = ["unique:onraes"]
+
+[[pile]]
+at = [3, 8]
+objects = ["unique:gar"]
+
+# Three more of the pool (#2109, #2117, #2131), along the arrival room's north side: Wergild, the
+# Oath, and the Wrecend.
+[[pile]]
+at = [5, 6]
+objects = ["unique:wergild"]
+
+[[pile]]
+at = [7, 6]
+objects = ["unique:oath"]
+
+[[pile]]
+at = [9, 6]
+objects = ["unique:wrecend"]
+
+# Three more of the pool (#2110, #2136, #2130), placed nowhere else, along the arrival room's
+# north wall: Beornhama, a fur cloak whose bear rages for its wearer; Gorthak, a great axe whose
+# kills roar; and the Dōmgeorn, a gold amulet that makes every death its wearer sees theirs.
+[[pile]]
+at = [5, 4]
+objects = ["unique:beornhama"]
+
+[[pile]]
+at = [7, 4]
+objects = ["unique:gorthak"]
+
+[[pile]]
+at = [9, 4]
+objects = ["unique:domgeorn"]
 
 # Three of the pool for a thief, in the row above the start (#2119, #2120, #2138): the Fambles,
 # gloves whose knife-cuts pick pockets; the Stampers, boots for an unseen approach; and Snaffle, a

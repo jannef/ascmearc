@@ -6,6 +6,7 @@ mod background;
 mod cold_blood;
 mod craving;
 pub(in crate::world) mod creation;
+mod credit;
 mod element_gifts;
 pub(in crate::world) mod experience;
 mod flavour;
@@ -36,6 +37,7 @@ cfg_if! {
         mod craving_rows_tests;
         mod craving_surrender_tests;
         mod craving_tests;
+        mod credit_tests;
         mod creation_tests;
         mod damage_talent_tests;
         mod element_gift_tests;

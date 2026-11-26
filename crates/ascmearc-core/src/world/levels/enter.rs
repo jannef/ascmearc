@@ -29,6 +29,9 @@ pub(in crate::world) struct Entry {
     pub footing: Footing,
     /// Whether the step flees a hostile (its noise).
     pub fleeing: bool,
+    /// How loud the step is, in percent of a plain step's noise (100; an iron-shod charge's
+    /// more, `onset.rs`), when it does not flee.
+    pub noise: u16,
     /// The step's price, for how long a wade lasts.
     pub price: i64,
     /// Whether the player chose `to` (a known trap there may be sidestepped); not when a
@@ -47,6 +50,7 @@ impl World {
             to,
             footing,
             fleeing,
+            noise,
             price,
             willing,
             swap,
@@ -66,7 +70,11 @@ impl World {
             to,
         });
         self.after_tread(player, (from, to), footing, events);
-        self.make_step_noise(player, to, fleeing);
+        if fleeing || noise == 100 {
+            self.make_step_noise(player, to, fleeing);
+        } else {
+            self.make_noise_at(player, crate::noise::Act::Step(to), u32::from(noise));
+        }
         // An approach unseen counts its steps (`approach.rs`).
         self.count_unseen_step();
         // Wading through a marsh may give a disease, by how long the step takes.

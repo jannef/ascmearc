@@ -1,0 +1,20 @@
+# Fēolaga (#2118): a Marvellous composite bow for the drop pool (#2103; placed nowhere else but
+# the test world's quarry), item level 28. The ranger and the companion are one hunt: a creature
+# its arrow strikes becomes the companion's quarry at once, set on as by Sic 'em for nothing (the
+# Savage it gives, if the beast has none), and every bite the beast lands on its quarry gives the
+# archer 1 Focus. Its power, Quarry, is read where a shot hits and where a bite does
+# (`world/allies/quarry.rs`). Its affixes as the design writes them: of Precision 4, Steady 4,
+# Hunter's 4 (range), of the Hunt 4 (stamina on a kill, past its ladder; the design calls it
+# Woodcraft, which no affix gives), Keen 2. Every value set by hand (docs/dev/magic-items.md
+# "Unique items").
+[[unique]]
+id = "feolaga"
+name = "Fēolaga"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "composite_bow"
+affixes = ["of_precision=4", "steady=4", "hunters=4", "of_the_hunt=4", "keen=2"]
+level = 28
+quality = "marvellous"
+power = { quarry = { resource = "focus", per_bite = 1 }, phrase = "Whatever its arrows strike, your companion runs down at once, and every bite it lands there sharpens your focus." }
+lore = "One of them chose the target. Nobody has ever been sure which."

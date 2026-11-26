@@ -45,12 +45,19 @@ pub(crate) struct Strain {
     pub(crate) at: GameTime,
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub(crate) locked: bool,
+    /// How fast it passes since `at`, in percent of the rules' `decay`: a worn unique's
+    /// `strain_decay` (Swīge's 200, #2112); `None` is 100 ([`World::keep_strain_pace`]).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) pace: Option<u16>,
 }
 
 impl Strain {
-    /// Its value at `time`: a point less for every `decay` since `at`, never below 0.
+    /// Its value at `time`: a point less for every `decay` since `at` (at its `pace`), never
+    /// below 0.
     pub(crate) fn now(&self, rules: &PrayerRules, time: GameTime) -> u16 {
-        let passed = time.since(self.at).as_seconds() / rules.decay.as_seconds().max(1);
+        let pace = u64::from(self.pace.unwrap_or(100));
+        let passed =
+            time.since(self.at).as_seconds() * pace / (rules.decay.as_seconds().max(1) * 100);
         self.value
             .saturating_sub(u16::try_from(passed).unwrap_or(u16::MAX))
     }
@@ -157,6 +164,7 @@ impl World {
             value: now.saturating_add(added),
             at: time,
             locked: fizzled,
+            pace: self.strain_pace(),
         });
         let spent = Spent::Turn(self.price_of(player, ActionKind::Cast));
         if fizzled {
@@ -305,5 +313,61 @@ impl World {
             let max = self.resource_max(player, resource);
             self.player_mut().resources.set(resource, max);
         }
+    }
+}
+
+impl World {
+    /// The pace the player's prayer strain passes at now, in percent, if not the usual 100: the
+    /// fastest a unique they wear sets (`strain_decay`, Swīge's 200, #2112).
+    fn strain_pace(&self) -> Option<u16> {
+        let content = &self.content;
+        let fastest = (self.state.player().worn_uniques(content))
+            .map(|u| u.strain_decay)
+            .max()?;
+        (fastest != 100).then_some(fastest)
+    }
+
+    /// Keeps the player's prayer strain passing at the pace of what they wear (once a turn, from
+    /// `run_turn`): when the pace has changed (a unique with a `strain_decay` put on or taken
+    /// off), the strain is written down as it stands now, to pass at the new pace from here.
+    /// Nothing changes while the pace holds, so a run without such a unique saves as before.
+    pub(in crate::world) fn keep_strain_pace(&mut self) {
+        let (Some(rules), Some(strain)) = (self.content.prayer(), self.state.progress.prayer)
+        else {
+            return;
+        };
+        let pace = self.strain_pace();
+        if strain.pace == pace {
+            return;
+        }
+        let time = self.state.time;
+        self.state.progress.prayer = Some(Strain {
+            value: strain.now(rules, time),
+            at: time,
+            locked: strain.locked,
+            pace,
+        });
+    }
+
+    /// Takes `amount` of the player's prayer strain off (`None`: all of it), never below 0: a
+    /// blow of Scrift's (#2111, `world/combat/shrive.rs`). Nothing without strain (one who has
+    /// never prayed). A lock a fizzle set ends as the strain reaches 0, as it would in time.
+    pub(in crate::world) fn ease_strain(&mut self, amount: Option<u16>) {
+        let (Some(rules), Some(strain)) = (self.content.prayer(), self.state.progress.prayer)
+        else {
+            return;
+        };
+        let time = self.state.time;
+        let now = strain.now(rules, time);
+        if now == 0 {
+            return;
+        }
+        let value = amount.map_or(0, |a| now.saturating_sub(a));
+        self.state.progress.prayer = Some(Strain {
+            value,
+            at: time,
+            locked: strain.locked && value > 0,
+            pace: strain.pace,
+        });
     }
 }

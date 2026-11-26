@@ -499,6 +499,8 @@ impl World {
                 Route::There | Route::Unreachable => mind.post = None,
             }
         }
+        // Back to its routine, the fight is over: a roar may frighten it again (`roar.rs`).
+        mind.heard_roar = false;
         Plan::Patrol
     }
 
