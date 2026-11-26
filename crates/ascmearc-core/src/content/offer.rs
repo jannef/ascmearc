@@ -19,7 +19,7 @@
 //! ```
 
 use super::dialogue::{ID_SHAPE, is_id};
-use super::{Content, MAX_ITEM_LEVEL, MAX_PER_KIND};
+use super::{Content, MAX_ITEM_LEVEL};
 use serde::Deserialize;
 
 /// A trader's one offer, as data.
@@ -92,10 +92,6 @@ struct UniquesSpec {
     items: Vec<String>,
 }
 
-/// The most affixes an item has: three prefixes and three suffixes. More would split past
-/// [`MAX_PER_KIND`] of a kind ([`crate::magic::loot::heirloom`]'s split).
-const MOST_AFFIXES: u8 = 2 * MAX_PER_KIND as u8;
-
 /// Resolves the offer of a dialogue of `campaign` against `content` (its uniques and shops);
 /// `taken` says whether an id is already a topic's or a service's.
 pub(super) fn resolve(
@@ -120,9 +116,12 @@ pub(super) fn resolve(
     if spec.level.least > MAX_ITEM_LEVEL {
         return Err(bad(format!("`level.least` is at most {MAX_ITEM_LEVEL}")));
     }
-    if (spec.affixes.iter()).any(|&(n, _)| n > MOST_AFFIXES) {
+    // The most affixes an item has: `rare.most_per_kind` prefixes and as many suffixes. More
+    // would split past that of a kind ([`crate::magic::loot::heirloom`]'s split).
+    let most = 2 * u32::from(content.affixes().most_per_kind);
+    if (spec.affixes.iter()).any(|&(n, _)| u32::from(n) > most) {
         return Err(bad(format!(
-            "`affixes`: an item has at most {MOST_AFFIXES} affixes"
+            "`affixes`: an item has at most {most} affixes"
         )));
     }
     let (chance, uniques) = match spec.uniques {

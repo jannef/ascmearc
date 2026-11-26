@@ -8,7 +8,7 @@
 //!   while damaged; #1444), + its main part's material's `binding` (−2
 //!   to +2; silver −2, adamantium +1, mithril +2), + a gem in its ornament part (+1, a gem of the finest cut +2), + 1 for a maker's mark
 //!   (Maker's mark, [`Worked::marked`](super::Worked::marked)), at least 1 and at most
-//!   [`MOST`]. The three-per-kind caps stand beside it.
+//!   [`most`]. The per-kind caps stand beside it.
 //! - **The trim** ([`trim`]): while an item's affixes outnumber its capacity, one of the kind
 //!   (prefix or suffix) it has more of goes, one of that kind at random (one `rng.index` draw), a
 //!   suffix on a tie. Its rarity and name stay: a trimmed rare is a rare still. It is the very
@@ -25,8 +25,10 @@ use crate::rng::Rng;
 /// What every item holds before its kind, quality, material, and gem (the owner, 2026-11-13).
 pub const BASE: i32 = 2;
 
-/// The most affixes any item holds: three of each kind.
-pub const MOST: u8 = (crate::content::MAX_PER_KIND * 2) as u8;
+/// The most affixes any item holds: `rare.most_per_kind` of each kind (at least one).
+pub fn most(content: &Content) -> u8 {
+    content.affixes().most_per_kind.saturating_mul(2).max(1)
+}
 
 /// The most affixes `stack` can hold (module docs).
 pub fn capacity(stack: &Stack, content: &Content) -> u8 {
@@ -45,7 +47,7 @@ pub fn capacity(stack: &Stack, content: &Content) -> u8 {
     // A maker's mark holds one more (Maker's mark, the craftsperson's).
     let mark = i32::from(stack.worked().is_some_and(super::Worked::marked));
     let sum = BASE + jewellery - ammo + quality + binding + gem + mark;
-    u8::try_from(sum.clamp(1, i32::from(MOST))).unwrap_or(1)
+    u8::try_from(sum.clamp(1, i32::from(most(content)))).unwrap_or(1)
 }
 
 /// What the gem set in `stack`'s ornament part adds: 1, or 2 for the finest cut; 0 with none.

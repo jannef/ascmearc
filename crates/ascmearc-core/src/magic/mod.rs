@@ -254,7 +254,7 @@ impl Magic {
             categories.push(&a.category);
             per_kind[a.kind as usize] += 1;
         }
-        let most = self.rarity.most_per_kind();
+        let most = self.rarity.most_per_kind(content.affixes());
         if per_kind.iter().any(|&n| n > most) {
             let rarity = content.english_word(self.rarity.word(), "bare");
             return Err(format!(

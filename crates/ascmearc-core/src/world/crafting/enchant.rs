@@ -63,8 +63,7 @@ use super::work::{Job, Task};
 use crate::action::Event;
 use crate::combat;
 use crate::content::{
-    AffixKind, Content, EnchantKind, ItemHarm, MAX_PER_KIND, ObjectDef, Rarity, RecipeDef,
-    RecipeId, RecipeUse,
+    AffixKind, Content, EnchantKind, ItemHarm, ObjectDef, Rarity, RecipeDef, RecipeId, RecipeUse,
 };
 use crate::lang::{Arg, MessageId, Msg, Phrase};
 use crate::magic::loot::{pick_weighted, rare_name, rare_split, roll_affix_within, rolls_within};
@@ -527,12 +526,13 @@ fn lacking(content: &Content, rolled: &[Affix]) -> Option<AffixKind> {
     }
 }
 
-/// The kinds a rare with `rolled` has room for: those below [`MAX_PER_KIND`].
+/// The kinds a rare with `rolled` has room for: those below `rare.most_per_kind`.
 fn with_room(content: &Content, rolled: &[Affix]) -> Vec<AffixKind> {
     let kinds = kinds_of(content, rolled);
+    let most = usize::from(content.affixes().most_per_kind);
     [AffixKind::Prefix, AffixKind::Suffix]
         .into_iter()
-        .filter(|k| kinds.iter().filter(|&x| x == k).count() < MAX_PER_KIND)
+        .filter(|k| kinds.iter().filter(|&x| x == k).count() < most)
         .collect()
 }
 
@@ -1002,7 +1002,7 @@ fn imbued(
     let counts = &content.affixes().rare_counts;
     let count = pick_weighted(rng, counts).copied().unwrap_or(RARE_LEAST);
     let count = count.min(room).max(1);
-    let (prefixes, suffixes) = rare_split(rng, i32::from(count));
+    let (prefixes, suffixes) = rare_split(content, rng, i32::from(count));
     let mut left = [prefixes, suffixes];
     let mut every: Vec<String> = Vec::new();
     for family in families.iter().flatten() {

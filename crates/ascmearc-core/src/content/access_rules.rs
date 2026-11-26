@@ -233,6 +233,12 @@ impl Content {
         &self.gear_condition
     }
 
+    /// The loot sources (`data/loot_sources.toml`, else every source plain:
+    /// [`crate::magic::loot::Rule::PLAIN`]).
+    pub fn loot_sources(&self) -> &super::LootSources {
+        &self.loot_sources
+    }
+
     /// How the player hungers, `data/hunger.toml`; `None` without the file:
     /// nobody hungers, nothing is eaten, and food does not rot.
     pub fn hunger(&self) -> Option<&HungerDef> {

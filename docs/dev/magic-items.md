@@ -47,8 +47,11 @@ base stats); `dice_text` is the one damage-dice form, which `OwnAttack::damage_t
 Every item a source yields is one pure function (`magic/loot.rs`, docs/design/loot-pipeline.md):
 `loot::find`/`finds` of a `Spec` (the source's `Origin`, the item level, the grade, the classes,
 the count) for a finder's `Luck`, and `loot::make`/`make_unfinished` for a base chosen already;
-`Origin::rule` is the source table (in code until it moves to data: the default grade, whether
-the finder counts, curses, how the material is drawn, a make). A find is always an item: where a
+`Origin::rule` is the source table, `data/loot_sources.toml` (`Content::loot_sources`, one row a
+source: the default grade or the caller's data that gives it, whether the finder counts, curses,
+how the material is drawn, a make; the loader refuses a missing row, a row of no source, and a
+grade a source cannot take; without the file every row is `Rule::PLAIN`), and its `[item] ammo`
+the size of a stack of ammunition found. A find is always an item: where a
 source still finds a loose gem in its place (floor loot, vault cells and chest items at grade
 `any`, hoards, dens, features at `any`, the stipend, drops), the caller draws it first by the
 wealth seam (`wealth::gem_instead`). The find sets an item of a class with an `[[ornament]]`

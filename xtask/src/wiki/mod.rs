@@ -53,6 +53,7 @@ mod install;
 mod kits;
 mod learning;
 mod links;
+mod loot_sources;
 mod magic;
 mod mana;
 mod materials;
@@ -492,6 +493,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("spring-outcomes.md", outcomes::spring_outcomes),
         ("risings.md", rooms::risings),
         ("magic-rarity.md", magic::magic_rarity),
+        ("loot-sources.md", loot_sources::loot_sources),
         ("magic-bases.md", magic::magic_bases),
         ("magic-prefixes.md", magic::prefixes),
         ("magic-suffixes.md", magic::suffixes),

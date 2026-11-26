@@ -41,12 +41,13 @@
 #            { per_cells, min, max }: one sleeper per `per_cells` floor cells, `min` to `max`;
 #            `wake`: a noise wakes a sleeper at this percent of its hearing threshold;
 #            `cry`: how loud a waking sleeper cries out, which may wake the next
-#            (at most 300, the loudest noise); `loot_level`: the hoard (an item per four sleepers, at least one) is
-#            this many item levels above the floor's; `themes = { kind, faction }`: percent
+#            (at most 300, the loudest noise); `loot_level`: the hoard is this many item levels
+#            above the floor's; `per_sleepers`: the hoard holds one thing (an item, or a corpse
+#            and its bones) per this many sleepers, at least one; `themes = { kind, faction }`: percent
 #            chances that every sleeper is of one type (a warren) or of one faction (a tribe);
 #            `factions`: faction ids (factions/): its sleepers are only of these, hostile or
 #            not, and it is drawn only in a branch whose own population holds one (a beast den);
-#            `hoard`: `items` (the default) or `corpses`: per four sleepers (at least one) a
+#            `hoard`: `items` (the default) or `corpses`: per piece of the hoard a
 #            fresh corpse of a creature drawn from the branch's population and a pile of bones;
 #            `population`: creature ids (families by their own id, `animated_blade`): its
 #            sleepers are drawn only among these (hostile or not, no strays, never with
