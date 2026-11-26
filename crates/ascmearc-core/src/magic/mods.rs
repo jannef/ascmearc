@@ -21,7 +21,7 @@ use super::{Effect, Magic};
 use crate::combat::{CRITS, Profile, THREATS};
 use crate::content::{
     COSTS, Content, DamageTypeId, Group, LightId, MAX_HINDRANCE, MAX_SPEED, OnHit, Power,
-    ResourceId,
+    ResourceId, WeaponGrowth,
 };
 use crate::damage::Rider;
 use crate::dice::Dice;
@@ -55,6 +55,8 @@ pub struct Mods {
     /// The damage its hits add, from a unique item's Inflict power's `added` (local, as
     /// `on_hit`).
     added: Vec<Rider>,
+    /// The thrust-through's percent, from a unique weapon's Thrust power (local, as `on_hit`).
+    thrust: Option<u8>,
     /// What bane affixes add against creatures of each tag, in the order first met.
     banes: Vec<(String, i32)>,
     /// How many times as far it shoots or is thrown, from a unique item's Range power (local;
@@ -63,6 +65,14 @@ pub struct Mods {
     /// The prayer strain its hits take off, from a unique weapon's Shrive power (local, as
     /// `on_hit`).
     shrive: Option<crate::content::Shrive>,
+    /// What a unique weapon's Tally or Grudge power keeps of the blows its bearer takes (local).
+    keeps: Option<crate::content::Keeps>,
+    /// Its damage dice and to-hit by its wielder's level, from a unique weapon's Grows power
+    /// (local: the weapon that hits; `world/combat/grows.rs`).
+    grows: Option<WeaponGrowth>,
+    /// Whether its hits on a foe at full health are sure criticals, from a unique weapon's
+    /// FirstBlood power (local; `world/combat/first_blood.rs`).
+    first_blood: bool,
 }
 
 impl Default for Mods {
@@ -77,9 +87,13 @@ impl Default for Mods {
             pools: Vec::new(),
             on_hit: Vec::new(),
             added: Vec::new(),
+            thrust: None,
             banes: Vec::new(),
             range_times: 1,
             shrive: None,
+            keeps: None,
+            grows: None,
+            first_blood: false,
         }
     }
 }
@@ -237,7 +251,7 @@ impl Mods {
 
     /// Adds the effects of `magic`'s affixes on an item of `kind` that are `local` (or not).
     fn add_magic(&mut self, magic: &Magic, local: bool, stack: &Stack, content: &Content) {
-        let Some(kind) = content.object(stack.object).kind else {
+        let Some(kind) = content.item_kind(stack) else {
             return;
         };
         for rolled in magic.rolled(content) {
@@ -260,6 +274,20 @@ impl Mods {
                 self.add(rolled.def.group(), (value, dice), light, content);
             }
         }
+        // A Scars power's scars (`scars.rs`), as its affixes of the same effects would be.
+        if let Some(scars) = stack.scars() {
+            let scarred = [
+                (Effect::Armour, scars.armour),
+                (Effect::MaxHp, scars.max_hp),
+                (Effect::Stat(crate::stats::Stat::Toughness), scars.toughness),
+            ];
+            for (effect, n) in scarred {
+                if n > 0 && effect.is_local_on(kind) == local {
+                    let slot = &mut self.values[effect.index()];
+                    *slot = slot.saturating_add(i32::from(n));
+                }
+            }
+        }
     }
 
     /// What `stack`'s affixes do to itself and to the attacks made with it (its local effects),
@@ -280,6 +308,14 @@ impl Mods {
                 }
                 Some(&Power::Range(times)) => mods.range_times = times,
                 Some(&Power::Shrive(shrive)) => mods.shrive = Some(shrive),
+                Some(Power::Tally { .. }) => mods.keeps = Some(crate::content::Keeps::Debt),
+                Some(&Power::Grudge { per_hit }) => {
+                    mods.keeps = Some(crate::content::Keeps::Grudges(per_hit));
+                }
+                Some(&Power::Thrust(percent)) => mods.thrust = Some(percent),
+                // The Stick's dice and to-hit, the wielder's level read where it strikes.
+                Some(Power::Grows(growth)) => mods.grows = Some(growth.clone()),
+                Some(Power::FirstBlood) => mods.first_blood = true,
                 _ => {}
             }
         }
@@ -354,7 +390,8 @@ impl Mods {
     /// Changes an attack by these effects: to-hit, damage (added to every roll), extra damage
     /// dice, a wider critical threat range, a larger critical multiplier, and the damage of
     /// other kinds elemental affixes add (one rider per kind, after those the attack has); and
-    /// what a unique weapon's Inflict power makes its hits cause (`Profile::on_hit`) and add; and its
+    /// what a unique weapon's Inflict power makes its hits cause (`Profile::on_hit`) and add, and
+    /// its Thrust power's thrust-through (`Profile::thrust`); and its
     /// banes (`Profile::banes`), which count only against their creatures.
     pub fn sharpen(&self, profile: &mut Profile) {
         profile.to_hit += self.get(Effect::ToHit);
@@ -382,9 +419,17 @@ impl Mods {
         }
         profile.on_hit.extend_from_slice(&self.on_hit);
         profile.shrive = profile.shrive.or(self.shrive);
+        profile.thrust = profile.thrust.or(self.thrust);
         for (tag, value) in &self.banes {
             add_bane(&mut profile.banes, tag, *value);
         }
+        if self.keeps.is_some() {
+            profile.keeps = self.keeps;
+        }
+        if self.grows.is_some() {
+            profile.grows.clone_from(&self.grows);
+        }
+        profile.first_blood |= self.first_blood;
     }
 
     /// Every effect with a value, in [`Effect::all`] order, and the light.

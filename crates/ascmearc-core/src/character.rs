@@ -1371,6 +1371,29 @@ mod tests {
                 })
             });
         }
+        // The shared uniques keep their other affixes: their skill ones go (Hushfoot's of the
+        // Fox, #2133).
+        let skilled: Vec<String> = (full.affixes().all().iter())
+            .filter(|a| a.skill.is_some())
+            .map(|a| a.id.clone())
+            .collect();
+        files.edit_table("uniques", |text| {
+            let kept: Vec<String> = (text.lines())
+                .map(|l| match l.strip_prefix("affixes = [") {
+                    Some(list) => {
+                        let left: Vec<&str> = (list.trim_end_matches(']').split(", "))
+                            .filter(|a| {
+                                let id = a.trim_matches('"').split('=').next().unwrap_or("");
+                                !skilled.iter().any(|s| s == id)
+                            })
+                            .collect();
+                        format!("affixes = [{}]", left.join(", "))
+                    }
+                    None => l.to_string(),
+                })
+                .collect();
+            kept.join("\n")
+        });
         Content::load(&files).expect("valid content")
     }
 

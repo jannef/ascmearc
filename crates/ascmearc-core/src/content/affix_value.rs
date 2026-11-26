@@ -6,7 +6,9 @@
 //! ([`super::MagicWorth`]) and counts toward the item level; a unique's value may lie past its
 //! affix's last tier (`Tier::passed_by`; of as many dice), be a penalty (`Tier::opposed_by`:
 //! the Grandmother's `"nimble=-2"`), or roll more dice than any tier (`"heavy=6d6"`, its
-//! count kept by [`super::UniqueDef::dice`]), which then takes the last tier, and a unique may set an affix on
+//! count kept by [`super::UniqueDef::dice`]), which then takes the last tier, or as many as a
+//! tier but of fewer sides (`"heavy=2d6"`, Gār's: the first tier of fewer dice that rolls the
+//! sides, the count kept the same way), and a unique may set an affix on
 //! any base its effect works on (the affix's bases say only where loot rolls it).
 //! [`crate::magic::Magic::check`] holds the same.
 
@@ -35,11 +37,18 @@ pub(super) fn valued(
         Value::Light(_) => (0, 1),
         Value::Number(v, dice) => (v, dice),
     };
+    let fewer = (a.effect.is_dice())
+        .then(|| (a.tiers.iter()).position(|t| t.dice < dice && t.holds(value)))
+        .flatten();
     let index = match found {
         Some(i) => i,
         None if unique && last.dice == dice && last.set_past(value) => a.tiers.len() - 1,
         // More dice than any tier rolls (#2091: the Grandmother's 6d6).
         None if unique && dice > last.dice => a.tiers.len() - 1,
+        // As many dice as a tier rolls but smaller ones (#2124: Gār's 2d6 where the tiers of two
+        // dice roll d8 and d10): the first tier of fewer dice whose range holds the sides, the
+        // count kept as above.
+        None if unique && fewer.is_some() => fewer.unwrap_or_default(),
         None => {
             let first = &a.tiers[0];
             let past = if unique {
@@ -60,8 +69,10 @@ pub(super) fn valued(
     if unique {
         let kind = (def.kind).ok_or_else(|| format!("`{}` cannot be magic", def.id))?;
         // Protection counts on whatever is worn or wielded (`Actor::protection`), so a unique
-        // weapon may add it (#2091: the Radiant's +2); no affix rolls it on one (its bases).
-        let held_protection = a.effect == Effect::Protection && kind == ItemKind::Weapon;
+        // weapon or shield may add it (#2091: the Radiant's +2; #2132: the Eorðfæst's +3); no
+        // affix rolls it on one (its bases).
+        let held_protection =
+            a.effect == Effect::Protection && matches!(kind, ItemKind::Weapon | ItemKind::Shield);
         let works = a.effect.allowed_on(kind) || held_protection;
         if !works || !crate::magic::may_roll_on(a, def) {
             return Err(format!(

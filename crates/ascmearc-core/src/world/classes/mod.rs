@@ -12,6 +12,8 @@ pub(in crate::world) mod invest;
 mod jack;
 pub(in crate::world) mod mark;
 mod merchants_eye;
+mod oath_paid;
+mod onset;
 mod openings;
 pub(in crate::world) mod orison;
 mod rage;
@@ -39,6 +41,7 @@ cfg_if! {
         mod lullaby_tests;
         mod mark_tests;
         mod merchants_eye_tests;
+        mod oath_paid_tests;
         mod openings_tests;
         mod orison_tests;
         mod sanctuary_tests;

@@ -528,8 +528,13 @@ mod tests {
             kinds: Default::default(),
             riders: Vec::new(),
             on_hit: Vec::new(),
+            thrust: None,
             banes: Vec::new(),
             shrive: None,
+            once: 0,
+            keeps: None,
+            grows: None,
+            first_blood: false,
         };
         let sharp = effects.sharpen(&content, profile);
         assert_eq!((sharp.to_hit, sharp.bonus), (5, 0));

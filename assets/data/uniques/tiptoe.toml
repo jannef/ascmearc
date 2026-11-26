@@ -1,0 +1,19 @@
+# Tiptoe (#2141): a kobold's pair of footwraps for the drop pool (#2103; placed nowhere else but
+# the test world's quarry), item level 20, an early wonder about where the kobolds are found.
+# Footwraps are clothing, of no kind, so the table names the kind its affixes work as (`kind =
+# "boots"`). Its Trapwise power (`world/skills/trapwise.rs`): no trap springs under its wearer's
+# step, and every hidden trap within 5 cells of them is found. +3 Dodge (Nimble, past the
+# ladder's 2), 60% less trap damage (of Wariness, past its 40), +30 Stealth, and 11% faster
+# moves; a footwrap's Protection (none). Every value set by hand (docs/dev/magic-items.md
+# "Unique items").
+[[unique]]
+id = "tiptoe"
+name = "Tiptoe"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "footwraps"
+kind = "boots"
+affixes = ["nimble=3", "fleet=11", "of_wariness=60", "of_shadows=30"]
+level = 20
+power = { trapwise = 5, phrase = "No trap springs under its wearer's feet, and they see every trap near them." }
+lore = "Sure, the floor's grand. Mind where you stand, though."

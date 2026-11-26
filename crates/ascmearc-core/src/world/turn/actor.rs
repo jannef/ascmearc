@@ -313,6 +313,18 @@ pub struct Actor {
     /// never followed.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub home: Option<String>,
+    /// What its unique weapons keep of the blows it took: a Tally's debt, a Grudge's grudges
+    /// (`world/combat/tally.rs`). Left out of saves and hashes while empty.
+    #[serde(
+        default,
+        skip_serializing_if = "crate::world::combat::tally::Tallies::is_empty"
+    )]
+    pub tallies: crate::world::combat::tally::Tallies,
+    /// Where it stood as its last turn ended and how many turns in a row ended there, while it
+    /// bears a unique shield with the Plant power (the Eorðfæst, `world/combat/plant.rs`); `None`
+    /// for everyone else.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub planted: Option<crate::world::Planted>,
 }
 
 fn is_ungraded(n: &i8) -> bool {
@@ -798,7 +810,11 @@ impl Actor {
             .filter(|&d| d != 0)
             .map(|d| (Category::Dodge, d));
         let magic = [
-            (Category::Dodge, mods.get(ItemEffect::Dodge)),
+            // Bare feet under a unique's Barefoot power (Hushfoot's +3, #2133).
+            (
+                Category::Dodge,
+                mods.get(ItemEffect::Dodge) + self.barefoot(content).map_or(0, |b| b.dodge),
+            ),
             (
                 Category::Deflection,
                 mods.get(ItemEffect::Deflection) + talents.defence.deflection + mage_armour,
@@ -853,7 +869,8 @@ impl Actor {
         // A companion's body at its grade, when that is more than its type's own (`companion.rs`).
         let natural = (self.hide(content, race).map_or(0, |h| h.protection))
             .max(self.growth_protection(content));
-        let base = base + self.talent_protection(content) + more;
+        // A planted shield's turns (`plant.rs`).
+        let base = base + self.talent_protection(content) + self.planted_protection(content) + more;
         let adjustments = (worn.iter()).flat_map(|s| s.protects(content).iter().copied());
         if content.damage_types().is_empty() {
             return Protection::plain(base + natural);
@@ -863,11 +880,17 @@ impl Actor {
 
     /// Whether it wears body armour: armour in a slot worn as body armour (`body_armor`, the
     /// Body slot), anything there that defends, protects, or is a base item; clothing (a robe,
-    /// a tunic: none of those, #1173) is no armour. Mage armour and Fleet ask for none.
+    /// a tunic: none of those, #1173) is no armour, nor is a unique that counts as none
+    /// (`counts_as_unarmoured`, Hǣrsceorp's, #2115). Mage armour and Fleet ask for none.
     pub fn wears_body_armour(&self, content: &Content) -> bool {
         (self.equipment.items().into_iter()).any(|(slot, item)| {
             let armour = |s: &Stack| {
                 let def = content.object(s.object);
+                let unique =
+                    (s.magic().and_then(|m| m.unique.as_deref())).and_then(|id| content.unique(id));
+                if unique.is_some_and(|u| u.unarmoured) {
+                    return false;
+                }
                 def.armour != 0 || def.protection != 0 || def.kind.is_some()
             };
             content.slot(slot).action == ActionKind::BodyArmor

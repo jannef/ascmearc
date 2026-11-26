@@ -1,0 +1,18 @@
+# The Kettle Hat (#2127), the commoner's helm: an iron helm for the drop pool (#2103; placed
+# nowhere else but the test world's quarry), item level 12. Every blow that lands on its wearer,
+# soaked to nothing too, rings it (its Ring power, `world/combat/struck.rs`): a clang heard 20
+# cells away (a critical's twice as far), and every creature beside the wearer, friend and foe,
+# that fails a Toughness check (difficulty 15) is Staggered; never the wearer. A very thick pot:
+# Hardened 3 on the helm's Protection 1, of the Ox 4 (Toughness), and two thirds heavier than an
+# iron helm (Featherweight −67: 2.5 kg). Every value set by hand (`=`), so a regrade of the tiers
+# leaves it as it is (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "kettle_hat"
+name = "the Kettle Hat"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "iron_helm"
+affixes = ["featherweight=-67", "hardened=3", "of_the_ox=4"]
+level = 12
+power = { ring = 20, stagger = 1, difficulty = 15, phrase = "Every blow that lands on it rings out far, and the din staggers whoever stands beside its wearer." }
+lore = "It kept the rain off and the soup in. Then the war came, and it kept the sword off too."

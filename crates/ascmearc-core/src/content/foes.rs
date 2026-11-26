@@ -78,15 +78,17 @@ mod tests {
 
     const PATH: &str = "data/rules/foes.toml";
 
-    /// The built-in content without the uniques' banes, which name a kind.
+    /// The built-in content without the uniques' banes, which name a kind: Scrift's
+    /// `of_undead_bane=4` (#2111) and the Oath's `of_undead_bane=2` (#2117).
     fn without_banes() -> ContentFiles {
         let mut files = ContentFiles::builtin();
         files.replace_in_table("uniques", "\"of_undead_bane=4\", ", "");
+        files.replace_in_table("uniques", ", \"of_undead_bane=2\"", "");
         files
     }
 
-    /// The built-in content with `text` for the list; Scrift's undead-bane (#2111) goes with
-    /// the kinds a list may leave out.
+    /// The built-in content with `text` for the list; the uniques' undead-banes go with the
+    /// kinds a list may leave out.
     fn with(text: &str) -> Result<Content, String> {
         let mut files = without_banes();
         files.insert(PATH, text);

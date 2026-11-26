@@ -1,0 +1,21 @@
+# Onrǣs (#2123): a pair of iron-shod boots for the drop pool (#2103; placed nowhere else but
+# the test world's quarry), item level 30. *Onrǣs* is an onslaught: worn, the warrior's Charge
+# costs no stamina at all (neither its point nor its paces), so it reaches any foe its wearer
+# sees on an open way, and a charge's blow that hits drives the foe back a cell, Staggering it
+# if it cannot be moved (a wall or another creature stops it; its Onset power,
+# `world/classes/onset.rs`). Whirling charge works as ever, and no charge passes through allies.
+# Loud: the charge's iron-shod steps make twice a step's noise, heard twice as far. +2
+# Protection, +4 Toughness, steps 10% faster (Fleet), +4 focus (of Steadiness). Every value set
+# by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "onraes"
+name = "Onrǣs"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "iron_shod_boots"
+affixes = ["fleet=10", "hardened=2", "of_steadiness=4", "of_the_ox=4"]
+level = 30
+# Four enchantments need its make (docs/dev/enchanting.md): Masterwork.
+quality = "masterwork"
+power = { onset = true, knockback = 1, noise = 200, phrase = "Its wearer's charge costs no breath, carries any distance, and drives the foe back. Its tread is loud." }
+lore = "The line held. He didn't."

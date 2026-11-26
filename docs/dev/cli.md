@@ -385,7 +385,7 @@ and are **dev-only**.
   digging, `v` a voice, `h` a howl, `r` a roar (a dragon's breath), a creature's cries `z`
   buzzing, `g` giggling, `s` a hiss, `l` a rattle, `y` a scream, `w` a wail, `j` a crash of
   glass (a flask breaking), `q` a heartbeat, `a` an alarm bell, `e` an explosion, `t` a
-  thunderclap, upper case when loud.
+  thunderclap, `n` a clang (a ringing helm, the Kettle Hat's), upper case when loud.
 - `blood`: blood the player sees or remembers as a digit over the view, `1` a few drops to `9`
   soaked.
 - `scorch`: fire's char, the same way, `1` a little soot to `9` charred through.

@@ -30,6 +30,10 @@ text = "Killed by {who:a}"
 [cause_died_of]
 text = "Died of {name:bare}"
 
+# They paid an oath in blood with the last of it (the Oath, a unique sword).
+[cause_oath]
+text = "Paid an oath in blood"
+
 [cause_own]
 text = "Killed by their own {name:bare}"
 

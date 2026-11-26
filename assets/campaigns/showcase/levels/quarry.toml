@@ -120,6 +120,73 @@ objects = ["rock*4"]
 at = [3, 12]
 objects = ["unique:masterpiece"]
 
+# Three more of the drop pool (#2126, #2125, #2132), placed nowhere else: the Stick, Satisfaction,
+# and the Eorðfæst, along the arrival room's north wall.
+[[pile]]
+at = [5, 5]
+objects = ["unique:stick"]
+
+[[pile]]
+at = [7, 5]
+objects = ["unique:satisfaction"]
+
+[[pile]]
+at = [9, 5]
+objects = ["unique:eorthfaest"]
+
+# Three more of the pool (#2139, #2141, #2133), down the arrival room's west wall: Smoulder (with
+# bolts to shoot), whose bolts smoke where they land; Tiptoe and Hushfoot, on whose feet no trap
+# springs.
+[[pile]]
+at = [3, 5]
+objects = ["unique:smoulder", "bolt*20"]
+
+[[pile]]
+at = [3, 6]
+objects = ["unique:tiptoe"]
+
+[[pile]]
+at = [3, 7]
+objects = ["unique:hushfoot"]
+
+# Three more of the pool along the south wall (#2115, #2127, #2137): Hǣrsceorp, a hair shirt
+# that turns pain into ki; the Kettle Hat, which rings when struck; and Scarhide, which keeps the
+# scars of every critical hit its wearer takes.
+[[pile]]
+at = [5, 12]
+objects = ["unique:haersceorp"]
+
+[[pile]]
+at = [7, 12]
+objects = ["unique:kettle_hat"]
+
+[[pile]]
+at = [9, 12]
+objects = ["unique:scarhide"]
+
+# Two more of the pool (#2123, #2124): Onrǣs, boots that make a charge free, at the south wall's
+# east end, and Gār, a spear that thrusts through to the one behind, on the west wall.
+[[pile]]
+at = [11, 12]
+objects = ["unique:onraes"]
+
+[[pile]]
+at = [3, 8]
+objects = ["unique:gar"]
+# Three more of the pool (#2109, #2117, #2131), along the arrival room's north side: Wergild, the
+# Oath, and the Wrecend.
+[[pile]]
+at = [5, 6]
+objects = ["unique:wergild"]
+
+[[pile]]
+at = [7, 6]
+objects = ["unique:oath"]
+
+[[pile]]
+at = [9, 6]
+objects = ["unique:wrecend"]
+
 # What the sealed chamber keeps.
 [[pile]]
 at = [48, 8]

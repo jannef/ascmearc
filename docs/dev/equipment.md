@@ -61,7 +61,7 @@ launcher fires (any `ammo` with none ready) while its slot is empty (`equipment:
 Creatures never go through either: `creature_shoots` calls `loose` directly.
 **Clothing** (#1173): item class `clothing` (`data/item_classes.toml`), everyday garments in the
 Body slot (tunic, kirtle, robe, ...) and shoes in the Feet slot (shoes, clogs, sandals, ...), one
-object file each; no `armour`, `protection`, or `kind` (never loot or magic), and the Body slot's
+object file each; no `armour`, `protection`, or `kind` (never loot or magic; a unique may be made on it as a kind its table names, docs/dev/magic-items.md "Unique items"), and the Body slot's
 `body_armor` action like any body armour. New characters' kits dress the body and the feet with
 it (docs/dev/character-creation.md "Starting kits"); `kit.rs`'s tests check every one is Dv 0
 Pv 0.

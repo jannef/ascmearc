@@ -11,6 +11,16 @@ hushed = "No word will come in this silence."
 # A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.
 no_craft = "It is unique: no craft of yours will change it."
 
+# An Oath pays what its wielder's zeal is short in hit points (the Oath, #2117;
+# `world/classes/oath_paid.rs`), said once the ability is done.
+oath_paid = "You pay the rest of your oath in blood."
+
+# A Tally's debt (Wergild, #2109; `world/combat/tally.rs`), on its description after its power
+# while its wielder rages: a third of what it may hold or less, two thirds or less, more.
+owed_a_fortune = "It is owed a fortune."
+owed_a_little = "It is owed a little."
+owed_much = "It is owed much."
+
 # The Restore power (#2098, `world/health/restore.rs`): a death near the stone's wearer undone.
 # `who`: a creature the player sees restored.
 restored = "{who:The} fall{who:s}, and rise{who:s} whole again!"
@@ -18,3 +28,34 @@ restored = "{who:The} fall{who:s}, and rise{who:s} whole again!"
 restored_unseen = "The stone on your finger grows warm."
 # The player restored.
 restored_you = "Death lets go of you: you rise whole again!"
+
+# The Plant power (#2132, the Eorðfæst; `world/combat/plant.rs`): the planted player is not
+# driven from their cell (a knockback, a shove, a spell's push).
+stand_fast = "You stand fast."
+
+# Feet that never spring a trap (Tiptoe's Trapwise, Hushfoot's bare feet; #2141, #2133;
+# `world/skills/trapwise.rs`): the player steps onto a trap, which stays armed. `trap`: the trap.
+tread_over_trap = "You tread over {trap:a}, and it does not spring."
+
+# The Ring power (#2127, the Kettle Hat; `world/combat/struck.rs`): a blow lands on the helm's
+# wearer. `who`: a wearer the player sees.
+rings_helm = "{who:poss} helm rings like a struck kettle!"
+# The player wears it.
+rings_your_helm = "Your helm rings like a struck kettle!"
+
+# The Scars power (#2137, Scarhide; `world/combat/struck.rs`): a critical hit on the player scars
+# what they wear.
+scarred = "The blow leaves its scar on your armour."
+
+# A Grudge's grudges (the Wrecend, #2131; `world/combat/tally.rs`), on its description after its
+# power: `n`, the hits the creature `who` (`creature:<id>`) landed on its bearer.
+[grudges]
+by = "n.number"
+one = "It bears a grudge against {who:the}."
+many = "It bears {n:num} grudges against {who:the}."
+
+# The scars a Scars power's item bears, on its description (`magic/describe.rs`): `n`, how many.
+[scars]
+by = "n.number"
+one = "It bears {n:num} scar."
+many = "It bears {n:num} scars."

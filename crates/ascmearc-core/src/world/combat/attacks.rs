@@ -179,8 +179,9 @@ impl OwnAttack {
 
 impl Actor {
     /// The attacks it has ready, as it knows them (module docs): the main hand's blow, the off
-    /// hand's with two weapons, and the missile weapon's shot or throw, in that order.
-    pub fn known_attacks(&self, content: &Content) -> Vec<OwnAttack> {
+    /// hand's with two weapons, and the missile weapon's shot or throw, in that order; a Grows
+    /// weapon's (`grows.rs`) as it strikes at its level `level`.
+    pub fn known_attacks(&self, content: &Content, level: u32) -> Vec<OwnAttack> {
         let me = self.as_known();
         let mut attacks = Vec::new();
         let main = match me.blow_item(content) {
@@ -196,7 +197,7 @@ impl Actor {
             AttackSource::MainHand,
             AttackKind::Melee,
             main,
-            blow,
+            blow.grown(level),
             None,
         ));
         if let (Some((item, _)), Some((_, profile))) =
@@ -207,7 +208,7 @@ impl Actor {
                 AttackSource::OffHand,
                 AttackKind::Melee,
                 name,
-                profile,
+                profile.grown(level),
                 None,
             ));
         }
@@ -229,7 +230,7 @@ impl Actor {
                 source,
                 AttackKind::Melee,
                 name,
-                profile,
+                profile.grown(level),
                 None,
             ));
         }
@@ -240,7 +241,7 @@ impl Actor {
                 AttackSource::Missile,
                 AttackKind::Ranged,
                 name,
-                profile,
+                profile.grown(level),
                 range,
             ));
         } else if let Some(item) = me.ready_to_throw(content)
@@ -252,7 +253,7 @@ impl Actor {
                 AttackSource::Missile,
                 AttackKind::Thrown,
                 name,
-                profile,
+                profile.grown(level),
                 range,
             ));
         }

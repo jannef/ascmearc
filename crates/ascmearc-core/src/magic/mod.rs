@@ -31,6 +31,7 @@ pub(crate) mod make;
 pub mod mods;
 pub(crate) mod name;
 pub mod numbers;
+pub mod scars;
 pub mod unique_pool;
 pub mod worked;
 
@@ -181,7 +182,9 @@ impl Magic {
         content: &Content,
         set: &[Affix],
     ) -> Result<(), String> {
-        let Some(kind) = def.kind else {
+        // A unique on clothing works as the kind its table names (#2141).
+        let clothed = (self.unique.as_deref()).and_then(|id| content.unique(id)?.kind);
+        let Some(kind) = def.kind.or(clothed) else {
             return Err(format!("`{}` cannot be magic: it has no `kind`", def.id));
         };
         match (self.rarity, &self.name) {
@@ -207,7 +210,8 @@ impl Magic {
             }
             None => {}
         }
-        if self.affixes.is_empty() {
+        // A unique may have none: its power is its magic (#2126, the Stick).
+        if self.affixes.is_empty() && self.unique.is_none() {
             return Err("a magic or rare item has an affix at least".into());
         }
         if self.level == 0 || self.level > crate::content::MAX_ITEM_LEVEL {

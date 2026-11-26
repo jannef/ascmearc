@@ -361,6 +361,8 @@ impl World {
         schedule[0].energy = schedule[0].energy.saturating_sub(price.max(1));
         // The player's action is taken: what eases by actions eases (`weapon_ability.rs`).
         self.spend_actions(player, events);
+        // A planted shield counts the turn (`plant.rs`).
+        self.plant_turn(player);
         self.acting = None;
         // Holds whose holder no longer holds end (`hold.rs`): after the player's action, after
         // every creature's turn, and as the turn ends.
@@ -400,6 +402,7 @@ impl World {
             let price = self.creature_turn(id, events);
             schedule[next].energy = schedule[next].energy.saturating_sub(price.max(1));
             self.spend_actions(id, events);
+            self.plant_turn(id);
             self.acting = None;
             self.loosen_holds(events);
             // Those who died are gone from the schedule (the player stays, first).

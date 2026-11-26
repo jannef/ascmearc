@@ -312,7 +312,7 @@ and [item level](affixes.md#base-items) are set by hand. Its name is shown in go
 also has a **power**, a rule of its own that no affix gives.
 
 Its affixes may go past what loot ever rolls: a value above an affix's highest
-[tier](affixes.md), more dice than any tier gives (the Grandmother's 6d6), a penalty (her −2 to
+[tier](affixes.md), more dice than any tier gives (the Grandmother's 6d6, Gār's 2d6), a penalty (her −2 to
 [Dodge](combat.md#defence), which lowers your Defence against every attack), or an affix on a
 kind of item it never rolls on (High Toby, a bow, has +2 damage; the Radiant, a hammer, has +2
 Protection and +2 Dodge). The table below marks such an affix "set" where the
@@ -378,12 +378,82 @@ Its power works while it is worn or wielded, identified or not:
   while it stands within the number of cells the table gives of you does not leave. It stays
   another minute, and again each time its minute ends that near. Looking at it says "rooted".
   Farther off when its time ends, it leaves as ever.
+- **Onset**: your [Charge](abilities.md#ability-charge) costs no stamina at all, so you can charge any
+  foe you see on an open way, however far. A charge's blow that hits drives the foe back a cell
+  along the line; if a wall or another creature stops it, it is
+  [Staggered](status-list.md#status-staggered) instead. The charge is loud: its steps are heard
+  twice as far.
+- **Thrust**: a melee blow with it that hits also strikes whoever stands right behind the one
+  you struck, in the next cell along the line from you. That blow rolls to hit on its own and
+  deals half the damage. It strikes friends as well as foes. Thrown, it is an ordinary spear.
+- **Grows**: a weapon whose damage dice and to-hit come from the wielder's character level, not
+  from the weapon. Every five levels its dice go up a step, and every ten levels it gets +1 to
+  hit, as the table says. Everything else that adds to its damage, such as Strength and your
+  skill, adds as usual. A creature that picks it up strikes at its own level. Its description
+  shows its first step; your [character screen](the-screen.md#character) shows the blow you strike now.
+- **First blood**: every hit with it on a foe that has all its hit points is a sure
+  [critical](combat.md#criticals), with no roll to confirm it. The weapon's own multiplier
+  counts as usual. A foe that is already hurt takes an ordinary blow.
+- **Plant**: a shield that sinks in while you stand. Every turn you end in the cell you began it
+  in (fighting, waiting, casting, shooting, drinking: anything but a step) adds 1 to your
+  [Protection](combat.md#protection), with no limit. Any step, or anything else that moves you,
+  takes it all away. While it adds at least 1, nothing pushes you from your cell: no knockback,
+  no shove, no spell's push. You are told "You stand fast." And you are never caught
+  [flat-footed](surprise.md#caught-unawares) because you did not see the attacker coming.
+- **Zone**: a missile weapon whose every shot, hit or miss, leaves the
+  [Fume](magic.md#spell-fume) spell's smoke around the cell where the missile stops, for the
+  turns the table gives. Nobody sees into the smoke or through it, and that includes you. A
+  thrown weapon leaves none.
+- **Trapwise**: no trap springs when its wearer steps on it, hidden or
+  [known](traps.md#finding-traps). The trap stays armed for whoever comes after. Every hidden
+  trap within the number of cells the table gives is found as you go, with no roll and no need
+  to see it, on a door or a chest too. A trap set off another way still strikes you: a door you
+  open, a chest, or a blast that someone else set off.
+- **Barefoot**: it works only while nothing is on your feet. Your
+  [footsteps](hearing.md#what-makes-noise) make no sound at all, on any ground. You get the
+  [Dodge](combat.md#defence) the table gives. Every hidden trap on the floor beside you or under
+  you is found as you pass, with no roll (not one on a door or a chest), and no trap springs when
+  you step on it. Put on boots and it is just a waistcoat.
+- **Pain**: every blow, shot, or thrown thing that hits you and does damage gives you
+  [ki](ki.md): 1 point, or 2 for a critical hit, up to your most. With no
+  ki of your own, it gives nothing. A hit your armour soaks to nothing gives none.
+- **Ring**: every blow, shot, or thrown thing that hits you rings your helm, even one your
+  armour soaks whole. The clang [carries](hearing.md#how-loud) up to 20 cells, a critical hit's twice
+  as far (30 at most), and whatever hears it may come to look. Everyone standing
+  beside you, friend or foe, makes a [Toughness](stats.md#stat-toughness)
+  [check](stats.md#the-checks) or is [Staggered](status-list.md#status-staggered). You never are.
+- **Scars**: every critical hit you suffer leaves a scar on it, chosen at random: +1 Armour, +1
+  maximum hit point, or +1 Toughness. The scars stay on it for whoever wears it next, and there
+  is no limit to them. Its description counts them once you have identified it.
+- **Tally** (Wergild): while you [rage](rage.md), every hit point a creature's attack takes from
+  you is owed to the axe, up to 3 × your level (90 at level 30). Your next blow with it that
+  lands adds the whole debt to its damage, once. [Armour](combat.md#protection) soaks it as it
+  soaks the axe's own damage, and a critical does not multiply it. Then the debt is paid. A miss keeps it, and so
+  does a kick. When the rage ends, the debt is forgiven. While you rage, its description says
+  how much it is owed: a little (a third of the most or less), much (two thirds or less), or a
+  fortune.
+- **Grudge** (the Wrecend): every time a creature's attack costs you hit points while you carry
+  it, wielded or in your pack, is a grudge against that one creature, not its kind. Its blows
+  deal +2 damage to that creature for each grudge, with no cap, for as long as you both live, on
+  any level. A [critical hit](combat.md#criticals) multiplies it with the rest. Ten hits from a
+  troll is +20 against that troll. Its description counts the grudges: "It bears three grudges
+  against the troll."
+- **Oath** (the Oath): while you wield it, a class ability paid in [zeal](zeal.md) (a smite, Lay
+  on hands) can be used with too little. You spend what you have, and each point short costs
+  you 5 hit points once the ability is done: a smite costing 3 with no zeal takes 15. You are
+  told "You pay the rest of your oath in blood." Nothing protects you: the price can kill you.
+
+Some uniques are made of clothing, such as footwraps or a waistcoat. Ordinary clothing is never
+magic, but these work as the boots or body armour they are worn as.
 
 Some give more besides their power, as the table says: an immunity or a weakness to a kind of
 [damage](damage-types.md#armour-and-resistance), damage added to a shield's
 [bashes](abilities.md#ability-shield-bash), going [unseen](creature-tricks.md#when-you-are-invisible), or a darkness about you: while you wear it, every light within
 that many cells of you gives no light, the lamps, the fires, and the lights others carry, your
 own too. Nothing is used up: the lights shine again once you are gone or take it off.
+Hǣrsceorp counts as no body armour at all, so [Mage armour](class-wizard.md#talent-mage-armour)
+and [Step of the wind](class-ascetic.md#talent-step-of-the-wind) work in it.
+The Oath's melee hits also build a second point of zeal, 2 a hit in place of 1.
 
 One has no power at all, only rules of its own: Swīge keeps a silence about its wearer. Nobody
 within two cells of you, you and your allies too, can cast a [spell](magic.md) or read a

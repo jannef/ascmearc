@@ -122,6 +122,9 @@ pub enum Cause {
     Altar,
     /// The thirteenth profane gift they received took them (`world/character/profane_taken.rs`).
     Profane,
+    /// They paid an oath in blood, and it took the last of it (the Oath's power,
+    /// `world/classes/oath_paid.rs`).
+    Oath,
 }
 
 impl Cause {
@@ -156,6 +159,7 @@ impl Cause {
             }
             Cause::Altar => msg::health::EPITAPH_ALTAR.into(),
             Cause::Profane => msg::health::EPITAPH_PROFANE.into(),
+            Cause::Oath => msg::health::EPITAPH_OATH.into(),
         }
     }
 
@@ -176,6 +180,7 @@ impl Cause {
             | Cause::Spell(_)
             | Cause::Miscast(_)
             | Cause::Altar
+            | Cause::Oath
             | Cause::Fall
             | Cause::Fire => msg::health::DIE.into(),
         }
@@ -917,12 +922,18 @@ impl World {
         noisy: bool,
         events: &mut Vec<Event>,
     ) -> Option<Blow> {
+        // The thrust-through under way, its share of the damage (`thrust.rs`).
+        let share = self.thrusting.take();
         let (Some(from), Some(to)) = (
             self.state.actors.get(&attacker).map(|a| a.pos),
             self.state.actors.get(&target).map(|a| a.pos),
         ) else {
             return None;
         };
+        // A unique weapon's thrust-through strikes on with the profile as it came (`thrust.rs`).
+        let thrust = profile.as_ref().filter(|p| p.thrust.is_some()).cloned();
+        // A unique weapon's Grows (`grows.rs`) and FirstBlood (`first_blood.rs`).
+        let profile = profile.map(|p| self.first_blood(target, self.grown_blow(attacker, p)));
         // A thrown exploit's ladder, on the creature it is aimed at only (`openings.rs`).
         let profile = profile.map(|p| self.thrown_exploit_profile(attacker, target, p));
         let profile = profile.map(|p| self.glared(attacker, p));
@@ -934,6 +945,9 @@ impl World {
         let profile = profile.map(|p| self.season_threat(attacker, p));
         // Its banes, against a creature of their tags (`bane.rs`).
         let profile = profile.map(|p| self.baned(target, p));
+        // A unique weapon's debt or grudges (`tally.rs`).
+        let profile = profile.map(|p| self.tallied(attacker, target, p));
+        let debt = profile.as_ref().and_then(|p| p.keeps) == Some(crate::content::Keeps::Debt);
         // Favoured prey and a sneak attack.
         let profile = profile.map(|p| self.favoured(attacker, target, p));
         // An ally's master's gifts to it (Beast-bond).
@@ -1011,6 +1025,10 @@ impl World {
         let blow = blow.map(|b| self.holy_wrathed(attacker, target, b));
         // A unique armour's Negate (`negate.rs`): the hit comes to nothing, before anything comes of it.
         let blow = blow.map(|b| self.negated(target, b));
+        let blow = blow.map(|b| Self::thrust_share(b, share));
+        if let Some(b) = blow {
+            self.tally_paid(attacker, debt, b);
+        }
         if blow.is_some_and(|b| b.strike.is_hit()) {
             self.savage_spent(attacker, events);
         }
@@ -1074,8 +1092,10 @@ impl World {
                 self.gain_resource(attacker, Build::Critical);
             }
         }
-        if blow.is_some_and(|b| b.strike.is_hit()) {
+        if let Some(blow) = blow.filter(|b| b.strike.is_hit()) {
             self.gain_resource(target, Build::Struck);
+            // A unique armour's Pain, Scars, and Ring powers (`struck.rs`).
+            self.struck(target, blow, events);
         }
         // Weapon abilities (`weapon_ability.rs`) fire on the same events, and on a melee
         // attack's miss by the target's Shield, Dexterity, or Dodge.
@@ -1130,6 +1150,11 @@ impl World {
         self.grip(attacker, target, kind, blow.as_ref(), events);
         // A unique shield's free spell, on a block beside or a bash (`unique_spell.rs`).
         self.unique_spell((attacker, target), (kind, with), (from, to), blow, events);
+        // A unique weapon's thrust-through: the one behind (`thrust.rs`).
+        if let Some(profile) = thrust {
+            let made = (kind, with, skills);
+            self.thrust_through(attacker, (from, to), made, (profile, blow), events);
+        }
         blow
     }
 
@@ -1272,6 +1297,10 @@ impl World {
         if matches!(harm, Harm::Actor(_)) && self.unstoppable(id, damage, events) {
             return false;
         }
+        // What a unique weapon keeps of it (`tally.rs`).
+        if let Harm::Actor(by) = harm {
+            self.tally_harm(id, by, damage);
+        }
         let Some(actor) = self.state.actors.get_mut(&id) else {
             return false;
         };
@@ -1358,6 +1387,7 @@ impl World {
             return;
         };
         events.push(Event::Died { actor: id, at, of });
+        self.grudges_end(id);
         if id == self.state.player {
             // A blow's dealer, if the player saw it (settled as the turn is perceived); a status
             // names itself instead.
@@ -1509,7 +1539,7 @@ impl World {
         target: ActorId,
         seen: bool,
         events: &mut Vec<Event>,
-    ) {
+    ) -> bool {
         let player = self.state.player;
         self.choose_mark(target);
         let first = self.player_blow(target, seen, None, events);
@@ -1524,6 +1554,7 @@ impl World {
         let first_hit = first.is_some_and(|b| b.strike.is_hit());
         parried |= self.extra_limbs(player, target, first_hit, events).0;
         self.after_attack(player, target, parried, events);
+        first_hit
     }
 
     /// The player strikes `target` in melee: the first blow of an attack (`None`: with what
@@ -1693,7 +1724,9 @@ impl World {
                 _ => None,
             })
             .unwrap_or_default();
-        let died = made.iter().any(|e| matches!(e, Event::Died { .. }));
+        // Its own target's death (a thrust-through may kill another, `thrust.rs`).
+        let died =
+            (made.iter()).any(|e| matches!(e, Event::Died { actor, .. } if *actor == target));
         // How the blow found the one it struck at, in its words (`surprise.rs`).
         let struck_at = end
             .clone()

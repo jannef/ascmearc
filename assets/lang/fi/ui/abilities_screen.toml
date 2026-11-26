@@ -40,9 +40,13 @@ text = "heitto näkemääsi paikkaan"
 of = "82aee0"
 text = "{cost:bare}, tähdättävä"
 
+[charge_free]
+of = "5a731c"
+text = "ei puhtia"
+
 [charge_stamina]
-of = "9856d7"
-text = "{base:bare} puhtia + {per:bare} askelta kohden"
+of = "f45888"
+text = "{base:bare} puhtia + {first:bare}, {second:bare}, {third:bare}… askelista"
 
 [close]
 of = "12c352"
