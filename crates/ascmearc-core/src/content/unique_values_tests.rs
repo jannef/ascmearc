@@ -203,7 +203,12 @@ const UNIQUES: &[Written] = &[
     (
         "smoulder",
         40,
-        &[("sharp", 5), ("keen", 4), ("of_precision", 4)],
+        &[
+            ("sharp", 5),
+            ("keen", 4),
+            ("steady", 6),
+            ("of_precision", 4),
+        ],
     ),
     ("stick", 6, &[]),
     ("stonebiter", 6, &[("sharp", 2), ("of_the_ox", 2)]),

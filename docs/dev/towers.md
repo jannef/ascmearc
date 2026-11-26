@@ -316,7 +316,7 @@ The third of the three towers (design §9, §10): Master Sigeric's, the maker's,
   100`; his own `parting` and `betrayed`), his `[[quest.side]]` (`offer`, `join`, `refuse`), and
   `steorratorr` in the quest's `reveals`. Sigeric's Star (`data/uniques/sigerics_star.toml`) is a
   unique gold ring of his making (item level 12: Potent, of the Magus, of Light, of the Sage set to +6, and a ward
-  against Transfixed; a flawless sapphire setting for its four), placed by his reward and
+  against Transfixed), placed by his reward and
   nothing else
   (`docs/dev/magic-items.md` "Unique items").
 

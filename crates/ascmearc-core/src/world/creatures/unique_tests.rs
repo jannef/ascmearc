@@ -232,7 +232,7 @@ fn unidentified_it_hides_its_name_affixes_power_and_lore() {
     let stack = |w: &World| w.state.actors[&player].inventory[item].clone();
     let hidden = stack(&w);
     assert!(hidden.known_magic().is_none());
-    assert_eq!(hidden.title(&content), "Marvellous stiletto");
+    assert_eq!(hidden.title(&content), "stiletto");
     assert!(!hidden.describe(&content).contains("Widowmaker"));
     let lines = describe::lines(&hidden, &content);
     let shown = |lines: &[describe::Line], kind: LineKind| {
@@ -253,10 +253,7 @@ fn unidentified_it_hides_its_name_affixes_power_and_lore() {
     run(&mut w, "identify");
     let known = stack(&w);
     assert_eq!(known.title(&content), "Widowmaker");
-    assert_eq!(
-        known.describe(&content),
-        "Widowmaker, a Marvellous stiletto"
-    );
+    assert_eq!(known.describe(&content), "Widowmaker, a stiletto");
     let lines = describe::lines(&known, &content);
     assert_eq!(shown(&lines, LineKind::Power), ["Its every cut poisons."]);
     assert_eq!(
@@ -271,7 +268,7 @@ fn unidentified_it_hides_its_name_affixes_power_and_lore() {
 }
 
 /// The form `"mystic=30"` (#2001, #2044): a unique's affixes are written so, never with a tier,
-/// and take the first tier that rolls the value, or past the ladder its last; checked at load.
+/// and take the first tier that rolls the value, or past the ladder its last; read at load.
 #[test]
 fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
     let load = |object: &str, affixes: &str| {
@@ -318,23 +315,13 @@ fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
     // A bow takes flat damage set by hand, though Sharp never rolls on one.
     load("long_bow", "\"sharp=2\"").expect("an effect a bow's shots use");
     for (object, affixes, needle) in [
-        // A penalty (`mystic=-3`, #2091) is a unique's to set; nothing is no value.
-        ("gold_ring", "\"mystic=0\"", "no tier of `mystic` rolls it"),
-        ("gold_ring", "\"mystic=1\"", "no tier of `mystic` rolls it"),
         ("gold_ring", "\"mystic=x\"", "must be a number"),
         ("gold_ring", "\"mystic:2\"", "not a tier"),
         ("gold_ring", "\"mystic\"", "not a tier"),
         ("gold_ring", "\"nothing=3\"", "unknown affix"),
         ("dagger", "\"heavy=8\"", "the value is dice"),
-        // More dice than a tier (`heavy=3d8`, #2091) are a unique's to set, and as many as a
-        // tier of sides a tier of fewer dice rolls (`heavy=2d6`, #2124); sides no tier rolls not.
-        ("dagger", "\"heavy=1d1\"", "no tier of `heavy` rolls it"),
-        ("dagger", "\"heavy=2d1\"", "no tier of `heavy` rolls it"),
         ("dagger", "\"sharp=1d4\"", "must be a number"),
         ("gold_ring", "\"of_light=3\"", "a light's value is a light"),
-        // Range on a ring does nothing, set by hand or not.
-        ("gold_ring", "\"hunters=3\"", "does nothing"),
-        ("gold_ring", "\"mystic=30\", \"mystic=31\"", "category"),
     ] {
         let e = load(object, affixes).expect_err(affixes).to_string();
         assert!(e.contains(needle), "{affixes}: {e}");
@@ -349,17 +336,76 @@ fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
         .get("heavy")
         .and_then(|a| a.tier(heavy.tier));
     assert_eq!((heavy.value, tier.map(|t| t.dice)), (6, Some(1)));
-    // The save's check: a value past the top on the last tier alone, the unique's alone.
+    // The save's check: the unique's affixes as set, but the same magic on any other item
+    // is held to every rule.
     let content = load("gold_ring", "\"mystic=40\"").expect("past the top");
     let unique = content.unique("test_set").expect("loaded");
     let ring = content.object(unique.object);
     unique.magic().check(ring, &content).expect("as set");
-    let mut lower = unique.magic().clone();
-    lower.affixes[0].tier = 1;
+    let mut rare = unique.magic().clone();
+    rare.unique = None;
+    rare.rarity = crate::magic::Rarity::Rare;
     assert!(
-        lower.check(ring, &content).is_err(),
-        "past a tier not the last"
+        rare.check(ring, &content).is_err(),
+        "past the top on a rare"
     );
+}
+
+/// A unique follows no affix rule (the owner, #2152): its table is taken as written, any value,
+/// any dice, any light, any number of one kind or category, on any base, never trimmed; the one
+/// check left is that each affix exists.
+#[test]
+fn a_unique_follows_no_affix_rule() {
+    let load = |object: &str, affixes: &str| {
+        let mut files = files();
+        files.insert(
+            "data/uniques/test_set.toml",
+            &format!(
+                "[[unique]]\nid = \"test_set\"\nname = \"Test Set\"\nobject = \"{object}\"\n\
+                 affixes = [{affixes}]\nlevel = 12\n"
+            ),
+        );
+        Content::load(&files)
+    };
+    for (object, affixes) in [
+        // Nothing, or less than the first tier rolls.
+        ("gold_ring", "\"mystic=0\""),
+        ("gold_ring", "\"mystic=1\""),
+        ("gold_ring", "\"mystic=-3\""),
+        // Dice no tier rolls.
+        ("dagger", "\"heavy=1d1\""),
+        ("dagger", "\"heavy=2d6\""),
+        ("dagger", "\"heavy=9d20\""),
+        // An effect with nothing to change on its base (Range on a ring, a draw on a crossbow).
+        ("gold_ring", "\"hunters=3\""),
+        ("heavy_crossbow", "\"steady=6\""),
+        // Two of one category, and more suffixes than a rare's three.
+        ("gold_ring", "\"mystic=30\", \"mystic=31\""),
+        (
+            "gold_ring",
+            "\"of_the_ox=2\", \"of_the_bear=2\", \"of_the_lynx=2\", \"of_the_owl=2\", \"of_vitality=9\"",
+        ),
+    ] {
+        let content = load(object, affixes).unwrap_or_else(|e| panic!("{affixes}: {e}"));
+        let unique = content.unique("test_set").expect("loaded");
+        let count = affixes.matches('=').count();
+        assert_eq!(
+            unique.magic().affixes.len(),
+            count,
+            "{affixes}: every affix kept"
+        );
+        let def = content.object(unique.object);
+        unique.magic().check(def, &content).expect(affixes);
+    }
+    // Dice between the tiers' counts keep their count; a light no tier gives keeps its light.
+    let content = load("dagger", "\"heavy=2d6\"").expect("two dice");
+    let magic = content.unique("test_set").expect("loaded").magic();
+    let rolled = magic.rolled(&content);
+    assert_eq!((rolled[0].dice, rolled[0].value), (2, 6));
+    let content = load("gold_ring", "\"of_light=radiant_hammer\"").expect("a light");
+    let magic = content.unique("test_set").expect("loaded").magic();
+    let rolled = magic.rolled(&content);
+    assert_eq!(rolled[0].light, content.light_id("radiant_hammer"));
 }
 
 /// A level's `[[item]]` may write an affix with its value (#2044), held within the ladder and
@@ -766,15 +812,10 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
         "a rare of the same roll"
     );
     // Unidentified it says it is unique, as a rare says it is rare.
-    assert_eq!(
-        widowmaker.describe(&content),
-        "a Marvellous stiletto (unique)"
-    );
+    assert_eq!(widowmaker.describe(&content), "a stiletto (unique)");
     let lines = describe::lines(&widowmaker, &content);
     assert!(
-        lines[0]
-            .english(&content)
-            .starts_with("Unique Marvellous stiletto"),
+        lines[0].english(&content).starts_with("Unique stiletto"),
         "{}",
         lines[0].english(&content)
     );

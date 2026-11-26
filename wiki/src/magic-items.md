@@ -14,7 +14,7 @@ magic crystals: see [Enchanting](enchanting.md).
 | Normal | none | "long sword" | white |
 | Magic | a [prefix](affixes.md#prefixes), a [suffix](affixes.md#suffixes), or one of each (most have one) | "Sharp long sword of the Bear" | blue |
 | Rare | three to six affixes (most often three), at most three prefixes and three suffixes, fewer if the item cannot bear them ([Capacity](#capacity)) | "Grim Bite, long sword" | yellow |
-| Unique | set by hand, at most three prefixes and three suffixes | "Widowmaker, stiletto" | golden orange |
+| Unique | set by hand, any number | "Widowmaker, stiletto" | golden orange |
 
 The color is the color of the item's name, in your pack, on the equipment screen, and in its
 description. The item's glyph keeps its own color. Loot never rolls a unique, but a rare find
@@ -311,12 +311,15 @@ A unique item is one of a kind, a [rarity](#rarity) of its own: an item whose na
 and [item level](affixes.md#base-items) are set by hand. Its name is shown in golden orange. It
 also has a **power**, a rule of its own that no affix gives.
 
-Its affixes may go past what loot ever rolls: a value above an affix's highest
-[tier](affixes.md), more dice than any tier gives (the Grandmother's 6d6, Gār's 2d6), a penalty (her −2 to
+A unique follows none of the rules for affixes. It may have any number of them, of any value,
+on any item, however few its make could hold: a value above an affix's highest
+[tier](affixes.md), dice no tier gives (the Grandmother's 6d6, Gār's 2d6), a penalty (her −2 to
 [Dodge](combat.md#defence), which lowers your Defence against every attack), or an affix on a
 kind of item it never rolls on (High Toby, a bow, has +2 damage; the Radiant, a hammer, has +2
-Protection and +2 Dodge). The table below marks such an affix "set" where the
-others name their tier. No random item, shop's ware, or enchantment ever gets one of these.
+Protection and +2 Dodge). An affix with nothing to change on its item does nothing (Smoulder's
+Steady eases a bow's draw, and a crossbow has none). The table below marks such an affix "set"
+where the others name their tier. No random item, shop's ware, or enchantment ever gets one of
+these.
 
 It is found unidentified like any magic item, but its rarity shows ("a stiletto (unique)"). Its
 affixes work as a rare item's do. A [shop](shops.md#magic-items) prices it as a rare item, but by its own item level instead of its affixes' tiers. Once identified, it shows its
