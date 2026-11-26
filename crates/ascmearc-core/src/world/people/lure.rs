@@ -17,8 +17,8 @@
 //!   arrive): the creature on the quest's level with the player, unbound, and the giver there too:
 //!   the binding's `words` are told, then it is bound: its faction is the binding's (at peace),
 //!   its mind calm, its stance neutral, its post the binding's `post`, where `ai.rs` walks it and
-//!   leaves it, and it carries the binding's `status` (no `eases`: for good; circled in
-//!   `data/circles.toml`, so its spell circle shows it). Then the giver says `done` and pays
+//!   leaves it, and it carries the binding's `status` (no `eases`: for good; it glows, in
+//!   `data/spell_glow.toml`, so its bearer's glyph shows it). Then the giver says `done` and pays
 //!   (`complete_saying`). The giver dead or elsewhere: no binding (it hunts the player there as
 //!   anywhere).
 //! - **The boon** ([`World::binding_boon`], one term in `cut.rs` and `set.rs`): while a bound

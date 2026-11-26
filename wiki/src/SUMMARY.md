@@ -101,7 +101,7 @@
   - [Mana](mana.md)
   - [Schools and caster styles](schools.md)
   - [Miscasts](miscasts.md)
-  - [Spell circles](spell-circles.md)
+  - [Spell glow](spell-glow.md)
   - [Wands and rods](wands-and-rods.md)
 - [Prayer](prayer.md)
 

@@ -1,6 +1,6 @@
 # Warlock — Spell circles: a rotating transmutation circle for every buff and hex
 
-**Built; this file is history.** Current behaviour is in spec §4 "Spell circles" and `docs/dev/rendering.md`.
+**Built, then removed; this file is history.** The circles were taken off buffs and hexes (#2173): a buffed or hexed actor's glyph glows instead, and no circle sheds light (docs/dev/rendering.md "Spell glow"; the renderer kept for later, "The circle renderer").
 
 Design document for the owner's review (2026-11-01, revised the same day with the owner's answers: §16). Written against `origin/main` at a9a703a6 (the spell scaling slices S0 to S11). Nothing here is implemented; §14 cuts it into issues. Every number is a first guess kept in data or in one named constant, to be tuned with captures of the test scenario (§13).
 

@@ -57,7 +57,7 @@ All campaign-owned, in `assets/campaigns/ascmearc/data/creatures/` (`deep_gnome*
 line's stones. In no population: only the lure quest makes it, on the crystal hollow at the bottom
 of Meyn Bew, and anew there after a death while the quest is active. Its dialogue has no words:
 one-liners and a `hums` mutter of notes. Bound, it is of the `peaceful` faction, carries `bound`
-(its circle), and stands in the corner of Kerensa's Stones; Kerensa and Ysella then have lines
+(its glow), and stands in the corner of Kerensa's Stones; Kerensa and Ysella then have lines
 about it (`[[dialogue.after]]`).
 
 ## Tests

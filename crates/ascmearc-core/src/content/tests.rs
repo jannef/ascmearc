@@ -750,11 +750,11 @@ fn builtin_races_and_classes_load_in_the_order_offered() {
             assert!(names.len() >= 10, "{} {gender:?}: {names:?}", race.id);
         }
     }
-    // (But the spell circles' hall, which has no character: its player is given every buff
-    // and hex spell instead of a class, docs/design/buff-circles.md §13.2.)
+    // (But the buffs and hexes hall, which has no character: its player is given every buff
+    // and hex spell instead of a class.)
     for scenario in content.scenarios() {
         let named = scenario.character_name.is_some();
-        assert_eq!(named, scenario.id != "circles", "{}", scenario.id);
+        assert_eq!(named, scenario.id != "glow", "{}", scenario.id);
     }
     let classes: Vec<&str> = content.classes().iter().map(|c| c.id.as_str()).collect();
     assert_eq!(

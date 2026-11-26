@@ -314,10 +314,10 @@ fn rank_words(mods: &SpellMods) -> String {
     }
 }
 
-/// The spell circles' statuses (`data/circles.toml`): each buff's and hex's spell, the status it
+/// The glowing statuses (`data/spell_glow.toml`): each buff's and hex's spell, the status it
 /// marks, and its school's colour; buffs first, then hexes, each by spell name.
-pub(super) fn circles(content: &Content) -> String {
-    let mut rows: Vec<(bool, &SpellData, &ascmearc_core::content::CircledStatus)> = (content
+pub(super) fn glow(content: &Content) -> String {
+    let mut rows: Vec<(bool, &SpellData, &ascmearc_core::content::GlowingStatus)> = (content
         .spells())
     .iter()
     .filter(|s| matches!(s.kind, SpellPurpose::Buff | SpellPurpose::Hex))
@@ -326,7 +326,7 @@ pub(super) fn circles(content: &Content) -> String {
         Some((
             s.kind == SpellPurpose::Hex,
             s,
-            content.circles().of(status)?,
+            content.spell_glow().of(status)?,
         ))
     })
     .collect();
@@ -342,7 +342,7 @@ pub(super) fn circles(content: &Content) -> String {
             if hex { "hex" } else { "buff" },
             link(Term::Status, &status.id, &status.name),
             link(Term::School, row.school.id(), row.school.id()),
-            content.circles().color(row.school),
+            content.spell_glow().color(row.school),
         );
     }
     out

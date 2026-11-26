@@ -359,11 +359,7 @@ fn brands_fire_hurts_and_never_burns_for_type_rules_never_reach_a_blow() {
 
 #[test]
 fn each_status_sheds_its_light_while_it_lasts_and_shows_on_the_wearer() {
-    for (name, light) in [
-        ("fire_cloaked", "ember"),
-        ("branded_blade", "ember"),
-        ("water_borne", "circle_transmutation"),
-    ] {
+    for (name, light) in [("fire_cloaked", "ember"), ("branded_blade", "ember")] {
         let mut w = showcase(1);
         let kobold = kobold_at(&mut w, (2, 0), 50);
         let light = w.content().light_id(light).expect("a light");

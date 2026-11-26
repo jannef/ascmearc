@@ -16,7 +16,7 @@ expression: shown
                     │     Screen fades        On                               │
                     │     Screen shake        On                               │
                     │     Weather             On                               │
-                    │   Spell circles         On                               │
+                    │   Spell glow            On                               │
                     │   Blood                 On                               │
                     │   Color palette         Default                          │
                     │   Clock                 24-hour                          │

@@ -5,7 +5,7 @@
 //! instance, easing by its own clock. One hook, in [`World::afflict`], the one door every status
 //! passes, so every source counts: a spell, a scroll of one, a potion, a boon.
 //!
-//! A buff is a status a buff spell lays (`circles.toml`'s rows that are not a hex's) or a potion
+//! A buff is a status a buff spell lays (`SpellPurpose::Buff`) or a potion
 //! lends (`Draught::lends`). A hex never crosses, nor anything else (a harm, a cooldown, Winded,
 //! Raging, a mimic's disguise). The shared one does not cross back (no echo). Nothing is drawn.
 //!
@@ -13,7 +13,7 @@
 //! viewpoint); the witch's familiar will read that one alone.
 
 use crate::action::Event;
-use crate::content::{Content, StatusId};
+use crate::content::{Content, SpellPurpose, StatusId};
 use crate::lang::Msg;
 use crate::msg;
 use crate::world::{ActorId, World};
@@ -64,13 +64,12 @@ impl World {
     }
 }
 
-/// Whether `status` is a buff (the module docs): a buff spell's (circled, not a hex) or one a
-/// potion lends.
+/// Whether `status` is a buff (the module docs): a buff spell's or one a potion lends.
 pub(crate) fn is_buff(content: &Content, status: StatusId) -> bool {
-    if let Some(row) = content.circles().of(status) {
-        return !row.hex;
-    }
-    (content.object_defs().iter())
-        .filter_map(|o| o.drink.as_ref())
-        .any(|d| d.does.lends().is_some_and(|(s, _)| s == status))
+    let spell = (content.spells().iter())
+        .any(|s| s.kind == SpellPurpose::Buff && s.effect.status.is_some_and(|(t, _)| t == status));
+    spell
+        || (content.object_defs().iter())
+            .filter_map(|o| o.drink.as_ref())
+            .any(|d| d.does.lends().is_some_and(|(s, _)| s == status))
 }

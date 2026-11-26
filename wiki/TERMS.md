@@ -335,7 +335,7 @@ above.
 | Spell rank, deepening a spell, rereading a grimoire | `learning-spells.md#spell-ranks` |
 | Forgetting a spell, a forgotten spell, ranks lost to a miscast | `miscasts.md#forgotten-spells` |
 | Wand, rod, charges | `wands-and-rods.md#wands`, `wands-and-rods.md#rods` |
-| Spell circle, buff, hex (as seen on a creature) | `spell-circles.md#spell-circles` |
+| Spell glow, buff, hex (as seen on a creature) | `spell-glow.md#spell-glow` |
 | Resource (Rage, Ki, Focus, …) | `resources.md` (a resource: its row; Rage: `rage.md`) |
 | **Creatures and people** | |
 | Creature, monster | `creatures.md` (a creature: its row) |

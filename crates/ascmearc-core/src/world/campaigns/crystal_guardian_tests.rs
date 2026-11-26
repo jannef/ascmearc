@@ -1,7 +1,7 @@
 //! Ysella the Binder's quest, "The crystal guardian" (#1446; `campaigns/ascmearc/data/quests/
 //! ysella.toml`, `world/people/lure.rs`): asked, she opens the crystal portal beside her into Meyn Bew;
 //! the guardian waits in the crystal hollow on its fourth floor, follows the player up every stair
-//! and out through the portal, and in Gimmwīc she binds it: at peace for good, its circled status
+//! and out through the portal, and in Gimmwīc she binds it: at peace for good, its glowing status
 //! on it, it walks to Kerensa's Stones and stays, and Jewelcraft's checks in the town go better.
 //! Killed unbound, it forms again in the hollow. The load checks of a lure quest; a replay.
 

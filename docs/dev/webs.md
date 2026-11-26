@@ -41,7 +41,7 @@ web keeps nothing.
 catch), a flask's (the flask of tar) `flask.rs::splash`. Scrolls and wands cast through the
 player's path. The webs stay until fire burns them. The spell grows by its reach and its burst
 (`range`, a `radius` ladder on Presence; ranks add cells, cut mana and time, and widen the burst
-at 10); it has no degrees. Webbed has no spell circle (`data/circles.toml`): webs are strands, not
+at 10); it has no degrees. Webbed has no spell glow (`data/spell_glow.toml`): webs are strands, not
 a spell on the creature.
 
 ## Spinning

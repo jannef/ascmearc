@@ -1,16 +1,17 @@
-//! Spell circles from the perception snapshot: which seen actors
-//! are circled and with what, and where each circle stands and how far it has turned this frame.
-//! `render/circles.rs` draws them.
+//! Spell glow from the perception snapshot (docs/dev/rendering.md "Spell glow"): which seen
+//! actors are buffed or hexed (`data/spell_glow.toml`), and where each stands this frame. Their
+//! glyphs glow and glint in the colour of their first effect's school: the one sign on the map of
+//! a buff or a hex. Drawn by the circle renderer (`render/circles.rs`) with its lines off
+//! ([`Circles::lines`]): the glyph's halo and glints alone, no rings, no polygon.
 //!
 //! The snapshot only: the player's own statuses (`own_effects`) and a seen creature's that show
-//! (`effects_of`, statuses with `seen`; every circled status has it), in status order. No severity
-//! and no time left: a circle says what the status bar and look mode say. An unseen actor has no
-//! circle. The list is rebuilt when the game changes (a turn), the angles, the fades and glides
-//! (`circle_tracks.rs`), and the sliding positions every frame.
+//! (`effects_of`, statuses with `seen`; every glowing status has it), in status order. No severity
+//! and no time left: a glow says what the status bar and look mode say. An unseen actor does not
+//! glow. The list is rebuilt when the game changes (a turn), the fades in and out
+//! (`circle_tracks.rs`) and the sliding positions every frame.
 
 use super::circle_tracks::Tracks;
 use super::motion::Motion;
-use crate::cli::Args;
 use crate::game::Game;
 use crate::render::atlas::{self, Font, GlyphAtlas};
 use crate::render::circles::{self, CircleInstance, Circles, Mark, SchoolColors};
@@ -24,13 +25,13 @@ use ascmearc_core::content::{School, school_index};
 use ascmearc_core::world::{ActorId, ActorKind};
 use bevy::prelude::*;
 
-/// How emissive a circle's ink is with glow on (`post::emissive`: × 1.1), the design's §8.4.
-const CIRCLE_GLOW: f32 = 0.1;
+/// How emissive a glow's colour is with the `glow` switch on (`post::emissive`: × 1.1).
+const GLOW_EMISSIVE: f32 = 0.1;
 
-/// The circled actors of the current turn (who and where they stand), their circles' fades and
-/// glides, and whether the list is current (it is not after a frame with circles off).
+/// The glowing actors of the current turn (who and where they stand), their glows' fades, and
+/// whether the list is current (it is not after a frame with the spell glow off).
 #[derive(Default)]
-pub(super) struct Circled {
+pub(super) struct Glowing {
     list: Vec<(ActorId, Pos)>,
     tracks: Tracks,
     current: bool,
@@ -44,10 +45,10 @@ pub(super) fn emit(
     effects: Res<Effects>,
     settings: Res<Settings>,
     light: Res<VisualLight>,
-    (font, atlas, args): (Res<Font>, Res<GlyphAtlas>, Res<Args>),
+    (font, atlas): (Res<Font>, Res<GlyphAtlas>),
     mut out: ResMut<Circles>,
     mut colors: ResMut<SchoolColors>,
-    mut circled: Local<Circled>,
+    mut circled: Local<Glowing>,
 ) {
     out.clip = grid.clip;
     out.cell_height = grid.cell.y;
@@ -55,19 +56,20 @@ pub(super) fn emit(
     out.cell = grid.cell;
     out.glyph_px = atlas.px;
     out.time = visual.seconds;
-    // The glints and the shimmer move with motion on (at the frozen moment under
-    // `--freeze-time`), and everything glows but with reduced effects (which also stills them).
+    // No rings, no polygon: a buff or a hex shows as its bearer's glyph's glow alone.
+    out.lines = false;
+    // The glints move with motion on (at the frozen moment under `--freeze-time`); the halo stays
+    // with reduced effects (information, as the setting is: it only stills, the glints gone).
     out.motion = effects.motion;
-    out.halo = !(settings.reduced_effects || args.reduced_effects);
+    out.halo = true;
     out.bloom = effects.glow;
     let view = game.world.perception();
     let content = view.content();
     if settings.is_changed() || effects.is_changed() || colors.0 == [Vec4::ZERO; 8] {
-        let defs = content.circles();
+        let defs = content.spell_glow();
         let mut table = [Vec4::ONE; 8];
-        // The circle sheds its school's light (core: the status's `light`); with glow on its
-        // ink is a little emissive too.
-        let glow = if effects.glow { CIRCLE_GLOW } else { 0.0 };
+        // With the `glow` switch on the colour is a little emissive.
+        let glow = if effects.glow { GLOW_EMISSIVE } else { 0.0 };
         for school in School::ALL {
             let c = settings.palette.apply(defs.color(school), Role::Fg);
             let linear = emissive(Color::srgb_u8(c.r, c.g, c.b).to_linear(), glow);
@@ -75,7 +77,7 @@ pub(super) fn emit(
         }
         colors.set_if_neq(SchoolColors(table));
     }
-    if !effects.circles {
+    if !effects.spell_glow {
         circled.current = false;
         circled.tracks = Tracks::default();
         return;
@@ -84,8 +86,8 @@ pub(super) fn emit(
     let animate = effects.motion && !visual.frozen;
     if game.is_changed() || !circled.current {
         circled.current = true;
-        let defs = content.circles();
-        let Circled { list, tracks, .. } = &mut *circled;
+        let defs = content.spell_glow();
+        let Glowing { list, tracks, .. } = &mut *circled;
         list.clear();
         let mut seen = Vec::new();
         for actor in view.actors() {
@@ -101,7 +103,7 @@ pub(super) fn emit(
                 };
                 Some((mark, def.hex))
             }));
-            // An actor whose circle has just gone keeps its place in the list while it fades.
+            // An actor whose glow has just gone keeps its place in the list while it fades.
             if !circle.is_empty() || tracks.has(actor.id) {
                 list.push((actor.id, actor.pos));
                 seen.push((actor.id, circle));
@@ -115,8 +117,7 @@ pub(super) fn emit(
         let at = motion.actor_pos(id, pos, time);
         // Centred on the actor's glyph's ink, not its cell: a glyph sits on the baseline, its
         // ink above the cell's middle or below it (`@` reaches under the baseline).
-        // The glyph drawn there glows and glints within its circle (the snapshot's glyph: what the
-        // player sees).
+        // The glyph drawn there glows and glints (the snapshot's glyph: what the player sees).
         let drawn = view.actor_at(pos).map(|a| a.glyph(content));
         let ink = ink(&font.0, atlas.px, drawn.unwrap_or('@'), grid.cell);
         out.push(CircleInstance {

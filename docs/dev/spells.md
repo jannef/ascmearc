@@ -469,10 +469,10 @@ cast path shares.
     (`Cast::degrees`, the base without a cast); Bleeding refuses the bloodless (Q7, below and
     `docs/dev/status-effects.md`); and a status `regen` above 100 quickens healing when no status
     or disease slows it (`Effects::regen`, `World::healing_rate_at`: the slowest counts while any
-    is below 100, else the fastest). Each new buff's and hex's status has a circle row
-    (`data/circles.toml`: `cat_eyed`, `glamoured`, `renewing`, `pinned`, `frightened`,
-    `silenced`, `transfixed`, `asleep`), so it sheds its school's faint light whatever laid it
-    (a Trip's Pinned, Intimidate's Frightened too), and Malison's `status_damage` rows name the
+    is below 100, else the fastest). Each new buff's and hex's status has a glow row
+    (`data/spell_glow.toml`: `cat_eyed`, `glamoured`, `renewing`, `pinned`, `frightened`,
+    `silenced`, `transfixed`), so its bearer's glyph glows whatever laid it (a Trip's Pinned,
+    Intimidate's Frightened too), and Malison's `status_damage` rows name the
     five new hex statuses. `spell_list_tests`' class check: a full caster three to twelve spells
     (Q13), a hybrid (bard, paladin, ranger) up to five (the bard's: Mend, Mesmerise,
     Thunderclap, Bind, Sense the quick), of any level or kind: spells are not class-specific
@@ -1182,12 +1182,11 @@ the shape too and refuses each field off its kind and shape).
   that is not undead, a construct, an elemental (by tag), or an animated thing. Perception's `noise::perceive`
   leaves out the ones the player sees and places the rest roughly; `Exact::All` (Tracker) never
   places a heartbeat exactly. The deaf feel nothing. `SoundKind::Heartbeat`, "a heartbeat", `q` in
-  the sound layer. The circled status (`data/circles.toml`, divination) sheds its circle's light,
-  as every circled buff does.
+  the sound layer. Its status glows (`data/spell_glow.toml`, divination).
 - **See invisible** (divination, level 7, a buff on `self`): Seeing (`seeing`, five minutes),
   a status that `sees_unseen`: while it lasts `world::unseen_by_player` hides no one, the
   invisible and the shadowy in the dim alike (docs/dev/creatures.md "The unseen"). The potion of
-  seeing gives the same status (a `vision` drink whose status `sees_unseen`). Circled
+  seeing gives the same status (a `vision` drink whose status `sees_unseen`). It glows
   (divination).
 - **Shatter**: data only on force's rules, with the `shatter` burst effect (`data/effects.toml`:
   white and brief); Thunderclap's look too.

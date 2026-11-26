@@ -109,20 +109,6 @@ fn light_name(content: &Content, id: LightId) -> String {
     if !tended.is_empty() {
         return format!("Your lantern ({})", tended.join(", "));
     }
-    // A spell circle's: every circled status of a school sheds it, on anyone.
-    let circled: Vec<&str> = (content.circles().rows().iter())
-        .filter(|r| content.status(r.status).light == Some(id))
-        .map(|r| content.status(r.status).name.as_str())
-        .collect();
-    if let Some(school) = preset.id.strip_prefix("circle_") {
-        return match circled.is_empty() {
-            true => format!("Spell circle, {school} (no status sheds it yet)"),
-            false => format!(
-                "Spell circle, {school} (anyone {})",
-                circled.join(", ").to_lowercase()
-            ),
-        };
-    }
     let statuses: Vec<&str> = (content.status_defs().iter())
         .filter(|s| s.light == Some(id))
         .map(|s| s.name.as_str())

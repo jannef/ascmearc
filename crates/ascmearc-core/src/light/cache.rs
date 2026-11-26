@@ -306,8 +306,7 @@ impl LevelLights {
                     });
                 }
             }
-            // The light of a status that sheds one (Lit; a spell circle's,
-            // §4.8): the widest, the first in status order on a tie. A disguised mimic sheds
+            // The light of a status that sheds one (Lit, a fire cloak's flames): the widest, the first in status order on a tie. A disguised mimic sheds
             // none: its disguise would glow.
             let radius = |id: LightId| content.light(id).radius;
             let lit = (actor.effects.iter())

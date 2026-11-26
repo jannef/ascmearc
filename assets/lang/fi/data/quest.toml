@@ -247,7 +247,7 @@ where = { text = "Meyn Bew aukiaa Ysellan vierest, Gimmwīcin puutarhas; vartija
 words = [
     { text = "Ysella nostaa kätensä ja laulaa yhden pitkän, matalan sävelen.", of = "b04423" },
     { text = "Kristallivartija pysähtyy ja soi takaisin, puhtaasti ja kirkkaasti. Sävel jatkuu ja jatkuu.", of = "01406b" },
-    { text = "Kun se loppuu, vartija seisoo hiljaa. Ruusunvioletti valokehä kiertää hitaasti sen ympärillä.", of = "625e3e" },
+    { text = "Kun se loppuu, vartija seisoo hiljaa, ruusunvioletti hehku yllään.", of = "8d0cdd" },
 ]
 shatters = { text = "Kristallivartija hajoaa sirpaleiksi. Kaukana alhaalla, sen onkalossa, kristalli alkaa kasvaa.", of = "ab4114" }
 reforms = { text = "Jossain tässä kerroksessa kristalli soi kasvaessaan jälleen vartijaksi.", of = "f0aa80" }

@@ -263,8 +263,8 @@ view, and it draws nothing and changes nothing (perception is a pure read of the
 
 **Shared buffs** (`BeastEffect::SharedBuffs` → `BeastMods::shared_buffs`), `world/allies/bond.rs`, one
 hook: `World::afflict`, the one door of every status (`status-effects.md`), calls `afflict_one`
-and then `share_buff`. With the talent, a **buff** (`bond::is_buff`: a status of a buff spell, a
-`circles` row that is not a hex, or one a potion lends, `Draught::lends`) on the player lands on
+and then `share_buff`. With the talent, a **buff** (`bond::is_buff`: a status a buff spell lays,
+or one a potion lends, `Draught::lends`) on the player lands on
 `World::companion()` (on the level or in the retinue) and one on the companion on the player, by
 `afflict_one`, so at the same severity, with no echo; each is its own `Effect`, easing by its own
 clock. A hex, a harm, a cooldown, Winded, Raging never cross. "Snel is bark-skinned too." when it
@@ -313,8 +313,7 @@ if it has none), for nothing and without the talent; each melee hit of the compa
 quarry pays the player a point of Focus.
 
 **Hunter's bond** never carries Savage to the ranger: its door (`bond.rs::is_buff`) passes only
-what a buff spell's circle row or a potion lends, and Savage is neither (nor does `circles.toml`
-list it). It reads only on the companion's blows and is the price of Focus.
+what a buff spell or a potion lends, and Savage is neither. It reads only on the companion's blows and is the price of Focus.
 
 Tests: `world/allies/sic_tests.rs` (the table's row and data; the set-on, its focus and time; the
 refusals; a neutral creature; the menu; every hit a critical and a degree, gone at three; speed;

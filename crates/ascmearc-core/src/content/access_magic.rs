@@ -2,9 +2,9 @@
 //! enchanting, rods, and spell effects.
 
 use super::{
-    CircleStatuses, Content, Crystals, DamageTypeId, DecipherRules, EffectDef, EnchantingRules,
-    Miscast, MiscastRules, Mishap, RodEffect, SpellData, SpellId, SpellRules, SpellType, StatusId,
-    StudyRules,
+    Content, Crystals, DamageTypeId, DecipherRules, EffectDef, EnchantingRules, Miscast,
+    MiscastRules, Mishap, RodEffect, SpellData, SpellGlow, SpellId, SpellRules, SpellType,
+    StatusId, StudyRules,
 };
 
 impl Content {
@@ -111,10 +111,10 @@ impl Content {
         &self.effects
     }
 
-    /// The spell circles' statuses of `data/circles.toml` (none without the file). The renderer draws
-    /// their circles; the one rule they make, a circled status's light, is in its `StatusDef::light`.
-    pub fn circles(&self) -> &CircleStatuses {
-        &self.circles
+    /// The glowing statuses of `data/spell_glow.toml` (none without the file): the renderer makes
+    /// their bearers' glyphs glow. Presentation only.
+    pub fn spell_glow(&self) -> &SpellGlow {
+        &self.spell_glow
     }
 
     /// The spell effect with id `id`.

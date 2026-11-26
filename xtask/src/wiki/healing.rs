@@ -347,7 +347,7 @@ fn brought_by(content: &Content, status: usize) -> Option<String> {
 /// What else a status does while it lasts and as it ends, in words: its fighting bonuses (as a
 /// stance's), how much slower it makes every action, what it keeps you from doing, and what
 /// follows it: a phrase each, not capitalised, to join.
-fn also(content: &Content, status: usize, def: &StatusDef) -> Vec<String> {
+fn also(content: &Content, def: &StatusDef) -> Vec<String> {
     let mut parts = Vec::new();
     let c = def.combat;
     let fighting: Vec<String> = [
@@ -456,17 +456,7 @@ fn also(content: &Content, status: usize, def: &StatusDef) -> Vec<String> {
             1 => "on your cell and the cells beside you".to_string(),
             r => format!("{r} cells around you"),
         };
-        // A status with no light of its own in data/status/ sheds its spell circle's
-        // (data/circles.toml; the loader fills `StatusDef::light` with it): say which.
-        let circle = (content.circles().rows().iter())
-            .find(|row| usize::from(row.status.0) == status && row.light == light);
-        match circle {
-            Some(row) => parts.push(format!(
-                "its {} spell circle sheds a faint light {reach} (everyone sees it)",
-                row.school.id()
-            )),
-            None => parts.push(format!("you shed light {reach}")),
-        }
+        parts.push(format!("you shed light {reach}"));
     }
     if let Some(senses) = def.senses {
         parts.push(format!(
@@ -603,7 +593,7 @@ pub(super) fn status_effects(content: &Content) -> String {
                 out,
                 "| {} | {} | {} | {} |",
                 anchored(Term::Status, &def.id, &def.name),
-                status_does(content, i, def),
+                status_does(content, def),
                 causes(content, i, def),
                 status_ends(content, i, def),
             );
@@ -615,7 +605,7 @@ pub(super) fn status_effects(content: &Content) -> String {
 
 /// What a status does while it lasts, in words: what it costs, its stats, how fast hit points
 /// come back, the rest ([`also`]), and how others show it.
-fn status_does(content: &Content, status: usize, def: &StatusDef) -> String {
+fn status_does(content: &Content, def: &StatusDef) -> String {
     let mut parts = Vec::new();
     match def.tick {
         Some(tick) if def.damage > 0 => {
@@ -659,7 +649,7 @@ fn status_does(content: &Content, status: usize, def: &StatusDef) -> String {
         0 => parts.push("hit points do not come back".into()),
         r => parts.push(format!("hit points come back {}", pace(u32::from(r)))),
     }
-    parts.extend(also(content, status, def));
+    parts.extend(also(content, def));
     if let Some(seen) = &def.seen {
         parts.push(format!("shows on others as \"{seen}\""));
     }

@@ -32,7 +32,6 @@ mod calendar;
 mod calling;
 mod campaign;
 mod chest;
-mod circles;
 mod class;
 mod companion;
 mod craving;
@@ -211,6 +210,7 @@ mod slot;
 mod smite;
 mod spell;
 mod spell_def;
+mod spell_glow;
 mod spell_ladder;
 mod spell_mod;
 mod spell_rank;
@@ -282,7 +282,6 @@ pub use calendar::Calendar;
 pub use calling::CallingDef;
 pub use campaign::{CAMPAIGNS, CampaignDef, CampaignKind};
 pub use chest::{ChestBand, ChestLoot, ChestRules};
-pub use circles::{CircleStatuses, CircledStatus, school_index};
 #[cfg(test)]
 pub(crate) use class::strip_tables as strip_class_tables;
 pub use class::{BonusTalents, ClassActive, ClassDef};
@@ -443,6 +442,7 @@ pub use spell_def::{
     Resolution, School, Shape, SpellBlink, SpellCharm, SpellData, SpellEffect, SpellId, SpellLook,
     SpellPurpose, SpellRise, SpellRules, SpellSummon, SpellWeather, SpellZone, ZoneKind,
 };
+pub use spell_glow::{GlowingStatus, SpellGlow, school_index};
 pub use spell_ladder::{Ladder as SpellLadder, MAX_SCORE, RungValue, Unit as LadderUnit};
 pub use spell_mod::{SpellMod, SpellModSpec, SpellMods, merge_rider};
 pub use spell_rank::{MAX_SPELL_RANK, RankSpec, Ranks};
@@ -815,9 +815,8 @@ pub struct Content {
     background: Option<Background>,
     /// Spell effects, in `data/effects.toml` order: presentation only.
     effects: Vec<EffectDef>,
-    /// Spell circles' statuses (`data/circles.toml`): a circled status sheds its school's light, so the
-    /// rows' statuses and schools are fingerprinted.
-    circles: CircleStatuses,
+    /// The glowing statuses (`data/spell_glow.toml`): presentation only.
+    spell_glow: SpellGlow,
     hunger: Option<HungerDef>,
     /// The corpse object of each creature type, by creature id (`None`: it leaves none).
     corpses: Vec<Option<ObjectId>>,
@@ -1161,11 +1160,10 @@ impl Content {
                 ));
             }
         }
-        // Spell circles name statuses and the spells that lay them.
-        let path = "data/circles.toml";
+        // The spell glow names statuses and the spells that lay them.
+        let path = "data/spell_glow.toml";
         if let Some(text) = files.get_optional(path) {
-            content.circles = circles::parse(path, text, &content)?;
-            circles::shed_lights(&mut content);
+            content.spell_glow = spell_glow::parse(path, text, &content)?;
         }
         scroll::check_spells(&content).map_err(|m| ContentError::new("data/objects", m))?;
         talent::check_heirlooms(&content).map_err(|m| ContentError::new("data/talents", m))?;

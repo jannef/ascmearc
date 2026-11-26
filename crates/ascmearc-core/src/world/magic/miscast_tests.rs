@@ -459,10 +459,10 @@ fn a_seen_line_names_the_caster_in_lower_case_inside_it() {
 
 #[test]
 fn a_run_that_miscasts_replays_the_same() {
-    // The circles' caster knows every buff and hex but is no master of Spellcraft: casting
+    // The buffs hall's caster knows every buff and hex but is no master of Spellcraft: casting
     // Haste and Fire cloak again and again miscasts.
     let content = builtin();
-    let mut w = World::new(content.clone(), "circles", None).expect("world");
+    let mut w = World::new(content.clone(), "glow", None).expect("world");
     let mut replay = crate::replay::Replay::new(&w);
     let actions = "use:haste use:fire_cloak use:renewal use:haste use:fire_cloak use:renewal";
     for action in crate::action::parse_actions(actions).expect("actions") {

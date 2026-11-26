@@ -33,10 +33,10 @@ pub(in crate::world) mod zone;
 cfg_if! {
     if #[cfg(test)] {
         mod backfire_tests;
+        mod buff_hall_tests;
         pub(in crate::world) mod cast_tests;
         mod caster_style_tests;
         pub(in crate::world) mod caster_tests;
-        mod circle_tests;
         mod concentration_tests;
         mod corpse_spell_tests;
         mod decipher_tests;

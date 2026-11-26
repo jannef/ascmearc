@@ -5,7 +5,7 @@
 # the guardian is made on the crystal hollow's bed (`waits`, world/people/lure.rs). It follows whoever
 # stands beside it as they take the stairs, so the player leads it up four floors and out through
 # the portal; in Gimmwīc, with Ysella there, she binds it (`[quest.binding]`): for good at
-# peace, its spell circle on it, it walks to Kerensa's Stones and keeps to the corner by her
+# peace, glowing with its binding, it walks to Kerensa's Stones and keeps to the corner by her
 # counter, and Jewelcraft's Cut and Set go better anywhere in the town while it stands there.
 # Killed unbound, it forms again in the hollow the next time the player comes down to it.
 
@@ -34,7 +34,7 @@ post = [67, 4]
 words = [
     "Ysella lifts her hands and sings one long, low note.",
     "The crystal guardian stops, and rings back, true and clear. The note goes on, and on.",
-    "When it ends, the guardian stands quiet. A circle of rose-violet light turns slowly about it.",
+    "When it ends, the guardian stands quiet, a rose-violet glow about it.",
 ]
 shatters = "The crystal guardian bursts into shards. Far below, in its hollow, crystal begins to grow."
 reforms = "Somewhere on this floor, crystal rings as it grows into a guardian again."
