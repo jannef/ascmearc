@@ -113,8 +113,11 @@ fn the_placed_uniques_never_join_the_pool() {
     let stone = c.unique("cracked_resurrection_stone").expect("the stone");
     assert!(stone.stack.magic().expect("magic").cursed(c));
     let rare = rares(&sure, stone.magic().level, 1).remove(0);
-    let unique = instead(&sure, &mut Rng::stream(0, "pool"), &rare, &found).expect("a sure pool");
-    assert_eq!(member(&sure, &unique), Some("cracked_resurrection_stone"));
+    // Whichever stream draws it: the pool at its level holds others too.
+    let unique = (0..1000)
+        .map(|i| instead(&sure, &mut Rng::stream(i, "pool"), &rare, &found).expect("a sure pool"))
+        .find(|u| member(&sure, u) == Some("cracked_resurrection_stone"))
+        .expect("the stone, from some stream");
     assert!(unique.magic().expect("magic").cursed(&sure));
 }
 
