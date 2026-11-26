@@ -69,8 +69,10 @@ pub(super) fn valued(
     if unique {
         let kind = (def.kind).ok_or_else(|| format!("`{}` cannot be magic", def.id))?;
         // Protection counts on whatever is worn or wielded (`Actor::protection`), so a unique
-        // weapon may add it (#2091: the Radiant's +2); no affix rolls it on one (its bases).
-        let held_protection = a.effect == Effect::Protection && kind == ItemKind::Weapon;
+        // weapon or shield may add it (#2091: the Radiant's +2; #2132: the Eorðfæst's +3); no
+        // affix rolls it on one (its bases).
+        let held_protection =
+            a.effect == Effect::Protection && matches!(kind, ItemKind::Weapon | ItemKind::Shield);
         let works = a.effect.allowed_on(kind) || held_protection;
         if !works || !crate::magic::may_roll_on(a, def) {
             return Err(format!(

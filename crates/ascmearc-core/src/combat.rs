@@ -292,6 +292,13 @@ pub struct Profile {
     /// arrows of undead-bane), by tag in the order first met: added where the attack meets its
     /// target (`World::resolve`), only when the target's type carries the tag.
     pub banes: Vec<(String, i32)>,
+    /// The damage dice and to-hit by the wielder's level of the unique weapon it is made with
+    /// (the Stick's Grows): set in place of its dice where it meets its target
+    /// (`World::resolve`, `world/combat/grows.rs`), and for the player's own attacks shown.
+    pub grows: Option<crate::content::WeaponGrowth>,
+    /// A hit on a foe at full health is a sure critical (Satisfaction's FirstBlood), decided
+    /// where it meets its target (`World::resolve`, `world/combat/first_blood.rs`).
+    pub first_blood: bool,
 }
 
 /// What an attack is made with, as data gives it: a weapon (`data/objects.toml`) or a creature's
@@ -420,6 +427,8 @@ impl Profile {
             on_hit: Vec::new(),
             thrust: None,
             banes: Vec::new(),
+            grows: None,
+            first_blood: false,
         }
     }
 
@@ -742,6 +751,8 @@ mod tests {
             on_hit: Vec::new(),
             thrust: None,
             banes: Vec::new(),
+            grows: None,
+            first_blood: false,
         }
     }
 

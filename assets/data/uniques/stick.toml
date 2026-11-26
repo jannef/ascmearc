@@ -1,0 +1,16 @@
+# The Stick (#2126, the owner's ladder): a club for the drop pool (#2103; placed nowhere else
+# but the test world's quarry), item level 6, so it may be found early. No affixes at all: its
+# Grows power sets its damage dice by its wielder's level, a rung every five levels, 1d4 below 5
+# up to 6d12 at 60, and +1 to hit every ten levels (`world/combat/grows.rs`). Strength, Big hands
+# and the Maces skill add as they add to any club. The worst weapon in the game at level 1 and
+# the best at 60.
+[[unique]]
+id = "stick"
+name = "the Stick"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "club"
+affixes = []
+level = 6
+power = { grows = ["1d4", "1d6", "1d8", "1d10", "1d12", "2d8", "2d10", "2d12", "3d10", "3d12", "4d12", "5d12", "6d12"], every = 5, to_hit_every = 10, phrase = "It seems to have got heavier." }
+lore = "It was a stick when they set out. Nobody remembers when it stopped being one."

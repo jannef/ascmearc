@@ -1,0 +1,22 @@
+# The Eorðfæst (#2132, "fixed in the earth"): a tower shield for the drop pool (#2103; placed
+# nowhere else but the test world's quarry), item level 40. Its Plant power: every turn its
+# bearer ends where they began adds 1 Protection, with no cap, and a step takes it all away;
+# planted at all, they are never driven from their cell nor caught flat-footed unawares
+# (`world/combat/plant.rs`). Sturdy 3 (the ladder's top), Hardened 3 (+3 Protection, which no
+# affix rolls on a shield), of the Tortoise 3, of the Ox 4, and 30% heavier (Featherweight −30,
+# a penalty only a unique carries: heavy, but no curse). Every value set by hand
+# (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "eorthfaest"
+name = "the Eorðfæst"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "tower_shield"
+affixes = ["featherweight=-30", "hardened=3", "sturdy=3", "of_the_ox=4", "of_the_tortoise=3"]
+level = 40
+# Five enchantments need its make (docs/dev/enchanting.md): Masterwork (4) and a smokestone set
+# in its inlay (+1).
+quality = "masterwork"
+parts = [{ part = "inlay", of = "smokestone" }]
+power = { plant = 1, phrase = "The longer its bearer stands, the harder they are to hurt, and nothing moves them." }
+lore = "Put your back to it and the mountain is behind you. Walk, and it is only wood and iron."

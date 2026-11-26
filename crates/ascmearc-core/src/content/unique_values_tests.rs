@@ -40,6 +40,17 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "eorthfaest",
+        40,
+        &[
+            ("featherweight", -30),
+            ("hardened", 3),
+            ("sturdy", 3),
+            ("of_the_ox", 4),
+            ("of_the_tortoise", 3),
+        ],
+    ),
+    (
         "gar",
         32,
         &[
@@ -142,6 +153,17 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "satisfaction",
+        32,
+        &[
+            ("guarding", 2),
+            ("keen", 4),
+            ("of_celerity", 12),
+            ("of_precision", 4),
+            ("of_the_lynx", 2),
+        ],
+    ),
+    (
         "scarhide",
         30,
         &[
@@ -171,6 +193,7 @@ const UNIQUES: &[Written] = &[
         40,
         &[("sharp", 5), ("keen", 4), ("of_precision", 4)],
     ),
+    ("stick", 6, &[]),
     ("stonebiter", 6, &[("sharp", 2), ("of_the_ox", 2)]),
     (
         "tiptoe",

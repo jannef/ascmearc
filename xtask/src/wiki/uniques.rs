@@ -290,6 +290,33 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
              struck (friend or foe, the next cell along the line from the wielder), rolled to \
              hit on its own, for {percent}% of the damage (at least 1); thrown, it does not"
         ),
+        Some(Power::Grows(growth)) => {
+            let every = growth.every;
+            let mut rungs = Vec::new();
+            for (i, dice) in growth.steps.iter().enumerate() {
+                let from = u32::try_from(i).unwrap_or(u32::MAX) * u32::from(every);
+                rungs.push(match i {
+                    0 => format!("{dice} below level {every}"),
+                    _ => format!("{dice} from {from}"),
+                });
+            }
+            format!(
+                "its damage dice come from its wielder's character level (a creature's, its \
+                 own), a step every {every} levels: {}; and +1 to hit every {} levels",
+                rungs.join(", "),
+                growth.to_hit_every
+            )
+        }
+        Some(Power::FirstBlood) => "every hit with it on a foe at full hit points is a sure \
+             critical, with no roll to confirm it (its own multiplier as ever); a hurt foe takes \
+             an ordinary blow"
+            .into(),
+        Some(Power::Plant { per_turn }) => format!(
+            "every turn its bearer ends in the cell they began it in adds {per_turn} Protection, \
+             with no cap; a step (or anything that moves them) takes it all away. While it adds \
+             any, its bearer is never driven from their cell (knockback, a shove, a spell's \
+             push) nor caught flat-footed by an attacker they did not see"
+        ),
         Some(Power::Barefoot(bare)) => {
             let slot = content.slot(bare.slot).name.to_lowercase();
             let mut gives = Vec::new();

@@ -927,6 +927,8 @@ impl World {
         };
         // A unique weapon's thrust-through strikes on with the profile as it came (`thrust.rs`).
         let thrust = profile.as_ref().filter(|p| p.thrust.is_some()).cloned();
+        // A unique weapon's Grows (`grows.rs`) and FirstBlood (`first_blood.rs`).
+        let profile = profile.map(|p| self.first_blood(target, self.grown_blow(attacker, p)));
         // A thrown exploit's ladder, on the creature it is aimed at only (`openings.rs`).
         let profile = profile.map(|p| self.thrown_exploit_profile(attacker, target, p));
         let profile = profile.map(|p| self.glared(attacker, p));

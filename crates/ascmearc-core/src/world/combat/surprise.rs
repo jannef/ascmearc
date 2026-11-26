@@ -208,14 +208,16 @@ impl World {
     }
 
     /// `struck`, actor `target`'s Defence against an attack, flat-footed (nothing of its
-    /// Dexterity or Dodge) when it is `unaware` of the attacker or suffers a flat-footed status
-    /// (Surprised, Stunned: [`World::off_guard`]).
+    /// Dexterity or Dodge) when it is `unaware` of the attacker (but planted, `plant.rs`) or
+    /// suffers a flat-footed status (Surprised, Stunned: [`World::off_guard`]).
     pub(in crate::world) fn flat_footed(
         &self,
         target: ActorId,
         unaware: bool,
         struck: Target,
     ) -> Target {
+        // A planted shield is a wall all round (`plant.rs`): never caught unawares.
+        let unaware = unaware && !self.stands_fast(target);
         let caught = (unaware && self.content.surprise().is_some()) || self.off_guard(target);
         if caught {
             struck.without(FLAT_FOOTED)
