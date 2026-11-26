@@ -210,7 +210,8 @@ impl Magic {
             }
             None => {}
         }
-        if self.affixes.is_empty() {
+        // A unique may have none: its power is its magic (#2126, the Stick).
+        if self.affixes.is_empty() && self.unique.is_none() {
             return Err("a magic or rare item has an affix at least".into());
         }
         if self.level == 0 || self.level > crate::content::MAX_ITEM_LEVEL {

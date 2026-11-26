@@ -29,6 +29,10 @@ phrase = { text = "Mikään hiljaisuus ei vaienna sen kantajan ääntä.", of = 
 [eorcanstan.power]
 message = { text = "Hiljaisuus ei saa ääntäsi vaikenemaan.", of = "3bc6d2" }
 
+[eorthfaest]
+lore = { text = "Nojaa siihen selkäsi, niin vuori on takanasi. Lähde kävelemään, niin se on pelkkää puuta ja rautaa.", of = "5ef9f3" }
+phrase = { text = "Mitä kauemmin sen kantaja seisoo, sitä vaikeampi häntä on haavoittaa, eikä mikään liikuta häntä.", of = "826bf0" }
+
 [grandmother]
 lore = { text = "Hän on elänyt kauemmin kuin kolme sukua ja haudannut jokaisen pojan, joka häntä kantoi.", of = "3ccae1" }
 phrase = { text = "Sen viiltämät haavat umpeutuvat hitaasti.", of = "64f657" }
@@ -67,6 +71,10 @@ message = { text = "Isku raukeaa tyhjiin rengaspaitaasi vasten.", of = "5a42d8" 
 lore = { text = "Se taottiin pyhän lähteen äärellä, eikä se ole sen jälkeen pimennyt, vaikka moni on yrittänyt sitä sammuttaa.", of = "1f3284" }
 phrase = { text = "Se luo kantajansa ympärille valon kuin keskipäivällä.", of = "db315d" }
 
+[satisfaction]
+lore = { text = "Hän ei koskaan tarvinnut kuin sen yhden.", of = "ae7b4b" }
+phrase = { text = "Sen ensimmäinen kosketus vahingoittumattomaan viholliseen osuu aina syvälle.", of = "f368a7" }
+
 [scarhide]
 lore = { text = "Jokaisen siinä näkyvän arven sen ensimmäinen omistaja kantoi ensin omassa nahassaan.", of = "656178" }
 phrase = { text = "Jokainen sen kantajan saama ankara haava kovettaa sitä hieman lisää.", of = "ebed52" }
@@ -81,6 +89,10 @@ message = { text = "Mikään ei vangitse katsettasi kauaksi aikaa.", of = "124df
 [silverstrike]
 lore = { text = "Sen jänne, niin jousentekijät vannoivat, oli kehrätty kuun hiuksesta.", of = "87875c" }
 phrase = { text = "Sen nuolet lentävät kaksi kertaa niin kauas kuin tavallisen jousen.", of = "7eb75c" }
+
+[stick]
+lore = { text = "Se oli keppi, kun he lähtivät matkaan. Kukaan ei muista, milloin se lakkasi olemasta.", of = "65158f" }
+phrase = { text = "Se tuntuu käyneen painavammaksi.", of = "875914" }
 
 [smoulder]
 lore = { text = "Ei sijnä ole tulda, ia quitengin se sauhupi.", of = "d1becc" }

@@ -948,7 +948,7 @@ impl<'a> PerceptionView<'a> {
     /// The one place the game shows a to-hit (the owner's exception to hidden numbers: the
     /// player's own attacks only); unidentified magic counts for nothing here.
     pub fn own_attacks(&self) -> Vec<crate::world::OwnAttack> {
-        self.player.known_attacks(self.content)
+        (self.player).known_attacks(self.content, u32::from(self.own_experience().level))
     }
 
     /// The player's hit points: what they have left (at most their maximum, never below 0) and

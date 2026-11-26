@@ -106,6 +106,20 @@ objects = ["rock*4"]
 at = [3, 12]
 objects = ["unique:masterpiece"]
 
+# Three more of the drop pool (#2126, #2125, #2132), placed nowhere else: the Stick, Satisfaction,
+# and the Eorðfæst, along the arrival room's north wall.
+[[pile]]
+at = [5, 5]
+objects = ["unique:stick"]
+
+[[pile]]
+at = [7, 5]
+objects = ["unique:satisfaction"]
+
+[[pile]]
+at = [9, 5]
+objects = ["unique:eorthfaest"]
+
 # Three more of the pool (#2139, #2141, #2133), down the arrival room's west wall: Smoulder (with
 # bolts to shoot), whose bolts smoke where they land; Tiptoe and Hushfoot, on whose feet no trap
 # springs.
