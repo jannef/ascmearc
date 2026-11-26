@@ -193,5 +193,14 @@ wizard's home, with no traps and nobody else.
 
 {{#include generated/dungeon-towers.md}}
 
+### Loot on the floor
+
+Every floor of a dungeon has a few items of [loot](magic-items.md#finding-them) lying about, and
+now and then a loose [gem](gems.md) as well (see [Coins and gems](wealth.md)). Each floor rolls
+its own, at its [danger](#who-lives-there-and-how-many) as the item level. The gem never takes
+the place of an item.
+
+{{#include generated/floor-purses.md}}
+
 See also: [The dungeons one by one](dungeon-guide.md), [Teeming dens](teeming-dens.md), and
 [Quests](quests.md).

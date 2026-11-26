@@ -291,12 +291,10 @@
 #   coin_find_percent { value }   coins it finds that percent more (the finder's `coins`; the
 #                                 one rule, wealth/mod.rs `scale`: a purse's coins that percent
 #                                 more often, and what is past certain more coins, to the
-#                                 nearest coin). No talent has it yet, and the player's finder
-#                                 reaches no purse yet (docs/design/wealth.md §8)
-#   gem_find_percent { value }    loose gems it finds that percent more (the finder's `gems`):
-#                                 where a find may be a loose gem instead of an item, that
-#                                 chance that percent more (never above certain; the same
-#                                 draws; wealth/mod.rs `scale`)
+#                                 nearest coin). No talent has it yet
+#   gem_find_percent { value }    loose gems it finds that percent more (the finder's `gems`;
+#                                 the one rule, wealth/mod.rs `scale`: a purse's gems that
+#                                 percent more often, and what is past certain more gems)
 #   notice { value }              notices hidden things in passing as if trained in Spot and
 #                                 Detect traps, with that much added
 #   spawn_every_percent { value } the time between attempts to bring creatures to its level

@@ -14,10 +14,11 @@
 //!
 //! [`finds`] first draws how many: the spec's count scaled by the finder's `quantity`
 //! ([`count`]; one draw for the fraction, none without the modifier), for a row that takes the
-//! finder; a source that draws something of its own before each find (the wealth seam's gem)
+//! finder; a source that draws something of its own between its finds (a floor's cell for each)
 //! takes its count from [`count`] too. Then [`find`] draws, for each, in this order, from the
-//! stream it is given (a level's `loot/<level id>` while it is generated, `drop/<actor id>` for
-//! what a creature drops, ...):
+//! generator it is given (the items' generator of its source's fork, [`crate::rng::Fork`]: of a
+//! level's `loot/<level id>` while it is generated, of `drop/<actor id>` for what a creature
+//! drops, ...):
 //!
 //! 1. **the base item** ([`base`]): one draw among the objects that are loot (base items, with a
 //!    `kind`, and scrolls, which are never magic and so left out when the grade asks for magic or
@@ -68,9 +69,9 @@
 //!     ([`super::capacity`]) loses them one at a time, one `index` draw each; none when it fits.
 //!
 //! What is found is unidentified (its gems and material show at once: materials are not
-//! hidden). A find is always an item: a loose gem found in place of one is the wealth seam's
-//! ([`crate::wealth::gem_instead`]), drawn by the callers before the find, and a vault cell's
-//! coins and gems are the cell's own ([`LootCell`], rolled in [`crate::mapgen`]'s `loot_cell`).
+//! hidden). A find is always an item: coins and loose gems are each source's purse
+//! ([`crate::wealth::purse`], rolled apart from the finds on the fork's own generators), a
+//! vault cell's too ([`LootCell`], rolled in [`crate::mapgen`]'s `loot_cell`).
 
 use super::drop_pool;
 pub use super::finder::Finder;

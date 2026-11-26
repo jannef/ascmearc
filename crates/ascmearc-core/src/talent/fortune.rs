@@ -46,8 +46,9 @@ pub enum FortuneEffect {
     /// where they come anyway, that many more (`magic::finder::Finder::coins`,
     /// `wealth::scale`). No talent has it yet.
     CoinFindPercent { value: i32 },
-    /// Loose gems it finds are this percent more (Hoard sense): the wealth seam's chance, never
-    /// above certain (`magic::finder::Finder::gems`, `wealth::scale`).
+    /// Loose gems it finds are this percent more (Hoard sense): each purse's gems come that much
+    /// more often, and where they come anyway, that many more (`magic::finder::Finder::gems`,
+    /// `wealth::scale`).
     GemFindPercent { value: i32 },
     /// Handed out once, as it is taken (a talent only for character creation: Family wealth):
     /// gold coins, `percent` of those the character carries more, at least `at_least` and at

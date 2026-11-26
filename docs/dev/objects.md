@@ -335,7 +335,7 @@ a type with `corpse` unless the file is `bodiless`; none for an animated type (i
 `construct` but breaks into its own pieces); each chance × its size's `drops` % (`sizes.toml`,
 small 50: a halved 25 % stays exact as 125 ‰). `Content::tag_drops` keeps the files for the
 wiki. Loader refusals: neither or both of `material` and `object`, an unknown one, a gem (gems
-come by the gems' chance) or a material with no group, bad dice, a chance outside 1 to 100, a
+come by the purses, `docs/dev/wealth.md`) or a material with no group, bad dice, a chance outside 1 to 100, a
 tag no creature carries (a typo would drop nothing), a tag's second file. The roll,
 `World::drops_of` (`world/items/material_drops.rs`), runs in `fight.rs::creature_dies` after the
 carried gear and `loot_of`, not for a body turned to stone (no corpse) nor a summoned or risen

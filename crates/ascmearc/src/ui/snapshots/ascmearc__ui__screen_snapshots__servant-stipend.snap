@@ -21,7 +21,8 @@ expression: "render(case, content.clone())"
 │ You open the door.                                                                               │
 │ Your squire says: "Yer family's sent yer stipend on, m'lord, all counted proper. 'Ere it is,     │
 │   every penny."                                                                                  │
-│ You receive 1035 gold coins, a fizzy orange potion, and a crude diamond.                         │
+│ You receive 990 gold coins, a scroll labelled QUAPRAXAM, a chain mail shirt (magic), a scroll    │
+│   labelled BEKXAM, and a scroll labelled VENFOOYO.                                               │
 │ You are burdened.                                                                                │
 │ Your squire says: "The rabble 'ere don't know quality, m'lord. I do."                            │
 │                                                                                                  │

@@ -132,7 +132,7 @@ fn resolve_row(spec: &DropSpec, content: &Content, from: DropFrom) -> Result<Dro
             let def = content.material(id);
             if def.gem.is_some() {
                 return Err(format!(
-                    "drop: `{m}` is a gem: gems come by the gems' chance, never as a drop"
+                    "drop: `{m}` is a gem: gems come by the purses (data/purses.toml), never as a drop"
                 ));
             }
             if def.group.is_none() {

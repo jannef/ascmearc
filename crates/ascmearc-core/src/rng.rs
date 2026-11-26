@@ -4,7 +4,10 @@
 //! on every platform) seeded from a 64-bit key: FNV-1a over the run seed and a stream label
 //! ([`stream_key`]). Nothing else makes a key: no stream is drawn from another, so a stream
 //! depends only on the run seed and its own label, never on the order streams are made or
-//! first used, and adding one moves no other.
+//! first used, and adding one moves no other. The one exception is a find's fork ([`Rng::fork`],
+//! docs/dev/wealth.md): a source of loot draws one `u64` from its stream per find and seeds its
+//! items', its coins', and its gems' generators from it, so no modifier of one kind moves
+//! another kind's draws, or the stream past the find.
 //!
 //! # Keys (#1662)
 //!
@@ -48,14 +51,14 @@
 //! | Ore veins | `veins/<level id>` |
 //! | Hidden traps | `traps/<level id>` |
 //! | Secret doors | `secrets/<level id>` |
-//! | Loot: vaults' loot cells and floor loot, then dens' hoards, tempting hoards, and special rooms' own loot, the stream going on (`mapgen::Loot`) | `loot/<level id>` |
+//! | Loot: vaults' loot cells and floor loot, then dens' hoards, tempting hoards, and special rooms' own loot, the stream going on (`mapgen::Loot`); each cell, floor, and hoard one fork, its items and its purse on the fork's generators ([`Rng::fork`]) | `loot/<level id>` |
 //! | A wand's rung in a level's, a fixed kit's, or a pack's objects | `objects/<level id>`, `objects/actor/<actor key>`, `objects/pack` |
 //! | Vault monsters | `vault_monsters/<level id>` |
 //! | Initial population (and its leavings) | `population/<level id>` |
 //! | A teeming den's sleepers | `swarm/<level id>` |
-//! | Vault chests | `vault_chests/<level id>` |
-//! | Chests | `chests/<level id>` |
-//! | Treasure rooms | `treasure/<level id>` |
+//! | Vault chests (each chest's contents one fork) | `vault_chests/<level id>` |
+//! | Chests (each chest's contents one fork) | `chests/<level id>` |
+//! | Treasure rooms (their chests' contents a fork each, then a fork for the room's purse) | `treasure/<level id>` |
 //! | Creatures' gear | `gear/<level id>` |
 //! | Animated creatures' bodies | `animated/<level id>` |
 //! | Gravestones (and which fallen they name) | `graves/<level id>`, `graves/<level id>/fallen` |
@@ -66,7 +69,7 @@
 //!
 //! | Stream | Label |
 //! |---|---|
-//! | What a creature drops when it dies | `drop/<actor key>` |
+//! | What a creature drops when it dies (its `loot` chance, then one fork: its item and its purse apart) | `drop/<actor key>` |
 //! | The materials a dead creature leaves | `materials/<actor key>` |
 //! | A creature's gear, placed in play | `gear/<actor key>` |
 //! | An animated creature's body, placed in play | `animated/<actor key>` |
@@ -93,11 +96,11 @@
 //! |---|---|
 //! | Every rule's roll in play | `<rule>/<decision>/<actor key>@<second>#<n>` ([`crate::draw!`]; the labels are listed at their sites, `docs/dev/merging.md` "Random streams") |
 //! | A rolled quest's draw | `quest/<quest id>` |
-//! | A quarrel's hoard (`world/people/quarrel.rs`): its items, then its purse | `hoard/<quest id>` |
+//! | A quarrel's hoard (`world/people/quarrel.rs`): one fork, its items and its purse apart | `hoard/<quest id>` |
 //! | Appraising | `appraise/<hour>` |
 //! | Whether food is told stale | `freshness/<object>/<died>/<hour>` |
 //! | An investment's week | `invest/<week>` |
-//! | An aristocrat's stipend: its loot roll, then its purse | `stipend/<level>` |
+//! | An aristocrat's stipend: one fork, its loot roll and its purse apart | `stipend/<level>` |
 //! | A patron's gift | `patron/<taken>` |
 //! | Scroll labels | `identification` |
 //! | Weather, one-liners' order, mutters | keyed draws (`weather::draw`): `weather`, `weather/start`, `line…`, `mutter…` |
@@ -304,6 +307,14 @@ impl Rng {
         self.0.next_u32()
     }
 
+    /// A find's fork (docs/dev/wealth.md "Streams"): one `u64` drawn from this stream, from which
+    /// the find's items, its coins, and its gems each seed a generator of their own
+    /// ([`Fork::items`], [`Fork::coins`], [`Fork::gems`]). What is drawn from one moves neither
+    /// another nor this stream past the one draw.
+    pub fn fork(&mut self) -> Fork {
+        Fork(self.0.next_u64())
+    }
+
     /// Uniform in `0..n` without modulo bias (Lemire's multiply-and-reject); 0 when `n` is 0.
     pub fn below(&mut self, n: u32) -> u32 {
         if n == 0 {
@@ -366,6 +377,28 @@ impl Rng {
             let j = self.index(i + 1);
             items.swap(i, j);
         }
+    }
+}
+
+/// A find's fork ([`Rng::fork`]): the seed its items', coins', and gems' generators are keyed
+/// from, as a stream is from the run seed ([`stream_key`] over `items`, `coins`, `gems`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Fork(u64);
+
+impl Fork {
+    /// The generator of the find's items.
+    pub fn items(self) -> Rng {
+        Rng::stream(self.0, "items")
+    }
+
+    /// The generator of the find's coins (its purse's, [`crate::wealth::purse`]).
+    pub fn coins(self) -> Rng {
+        Rng::stream(self.0, "coins")
+    }
+
+    /// The generator of the find's loose gems (its purse's, [`crate::wealth::purse`]).
+    pub fn gems(self) -> Rng {
+        Rng::stream(self.0, "gems")
     }
 }
 

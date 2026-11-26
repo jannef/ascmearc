@@ -18,6 +18,7 @@ secret_doors = [0, 1]
 hidden_danger_percent = 25
 locks_danger_percent = 25
 loot = [2, 4]
+purse = { gems = { chance = 15 } }
 key = "iron_key"
 # Danger 6 on the first floor to 9 on the fourth: the goblins he hires
 # out to and their chiefs, footpads who ran with him, bats in the broken roof, and the ogres he

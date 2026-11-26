@@ -407,12 +407,14 @@ impl World {
         }
     }
 
-    /// The hoard of quest `def` (see the module docs): its rare items, its grimoires, and its
-    /// purse's coins ([`wealth::purse`]), from the one-shot stream `hoard/<quest id>` (a
-    /// quarrel's quest is done once); the coins come first in it.
+    /// The hoard of quest `def` (see the module docs): its rare items, its grimoires, and apart
+    /// from them its purse's coins ([`wealth::purse`]), from one fork of the one-shot stream
+    /// `hoard/<quest id>` (a quarrel's quest is done once; [`Rng::fork`]); the coins come first
+    /// in it.
     fn make_hoard(&self, def: &QuestDef, hoard: &crate::content::QuarrelHoard) -> Vec<Stack> {
         let content = &self.content;
-        let mut rng = Rng::stream(self.state.seed, &format!("hoard/{}", def.id));
+        let fork = Rng::stream(self.state.seed, &format!("hoard/{}", def.id)).fork();
+        let mut rng = fork.items();
         let mut stacks = Vec::new();
         let finder = loot::Finder::of(&self.state.player().talent_mods(content));
         let spec = Spec::new(Origin::Quarrel, hoard.item_level).count(u32::from(hoard.rare));
@@ -426,14 +428,14 @@ impl World {
             }
             stacks.push(Stack::one(grimoires[rng.index(grimoires.len())]));
         }
-        // Its purse, after its items, and carried before them.
+        // Its purse, apart from its items, and carried before them (its row takes no finder).
         let spec = PurseSpec::of(
             content,
             Source::Quarrel,
             hoard.item_level,
             Some(&hoard.purse),
         );
-        let purse = wealth::purse(content, &spec, &loot::Finder::NONE, &mut rng);
+        let purse = wealth::purse(content, &spec, &finder, fork);
         stacks.splice(0..0, purse);
         stacks
     }

@@ -21,6 +21,7 @@ secret_doors = [0, 2]
 hidden_danger_percent = 55
 locks_danger_percent = 110
 loot = [3, 5]
+purse = { gems = { chance = 20 } }
 key = "brass_key"
 temperature = 10
 # Danger 5 on the first floor to 16 on the twelfth (squished from 8 to 19,

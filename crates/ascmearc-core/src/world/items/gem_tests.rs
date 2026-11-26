@@ -511,29 +511,35 @@ fn placements_and_items_name_their_gems() {
 }
 
 #[test]
-fn loot_finds_gems_rarely_and_larger_and_finer_at_higher_item_levels() {
+fn purses_find_gems_rarely_and_larger_and_finer_at_higher_item_levels() {
+    use crate::wealth::{PurseSpec, Source, purse};
     let content = builtin();
     let gems = content.gems().expect("gems");
-    // Across seeds: 5000 finds from each of four runs' streams.
+    // Across seeds: 5000 purses of a creature's drop (a gem 5 times in 100) from each of four
+    // runs' streams.
     let roll_many = |level: u8| {
+        let spec = PurseSpec::of(&content, Source::Drop, level, None);
+        let none = &crate::magic::loot::Finder::NONE;
         let mut found = Vec::new();
         for seed in 1..=4 {
             let mut rng = Rng::stream(seed, &format!("test/gems/{level}"));
-            found.extend((0..5000).filter_map(|_| {
-                crate::test_support::found(&content, &mut rng, level, LootGrade::Any)
-            }));
+            for _ in 0..5000 {
+                found.push(purse(&content, &spec, none, rng.fork()));
+            }
         }
         found
     };
     for level in [1, 8] {
-        let found = roll_many(level);
+        let purses = roll_many(level);
+        let found: Vec<&Stack> = purses.iter().flatten().collect();
         let loose: Vec<Cutting> = found
             .iter()
             .filter_map(|s| s.gem(&content))
             .map(|(_, c)| c)
             .collect();
-        // About `chance` percent of finds are gems.
-        let share = loose.len() * 1000 / found.len();
+        // About `chance` percent of purses hold a gem, and nothing else.
+        assert_eq!(loose.len(), found.len(), "level {level}: gems alone");
+        let share = loose.len() * 1000 / purses.len();
         assert!((40..=60).contains(&share), "level {level}: {share}‰ gems");
         // Uncut is the most common find.
         let uncut = gems.cut_id("uncut").unwrap();
@@ -553,6 +559,7 @@ fn loot_finds_gems_rarely_and_larger_and_finer_at_higher_item_levels() {
     let average = |level: u8| {
         let loose: Vec<Cutting> = roll_many(level)
             .iter()
+            .flatten()
             .filter_map(|s| s.gem(&content))
             .map(|(_, c)| c)
             .collect();
@@ -619,18 +626,21 @@ fn creatures_drop_gems_now_and_then_from_their_own_stream() {
     for id in 1..8000 {
         let mut a = kobold.clone();
         a.id = ActorId(id);
-        if let Some(stack) = w.loot_of(&a).pop() {
-            drops += 1;
-            gems += usize::from(stack.gem(w.content()).is_some());
-            assert!(stack.is_valid_for(w.content()));
-            assert_eq!(
-                w.loot_of(&a).pop(),
-                Some(stack),
-                "the same actor drops the same"
-            );
+        let dropped = w.loot_of(&a);
+        if dropped.is_empty() {
+            continue;
         }
+        drops += 1;
+        let (loose, items): (Vec<&Stack>, Vec<&Stack>) =
+            dropped.iter().partition(|s| s.gem(w.content()).is_some());
+        // The gem comes beside the item, never in its place, and after it.
+        assert!(loose.len() <= 1 && !items.is_empty(), "{dropped:?}");
+        assert!(dropped.last().is_some_and(|s| s.gem(w.content()).is_some()) == !loose.is_empty());
+        gems += loose.len();
+        assert!(dropped.iter().all(|s| s.is_valid_for(w.content())));
+        assert_eq!(w.loot_of(&a), dropped, "the same actor drops the same");
     }
-    // About the gems' chance (5%) of drops are gems.
+    // About the drop purse's chance (5%) of drops hold a gem.
     let share = gems * 1000 / drops;
     assert!((25..=80).contains(&share), "{gems} gems of {drops} drops");
 }

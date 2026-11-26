@@ -19,6 +19,7 @@ size = [80, 21]
 traps = ["pit", "lightning_bolt", "frost"]
 traps_per_level = [1, 3]
 loot = [2, 4]
+purse = { gems = { chance = 15 } }
 # A faint violet glow everywhere: the crystal in the rock.
 ambient = [30, 24, 48, 0]
 temperature = 12

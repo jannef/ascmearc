@@ -62,19 +62,12 @@ row, a row of no source, and a grade a source cannot take; without the file ever
 (`magic/finder.rs`, `Finder::of(talents)`): `quantity` read at the count (`loot::count`),
 `rarity` at the rarity draw, `unique` at step 3b, each only there; its wealth fields `coins` and
 `gems` read only by wealth (`wealth::scale`, the one modifier rule: the chance raised first, the
-amount past certain; `wealth::purse` and the seam); `Finder::NONE` for a row that takes none.
-The invariant that no modifier lowers another kind's quantity is tested in
-`magic/finder_tests.rs` and `wealth/purse_tests.rs` (what holds exactly, and what by
-expectation, is in the module docs of `wealth/purse.rs`). **A find is always an item**: where a source still finds a loose gem in its place
-(floor loot, vault cells and chest items at grade `any`, hoards, dens, features at `any`, the
-stipend, drops), the caller draws it first by the wealth seam (`wealth::gem_instead`, the finder's `gems`). **Coins and loose gems** have their own table,
-`data/purses.toml` (`Content::purses`, one row a `wealth::Source`, its columns and the one
-purse shape explained in the file's header), and one function, `wealth::purse` (its draws in
-the module docs of `wealth/purse.rs`), rolled after a source's items on its stream: chests,
-treasure rooms, a vault's coins and gems cells, the stipend's gold, and a quarrel's gold so far
-(docs/design/wealth.md; the seam's sources follow). The purse reads the finder for a row whose
-`finder` is true; so far only the stipend's own finder reaches it (its `coins` Landed noble's
-gold), the other callers passing `Finder::NONE` until the seam goes. An item's own parts are the material first, then
+amount past certain; `wealth::purse`); `Finder::NONE` for a row that takes none. The invariant
+that no modifier of one kind (items, coins, gems) changes another kind is tested, exactly, in
+`magic/finder_tests.rs` and `wealth/purse_tests.rs`. **A find is always an item**: coins and
+loose gems are each source's purse, rolled apart from its finds (`docs/dev/wealth.md`: the
+purse table `data/purses.toml`, `wealth::purse`, and the fork each find draws so its items,
+coins, and gems draw from generators of their own, `Rng::fork`). An item's own parts are the material first, then
 the gem (`gem::ornament`)
 (`docs/dev/objects.md`, "Gems" and "Materials and variants"). A wand made by `make_unfinished` draws
 its rung last (`Stack::draw_wand_rung`, `Stack::wand_rung`, S5 #752: one draw, a wand's only;
@@ -229,11 +222,11 @@ shops' goods, and enchanting (`roll_affix_within`) (`magic/tests.rs`,
 `tiers_roll_flat_over_every_tier_the_item_level_reaches`). **A vault's loot cell**
 (`magic/loot.rs`: `LootCell`; rolled by `LootCell::roll` in `mapgen/loot_cell.rs`; the legend's
 syntax in `docs/dev/content.md`): a grade and item classes. With no classes (`loot =
-"magic"`) it is a find of the vault-cell row at its grade (at `any` the wealth seam's gem first),
-the same draws as a floor find. With classes: one draw among those that hold something at the item level (`holds`), then
+"magic"`) it is a find of the vault-cell row at its grade (at `any` the `vault_cell`
+row's gems apart from it), a floor find on its fork's items' generator. With classes: one draw among those that hold something at the item level (`holds`), then
 coins or a loose gem (`wealth::purse` of the purse table's `vault_cell` row asking that kind alone, certain: the coins of a chest of that level, one gem; which
 classes these are comes from the currency's and the gem object's `class`, never the finder), or
-`loot::finds` among the class's objects (no gem instead), for the finder. Tests: `magic/cell_tests.rs`. The aristocrat's stipend (`world/classes/stipend.rs`, #1405) rolls a find of the stipend row (the wealth seam's gem first) once a level-up, by `data/rules/stipend.toml`'s chance, at the level, with its own `finder` from data (`loot.finder = { rarity = 100 }`, plus Landed noble's; not the player's), on the stream `stipend/<level>`, keeping only magic and rare finds and the `keep` classes, then its gold (`wealth::purse` of the file's `purse`, for the same finder: its `coins` is Landed noble's gold percent). **A drop's item level**
+`loot::finds` among the class's objects, for the finder; the kind on its fork's generator. Tests: `magic/cell_tests.rs`. The aristocrat's stipend (`world/classes/stipend.rs`, #1405) rolls a find of the stipend row once a level-up, by `data/rules/stipend.toml`'s chance, at the level, with its own `finder` from data (`loot.finder = { rarity = 100 }`, plus Landed noble's; not the player's), on the stream `stipend/<level>`, keeping only magic and rare finds and the `keep` classes, and apart from it its purse (`wealth::purse` of the file's `purse`, for the same finder: its `coins` is Landed noble's gold percent; its gem kept). **A drop's item level**
 (`world/items/loot.rs::drop_level`): the creature type's level, at least the floor's item level, at
 most `MAX_ITEM_LEVEL`; floor loot keeps the floor's (`world/magic/magic_tests.rs`,
 `a_drop_rolls_at_the_creatures_level_at_least_the_floors`). **The floor's item level**

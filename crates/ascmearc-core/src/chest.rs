@@ -136,13 +136,13 @@ pub fn destroyed(
 /// What a generated chest of `level` holds, rolled from its band's loot table for `finder`, as a
 /// pile (the last rolled on top, like stacks joined); a
 /// rare item perhaps a unique of the drop pool none of `found` ([`loot::find`]'s step 3b).
-/// Draws, in order: the `items` dice, scaled by the finder's `quantity` ([`loot::count`]; no
-/// draw without it); per item one `below(100)` for its grade (under `rare` rare, under `magic`
-/// at least magic, else any) and at `level + loot_level`, at grade any a loose gem by the wealth
-/// seam ([`crate::wealth::gem_instead`], the finder's `gems`), else [`loot::find`]'s own (nothing found rolls nothing
-/// more); then the band's purse at `level + loot_level` ([`wealth::purse`]'s draws: its coins,
-/// then its gems). A mimic standing in for the chest carries the same stacks from the same
-/// draws. Empty without bands.
+/// Draws: one fork of `rng` ([`Rng::fork`]); on its items' generator the `items` dice, scaled by
+/// the finder's `quantity` ([`loot::count`]; no draw without it), then per item one `below(100)`
+/// for its grade (under `rare` rare, under `magic` at least magic, else any) and [`loot::find`]'s
+/// own at `level + loot_level` (nothing found rolls nothing more); and apart from them the band's
+/// purse at `level + loot_level` ([`wealth::purse`]: its coins and its gems, each on the fork's
+/// own generator, for the finder's `coins` and `gems`), laid after the items. A mimic standing
+/// in for the chest carries the same stacks from the same draws. Empty without bands.
 pub fn roll_contents(
     content: &Content,
     rng: &mut Rng,
@@ -158,6 +158,8 @@ pub fn roll_contents(
         .saturating_add(table.loot_level)
         .clamp(1, MAX_ITEM_LEVEL);
     let mut holds = Vec::new();
+    let fork = rng.fork();
+    let rng = &mut fork.items();
     let items = u32::try_from(table.items.roll(rng).max(0)).unwrap_or(0);
     for _ in 0..loot::count(
         content,
@@ -170,19 +172,14 @@ pub fn roll_contents(
             g if g < u32::from(table.magic) => LootGrade::Magic,
             _ => LootGrade::Any,
         };
-        // At grade any a loose gem instead, by the wealth seam; else a find of the chest row.
-        let gem = (grade == LootGrade::Any)
-            .then(|| crate::wealth::gem_instead(content, rng, at, finder))
-            .flatten();
         let spec = Spec::new(Origin::Chest, at).grade(grade);
-        if let Some(stack) = gem.or_else(|| loot::find(content, &spec, finder, found, rng)) {
+        if let Some(stack) = loot::find(content, &spec, finder, found, rng) {
             add_to_pile(&mut holds, &[stack], content);
         }
     }
-    // Its purse, after the items: the band's coins, then its gems at the items' level. No
-    // finder yet: it reaches the purse as the seam goes (docs/design/wealth.md §8, W3).
+    // Its purse, apart from the items: the band's coins, then its gems at the items' level.
     let spec = PurseSpec::of(content, Source::Chest, at, Some(&table.purse));
-    for stack in wealth::purse(content, &spec, &Finder::NONE, rng) {
+    for stack in wealth::purse(content, &spec, finder, fork) {
         add_to_pile(&mut holds, &[stack], content);
     }
     holds

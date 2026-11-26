@@ -22,8 +22,9 @@
 //!   (`treasure/<level id>`), so the rest of the level, its other chests too, is the same with or
 //!   without a treasure room. Per room in order: the `chests` dice, then per chest its cell
 //!   (never where something lies) and [`super::chest::lay`]'s draws (a chest of the floor's item
-//!   level: lock, trap, contents, the mimic draw); then its `purse` at the floor's item level
-//!   ([`crate::wealth::purse_placed`]'s draws, each heap's and each gem's cell drawn before it).
+//!   level: lock, trap, contents (a fork of its own), the mimic draw); then one fork, its
+//!   `purse` at the floor's item level for the finder ([`crate::wealth::purse_placed`]: each
+//!   heap's and each gem's cell drawn before it, on its kind's generator).
 
 use super::{Canvas, Palette, connect};
 use crate::chest::ChestState;
@@ -322,11 +323,10 @@ pub(super) fn fill(
             let chest = (&traps[..], visit, &mut *taken);
             super::chest::lay(template, content, &mut rng, (at, shut), chest);
         }
-        // Its purse, after its chests: each heap's and each gem's cell drawn before it. No
-        // finder yet: it reaches the purse as the seam goes (docs/design/wealth.md §8, W3).
+        // Its purse, after its chests, on a fork of the stream: each heap's and each gem's cell
+        // drawn before it, on its kind's generator.
         let spec = PurseSpec::of(content, Source::Treasury, level, Some(&treasure.purse));
-        let none = &crate::magic::loot::Finder::NONE;
-        let laid = wealth::purse_placed(content, &spec, none, &mut rng, |rng| {
+        let laid = wealth::purse_placed(content, &spec, &visit.finder, rng.fork(), |rng| {
             rng.pick(&free).copied()
         });
         for (at, stack) in laid {

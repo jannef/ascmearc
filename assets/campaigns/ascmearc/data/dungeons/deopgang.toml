@@ -22,6 +22,7 @@ secret_doors = [1, 3]
 hidden_danger_percent = 55
 locks_danger_percent = 55
 loot = [3, 6]
+purse = { gems = { chance = 23 } }
 key = "brass_key"
 temperature = 12
 # More chests than the shared odds: the deep's old caches.

@@ -12,15 +12,18 @@
 //! on a cell of the room's plain floor drawn among those free (no creature, stairs, light, or
 //! trap), keeps no post (it has none to return to until woken), and is placed asleep
 //! ([`CreatureSpawn::asleep`]). The hoard is one item per four sleepers (at least one) at the
-//! floor's item level + `loot_level`, with the finder's talents, each on a plain floor cell of the
-//! room drawn anew.
+//! floor's item level + `loot_level`, with the finder's talents, and apart from them its
+//! `swarm.purse` (the purse table's `den` row: coins and loose gems), each on a plain floor cell
+//! of the room drawn anew; the items, the coins, and the gems each from a generator of their own
+//! seeded by one fork of the loot stream ([`Rng::fork`]).
 //!
 //! A den kind may name `swarm.factions` (a beast den's `wildlife`, `vermin`, and `marsh`): its
 //! sleepers are then drawn only among the types of those factions, hostile or not, and the kind
 //! is eligible only on a branch whose own population holds one ([`peopled`], asked by
 //! `special::pick`). Its hoard may be `corpses` instead of items: per piece, a fresh corpse of a
 //! type drawn from the branch's population at large (its prey, any faction, by the same draw;
-//! a type that leaves none leaves nothing) and a pile of bones, each on a cell drawn anew.
+//! a type that leaves none leaves nothing) and a pile of bones, each on a cell drawn anew, then
+//! its `swarm.purse` if it names one (a fork drawn after the corpses; a beast den names none).
 //!
 //! The sleepers come from the level's own stream [`Rng::swarm`] (`swarm/<level id>`), drawn
 //! after its population, and the hoards (items or corpses, and their cells) from the level's loot
@@ -37,7 +40,7 @@ use crate::geom::Pos;
 use crate::magic::loot::{self, Origin, Spec};
 use crate::object::{Stack, add_to_pile};
 use crate::rng::Rng;
-use crate::wealth;
+use crate::wealth::{self, PurseSpec, Source};
 
 /// Fills every teeming den of generated level `template` (see the module docs): `danger` its
 /// danger, `spawning` its branch's rules, `visit` whom it is made for (the finder's talents),
@@ -120,20 +123,31 @@ pub(super) fn fill(
                 &floor,
                 (swarm.hoard(placed), prey, danger, spawning),
             );
-            continue;
         }
         let level = template.item_level.saturating_add(swarm.loot_level);
-        let spec = Spec::new(Origin::Den, level)
-            .count(u32::try_from(swarm.hoard(placed)).unwrap_or(u32::MAX));
         // The hoard from the loot stream, never the sleepers'.
         let Loot { rng: hoard, taken } = &mut *loot;
-        for _ in 0..loot::count(content, &spec, &visit.finder, hoard) {
-            let p = floor[hoard.index(floor.len())];
-            let item = wealth::gem_instead(content, hoard, level, &visit.finder)
-                .or_else(|| loot::find(content, &spec, &visit.finder, taken, hoard));
-            if let Some(stack) = item {
-                add_to_pile(template.objects.entry(p).or_default(), &[stack], content);
+        if swarm.hoard == Hoard::Corpses && swarm.purse.is_none() {
+            continue;
+        }
+        let fork = hoard.fork();
+        if swarm.hoard == Hoard::Items {
+            let spec = Spec::new(Origin::Den, level)
+                .count(u32::try_from(swarm.hoard(placed)).unwrap_or(u32::MAX));
+            let items = &mut fork.items();
+            for _ in 0..loot::count(content, &spec, &visit.finder, items) {
+                let p = floor[items.index(floor.len())];
+                if let Some(stack) = loot::find(content, &spec, &visit.finder, taken, items) {
+                    add_to_pile(template.objects.entry(p).or_default(), &[stack], content);
+                }
             }
+        }
+        let purse = PurseSpec::of(content, Source::Den, level, swarm.purse.as_ref());
+        let laid = wealth::purse_placed(content, &purse, &visit.finder, fork, |rng| {
+            Some(floor[rng.index(floor.len())])
+        });
+        for (p, stack) in laid {
+            add_to_pile(template.objects.entry(p).or_default(), &[stack], content);
         }
     }
 }

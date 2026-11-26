@@ -5,9 +5,8 @@
 # Top-level fields:
 #   object  the object a loose gem is (objects/gem.toml): made of its gem, which names it ("a large
 #           fine emerald"), colours it, and prices it; its size gives its weight
-#   chance  percent of finds that are a loose gem instead of an item: floor loot, vault loot cells
-#           of grade `any`, and what creatures drop. Finds are rolled from the loot streams, so
-#           maps never change
+#
+# Where loose gems are found, and how many, is each place's purse (purses.toml).
 #
 # [[size]], smallest first, and [[cut]], roughest first:
 #   id, name  what items and names say ("large", "fine")
@@ -31,7 +30,6 @@
 #   colour  the item takes its gem's colour (a ring set with a ruby is drawn red)
 
 object = "gem"
-chance = 5
 
 [[size]]
 id = "tiny"

@@ -1,22 +1,23 @@
-//! The purse (docs/design/wealth.md §3.2–§3.5): what one source's coins and loose gems are, as
-//! data in one shape ([`Purse`]: `{ coins = { chance, heaps, dice, each }, gems = { chance,
-//! dice } }`), and the one function that rolls it, [`purse`].
+//! The purse (docs/design/wealth.md §3.2–§3.5, docs/dev/wealth.md): what one source's coins and
+//! loose gems are, as data in one shape ([`Purse`]: `{ coins = { chance, heaps, dice, each },
+//! gems = { chance, dice } }`), and the one function that rolls it, [`purse`].
 //!
 //! Its parameter set is exactly the content (the currency, `data/gems.toml`'s sizes, cuts, and
 //! object, the gem materials' `rarity`, the purse table's rows), the [`PurseSpec`] (the source,
 //! the item level, the purse to roll, the one kind asked if any), the finder's `coins` and `gems`
-//! (its item fields unread; [`Finder::NONE`] for a row whose `finder` is false), and the stream.
-//! Each kind's chance and amount are scaled by its finder field by the one rule,
-//! [`super::scale`]. The draws, in order:
+//! (its item fields unread; [`Finder::NONE`] for a row whose `finder` is false), and the find's
+//! fork ([`Fork`]: the coins draw from its coins' generator, the gems from its gems'). Each
+//! kind's chance and amount are scaled by its finder field by the one rule, [`super::scale`].
+//! The draws, coins and gems each on their own generator:
 //!
-//! 1. the coins' chance (one `chance` draw against the scaled chance, made when the data's chance
-//!    or the scaled one is neither certain nor never: so a finder field of 0 or more never adds
-//!    or takes a draw here);
+//! 1. coins: the chance (one `chance` draw against the scaled chance, made when the data's
+//!    chance or the scaled one is neither certain nor never: so a finder field of 0 or more never
+//!    adds or takes a draw here);
 //! 2. the `heaps` dice (no draw for a fixed number);
 //! 3. per heap, the caller's place for it if it draws one ([`purse_placed`]), then the `dice`
 //!    (× `each` coins of [`super::currency`], scaled past certain to the nearest coin with no
 //!    draw; a stack when more than none);
-//! 4. the gems' chance, as the coins';
+//! 4. gems: the chance, as the coins';
 //! 5. the count: the gems' `dice` (0 or less: none), scaled past certain: the whole part;
 //! 6. per gem, the caller's place for it if any, then [`crate::gem::loose`]'s three draws at the
 //!    item level;
@@ -26,20 +27,16 @@
 //! draw was the chance) rolls only that kind, as certain: no chance draw. Nothing inside reads
 //! the world: where each stack lies is the caller's.
 //!
-//! What a finder field changes, for the same stream (`wealth/purse_tests.rs` tests each):
-//! `gems`, of any sign, changes no coin (the coins are drawn first); `coins` of 0 or more draws
-//! the chance as the data says and scales the amount with no draw, so it changes no gem wherever
-//! the coins come, or fail to, with it as without it; a positive `coins` never gives fewer
-//! coins, heap for heap, and a positive `gems` gives the gems of none and perhaps more after
-//! them. Where a raised chance brings coins that would not have come, their heaps' draws come
-//! before the gems, and the gems move; a negative `coins` on certain coins adds a chance draw,
-//! with the same effect. There only the expectation of the gems holds.
+//! What a finder field changes, for the same fork (`wealth/purse_tests.rs` tests each): only its
+//! own kind, since the kinds draw from generators of their own. `coins` changes no gem and
+//! `gems` no coin, of any sign; a positive field never gives fewer of its kind, heap for heap
+//! and gem for gem (the gems of a smaller percent are the first gems of a larger one).
 
 use crate::content::Content;
 use crate::dice::Dice;
 use crate::magic::finder::Finder;
 use crate::object::Stack;
-use crate::rng::Rng;
+use crate::rng::{Fork, Rng};
 use serde::Deserialize;
 
 /// A source of wealth: a row of the purse table (`data/purses.toml`).
@@ -225,23 +222,23 @@ impl PurseSpec {
     }
 }
 
-/// What the purse of `spec` holds for `finder`, drawn from `rng` (the module docs give the
-/// draws): a stack of coins per heap and a stack of one per gem, in that order; empty when
-/// nothing came.
-pub fn purse(content: &Content, spec: &PurseSpec, finder: &Finder, rng: &mut Rng) -> Vec<Stack> {
-    (purse_placed(content, spec, finder, rng, |_| Some(())).into_iter())
+/// What the purse of `spec` holds for `finder`, drawn from the find's `fork` (the module docs
+/// give the draws): a stack of coins per heap and a stack of one per gem, in that order; empty
+/// when nothing came.
+pub fn purse(content: &Content, spec: &PurseSpec, finder: &Finder, fork: Fork) -> Vec<Stack> {
+    (purse_placed(content, spec, finder, fork, |_| Some(())).into_iter())
         .map(|((), stack)| stack)
         .collect()
 }
 
-/// [`purse`], with `place` drawn before each heap and each gem: where it lies (a treasure room's
-/// cell). `None` from it ends that kind (no more heaps, or no more gems). Each stack comes with
+/// [`purse`], with `place` drawn before each heap and each gem, from that kind's generator: where
+/// it lies (a treasure room's cell, a floor's). `None` from it ends that kind (no more heaps, or no more gems). Each stack comes with
 /// its place.
 pub fn purse_placed<T>(
     content: &Content,
     spec: &PurseSpec,
     finder: &Finder,
-    rng: &mut Rng,
+    fork: Fork,
     mut place: impl FnMut(&mut Rng) -> Option<T>,
 ) -> Vec<(T, Stack)> {
     let finder = match content.purses().row(spec.source).finder {
@@ -254,6 +251,7 @@ pub fn purse_placed<T>(
     if let Some(coins) = spec.purse.coins.filter(|_| spec.asks(Kind::Coins)) {
         let base = chance(coins.chance);
         let scaled = super::scale(base, finder.coins);
+        let rng = &mut fork.coins();
         if comes(base, scaled.chance, rng) {
             let currency = super::currency(content);
             for _ in 0..coins.heaps.roll(rng).max(0) {
@@ -270,6 +268,7 @@ pub fn purse_placed<T>(
     if let Some(gems) = spec.purse.gems.filter(|_| spec.asks(Kind::Gems)) {
         let base = chance(gems.chance);
         let scaled = super::scale(base, finder.gems);
+        let rng = &mut fork.gems();
         if comes(base, scaled.chance, rng) {
             let rolled = u64::try_from(gems.dice.roll(rng).max(0)).unwrap_or(0);
             let hundredths = scaled.hundredths(rolled);

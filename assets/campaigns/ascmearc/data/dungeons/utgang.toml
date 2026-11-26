@@ -24,6 +24,7 @@ secret_doors = [0, 2]
 hidden_danger_percent = 10
 locks_danger_percent = 15
 loot = [3, 5]
+purse = { gems = { chance = 20 } }
 key = "brass_key"
 # No traders this far from the galleries.
 shops = { chance = 0 }

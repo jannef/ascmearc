@@ -30,6 +30,7 @@ secret_doors = [0, 1]
 # Rewarding (#1840): about twice Ūtgang's loot, a chest or two for certain, and random vaults
 # beside the waystation (only vaults with one entrance, so no vault opens a second route).
 loot = [6, 10]
+purse = { gems = { chance = 40 } }
 chests = { chance = 100, count = [1, 2] }
 temperature = 9
 # Between the deep's silver and gold and the mountain's foot's common ores.

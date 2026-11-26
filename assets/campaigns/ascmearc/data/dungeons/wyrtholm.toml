@@ -16,6 +16,7 @@ size = [100, 40]
 traps = ["pit", "alarm"]
 hidden_danger_percent = 25
 loot = [2, 4]
+purse = { gems = { chance = 15 } }
 # The fen's damp cold.
 temperature = 9
 # Danger 6 on the first floor to 9 on the fourth: the fen's beasts and

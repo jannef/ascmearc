@@ -22,6 +22,7 @@ ambient = [40, 8, 4, 0]
 traps = ["fireball", "pit", "pit"]
 traps_per_level = [3, 5]
 loot = [2, 5]
+purse = { gems = { chance = 18 } }
 chests = { chance = 40, count = [1, 2] }
 # Danger 12 on the first floor, 4 more a floor, and half the player's levels past 10, at most 30
 # more, read as each floor is made: a level-1 fool meets lemures and dretches, a level-40 one

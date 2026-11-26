@@ -21,6 +21,7 @@ hidden_danger_percent = 60
 locks_danger_percent = 60
 # A floor is about three times a rooms floor of 80x21: so is its loot.
 loot = [5, 10]
+purse = { gems = { chance = 38 } }
 key = "iron_key"
 # The marsh is mild: its water freezes nowhere.
 temperature = 6

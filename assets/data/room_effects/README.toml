@@ -53,7 +53,8 @@
 #            sleepers are drawn only among these (hostile or not, no strays, never with
 #            `factions`), whatever the branch's population, and it is drawn only where one of them
 #            weighs something at the floor's least danger (an armoury); `danger`: its sleepers are
-#            drawn this many dangers deeper than the floor's (default 0)
+#            drawn this many dangers deeper than the floor's (default 0); `purse`: the hoard's
+#            coins and loose gems after its items (the one shape of ../purses.toml; default none)
 #   temperature  degrees Celsius added to the level's temperature inside; default 0.
 #            The room sets its cells' temperature and nothing else: what the temperature does
 #            (ice today) is the environment's; the status bar shows it
@@ -71,7 +72,9 @@
 #            stack the player lifts inside seals the room: every door of it shuts and locks (a lock
 #            of the floor's level: picked, kicked, or opened with a skeleton key), and `guardians`
 #            = [least, most] hostiles of the level's danger + `danger` come at the
-#            room's edges, out of the player's view where they can be
+#            room's edges, out of the player's view where they can be. `purse`: its coins and
+#            loose gems after its items, each on a free floor cell of the room (the one shape of
+#            ../purses.toml; default none)
 #   collapse a collapsed floor (needs `needs_below`; never the whole level): `{ chance, damage }`,
 #            the percent chance that a step of the player onto a cell inside gives
 #            way, doubled while they are Burdened or worse, and the dice they take as they land

@@ -4,11 +4,11 @@
 //!
 //! Each level reached makes, by `loot.chance` percent, one loot roll at
 //! the level as item level, with the stipend's own finder `loot.finder` (`{ rarity = 100 }`: the
-//! magic and rare rarities twice as likely; [`crate::magic::finder::Finder`], whose `gems` is the
-//! wealth seam's percent and whose `coins` scales the purse); what is rolled is kept when it is
-//! magic or better or of one of the `loot.keep` item classes, and otherwise thrown away; then
-//! its `purse`, the one shape of `data/purses.toml` (the purse table's `stipend` row,
-//! [`crate::wealth`]), for the same finder: its gold.
+//! magic and rare rarities twice as likely; [`crate::magic::finder::Finder`], whose `coins` and
+//! `gems` scale the purse); what is rolled is kept when it is magic or better or of one of the
+//! `loot.keep` item classes, and otherwise thrown away; and apart from it its `purse`, the one
+//! shape of `data/purses.toml` (the purse table's `stipend` row, [`crate::wealth`]), for the same
+//! finder: its gold, and now and then a loose gem, kept.
 //!
 //! The file is optional: without it the stipend never grows.
 

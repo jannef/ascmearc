@@ -7,7 +7,8 @@
 //! for a player with Lore ([`World::lore`]).
 //!
 //! **Drops**: a creature type with `loot` (a chance in percent) drops a magic or rare item where
-//! it dies, besides what it carried, or now and then a loose gem instead (by the gems' `chance`).
+//! it dies, besides what it carried, and with it the purse table's `drop` purse (now and then a
+//! loose gem, `data/purses.toml`), rolled apart from the item ([`crate::wealth::purse`]).
 //! The roll draws from the stream `drop/<actor id>`, never the gameplay stream, so a kill changes
 //! no later roll of a fight; its item level is the creature's level, at least the level's item
 //! level ([`drop_level`]: an out-of-depth creature drops an item of its own, higher level). What it drops is its gear:
@@ -22,7 +23,7 @@ use crate::magic::loot::{self, Origin, Spec};
 use crate::msg;
 use crate::object::Stack;
 use crate::rng::Rng;
-use crate::wealth;
+use crate::wealth::{self, PurseSpec, Source};
 use crate::world::{Actor, ActorId, Spent, World};
 
 /// What came of [`World::identify`].
@@ -93,11 +94,12 @@ impl World {
     }
 
     /// What `actor`, a creature that just died, drops besides what it carried: by its type's
-    /// `loot` chance, one find (more by the finder's `quantity`, [`loot::count`]), each a loose
-    /// gem (by the gems' chance) or else a magic or rare item at its [`drop_level`], of a
-    /// material by the creature's level (its gear), from its own stream; a rare one perhaps a
-    /// unique of the drop pool none the run has found (`magic/drop_pool.rs`; its caller notes it
-    /// found, [`crate::world::WorldState::note_dropped`]).
+    /// `loot` chance, one find (more by the finder's `quantity`, [`loot::count`]), each a magic
+    /// or rare item at its [`drop_level`], of a material by the creature's level (its gear), and
+    /// apart from them the `drop` row's purse at the same level, from its own stream (the chance
+    /// drawn, then one fork: [`Rng::fork`]); a rare one perhaps a unique of the drop pool none
+    /// the run has found (`magic/drop_pool.rs`; its caller notes it found,
+    /// [`crate::world::WorldState::note_dropped`]).
     pub(in crate::world) fn loot_of(&self, actor: &Actor) -> Vec<Stack> {
         let Some(chance) = content_loot(self, actor) else {
             return Vec::new();
@@ -113,14 +115,14 @@ impl World {
         let talents = self.state.player().talent_mods(&self.content);
         let finder = loot::Finder::of(&talents);
         let mut found = self.state.uniques_dropped.clone();
-        (0..loot::count(&self.content, &spec, &finder, &mut rng))
-            .filter_map(|_| {
-                // A loose gem instead by the wealth seam, else a find of the drop row.
-                let gem = wealth::gem_instead(&self.content, &mut rng, level, &finder);
-                let finder = &finder;
-                gem.or_else(|| loot::find(&self.content, &spec, finder, &mut found, &mut rng))
-            })
-            .collect()
+        let fork = rng.fork();
+        let items = &mut fork.items();
+        let mut dropped: Vec<Stack> = (0..loot::count(&self.content, &spec, &finder, items))
+            .filter_map(|_| loot::find(&self.content, &spec, &finder, &mut found, items))
+            .collect();
+        let purse = PurseSpec::of(&self.content, Source::Drop, level, None);
+        dropped.extend(wealth::purse(&self.content, &purse, &finder, fork));
+        dropped
     }
 
     /// Keeps actor `id`'s hit points within its maximum, which falls when it takes off something

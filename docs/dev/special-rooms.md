@@ -137,8 +137,10 @@ a tribe one `danger::draw` for the first type. Per sleeper: `Theme::draw` (mixed
 a warren: the type; a tribe: `danger::draw` over the faction's candidates, else the first type),
 then a cell (`swap_remove` of a drawn index). Each is a `CreatureSpawn` with `asleep: true`, no
 route, `rolls_gear: true` (so `gear::arm` rolls it after the population, in spawn order). The
-hoard: a loose gem by the wealth seam (`wealth::gem_instead`) or else `loot::find` of the den row at the item level + `loot_level` (the visit's finder), each
-on a plain floor cell of the room (stairs and lights left out) drawn anew. `population.rs` keeps
+hoard: `loot::find` of the den row at the item level + `loot_level` (the visit's finder), and
+apart from it the effect's `swarm.purse` (the purse table's `den` row, `docs/dev/wealth.md`), each
+on a plain floor cell of the room (stairs and lights left out) drawn anew, on one fork of the loot
+stream. `population.rs` keeps
 its creatures and their routes out of a den (as out of a sanctuary), and `special::make` refuses a
 den where a generator patrol walks. `travel.rs::make_creature` gives a spawn with `asleep` the
 first status that `sleeps` (`Content::sleep_status`) at one degree.
@@ -212,8 +214,8 @@ danger 3 and 30, and Fyrdelf's bottom floor).
 
 Items (`mapgen/hoard.rs`, `hoard::fill`, called in `mapgen::generate_with` right after
 `den::fill`, only on a branch level with a danger): every special room whose effect has a
-`hoard` gets `hoard.items` items, a loose gem by the wealth seam (`wealth::gem_instead`) or else
-`loot::find` of the hoard row at the item level + `loot_level` (the visit's finder), each on a plain floor cell of the room (the palette's floor,
+`hoard` gets `hoard.items` items, each `loot::find` of the hoard row, and apart from them its
+`hoard.purse` (the purse table's `hoard` row, `docs/dev/wealth.md`), at the item level + `loot_level` (the visit's finder), each on a plain floor cell of the room (the palette's floor,
 no stairs, light, or trap) drawn anew, from the level's loot stream (`mapgen::Loot`,
 `loot/<level id>`), going on after the dens' hoards and before the rooms' own loot, never
 restarted.
@@ -422,7 +424,8 @@ floor `DRAIN_FLOOR`, then stat damage clamped and `keep_hp_within_max`), `levels
 drawn, `bestow`: `Talents::take`, `class::hand_out`, and pushed to
 `Actor::boons`), and `flaw` (Forsaken: the `flaw` talents not held, by id, one drawn, given
 likewise); `rarity` (`magic`/`rare`, only with `loot`) is the relic's floor, the `LootGrade`
-of the feature row's `loot::find` (at `any` a loose gem by the wealth seam first). No outcome grants a wish. `Actor::boons` (saved, left out while empty) is read by
+of the feature row's `loot::find`; `purse` (only with `loot`) its coins and gems after it (the
+purse table's `feature` row, `docs/dev/wealth.md`: the altar's two `any` loot boons have one). No outcome grants a wish. `Actor::boons` (saved, left out while empty) is read by
 `stars::grant`, which passes its ids to `Talents::regrant` beside the race's and the sign's
 (the flaws, being granted, are dropped and put back there) and `Talents::take`s the rest.
 `World::lose_level` takes the experience to `threshold_for(level - 1)`, the level's

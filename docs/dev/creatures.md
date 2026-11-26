@@ -380,7 +380,7 @@ floor is `mapgen/population.rs` (`populate`, one call in `mapgen::generate_for` 
 `place_loot` and before `gear::arm`; stream `population/<level id>`, `Rng::population`): the
 count by walkable cells, the draw by `danger::draw`, a cell from the free plain-floor cells in
 row order (`swap_remove` of a drawn index), a route by `out_and_back`. Whom a level is made for
-is `mapgen::Visit` (the finder, its `gems` the wealth seam's, the player's level for a scaled danger, the uniques met;
+is `mapgen::Visit` (the finder, its items' and its purses' fields, the player's level for a scaled danger, the uniques met;
 `travel::level_template` builds it; `generate_with` is `generate_for` with only those two).
 A vault's monster pools (#958, `content/monster_pool.rs`): `populate` draws them first, group by
 group, from `Rng::vault_monsters` with the same `content.candidates` and `danger::draw`

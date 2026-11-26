@@ -18,6 +18,7 @@ hidden_danger_percent = 90
 locks_danger_percent = 90
 # Loot on the floor of each level, at the floor's danger: 1 on the first, one more a level down.
 loot = [2, 4]
+purse = { gems = { chance = 15 } }
 danger = 1
 # Only its patrols live there: nothing is drawn by the danger, and nothing comes back.
 population_count = 0

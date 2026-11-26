@@ -1,14 +1,15 @@
 //! The aristocrat's stipend and servant (Stipend; #1405).
 //!
 //! A character with the Stipend class ability (`FortuneMods::stipend`, the aristocrat's from
-//! level 1) has their family put something by at every level they reach, a prestige class's
-//! too ([`World::grow_stipend`], one line in `experience.rs::rise_from`): one loot roll at the
+//! level 1) has their family put something by at every level they reach
+//! ([`World::grow_stipend`], one line in `experience.rs::rise_from`): one loot roll at the
 //! level as item level with the file's luck (Landed noble's magic odds added), kept when magic
-//! or rare or of a `keep` class, then the gold of `data/rules/stipend.toml`'s `purse`
-//! ([`wealth::purse`]). Both read the stipend's own finder (`loot.finder`), Landed noble's
-//! percents added: its magic odds to `rarity`, its gold to `coins`; the player's own finder
-//! counts for neither. Each level draws from its own stream,
-//! `stipend/<level>`, so nothing else moves. It accumulates in [`WorldState::stipend`] (saved
+//! or rare or of a `keep` class, and apart from it the gold and the loose gems of
+//! `data/rules/stipend.toml`'s `purse` ([`wealth::purse`]; a gem is kept with the items). Both
+//! read the stipend's own finder (`loot.finder`), Landed noble's percents added: its magic odds
+//! to `rarity`, its gold to `coins`; the player's own finder counts for neither. Each level
+//! draws one fork from its own stream, `stipend/<level>` ([`Rng::fork`]: its items, its coins,
+//! and its gems each on a generator of their own), so nothing else moves. It accumulates in [`WorldState::stipend`] (saved
 //! and hashed; left out while empty).
 //!
 //! A town's `servant` for `stipend` (`content/town.rs`) is placed as its level is made
@@ -64,8 +65,9 @@ impl Stipend {
     }
 }
 
-/// What level `level` puts by for a character with `mods`: its gold, and its finds kept (one at
-/// most, unless the stipend's finder has `quantity`). Drawn from the level's own stream.
+/// What level `level` puts by for a character with `mods`: its gold, and its finds kept (one
+/// item at most, unless the stipend's finder has `quantity`, then its purse's loose gems). Drawn
+/// from the level's own stream, forked.
 pub(crate) fn of_level(
     content: &Content,
     seed: u64,
@@ -73,7 +75,8 @@ pub(crate) fn of_level(
     mods: &crate::talent::TalentMods,
 ) -> Option<(u32, Vec<Stack>)> {
     let rules = content.stipend()?;
-    let mut rng = Rng::stream(seed, &format!("stipend/{level}"));
+    let fork = Rng::stream(seed, &format!("stipend/{level}")).fork();
+    let mut rng = fork.items();
     // The stipend's own finder (data), Landed noble's odds and gold added.
     let finder = Finder {
         rarity: rules.finder.rarity + mods.fortune.stipend_magic_percent,
@@ -90,9 +93,7 @@ pub(crate) fn of_level(
         // Its row asks no drop pool: nothing is found of it.
         let none = &mut std::collections::BTreeSet::new();
         for _ in 0..loot::count(content, &spec, &finder, &mut rng) {
-            // A loose gem instead by the wealth seam, else a find of the stipend row.
-            let find = crate::wealth::gem_instead(content, &mut rng, item_level, &finder)
-                .or_else(|| loot::find(content, &spec, &finder, none, &mut rng));
+            let find = loot::find(content, &spec, &finder, none, &mut rng);
             let find = find.filter(|s| {
                 s.rarity() != Rarity::Normal || rules.keep.contains(&content.object(s.object).class)
             });
@@ -102,13 +103,17 @@ pub(crate) fn of_level(
             }
         }
     }
-    // Its purse, after the item roll: the coins, by the finder's `coins` (Landed noble's).
+    // Its purse, apart from the item roll: the coins, by the finder's `coins` (Landed noble's),
+    // and the gems, kept with the items.
     let spec = PurseSpec::of(content, Source::Stipend, item_level, Some(&rules.purse));
     let currency = wealth::currency(content);
-    let gold: u64 = (wealth::purse(content, &spec, &finder, &mut rng).iter())
-        .filter(|s| Some(s.object) == currency)
-        .map(|s| u64::from(s.count))
-        .sum();
+    let mut gold = 0u64;
+    for stack in wealth::purse(content, &spec, &finder, fork) {
+        match Some(stack.object) == currency {
+            true => gold = gold.saturating_add(u64::from(stack.count)),
+            false => kept.push(stack),
+        }
+    }
     Some((u32::try_from(gold).unwrap_or(u32::MAX), kept))
 }
 

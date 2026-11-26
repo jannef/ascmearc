@@ -148,7 +148,8 @@ where a dungeon favours or bans nothing. "Only" says where it can come at all.
   bruises. Creatures never fall through.
 - **Treasure room.** Wealth nobody has touched in a long time. Inside lie one or two chests of the
   level's depth (see [Chests](chests.md)), two to five heaps of [gold](shops.md#money) coins (three
-  six-sided dice times two coins: 6 to 36 coins a heap), and one to three loose [gems](gems.md).
+  six-sided dice times two coins: 6 to 36 coins a heap), and one to three loose [gems](gems.md)
+  (more with a talent that finds gems: see [Coins and gems](wealth.md)).
 
   Every door of it is a [secret door](doors.md#secret-doors), so you must
   [search](searching.md#how-to-search) the walls to find the way in, or [dig](digging.md#digging) in.
@@ -171,7 +172,7 @@ where a dungeon favours or bans nothing. "Only" says where it can come at all.
   Nothing the level needs is ever inside, no [trap](traps.md#finding-traps) is hidden in it, and
   no creature wanders in. Each time you arrive on its level until you have been inside,
   *something tells you a fortune lies walled up on this level*.
-- **Tempting hoard.** Three items lie on its floor, better than the level's own (three item levels above it), and no one guards them.
+- **Tempting hoard.** Three items lie on its floor, better than the level's own (three item levels above it), and no one guards them. Now and then a loose [gem](gems.md) lies there too (see [Coins and gems](wealth.md)).
 
   The moment you pick anything up inside, the room seals. Every door of it slams shut and locks
   ("The doors slam shut!"); a door with something in the doorway stays open. Two to four creatures

@@ -2,7 +2,7 @@
 //! an item is found or made, the least rarity of what it gives, whether the finder's talents
 //! count, whether a curse may roll, and whether arms and armour may come Fine or better; then
 //! which of them may give a unique of the drop pool. And the odds of one find by its least
-//! rarity, the drop pool's included, with the loose gem found in an item's place.
+//! rarity, the drop pool's included. Coins and loose gems are the purse's (`purses.rs`).
 
 use super::util::{percent_of, thousands};
 use ascmearc_core::content::{Content, Rarity};
@@ -136,7 +136,7 @@ fn one_in(part: u64, of: u64) -> String {
 
 /// The odds of one item found, by the least rarity of its place, with no talents: normal,
 /// magic, or rare, and a unique of the drop pool (where the place gives one and a unique is
-/// open to the find's item level); then how often a loose gem comes in an item's place.
+/// open to the find's item level).
 pub(super) fn loot_odds(content: &Content) -> String {
     let affixes = content.affixes();
     let unique = u64::from(affixes.unique_pool);
@@ -180,14 +180,6 @@ pub(super) fn loot_odds(content: &Content) -> String {
             one_in(rare * unique, u64::from(total.max(1)) * 10_000),
         );
     }
-    let gems = content.gems().map_or(0, |g| g.chance);
-    let _ = write!(
-        out,
-        "\nIn some places a loose [gem](gems.md) comes instead of an item {gems} times in 100: \
-         on a floor, in a tempting hoard or a den's hoard, from the stipend, from what a creature \
-         drops, and in a vault, a chest, or from a feature whose rarity at least is any. The odds \
-         above are of the items that come.\n"
-    );
     out
 }
 
@@ -223,6 +215,6 @@ mod tests {
             "{text}"
         );
         assert!(text.contains("| rare | - | - | 100% | 1 in 50 |"), "{text}");
-        assert!(text.contains("instead of an item 5 times in 100"));
+        assert!(!text.contains("instead of an item"));
     }
 }

@@ -76,7 +76,7 @@ use crate::magic::LootCell;
 use crate::magic::loot::{self, Finder, Origin, Spec};
 use crate::object::{Stack, add_to_pile};
 use crate::rng::Rng;
-use crate::wealth;
+use crate::wealth::{self, PurseSpec, Source};
 use std::collections::{BTreeMap, BTreeSet};
 
 /// Attempts before giving up on a level (each with its own derived stream).
@@ -486,8 +486,8 @@ fn spaced_vaults<'a>(
 /// the same for anyone.
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Visit<'a> {
-    /// The finder (`magic/finder.rs`): its items, and its gems where the wealth seam draws one
-    /// ([`crate::wealth::gem_instead`]; Hoard sense).
+    /// The finder (`magic/finder.rs`): its items, and its purses' coins and gems
+    /// ([`crate::wealth::purse`]; Hoard sense).
     pub finder: Finder,
     pub player_level: u8,
     pub uniques: Option<&'a std::collections::BTreeSet<String>>,
@@ -699,6 +699,7 @@ pub fn generate_for(
             let floor = Floor {
                 terrain: pal.floor,
                 count: plan.loot,
+                purse: plan.purse,
             };
             let mut loot = Loot::new(seed, &template.id, visit);
             place_loot(
@@ -927,12 +928,14 @@ fn hide_secrets(
     }
 }
 
-/// The floor loot of a generated level: how many items, and the terrain they lie on.
+/// The floor loot of a generated level: how many items, the terrain they lie on, and its purse.
 #[derive(Clone, Copy, Debug)]
 pub(crate) struct Floor {
     pub terrain: TerrainId,
     /// Fewest and most.
     pub count: [u8; 2],
+    /// Its coins and loose gems (the dungeon's `purse`); `None`: none.
+    pub purse: Option<wealth::Purse>,
 }
 
 /// A generated level's loot as it is laid: the level's one loot stream, and the drop pool's
@@ -959,12 +962,13 @@ impl Loot {
 }
 
 /// Rolls a generated level's loot at its item level, from its loot stream (`loot`, so that the
-/// map is the same with or without it): first an item on each of `markers` (vaults' loot
-/// cells), then the floor loot, one draw for how many (between the fewest and
-/// the most) and, for each, one for a cell of `floor` terrain where nothing lies, stands,
-/// shines, or leads away (in row order), then the item, for the finder `visit` describes (a
-/// cell by [`LootCell::roll`]; the floor's count by [`loot::count`], each by
-/// [`wealth::gem_instead`], then [`loot::find`]).
+/// map is the same with or without it), for the finder `visit` describes: first each of
+/// `markers` (vaults' loot cells, [`LootCell::roll`], a fork each), then the floor's, one fork
+/// of the stream ([`Rng::fork`]): on its items' generator one draw for how many (between the
+/// fewest and the most, scaled by [`loot::count`]) and, for each, one for a cell of `floor`
+/// terrain where nothing lies, stands, shines, or leads away (in row order), then the item
+/// ([`loot::find`]); and apart from them the floor's purse ([`wealth::purse_placed`], the
+/// dungeon's `purse`), each stack on such a cell drawn on its kind's generator.
 pub(crate) fn place_loot(
     template: &mut LevelTemplate,
     content: &Content,
@@ -986,6 +990,8 @@ pub(crate) fn place_loot(
         }
     }
     let Some(floor) = floor else { return };
+    let fork = rng.fork();
+    let rng = &mut fork.items();
     let [fewest, most] = floor.count.map(i32::from);
     let spec =
         Spec::new(Origin::Floor, level).count(u32::try_from(rng.range(fewest, most)).unwrap_or(0));
@@ -1007,10 +1013,16 @@ pub(crate) fn place_loot(
             break;
         }
         let p = free.remove(rng.index(free.len()));
-        // A loose gem instead by the wealth seam, else a find of the floor row.
-        let stack = wealth::gem_instead(content, rng, level, &visit.finder)
-            .or_else(|| loot::find(content, &spec, &visit.finder, taken, rng));
+        let stack = loot::find(content, &spec, &visit.finder, taken, rng);
         place(template, p, stack);
+    }
+    // The floor's purse, apart from its items: each stack on a free cell.
+    let purse = PurseSpec::of(content, Source::Floor, level, floor.purse.as_ref());
+    let laid = wealth::purse_placed(content, &purse, finder, fork, |rng| {
+        (!free.is_empty()).then(|| free.remove(rng.index(free.len())))
+    });
+    for (p, stack) in laid {
+        place(template, p, Some(stack));
     }
 }
 
