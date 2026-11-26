@@ -29,7 +29,7 @@ cold barrows, a drowned minster, a hidden fey hall, and a fire mountain that smo
   story, and the talents you pick make every character different. They are not balanced, on
   purpose.
 - **Grow by doing.** Experience levels, skills and weapon skills that improve with use,
-  fighting styles, spells to learn and deepen, and prestige classes later on.
+  fighting styles, and spells to learn and deepen.
 - **Things to make.** Forge swords at an anvil, brew potions, cut and set gems, fletch arrows,
   and enchant your gear with magic crystals.
 - **People to meet.** Towns with shops, inns, a temple, and a guild; folk to talk to, quests to
@@ -99,7 +99,7 @@ Feature work changes the wiki, the spec, and the developer notes, not this file.
 To play a locked release from source, install it with `cargo install` (a tag picks the version):
 
 ```sh
-cargo install --git https://github.com/jannef/ascmearc --tag v0.23.1 --locked ascmearc
+cargo install --git https://github.com/jannef/ascmearc --tag v0.24.0 --locked ascmearc
 ```
 
 - `--locked` uses the release's `Cargo.lock`. Add `ascmearc-cli` after `ascmearc` for the
