@@ -393,7 +393,10 @@ pub fn noise(
         Act::Step(_) => {
             let quieter = actor.mods(content).get(ItemEffect::Stealth);
             let loudness = crate::magic::mods::less(u64::from(loudness), quieter);
-            TalentMods::scaled(loudness, talents.stealth.footsteps_percent) as u32
+            let loudness = TalentMods::scaled(loudness, talents.stealth.footsteps_percent);
+            // Bare feet under a unique's Barefoot power (Hushfoot's: silent, #2133).
+            let bare = actor.barefoot(content).map_or(100, |b| u64::from(b.noise));
+            (loudness * bare / 100) as u32
         }
         Act::OpenDoor(_) | Act::CloseDoor(_) if talents.stealth.silent_doors => 0,
         Act::Kick(_) => {

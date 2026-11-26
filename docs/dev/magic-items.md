@@ -412,6 +412,32 @@ id on another rarity than unique, and a unique without its id.
   four are the rollable ones with a unique's hand-set values, so no rollable pool changes.
   Tests: `world/combat/negate_tests.rs` (the weight, Defence and Protection, casting, a negated
   hit, a miss never rolling, loot never making one).
+- **Smoulder, Tiptoe, Hushfoot** (#2139, #2141, #2133), in the shared `data/uniques/`, each of
+  the drop pool (`pool = true`) and placed nowhere but the quarry. **Smoulder**: a Masterwork
+  heavy crossbow, item level 40: Sharp 5 (on a launcher by a unique's hand), Keen 4 (past the
+  ladder), of Precision 4, and the Zone power (smoke, radius 1, 8 turns). The owner's Steady +6
+  is left out: Steady lowers a bow's Strength to draw and a crossbow has none, so the load
+  refuses it ("its effect does nothing"). **Tiptoe**: footwraps, item level 20: Nimble 3, Fleet
+  11, of Wariness 60, of Shadows 30, and the Trapwise power (radius 5). **Hushfoot**: a
+  waistcoat, item level 30: Hale 12, of the Fox 40, of Shadows 40, of Sustenance 25, and the
+  Barefoot power (the feet; noise 0, Dodge 3, `feel_traps`). Tests:
+  `world/combat/shot_zone_tests.rs` (smoke where a bolt falls and where it stops at a creature,
+  the shooter blinded too, its fading, none from a plain crossbow or a throw) and
+  `world/skills/trapwise_tests.rs` (the traps found within 5, a door's too; none sprung by the
+  player or a creature, the trap left armed; Hushfoot's bare feet against shoes: noise, Dodge,
+  the traps beside found but not a door's; the load's refusals; nothing rolled).
+- **A unique on clothing** (#2141, #2133): clothing has no `kind` and is never magic
+  (docs/dev/equipment.md), so a unique on it names the kind its affixes work as (`kind =
+  "boots"`, `UniqueDef::kind`: an armour kind, a ring, or an amulet, on a worn base without a
+  kind of its own; refused on a base with one). The unique is made against its base as that
+  kind (`content/unique.rs`, a copy of the base with the kind), and `Content::item_kind` (the
+  base's kind, else the unique's) is what `Mods` (`add_magic`), `Magic::check_set`, and the
+  description's affix lines read. Everything else keeps the base's own: plain footwraps stay
+  clothing, never loot, never enchanted, and the description shows no capacity line.
+  Like every unique, it is never trimmed (`content/level.rs::hand_made`,
+  docs/dev/enchanting.md): four on cloth (capacity 2) stay four. A test that drops the skills
+  (`character.rs`'s `skill_free_content`) drops the shared uniques' skill affixes with them
+  (Hushfoot's of the Fox).
 - **Hǣrsceorp, the Kettle Hat, and Scarhide** (#2115, #2127, #2137; the class and race uniques'
   first three), in the shared `data/uniques/`, each `pool = true`, placed nowhere but the quarry.
   **Hǣrsceorp** (`haersceorp`, a padded coat, item level 24): Featherweight 50, Nimble 4 (+4
@@ -522,6 +548,24 @@ id on another rarity than unique, and a unique without its id.
   `World::creature_spell_does`, the spell's own code for any caster (a cone from the bearer's
   cell, never holding it), its lines held into the news so they follow the blow's ("Flames leap
   from your shield!", `uniques.flames_from_*`). The spell's data is untouched.
+  `Power::Zone { kind, radius, turns }` (`{ zone = "smoke", radius = 1, turns = 8 }`, only on
+  a missile weapon and never fire, which has no harm to roll; #2139): read once a flight is
+  over (`World::fly`, for a shot, never a throw; `world/combat/shot_zone.rs`): the zone, by the
+  shooter, around the cell the missile stopped at (hit or miss; `lay_zone_around`, a miscast's
+  zone: within the radius in that cell's line of sight, none on the overworld). No draw.
+  `Power::Trapwise(radius)` (`{ trapwise = 5 }`, #2141) and `Power::Barefoot(Barefoot)` (`{
+  barefoot = "feet", noise = 0, dodge = 3, feel_traps = true }`, #2133; the slot must be
+  empty, never the item's own): `world/skills/trapwise.rs` (its module docs). One rule for both:
+  `Actor::treads_over_traps` (Trapwise, or Barefoot with `feel_traps` on bare feet) makes
+  `World::treads_safely` keep a trap stepped on from springing (`step_onto_trap`, asked first,
+  the player and a creature alike; `sidesteps` skips its draw for them), the trap staying armed;
+  the player finds it and is told `uniques.tread_over_trap`. After each of the player's turns
+  (`notice_hidden`, first) `World::feel_traps` finds every hidden trap within Trapwise's radius
+  (Chebyshev, no line of sight, a door's or a chest's too) and those on the floor beside and
+  under bare feet (not a door's or a chest's), through `search.rs`'s `reveal`, with no draw. The
+  Barefoot's `noise` (a percent of a step's loudness, after stealth and talents) is read in
+  `noise::noise` for `Act::Step`, its `dodge` with the magic Dodge in `Actor::defence`, both
+  through `Actor::barefoot`. No bare-feet harm exists yet for Hushfoot's drawback to read.
   `magic::worn_powers` lists the powers of what an actor has equipped.
   `Power::Pain { resource, gain, critical }` (`{ pain = "ki", gain = 1, critical = 2 }`, #2115),
   `Power::Ring { cells, stagger, difficulty }` (`{ ring = 20, stagger = 1, difficulty = 15 }`,

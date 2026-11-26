@@ -48,6 +48,10 @@ phrase = { text = "Jokaisen sen kantajaan osuvan iskun kipu kertyy ki-voimaksi."
 lore = { text = "Moni vaunu on pysähtynyt sen tähden, ja moni kuski juossut karkuun.", of = "6c3884" }
 phrase = { text = "Sen nuolet jättävät vuotavia haavoja.", of = "0f05cd" }
 
+[hushfoot]
+lore = { text = "Mummo sano: suappaat jalassa et kuule yhtikäs mittään tulovan, kultaseni.", of = "78f9b5" }
+phrase = { text = "Paljain jaloin sen kantaja kulkee äänettä, väistää ketterämmin ja tuntee jokaisen ansan jalkojensa alla; yksikään ansa ei laukea hänen allaan.", of = "e013b2" }
+
 [kettle_hat]
 lore = { text = "Se piti sateen poissa ja keiton sisällä. Sitten tuli sota, ja se piti miekankin poissa.", of = "d2d11a" }
 phrase = { text = "Jokainen siihen osuva isku kumahtaa kauas, ja meteli horjuttaa jokaista sen kantajan vieressä seisovaa.", of = "6e7327" }
@@ -78,9 +82,17 @@ message = { text = "Mikään ei vangitse katsettasi kauaksi aikaa.", of = "124df
 lore = { text = "Sen jänne, niin jousentekijät vannoivat, oli kehrätty kuun hiuksesta.", of = "87875c" }
 phrase = { text = "Sen nuolet lentävät kaksi kertaa niin kauas kuin tavallisen jousen.", of = "7eb75c" }
 
+[smoulder]
+lore = { text = "Ei sijnä ole tulda, ia quitengin se sauhupi.", of = "d1becc" }
+phrase = { text = "Sen nuolet savuavat siellä, mihin ne pysähtyvät, osuivat tai eivät: savun läpi ei näe mikään silmä, ei sinunkaan.", of = "43456b" }
+
 [stonebiter]
 lore = { text = "Lovettu sadassa louhoksen seinässä, eikä yksikään niistä antanut periksi.", of = "fa63dd" }
 phrase = { text = "Sen kantaja näkee hämärässä.", of = "95fdf0" }
+
+[tiptoe]
+lore = { text = "Kyl laattia o iha hyvä. Katto vaa mihe sää seisot.", of = "5a94ee" }
+phrase = { text = "Yksikään ansa ei laukea sen kantajan jalkojen alla, ja hän näkee jokaisen lähellään olevan ansan.", of = "fd7e71" }
 
 [turncoat]
 lore = { text = "Rykmentin värit leikattiin siitä irti kauan sitten; ompeleet näkyvät yhä.", of = "d825c0" }

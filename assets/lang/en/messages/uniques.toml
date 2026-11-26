@@ -16,6 +16,10 @@ restored_unseen = "The stone on your finger grows warm."
 # The player restored.
 restored_you = "Death lets go of you: you rise whole again!"
 
+# Feet that never spring a trap (Tiptoe's Trapwise, Hushfoot's bare feet; #2141, #2133;
+# `world/skills/trapwise.rs`): the player steps onto a trap, which stays armed. `trap`: the trap.
+tread_over_trap = "You tread over {trap:a}, and it does not spring."
+
 # The Ring power (#2127, the Kettle Hat; `world/combat/struck.rs`): a blow lands on the helm's
 # wearer. `who`: a wearer the player sees.
 rings_helm = "{who:poss} helm rings like a struck kettle!"

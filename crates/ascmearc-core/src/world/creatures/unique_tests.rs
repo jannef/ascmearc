@@ -168,6 +168,9 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
                 Power::Range(_) => "range",
                 Power::Restore { .. } => "restore",
                 Power::Cast(_) => "cast",
+                Power::Barefoot(_) => "barefoot",
+                Power::Trapwise(_) => "trapwise",
+                Power::Zone { .. } => "zone",
                 Power::Pain { .. } => "pain",
                 Power::Ring { .. } => "ring",
                 Power::Scars => "scars",
@@ -183,11 +186,14 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
             ("demonsoul", "cast"),
             ("grandmother", "inflict"),
             ("haersceorp", "pain"),
+            ("hushfoot", "barefoot"),
             ("kettle_hat", "ring"),
             ("masterpiece", "negate"),
             ("radiant", "light"),
             ("scarhide", "scars"),
             ("silverstrike", "range"),
+            ("smoulder", "zone"),
+            ("tiptoe", "trapwise"),
             ("brosinga_mene", "ward"),
             ("eorcanstan", "ward"),
             ("grendles_grape", "ward"),
@@ -705,8 +711,9 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
     }
     // The outlaws' four, Sigeric's Star, the pedlar's three, the drop pool's five (#1976, #2095,
     // #2097), the Cracked Resurrection Stone (#2098), the test world's Stonebiter, and the
-    // Masterpiece (#2100); Hǣrsceorp, the Kettle Hat, and Scarhide (#2115, #2127, #2137).
-    assert_eq!(ids.len(), 19, "{ids:?}");
+    // Masterpiece (#2100); Hǣrsceorp, the Kettle Hat, and Scarhide (#2115, #2127, #2137);
+    // Smoulder, Tiptoe, and Hushfoot (#2139, #2141, #2133).
+    assert_eq!(ids.len(), 22, "{ids:?}");
     let widowmaker = unique(&w, "widowmaker");
     let magic = widowmaker.magic().expect("magic");
     let stiletto = content.object(widowmaker.object);

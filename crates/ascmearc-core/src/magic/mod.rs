@@ -182,7 +182,9 @@ impl Magic {
         content: &Content,
         set: &[Affix],
     ) -> Result<(), String> {
-        let Some(kind) = def.kind else {
+        // A unique on clothing works as the kind its table names (#2141).
+        let clothed = (self.unique.as_deref()).and_then(|id| content.unique(id)?.kind);
+        let Some(kind) = def.kind.or(clothed) else {
             return Err(format!("`{}` cannot be magic: it has no `kind`", def.id));
         };
         match (self.rarity, &self.name) {

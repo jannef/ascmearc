@@ -509,7 +509,7 @@ fn lines_named(stack: &Stack, content: &Content, name: Phrase, maker: Option<&st
     match stack.known_magic() {
         None => out.push(line(LineKind::Note, msg::describe::MAGIC_UNKNOWN)),
         Some(magic) => {
-            let kind = def.kind.unwrap_or(ItemKind::Ring);
+            let kind = content.item_kind(stack).unwrap_or(ItemKind::Ring);
             for rolled in magic.rolled(content) {
                 let said = affix_line(&rolled, Some(kind), content);
                 out.push(line(LineKind::Affix(rolled.def.kind), said));
