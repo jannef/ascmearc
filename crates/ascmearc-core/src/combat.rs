@@ -288,6 +288,9 @@ pub struct Profile {
     /// arrows of undead-bane), by tag in the order first met: added where the attack meets its
     /// target (`World::resolve`), only when the target's type carries the tag.
     pub banes: Vec<(String, i32)>,
+    /// The prayer strain its hits take off its wielder: the power of the unique weapon it is
+    /// made with (Scrift's Shrive, #2111; `world/combat/shrive.rs`).
+    pub shrive: Option<crate::content::Shrive>,
 }
 
 /// What an attack is made with, as data gives it: a weapon (`data/objects.toml`) or a creature's
@@ -415,6 +418,7 @@ impl Profile {
             riders: Vec::new(),
             on_hit: Vec::new(),
             banes: Vec::new(),
+            shrive: None,
         }
     }
 
@@ -736,6 +740,7 @@ mod tests {
             riders: Vec::new(),
             on_hit: Vec::new(),
             banes: Vec::new(),
+            shrive: None,
         }
     }
 

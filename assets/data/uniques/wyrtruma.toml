@@ -1,0 +1,20 @@
+# Wyrtruma (#2113, "root"): an ironwood staff for the drop pool (#2103; placed nowhere else but
+# the test world's quarry), item level 30, the druid's. Its Root power: a called beast of its
+# wielder's whose time runs out within three cells of them stays another minute, again and again
+# while it stands near (`world/allies/root.rs`). +3 Natural armour (the staff is bark), Survival
+# +30, +2 degrees on buffs and hexes, Balance +30, and Guarding 2 (+2 Parry, the staff's own 1
+# aside). Every value set by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "wyrtruma"
+name = "Wyrtruma"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "ironwood_staff"
+affixes = ["guarding=2", "oaken=3", "of_balance=30", "of_lingering=2", "of_the_wanderer=30"]
+level = 30
+# Five enchantments need its make (docs/dev/enchanting.md): Marvellous (+1), ironwood's binding
+# (+1), and an emerald set in its tip (+1).
+quality = "marvellous"
+parts = [{ part = "tip", of = "emerald" }]
+power = { root = 3, renew = 60, phrase = "The beasts its bearer calls stay on while they stand by." }
+lore = "Planted, it would grow. Nobody has dared put it down long enough to see."

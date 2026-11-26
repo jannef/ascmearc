@@ -1481,6 +1481,10 @@ impl World {
         if let Some(refused) = self.refuse_blocked(action) {
             return refused;
         }
+        // A unique's vow of silence (`hush.rs`).
+        if let Some(refused) = self.refuse_hushed(action) {
+            return refused;
+        }
         let here = self.player_pos();
         // Whether the action was done, and what kind of action it was for its cost (the same on
         // any level: taking stairs ends on another).

@@ -369,12 +369,28 @@ Its power works while it is worn or wielded, identified or not:
   it off. When you bash with it, hit or miss, the spell goes at the one you bashed. The spell
   works as it always does, with the reach and damage the table gives, whatever your own magic.
   A cone never reaches you.
+- **Shrive**: every blow it lands takes some of its wielder's prayer
+  [strain](prayer.md#strain) away, a critical hit more, and a blow that kills one of the
+  [undead](spell-rules.md#healing-harms-the-undead) or a fiend takes all of it. Strain never goes
+  below nothing. One who does not pray gets nothing from it, and a blow with another weapon takes
+  nothing away.
+- **Root**: a creature you called with a [summon spell](allies.md#summons) whose time runs out
+  while it stands within the number of cells the table gives of you does not leave. It stays
+  another minute, and again each time its minute ends that near. Looking at it says "rooted".
+  Farther off when its time ends, it leaves as ever.
 
 Some give more besides their power, as the table says: an immunity or a weakness to a kind of
 [damage](damage-types.md#armour-and-resistance), damage added to a shield's
 [bashes](abilities.md#ability-shield-bash), going [unseen](creature-tricks.md#when-you-are-invisible), or a darkness about you: while you wear it, every light within
 that many cells of you gives no light, the lamps, the fires, and the lights others carry, your
 own too. Nothing is used up: the lights shine again once you are gone or take it off.
+
+One has no power at all, only rules of its own: Swīge keeps a silence about its wearer. Nobody
+within two cells of you, you and your allies too, can cast a [spell](magic.md) or read a
+[scroll](scrolls.md) ("No word will come in this silence."). Nothing else is stopped: you can
+still [pray](prayer.md), use a wand or a rod, and use any ability that is not a spell, and a spell
+already cast goes on. To cast, take it off (a turn) or have the caster step out of the square.
+It also lets your prayer [strain](prayer.md#strain) pass twice as fast.
 
 {{#include generated/uniques.md}}
 

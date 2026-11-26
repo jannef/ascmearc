@@ -154,20 +154,26 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     let mut other = bedes.magic().clone();
     other.unique = None;
     assert!(other.check(content.object(bedes.object), &content).is_err());
-    // The drop pool's seven (#1976, #2095, #2097, #2098, #2100, the shared table first), the
-    // criminals' four, the pedlar's three (#808), and Sigeric's (#1787), each with its power.
+    // The drop pool's ten (#1976, #2095, #2097, #2098, #2100, #2111-#2113, the shared table
+    // first), the criminals' four, the pedlar's three (#808), and Sigeric's (#1787), each with its
+    // power (Swīge has none: its rules are fields).
     let powers: Vec<(&str, &str)> = (content.uniques())
         .filter(|u| u.stack.magic().is_some_and(|m| m.level >= 12))
         .map(|u| {
-            let power = match u.power.as_ref().expect("a power") {
-                Power::Inflict { .. } => "inflict",
-                Power::Vision(_) => "vision",
-                Power::Ward { .. } => "ward",
-                Power::Negate { .. } => "negate",
-                Power::Light(_) => "light",
-                Power::Range(_) => "range",
-                Power::Restore { .. } => "restore",
-                Power::Cast(_) => "cast",
+            let power = match u.power.as_ref() {
+                None => "none",
+                Some(power) => match power {
+                    Power::Inflict { .. } => "inflict",
+                    Power::Vision(_) => "vision",
+                    Power::Ward { .. } => "ward",
+                    Power::Negate { .. } => "negate",
+                    Power::Light(_) => "light",
+                    Power::Range(_) => "range",
+                    Power::Restore { .. } => "restore",
+                    Power::Cast(_) => "cast",
+                    Power::Root { .. } => "root",
+                    Power::Shrive(_) => "shrive",
+                },
             };
             (u.id.as_str(), power)
         })
@@ -181,7 +187,10 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
             ("grandmother", "inflict"),
             ("masterpiece", "negate"),
             ("radiant", "light"),
+            ("scrift", "shrive"),
             ("silverstrike", "range"),
+            ("swige", "none"),
+            ("wyrtruma", "root"),
             ("brosinga_mene", "ward"),
             ("eorcanstan", "ward"),
             ("grendles_grape", "ward"),
@@ -699,8 +708,8 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
     }
     // The outlaws' four, Sigeric's Star, the pedlar's three, the drop pool's five (#1976, #2095,
     // #2097), the Cracked Resurrection Stone (#2098), the test world's Stonebiter, and the
-    // Masterpiece (#2100).
-    assert_eq!(ids.len(), 16, "{ids:?}");
+    // Masterpiece (#2100), Scrift, Swīge, and Wyrtruma (#2111-#2113).
+    assert_eq!(ids.len(), 19, "{ids:?}");
     let widowmaker = unique(&w, "widowmaker");
     let magic = widowmaker.magic().expect("magic");
     let stiletto = content.object(widowmaker.object);

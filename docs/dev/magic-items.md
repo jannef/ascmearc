@@ -412,6 +412,17 @@ id on another rarity than unique, and a unique without its id.
   four are the rollable ones with a unique's hand-set values, so no rollable pool changes.
   Tests: `world/combat/negate_tests.rs` (the weight, Defence and Protection, casting, a negated
   hit, a miss never rolling, loot never making one).
+- **Scrift, Swīge, and Wyrtruma** (#2111, #2112, #2113): three of the drop pool (`pool = true`;
+  placed nowhere but the quarry), each for a class. **Scrift**, the priest's Masterwork mace,
+  item level 26: Sharp 4, of undead-bane 4, of the Sage 4 (Willpower), of the Lion 4 (Presence),
+  and its Shrive power (below). **Swīge**, a jade amulet, item level 32: of Warding 4 (past the
+  ladder), of the Sage 6, of Clarity 30, no power, and two fields (`silence = 2`, `strain_decay =
+  200`, below); its words are the table's own `phrase` (a unique with no power may write one).
+  **Wyrtruma**, the druid's Marvellous ironwood staff with an emerald in its tip (five affixes:
+  Marvellous +1, ironwood's binding +1, the gem +1), item level 30: Guarding 2 (+2 Parry), Oaken
+  3, of Balance 30, of Lingering 2, of the Wanderer 30 (Survival), and its Root power (below).
+  No new affix: their values are the rollable affixes' with a unique's hand. Tests:
+  `world/combat/shrive_tests.rs`, `world/magic/hush_tests.rs`, `world/allies/root_tests.rs`.
 - **What only a unique sets** (#2091), each refused to any other item by `Magic::check` and
   never rolled (`content/unique_values_tests.rs::what_only_a_unique_sets_never_rolls`: every
   random affix, loot's, a vault's, a shop's, enchanting's and its recast's, comes of
@@ -506,6 +517,16 @@ id on another rarity than unique, and a unique without its id.
   `World::creature_spell_does`, the spell's own code for any caster (a cone from the bearer's
   cell, never holding it), its lines held into the news so they follow the blow's ("Flames leap
   from your shield!", `uniques.flames_from_*`). The spell's data is untouched.
+  `Power::Shrive(Shrive { per_hit, per_crit })` (`{ shrive = 40, critical = 120 }`, a weapon
+  only; #2111): `Mods::local` carries it into `Profile::shrive` (as Inflict's `on_hit`), and
+  `World::resolve` hands it to `world/combat/shrive.rs::World::shriven` once the blow is done:
+  a hit by the player takes `per_hit` of their prayer strain off, a critical `per_crit`, and one
+  that killed (the target gone from `actors`) an undead or `fiend`-tagged creature all of it
+  (`World::ease_strain`, docs/dev/prayer.md); no draw, no word.
+  `Power::Root { cells, renew }` (`{ root = 3, renew = 60 }`, #2113): `world/allies/root.rs::
+  World::root_summons`, first in `World::allies_lapse`: a summoned ally past its time within
+  `cells` (Chebyshev) of a master on its level bearing the power stays `renew` seconds more and is
+  `Ally::rooted` (docs/dev/allies.md "Time"); no draw.
   `magic::worn_powers` lists the powers of what an actor has equipped.
 - **Rules beside the power** (#2095, #2097), fields of the unique's table read where the rule
   is, never affixes (so no pool can roll them; `unique_spell_tests.rs::nothing_unique_only_is_ever_rolled`):
@@ -517,7 +538,14 @@ id on another rarity than unique, and a unique without its id.
   source within that Chebyshev distance of the wearer gives no light while it is worn, placed
   lights, fires, fire zones, and every carried light, the wearer's own too, dropped where
   `light/cache.rs`'s `sources` drops a darkened one, so the light map, sight, and the perception
-  snapshot follow; nothing is put out or used up).
+  snapshot follow; nothing is put out or used up); `silence` (cells, #2112:
+  `world/magic/hush.rs::World::hushed` asks whether an actor stands within that Chebyshev distance
+  of a wearer on its level, the wearer too; `World::refuse_hushed`, after `refuse_blocked` in the
+  player's turn, refuses a spell (`Action::Cast`/`CastOn` of a spell id) or the reading of an
+  object with a `read` (a scroll) for no time, `uniques.hushed`; a creature's `casts_now` casts
+  nothing; no status is laid; prayer, class and weapon abilities, wands, rods, songs, and a
+  creature's summoning go on); and `strain_decay` (percent, default 100: docs/dev/prayer.md
+  "What items do to the strain").
 - **Description**: `describe::lines` adds `LineKind::Power` (the `phrase`) and
   `LineKind::Lore` after the affixes, only through `known_magic`; the UI labels the first
   "Power" and dims the lore in a section of its own. A spirit weapon (`Stack::spirit`, the

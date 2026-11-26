@@ -94,6 +94,16 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "scrift",
+        26,
+        &[
+            ("sharp", 4),
+            ("of_undead_bane", 4),
+            ("of_the_sage", 4),
+            ("of_the_lion", 4),
+        ],
+    ),
+    (
         "sigerics_star",
         12,
         &[
@@ -109,6 +119,11 @@ const UNIQUES: &[Written] = &[
         &[("keen", 6), ("steady", 6), ("of_precision", 6)],
     ),
     ("stonebiter", 6, &[("sharp", 2), ("of_the_ox", 2)]),
+    (
+        "swige",
+        32,
+        &[("of_warding", 4), ("of_the_sage", 6), ("of_clarity", 30)],
+    ),
     (
         "turncoat",
         12,
@@ -128,6 +143,17 @@ const UNIQUES: &[Written] = &[
         "widowmaker",
         12,
         &[("of_celerity", 16), ("of_the_lynx", 2), ("of_precision", 2)],
+    ),
+    (
+        "wyrtruma",
+        30,
+        &[
+            ("guarding", 2),
+            ("oaken", 3),
+            ("of_balance", 30),
+            ("of_lingering", 2),
+            ("of_the_wanderer", 30),
+        ],
     ),
 ];
 

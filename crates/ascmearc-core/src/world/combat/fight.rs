@@ -992,6 +992,7 @@ impl World {
         });
         // What a hit causes besides its damage (a unique weapon's Inflict power).
         let made = profile.as_ref().map_or_else(Vec::new, |p| p.on_hit.clone());
+        let shrive = profile.as_ref().and_then(|p| p.shrive);
         // The blow's dice: the strike's own stream (`fight/strike/<attacker>/<target>`); an
         // intent (no profile) draws nothing.
         let blow = profile.map(|profile| {
@@ -1117,6 +1118,8 @@ impl World {
                 self.knock_away(attacker, target, kind);
             }
         }
+        // Scrift's penance by blows: the wielder's prayer strain (`shrive.rs`).
+        self.shriven(attacker, target, shrive, blow);
         // A familiar's touch is its master's hex (`familiar.rs`), on a hit that leaves it alive.
         if blow.is_some_and(|b| b.strike.is_hit()) {
             self.familiar_touch(attacker, target, kind, events);

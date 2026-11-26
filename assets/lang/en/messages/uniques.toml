@@ -5,6 +5,9 @@
 # before the spell's own lines. `who`: a bearer the player sees.
 flames_from_shield = "Flames leap from {who:poss} shield!"
 flames_from_your_shield = "Flames leap from your shield!"
+# A spell cast or a scroll read in a unique's silence (Swīge, #2112; `world/magic/hush.rs`),
+# refused.
+hushed = "No word will come in this silence."
 # A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.
 no_craft = "It is unique: no craft of yours will change it."
 

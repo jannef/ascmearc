@@ -60,6 +60,9 @@ pub struct Mods {
     /// How many times as far it shoots or is thrown, from a unique item's Range power (local;
     /// 1 without one: [`Mods::range`]).
     range_times: u8,
+    /// The prayer strain its hits take off, from a unique weapon's Shrive power (local, as
+    /// `on_hit`).
+    shrive: Option<crate::content::Shrive>,
 }
 
 impl Default for Mods {
@@ -76,6 +79,7 @@ impl Default for Mods {
             added: Vec::new(),
             banes: Vec::new(),
             range_times: 1,
+            shrive: None,
         }
     }
 }
@@ -275,6 +279,7 @@ impl Mods {
                     mods.added.extend(*added);
                 }
                 Some(&Power::Range(times)) => mods.range_times = times,
+                Some(&Power::Shrive(shrive)) => mods.shrive = Some(shrive),
                 _ => {}
             }
         }
@@ -376,6 +381,7 @@ impl Mods {
             profile.add_rider(rider);
         }
         profile.on_hit.extend_from_slice(&self.on_hit);
+        profile.shrive = profile.shrive.or(self.shrive);
         for (tag, value) in &self.banes {
             add_bane(&mut profile.banes, tag, *value);
         }

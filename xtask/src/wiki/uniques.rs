@@ -131,7 +131,8 @@ fn rewarded_by(content: &Content, u: &UniqueDef) -> Vec<String> {
 }
 
 /// What a unique's power does, exactly, and what more it gives besides its affixes (an
-/// immunity, a resistance, a bash's damage, invisibility, a douse; #2095, #2097).
+/// immunity, a resistance, a bash's damage, invisibility, a douse, a silence, a strain's pace;
+/// #2095, #2097, #2112).
 fn power_text(content: &Content, u: &UniqueDef) -> String {
     let mut all: Vec<String> = (u.power.as_ref())
         .map(|_| own_power(content, u))
@@ -158,6 +159,24 @@ fn power_text(content: &Content, u: &UniqueDef) -> String {
             "every light source within {} cells of its wearer gives no light (lamps, torches, \
              fires, and lights carried, the wearer's own too; nothing is used up)",
             u.douse
+        ));
+    }
+    if u.silence > 0 {
+        let side = 2 * u.silence + 1;
+        all.push(format!(
+            "nobody within {} cells of its wearer ({side} by {side} cells, the wearer and their \
+             allies too) can cast a spell or read a scroll; prayer, wands, rods, and abilities \
+             that are no spells still work, and a spell already cast goes on",
+            u.silence
+        ));
+    }
+    if u.strain_decay != 100 {
+        all.push(format!(
+            "its wearer's prayer strain passes {}",
+            match u.strain_decay {
+                200 => "twice as fast".to_string(),
+                p => format!("at {p}% of the usual pace"),
+            }
         ));
     }
     if all.is_empty() {
@@ -237,6 +256,17 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
              their foes; no line of sight needed) comes back to full hit points instead, \
              {chance}% of the time, rolled anew at every death; never the undead. A creature \
              brought back did not die: no experience, no loot, no corpse, no kill counted"
+        ),
+        Some(Power::Root { cells, renew }) => format!(
+            "a creature its wielder called with a spell, whose time runs out within {cells} cells \
+             of them, stays {renew} seconds more, and again each time its time runs out that \
+             near (shown as rooted); farther off, it leaves as ever"
+        ),
+        Some(Power::Shrive(s)) => format!(
+            "every blow it lands takes {} points of its wielder's prayer strain off ({} for a \
+             critical hit); a blow that kills one of the undead or a fiend takes it all; never \
+             below 0, and nothing for one who does not pray",
+            s.per_hit, s.per_crit
         ),
         Some(Power::Cast(cast)) => {
             let def = content.spell(cast.spell);

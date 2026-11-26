@@ -529,6 +529,7 @@ mod tests {
             riders: Vec::new(),
             on_hit: Vec::new(),
             banes: Vec::new(),
+            shrive: None,
         };
         let sharp = effects.sharpen(&content, profile);
         assert_eq!((sharp.to_hit, sharp.bonus), (5, 0));

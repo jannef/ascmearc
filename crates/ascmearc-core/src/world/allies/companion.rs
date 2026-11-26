@@ -244,6 +244,7 @@ impl World {
             order: crate::world::Order::Follow,
             retinue: false,
             until: None,
+            rooted: false,
         });
         let after = actor.max_hp(&content);
         actor.hp += (after - before).max(0);

@@ -55,6 +55,10 @@ message = { text = "Isku raukeaa tyhjiin rengaspaitaasi vasten.", of = "5a42d8" 
 lore = { text = "Se taottiin pyhän lähteen äärellä, eikä se ole sen jälkeen pimennyt, vaikka moni on yrittänyt sitä sammuttaa.", of = "1f3284" }
 phrase = { text = "Se luo kantajansa ympärille valon kuin keskipäivällä.", of = "db315d" }
 
+[scrift]
+lore = { text = "Lue rukouksesi. Sitten varmista.", of = "0e8f22" }
+phrase = { text = "Jokainen sen osuva isku on suoritettu katumustyö.", of = "b43f52" }
+
 [sigerics_star]
 lore = { text = "Sormuksen sisäpuolella, hyvin pienin kirjaimin: SIGERIC MINUT TEKI. Ulkopuolella, suuremmin: SIGERIC.", of = "8aa25a" }
 phrase = { text = "Mikään ei pidä sen kantajan katsetta vangittuna.", of = "e81a46" }
@@ -70,6 +74,10 @@ phrase = { text = "Sen nuolet lentävät kaksi kertaa niin kauas kuin tavallisen
 lore = { text = "Lovettu sadassa louhoksen seinässä, eikä yksikään niistä antanut periksi.", of = "fa63dd" }
 phrase = { text = "Sen kantaja näkee hämärässä.", of = "95fdf0" }
 
+[swige]
+lore = { text = "Sen kantajat eivät koskaan kertoneet, mitä varten se oli. He eivät kertoneet mitään.", of = "33821f" }
+phrase = { text = "Sen kantajan lähellä ei loitsita eikä kääröjä lueta, ja hänen rukouksensa käyvät keveämmin.", of = "5aeb36" }
+
 [turncoat]
 lore = { text = "Rykmentin värit leikattiin siitä irti kauan sitten; ompeleet näkyvät yhä.", of = "d825c0" }
 phrase = { text = "Sen kantaja ei tunne pelkoa.", of = "ff336e" }
@@ -84,3 +92,7 @@ phrase = { text = "Sen kantaja näkee pimeässä.", of = "8a8773" }
 [widowmaker]
 lore = { text = "Ohut kuin hattuneula, eikä koskaan aivan puhdas.", of = "a463c4" }
 phrase = { text = "Sen jokainen viilto myrkyttää.", of = "1649e4" }
+
+[wyrtruma]
+lore = { text = "Maahan pistettynä se kasvaisi. Kukaan ei ole uskaltanut laskea sitä käsistään niin pitkäksi aikaa, että sen näkisi.", of = "aafcec" }
+phrase = { text = "Sen kantajan kutsumat pedot jäävät, kunhan ne pysyvät hänen vierellään.", of = "f3f402" }

@@ -43,7 +43,8 @@ list is never answered. A prayer effect: `tier` 1–5 with a
    of one); poison, Poisoned; wounds, Bleeding or `hp < max_hp`; release, any status of the list;
    mana, `mana < max_mana`; hunger, `Hunger::Hungry` or worse; restoration, stat damage or a
    drained point.
-3. The strain is lazy: `Strain::now = value − elapsed / decay` (never below 0). Locked (a fizzle
+3. The strain is lazy: `Strain::now = value − elapsed × pace / (decay × 100)` (never below 0;
+   `pace` 100 unless a worn unique's `strain_decay` sets it, below). Locked (a fizzle
    locked it and `now > 0`) → a fizzle with no draw. Else the chance is `now × fizzle_per_100 /
    100` (at most 100); above 0 it is **one draw** of its keyed stream (`rng.chance`), at 0 none.
    Either way the strain becomes `now + strain` at the current time, `locked` = fizzled.
@@ -94,6 +95,24 @@ actor's cell:
 A priest the holy powers answer holds the talent and it does nothing. `TalentDef::alignment` is
 accepted on a talent with a holy class active or a band-gated passive (`TalentEffect::band_gated`:
 Communion).
+
+## What items do to the strain
+
+Two uniques (docs/dev/magic-items.md "Unique items"), the only things besides time and prayer that
+move it:
+
+- **Scrift's Shrive** (#2111, `world/combat/shrive.rs`): a blow of the weapon that hits takes
+  its `per_hit` off (a critical its `per_crit`; a kill of the undead or a `fiend`-tagged creature
+  all of it) through `World::ease_strain`, which writes `value = now − amount` (never below 0)
+  at the current time and keeps the lock only while some strain is left. Nothing without strain.
+- **Swīge's `strain_decay`** (#2112): `Strain::pace`, saved and left out while `None` (100).
+  `World::keep_strain_pace`, once a turn from `run_turn` (beside `allies_lapse`), compares it
+  with the fastest `strain_decay` the player wears (`World::strain_pace`) and, when it differs,
+  writes the strain down as it stands (`value = now`, `at` = now) with the new pace, so time
+  before the change counts at the old pace (up to a turn late). An attempt writes the current
+  pace too. A run without such a unique never writes it, and saves and hashes as before.
+
+Tests: `world/combat/shrive_tests.rs`, `world/magic/hush_tests.rs` (the pace).
 
 ## Saved state, determinism
 
