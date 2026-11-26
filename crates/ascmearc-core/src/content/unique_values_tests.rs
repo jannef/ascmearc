@@ -80,10 +80,10 @@ const UNIQUES: &[Written] = &[
         "gorthak",
         40,
         &[
-            ("featherweight", -20),
             ("sharp", 6),
             ("heavy", 10),
             ("brutal", 1),
+            ("featherweight", -20),
             ("of_the_bear", 6),
         ],
     ),
