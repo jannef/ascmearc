@@ -18,7 +18,7 @@ pub(super) fn text(content: &Content, effect: &FortuneEffect) -> String {
                 rules.each,
                 rules.dice,
                 rules.chance,
-                percent(rules.magic),
+                percent(rules.finder.rarity),
                 if rules.gems == 0 {
                     String::new()
                 } else {
@@ -83,6 +83,15 @@ pub(super) fn text(content: &Content, effect: &FortuneEffect) -> String {
         FortuneEffect::LootMagicPercent { value } => format!(
             "the weights of the rarities better than a find's least {} (anything found: magic \
              and rare; what creatures drop, always magic: rare)",
+            percent(value)
+        ),
+        FortuneEffect::LootQuantityPercent { value } => format!(
+            "the items you [find](magic-items.md#every-place-items-come-from) wherever your \
+             talents count {} (the fraction by chance)",
+            percent(value)
+        ),
+        FortuneEffect::LootUniquePercent { value } => format!(
+            "the chance a rare find is a unique of [the drop pool](magic-items.md#the-drop-pool) {}",
             percent(value)
         ),
         FortuneEffect::QuestGoldPercent { value } => {

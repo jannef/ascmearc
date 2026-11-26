@@ -263,7 +263,15 @@
 #   grade_ease { value }          added to a made check's margin as its grade or cut is read,
 #                                 never to whether it is made
 #   loot_magic_percent { value }  loot it finds and creatures drop: the weights of the rarities
-#                                 better than the least the find may be, that percent more
+#                                 better than the least the find may be, that percent more (the
+#                                 finder's `rarity`, magic/finder.rs; where a source's row in
+#                                 ../loot_sources.toml says `finder = true`)
+#   loot_quantity_percent { value }  loot it finds and creatures drop: each source's count that
+#                                 percent more items, the fraction by chance (the finder's
+#                                 `quantity`; the same rows)
+#   loot_unique_percent { value } a rare find is a unique of the drop pool that percent more often
+#                                 (the finder's `unique`; read once the pool's check moves into
+#                                 the find, docs/design/loot-pipeline.md S4)
 #   read_percent { value }        reading a scroll takes that percent more time (negative: less)
 #   scroll_kept { chance }        a scroll it reads is not used up, by that chance in percent
 #   potion_kept { chance }        a potion it drinks is not used up, by that chance in percent

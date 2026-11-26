@@ -4,7 +4,7 @@
 use crate::character::CharacterSpec;
 use crate::content::{ContentFiles, Sign, TalentEffect};
 use crate::dump::{self, Layer};
-use crate::magic::loot::Luck;
+use crate::magic::loot::Finder;
 use crate::object::Stack;
 use crate::perception::Freshness;
 use crate::rng::Rng;
@@ -130,16 +130,20 @@ fn daylight_phase(w: &World) -> crate::daylight::DayPhase {
 
 #[test]
 fn hoard_sense_finds_magic_and_gems_more_often_from_the_same_draws() {
-    let luck = Luck::of(&mods(&born_under("griffin", "fire")));
+    let talents = mods(&born_under("griffin", "fire"));
+    let luck = (Finder::of(&talents), talents.fortune.gem_find_percent);
     assert_eq!(
         luck,
-        Luck {
-            magic: 50,
-            gems: 100
-        }
+        (
+            Finder {
+                rarity: 50,
+                ..Finder::NONE
+            },
+            100
+        )
     );
     let content = &*BUILTIN;
-    let gems = |luck: Luck| {
+    let gems = |luck: (Finder, i32)| {
         let mut rng = Rng::stream(3, "stars-test");
         (0..4000)
             .filter_map(|_| {
@@ -149,7 +153,7 @@ fn hoard_sense_finds_magic_and_gems_more_often_from_the_same_draws() {
             .filter(|s| s.gem(content).is_some())
             .count()
     };
-    let (plain, lucky) = (gems(Luck::default()), gems(luck));
+    let (plain, lucky) = (gems((Finder::NONE, 0)), gems(luck));
     assert!(
         lucky > plain * 3 / 2,
         "{plain} gems, {lucky} with hoard sense"

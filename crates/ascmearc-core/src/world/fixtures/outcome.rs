@@ -425,23 +425,27 @@ impl World {
         let level = content
             .item_level(&self.state.current_level)
             .saturating_add(bonus);
-        let luck = loot::Luck::of(&self.state.player().talent_mods(&content));
+        let talents = self.state.player().talent_mods(&content);
+        let (finder, gems) = (loot::Finder::of(&talents), talents.fortune.gem_find_percent);
         let mut rng = draw!(self, "outcome/loot/{},{}", feature.x, feature.y);
-        // At grade any a loose gem instead, by the wealth seam; else a find of the feature row.
-        let gem = (grade == LootGrade::Any)
-            .then(|| crate::wealth::gem_instead(&content, &mut rng, level, luck.gems))
-            .flatten();
         let spec = loot::Spec::new(loot::Origin::Feature, level).grade(grade);
-        let item = gem.or_else(|| loot::find(&content, &spec, &luck, &mut rng));
-        // A rare one may be a unique of the drop pool instead, on the same stream after it.
-        let item = item.map(|s| {
-            let found = &self.state.uniques_dropped;
-            unique_pool::instead(&content, &mut rng, &s, found).unwrap_or(s)
-        });
-        unique_pool::note(&content, &item, &mut self.state.uniques_dropped);
-        if let Some(stack) = item {
-            let at = self.foot_of(feature);
-            self.lay(at, stack);
+        for _ in 0..loot::count(&content, &spec, &finder, &mut rng) {
+            // At grade any a loose gem instead, by the wealth seam; else a find of the feature
+            // row.
+            let gem = (grade == LootGrade::Any)
+                .then(|| crate::wealth::gem_instead(&content, &mut rng, level, gems))
+                .flatten();
+            let item = gem.or_else(|| loot::find(&content, &spec, &finder, &mut rng));
+            // A rare one may be a unique of the drop pool instead, on the same stream after it.
+            let item = item.map(|s| {
+                let found = &self.state.uniques_dropped;
+                unique_pool::instead(&content, &mut rng, &s, found).unwrap_or(s)
+            });
+            unique_pool::note(&content, &item, &mut self.state.uniques_dropped);
+            if let Some(stack) = item {
+                let at = self.foot_of(feature);
+                self.lay(at, stack);
+            }
         }
     }
 

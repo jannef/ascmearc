@@ -2,7 +2,7 @@
 //! weapon does, one fewer than other equipment holds by its grade; only what betters a shot, never
 //! a stat; stacks of different magic never join.
 
-use super::loot::{Luck, Origin, Spec, finished, make_unfinished};
+use super::loot::{Finder, Origin, Spec, finished, make_unfinished};
 use super::{Affix, LootGrade, Magic, Quality, Rarity, capacity, may_roll};
 use crate::content::{ItemKind, ObjectId};
 use crate::object::{Stack, add_to_inventory};
@@ -70,7 +70,7 @@ fn rare_arrows_keep_what_their_grade_holds() {
     let mut most = 0;
     for _ in 0..200 {
         let spec = Spec::new(Origin::Floor, 12).grade(LootGrade::Rare);
-        let rolled = make_unfinished(&CONTENT, &spec, arrow, 12, &Luck::NONE, &mut rng);
+        let rolled = make_unfinished(&CONTENT, &spec, arrow, 12, &Finder::NONE, &mut rng);
         // The same roll, plain and Masterwork (whatever make it drew).
         let magic = rolled.magic().expect("rare").clone();
         let fresh = || Stack::with_magic(arrow, 12, magic.clone());

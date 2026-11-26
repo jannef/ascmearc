@@ -3,7 +3,7 @@
 //! the same way at one quality; stacks join only their like; the grade is in the name and the
 //! worth.
 
-use super::loot::{self, Luck, Origin, Spec};
+use super::loot::{self, Finder, Origin, Spec};
 use super::make::make;
 use super::worked::{Aspect, Worked, ammunition, ammunition_make};
 use super::{LootGrade, Quality};
@@ -117,7 +117,14 @@ fn loot_arrows_take_a_make_by_their_level() {
                 let mut rng = Rng::stream(seed, "ammo");
                 let grade = LootGrade::default();
                 let spec = Spec::new(origin, level).grade(grade);
-                let made = loot::make(&CONTENT, &spec, object("arrow"), 12, &Luck::NONE, &mut rng);
+                let made = loot::make(
+                    &CONTENT,
+                    &spec,
+                    object("arrow"),
+                    12,
+                    &Finder::NONE,
+                    &mut rng,
+                );
                 made.worked().is_some_and(|w| w.improvements() > 0)
             })
             .count()

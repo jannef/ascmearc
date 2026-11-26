@@ -619,11 +619,15 @@ fn creatures_drop_gems_now_and_then_from_their_own_stream() {
     for id in 1..8000 {
         let mut a = kobold.clone();
         a.id = ActorId(id);
-        if let Some(stack) = w.loot_of(&a) {
+        if let Some(stack) = w.loot_of(&a).pop() {
             drops += 1;
             gems += usize::from(stack.gem(w.content()).is_some());
             assert!(stack.is_valid_for(w.content()));
-            assert_eq!(w.loot_of(&a), Some(stack), "the same actor drops the same");
+            assert_eq!(
+                w.loot_of(&a).pop(),
+                Some(stack),
+                "the same actor drops the same"
+            );
         }
     }
     // About the gems' chance (5%) of drops are gems.

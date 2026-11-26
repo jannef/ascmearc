@@ -15,7 +15,7 @@ use crate::content::{
 use crate::equipment::Equipment;
 use crate::geom::{Dir, Pos};
 use crate::lang::{Arg, Msg, Phrase};
-use crate::magic::loot::Luck;
+use crate::magic::loot::Finder;
 use crate::mapgen::local::arrival;
 use crate::msg;
 use crate::object::Stack;
@@ -502,8 +502,10 @@ impl World {
         let from = out.as_deref().or(from);
         // A Pit's floor reads its own warden's death, never the slain list (`pit.rs`).
         let pit_slain = self.state.pit_slain(&self.content, id);
+        let talents = self.state.player().talent_mods(&self.content);
         let visit = crate::mapgen::Visit {
-            luck: Luck::of(&self.state.player().talent_mods(&self.content)),
+            finder: Finder::of(&talents),
+            gems: talents.fortune.gem_find_percent,
             player_level: self.player_level(),
             uniques: Some(&self.state.progress.uniques),
             slain: Some(pit_slain.as_ref().unwrap_or(self.state.quests.slain_set())),
@@ -594,7 +596,7 @@ pub(in crate::world) fn enter_room(state: &mut WorldState, content: &Content) ->
 
 /// The template of level `id`: a hand-made level, or one generated from the run seed: a level of
 /// a dungeon branch (`entered_from` is where the up staircase of a branch's first level leads)
-/// or a local area of the overworld, its loot rolled with the player's `luck` as they first come
+/// or a local area of the overworld, its loot rolled with the player's finder as they first come
 /// (Treasure hunter, Hoard sense).
 pub(in crate::world) fn level_template<'a>(
     content: &'a Content,

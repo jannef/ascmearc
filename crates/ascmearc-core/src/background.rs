@@ -22,7 +22,7 @@ use crate::content::{
     Content, CreatureId, Keep, Marks, SET_SLOTS, StoryEffect, StoryLine, WeaponSkillId,
 };
 use crate::lang::{Arg, Msg, Phrase};
-use crate::magic::loot::{self, Luck, Origin, Spec};
+use crate::magic::loot::{self, Finder, Origin, Spec};
 use crate::object::Stack;
 use crate::rng::Rng;
 use crate::skills::SkillId;
@@ -211,7 +211,7 @@ fn roll(content: &Content, rng: &mut Rng, effect: &StoryEffect, witness: &Witnes
                             let level = crate::kit::ITEM_LEVEL;
                             let spec = Spec::new(Origin::Kit, level).grade(grade);
                             let mut made =
-                                loot::make(content, &spec, object, count, &Luck::NONE, rng);
+                                loot::make(content, &spec, object, count, &Finder::NONE, rng);
                             made.identify();
                             made
                         }

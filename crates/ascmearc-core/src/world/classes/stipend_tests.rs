@@ -168,7 +168,7 @@ fn find_rate(content: &Content, mods: &TalentMods, seeds: u64) -> f64 {
     for seed in 0..seeds {
         for level in 2..=60 {
             let (_, find) = super::stipend::of_level(content, seed, level, mods).expect("rules");
-            found += u32::from(find.is_some());
+            found += u32::from(!find.is_empty());
             all += 1;
         }
     }

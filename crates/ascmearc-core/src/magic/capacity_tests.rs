@@ -337,8 +337,14 @@ fn every_loot_path_holds_its_items_to_their_capacity() {
                 }
             }
             let pool = LootPool::from(LootGrade::Rare);
-            if let Some(s) =
-                crate::mapgen::loot_cell::roll(&c, &mut rng, level, &pool, loot::Luck::NONE)
+            if let Some(s) = (crate::mapgen::loot_cell::roll(
+                &c,
+                &mut rng,
+                level,
+                &pool,
+                (&loot::Finder::NONE, 0),
+            ))
+            .pop()
             {
                 fits(&s, "vault cell");
             }
@@ -352,7 +358,7 @@ fn every_loot_path_holds_its_items_to_their_capacity() {
             );
             let spec = loot::Spec::new(loot::Origin::Gear, level).grade(LootGrade::Rare);
             fits(
-                &loot::make(&c, &spec, sword, 1, &loot::Luck::NONE, &mut rng),
+                &loot::make(&c, &spec, sword, 1, &loot::Finder::NONE, &mut rng),
                 "make (gear)",
             );
             fits(

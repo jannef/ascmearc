@@ -309,7 +309,7 @@ impl Shops {
         object: ObjectId,
         level: u8,
     ) -> Stack {
-        use crate::magic::loot::{Luck, Origin, Spec, make};
+        use crate::magic::loot::{Finder, Origin, Spec, make};
         let object = content.grimoire_or(rng, object);
         let count = if content.object(object).stackable {
             let (lo, hi) = self.bundle;
@@ -322,7 +322,7 @@ impl Shops {
             &Spec::new(Origin::Goods, level),
             object,
             count,
-            &Luck::NONE,
+            &Finder::NONE,
             rng,
         )
     }

@@ -26,6 +26,7 @@
 
 pub mod capacity;
 pub mod describe;
+pub mod finder;
 pub mod loot;
 pub(crate) mod make;
 pub mod mods;
@@ -308,6 +309,8 @@ pub(crate) fn may_roll_on(a: &AffixDef, def: &ObjectDef) -> bool {
 mod ammo_magic_tests;
 #[cfg(test)]
 mod ammo_make_tests;
+#[cfg(test)]
+mod finder_tests;
 #[cfg(test)]
 mod pool_tests;
 #[cfg(test)]

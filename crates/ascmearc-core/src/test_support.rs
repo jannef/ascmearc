@@ -187,23 +187,29 @@ pub(crate) fn found(
     level: u8,
     grade: crate::magic::LootGrade,
 ) -> Option<crate::object::Stack> {
-    found_with(content, rng, level, grade, crate::magic::loot::Luck::NONE)
+    found_with(
+        content,
+        rng,
+        level,
+        grade,
+        (crate::magic::loot::Finder::NONE, 0),
+    )
 }
 
-/// [`found`] for a finder with `luck`.
+/// [`found`] for `finder` and the wealth seam's `gems` percent.
 pub(crate) fn found_with(
     content: &Content,
     rng: &mut Rng,
     level: u8,
     grade: crate::magic::LootGrade,
-    luck: crate::magic::loot::Luck,
+    (finder, gems): (crate::magic::loot::Finder, i32),
 ) -> Option<crate::object::Stack> {
     use crate::magic::loot::{self, Origin, Spec};
     let gem = (grade == crate::magic::LootGrade::Any)
-        .then(|| crate::wealth::gem_instead(content, rng, level, luck.gems))
+        .then(|| crate::wealth::gem_instead(content, rng, level, gems))
         .flatten();
     let spec = Spec::new(Origin::Floor, level).grade(grade);
-    gem.or_else(|| loot::find(content, &spec, &luck, rng))
+    gem.or_else(|| loot::find(content, &spec, &finder, rng))
 }
 
 /// `count` of `object` made as a kit's magic line makes it ([`crate::magic::loot::make`] of the
@@ -216,9 +222,9 @@ pub(crate) fn made(
     level: u8,
     grade: crate::magic::LootGrade,
 ) -> crate::object::Stack {
-    use crate::magic::loot::{self, Luck, Origin, Spec};
+    use crate::magic::loot::{self, Finder, Origin, Spec};
     let spec = Spec::new(Origin::Kit, level).grade(grade);
-    loot::make(content, &spec, object, count, &Luck::NONE, rng)
+    loot::make(content, &spec, object, count, &Finder::NONE, rng)
 }
 
 /// `docs/dev/cli.md`, the command-line reference (#1667).

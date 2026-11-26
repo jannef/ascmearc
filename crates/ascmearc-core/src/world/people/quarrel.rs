@@ -418,9 +418,9 @@ impl World {
         {
             stacks.push(Stack::new(coin, gold));
         }
-        let luck = loot::Luck::of(&self.state.player().talent_mods(content));
+        let finder = loot::Finder::of(&self.state.player().talent_mods(content));
         let spec = Spec::new(Origin::Quarrel, hoard.item_level).count(u32::from(hoard.rare));
-        stacks.extend(loot::finds(content, &spec, &luck, &mut rng));
+        stacks.extend(loot::finds(content, &spec, &finder, &mut rng));
         let grimoires = content.grimoires().all();
         for _ in 0..hoard.grimoires {
             if grimoires.is_empty() {

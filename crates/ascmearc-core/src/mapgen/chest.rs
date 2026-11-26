@@ -31,18 +31,17 @@ use crate::door::Lock;
 use crate::equipment::Equipment;
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
-use crate::magic::loot::Luck;
 use crate::rng::Rng;
 
 /// The fewest cells (Chebyshev) between a chest and a staircase.
 pub const AWAY: i32 = 6;
 
 /// Lays the chests of generated level `template` of plan `plan` (see the module docs), the
-/// finder's `luck` reaching their contents; `stamped` marks the vaults' cells.
+/// finder `visit` describes reaching their contents; `stamped` marks the vaults' cells.
 pub(super) fn fill(
     template: &mut LevelTemplate,
     content: &Content,
-    (seed, luck): (u64, Luck),
+    (seed, visit): (u64, &super::Visit),
     (pal, plan): (Palette, &LevelPlan),
     stamped: &Grid<bool>,
 ) {
@@ -68,19 +67,19 @@ pub(super) fn fill(
         }
         let at = free.swap_remove(rng.index(free.len()));
         free.retain(|p| p.chebyshev(at) > 1);
-        lay(template, content, &mut rng, (at, shut), (&traps, luck));
+        lay(template, content, &mut rng, (at, shut), (&traps, visit));
     }
 }
 
 /// Fills the chests that generated level `template`'s vaults stamped with nothing in them: each,
 /// in position order, holds what its band's loot table rolls at its level (the floor's), the
-/// finder's `luck` reaching it, from the level's vault chest stream [`Rng::vault_chests`]. A
+/// finder `visit` describes reaching it, from the level's vault chest stream [`Rng::vault_chests`]. A
 /// vault's lock and trap are its legend's: nothing else is drawn, and a vault chest is never a
 /// mimic.
 pub(super) fn fill_vaults(
     template: &mut LevelTemplate,
     content: &Content,
-    (seed, luck): (u64, Luck),
+    (seed, visit): (u64, &super::Visit),
 ) {
     if template.chests.values().all(|c| !c.holds.is_empty()) {
         return;
@@ -88,20 +87,21 @@ pub(super) fn fill_vaults(
     let mut rng = Rng::vault_chests(seed, &template.id);
     for chest in template.chests.values_mut() {
         if chest.holds.is_empty() {
-            chest.holds = roll_contents(content, &mut rng, chest.level, luck);
+            chest.holds =
+                roll_contents(content, &mut rng, chest.level, (&visit.finder, visit.gems));
         }
     }
 }
 
 /// Lays one chest of the floor's item level on `at` (its `shut` terrain), drawing from `rng`
 /// its lock, its trap (one of `traps`, those of the branch that fit a fixture), its contents
-/// with the finder's `luck`, and the mimic draw (see the module docs).
+/// for the finder `visit` describes, and the mimic draw (see the module docs).
 pub(super) fn lay(
     template: &mut LevelTemplate,
     content: &Content,
     rng: &mut Rng,
     (at, shut): (Pos, TerrainId),
-    (traps, luck): (&[TrapId], Luck),
+    (traps, visit): (&[TrapId], &super::Visit),
 ) {
     let level = template.item_level;
     let Some(band) = content.chests().band_of(level) else {
@@ -117,7 +117,7 @@ pub(super) fn lay(
             template.traps.insert(at, trap);
         }
     }
-    let holds = roll_contents(content, rng, level, luck);
+    let holds = roll_contents(content, rng, level, (&visit.finder, visit.gems));
     // The mimic draw (docs/design/chests-and-treasure.md §5.3): a mimic of the floor's level
     // stands in for the chest, carrying what it would have held.
     let mimic = rng.chance(u32::from(band.mimic));

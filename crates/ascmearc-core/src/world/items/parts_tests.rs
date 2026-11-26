@@ -253,7 +253,7 @@ fn loot_and_creature_kits_are_made_of_their_base_items_parts() {
         for n in 0..50 {
             let mut a = actor.clone();
             a.id = ActorId(1000 + n);
-            if let Some(drop) = w.loot_of(&a) {
+            if let Some(drop) = w.loot_of(&a).pop() {
                 check_stack(&content, &drop);
             }
         }

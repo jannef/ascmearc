@@ -12,7 +12,7 @@
 use super::Palette;
 use crate::content::{Content, LevelTemplate};
 use crate::geom::Pos;
-use crate::magic::loot::{self, Luck, Origin, Spec};
+use crate::magic::loot::{self, Finder, Origin, Spec};
 use crate::object::add_to_pile;
 use crate::rng::Rng;
 
@@ -42,7 +42,7 @@ pub(super) fn fill(template: &mut LevelTemplate, content: &Content, seed: u64, p
         for _ in 0..count {
             let classes = [room_loot.class];
             let spec = Spec::new(Origin::RoomLoot, level).classes(&classes);
-            let Some(stack) = loot::find(content, &spec, &Luck::NONE, &mut rng) else {
+            let Some(stack) = loot::find(content, &spec, &Finder::NONE, &mut rng) else {
                 break;
             };
             let p = floor[rng.index(floor.len())];

@@ -7,7 +7,9 @@
 #   grade      the least rarity of what it yields: `any`, `magic`, or `rare`; or, for a source
 #              whose own data gives the grade, that data's name: a vault's `legend` (its loot
 #              cell), a chest's `band` (data/chests.toml), a feature's `outcome`, a kit's `line`
-#   finder     whether the finder's talents count (Treasure hunter: magic and rare likelier)
+#   finder     whether the finder counts (magic/finder.rs): their talents' loot effects, each at
+#              its one step: more finds at the count, magic and rare likelier at the rarity
+#              (Treasure hunter), a rare likelier a unique of the drop pool
 #   curses     whether a curse may roll among its affixes
 #   material   how its material is drawn: `loot` (by the materials' `rarity` at the item level),
 #              `gear` (by their `gear` weights at the creature's level, its faction's favoured

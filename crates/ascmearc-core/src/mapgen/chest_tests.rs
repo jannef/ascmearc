@@ -156,8 +156,14 @@ fn a_branch_without_traps_traps_nothing_but_draws_the_same() {
     for seed in 0..40 {
         let (mut a, mut b) = (level.clone(), level.clone());
         let (mut ra, mut rb) = (Rng::chests(seed, "x"), Rng::chests(seed, "x"));
-        chest::lay(&mut a, &c, &mut ra, (at, shut), (&[arrow], Luck::default()));
-        chest::lay(&mut b, &c, &mut rb, (at, shut), (&[], Luck::default()));
+        chest::lay(
+            &mut a,
+            &c,
+            &mut ra,
+            (at, shut),
+            (&[arrow], &Visit::default()),
+        );
+        chest::lay(&mut b, &c, &mut rb, (at, shut), (&[], &Visit::default()));
         assert_eq!(ra, rb, "seed {seed}: the same draws");
         assert_eq!(a.chests, b.chests, "seed {seed}: the same contents");
         assert_eq!(a.locks, b.locks, "seed {seed}: the same lock");
@@ -210,14 +216,14 @@ fn a_mimic_stands_in_for_a_chest_carrying_its_loot() {
             &chests,
             &mut ra,
             (at, shut),
-            (&[arrow], Luck::default()),
+            (&[arrow], &Visit::default()),
         );
         chest::lay(
             &mut b,
             &mimics,
             &mut rb,
             (at, shut),
-            (&[arrow], Luck::default()),
+            (&[arrow], &Visit::default()),
         );
         assert_eq!(ra, rb, "seed {seed}: the same draws");
         let mimic = b.creatures.last().expect("a mimic");
@@ -262,7 +268,7 @@ fn means(c: &Content, level: u8, n: u32) -> (f64, f64, f64) {
     let mut rng = Rng::chests(7, "means");
     let (mut items, mut gold, mut stones) = (0u32, 0u32, 0u32);
     for _ in 0..n {
-        for stack in roll_contents(c, &mut rng, level, Luck::default()) {
+        for stack in roll_contents(c, &mut rng, level, (&crate::magic::loot::Finder::NONE, 0)) {
             match stack.object {
                 o if o == coins => gold += stack.count,
                 o if o == gems => stones += stack.count,
@@ -295,7 +301,7 @@ fn chest_loot_is_magic_as_often_as_the_table_says() {
     let mut rng = Rng::chests(11, "magic");
     let (mut items, mut magic) = (0u32, 0u32);
     for _ in 0..1500 {
-        for stack in roll_contents(&c, &mut rng, 5, Luck::default()) {
+        for stack in roll_contents(&c, &mut rng, 5, (&crate::magic::loot::Finder::NONE, 0)) {
             magic += u32::from(stack.rarity() != Rarity::Normal);
             items += 1;
         }

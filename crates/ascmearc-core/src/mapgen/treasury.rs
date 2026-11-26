@@ -34,7 +34,6 @@ use crate::content::{
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
 use crate::item_parts::ItemPart;
-use crate::magic::loot::Luck;
 use crate::object::{Stack, add_to_pile};
 use crate::rng::Rng;
 
@@ -282,11 +281,11 @@ pub(super) fn seal(template: &mut LevelTemplate, content: &Content, pal: Palette
 }
 
 /// Lays what every treasure room of generated level `template` of plan `plan` holds (see the
-/// module docs), the finder's `luck` reaching its chests.
+/// module docs), the finder `visit` describes reaching its chests.
 pub(super) fn fill(
     template: &mut LevelTemplate,
     content: &Content,
-    (seed, luck): (u64, Luck),
+    (seed, visit): (u64, &super::Visit),
     (pal, plan): (Palette, &LevelPlan),
 ) {
     let rooms: Vec<(usize, crate::content::Treasury)> = (template.rooms.iter().enumerate())
@@ -319,7 +318,7 @@ pub(super) fn fill(
                 .collect();
             let Some(&at) = rng.pick(&fits) else { break };
             free.retain(|&p| p != at);
-            super::chest::lay(template, content, &mut rng, (at, shut), (&traps, luck));
+            super::chest::lay(template, content, &mut rng, (at, shut), (&traps, visit));
         }
         for _ in 0..treasure.gold.heaps.roll(&mut rng).max(0) {
             let Some(&at) = rng.pick(&free) else { break };

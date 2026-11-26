@@ -28,6 +28,12 @@ pub enum FortuneEffect {
     /// Loot it finds (what generated levels hold, what creatures drop) rolls magic and rare this
     /// percent more often: their rarity weights (Treasure hunter).
     LootMagicPercent { value: i32 },
+    /// Loot it finds (wherever a find counts the finder: `data/loot_sources.toml`) is this
+    /// percent more items: each count scaled, the fraction by chance (`magic::finder`).
+    LootQuantityPercent { value: i32 },
+    /// A rare find it makes is a unique of the drop pool this percent more often: `rare.unique`
+    /// scaled (`magic::finder`; read from #2161 S4).
+    LootUniquePercent { value: i32 },
     /// The gold a quest gives, this percent more.
     QuestGoldPercent { value: i32 },
     /// Prices move this many percent more in its favour, before the cap.
@@ -76,7 +82,7 @@ pub enum FortuneEffect {
 impl FortuneEffect {
     /// The `kind`s of the data that are effects of the area, one a variant (`TalentEffect`'s
     /// deserializer hands these to [`FortuneEffect`]).
-    pub const KINDS: [&'static str; 15] = [
+    pub const KINDS: [&'static str; 17] = [
         "distrusted",
         "favour_percent",
         "gem_find_percent",
@@ -85,6 +91,8 @@ impl FortuneEffect {
         "identify_carried",
         "invest",
         "loot_magic_percent",
+        "loot_quantity_percent",
+        "loot_unique_percent",
         "merchants_eye",
         "patron",
         "quest_gold_percent",
@@ -113,6 +121,11 @@ pub struct FortuneMods {
     pub patron: bool,
     /// Percent more often loot it finds rolls magic and rare.
     pub loot_magic_percent: i32,
+    /// Percent more items its finds are (`magic::finder::Finder::quantity`).
+    pub loot_quantity_percent: i32,
+    /// Percent more often a rare find of it is a unique of the drop pool
+    /// (`magic::finder::Finder::unique`).
+    pub loot_unique_percent: i32,
     /// Percent more gold from quests.
     pub quest_gold_percent: i32,
     /// Percent more favour in shops, before the cap.
@@ -151,6 +164,8 @@ impl FortuneMods {
             | FortuneEffect::StartingGems { .. }
             | FortuneEffect::Heirloom { .. } => {}
             FortuneEffect::LootMagicPercent { value } => self.loot_magic_percent += value,
+            FortuneEffect::LootQuantityPercent { value } => self.loot_quantity_percent += value,
+            FortuneEffect::LootUniquePercent { value } => self.loot_unique_percent += value,
             FortuneEffect::QuestGoldPercent { value } => self.quest_gold_percent += value,
             FortuneEffect::FavourPercent { value } => self.favour_percent += value,
             FortuneEffect::GemWorth => self.gem_worth = true,

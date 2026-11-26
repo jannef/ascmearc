@@ -2,7 +2,7 @@
 
 **Status: approved, being built (#2161)**: D1–D5 take their defaults and §9's questions the
 assumptions written here. Written against `origin/main` at 88699d6f6 (version 0.23.1); §8 maps it
-onto implementation slices, one PR each (S1, the function, and S2, the table, are built). It answers the owner's question (2026-11-26): "it seems like quite convoluted
+onto implementation slices, one PR each (S1, the function, S2, the table, and S3, the finder, are built). It answers the owner's question (2026-11-26): "it seems like quite convoluted
 system in total, built piecemeal. Is there room to make it more elegant, standardized and
 consolidated?" — about how loot is generated, the drop pool of uniques included.
 

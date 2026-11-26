@@ -94,29 +94,36 @@ impl World {
     }
 
     /// What `actor`, a creature that just died, drops besides what it carried: by its type's
-    /// `loot` chance, a loose gem (by the gems' chance) or else a magic or rare item at its
-    /// [`drop_level`], of a material by the creature's level (its gear), from its own stream; a
-    /// rare one perhaps a unique of the drop pool instead (`magic/unique_pool.rs`).
-    pub(in crate::world) fn loot_of(&self, actor: &Actor) -> Option<Stack> {
-        let chance = content_loot(self, actor)?;
+    /// `loot` chance, one find (more by the finder's `quantity`, [`loot::count`]), each a loose
+    /// gem (by the gems' chance) or else a magic or rare item at its [`drop_level`], of a
+    /// material by the creature's level (its gear), from its own stream; a rare one perhaps a
+    /// unique of the drop pool instead (`magic/unique_pool.rs`).
+    pub(in crate::world) fn loot_of(&self, actor: &Actor) -> Vec<Stack> {
+        let Some(chance) = content_loot(self, actor) else {
+            return Vec::new();
+        };
         let mut rng = Rng::stream(self.state.seed, &format!("drop/{}", actor.id.0));
         if !rng.chance(u32::from(chance)) {
-            return None;
+            return Vec::new();
         }
         let level = drop_level(&self.content, actor);
         let wearer = self.content.creature(actor.creature).level;
         let spec = Spec::new(Origin::Drop, level).wearer(wearer, actor.faction(&self.content));
-        // Treasure hunter, Hoard sense: the player's
-        // luck, whoever made the kill.
+        // Treasure hunter, Hoard sense: the player's, whoever made the kill.
         let talents = self.state.player().talent_mods(&self.content);
-        let luck = loot::Luck::of(&talents);
-        // A loose gem instead by the wealth seam, else a find of the drop row.
-        let gem = wealth::gem_instead(&self.content, &mut rng, level, luck.gems);
-        let item = gem.or_else(|| loot::find(&self.content, &spec, &luck, &mut rng))?;
-        // A rare one may be a unique of the drop pool instead, on the same stream after it
-        // (`magic/unique_pool.rs`); its caller notes it found.
+        let finder = loot::Finder::of(&talents);
+        let gems = talents.fortune.gem_find_percent;
         let found = &self.state.uniques_dropped;
-        Some(unique_pool::instead(&self.content, &mut rng, &item, found).unwrap_or(item))
+        (0..loot::count(&self.content, &spec, &finder, &mut rng))
+            .filter_map(|_| {
+                // A loose gem instead by the wealth seam, else a find of the drop row.
+                let gem = wealth::gem_instead(&self.content, &mut rng, level, gems);
+                let item = gem.or_else(|| loot::find(&self.content, &spec, &finder, &mut rng))?;
+                // A rare one may be a unique of the drop pool instead, on the same stream after
+                // it (`magic/unique_pool.rs`); its caller notes it found.
+                Some(unique_pool::instead(&self.content, &mut rng, &item, found).unwrap_or(item))
+            })
+            .collect()
     }
 
     /// Keeps actor `id`'s hit points within its maximum, which falls when it takes off something
