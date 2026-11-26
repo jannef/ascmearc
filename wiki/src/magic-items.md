@@ -369,6 +369,29 @@ Its power works while it is worn or wielded, identified or not:
   it off. When you bash with it, hit or miss, the spell goes at the one you bashed. The spell
   works as it always does, with the reach and damage the table gives, whatever your own magic.
   A cone never reaches you.
+- **Wakes**: when anything leaves you alive below the share of your hit points the table gives,
+  and you are not [raging](status-list.md#status-raging), you fly into a rage at once, free. It
+  comes even while you are [Exhausted](status-list.md#status-exhausted): that ends first. A
+  berserker's own [Rage](rage.md) is filled to its maximum. Anyone else gets a rage of 12 that only
+  runs down: no blow, critical, or kill adds to it, and it brings no frenzy. The rage ends as any
+  does, in Exhausted. Then the power sleeps for the number of turns the table gives, and the
+  cloak's description says "The bear in it sleeps." until it wakes. While raging you cannot read
+  or cast, so the rage may cost you a quiet potion or scroll.
+- **Roar**: every kill you make with a blow of the weapon is a roar. Each foe within the table's
+  cells that sees you checks its nerve, just as against your
+  [Intimidate](skill-uses.md#intimidating): your Strength and Intimidate against its
+  Willpower. One that fails is [frightened](status-list.md#status-frightened) and flees, and is not
+  checked again until the fight is over for it (it goes back to what it was doing). The undead,
+  creatures with no vitals, and those that cannot be frightened pay no heed. The roar is also a
+  [noise](hearing.md#what-makes-noise) as loud as the table says. A kick, or a blow with
+  anything else, never roars.
+- **Credit**: whatever dies where its wearer can see it counts as their own kill, whoever or
+  whatever killed it: a monster, an ally, a trap, bleeding, a fall, or fire. You get the full
+  [experience](experience.md) (and the bonus for the first of its kind), it counts for
+  [quests](quests.md) and the dwarves' [oaths](races.md#the-dwarves-oaths), and your
+  [alignment](alignment.md#what-moves-you) moves as if you had done it. That includes a peaceful
+  townsperson a monster kills in front of you, or a friend. An ally's kill pays you in full
+  rather than your usual share. A creature that comes back and dies again counts again.
 
 Some give more besides their power, as the table says: an immunity or a weakness to a kind of
 [damage](damage-types.md#armour-and-resistance), damage added to a shield's

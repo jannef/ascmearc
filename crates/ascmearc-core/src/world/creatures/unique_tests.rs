@@ -154,7 +154,7 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     let mut other = bedes.magic().clone();
     other.unique = None;
     assert!(other.check(content.object(bedes.object), &content).is_err());
-    // The drop pool's seven (#1976, #2095, #2097, #2098, #2100, the shared table first), the
+    // The drop pool's ten (#1976, #2095, #2097, #2098, #2100, #2110, #2130, #2136, the shared table first), the
     // criminals' four, the pedlar's three (#808), and Sigeric's (#1787), each with its power.
     let powers: Vec<(&str, &str)> = (content.uniques())
         .filter(|u| u.stack.magic().is_some_and(|m| m.level >= 12))
@@ -168,6 +168,9 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
                 Power::Range(_) => "range",
                 Power::Restore { .. } => "restore",
                 Power::Cast(_) => "cast",
+                Power::Wakes { .. } => "wakes",
+                Power::Roar(_) => "roar",
+                Power::Credit => "credit",
             };
             (u.id.as_str(), power)
         })
@@ -175,9 +178,12 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert_eq!(
         powers,
         [
+            ("beornhama", "wakes"),
             ("cracked_resurrection_stone", "restore"),
             ("deep_night", "vision"),
             ("demonsoul", "cast"),
+            ("domgeorn", "credit"),
+            ("gorthak", "roar"),
             ("grandmother", "inflict"),
             ("masterpiece", "negate"),
             ("radiant", "light"),
@@ -699,8 +705,8 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
     }
     // The outlaws' four, Sigeric's Star, the pedlar's three, the drop pool's five (#1976, #2095,
     // #2097), the Cracked Resurrection Stone (#2098), the test world's Stonebiter, and the
-    // Masterpiece (#2100).
-    assert_eq!(ids.len(), 16, "{ids:?}");
+    // Masterpiece (#2100), Beornhama (#2110), Gorthak (#2136), and the Dōmgeorn (#2130).
+    assert_eq!(ids.len(), 19, "{ids:?}");
     let widowmaker = unique(&w, "widowmaker");
     let magic = widowmaker.magic().expect("magic");
     let stiletto = content.object(widowmaker.object);

@@ -17,10 +17,11 @@ use super::level::{ItemPartSpec, hand_made, item_part, magic_of};
 use super::object::AddedSpec;
 use super::status::{OnHit, OnHitSpec};
 use super::{
-    Content, ContentError, DamageTypeId, LightId, ObjectDef, ObjectId, Rarity, SpellId, StatusId,
+    Content, ContentError, DamageTypeId, LightId, ObjectDef, ObjectId, Rarity, ResourceId, SpellId,
+    StatusId,
 };
 use crate::damage::Rider;
-use crate::dice::Roll;
+use crate::dice::{Dice, Roll};
 use crate::item_parts;
 use crate::magic::{Magic, Quality};
 use crate::object::Stack;
@@ -81,6 +82,38 @@ pub enum Power {
     /// its own code (its shape, damage type, messages, and every immunity), with this power's
     /// reach and roll in place of the caster's.
     Cast(CastPower),
+    /// Its wearer, hurt below `below` percent of their hit points and not raging, flies into a
+    /// rage at once, free, even while Exhausted, at most once in `every` base turns (`{ wakes =
+    /// 25, every = 1000, resource = "rage" }`, Beornhama's, #2110): read where hit points go
+    /// down (`World::hurt`, `world/health/wakes.rs`). `resource` is the rage's pool (its status
+    /// the Raging): filled to its maximum for one whose Rage it is, else lent at its start, and
+    /// then it only decays.
+    Wakes {
+        below: u8,
+        every: u32,
+        resource: ResourceId,
+    },
+    /// Its wielder's every kill with it is a roar that frightens the foes who see it (`{ roar =
+    /// 6, status = "frightened", turns = "2d4", noise = 40 }`, Gorthak's, #2136): read where a
+    /// blow kills (`World::resolve`, `world/combat/roar.rs`).
+    Roar(RoarPower),
+    /// Every death its wearer sees is credited to them as their own kill (`{ credit = true }`,
+    /// the Dōmgeorn's, #2130): read where a death is credited (`World::dies`,
+    /// `world/character/credit.rs`).
+    Credit,
+}
+
+/// A [`Power::Roar`]: whom it reaches, what they suffer, and how loud it is.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct RoarPower {
+    /// How far from its wielder a foe checks its nerve, in cells (the fov's round radius).
+    pub radius: u8,
+    /// What a foe that fails suffers (Frightened: a status that `flees`).
+    pub status: StatusId,
+    /// For how many degrees (rolled, at most the status's `max`).
+    pub turns: Dice,
+    /// The roar's loudness where its wielder stands.
+    pub noise: u16,
 }
 
 /// A [`Power::Cast`]: the spell, its reach and roll, and the chances, in percent, that a block
@@ -255,6 +288,22 @@ struct PowerSpec {
     on_block: Option<u8>,
     /// The chance, in percent, a bash casts it.
     on_bash: Option<u8>,
+    /// The percent of its wearer's hit points below which the rage wakes in them.
+    wakes: Option<u8>,
+    /// How many base turns the rage sleeps once it woke (`wakes` only).
+    every: Option<u32>,
+    /// The rage's pool (`wakes` only).
+    resource: Option<String>,
+    /// How far its kills' roar reaches, in cells.
+    roar: Option<u8>,
+    /// What the roar makes a foe suffer (`roar` only).
+    status: Option<String>,
+    /// For how many degrees (`roar` only).
+    turns: Option<Dice>,
+    /// How loud the roar is (`roar` only).
+    noise: Option<u16>,
+    /// Every death its wearer sees is theirs.
+    credit: Option<bool>,
     phrase: String,
 }
 
@@ -374,7 +423,8 @@ fn more_dice(written: &[String], content: &Content) -> Vec<(String, u8)> {
 /// The power a `power` table names on base item `def`: exactly one of `inflict` (with `chance`
 /// and `severity`, and perhaps `added`), `vision`, `ward` (with a `message`), `negate` (1 to 99,
 /// with a `message`, on worn armour), `light`, `range` (2 or more, on a base with a range),
-/// `restore` (with a `radius`), and `cast` (on a shield).
+/// `restore` (with a `radius`), `cast` (on a shield), `wakes` (with `every` and a `resource`),
+/// `roar` (with `status`, `turns`, and `noise`, on a weapon), and `credit`.
 fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, String> {
     let named = [
         p.inflict.is_some(),
@@ -385,12 +435,22 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         p.range.is_some(),
         p.restore.is_some(),
         p.cast.is_some(),
+        p.wakes.is_some(),
+        p.roar.is_some(),
+        p.credit.is_some(),
     ];
     if named.iter().filter(|&&n| n).count() != 1 {
         return Err(
-            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, and `cast`"
+            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `wakes`, `roar`, and `credit`"
                 .into(),
         );
+    }
+    if p.wakes.is_none() && (p.every.is_some() || p.resource.is_some()) {
+        return Err("power: `every` and `resource` belong to `wakes`".into());
+    }
+    let roar_fields = [p.status.is_some(), p.turns.is_some(), p.noise.is_some()];
+    if p.roar.is_none() && roar_fields.iter().any(|&n| n) {
+        return Err("power: `status`, `turns`, and `noise` belong to `roar`".into());
     }
     if p.restore.is_none() && p.radius.is_some() {
         return Err("power: `radius` belongs to `restore`".into());
@@ -468,6 +528,18 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     if let Some(spell) = &p.cast {
         return cast(p, spell, def, content).map(Power::Cast);
     }
+    if let Some(below) = p.wakes {
+        return wakes(p, below, content);
+    }
+    if let Some(radius) = p.roar {
+        return roar(p, radius, def, content).map(Power::Roar);
+    }
+    if p.credit.is_some() {
+        return match p.credit {
+            Some(true) => Ok(Power::Credit),
+            _ => Err("power: `credit` is `true` or left out".into()),
+        };
+    }
     if let Some(vision) = &p.vision {
         let index = (content.vision_index(vision))
             .ok_or_else(|| format!("power: unknown vision profile `{vision}`"))?;
@@ -518,5 +590,56 @@ fn cast(
         damage,
         on_block,
         on_bash,
+    })
+}
+
+/// A `wakes` power below `below` percent (1 to 99): `every` (1 or more base turns) and the
+/// `resource` of a rage (one that brings a status).
+fn wakes(p: &PowerSpec, below: u8, content: &Content) -> Result<Power, String> {
+    if !(1..=99).contains(&below) {
+        return Err("power: `wakes` is a percent of hit points, 1 to 99".into());
+    }
+    let every = (p.every)
+        .filter(|&e| e > 0)
+        .ok_or("power: `wakes` needs an `every` (base turns, 1 or more)")?;
+    let name = (p.resource.as_deref()).ok_or("power: `wakes` needs a `resource` (the rage's)")?;
+    let resource =
+        (content.resource_id(name)).ok_or_else(|| format!("power: unknown resource `{name}`"))?;
+    if content.resource(resource).status.is_none() {
+        return Err(format!("power: `{name}` brings no status to rage with"));
+    }
+    Ok(Power::Wakes {
+        below,
+        every,
+        resource,
+    })
+}
+
+/// A `roar` power of `radius` cells (1 or more) on base item `def` (a weapon), with its
+/// `status`, `turns`, and `noise`.
+fn roar(
+    p: &PowerSpec,
+    radius: u8,
+    def: &ObjectDef,
+    content: &Content,
+) -> Result<RoarPower, String> {
+    if radius == 0 {
+        return Err("power: `roar` is a radius in cells, 1 or more".into());
+    }
+    if def.attack.is_none() {
+        return Err("power: `roar` needs a weapon (a base that attacks)".into());
+    }
+    let name = (p.status.as_deref()).ok_or("power: `roar` needs a `status`")?;
+    let status =
+        (content.status_id(name)).ok_or_else(|| format!("power: unknown status `{name}`"))?;
+    let turns = p.turns.ok_or("power: `roar` needs `turns` (a roll)")?;
+    let noise = p
+        .noise
+        .ok_or("power: `roar` needs a `noise` (its loudness)")?;
+    Ok(RoarPower {
+        radius,
+        status,
+        turns,
+        noise,
     })
 }

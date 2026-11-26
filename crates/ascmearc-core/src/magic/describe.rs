@@ -166,7 +166,9 @@ fn capacity_line(stack: &Stack, content: &Content) -> Option<Line> {
     let room = usize::from(super::capacity(stack, content));
     let said = match stack.known_magic().map(|m| m.affixes.len()) {
         None => Msg::new(msg::describe::CAPACITY_CAN).role("room", enchantments(room)),
-        Some(n) if n > room => msg::describe::CAPACITY_OVER.into(),
+        // A unique holds what its table sets, past its make's capacity too (#2115).
+        Some(n) if n > room && !stack.is_unique() => msg::describe::CAPACITY_OVER.into(),
+        Some(n) if n > room => msg::describe::CAPACITY_ALL.into(),
         Some(n) if n == room => msg::describe::CAPACITY_ALL.into(),
         Some(n) => (Msg::new(msg::describe::CAPACITY_MORE).role("has", enchantments(n)))
             .role("n", num(room - n)),

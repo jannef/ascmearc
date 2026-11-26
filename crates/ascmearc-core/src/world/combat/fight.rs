@@ -1100,6 +1100,8 @@ impl World {
                     blow: Some(blow),
                 };
                 self.weapon_trigger(attacker, crate::content::Trigger::Kill, fired, events);
+                // A roaring weapon's kill frightens the foes who see it (`roar.rs`).
+                self.roar(attacker, (kind, with, skills), events);
             }
             // A sneak attack that kills: Vanishing act (`thief.rs`).
             if died && unseen {
@@ -1279,6 +1281,8 @@ impl World {
         }
         actor.hp -= damage;
         if actor.hp > 0 {
+            // Near death, the rage of a Wakes power it wears wakes (`wakes.rs`).
+            self.rage_wakes(id, events);
             // A blow, or any harm, wakes a sleeper (`den.rs`).
             self.wake(id);
             return false;
@@ -1375,7 +1379,10 @@ impl World {
             // An ally's kill is its master's (`ally.rs`).
             let player = self.state.player;
             let master = by.and_then(|b| self.master_of(b)).filter(|&m| m == player);
-            let credited = by == Some(player) || master.is_some();
+            // A death the player sees, by any hand, is theirs in full by a Credit power
+            // (`credit.rs`).
+            let glory = by != Some(player) && self.glory(at, &level);
+            let credited = by == Some(player) || master.is_some() || glory;
             // A kill builds the killer's resources.
             if let Some(by) = master.or(by) {
                 self.gain_resource(by, Build::Kill);
@@ -1383,7 +1390,10 @@ impl World {
             // The mark's death: its killer's own kill builds `mark_kill`; cleared (`mark.rs`).
             self.mark_dies(id, by);
             if credited {
-                let percent = master.map_or(100, |_| self.ally_share());
+                let percent = match master {
+                    Some(_) if !glory => self.ally_share(),
+                    _ => 100,
+                };
                 // A half, or what crawled out of a corpse, pays less and counts for no quest.
                 let (percent, counts) = self.offspring_share(id, percent);
                 self.earn_kill_at(creature, percent);
@@ -1393,7 +1403,7 @@ impl World {
                 if counts {
                     self.tally_kill(creature, &level);
                     // An oath is kept by the player's own hand (`oath.rs`).
-                    if master.is_none() {
+                    if master.is_none() || glory {
                         self.oath_kill(creature);
                     }
                 }

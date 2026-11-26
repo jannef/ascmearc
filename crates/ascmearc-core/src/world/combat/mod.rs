@@ -18,6 +18,7 @@ mod lurk;
 mod natural;
 mod negate;
 pub(in crate::world) mod reflect;
+mod roar;
 mod sear;
 pub(in crate::world) mod shoot;
 pub(in crate::world) mod slip;
@@ -46,6 +47,7 @@ cfg_if! {
         mod lurk_tests;
         mod negate_tests;
         mod protection_tests;
+        mod roar_tests;
         mod sear_tests;
         pub(in crate::world) mod shoot_tests;
         mod shot_range_tests;

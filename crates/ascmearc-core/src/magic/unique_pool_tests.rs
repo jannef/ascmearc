@@ -25,10 +25,13 @@ const PLACED: [&str; 9] = [
 ];
 
 /// The uniques of the drop pool, every one `pool = true` in its data.
-const POOL: [&str; 7] = [
+const POOL: [&str; 10] = [
+    "beornhama",
     "cracked_resurrection_stone",
     "deep_night",
     "demonsoul",
+    "domgeorn",
+    "gorthak",
     "grandmother",
     "masterpiece",
     "radiant",
@@ -95,6 +98,8 @@ fn the_placed_uniques_never_join_the_pool() {
     let stone = c.unique("cracked_resurrection_stone").expect("the stone");
     assert!(stone.stack.magic().expect("magic").cursed(c));
     let rare = rares(&sure, stone.magic().level, 1).remove(0);
+    // Beornhama (item level 28) found already, the stone is the one open at its level.
+    let found = BTreeSet::from(["beornhama".to_string()]);
     let unique = instead(&sure, &mut Rng::stream(0, "pool"), &rare, &found).expect("a sure pool");
     assert_eq!(member(&sure, &unique), Some("cracked_resurrection_stone"));
     assert!(unique.magic().expect("magic").cursed(&sure));

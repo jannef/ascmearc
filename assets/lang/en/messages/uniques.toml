@@ -8,6 +8,13 @@ flames_from_your_shield = "Flames leap from your shield!"
 # A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.
 no_craft = "It is unique: no craft of yours will change it."
 
+# The Wakes power (#2110, Beornhama's; `world/health/wakes.rs`): the description's line while the
+# rage sleeps once it woke in its wearer.
+rage_sleeps = "The bear in it sleeps."
+# The rage wakes in its wearer near death. `who`: a wearer the player sees.
+rage_wakes = "The bear wakes in {who:the}!"
+rage_wakes_you = "The bear wakes in you!"
+
 # The Restore power (#2098, `world/health/restore.rs`): a death near the stone's wearer undone.
 # `who`: a creature the player sees restored.
 restored = "{who:The} fall{who:s}, and rise{who:s} whole again!"
@@ -15,3 +22,12 @@ restored = "{who:The} fall{who:s}, and rise{who:s} whole again!"
 restored_unseen = "The stone on your finger grows warm."
 # The player restored.
 restored_you = "Death lets go of you: you rise whole again!"
+
+# The Roar power (#2136, Gorthak's; `world/combat/roar.rs`): a kill with the weapon. `who`: a
+# wielder the player sees.
+roar = "A great shout goes up as {who:poss} blow falls!"
+# A foe the player sees heard the roar: it quails (Frightened), or it stands.
+roar_quails = "{who:The} quail{who:s} and flee{who:s}."
+roar_stands = "{who:The} {who:does} not flinch."
+# The player's own kill.
+roar_yours = "A great shout goes up as your blow falls!"

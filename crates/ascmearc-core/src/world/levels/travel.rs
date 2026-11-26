@@ -750,6 +750,7 @@ pub(in crate::world) fn make_creature(
         npc: spawn.npc.clone(),
         talk: Talk::default(),
         home: None,
+        rage_sleeps: None,
         spells: Default::default(),
         streak: None,
         satiation: None,

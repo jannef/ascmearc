@@ -263,5 +263,47 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
             }
             when.join("; ")
         }
+        Some(Power::Wakes {
+            below,
+            every,
+            resource,
+        }) => {
+            let def = content.resource(*resource);
+            let rage = def
+                .status
+                .map_or("-".to_string(), |s| content.status(s).name.clone());
+            format!(
+                "when a harm leaves its wearer alive below {below}% of their hit points and they \
+                 are not {rage}, they become {rage} at once, free, even while Exhausted (which \
+                 ends): one with the {} ability gets their {} filled to its maximum; anyone else \
+                 a pool of {} that only decays (nothing builds it, no frenzy). The rage ends as \
+                 any does, in Exhausted. It then sleeps for {every} turns",
+                def.name, def.name, def.start
+            )
+        }
+        Some(Power::Roar(roar)) => {
+            let status = &content.status(roar.status);
+            format!(
+                "each kill with a blow of it is a roar (noise {}): every foe within {} cells that \
+                 sees the wielder rolls 2d12 + its Willpower modifier against {} + the wielder's \
+                 Strength modifier + what their Intimidate adds (the Intimidate skill's check); \
+                 on a fail it is {} for {} turns (at most {}) and flees, and it is not checked \
+                 again until the fight is over for it. The undead, those without vitals, and \
+                 those that never suffer {} pay no heed",
+                roar.noise,
+                roar.radius,
+                content.intimidate().map_or(0, |r| r.difficulty),
+                status.name,
+                roar.turns,
+                status.max,
+                status.name
+            )
+        }
+        Some(Power::Credit) => "whatever dies where its wearer sees it, by anyone's hand or of \
+             anything (a monster's blow, an ally's, a trap, bleeding, a fall, fire), counts as \
+             their own kill: the full experience and the first-kill bonus, quest and bounty \
+             counts, oaths, and the alignment change of the kill (a peaceful creature's death \
+             too). An ally's kill so counted pays the full experience, not the ally's share"
+            .into(),
     }
 }

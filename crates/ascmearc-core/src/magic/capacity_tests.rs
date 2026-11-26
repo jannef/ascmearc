@@ -482,6 +482,8 @@ fn hand_made_items_are_never_trimmed() {
         };
         let room = usize::from(capacity(&stack, &c));
         let held = stack.magic().map_or(0, |m| m.affixes.len());
+        // A unique holds what its table sets, whatever its capacity (#2115: Hǣrsceorp's six).
+        let room = if kind == "unique" { n } else { room };
         if n > room || held < n {
             short.push(format!(
                 "{kind} `{name}` ({object}): {n} affixes, capacity {room}"

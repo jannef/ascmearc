@@ -102,6 +102,9 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Magic raises an item's worth: a magic or rare item is priced above its base item, and the price follows what the magic is.
 - Each unique comes at most once a run. Most are placed by content once; loot never rolls one, but a unique of the drop pool (#2103) may stand in for a rare find, very rarely, where the find's item level reaches the unique's own: by item level and so danger, never depth.
 - The Cracked Resurrection Stone (#2098), a cursed unique ring: whatever dies within 10 cells of its wearer (the wearer, allies, foes) is restored to full health instead half the time, each death rolled anew, never the undead. Restored, it did not die: no experience, loot, corpse, kill count, or on-death effect.
+- Beornhama (#2110), a unique fur cloak: below a quarter of its wearer's hit points, not raging, they fly into a free rage even while Exhausted, at most once in 1,000 turns; a berserker's own Rage filled, anyone else lent 12 rage that only decays.
+- Gorthak (#2136), a unique great axe: each kill with it is a roar (noise 40); every foe within 6 cells who sees the wielder checks its nerve as against Intimidate and the failed flee Frightened, once a fight; the undead, the mindless, and the fearless pay no heed.
+- The Dōmgeorn (#2130), a unique gold amulet: every death its wearer sees, by any hand or harm, is credited to them as their own kill (experience, tallies, oaths, alignment), a peaceful's too.
 
 ### Curses
 

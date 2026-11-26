@@ -929,6 +929,7 @@ impl World {
             npc: None,
             talk: Talk::default(),
             home: None,
+            rage_sleeps: None,
             // The scenario's spells, known from the start (a test world's fixture).
             spells: def.spells.iter().map(|&s| (s, 1)).collect(),
             streak: None,

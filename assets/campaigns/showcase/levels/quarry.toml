@@ -106,6 +106,21 @@ objects = ["rock*4"]
 at = [3, 12]
 objects = ["unique:masterpiece"]
 
+# Three more of the pool (#2110, #2136, #2130), placed nowhere else, along the arrival room's
+# south wall: Beornhama, a fur cloak whose bear rages for its wearer; Gorthak, a great axe whose
+# kills roar; and the Dōmgeorn, a gold amulet that makes every death its wearer sees theirs.
+[[pile]]
+at = [5, 12]
+objects = ["unique:beornhama"]
+
+[[pile]]
+at = [7, 12]
+objects = ["unique:gorthak"]
+
+[[pile]]
+at = [9, 12]
+objects = ["unique:domgeorn"]
+
 # What the sealed chamber keeps.
 [[pile]]
 at = [48, 8]

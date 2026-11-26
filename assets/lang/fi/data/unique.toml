@@ -3,6 +3,10 @@
 # and `lore` are sentences of their own, its `power.message` what its wearer is told as it wards
 # off a status. Old in tone, as the lore of heirlooms is.
 
+[beornhama]
+lore = { text = "Karhu ei kysy, oletko valmis.", of = "c7ad73" }
+phrase = { text = "Kun sen kantaja on kuoleman partaalla, karhu siinä herää ja raivoaa hänen puolestaan, väsyneenä tai ei; sitten se nukkuu pitkään.", of = "cf2b50" }
+
 [brosinga_mene]
 lore = { text = "Hama vei sen mukanaan kirkkaaseen kaupunkiin, eikä kukaan ole sittemmin kertonut, minne se joutui.", of = "7f1af7" }
 phrase = { text = "Mikään myrkky ei tartu sen kantajaan.", of = "78b2f2" }
@@ -22,12 +26,20 @@ phrase = { text = "Sen kantaja kulkee näkymättömänä ja näkee pimeässä, j
 lore = { text = "Jotakin suljettiin sen sisään kauan sitten, eikä se ole sen jälkeen jäähtynyt.", of = "bc3b0c" }
 phrase = { text = "Se vastaa iskuihin tulella. Sen kantaja ei pelkää liekkejä, mutta pakkanen puree häntä syvemmältä.", of = "c725ae" }
 
+[domgeorn]
+lore = { text = "Hän kantoi sitä kentälle ja toi kotiin laulun. Muut toivat kotiin haavat.", of = "2f6633" }
+phrase = { text = "Jokainen kuolema, jonka sen kantaja näkee, on hänen: niin maine kuin syykin.", of = "d5ca0b" }
+
 [eorcanstan]
 lore = { text = "Kivi on tumma, kunnes sen lähellä lausutaan loitsu; silloin se tummuu entisestään.", of = "5dc3aa" }
 phrase = { text = "Mikään hiljaisuus ei vaienna sen kantajan ääntä.", of = "b8013d" }
 
 [eorcanstan.power]
 message = { text = "Hiljaisuus ei saa ääntäsi vaikenemaan.", of = "3bc6d2" }
+
+[gorthak]
+lore = { text = "Kun se iskee alas, kuuluu huuto, eikä kukaan tiedä varmasti kenen.", of = "233c45" }
+phrase = { text = "Sen jokainen tappo on karjaisu: sen nähneet viholliset voivat menettää rohkeutensa ja paeta.", of = "7b132f" }
 
 [grandmother]
 lore = { text = "Hän on elänyt kauemmin kuin kolme sukua ja haudannut jokaisen pojan, joka häntä kantoi.", of = "3ccae1" }
