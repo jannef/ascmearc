@@ -299,6 +299,13 @@ pub struct Profile {
     /// A hit on a foe at full health is a sure critical (Satisfaction's FirstBlood), decided
     /// where it meets its target (`World::resolve`, `world/combat/first_blood.rs`).
     pub first_blood: bool,
+    /// Its blows make no noise (the Dierne's Silent power): read where a blow is resolved
+    /// (`World::resolve`).
+    pub silent: bool,
+    /// Its blows spill no blood (the Dierne's Silent power, `blood = false`).
+    pub bloodless: bool,
+    /// What it kills its wielder eats, whole (Gorb's Devour power, `world/combat/devour.rs`).
+    pub devour: bool,
 }
 
 /// What an attack is made with, as data gives it: a weapon (`data/objects.toml`) or a creature's
@@ -429,6 +436,9 @@ impl Profile {
             banes: Vec::new(),
             grows: None,
             first_blood: false,
+            silent: false,
+            bloodless: false,
+            devour: false,
         }
     }
 
@@ -753,6 +763,9 @@ mod tests {
             banes: Vec::new(),
             grows: None,
             first_blood: false,
+            silent: false,
+            bloodless: false,
+            devour: false,
         }
     }
 

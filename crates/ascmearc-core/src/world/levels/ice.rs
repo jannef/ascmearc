@@ -378,6 +378,8 @@ impl World {
         // A web there may catch it (`web.rs`), a fire burns it (`fire.rs`).
         self.web_tread(id, at, events);
         self.fire_tread(id, at, events);
+        // Sindertread's trail: the cell stepped off is left burning (`firewalk.rs`).
+        self.firewalk_trail(id, from, events);
     }
 
     /// The price of what `footing` adds to a step: climbing out of the water onto ice (less

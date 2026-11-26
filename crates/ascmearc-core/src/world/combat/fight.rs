@@ -927,6 +927,9 @@ impl World {
         };
         // A unique weapon's thrust-through strikes on with the profile as it came (`thrust.rs`).
         let thrust = profile.as_ref().filter(|p| p.thrust.is_some()).cloned();
+        // A unique weapon's Silent power (the Dierne's) and Devour power (Gorb's, `devour.rs`).
+        let (silent, bloodless, devour) =
+            (profile.as_ref()).map_or((false, false, false), |p| (p.silent, p.bloodless, p.devour));
         // A unique weapon's Grows (`grows.rs`) and FirstBlood (`first_blood.rs`).
         let profile = profile.map(|p| self.first_blood(target, self.grown_blow(attacker, p)));
         // A thrown exploit's ladder, on the creature it is aimed at only (`openings.rs`).
@@ -1036,7 +1039,7 @@ impl World {
             natural: None,
             caught,
         });
-        if noisy && !dummy {
+        if noisy && !dummy && !silent {
             self.make_noise(attacker, Act::Attack(kind));
         }
         // A shopkeeper the player attacks turns on them.
@@ -1092,8 +1095,13 @@ impl World {
         if let Some(blow) = blow
             && blow.damage > 0
         {
-            self.bleed((attacker, target), from, kind, blow);
+            if !bloodless {
+                self.bleed((attacker, target), from, kind, blow);
+            }
             let died = self.hurt(target, blow.damage, Harm::Actor(attacker), events);
+            if died && devour {
+                self.devour(attacker, target, events);
+            }
             if died {
                 self.train_kill((attacker, target), kind);
                 // Of Siphoning and of the Hunt: a kill of one's own close by (`siphon.rs`).

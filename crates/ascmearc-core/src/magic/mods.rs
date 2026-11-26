@@ -68,6 +68,12 @@ pub struct Mods {
     /// Whether its hits on a foe at full health are sure criticals, from a unique weapon's
     /// FirstBlood power (local; `world/combat/first_blood.rs`).
     first_blood: bool,
+    /// Whether its blows are silent, and spill no blood, from a unique weapon's Silent power
+    /// (local).
+    silent: Option<bool>,
+    /// Whether what it kills is eaten, from a unique weapon's Devour power (local;
+    /// `world/combat/devour.rs`).
+    devour: bool,
 }
 
 impl Default for Mods {
@@ -87,6 +93,8 @@ impl Default for Mods {
             range_times: 1,
             grows: None,
             first_blood: false,
+            silent: None,
+            devour: false,
         }
     }
 }
@@ -304,6 +312,8 @@ impl Mods {
                 // The Stick's dice and to-hit, the wielder's level read where it strikes.
                 Some(Power::Grows(growth)) => mods.grows = Some(growth.clone()),
                 Some(Power::FirstBlood) => mods.first_blood = true,
+                Some(&Power::Silent { blood }) => mods.silent = Some(blood),
+                Some(Power::Devour) => mods.devour = true,
                 _ => {}
             }
         }
@@ -414,6 +424,11 @@ impl Mods {
             profile.grows.clone_from(&self.grows);
         }
         profile.first_blood |= self.first_blood;
+        if let Some(blood) = self.silent {
+            profile.silent = true;
+            profile.bloodless |= !blood;
+        }
+        profile.devour |= self.devour;
     }
 
     /// Every effect with a value, in [`Effect::all`] order, and the light.

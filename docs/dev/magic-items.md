@@ -479,6 +479,22 @@ id on another rarity than unique, and a unique without its id.
   (`content/level.rs::hand_made`, docs/dev/enchanting.md), so the owner's numbers stand as
   written, and no make adds Armour or Protection they did not ask for. Tests:
   `world/combat/struck_tests.rs`.
+- **The Fyrwit, Sindertread, the Dierne, and Gorb** (#2135, #2142, #2143, #2144), in the shared
+  `data/uniques/`, each `pool = true`, placed nowhere but the quarry. **The Fyrwit**
+  (`fyrwit`, an amber amulet, item level 30): of the Owl 5 (Intelligence), of Seeking 40
+  (Search), of the Alchemist 25 (past the ladder's top); its Sense power. **Sindertread**
+  (`sindertread`, hobnailed boots, item level 40; clothing, so `kind = "boots"`): Hardened 3,
+  Hobnailed 4, of the Salamander 60 (on boots by a unique's hand), of the Ox 4, and
+  Featherweight −30 (30% heavier: the issue's "Leaden" is a curse that binds, which the design
+  never asks for, as the Kettle Hat's); its Firewalk power. The design's noise of the hobnails
+  is no rule of the item: the steps are as loud as anyone's. **The Dierne** (`dierne`, a mace,
+  item level 40): Sharp 5, Heavy 2d8, of Precision 4, of the Sage 4 (Willpower), Featherweight
+  40; its Silent power. The design's sneak dice "as a knife does" need nothing: sneak attacks
+  add their dice with any weapon (`ambush.rs`), and no creature cries out when hurt or killed,
+  so its silence is the blow's own noise. **Gorb** (`gorb`, a dagger, item level 40): Sharp 5,
+  of Celerity 22, of the Lynx 4, of Sustenance 25 (on a weapon by a unique's hand); its Devour
+  power. Tests: `world/items/fyrwit_tests.rs`, `world/levels/firewalk_tests.rs`,
+  `world/combat/silent_blow_tests.rs`, `world/combat/devour_tests.rs`.
 - **What only a unique sets** (#2091), each refused to any other item by `Magic::check` and
   never rolled (`content/unique_values_tests.rs::what_only_a_unique_sets_never_rolls`: every
   random affix, loot's, a vault's, a shop's, enchanting's and its recast's, comes of
@@ -656,6 +672,33 @@ id on another rarity than unique, and a unique without its id.
   `stagger` degrees of Staggered (a critical's twice; Staggered's `max = 1` keeps it one slowed
   action). **`counts_as_unarmoured`** (a body piece only): `Actor::wears_body_armour` says no
   for it (Mage armour, Fleet, Step of the wind).
+  `Power::Sense { radius, identify }` (`{ sense = "items", radius = 12, identify = 200 }`, the
+  Fyrwit's, #2135): `perception/sensed.rs` (its module docs) derives `Perception::sensed` each
+  turn from ground truth, the one place: every cell within the radius (`radius2`, no line of
+  sight) the player does not see that holds a pile, a chest (`LevelState::chests`, a disguised
+  mimic as its chest), or a non-player actor wearing or wielding an item above normal rarity, as
+  a `Sensed { pos, chest, magic }`; presentation reads it through `PerceptionView::sensed`
+  (`crates/ascmearc/src/ui/sensed.rs`: `*` grey, the rare colour when `magic`, a chest by its
+  glyph; the dump's `view` layer, `*` or the chest's glyph). `identify` turns (6 seconds each)
+  of carrying identify an unidentified magic item or wand: `World::appraise_carried` counts
+  them on Connoisseur's counter (`Stack::carry_for`), the sooner of the two.
+  `Power::Silent { blood }` (`{ silent = true, blood = false }`, a weapon; the Dierne's, #2143)
+  and `Power::Devour` (`{ devour = true }`, a weapon; Gorb's, #2144) ride `Mods::local` into
+  `Profile::silent`, `bloodless`, and `devour` (`sharpen`; a kick or a bash builds none), read
+  in `World::resolve`: a silent blow makes no `Act::Attack` noise, a bloodless one skips
+  `World::bleed` (no stain, no spatter, no char); a Devour blow that kills calls
+  `world/combat/devour.rs::World::devour`, which takes the corpse just left from the pile and
+  eats it through `World::consume` (`eat.rs`, the meal's last turn: the corpse's laws, craving,
+  `on_eat`, rot) with `keep_down`: no vomiting draw (the corpse's, rot's) and no overeating (no
+  choke, no vomit; what does not fit is lost). The player's only; said after the blow's lines.
+  `Power::Firewalk(Firewalk)` (`{ firewalk = ["lava"], kick = { type = "fire", damage = "2d6" },
+  trail = 2, turns = 2 }`, worn armour; Sindertread's, #2142): `world/levels/firewalk.rs` (its
+  module docs): its terrains open to the wearer's step (`World::walks_on`, read by
+  `player_moves` and `open_to`); `World::walks_fire` keeps fire on the ground off them
+  (`fire_burns`, `zone_burns`) and makes them `fireproof`; `Actor::kick` adds the `kick`
+  rider; `kick_door` calls `World::kick_alight` (the door `catch_fire`s, "The door catches
+  fire!"); and `after_tread` calls `World::firewalk_trail`, a one-cell fire zone of `trail` harm
+  for `turns` on the cell stepped off (`World::lay_cells`), by the wearer.
 - **Rules beside the power** (#2095, #2097), fields of the unique's table read where the rule
   is, never affixes (so no pool can roll them; `unique_spell_tests.rs::nothing_unique_only_is_ever_rolled`):
   `immune` (kinds; `Actor::resistances` adds them to the immunities) and `resist` (kind to

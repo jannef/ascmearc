@@ -22,6 +22,10 @@ phrase = { text = "Sen kantaja kulkee näkymättömänä ja näkee pimeässä, j
 lore = { text = "Jotakin suljettiin sen sisään kauan sitten, eikä se ole sen jälkeen jäähtynyt.", of = "bc3b0c" }
 phrase = { text = "Se vastaa iskuihin tulella. Sen kantaja ei pelkää liekkejä, mutta pakkanen puree häntä syvemmältä.", of = "c725ae" }
 
+[dierne]
+lore = { text = "Kukaan ei kuullut mitään. Siinäpä se juju olikin.", of = "d61a0f" }
+phrase = { text = "Sen iskut eivät päästä ääntä eivätkä vuodata verta.", of = "15e84c" }
+
 [eorcanstan]
 lore = { text = "Kivi on tumma, kunnes sen lähellä lausutaan loitsu; silloin se tummuu entisestään.", of = "5dc3aa" }
 phrase = { text = "Mikään hiljaisuus ei vaienna sen kantajan ääntä.", of = "b8013d" }
@@ -33,9 +37,17 @@ message = { text = "Hiljaisuus ei saa ääntäsi vaikenemaan.", of = "3bc6d2" }
 lore = { text = "Nojaa siihen selkäsi, niin vuori on takanasi. Lähde kävelemään, niin se on pelkkää puuta ja rautaa.", of = "5ef9f3" }
 phrase = { text = "Mitä kauemmin sen kantaja seisoo, sitä vaikeampi häntä on haavoittaa, eikä mikään liikuta häntä.", of = "826bf0" }
 
+[fyrwit]
+lore = { text = "Se ei siedä kiinni olevaa laatikkoa.", of = "9cd2a3" }
+phrase = { text = "Sen kantaja tuntee jokaisen esineen lähellään kiven ja pimeän läpi, ja oppii, mitä kantaa, kantamalla sitä.", of = "19e38b" }
+
 [gar]
 lore = { text = "Jokaisen kilpimuurin takana on rivi näitä, ja jokaisen rivin takana rivi.", of = "1a6fc5" }
 phrase = { text = "Sen pisto menee läpi: sekin, joka seisoo lyödyn takana, saa iskun, oli ystävä tai vihollinen.", of = "f0a260" }
+
+[gorb]
+lore = { text = "No, se on vain pikku suupala.", of = "18867e" }
+phrase = { text = "Minkä se tappaa, sen sen kantaja syö heti, kokonaan, eikä koskaan oksenna sitä.", of = "ccf04f" }
 
 [grandmother]
 lore = { text = "Hän on elänyt kauemmin kuin kolme sukua ja haudannut jokaisen pojan, joka häntä kantoi.", of = "3ccae1" }
@@ -97,6 +109,10 @@ message = { text = "Mikään ei vangitse katsettasi kauaksi aikaa.", of = "124df
 [silverstrike]
 lore = { text = "Sen jänne, niin jousentekijät vannoivat, oli kehrätty kuun hiuksesta.", of = "87875c" }
 phrase = { text = "Sen nuolet lentävät kaksi kertaa niin kauas kuin tavallisen jousen.", of = "7eb75c" }
+
+[sindertread]
+lore = { text = "Kuule, ei se ole kuin vähän lämmin.", of = "d31df8" }
+phrase = { text = "Sen kantaja kävelee laavalla ja tulen läpi palamatta. Hänen potkunsa polttavat, ja maa, jolta hän astuu, jää palamaan.", of = "8ad7b5" }
 
 [stick]
 lore = { text = "Se oli keppi, kun he lähtivät matkaan. Kukaan ei muista, milloin se lakkasi olemasta.", of = "65158f" }

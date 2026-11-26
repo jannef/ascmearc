@@ -209,6 +209,10 @@ impl World {
     /// The fire on actor `id`'s cell burns it: the rules' harm, less what it resists, as a
     /// place's harm (a kill is no one's).
     fn fire_burns(&mut self, id: ActorId, events: &mut Vec<Event>) {
+        // Fire on the ground never burns a firewalker (`firewalk.rs`).
+        if self.walks_fire(id) {
+            return;
+        }
         let content = self.content.clone();
         let Some(rules) = content.fire() else {
             return;
@@ -254,6 +258,7 @@ impl World {
     pub(in crate::world) fn fireproof(&self, id: ActorId) -> bool {
         (self.content.fire())
             .is_none_or(|rules| self.resistances_of(id).get(Some(rules.damage_type)) >= IMMUNE)
+            || self.walks_fire(id)
     }
 
     /// Creature `id`, about to follow `plan`, stands in fire: it steps out instead, onto the

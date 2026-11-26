@@ -158,14 +158,32 @@ impl World {
             self.say(msg::health::NOTHING_LEFT_TO_EAT);
             return;
         };
+        if self.player_hunger().is_none() {
+            return;
+        }
+        self.train_judged(&food, self.state.time);
+        let what = object_phrase(&self.content, food.object);
+        self.say(Msg::new(msg::health::EAT).role("what", what));
+        self.ate_goods(dish.meal, &food);
+        self.consume(&food, burden, false, events);
+    }
+
+    /// The player has eaten `food` (said already), carrying `burden` before: it feeds and does
+    /// what it does (module docs), and the news of their hunger and burden follows. Kept
+    /// down (`keep_down`: Gorb's Devour, `world/combat/devour.rs`), it never makes them vomit
+    /// nor choke, and draws nothing for either: what does not fit is lost.
+    pub(in crate::world) fn consume(
+        &mut self,
+        food: &Stack,
+        burden: crate::burden::Burden,
+        keep_down: bool,
+        events: &mut Vec<Event>,
+    ) {
         let content = self.content.clone();
         let Some(before) = self.player_hunger() else {
             return;
         };
         let def = content.object(food.object);
-        self.train_judged(&food, self.state.time);
-        self.say(Msg::new(msg::health::EAT).role("what", object_phrase(&content, food.object)));
-        self.ate_goods(dish.meal, &food);
         if let Some(creature) = def.corpse {
             self.ate_corpse(creature);
             self.ate_flesh(creature);
@@ -176,18 +194,19 @@ impl World {
             }
         }
         let nutrition = def.food.map_or(0, |f| f.nutrition) as i32;
-        let rotten = self.stage(&food).is_some_and(|s| s.is_rotten());
+        let rotten = self.stage(food).is_some_and(|s| s.is_rotten());
+        let meal = (nutrition, food.object, keep_down);
         match def.corpse {
-            _ if rotten => self.eat_rotten(nutrition, food.object, events),
+            _ if rotten => self.eat_rotten(meal, events),
             Some(creature) => {
                 let on_eat = content.creature(creature).on_eat.clone();
                 let on_eat = on_eat.unwrap_or_default();
-                self.eat_fresh(nutrition, food.object, creature, on_eat, events);
+                self.eat_fresh(meal, creature, on_eat, events);
             }
-            None => self.feed(nutrition, food.object),
+            None => self.feed(nutrition, food.object, keep_down),
         }
         self.remedy(&def.cures, events);
-        self.meal_heals(&food, rotten);
+        self.meal_heals(food, rotten);
         if self.state.death.is_none() {
             self.hunger_news(before);
             self.burden_news(burden);
@@ -239,8 +258,7 @@ impl World {
     /// A fresh corpse feeds by its size and does what its creature's `on_eat` says (module docs).
     fn eat_fresh(
         &mut self,
-        nutrition: i32,
-        what: ObjectId,
+        (nutrition, what, keep_down): (i32, ObjectId, bool),
         creature: CreatureId,
         on_eat: crate::content::OnEat,
         events: &mut Vec<Event>,
@@ -259,7 +277,7 @@ impl World {
             .corpse_harmless;
         // What the corpse does to them: one stream (`eat/corpse/player`).
         let mut rng = draw!(self, "eat/corpse/player");
-        if !harmless && on_eat.vomit > 0 && rng.chance(u32::from(on_eat.vomit)) {
+        if !harmless && !keep_down && on_eat.vomit > 0 && rng.chance(u32::from(on_eat.vomit)) {
             self.vomit();
             return;
         }
@@ -284,7 +302,8 @@ impl World {
         if self.state.death.is_some() {
             return;
         }
-        self.feed(nutrition.saturating_add(on_eat.satiation).max(0), what);
+        let points = nutrition.saturating_add(on_eat.satiation).max(0);
+        self.feed(points, what, keep_down);
     }
 
     /// A fresh corpse's gifts to the stats, per stat in display order: its `train` marks into
@@ -347,11 +366,10 @@ impl World {
 
     /// A rotten corpse: the player vomits (a chance), else it makes them sick, exposes them to
     /// the diseases rotten food carries (grave rot), and then feeds them; a player whose race
-    /// `eats_rotten` it only feeds.
+    /// `eats_rotten` it only feeds. Kept down (`keep_down`), it never makes them vomit.
     pub(in crate::world) fn eat_rotten(
         &mut self,
-        nutrition: i32,
-        what: ObjectId,
+        (nutrition, what, keep_down): (i32, ObjectId, bool),
         events: &mut Vec<Event>,
     ) {
         let content = self.content.clone();
@@ -364,7 +382,7 @@ impl World {
         if rooted || race.is_some_and(|r| r.eats_rotten) {
             let name = object_phrase(&content, what);
             self.say(Msg::new(msg::health::ROTTEN_NO_MIND).role("what", name));
-            self.feed(nutrition, what);
+            self.feed(nutrition, what, keep_down);
             return;
         }
         let name = object_phrase(&content, what);
@@ -379,14 +397,14 @@ impl World {
             .iron_stomach;
         // What the rot does to them: one stream (`eat/rotten/player`).
         let mut rng = draw!(self, "eat/rotten/player");
-        if !iron && rotten.vomit > 0 && rng.chance(u32::from(rotten.vomit)) {
+        if !iron && !keep_down && rotten.vomit > 0 && rng.chance(u32::from(rotten.vomit)) {
             self.vomit();
             return;
         }
         // Purify: rotten food neither sickens them nor exposes them
         // to a disease, and draws nothing for it.
         if self.state.player().talent_mods(&content).hunger.purify {
-            self.feed(nutrition, what);
+            self.feed(nutrition, what, keep_down);
             return;
         }
         let degrees = rotten.harm.roll(&mut rng);
@@ -411,7 +429,7 @@ impl World {
         }
         // Rotten food may carry a disease (grave rot): a check to resist it.
         self.expose_to(self.state.player, "rotten_food");
-        self.feed(nutrition, what);
+        self.feed(nutrition, what, keep_down);
     }
 
     /// What the player's talents heal of a meal of `food` besides (Herb lore's angelica root,
@@ -501,8 +519,9 @@ impl World {
     /// there can be is overeating: they may choke to death (if choking is on), else vomit, else
     /// what does not fit is lost; the most is the data's `max`, `capacity_percent` more for a
     /// halfling (`HungerMods::capacity`). With Gourmand a meal never leaves them
-    /// Bloated: what does not fit below it is lost, and they never overeat.
-    fn feed(&mut self, points: i32, what: ObjectId) {
+    /// Bloated: what does not fit below it is lost, and they never overeat. Kept down
+    /// (`keep_down`), a meal past the most is no overeating: what does not fit is lost.
+    fn feed(&mut self, points: i32, what: ObjectId, keep_down: bool) {
         let content = self.content.clone();
         let Some(def) = content.hunger() else {
             return;
@@ -522,7 +541,7 @@ impl World {
         }
         // The most there can be: the data's, more for one who holds more (Second breakfast).
         let max = (self.state.player().talent_mods(&content).hunger).capacity(def.max);
-        if nutrition.saturating_add(points) > max {
+        if nutrition.saturating_add(points) > max && !keep_down {
             let o = def.overeating;
             let mut rng = draw!(self, "eat/overeat/player");
             if o.choke > 0 && rng.chance(u32::from(o.choke)) {

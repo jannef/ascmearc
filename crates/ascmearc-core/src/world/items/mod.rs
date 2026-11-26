@@ -59,6 +59,7 @@ cfg_if! {
         mod body_slots_tests;
         mod curse_tests;
         mod equip_tests;
+        mod fyrwit_tests;
         pub(in crate::world) mod gear_tests;
         mod gem_tests;
         pub(in crate::world) mod lamp_tests;

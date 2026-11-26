@@ -98,6 +98,7 @@ mod lighting;
 mod own;
 mod seeing;
 mod seen;
+pub(crate) mod sensed;
 mod shop;
 mod truth;
 mod view;
@@ -110,6 +111,7 @@ pub use own::{
 pub use seen::{
     AllyView, CellView, Emitter, PerceivedLight, SeenActor, SeenGear, SeenLight, Shape,
 };
+pub use sensed::Sensed;
 pub use shop::{Sale, ShopView};
 pub use view::PerceptionView;
 
@@ -210,6 +212,9 @@ pub(crate) struct Perception {
     /// The level below as the air cells in sight show it (`below.rs`): on a floor above the
     /// ground whose level below exists.
     below: Option<below::Below>,
+    /// What the player senses on cells they do not see (the Fyrwit's Sense power, `sensed.rs`),
+    /// in position order.
+    sensed: Vec<Sensed>,
 }
 
 /// A disguised mimic as the snapshot hides it: a shut chest of its level's band at its cell.
@@ -355,6 +360,7 @@ impl Perception {
         let scorch = stained(&v, &seeing, &level.scorch);
         let sounds = heard(&v, &seeing, &seen.concealed);
         let below = below::see(&v, &seeing);
+        let sensed = sensed::sensed(&v, &seeing, &seen.disguises);
         // The player feels the air where they stand: fixed underground, the weather's under the
         // open sky, and what a hot or a cold room adds.
         let temperature = state.temperature_at(level, content, state.time, v.viewer);
@@ -391,6 +397,7 @@ impl Perception {
             escort_beside: (crate::world::allies_beside(state).into_iter())
                 .any(|(_, a)| a.escorting().is_some()),
             below,
+            sensed,
         }
     }
 

@@ -1,5 +1,10 @@
 # Unique items (`content/unique.rs`).
 
+# Gorb's Devour power (#2144): the player eats what they just killed, whole.
+devours = { text = "Syöt {what:acc} kokonaan siltä seisomalta.", of = "0ea48e" }
+# Sindertread's Firewalk power (#2142): the door the player kicked catches fire.
+door_catches = { text = "Ovi syttyy tuleen!", of = "4acee2" }
+
 # A unique shield's Cast power goes off (Demonsoul, #2095).
 flames_from_shield = { text = "{who:Gen} kilvestä leimahtaa liekkejä!", of = "929475" }
 flames_from_your_shield = { text = "Kilvestäsi leimahtaa liekkejä!", of = "e3fd55" }

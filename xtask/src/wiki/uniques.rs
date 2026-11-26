@@ -393,6 +393,45 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
              scars it: +1 Armour, +1 maximum hit point, or +1 Toughness, each a third of the \
              time, kept on it for whoever wears it, without end"
             .into(),
+        Some(Power::Sense { radius, identify }) => format!(
+            "its wearer senses every object within {radius} cells that they do not see, through \
+             walls, doors, and dark: each pile, each chest (a mimic shows as a chest), and each \
+             magic item a creature wears or wields is a mark on the map, a magic one glinting; \
+             never a creature itself or what it keeps in its pack; and an unidentified magic \
+             item or wand its wearer carries {identify} turns is identified"
+        ),
+        Some(Power::Silent { blood }) => {
+            let blood = if *blood {
+                ""
+            } else {
+                ", and they spill no blood (no stain, no spatter)"
+            };
+            format!(
+                "its blows make no noise at all: nothing hears the fight, so nothing wakes or \
+                 comes{blood}"
+            )
+        }
+        Some(Power::Devour) => "a creature its wielder kills with a blow of it is eaten at once, \
+             whole, with everything eating its corpse does (its gifts, its harm, the craving, \
+             a rotten one's sickness), but it never makes them vomit or choke: what does not fit \
+             is lost; a creature that leaves no corpse leaves nothing to eat"
+            .into(),
+        Some(Power::Firewalk(walk)) => {
+            let ground = (walk.terrains.iter())
+                .map(|&t| content.terrain(t).name.clone())
+                .collect::<Vec<_>>()
+                .join(", ");
+            let kick = &walk.kick;
+            let kind = &content.damage_type(kick.kind).id;
+            format!(
+                "its wearer walks on {ground} as on floor, unharmed, and fire on the ground \
+                 (burning terrain, a fire zone) never burns them; their every kick adds {} \
+                 {kind} damage, and a door they kick catches fire; every cell they step off is \
+                 left burning, a fire zone of {} harm for {} turns that burns anyone else in it \
+                 and lights what burns there",
+                kick.dice, walk.trail, walk.turns
+            )
+        }
     }
 }
 

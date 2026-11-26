@@ -6,6 +6,7 @@ pub(in crate::world) mod attacks;
 mod bane;
 mod bleed;
 mod corrode;
+mod devour;
 mod dummy;
 mod extra_limbs;
 pub(in crate::world) mod fight;
@@ -41,6 +42,7 @@ cfg_if! {
         mod blood_tests;
         mod corrode_tests;
         mod damage_tests;
+        mod devour_tests;
         mod dummy_tests;
         mod extra_limbs_tests;
         mod first_blood_tests;
@@ -59,6 +61,7 @@ cfg_if! {
         pub(in crate::world) mod shoot_tests;
         mod shot_range_tests;
         mod shot_zone_tests;
+        mod silent_blow_tests;
         mod silent_tests;
         mod slip_tests;
         mod struck_tests;

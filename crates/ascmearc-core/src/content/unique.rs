@@ -42,6 +42,16 @@ pub enum Power {
     /// in `noise::noise` (a step), `Actor::defence` (Dodge), and `world/skills/trapwise.rs` (no
     /// trap springs under them; the traps beside them found).
     Barefoot(Barefoot),
+    /// It eats whatever it kills, whole, at once, with everything a meal of the corpse does but
+    /// vomiting (`{ devour = true }`, Gorb's, #2144; a weapon): read where a blow of it kills
+    /// (`world/combat/devour.rs`, `World::resolve`), for the player who struck it.
+    Devour,
+    /// Its wearer walks the `terrains` (lava) as floor and takes no harm from fire on the ground
+    /// (burning terrain, a fire zone); its every kick adds `kick` (2d6 fire) and sets a door it
+    /// kicks alight; and every cell it steps off is left a weak fire of `trail` harm for `turns`
+    /// (`{ firewalk = ["lava"], kick = { type = "fire", damage = "2d6" }, trail = 2, turns = 2
+    /// }`, Sindertread's, #2142; worn armour). Read in `world/levels/firewalk.rs`.
+    Firewalk(Firewalk),
     /// Its hits cause a status, by a chance (`{ inflict = "poisoned", chance = 100, severity =
     /// 1 }`): read where a natural attack's `on_hit` is applied (`World::after_blow`), for the
     /// weapon that hit (a launcher's for its shots), through the attack's
@@ -107,6 +117,16 @@ pub enum Power {
         stagger: u16,
         difficulty: i32,
     },
+    /// Its wearer senses the items within `radius` cells, through stone and dark: every pile,
+    /// chest, and magic item worn in plain view is a mark on their map; and an unidentified item
+    /// they carry `identify` turns is identified (`{ sense = "items", radius = 12, identify = 200
+    /// }`, the Fyrwit's, #2135). Read in `perception/sensed.rs` (the marks) and where carrying
+    /// is counted (`World::appraise_carried`).
+    Sense { radius: u8, identify: u16 },
+    /// Its blows make no noise and, with `blood` false, spill no blood (`{ silent = true, blood =
+    /// false }`, the Dierne's, #2143; a weapon): read where a blow of it is resolved
+    /// (`World::resolve`).
+    Silent { blood: bool },
     /// Every critical hit its wearer suffers scars it: +1 Armour, +1 maximum hit point, or +1
     /// Toughness, chosen at random, kept on the item for whoever wears it, without end (`{ scars
     /// = true }`, Scarhide's, #2137; worn armour only). Read where an attack's blow lands
@@ -170,6 +190,19 @@ impl WeaponGrowth {
         let to_hit = i32::try_from(level / u32::from(self.to_hit_every)).unwrap_or(i32::MAX);
         (dice, to_hit)
     }
+}
+
+/// A [`Power::Firewalk`]: the terrains walked as floor, the kick's fire, and the trail's.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Firewalk {
+    /// The terrains its wearer walks as floor (lava).
+    pub terrains: Vec<super::TerrainId>,
+    /// What its wearer's kicks add (2d6 fire).
+    pub kick: Rider,
+    /// The harm of the weak fire left on each cell its wearer steps off (0: none).
+    pub trail: i32,
+    /// How many turns that fire burns.
+    pub turns: u8,
 }
 
 /// A [`Power::Barefoot`]: the slot that must be empty, and what bare feet give.
@@ -369,9 +402,26 @@ struct PowerSpec {
     difficulty: Option<i32>,
     /// Whether criticals suffered scar it.
     scars: Option<bool>,
+    /// What its wearer senses through walls (`"items"`).
+    sense: Option<String>,
+    /// How many turns an unidentified item is carried before it is known (`sense` only).
+    identify: Option<u16>,
+    /// Whether its blows are silent.
+    silent: Option<bool>,
+    /// Whether its silent blows spill blood (`silent` only).
+    blood: Option<bool>,
+    /// Whether it eats what it kills.
+    devour: Option<bool>,
+    /// The terrains its wearer walks as floor, the fire never harming them.
+    firewalk: Option<Vec<String>>,
+    /// What its wearer's kicks add (`firewalk` only).
+    kick: Option<AddedSpec>,
+    /// The harm of the fire left where its wearer steps off (`firewalk` only).
+    trail: Option<i32>,
     /// The chance in a hundred that a death near its wearer is undone.
     restore: Option<u8>,
-    /// How far from its wearer a death is undone (`restore`), or how far a zone reaches (`zone`).
+    /// How far from its wearer a death is undone (`restore`), how far a zone reaches (`zone`), or
+    /// how far its wearer senses (`sense`).
     radius: Option<u8>,
     /// The onset: a Charge free, as far as its wearer sees (`true`).
     onset: Option<bool>,
@@ -392,7 +442,7 @@ struct PowerSpec {
     trapwise: Option<u8>,
     /// A zone its shots leave where they stop (with `radius` and `turns`).
     zone: Option<ZoneKind>,
-    /// How many turns its zone lies (`zone` only).
+    /// How many turns its zone lies (`zone`), or the fire its wearer leaves (`firewalk`).
     turns: Option<u8>,
     /// A damage spell its bearer casts free from a shield, by `on_block` and `on_bash`.
     cast: Option<String>,
@@ -588,7 +638,9 @@ fn more_dice(
 /// on a weapon), `first_blood` (on a weapon), `plant` (on a shield or armour), `barefoot`,
 /// `trapwise`, `zone`, `pain` (with `gain` and `critical`), `ring` (with `stagger` and
 /// `difficulty`), `scars` (on worn armour), `onset` (with a `knockback` and a `noise`, on worn
-/// armour), and `thrust` (1 to 100, on a melee weapon).
+/// armour), `thrust` (1 to 100, on a melee weapon), `sense` (`"items"`, with a `radius` and
+/// perhaps `identify`), `silent` (perhaps with `blood`, on a weapon), `devour` (on a weapon), and
+/// `firewalk` (with a `kick`, perhaps a `trail` and its `turns`, on worn armour).
 fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, String> {
     let named = [
         p.inflict.is_some(),
@@ -610,21 +662,34 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         p.scars.is_some(),
         p.onset.is_some(),
         p.thrust.is_some(),
+        p.sense.is_some(),
+        p.silent.is_some(),
+        p.devour.is_some(),
+        p.firewalk.is_some(),
     ];
     if named.iter().filter(|&&n| n).count() != 1 {
         return Err(
-            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `grows`, `first_blood`, `plant`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, `scars`, `onset`, and `thrust`"
+            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `grows`, `first_blood`, `plant`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, `scars`, `onset`, `thrust`, `sense`, `silent`, `devour`, and `firewalk`"
                 .into(),
         );
     }
     if p.grows.is_none() && (p.every.is_some() || p.to_hit_every.is_some()) {
         return Err("power: `every` and `to_hit_every` belong to `grows`".into());
     }
-    if p.restore.is_none() && p.zone.is_none() && p.radius.is_some() {
-        return Err("power: `radius` belongs to `restore` and `zone`".into());
+    if p.restore.is_none() && p.zone.is_none() && p.sense.is_none() && p.radius.is_some() {
+        return Err("power: `radius` belongs to `restore`, `zone`, and `sense`".into());
     }
-    if p.zone.is_none() && p.turns.is_some() {
-        return Err("power: `turns` belongs to `zone`".into());
+    if p.zone.is_none() && p.firewalk.is_none() && p.turns.is_some() {
+        return Err("power: `turns` belongs to `zone` and `firewalk`".into());
+    }
+    if p.sense.is_none() && p.identify.is_some() {
+        return Err("power: `identify` belongs to `sense`".into());
+    }
+    if p.silent.is_none() && p.blood.is_some() {
+        return Err("power: `blood` belongs to `silent`".into());
+    }
+    if p.firewalk.is_none() && (p.kick.is_some() || p.trail.is_some()) {
+        return Err("power: `kick` and `trail` belong to `firewalk`".into());
     }
     if p.barefoot.is_none() && (p.dodge.is_some() || p.feel_traps.is_some()) {
         return Err("power: `dodge` and `feel_traps` belong to `barefoot`".into());
@@ -808,6 +873,31 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         }
         return Ok(Power::Scars);
     }
+    if let Some(what) = &p.sense {
+        if what != "items" {
+            return Err(format!("power: `sense` knows only `items`, not `{what}`"));
+        }
+        let radius = (p.radius.filter(|&r| r > 0)).ok_or("power: `sense` needs a `radius`")?;
+        let identify = p.identify.unwrap_or(0);
+        return Ok(Power::Sense { radius, identify });
+    }
+    if let Some(silent) = p.silent {
+        if !silent || def.attack.is_none() {
+            return Err("power: `silent = true` needs a base that attacks (a weapon)".into());
+        }
+        return Ok(Power::Silent {
+            blood: p.blood.unwrap_or(true),
+        });
+    }
+    if let Some(devour) = p.devour {
+        if !devour || def.attack.is_none() {
+            return Err("power: `devour = true` needs a base that attacks (a weapon)".into());
+        }
+        return Ok(Power::Devour);
+    }
+    if let Some(terrains) = &p.firewalk {
+        return firewalk(p, terrains, def, content).map(Power::Firewalk);
+    }
     if let Some(vision) = &p.vision {
         let index = (content.vision_index(vision))
             .ok_or_else(|| format!("power: unknown vision profile `{vision}`"))?;
@@ -847,6 +937,37 @@ fn grows(p: &PowerSpec, steps: &[String], def: &ObjectDef) -> Result<WeaponGrowt
         steps,
         every,
         to_hit_every,
+    })
+}
+
+/// A `firewalk` power over `terrains` on base item `def`: worn armour, every terrain known, a
+/// `kick` rider, and a `trail` (0 or more; with `turns` when above 0).
+fn firewalk(
+    p: &PowerSpec,
+    terrains: &[String],
+    def: &ObjectDef,
+    content: &Content,
+) -> Result<Firewalk, String> {
+    if !def.kind.is_some_and(|k| k.is_armour()) {
+        return Err("power: `firewalk` needs a base that is worn armour".into());
+    }
+    let terrains = (terrains.iter())
+        .map(|t| (content.terrain_id(t)).ok_or_else(|| format!("power: unknown terrain `{t}`")))
+        .collect::<Result<Vec<_>, _>>()?;
+    let kick = (p.kick.as_ref())
+        .ok_or("power: `firewalk` needs a `kick` (`{ type, damage }`)")?
+        .resolve(content)
+        .map_err(|m| format!("power: {m}"))?;
+    let trail = p.trail.unwrap_or(0);
+    let turns = p.turns.unwrap_or(0);
+    if trail < 0 || (trail > 0 && turns == 0) {
+        return Err("power: `trail` is a harm of 0 or more, with `turns` (1 or more)".into());
+    }
+    Ok(Firewalk {
+        terrains,
+        kick,
+        trail,
+        turns,
     })
 }
 

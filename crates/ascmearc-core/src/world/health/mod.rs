@@ -6,7 +6,7 @@ use crate::lang::Phrase;
 
 /// Object `id` as a message names it: `object:<id>` in the lexicon, a phrase built at the `say`
 /// site (`docs/dev/localization.md` "Phrases").
-fn object_phrase(content: &Content, id: ObjectId) -> Phrase {
+pub(in crate::world) fn object_phrase(content: &Content, id: ObjectId) -> Phrase {
     Phrase::id(format!("object:{}", content.object(id).id))
 }
 
