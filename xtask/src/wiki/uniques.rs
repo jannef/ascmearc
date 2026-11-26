@@ -374,6 +374,33 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
              scars it: +1 Armour, +1 maximum hit point, or +1 Toughness, each a third of the \
              time, kept on it for whoever wears it, without end"
             .into(),
+        Some(Power::Momentum { max, die }) => format!(
+            "every step its wearer takes (not a blink) builds a point of momentum, up to {max}; \
+             any other action loses it all. Their next bare-handed blow (a punch or a kick, with \
+             nothing wielded) spends it, hit or miss: a hit does 1d{die} more damage a point. \
+             At {max} points the one hit is knocked a cell back once the attack is over, and a \
+             Flurry's second blow in that attack costs no ki"
+        ),
+        Some(Power::Gather) => "every melee or missile attack that misses its wearer gives \
+             them +1 Dodge, with no cap, until one hits (even one their armour soaks whole): \
+             then it is all lost. Spells, breath, blasts, and traps neither add nor break it. It \
+             lasts between fights; being surprised or taking it off loses it all"
+            .into(),
+        Some(Power::Parley(parley)) => {
+            let unless = parley.unless.join(", ");
+            format!(
+                "a hostile {} creature (never one tagged {unless}) that first notices its \
+                 wearer makes a Willpower check against {} + the wearer's {} modifier + what \
+                 their Bluff adds to a feint. Failing, it holds back: it is neutral to the \
+                 wearer and their allies until one of them attacks it, casts at it, or tries \
+                 to steal from it, and then never checks again. Making peace this way moves \
+                 alignment toward good. Creatures already hunting the wearer when it is put \
+                 on never check",
+                parley.tag,
+                parley.difficulty,
+                super::util::stat_name(parley.stat)
+            )
+        }
     }
 }
 

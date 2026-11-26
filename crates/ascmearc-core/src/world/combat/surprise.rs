@@ -274,6 +274,8 @@ impl World {
             );
         if !made {
             self.afflict(target, status, 1, by, events);
+            // Flat-footed, what unique boots gathered is lost (`gather.rs`).
+            self.lose_gathering(target);
         }
         let player = self.state.player;
         // A check made, whatever came of it, marks the player's Initiative (training stream).

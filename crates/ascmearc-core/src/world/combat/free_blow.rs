@@ -236,6 +236,8 @@ impl World {
                 _ => None,
             };
         }
+        // A full-tilt blow drives its foe back once the attack is done (`gather.rs`).
+        self.tilt_knock(events);
     }
 
     /// Actor `id` is about to step to `to`: every hostile opportunist beside it whose reach the
@@ -441,7 +443,9 @@ impl World {
         if !self.free_blows_of(me).flurry || me.weapon_item(&self.content).is_some() {
             return None;
         }
+        // A blow at full tilt pays for it (`gather.rs`).
         if let Some(cost) = me.talent_mods(&self.content).martial.flurry_cost
+            && !self.full_tilt(striker)
             && !self.spend_resource(striker, cost.resource, cost.amount, events)
         {
             return None;

@@ -112,7 +112,7 @@ use ascmearc_core::color::Rgb;
 use ascmearc_core::content::{Content, ObjectId, data_line};
 use ascmearc_core::hunger::Hunger;
 use ascmearc_core::lang::{Arg, Entry};
-use ascmearc_core::perception::{BelowView, CellView, PerceptionView};
+use ascmearc_core::perception::{BelowView, CellView, OwnGathered, PerceptionView};
 use bevy::prelude::*;
 use missiles::Missiles;
 use motion::Motion;
@@ -911,10 +911,21 @@ fn conditions(view: &PerceptionView) -> Vec<Segment> {
     let rest = [
         (view.dazzled()).then(|| Segment::new(1, ui(T::DAZZLED))),
         (view.averted()).then(|| Segment::new(1, ui(T::AVERTED))),
+        view.own_gathered().map(|g| Segment::new(1, gathered(g))),
         hunger.map(|h| Segment::new(u8::from(hunger_tint(h).is_none()), word(h.name(), "Bare"))),
         (burden != Burden::Unburdened).then(|| Segment::new(1, word(burden.name(), "Bare"))),
     ];
     effects.chain(rest.into_iter().flatten()).collect()
+}
+
+/// What the player's unique boots have gathered, in the status bar's words (#2116, #2128).
+fn gathered(gathered: OwnGathered) -> String {
+    match gathered {
+        OwnGathered::Steps(1) => ui(T::MOMENTUM_ONE),
+        OwnGathered::Steps(_) => ui(T::MOMENTUM_TWO),
+        OwnGathered::FullTilt => ui(T::FULL_TILT),
+        OwnGathered::Dodge(n) => ui_with(T::GATHERED, &[("count", number(n))]),
+    }
 }
 
 /// One segment of the status bar.
@@ -1087,6 +1098,37 @@ mod tests {
             .map(|s| s.text)
             .collect();
         assert!(texts.contains(&"Averted".to_string()), "{texts:?}");
+    }
+
+    #[test]
+    fn the_status_bar_names_the_momentum_unique_boots_build() {
+        let mut files = ascmearc_assets::files();
+        files.insert(
+            "levels/run.toml",
+            "name = \"Run\"\nambient = [255, 255, 255, 0]\nmap = '''\n########\n#@.....#\n########\n'''\n\
+             [legend]\n\"@\" = { terrain = \"floor\", spawn = \"player\" }\n",
+        );
+        files.insert(
+            "scenarios/run.toml",
+            "name = \"Run\"\nstart_level = \"run\"\nwield = [\"unique:leohtfot\"]\n",
+        );
+        let content = Arc::new(Content::load(&files).expect("valid"));
+        let mut world = World::new(content, "run", None).expect("world");
+        let texts = |w: &World| -> Vec<String> {
+            status_segments(&w.perception(), Clock::H24, true)
+                .into_iter()
+                .map(|s| s.text)
+                .collect()
+        };
+        let words = ["One step", "Two steps", "Full tilt"];
+        let shown = |w: &World| texts(w).into_iter().filter(|t| words.contains(&t.as_str()));
+        assert_eq!(shown(&world).count(), 0);
+        for (n, word) in words.into_iter().chain(["Full tilt"]).enumerate() {
+            world.apply(&Action::Move(Dir::E));
+            assert_eq!(shown(&world).collect::<Vec<_>>(), [word], "step {n}");
+        }
+        world.apply(&Action::Wait);
+        assert_eq!(shown(&world).count(), 0, "standing still loses it");
     }
 
     #[test]

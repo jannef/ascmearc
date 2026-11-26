@@ -150,6 +150,21 @@ objects = ["unique:kettle_hat"]
 at = [9, 12]
 objects = ["unique:scarhide"]
 
+# Three more of the pool along the east wall of the arrival room (#2116, #2128, #2129):
+# Lēohtfōt, boots whose steps build into a bare-handed blow; Fǣgerfōt, boots that gather every
+# miss into Dodge; and the Friþwebbe, an amulet before which a thinking foe may hold its hand.
+[[pile]]
+at = [11, 5]
+objects = ["unique:leohtfot"]
+
+[[pile]]
+at = [11, 6]
+objects = ["unique:faegerfot"]
+
+[[pile]]
+at = [11, 7]
+objects = ["unique:frithwebbe"]
+
 # What the sealed chamber keeps.
 [[pile]]
 at = [48, 8]

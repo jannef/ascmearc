@@ -147,6 +147,8 @@ fn actor(content: &Content, creature: &str) -> Actor {
         talk: Default::default(),
         home: None,
         planted: None,
+        gathered: None,
+        truce: None,
         spells: Default::default(),
         streak: None,
         satiation: None,

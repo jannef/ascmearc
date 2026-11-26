@@ -318,6 +318,14 @@ pub struct Actor {
     /// for everyone else.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub planted: Option<crate::world::Planted>,
+    /// What its unique boots have gathered (Lēohtfōt's momentum, Fǣgerfōt's Dodge,
+    /// `world/combat/gather.rs`); `None` for everyone else.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub gathered: Option<crate::world::Gathered>,
+    /// Whether it has checked against a unique's Parley, and whether it holds its hand
+    /// (the Friþwebbe's, `world/creatures/parley.rs`); `None` for one that never checked.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub truce: Option<crate::world::Truce>,
 }
 
 fn is_ungraded(n: &i8) -> bool {
@@ -803,10 +811,13 @@ impl Actor {
             .filter(|&d| d != 0)
             .map(|d| (Category::Dodge, d));
         let magic = [
-            // Bare feet under a unique's Barefoot power (Hushfoot's +3, #2133).
+            // Bare feet under a unique's Barefoot power (Hushfoot's +3, #2133); Fǣgerfōt's
+            // gathered misses (#2128, `gather.rs`).
             (
                 Category::Dodge,
-                mods.get(ItemEffect::Dodge) + self.barefoot(content).map_or(0, |b| b.dodge),
+                mods.get(ItemEffect::Dodge)
+                    + self.barefoot(content).map_or(0, |b| b.dodge)
+                    + self.gathered_dodge(content),
             ),
             (
                 Category::Deflection,

@@ -75,6 +75,8 @@ impl World {
         }
         // Priced before anything changes hands.
         let price = self.price_of(player, ActionKind::Steal);
+        // A Parley's truce is broken by the try (`parley.rs`).
+        self.break_truce(player, victim);
         let thief = self.state.player();
         let modifier = thief.effective_stats(&content).modifier(Stat::Dexterity)
             + thief.skill_effect(&content, Effect::Steal);

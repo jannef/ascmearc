@@ -5,6 +5,9 @@
 # before the spell's own lines. `who`: a bearer the player sees.
 flames_from_shield = "Flames leap from {who:poss} shield!"
 flames_from_your_shield = "Flames leap from your shield!"
+# The Parley power (#2129, the Friþwebbe; `world/creatures/parley.rs`): a thinking creature
+# fails its check and will not fight the player. `who`: a creature the player sees.
+holds_back = "{who:The} hold{who:s} back, and will not fight you."
 # A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.
 no_craft = "It is unique: no craft of yours will change it."
 

@@ -16,6 +16,18 @@ pub struct OwnSkill {
     pub progress: u8,
 }
 
+/// What the player's unique boots have gathered, as the status bar shows it (#2116, #2128;
+/// `world/combat/gather.rs`): Lēohtfōt's momentum in words, Fǣgerfōt's misses as a count.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum OwnGathered {
+    /// One step, or two, of momentum.
+    Steps(u8),
+    /// Momentum at its most.
+    FullTilt,
+    /// Misses gathered into Dodge, one a miss.
+    Dodge(u16),
+}
+
 /// One of the player's own alternative resources, as the status bar and
 /// the character screen show it: what it holds and its maximum. Never its pace.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

@@ -469,6 +469,18 @@ id on another rarity than unique, and a unique without its id.
   (`content/level.rs::hand_made`, docs/dev/enchanting.md), so the owner's numbers stand as
   written, and no make adds Armour or Protection they did not ask for. Tests:
   `world/combat/struck_tests.rs`.
+- **Lēohtfōt, Fǣgerfōt, and the Friþwebbe** (#2116, #2128, #2129), in the shared
+  `data/uniques/`, each `pool = true`, placed nowhere but the quarry. **Lēohtfōt** (`leohtfot`,
+  leather boots, item level 20): Fleet 15 (the issue's "`of_the_hare=15` (steps 15% faster)":
+  of the Hare is Tumble, Fleet the step speed), Nimble 2; its Momentum power. The issue's
+  `of_balance=6` and Tumble +4 (its `supple=4`: Supple is a Dexterity limit, so `of_the_hare=4`)
+  lie below their ladders' first tier, which the loader still refuses: the data file keeps
+  them in a comment to add back after #2152. **Fǣgerfōt** (`faegerfot`, soft boots, clothing
+  worn as `kind = "boots"`, item level 40): of the Lynx 6, of Evasion 3 (past its ladder's 2),
+  of the Hare 40, Featherweight 50; its Gather power. **The Friþwebbe** (`frithwebbe`, item
+  level 30): the issue's silver amulet is no base the game has, so a jade amulet (the issue's
+  own alternative); of the Lion 7, of Haggling 40, of Health 4 (past its 3); its Parley power.
+  Tests: `world/combat/gather_tests.rs`, `world/creatures/parley_tests.rs`.
 - **What only a unique sets** (#2091), each refused to any other item by `Magic::check` and
   never rolled (`content/unique_values_tests.rs::what_only_a_unique_sets_never_rolls`: every
   random affix, loot's, a vault's, a shop's, enchanting's and its recast's, comes of
@@ -626,6 +638,35 @@ id on another rarity than unique, and a unique without its id.
   `stagger` degrees of Staggered (a critical's twice; Staggered's `max = 1` keeps it one slowed
   action). **`counts_as_unarmoured`** (a body piece only): `Actor::wears_body_armour` says no
   for it (Mage armour, Fleet, Step of the wind).
+  `Power::Momentum { max, die }` (`{ momentum = 3, die = 6 }`, worn armour, `max` 2 or 3: the
+  status bar's words; #2116) and `Power::Gather` (`{ gather = "dodge" }`, worn armour; #2128)
+  share one count, `Actor::gathered` (`Gathered::Momentum(n)` or `Gathered::Dodge(n)`, saved,
+  left out while `None`), and one module, `world/combat/gather.rs` (its module docs): a step
+  (`make_step_noise` → `note_step`, a transient `World::footwork`) builds momentum as the
+  action ends (`gather_turn`, `schedule.rs` beside `plant_turn`; anything else empties it, and
+  a count of other boots or none is dropped); `momentum_blow` in `World::resolve` (after Holy
+  wrath, before Negate) spends it on a bare-handed melee blow, hit or miss, adding `points`d`die`
+  to a hit (`unique/momentum/<wearer>/<target>`), and at `max` marks the tilt: Flurry's second
+  blow skips its ki (`free_blow.rs::flurry`, `World::full_tilt`) and `after_melee` ends with
+  `tilt_knock` (`drive_back`, "is driven back"); any attack ends the attacker's stepping (a
+  charge). `gather_on` in `resolve` (after `plain_miss_dodged`) adds a point for a miss of a
+  melee, shot, or thrown attack on the wearer and empties it on a hit (soaked or resisted too);
+  `startle` empties it when the check fails (`lose_gathering`); `Actor::gathered_dodge` joins the
+  magic Dodge in `Actor::defence`. `PerceptionView::own_gathered` (`OwnGathered`) gives the
+  status bar "One step", "Two steps", "Full tilt", or "Gathered N" (`ui/mod.rs::conditions`).
+  `Power::Parley(Parley { stat, difficulty, tag, unless })` (`{ parley = "presence", difficulty
+  = 10, tag = "sapient", unless = ["fiend", "undead", "construct"] }`, a worn base; #2129;
+  `content/unique_parley.rs` parses it and the two above): `world/creatures/parley.rs` (its
+  module docs). `Actor::truce` (`Truce::Holds` or `Refused`, saved, `None` left out):
+  `parley_turn` as a creature's turn begins (`ai.rs::creature_turn`, before `decide`) checks a
+  hostile creature of the tag and none of the exceptions that is aware of the player wearing it
+  (`World::unaware`): Willpower against `difficulty` + the player's stat modifier + Bluff's
+  `Effect::Feint` (`unique/parley/<creature>`); failed, it holds (`uniques.holds_back` if seen,
+  `Deed::MadePeace`, `[shift] make_peace`). `holds_hand` makes it neutral to the player and their
+  allies in `world::stance_between` and `ai.rs::nearest_hostile_in_sight`. `break_truce`
+  (`resolve`, for the player or an ally striking; `shop.rs::provoke`, the player's spells and
+  shoves; `steal.rs`, a try) refuses it for good; `parley_put_on` (`equip.rs`) refuses every
+  creature already aware of the player as it is put on.
 - **Rules beside the power** (#2095, #2097), fields of the unique's table read where the rule
   is, never affixes (so no pool can roll them; `unique_spell_tests.rs::nothing_unique_only_is_ever_rolled`):
   `immune` (kinds; `Actor::resistances` adds them to the immunities) and `resist` (kind to

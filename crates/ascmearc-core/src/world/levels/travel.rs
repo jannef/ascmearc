@@ -751,6 +751,8 @@ pub(in crate::world) fn make_creature(
         talk: Talk::default(),
         home: None,
         planted: None,
+        gathered: None,
+        truce: None,
         spells: Default::default(),
         streak: None,
         satiation: None,

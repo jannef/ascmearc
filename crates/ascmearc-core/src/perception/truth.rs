@@ -581,6 +581,25 @@ impl<'a> PerceptionView<'a> {
         self.player.effects.iter().map(|e| e.status)
     }
 
+    /// What the player's unique boots have gathered (Lēohtfōt's momentum, Fǣgerfōt's misses),
+    /// while they wear them and it is something.
+    pub fn own_gathered(&self) -> Option<super::OwnGathered> {
+        use super::OwnGathered;
+        match self.player.gathered? {
+            world::Gathered::Momentum(_) => {
+                let (n, max, _) = self.player.momentum(self.content)?;
+                Some(if n >= max {
+                    OwnGathered::FullTilt
+                } else {
+                    OwnGathered::Steps(n)
+                })
+            }
+            world::Gathered::Dodge(n) => {
+                (self.player.gathered_dodge(self.content) > 0).then_some(OwnGathered::Dodge(n))
+            }
+        }
+    }
+
     /// The diseases the player knows they have, in disease order: those
     /// that have progressed at least once. One that incubates, or has only just shown, is not
     /// here (a showing one makes the player Diseased, [`PerceptionView::own_effects`]).

@@ -51,6 +51,21 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "faegerfot",
+        40,
+        &[
+            ("of_the_lynx", 6),
+            ("of_evasion", 3),
+            ("of_the_hare", 40),
+            ("featherweight", 50),
+        ],
+    ),
+    (
+        "frithwebbe",
+        30,
+        &[("of_the_lion", 7), ("of_haggling", 40), ("of_health", 4)],
+    ),
+    (
         "grandmother",
         40,
         &[
@@ -110,6 +125,7 @@ const UNIQUES: &[Written] = &[
         12,
         &[("featherweight", -67), ("hardened", 3), ("of_the_ox", 4)],
     ),
+    ("leohtfot", 20, &[("fleet", 15), ("nimble", 2)]),
     (
         "masterpiece",
         40,

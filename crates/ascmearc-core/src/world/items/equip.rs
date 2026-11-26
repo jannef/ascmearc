@@ -124,6 +124,8 @@ impl World {
             self.say(text);
         }
         self.bind_if_cursed(item, quiet);
+        // Those already after the player get no Parley check (`parley.rs`).
+        self.parley_put_on(item);
         self.fade_spirit();
         self.price_for(&kinds)
     }

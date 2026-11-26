@@ -1,0 +1,19 @@
+# Fǣgerfōt (#2128), the elves' boots: a pair of soft boots for the drop pool (#2103; placed
+# nowhere else but the test world's quarry), item level 40. Soft boots are clothing, of no kind,
+# so the table names the kind its affixes work as (`kind = "boots"`). Every melee or missile
+# attack that misses its wearer adds +1 to their Dodge, without a cap, until one lands; a hit,
+# taking the boots off, or being Surprised loses it all (its Gather power,
+# `world/combat/gather.rs`). +6 Dexterity (of the Lynx), +3 Dodge (of Evasion, past its
+# ladder's 2), +40 Tumble (of the Hare), Featherweight 50. Every value set by hand
+# (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "faegerfot"
+name = "Fǣgerfōt"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "soft_boots"
+kind = "boots"
+affixes = ["of_the_lynx=6", "of_evasion=3", "of_the_hare=40", "featherweight=50"]
+level = 40
+power = { gather = "dodge", phrase = "Every blow that misses its wearer makes the next one harder to land." }
+lore = "They have never touched the ground twice in the same place."
