@@ -309,16 +309,6 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
-        "stampers",
-        28,
-        &[
-            ("of_stealth", 30),
-            ("of_the_hare", 10),
-            ("nimble", 2),
-            ("of_the_hare", 4),
-        ],
-    ),
-    (
         "sonneles",
         40,
         &[
@@ -326,6 +316,16 @@ const UNIQUES: &[Written] = &[
             ("of_shadows", 40),
             ("of_the_adder", 40),
             ("of_the_lynx", 4),
+        ],
+    ),
+    (
+        "stampers",
+        28,
+        &[
+            ("of_stealth", 30),
+            ("of_the_hare", 10),
+            ("nimble", 2),
+            ("of_the_hare", 4),
         ],
     ),
     ("stick", 6, &[]),
