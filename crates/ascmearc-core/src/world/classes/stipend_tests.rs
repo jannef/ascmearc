@@ -203,7 +203,11 @@ fn a_landed_noble_has_twice_the_gold_and_more_finds() {
     let w = run("human,male,aristocrat", &["landed_noble"]);
     let landed = w.state.player().talent_mods(content).into_owned();
     assert!(landed.fortune.stipend && landed.fortune.stipend_gold_percent == 100);
-    let (a, _) = super::stipend::of_level(content, 7, 10, &plain).expect("rules");
+    // The gold comes after the loot roll, whose draws Landed noble's odds move: its percent
+    // doubles the gold of the same roll.
+    let mut unpaid = landed.clone();
+    unpaid.fortune.stipend_gold_percent = 0;
+    let (a, _) = super::stipend::of_level(content, 7, 10, &unpaid).expect("rules");
     let (b, _) = super::stipend::of_level(content, 7, 10, &landed).expect("rules");
     assert_eq!(b, a * 2);
     let (rate, more) = (

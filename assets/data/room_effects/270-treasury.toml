@@ -10,4 +10,4 @@ enter = "Gold glints in the dust. No one has been here in a long time."
 weight = 4
 min_cells = 9
 secret_doors = "all"
-treasure = { chests = "1d2", gold = { heaps = "1d4+1", dice = "3d6", each = 2 }, gems = "1d3" }
+treasure = { chests = "1d2", purse = { coins = { heaps = "1d4+1", dice = "3d6", each = 2 }, gems = { dice = "1d3" } } }

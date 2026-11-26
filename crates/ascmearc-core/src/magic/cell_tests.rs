@@ -2,7 +2,6 @@
 
 use super::loot::{self, Finder};
 use super::{LootCell, LootGrade, Rarity};
-use crate::chest;
 use crate::content::{Content, ContentFiles, MAX_ITEM_LEVEL};
 use crate::geom::Pos;
 use crate::object::Stack;
@@ -99,7 +98,7 @@ fn a_cell_s_finds_fit_the_item_level() {
             .sum()
     };
     assert!(total(40) > total(1) * 4, "{} {}", total(40), total(1));
-    let currency = chest::currency(&c).expect("a currency");
+    let currency = crate::wealth::currency(&c).expect("a currency");
     assert!(
         roll_many(&c, &money, 1, 50)
             .iter()

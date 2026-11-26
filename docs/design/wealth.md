@@ -413,13 +413,18 @@ new stream. Each moved snapshot is reviewed in its PR (`cargo insta review`), ne
   `chests.toml`, the two treasuries, `stipend.toml`, and the two quests re-keyed; `chest::purse`,
   `treasury::fill`'s loops, the stipend's and the quarrel's gold routed through `purse`. The seam
   stays, its callers untouched. `replay --verify` unchanged over the test world; the two moved
-  one-shot streams of §7 reviewed.
+  one-shot streams of §7 reviewed. Built (#2168's first PR) with one change: the coffer's,
+  chest's, and hutch's gems keep their dice (`gems = { dice = "1d4-3" }`, `"1d4-2"`,
+  `"1d3-1"`) in the one shape, because a `chance` draw cannot reproduce a die's draw and W1
+  moves no chest draw; W3, which moves every chest stream anyway, re-keys them to §3.4's
+  chances.
 - **W2 — The finder.** `Finder::coins`, `Finder::gems`; `Finder::of` reads `gem_find_percent`
   into `gems`; `coin_find_percent` (D7); the stipend's purse finder (D3); `wealth::scale`; the
   seam takes `finder.gems` and the loose `gems: i32` arguments and `Visit::gems` go; the
   invariant test. Zero draw changes.
 - **W3 — The seam gone.** `wealth::gem_instead` deleted; `gems.toml`'s `chance` removed; the
-  dungeons' (D1), rooms' (D2), outcomes' (D4), and stipend's (D3) purses; `place_loot`,
+  dungeons' (D1), rooms' (D2), outcomes' (D4), and stipend's (D3) purses; the coffer's,
+  chest's, and hutch's gem dice re-keyed to their chances (§3.4, left from W1); `place_loot`,
   `LootCell::roll`, `roll_contents`, `hoard.rs`, `den.rs`, `loot_of`, `leave_loot`, `of_level`
   call `purse` after their finds; `test_support::found_with` loses its gem argument. The wiki
   page, the generated table, the dungeons' column, `gems.md`, `chests.md`, `magic-items.md`, the

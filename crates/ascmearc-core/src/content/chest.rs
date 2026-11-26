@@ -10,6 +10,7 @@
 use super::ContentError;
 use crate::color::Rgb;
 use crate::dice::Dice;
+use crate::wealth::Purse;
 use serde::Deserialize;
 
 /// A band of chests: what chests of its levels are called and like.
@@ -50,18 +51,9 @@ pub struct ChestLoot {
     pub magic: u8,
     /// Percent of items rare.
     pub rare: u8,
-    /// A purse of coins.
-    pub gold: ChestGold,
-    /// How many loose gems (0 or less: none).
-    pub gems: Dice,
-}
-
-/// A loot table's purse: `dice` × `each` gold coins.
-#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct ChestGold {
-    pub dice: Dice,
-    pub each: u32,
+    /// Its coins and loose gems, rolled after the items (the purse table's `chest` row,
+    /// [`crate::wealth`]).
+    pub purse: Purse,
 }
 
 /// The chest rules of `data/chests.toml`.
@@ -145,7 +137,10 @@ impl ChestBand {
         if i > 0 && self.from <= all[i - 1].from {
             return Err("`from` must rise from band to band".into());
         }
-        Ok(())
+        self.loot
+            .purse
+            .check()
+            .map_err(|m| format!("`loot.purse`: {m}"))
     }
 }
 
@@ -158,7 +153,7 @@ mod tests {
             "[[band]]\nid = \"{id}\"\nname = \"{id}\"\ndescription = \"A box.\"\nfg = \"#808080\"\n\
              from = {from}\nsturdiness = 20\nhardness = 200\nlocked = 60\ntrapped = 25\n\
              mimic = 5\nhold = 10\nloot = {{ items = \"1d3\", loot_level = 0, magic = 10, \
-             rare = 1, gold = {{ dice = \"2d6\", each = 1 }}, gems = \"1d4-3\" }}\n"
+             rare = 1, purse = {{ coins = {{ dice = \"2d6\" }}, gems = {{ dice = \"1d4-3\" }} }} }}\n"
         )
     }
 

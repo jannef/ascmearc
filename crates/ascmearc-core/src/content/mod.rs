@@ -149,6 +149,9 @@ mod potion;
 mod prayer;
 mod prestige;
 mod profane;
+mod purse;
+#[cfg(test)]
+mod purse_tests;
 mod quarrel;
 #[cfg(test)]
 mod quarrel_tests;
@@ -278,7 +281,7 @@ pub use burst::{BurstWhen, CreatureBurst};
 pub use calendar::Calendar;
 pub use calling::CallingDef;
 pub use campaign::{CAMPAIGNS, CampaignDef, CampaignKind};
-pub use chest::{ChestBand, ChestGold, ChestLoot, ChestRules};
+pub use chest::{ChestBand, ChestLoot, ChestRules};
 pub use circles::{CircleStatuses, CircledStatus, school_index};
 #[cfg(test)]
 pub(crate) use class::strip_tables as strip_class_tables;
@@ -393,6 +396,7 @@ pub use potion::{Draught, Drink, Flask, Splash};
 pub use prayer::{Face, FaceWords, Faced, PrayerRules, PrayerUse, UseDef};
 pub use prestige::{PrestigeDef, Table};
 pub use profane::{GiftDef, GiftKind, GiftTier, ProfaneRolls, ProfaneTable};
+pub use purse::{PurseRow, Purses, RowCoins, RowPurse};
 pub use quarrel::{PartingDef, Quarrel, QuarrelHoard, SideDef, Taker};
 pub use quest::{
     Binding, Boon, GOLD, Goal, KillTarget, OnAccept, QuestDef, QuestId, QuestKind, QuestTexts,
@@ -420,7 +424,7 @@ pub use room_haunt::Haunt;
 pub use room_lore::RoomLoot;
 pub use room_shrine::{Regard, Shrine};
 pub(crate) use room_treasury::breach_fault;
-pub use room_treasury::{Heaps, Sealed, SecretDoors, Treasury};
+pub use room_treasury::{Sealed, SecretDoors, Treasury};
 pub use ruin::{RuinOf, RuinRow, RuinRules};
 pub use salvage::SalvageRules;
 pub use scenario::ScenarioDef;
@@ -660,6 +664,9 @@ pub struct Content {
     gear_condition: GearConditions,
     /// The loot sources (`data/loot_sources.toml`); without the file, every source plain.
     loot_sources: LootSources,
+    /// The purse table (`data/purses.toml`); without the file, every purse the caller's data or
+    /// none.
+    purses: Purses,
     /// Material drops by creature tag (`data/drops/`, `content/drops.rs`); each creature type's
     /// resolved rows are on it ([`CreatureDef::drops`]).
     drops: Vec<TagDrops>,
@@ -1046,6 +1053,8 @@ impl Content {
         }
         // The loot sources, which name nothing: every item found or made reads its row.
         content.loot_sources = content.load_or_default(files)?;
+        // The purse table, which names nothing: every source of coins and gems reads its row.
+        content.purses = content.load_or_default(files)?;
         content.check_follows_end()?;
         // Spells after damage types and statuses, which they name.
         let path = "data/spells.toml";

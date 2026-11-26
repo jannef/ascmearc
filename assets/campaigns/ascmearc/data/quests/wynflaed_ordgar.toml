@@ -64,7 +64,7 @@ betray = "Ah. I did wonder whether you had read the whole of the bargain. Come, 
 # The spoils of the quarrel (§10.4): made at the hand-in and carried by the winner, dropped where
 # they die. The same whoever wins.
 [quest.hoard]
-gold = "6d100"
+purse = { coins = { dice = "6d100" } }
 rare = 2
 item_level = 14
 grimoires = 1

@@ -5,22 +5,19 @@
 //! ([`loot::find`], as many as [`loot::count`] gives: one without the finder's `quantity`), at
 //! grade `any` each a loose gem instead by the wealth seam
 //! ([`wealth::gem_instead`], drawn first). With classes, one draw among those that hold
-//! something at the item level, then what the class is: coins (the purse of a chest of that
-//! level, [`chest::purse`]), a loose gem ([`gem::loose`]), or a find among the class's objects
-//! (no gem instead).
+//! something at the item level, then what the class is: coins or a loose gem (the vault-cell
+//! row's purse asking that kind alone, [`wealth::purse`]: the coins of a chest of that level,
+//! one gem), or a find among the class's objects (no gem instead).
 
-use crate::chest;
 use crate::content::{Content, ItemClassId, ObjectId};
-use crate::gem;
 use crate::magic::loot::{self, Finder, Origin, Spec};
 use crate::magic::{LootCell, LootGrade};
 use crate::object::Stack;
 use crate::rng::Rng;
-use crate::wealth;
+use crate::wealth::{self, PurseSpec, Source};
 use std::collections::BTreeSet;
 
-/// What a class is found as: coins and gems have no `frequency`, and are found by the purse and
-/// the gem's own draws.
+/// What a class is found as: coins and gems have no `frequency`, and are found by the purse.
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum Kind {
     Coins,
@@ -30,7 +27,7 @@ enum Kind {
 
 fn kind_of(content: &Content, class: ItemClassId) -> Kind {
     let of = |object: ObjectId| content.object(object).class == class;
-    if chest::currency(content).is_some_and(of) {
+    if wealth::currency(content).is_some_and(of) {
         Kind::Coins
     } else if content.gems().is_some_and(|g| of(g.object)) {
         Kind::Gem
@@ -46,16 +43,21 @@ fn spec(level: u8, grade: LootGrade, classes: &[ItemClassId]) -> Spec<'_> {
         .classes(classes)
 }
 
+/// The vault-cell row's purse at item level `level`, asking `kind` alone.
+fn purse(content: &Content, level: u8, kind: wealth::Kind) -> PurseSpec {
+    PurseSpec::of(content, Source::VaultCell, level, None).only(kind)
+}
+
 /// Whether class `class` holds anything of `grade` at item level `level`: what is never magic
 /// (coins, gems, a potion) holds nothing that must be.
 fn holds(content: &Content, class: ItemClassId, level: u8, grade: LootGrade) -> bool {
+    let purse = || PurseSpec::of(content, Source::VaultCell, level, None).purse;
     match kind_of(content, class) {
         Kind::Coins => {
-            let band = content.chests().band_of(level);
             grade == LootGrade::Any
-                && band.is_some_and(|b| b.loot.gold.dice.max() > 0 && b.loot.gold.each > 0)
+                && (purse().coins).is_some_and(|c| c.dice.max() > 0 && c.each > 0)
         }
-        Kind::Gem => grade == LootGrade::Any,
+        Kind::Gem => grade == LootGrade::Any && purse().gems.is_some_and(|g| g.dice.max() > 0),
         Kind::Item => !loot::bases(content, &spec(level, grade, &[class])).is_empty(),
     }
 }
@@ -94,8 +96,8 @@ impl LootCell {
             return Vec::new();
         };
         match kind_of(content, class) {
-            Kind::Coins => chest::purse(content, rng, level).into_iter().collect(),
-            Kind::Gem => gem::loose(content, rng, level).into_iter().collect(),
+            Kind::Coins => wealth::purse(content, &purse(content, level, wealth::Kind::Coins), rng),
+            Kind::Gem => wealth::purse(content, &purse(content, level, wealth::Kind::Gems), rng),
             Kind::Item => loot::finds(content, &spec(level, grade, &[class]), finder, taken, rng),
         }
     }

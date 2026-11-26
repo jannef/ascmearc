@@ -12,7 +12,7 @@ use super::Content;
 use super::FactionId;
 use super::dialogue::{DialogueId, Speaker};
 use super::quest::{QuestKind, Reward, RewardSpec, reward};
-use crate::dice::Dice;
+use crate::wealth::Purse;
 use serde::Deserialize;
 
 /// A `[[quest.taker]]`.
@@ -49,7 +49,8 @@ pub(super) struct PartingSpec {
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(super) struct HoardSpec {
-    gold: Option<Dice>,
+    #[serde(default)]
+    purse: Purse,
     #[serde(default)]
     rare: u8,
     #[serde(default)]
@@ -108,8 +109,8 @@ pub struct PartingDef {
 /// What the winner carries from the hand-in on, dropped where they die.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct QuarrelHoard {
-    /// Gold coins.
-    pub gold: Option<Dice>,
+    /// Its coins (the purse table's `quarrel` row, [`crate::wealth`]), made after its items.
+    pub purse: Purse,
     /// Rare items, made at `item_level`.
     pub rare: u8,
     pub item_level: u8,
@@ -256,14 +257,15 @@ pub(super) fn resolve(
     }
     let hoard = match spec.hoard {
         Some(h) => {
-            if h.gold.is_some() && content.object_id(super::GOLD).is_none() {
-                return Err(format!("`hoard`: gold needs the object `{}`", super::GOLD));
+            h.purse.check().map_err(|m| format!("`hoard.purse`: {m}"))?;
+            if h.purse.coins.is_some() && crate::wealth::currency(content).is_none() {
+                return Err(format!("`hoard`: coins need the object `{}`", super::GOLD));
             }
             if takers.is_empty() {
                 return Err("`hoard` is carried by a taker: the quest has none".into());
             }
             Some(QuarrelHoard {
-                gold: h.gold,
+                purse: h.purse,
                 rare: h.rare,
                 item_level: h.item_level,
                 grimoires: h.grimoires,

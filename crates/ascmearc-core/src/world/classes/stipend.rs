@@ -2,10 +2,10 @@
 //!
 //! A character with the Stipend class ability (`FortuneMods::stipend`, the aristocrat's from
 //! level 1) has their family put something by at every level they reach, a prestige class's
-//! too ([`World::grow_stipend`], one line in `experience.rs::rise_from`): the gold of
-//! `data/rules/stipend.toml` (`each` plus its dice, Landed noble's percent more), and one loot roll
-//! at the level as item level with the file's luck (Landed noble's magic odds added), kept
-//! when magic or rare or of a `keep` class. Each level draws from its own stream,
+//! too ([`World::grow_stipend`], one line in `experience.rs::rise_from`): one loot roll at the
+//! level as item level with the file's luck (Landed noble's magic odds added), kept when magic
+//! or rare or of a `keep` class, then the gold of `data/rules/stipend.toml`'s `purse`
+//! ([`wealth::purse`], Landed noble's percent more). Each level draws from its own stream,
 //! `stipend/<level>`, so nothing else moves. It accumulates in [`WorldState::stipend`] (saved
 //! and hashed; left out while empty).
 //!
@@ -37,6 +37,7 @@ use crate::magic::loot::{self, Finder, Origin, Spec};
 use crate::msg;
 use crate::object::{self, Stack};
 use crate::rng::Rng;
+use crate::wealth::{self, PurseSpec, Source};
 use crate::world::{ActorId, Spent, World, WorldState};
 use serde::{Deserialize, Serialize};
 
@@ -71,10 +72,6 @@ pub(crate) fn of_level(
 ) -> Option<(u32, Vec<Stack>)> {
     let rules = content.stipend()?;
     let mut rng = Rng::stream(seed, &format!("stipend/{level}"));
-    let rolled = u32::try_from(rules.dice.roll(&mut rng).max(0)).unwrap_or(0);
-    let gold = u64::from(rules.each + rolled)
-        * u64::try_from(100 + mods.fortune.stipend_gold_percent).unwrap_or(0)
-        / 100;
     // The stipend's own finder (data), Landed noble's odds added.
     let finder = Finder {
         rarity: rules.finder.rarity + mods.fortune.stipend_magic_percent,
@@ -102,6 +99,14 @@ pub(crate) fn of_level(
             }
         }
     }
+    // Its purse, after the item roll: the coins, Landed noble's percent more.
+    let spec = PurseSpec::of(content, Source::Stipend, item_level, Some(&rules.purse));
+    let currency = wealth::currency(content);
+    let rolled: u64 = (wealth::purse(content, &spec, &mut rng).iter())
+        .filter(|s| Some(s.object) == currency)
+        .map(|s| u64::from(s.count))
+        .sum();
+    let gold = rolled * u64::try_from(100 + mods.fortune.stipend_gold_percent).unwrap_or(0) / 100;
     Some((u32::try_from(gold).unwrap_or(u32::MAX), kept))
 }
 
@@ -233,7 +238,7 @@ impl World {
         let content = self.content.clone();
         let stipend = std::mem::take(&mut self.state.stipend);
         let mut all = Vec::new();
-        if let Some(coin) = crate::chest::currency(&content).filter(|_| stipend.gold > 0) {
+        if let Some(coin) = wealth::currency(&content).filter(|_| stipend.gold > 0) {
             all.push(Stack::new(coin, stipend.gold));
         }
         all.extend(stipend.items);

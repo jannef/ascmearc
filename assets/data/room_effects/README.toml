@@ -105,9 +105,10 @@
 #            up staircase) guaranteed to open it; found by searching (it sounds hollow), opened
 #            by digging or a blast. A level file's room names its `breach = [x, y]`. Not with
 #            `secret_doors`; never the whole level
-#   treasure what generators lay inside a treasure room: { chests = DICE, gold = { heaps = DICE,
-#            dice = DICE, each = N }, gems = DICE }: `chests` chests of the floor's item
-#            level, `heaps` heaps of `dice` × `each` gold coins, and `gems`
-#            loose gems, each on a plain floor cell of the room. Never the whole level
+#   treasure what generators lay inside a treasure room: { chests = DICE, purse = PURSE }:
+#            `chests` chests of the floor's item level, then its purse (the one shape of
+#            ../purses.toml: coins = { heaps, dice, each }, `heaps` heaps of `dice` × `each`
+#            coins; gems = { dice }, so many loose gems), each heap and gem on a plain floor
+#            cell of the room. Never the whole level
 #   arrive   said on every arrival on a level holding such a room the player has not entered
 #            yet (one line for all such rooms of one effect). Never the whole level

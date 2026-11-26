@@ -112,9 +112,10 @@
 #   [quest.parting]  asked once by the one dialog right after the hand-in: `text` (what the
 #              one who paid says) and `betray` (what they say betrayed); options Leave and
 #              Betray <name>, which turns them hostile
-#   [quest.hoard]  what the one who paid carries from then on, dropped where they die: `gold`
-#              (dice), `rare` (rare items, made at `item_level`), `grimoires` (drawn among every
-#              grimoire)
+#   [quest.hoard]  what the one who paid carries from then on, dropped where they die: `rare`
+#              (rare items, made at `item_level`), `grimoires` (drawn among every grimoire),
+#              and its `purse`, made after them, in the one shape of purses.toml (`{ coins =
+#              { dice = "6d100" } }`)
 #   feud       the faction (data/factions/) a wizard of the quarrel fights for while hostile;
 #              needed with sides or a parting
 #

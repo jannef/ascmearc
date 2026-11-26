@@ -118,7 +118,7 @@ impl World {
     }
 
     /// Where in `victim`'s pack what a thief's hand may take lies: its coins (the shops'
-    /// currency, [`crate::chest::currency`]) when it carries any loose, the owner's rule (#2119);
+    /// currency, [`crate::wealth::currency`]) when it carries any loose, the owner's rule (#2119);
     /// else every stack it neither wears nor wields. The Steal ability and a unique's Pilfer
     /// power (`world/combat/pilfer.rs`) take one of these, picked uniformly.
     pub(in crate::world) fn pockets(&self, victim: ActorId) -> Vec<usize> {
@@ -128,7 +128,7 @@ impl World {
         let loose: Vec<usize> = (0..actor.inventory.len())
             .filter(|&i| !actor.equipment.holds(i))
             .collect();
-        let coins = crate::chest::currency(&self.content);
+        let coins = crate::wealth::currency(&self.content);
         let purse: Vec<usize> = (loose.iter().copied())
             .filter(|&i| Some(actor.inventory[i].object) == coins)
             .take(1)

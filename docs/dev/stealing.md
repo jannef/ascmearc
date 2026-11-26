@@ -28,7 +28,7 @@ is the Steal skill's use: `Action::Steal(Dir)` (replay text `steal:DIR`, cost `s
   changes), then the contest `check::contest(rng, Dexterity modifier + Steal benefit, victim's
   Willpower modifier)` (effective scores; four keyed draws, the victim's roll first; ties go
   to the thief). Unnoticed: `lift` takes one stack the victim neither wears nor wields (`Equipment::holds`): its
-  gold coins (`chest::currency`) when it carries any, the owner's rule (#2119), else one picked
+  gold coins (`wealth::currency`) when it carries any, the owner's rule (#2119), else one picked
   uniformly (`rng.index(n)`, a draw only when there are two or more; `World::pockets`),
   `Equipment::after_removal` follows the victim's letters, and the stack joins the player's pack.
   Caught: `World::caught_stealing` (`shop.rs`) outrages a keeper of an open shop on the level as

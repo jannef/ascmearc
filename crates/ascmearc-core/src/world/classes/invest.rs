@@ -225,7 +225,7 @@ impl World {
 
     /// The gold coins the player carries.
     fn gold_carried(&self) -> u32 {
-        crate::chest::currency(&self.content).map_or(0, |c| {
+        crate::wealth::currency(&self.content).map_or(0, |c| {
             crate::world::people::shop::count_of(&self.state.player().inventory, c)
         })
     }
@@ -317,7 +317,7 @@ impl World {
     /// `gold` coins from the pack into the stake, `fee` of them kept by the partner. A stake
     /// started afresh takes its first return when the next week begins.
     fn put_in(&mut self, gold: u32, fee: u32) {
-        let Some(coin) = crate::chest::currency(&self.content) else {
+        let Some(coin) = crate::wealth::currency(&self.content) else {
             return;
         };
         let player = self.player_mut();
@@ -336,7 +336,7 @@ impl World {
         let fund = &mut self.state.fund;
         fund.cents = fund.cents.saturating_sub(u64::from(gold) * CENTS);
         let paid = gold - fee;
-        if let Some(coin) = crate::chest::currency(&self.content).filter(|_| paid > 0) {
+        if let Some(coin) = crate::wealth::currency(&self.content).filter(|_| paid > 0) {
             self.receive(vec![Stack::new(coin, paid)]);
         }
     }

@@ -219,11 +219,13 @@ pub(super) fn special_rooms(content: &Content) -> String {
                     .into(),
             );
         }
-        if let Some(t) = e.treasure {
+        if let Some(t) = e.treasure
+            && let (Some(coins), Some(gems)) = (t.purse.coins, t.purse.gems)
+        {
             does.push(format!(
                 "{} chests of the level's item level, {} heaps of {} × {} gold coins, and {} \
                  loose gems lie inside. Nothing guards it and nothing seals.",
-                t.chests, t.gold.heaps, t.gold.dice, t.gold.each, t.gems
+                t.chests, coins.heaps, coins.dice, coins.each, gems.dice
             ));
         }
         if let Some(line) = &e.arrive {

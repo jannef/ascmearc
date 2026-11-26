@@ -65,10 +65,13 @@ fn the_treasury_effect_is_data() {
     assert!(treasury.secret_doors.is_some());
     let treasure = treasury.treasure.expect("treasure");
     assert_eq!(
-        (treasure.chests.to_string(), treasure.gems.to_string()),
-        ("1d2".to_string(), "1d3".to_string())
+        (
+            treasure.chests.to_string(),
+            treasure.purse.gems.map(|g| g.dice.to_string())
+        ),
+        ("1d2".to_string(), Some("1d3".to_string()))
     );
-    assert_eq!(treasure.gold.each, 2);
+    assert_eq!(treasure.purse.coins.map(|c| c.each), Some(2));
     assert!(!treasury.can_pervade(), "never a whole level");
     let hoard = effects.get(effects.id("hoard").expect("hoard"));
     assert_eq!((hoard.name.as_str(), hoard.mark), ("tempting hoard", 'T'));
@@ -175,8 +178,11 @@ fn the_greater_treasury_effect_is_data() {
     assert!(great.secret_doors.is_none());
     let treasure = great.treasure.expect("treasure");
     assert_eq!(
-        (treasure.chests.to_string(), treasure.gems.to_string()),
-        ("2d2".to_string(), "2d3".to_string())
+        (
+            treasure.chests.to_string(),
+            treasure.purse.gems.map(|g| g.dice.to_string())
+        ),
+        ("2d2".to_string(), Some("2d3".to_string()))
     );
     assert!(!great.can_pervade(), "never a whole level");
     assert_eq!(w.state.current().rooms[0].breach, Some(BREACH));
