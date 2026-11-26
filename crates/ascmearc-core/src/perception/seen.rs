@@ -79,6 +79,8 @@ pub struct AllyView {
     pub lasts: Option<u32>,
     /// Travelling with the player off any level.
     pub retinue: bool,
+    /// Held past its time by the Root power the player bears (Wyrtruma's, #2113).
+    pub rooted: bool,
     /// On the level the player is on, acting.
     pub here: bool,
     /// What it wears (a companion's collar, `world/allies/collar.rs`), which the player knows wherever
@@ -106,6 +108,7 @@ pub(super) fn allies_of(state: &WorldState, content: &Content) -> Vec<AllyView> 
                 source: ally.source.clone(),
                 lasts,
                 retinue: ally.retinue,
+                rooted: ally.rooted,
                 here: a.level == state.current_level && !ally.retinue,
                 wears: (a.equipment.items().into_iter())
                     .filter_map(|(_, item)| a.inventory.get(item).cloned())

@@ -12,7 +12,5 @@ name = "Widowmaker"
 object = "stiletto"
 affixes = ["of_celerity=16", "of_the_lynx=2", "of_precision=2"]
 level = 12
-# Three enchantments need its make (docs/dev/enchanting.md): Marvellous.
-quality = "marvellous"
 power = { inflict = "poisoned", chance = 100, severity = 1, added = { type = "poison", damage = "2d6" }, phrase = "Its every cut poisons." }
 lore = "Thin as a hatpin, and never quite clean."

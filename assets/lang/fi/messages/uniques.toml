@@ -3,9 +3,19 @@
 # A unique shield's Cast power goes off (Demonsoul, #2095).
 flames_from_shield = { text = "{who:Gen} kilvestä leimahtaa liekkejä!", of = "929475" }
 flames_from_your_shield = { text = "Kilvestäsi leimahtaa liekkejä!", of = "e3fd55" }
+# A spell or a scroll refused in a unique's silence (Swīge, #2112).
+hushed = { text = "Tässä hiljaisuudessa ei synny sanaakaan.", of = "643f8b" }
+# A Grudge's grudges (the Wrecend, #2131).
+grudges = { by = "n.number", one = "Se kantaa {who:all} kaunaa yhdestä iskusta.", many = "Se kantaa {who:all} kaunaa {n:num} iskusta.", of = "0bcac4" }
 # A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.
 no_craft = { text = "Se on ainutlaatuinen: mikään taitosi ei muuta sitä.", of = "749215" }
 
+# An Oath pays what its wielder's zeal is short in hit points (the Oath, #2117).
+oath_paid = { text = "Maksat loput valastasi verelläsi.", of = "0a11e0" }
+# A Tally's debt (Wergild, #2109).
+owed_a_fortune = { text = "Sille ollaan velkaa omaisuus.", of = "4c2744" }
+owed_a_little = { text = "Sille ollaan velkaa vähän.", of = "c9e5e3" }
+owed_much = { text = "Sille ollaan velkaa paljon.", of = "1900ce" }
 # The Wakes power (#2110, Beornhama's): its rage sleeps; it wakes in its wearer.
 rage_sleeps = { text = "Karhu nukkuu siinä.", of = "624e87" }
 rage_wakes = { text = "Karhu herää: {who:Nom} raivostuu!", of = "4fdb11" }
@@ -21,3 +31,23 @@ roar = { text = "{who:Gen} iskun mukana kajahtaa mahtava huuto!", of = "3cb0ec" 
 roar_quails = { text = "{who:Nom} kavahtaa ja pakenee.", of = "e64334" }
 roar_stands = { text = "{who:Nom} ei hätkähdäkään.", of = "ed6dd9" }
 roar_yours = { text = "Iskusi mukana kajahtaa mahtava huuto!", of = "57ebf3" }
+
+# The Plant power (#2132): the planted player is not driven from their cell.
+stand_fast = { text = "Seisot lujana paikallasi.", of = "0121fd" }
+
+# Feet that never spring a trap (Tiptoe, Hushfoot; #2141, #2133).
+tread_over_trap = { text = "Astut {trap:counted_gen} yli, eikä se laukea.", of = "a32251" }
+
+# The Ring power (#2127, the Kettle Hat): a blow lands on the helm's wearer.
+rings_helm = { text = "{who:Gen} kypärä kumahtaa kuin lyöty pata!", of = "101ada" }
+rings_your_helm = { text = "Kypäräsi kumahtaa kuin lyöty pata!", of = "8dc87f" }
+
+# The Scars power (#2137, Scarhide): a critical hit on the player scars what they wear.
+scarred = { text = "Isku jättää arpensa haarniskaasi.", of = "17a6ea" }
+
+# The scars a Scars power's item bears, on its description: `n`, how many.
+[scars]
+of = "29a270"
+by = "n.number"
+one = "Siinä on {n:num} arpi."
+many = "Siinä on {n:num} arpea."

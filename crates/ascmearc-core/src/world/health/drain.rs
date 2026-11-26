@@ -34,7 +34,7 @@ impl World {
     /// stat (Iron will), `extra` (a drain's `drain_checks`), and Knowledge against a creature
     /// (`knowledge.rs`). Made, it trains the stat as a disease resisted does. A drain's check,
     /// and a status rider's with a `check` (a basilisk's stiffening, `status.rs`). Two draws.
-    pub(super) fn resists(
+    pub(in crate::world) fn resists(
         &mut self,
         target: ActorId,
         by: Option<ActorId>,

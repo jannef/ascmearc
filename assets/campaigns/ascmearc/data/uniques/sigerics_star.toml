@@ -9,7 +9,5 @@ name = "Sigeric's Star"
 object = "gold_ring"
 affixes = ["potent=2", "of_the_magus=2", "of_light=item_glow", "of_the_sage=6"]
 level = 12
-# Four enchantments need its make (docs/dev/enchanting.md): a flawless sapphire setting.
-parts = [{ part = "setting", of = "sapphire", cut = "flawless" }]
 power = { ward = "transfixed", message = "Nothing holds your eyes for long.", phrase = "Nothing holds its wearer staring." }
 lore = "Inside the band, very small: SIGERIC MADE ME. Outside, larger: SIGERIC."

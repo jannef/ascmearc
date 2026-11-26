@@ -20,10 +20,14 @@
 //! - **No free blows**: the steps never call [`World::step_away`] or [`World::step_up`], so
 //!   nobody passed or left gets an opportunist's blow, a gatekeeper's, a brace, or a
 //!   point-blank shot.
-//! - **Cost**: its talent's `resource` (1 stamina) and `per_cell` more for every cell moved,
-//!   all spent as the charge begins; refused while the player holds less than the whole
-//!   distance costs. **Time**: the steps' (each priced as the step onto its terrain is); the
-//!   blow comes free, with its exertion.
+//! - **Cost**: its talent's `resource` (1 stamina) and, for the cells moved, `per_cell` for the
+//!   first, twice that for the second, three times for the third, and so on (#2108: 1, 2, 3, ...;
+//!   [`charge_price`]), all spent as the charge begins; refused while the player holds less than
+//!   the whole distance costs. **Time**: the steps' (each priced as the step onto its terrain
+//!   is); the blow comes free, with its exertion.
+//! - **The onset** (Onrǣs', #2123; `onset.rs`): worn, the charge costs nothing (so it reaches as
+//!   far as the player sees a foe on an open way), its steps are as loud as the power says, and
+//!   its blow, if it hits, drives the foe back.
 //!
 //! - **Whirling charge** (the warrior's level-50 talent, `whirling_charge`): after each step,
 //!   every hostile beside the cell just entered takes a free blow ([`Free::Cleave`]'s kind: no
@@ -43,6 +47,15 @@ use crate::world::levels::enter::Entry;
 use crate::world::levels::ice::Footing;
 use crate::world::{ActorId, Spent, World};
 
+/// What a charge of `cells` cells costs: `base`, and `per_cell` times 1 for the first cell, 2
+/// for the second, 3 for the third, and so on (#2108), so `base + per_cell * cells * (cells + 1)
+/// / 2`.
+pub(crate) fn charge_price(base: u16, per_cell: u16, cells: u16) -> u16 {
+    let steps = u32::from(cells) * (u32::from(cells) + 1) / 2;
+    let total = u32::from(base) + u32::from(per_cell) * steps;
+    u16::try_from(total).unwrap_or(u16::MAX)
+}
+
 impl World {
     /// Charge at `at` (the module docs); `use_class_at` has checked the ability.
     pub(super) fn charge(&mut self, at: Pos, events: &mut Vec<Event>) -> Spent {
@@ -54,9 +67,11 @@ impl World {
         let Some((target, path)) = self.charge_path(at) else {
             return Spent::Nothing;
         };
+        let onset = self.state.player().onset(&content);
         let base = (content.class_active(ClassActive::Charge)).and_then(|a| a.resource);
+        let base = base.filter(|_| onset.is_none());
         let cells = u16::try_from(path.len()).unwrap_or(u16::MAX);
-        let price = base.map(|b| b.amount.saturating_add(per_cell.saturating_mul(cells)));
+        let price = base.map(|b| charge_price(b.amount, per_cell, cells));
         if let (Some(cost), Some(amount)) = (base, price) {
             let held = (self.state.player().resources.get(cost.resource)).map_or(0, |p| p.value);
             if held < amount {
@@ -89,6 +104,7 @@ impl World {
                 to,
                 footing: Footing::Plain,
                 fleeing: false,
+                noise: onset.map_or(100, |o| o.noise),
                 price,
                 willing: true,
                 swap: None,
@@ -108,7 +124,10 @@ impl World {
             from = to;
         }
         if self.state.actors.contains_key(&target) && self.state.death.is_none() {
-            self.player_attacks(target, true, events);
+            let hit = self.player_attacks(target, true, events);
+            if let Some(onset) = onset.filter(|_| hit) {
+                self.onset_drives(target, onset.knockback, events);
+            }
             self.exert(ActionKind::Melee);
         }
         Spent::Turn(time)

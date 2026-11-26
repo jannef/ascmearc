@@ -148,6 +148,10 @@ Each call keeps one of its own beside you. From [Pack leader](class-druid.md#tal
 [Lord of the wild](class-druid.md#talent-lord-of-the-wild) (level 60) keeps three of each, and what you
 call stays until it is slain.
 
+Before then, Wyrtruma, a [unique](magic-items.md#unique-items) staff, keeps your calls with you
+while they stand within three cells of you: one whose time runs out that near stays another
+minute, and again each minute after, for as long as it stands by you.
+
 [Beast-bond](talents-exploring.md#talent-beast-bond), a Wayfarer talent for those with some
 [Handle animal](skills.md#skill-handle-animal), makes every ally of yours strike surer and take less
 harm.

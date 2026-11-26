@@ -2,11 +2,13 @@
 //! stock, recipes, uniques, parts, labels, and affixes.
 
 use super::{
-    Affixes, ChestRules, Content, Gems, ItemClassDef, ItemClassId, MAX_ITEM_LEVEL, MaterialDef,
-    MaterialId, ObjectDef, ObjectId, Part, PartDef, PartId, Reading, RecipeDef, RecipeId, Recipes,
-    ScrollLabelDef, SlotDef, SlotId, SpellId, Stock, TrapAvoid, TrapDef, TrapDisarm, TrapHarm,
-    TrapId, UniqueDef, part,
+    Affixes, ChestRules, Content, Gems, ItemClassDef, ItemClassId, ItemKind, MAX_ITEM_LEVEL,
+    MaterialDef, MaterialId, ObjectDef, ObjectId, Part, PartDef, PartId, Reading, RecipeDef,
+    RecipeId, Recipes, ScrollLabelDef, SlotDef, SlotId, SpellId, Stock, TrapAvoid, TrapDef,
+    TrapDisarm, TrapHarm, TrapId, UniqueDef, part,
 };
+
+use crate::object::Stack;
 
 impl Content {
     pub fn object(&self, id: ObjectId) -> &ObjectDef {
@@ -210,6 +212,13 @@ impl Content {
     /// Unique item `id`.
     pub fn unique(&self, id: &str) -> Option<&UniqueDef> {
         self.uniques.get(id)
+    }
+
+    /// The kind `stack`'s affixes work as: its base's, or for a unique on a base of none
+    /// (clothing, #2141) the kind its table names ([`UniqueDef::kind`]).
+    pub fn item_kind(&self, stack: &Stack) -> Option<ItemKind> {
+        let own = self.object(stack.object).kind;
+        own.or_else(|| self.unique(stack.magic()?.unique.as_deref()?)?.kind)
     }
 
     /// Unique item `id` as a placement makes it (`unique:ID`): refused for an unknown id, and

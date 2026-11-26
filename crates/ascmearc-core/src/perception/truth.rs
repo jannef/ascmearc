@@ -415,6 +415,19 @@ impl<'a> PerceptionView<'a> {
         let maker = self.character.map(|c| c.name.as_str());
         let mut lines =
             describe::appraised_for(stack, self.lore, self.appraisal(), Some(self.player), maker);
+        // What a unique weapon keeps of the blows the player took, after its power (`tally.rs`).
+        let level = self.own_experience().level;
+        let kept = self.player.tally_lines(self.content, stack, level);
+        if !kept.is_empty() {
+            let at = (lines.iter())
+                .rposition(|l| l.kind == LineKind::Power)
+                .map_or(lines.len(), |i| i + 1);
+            let kept = kept.into_iter().map(|msg| describe::Line {
+                kind: LineKind::Power,
+                msg,
+            });
+            lines.splice(at..at, kept);
+        }
         if self.player.talent_mods(self.content).craft.eye_for_make {
             let percent = crate::world::salvage_percent(self.content, self.player);
             let protected = crate::world::protected_in(self.content, self.quests, stack);
@@ -906,6 +919,12 @@ impl<'a> PerceptionView<'a> {
         Some((self.player).spell_cost(self.content, def))
     }
 
+    /// Whether the player's Charge costs them nothing now (Onrǣs' onset worn,
+    /// `world/classes/onset.rs`; they know their own costs).
+    pub fn own_charge_free(&self) -> bool {
+        self.player.onset(self.content).is_some()
+    }
+
     /// What the player's weapon active `id` costs them in stamina now, their talents' discounts
     /// counted (they know their own costs, as a spell's mana).
     pub fn own_weapon_stamina(&self, id: crate::content::WeaponAbilityId) -> u16 {
@@ -963,7 +982,7 @@ impl<'a> PerceptionView<'a> {
     /// The one place the game shows a to-hit (the owner's exception to hidden numbers: the
     /// player's own attacks only); unidentified magic counts for nothing here.
     pub fn own_attacks(&self) -> Vec<crate::world::OwnAttack> {
-        self.player.known_attacks(self.content)
+        (self.player).known_attacks(self.content, u32::from(self.own_experience().level))
     }
 
     /// The player's hit points: what they have left (at most their maximum, never below 0) and

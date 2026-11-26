@@ -326,6 +326,7 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
                 "source": a.source.id(),
                 "lasts": a.lasts,
                 "retinue": a.retinue,
+                "rooted": a.rooted,
                 "here": a.here,
             }))
             .collect::<Vec<_>>(),

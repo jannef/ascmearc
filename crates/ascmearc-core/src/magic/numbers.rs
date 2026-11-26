@@ -325,6 +325,8 @@ fn attack(stack: &Stack, content: &Content) -> Option<AttackNumbers> {
     } else {
         mods.sharpen(&mut profile);
     }
+    // A Grows weapon (the Stick) as it is in no one's hand: its first rung's dice.
+    let profile = profile.grown(0);
     let numbers = AttackNumbers {
         to_hit: profile.to_hit,
         damage: profile.damage.plus(profile.bonus),

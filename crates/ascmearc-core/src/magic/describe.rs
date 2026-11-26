@@ -509,7 +509,7 @@ fn lines_named(stack: &Stack, content: &Content, name: Phrase, maker: Option<&st
     match stack.known_magic() {
         None => out.push(line(LineKind::Note, msg::describe::MAGIC_UNKNOWN)),
         Some(magic) => {
-            let kind = def.kind.unwrap_or(ItemKind::Ring);
+            let kind = content.item_kind(stack).unwrap_or(ItemKind::Ring);
             for rolled in magic.rolled(content) {
                 let said = affix_line(&rolled, Some(kind), content);
                 out.push(line(LineKind::Affix(rolled.def.kind), said));
@@ -519,6 +519,11 @@ fn lines_named(stack: &Stack, content: &Content, name: Phrase, maker: Option<&st
                 if unique.phrase.is_some() {
                     let said = data_line::said(data_line::unique_phrase(&unique.id));
                     out.push(line(LineKind::Power, said));
+                }
+                // A Scars power's scars (`scars.rs`), counted, never what each gave.
+                if let Some(n) = stack.scars().map(|s| s.count()).filter(|&n| n > 0) {
+                    let said = Msg::new(msg::uniques::SCARS).role("n", num(n));
+                    out.push(line(LineKind::Note, said));
                 }
                 if unique.lore.is_some() {
                     let said = data_line::said(data_line::unique_lore(&unique.id));
@@ -590,10 +595,15 @@ pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> Msg {
         Effect::Durability => by(msg::describe::DOES_DURABILITY),
         Effect::Bane => by(msg::describe::DOES_BANE).role("bane", bane_of(rolled)),
         Effect::Parry => by(msg::describe::DOES_PARRY),
+        // A unique's penalty (#2115: Hǣrsceorp's −1).
+        Effect::Armour if v < 0 => Msg::new(msg::describe::DOES_ARMOUR_LESS).role("v", num(-v)),
         Effect::Armour => by(msg::describe::DOES_ARMOUR),
         Effect::Protection => by(msg::describe::DOES_PROTECTION),
         Effect::Shield => by(msg::describe::DOES_SHIELD),
         Effect::MaxDex => by(msg::describe::DOES_MAX_DEX),
+        // A unique's penalty (#2127: the Kettle Hat's, a heavy pot; #2132: the Eorðfæst's −30,
+        // heavier and no curse).
+        Effect::Weight if v < 0 => Msg::new(msg::describe::DOES_HEAVIER).role("v", num(-v)),
         Effect::Weight => by(msg::describe::DOES_LIGHTER),
         Effect::Proof => msg::describe::DOES_PROOF.into(),
         // A unique's penalty (#2091: the Grandmother's −2).
@@ -641,8 +651,7 @@ pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> Msg {
         Effect::DiseaseCheck => by(msg::describe::DOES_DISEASE_CHECK),
         Effect::PotionKept => by(msg::describe::DOES_POTION_KEPT),
         Effect::Light => {
-            let tier = rolled.def.tier(rolled.tier);
-            let radius = (tier.and_then(|t| t.light)).map_or(0, |id| content.light(id).radius);
+            let radius = (rolled.light).map_or(0, |id| content.light(id).radius);
             match radius {
                 ..=2 => msg::describe::DOES_GLOWS_FAINTLY,
                 3 => msg::describe::DOES_GLOWS,

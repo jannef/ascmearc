@@ -494,11 +494,15 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> Arg {
     let unaware = actor.unaware.then(|| clause(T::UNAWARE, []));
     // The creature the player's openings are in (`world/classes/mark.rs`).
     let marked = actor.marked.then(|| clause(T::YOUR_MARK, []));
+    // A called beast the Root power holds past its time (`world/allies/root.rs`).
+    let rooted = (view.allies().iter())
+        .any(|a| a.id == actor.id && a.rooted)
+        .then(|| clause(T::ROOTED, []));
     let state: Vec<Arg> = [ally, hostile, health]
         .into_iter()
         .flatten()
         .chain(effects)
-        .chain([unaware, marked].into_iter().flatten())
+        .chain([unaware, marked, rooted].into_iter().flatten())
         .collect();
     let state = joined(T::LISTED, state).unwrap_or_else(none);
     // What lives in it shows (docs/design/monster-dread.md §5.5): "writhing".
@@ -1580,6 +1584,26 @@ map = '''
         assert_eq!(
             describe(&view, ally.pos, true),
             "Your dire warg (unhurt), on stone floor."
+        );
+    }
+
+    #[test]
+    fn a_call_wyrtruma_holds_past_its_time_is_rooted() {
+        let content = Arc::new(ascmearc_assets::content().expect("content"));
+        let mut w = World::new(content, "quarry", None).expect("the quarry");
+        // To the staff, wielded, and a wolf called for a minute that stays by the player.
+        let walk = "move:SW*3 move:W*2 pickup equip:main_hand:d ally:wolf:1:1m rest:3m";
+        for action in ascmearc_core::action::parse_actions(walk).expect("actions") {
+            w.apply(&action);
+        }
+        let view = w.perception();
+        let wolf = (view.actors().iter())
+            .find(|a| a.ally)
+            .expect("the wolf beside the player");
+        assert!(
+            describe(&view, wolf.pos, true).starts_with("Your wolf (unhurt, rooted), on "),
+            "{}",
+            describe(&view, wolf.pos, true)
         );
     }
 

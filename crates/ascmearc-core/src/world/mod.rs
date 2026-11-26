@@ -169,6 +169,7 @@ pub use combat::attacks::{AttackSource, OwnAttack};
 pub use combat::fight::{Cause, Death};
 pub use combat::free_blow::FreeBlows;
 pub(crate) use combat::item_damage::protected_in;
+pub use combat::plant::Planted;
 pub(crate) use crafting::craft::recipe_rows;
 pub use crafting::craft::{RecipeLack, RecipeRow};
 #[cfg(test)]
@@ -569,6 +570,9 @@ pub struct World {
     /// The creature a spell with `crystal` is striking now (not saved; Soulglass, `crystal.rs`):
     /// if it dies of the blow it leaves crystals, not a corpse.
     glassing: Option<ActorId>,
+    /// The thrust-through under way (not saved; Gār's, `thrust.rs`): its percent of the blow's
+    /// damage, taken by the next `World::resolve`.
+    thrusting: Option<u8>,
     /// Traps sprung since this world was created or loaded (not saved): a rest perceives every
     /// turn in which one went off (a teleport moves someone farther than a step).
     sprung: u64,
@@ -930,6 +934,8 @@ impl World {
             talk: Talk::default(),
             home: None,
             rage_sleeps: None,
+            tallies: Default::default(),
+            planted: None,
             // The scenario's spells, known from the start (a test world's fixture).
             spells: def.spells.iter().map(|&s| (s, 1)).collect(),
             streak: None,
@@ -1145,6 +1151,7 @@ impl World {
             sleeper_struck: None,
             caught: false,
             glassing: None,
+            thrusting: None,
             sprung: 0,
             rigger: None,
             spawned: 0,
@@ -1480,6 +1487,10 @@ impl World {
             return spent;
         }
         if let Some(refused) = self.refuse_blocked(action) {
+            return refused;
+        }
+        // A unique's vow of silence (`hush.rs`).
+        if let Some(refused) = self.refuse_hushed(action) {
             return refused;
         }
         let here = self.player_pos();

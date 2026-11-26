@@ -6,9 +6,9 @@
 # holds 3 at most) and flees, and is not checked again until the fight is over for it. The
 # undead, the mindless, and the fearless pay no heed. The roar is loud (40, where the wielder
 # stands), and the noise brings more than it frightens. Sharp +6, Heavy 2d10 (the ladder's top),
-# Brutal (a critical rolls the damage once more), and +6 Strength (of the Bear). The design's
-# fourth prefix, Leaden −20%, is left out: a rare or unique holds three prefixes at most. Its
-# make, Fine. Every value set by hand
+# Brutal (a critical rolls the damage once more), +6 Strength (of the Bear), and the design's
+# Leaden −20% as Featherweight −20 (20% heavier; Leaden is a curse that would bind). Its make,
+# Fine. Every value set by hand
 # (docs/dev/magic-items.md "Unique items").
 [[unique]]
 id = "gorthak"
@@ -16,7 +16,7 @@ name = "Gorthak"
 # Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
 pool = true
 object = "great_axe"
-affixes = ["sharp=6", "heavy=2d10", "brutal=1", "of_the_bear=6"]
+affixes = ["sharp=6", "heavy=2d10", "brutal=1", "featherweight=-20", "of_the_bear=6"]
 level = 40
 quality = "fine"
 power = { roar = 6, status = "frightened", turns = "2d4", noise = 40, phrase = "Its every kill is a roar: the foes who see it may lose their nerve and flee." }

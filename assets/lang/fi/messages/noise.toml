@@ -7,6 +7,7 @@ heard_banging = { text = "jyskettä", of = "310a7d" }
 heard_bell = { text = "kellon soivan", of = "65ce00" }
 heard_bowstring = { text = "jousen jänteen napsahduksen", of = "000369" }
 heard_buzzing = { text = "surinaa", of = "8d60a7" }
+heard_clang = { text = "kumahduksen", of = "fc038f" }
 heard_chanting = { text = "loitsulaulua", of = "0e1349" }
 heard_digging = { text = "kaivamisen ääniä", of = "429612" }
 heard_door_closed = { text = "oven sulkeutuvan", of = "464827" }

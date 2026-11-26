@@ -1,0 +1,20 @@
+# Swīge (#2112, "silence"): a jade amulet for the drop pool (#2103; placed nowhere else but the
+# test world's quarry), item level 32, the priest's vow of silence. While it is worn, nobody
+# within two cells of its wearer (a 5×5 square, the wearer too, allies and foes alike) casts a
+# spell or reads a scroll (`silence`, `world/magic/hush.rs`); prayer, wands, rods, and abilities
+# that are no spells work in it. Its wearer's prayer strain passes twice as fast (`strain_decay`,
+# `world/classes/orison.rs`). +4 Defence (of Warding's Deflection, past its ladder), +6
+# Willpower, and mana back 30% faster, for the spells cast with it off. No power: its rules are
+# fields. Every value set by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "swige"
+name = "Swīge"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "jade_amulet"
+affixes = ["of_warding=4", "of_the_sage=6", "of_clarity=30"]
+level = 32
+silence = 2
+strain_decay = 200
+phrase = "No spell is cast and no scroll read near its wearer, and their prayers come easier."
+lore = "Those who wore it never said what it was for. They never said anything."

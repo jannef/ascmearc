@@ -107,6 +107,7 @@ impl World {
                 order: Order::Follow,
                 retinue: false,
                 until: None,
+                rooted: false,
             });
         }
         if let Some(actor) = self.state.actors.get_mut(&id) {

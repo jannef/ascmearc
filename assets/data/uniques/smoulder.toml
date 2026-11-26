@@ -1,0 +1,19 @@
+# Smoulder (#2139): a Masterwork heavy crossbow for the drop pool (#2103; placed nowhere else but
+# the test world's quarry), item level 40 as the pool's uniques are (docs/design/item-level-40.md
+# §10). Every bolt it shoots, hit or miss, leaves the Fume's smoke where it stops (its Zone
+# power: radius 1, 8 turns; `world/combat/shot_zone.rs`): no eye sees into it or through it, the
+# shooter's own neither. +5 damage (Sharp, which rolls on no launcher: a unique's hand), Keen 4
+# (past the ladder's 2), Steady 6, and +4 to hit. Steady lowers a bow's Strength to draw, and a
+# crossbow has none, so it does nothing here: the owner's number, kept as written (a unique
+# follows no affix rule, #2152). Every value set by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "smoulder"
+name = "Smoulder"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "heavy_crossbow"
+affixes = ["sharp=5", "keen=4", "steady=6", "of_precision=4"]
+level = 40
+quality = "masterwork"
+power = { zone = "smoke", radius = 1, turns = 8, phrase = "Its bolts smoke where they land, hit or miss: no eye sees through it, yours neither." }
+lore = "It hath no flame, and yet it smoketh."

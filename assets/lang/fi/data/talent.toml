@@ -202,7 +202,7 @@ description = { text = "Kriittiset iskusi lähitaisteluaseilla iskevät vielä k
 description = { text = "Voima virtaa lävitsesi helposti: valtikka ottaa manastasi neljänneksen vähemmän joka käyttökerralla.", of = "23758e" }
 
 [charge]
-description = { text = "Rynnistä suoraa tietä kohti näkemääsi vihollista ja iske sitä tullessasi (kyky): yksi piste puhtia ja yksi lisää joka askeleelta. Kukaan, jonka ohitat, ei ehdi lyödä.", of = "7daf9e" }
+description = { text = "Rynnistä suoraa tietä kohti näkemääsi vihollista ja iske sitä tullessasi (kyky): yksi piste puhtia ja askelilta vuorollaan 1, 2, 3… Kukaan, jonka ohitat, ei ehdi lyödä.", of = "480d0d" }
 
 [charnel_burst]
 description = { text = "Näkemäsi ruumis räjähtää siinä, missä se makaa, ja repii jokaista sen vierellä olevaa (loitsu, maksaa manaa).", of = "2421f2" }
