@@ -21,11 +21,12 @@
 //! What a **generated** chest holds is rolled by [`roll_contents`] from its band's loot table, on
 //! the level's chest stream (`mapgen/chest.rs`).
 
-use crate::content::{Content, GOLD, MAX_ITEM_LEVEL, ObjectId};
+use crate::content::{Content, MAX_ITEM_LEVEL};
 use crate::magic::LootGrade;
 use crate::magic::loot::{self, Finder, Origin, Spec};
 use crate::object::{Stack, add_to_pile};
 use crate::rng::Rng;
+use crate::wealth::{self, PurseSpec, Source};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
@@ -139,10 +140,9 @@ pub fn destroyed(
 /// draw without it); per item one `below(100)` for its grade (under `rare` rare, under `magic`
 /// at least magic, else any) and at `level + loot_level`, at grade any a loose gem by the wealth
 /// seam ([`crate::wealth::gem_instead`]), else [`loot::find`]'s own (nothing found rolls nothing
-/// more); the
-/// purse's dice (`dice` × `each` coins of the shops' currency, else `gold_coin`; none at 0);
-/// the `gems` dice (0 or less: none) and per gem [`crate::gem::roll`]'s. A mimic standing in
-/// for the chest carries the same stacks from the same draws. Empty without bands.
+/// more); then the band's purse at `level + loot_level` ([`wealth::purse`]'s draws: its coins,
+/// then its gems). A mimic standing in for the chest carries the same stacks from the same
+/// draws. Empty without bands.
 pub fn roll_contents(
     content: &Content,
     rng: &mut Rng,
@@ -179,28 +179,10 @@ pub fn roll_contents(
             add_to_pile(&mut holds, &[stack], content);
         }
     }
-    if let Some(coins) = purse(content, rng, level) {
-        add_to_pile(&mut holds, &[coins], content);
-    }
-    for _ in 0..table.gems.roll(rng).max(0) {
-        if let Some(gem) = crate::gem::loose(content, rng, at) {
-            add_to_pile(&mut holds, &[gem], content);
-        }
+    // Its purse, after the items: the band's coins, then its gems at the items' level.
+    let spec = PurseSpec::of(content, Source::Chest, at, Some(&table.purse));
+    for stack in wealth::purse(content, &spec, rng) {
+        add_to_pile(&mut holds, &[stack], content);
     }
     holds
-}
-
-/// What coins are: the shops' currency, else `gold_coin`.
-pub fn currency(content: &Content) -> Option<ObjectId> {
-    (content.shops().map(|s| s.currency)).or_else(|| content.object_id(GOLD))
-}
-
-/// The coins a chest of `level` holds: its band's purse (`dice` × `each` of [`currency`]), one
-/// roll of the dice. `None` without bands, or with no coins rolled. A vault's pool of coins pays
-/// the same (`magic/loot.rs`).
-pub fn purse(content: &Content, rng: &mut Rng, level: u8) -> Option<Stack> {
-    let gold = &content.chests().band_of(level)?.loot.gold;
-    let coins = (gold.dice.roll(rng).max(0) as u32).saturating_mul(gold.each);
-    let currency = currency(content)?;
-    (coins > 0).then(|| Stack::new(currency, coins))
 }

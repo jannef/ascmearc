@@ -271,7 +271,7 @@ impl World {
                             .with("gold", i64::from(gold));
                         self.answer(id, line, None, events);
                         self.state.patron.open = None;
-                        if let Some(coin) = crate::chest::currency(&content).filter(|_| gold > 0) {
+                        if let Some(coin) = crate::wealth::currency(&content).filter(|_| gold > 0) {
                             self.receive(vec![Stack::new(coin, gold)]);
                         }
                         self.train(Use::Deal);

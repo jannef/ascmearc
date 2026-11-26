@@ -49,9 +49,9 @@ name content loaded after the effects, so `content/room_lore.rs` keeps the names
 `RoomEffects::resolve_lore` (after `resolve_places`) resolves them, refusing unknown ones
 (`train` is dropped when the content has no skills at all).
 Treasure rooms (#617, `content/room_treasury.rs`) add `secret_doors` (`SecretDoors::All`: every
-door secret), `treasure` (`content::Treasury`: `chests`, `gold = { heaps, dice, each }`, `gems`;
-each count's dice 0 to `MAX_TREASURE` 16, a heap's dice never below 0, `each` 1 to
-`MAX_COINS_EACH` 1000), and `arrive` (a line said on arrival, not empty); none of the three may
+door secret), `treasure` (`content::Treasury`: `chests`, `purse = { coins = { heaps, dice, each }, gems = { dice } }`, a `wealth::Purse`;
+the `chests` dice never below 0, the purse's chances at most 100 and its `heaps` never below
+0, `Treasury::check`), and `arrive` (a line said on arrival, not empty); none of the three may
 pervade. Greater treasure rooms (#618) add `sealed` (`Sealed::Dig`: no door at all, a box with
 its breach; never with `secret_doors`, never pervading).
 An effect with `level_chance` must have a
@@ -268,9 +268,10 @@ out while 0/false, so other rooms hash as before. The `rooms` dev layer adds `, 
   (`treasure/<level id>`), per room with `treasure` in room order: the `chests` dice, per chest
   one `rng.pick` among the free floor cells that touch no door or secret door of the room and
   leave its walkable cells joined (`special::joined`), then `chest::lay` (lock, trap of the
-  branch's that fit a fixture, `roll_contents`, the mimic draw: a floor chest's draws); the
-  `gold.heaps` dice, per heap a cell and `gold.dice` × `each` coins of the shops' currency (else
-  `gold_coin`); the `gems` dice, per gem a cell and `gem::roll` at the item level. Free cells:
+  branch's that fit a fixture, `roll_contents`, the mimic draw: a floor chest's draws); then
+  its `purse` at the item level (`wealth::purse_placed`, the purse table's `treasury` row: the
+  `coins.heaps` dice, per heap a cell and `coins.dice` × `each` coins of `wealth::currency`;
+  the `gems.dice`, per gem a cell and `gem::loose`). Free cells:
   the room's plain floor without stairs, light, trap, lock, chest, or creature (a floor chest's
   mimic); a chest's cell also has nothing lying on it (#661: its terrain is no floor, so a pile
   there would lie on a wall); chests take theirs away, heaps and gems share. A room too small for its chests holds what fits.

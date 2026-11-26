@@ -105,18 +105,29 @@ pub(super) fn chest_loot(content: &Content) -> String {
             0 => "the floor's".to_string(),
             n => format!("the floor's + {n}"),
         };
-        let gold = match loot.gold.each {
-            1 => loot.gold.dice.to_string(),
-            each => format!("{} × {each}", loot.gold.dice),
+        let (coins, gems) = (loot.purse.coins, loot.purse.gems);
+        let gold = match coins {
+            None => "none".to_string(),
+            Some(c) if c.each == 1 => c.dice.to_string(),
+            Some(c) => format!("{} × {}", c.dice, c.each),
         };
         let items = mean(loot.items);
-        let coins = mean(loot.gold.dice) * f64::from(loot.gold.each);
-        let gems = mean(loot.gems);
+        // Each kind's mean, by its chance.
+        let likely = |chance: u8| f64::from(chance) / 100.0;
+        let mean_coins = coins.map_or(0.0, |c| {
+            likely(c.chance) * mean(c.heaps) * mean(c.dice) * f64::from(c.each)
+        });
+        let mean_gems = gems.map_or(0.0, |g| likely(g.chance) * mean(g.dice));
+        let gems = match gems {
+            None => "none".to_string(),
+            Some(g) if g.chance == 100 => g.dice.to_string(),
+            Some(g) => format!("{} % {}", g.chance, g.dice),
+        };
         let _ = writeln!(
             out,
-            "| {} | {} | {level} | {}% / {}% | {gold} | {} | {items:.1} items, {coins:.1} gold, \
-             {gems:.2} gems |",
-            band.name, loot.items, loot.magic, loot.rare, loot.gems
+            "| {} | {} | {level} | {}% / {}% | {gold} | {gems} | {items:.1} items, \
+             {mean_coins:.1} gold, {mean_gems:.2} gems |",
+            band.name, loot.items, loot.magic, loot.rare
         );
     }
     out

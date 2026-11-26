@@ -17,6 +17,7 @@ How far a design's slices have come is tracked in its issues, not here.
 ## Approved, being built
 
 - `profane-gifts.md` (#1471): the layer bosses' corpses and the gift table.
+- `wealth.md` (#2168): coins and loose gems as one purse roll, apart from items.
 
 ## Built
 

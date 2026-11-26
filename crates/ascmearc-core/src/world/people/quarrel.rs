@@ -33,6 +33,7 @@ use crate::msg;
 use crate::object::{self, Stack};
 use crate::perception::PerceptionView;
 use crate::rng::Rng;
+use crate::wealth::{self, PurseSpec, Source};
 use crate::world::{ActorId, Spent, TopicName, TopicView, World};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
@@ -406,18 +407,13 @@ impl World {
         }
     }
 
-    /// The hoard of quest `def` (see the module docs): its gold, its rare items, and its
-    /// grimoires, from the one-shot stream `hoard/<quest id>` (a quarrel's quest is done once).
+    /// The hoard of quest `def` (see the module docs): its rare items, its grimoires, and its
+    /// purse's coins ([`wealth::purse`]), from the one-shot stream `hoard/<quest id>` (a
+    /// quarrel's quest is done once); the coins come first in it.
     fn make_hoard(&self, def: &QuestDef, hoard: &crate::content::QuarrelHoard) -> Vec<Stack> {
         let content = &self.content;
         let mut rng = Rng::stream(self.state.seed, &format!("hoard/{}", def.id));
         let mut stacks = Vec::new();
-        let gold = hoard.gold.map_or(0, |d| d.roll(&mut rng).max(0));
-        if let (Ok(gold @ 1..), Some(coin)) =
-            (u32::try_from(gold), content.object_id(crate::content::GOLD))
-        {
-            stacks.push(Stack::new(coin, gold));
-        }
         let finder = loot::Finder::of(&self.state.player().talent_mods(content));
         let spec = Spec::new(Origin::Quarrel, hoard.item_level).count(u32::from(hoard.rare));
         // Its row asks no drop pool: nothing is found of it.
@@ -430,6 +426,15 @@ impl World {
             }
             stacks.push(Stack::one(grimoires[rng.index(grimoires.len())]));
         }
+        // Its purse, after its items, and carried before them.
+        let spec = PurseSpec::of(
+            content,
+            Source::Quarrel,
+            hoard.item_level,
+            Some(&hoard.purse),
+        );
+        let purse = wealth::purse(content, &spec, &mut rng);
+        stacks.splice(0..0, purse);
         stacks
     }
 

@@ -1,0 +1,47 @@
+# The purse table (docs/design/wealth.md §3.4; crates/ascmearc-core/src/wealth/): every place
+# that gives coins or loose gems, one row each, and its purse. Coins and loose gems are found by
+# their own rule, apart from items: a place's purse is rolled after its items, on the same
+# stream, and never takes from them. The sources are fixed in code (`Source` in wealth/purse.rs):
+# every source has exactly one row here, and a row names a source (a load error either way).
+# Fields:
+#   purse    the purse; or, for a source whose own data gives it, that data's name: a dungeon's
+#            `dungeon`, a chest band's `band` (chests.toml), a room effect's `room`
+#            (room_effects/), an outcome's `outcome`, the stipend's `own` (rules/stipend.toml),
+#            a quest's hoard's `quest` (quests.toml). Data that names no purse gives none
+#   finder   whether the finder counts (the player's, for what they find; the stipend's own)
+#
+# A purse, everywhere the data gives one, is one shape:
+#   purse = { coins = { chance, heaps, dice, each }, gems = { chance, dice } }
+#   coins    by `chance` percent (default 100), `heaps` heaps (dice, default 1) of `dice` ×
+#            `each` (default 1) coins of the shops' currency; left out: no coins. `coins =
+#            "band"`: the coins of a chest of the item level (chests.toml)
+#   gems     by `chance` percent (default 100), `dice` loose gems (default 1; a roll of 0 or
+#            less: none) at the item level; left out: no gems
+# Coins come before gems. A chance of 100 draws nothing.
+#
+# Until the wealth seam goes (docs/design/wealth.md §8), the floor, a vault cell without
+# classes, the hoards, the drops, and the features still find a loose gem in place of an item by
+# gems.toml's `chance`, and roll no purse of their own; a vault cell with classes takes the kind
+# its class draw named from its row, certain.
+
+[source]
+# A level's floor.
+floor = { purse = "dungeon", finder = true }
+# A vault's loot cell: a coins cell a chest's coins of its level, a gems cell one gem.
+vault_cell = { purse = { coins = "band", gems = { chance = 5 } }, finder = true }
+# A chest (a treasure room's too).
+chest = { purse = "band", finder = true }
+# A treasure room's heaps and gems, after its chests.
+treasury = { purse = "room", finder = true }
+# A tempting hoard.
+hoard = { purse = "room", finder = true }
+# A teeming den's hoard.
+den = { purse = "room", finder = true }
+# What a creature drops when it dies, by its type's `loot` percent.
+drop = { purse = { gems = { chance = 5 } }, finder = true }
+# What a feature leaves.
+feature = { purse = "outcome", finder = true }
+# The aristocrat's stipend, after its loot roll.
+stipend = { purse = "own", finder = true }
+# A quarrel's hoard, after its rares and grimoires: a quest's pay.
+quarrel = { purse = "quest", finder = false }

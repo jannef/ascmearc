@@ -22,20 +22,20 @@
 //!   (`treasure/<level id>`), so the rest of the level, its other chests too, is the same with or
 //!   without a treasure room. Per room in order: the `chests` dice, then per chest its cell
 //!   (never where something lies) and [`super::chest::lay`]'s draws (a chest of the floor's item
-//!   level: lock, trap, contents, the mimic draw); the `gold.heaps` dice, then per heap its cell and its `gold.dice`; the `gems`
-//!   dice, then per gem its cell and [`crate::gem::roll`]'s draws.
+//!   level: lock, trap, contents, the mimic draw); then its `purse` at the floor's item level
+//!   ([`crate::wealth::purse_placed`]'s draws, each heap's and each gem's cell drawn before it).
 
 use super::{Canvas, Palette, connect};
 use crate::chest::ChestState;
 use crate::content::{
-    Content, GOLD, LevelPlan, LevelTemplate, RoomEffectDef, RoomEffectId, Secret, SpecialRoom,
+    Content, LevelPlan, LevelTemplate, RoomEffectDef, RoomEffectId, Secret, SpecialRoom,
     secret_look,
 };
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
-use crate::item_parts::ItemPart;
-use crate::object::{Stack, add_to_pile};
+use crate::object::add_to_pile;
 use crate::rng::Rng;
+use crate::wealth::{self, PurseSpec, Source};
 use std::collections::BTreeSet;
 
 /// The interior (width, height) of a stamped box of at least `min_cells` floor cells (at least
@@ -301,7 +301,6 @@ pub(super) fn fill(
         .filter(|&t| content.trap(t).effect.fits_fixture())
         .collect();
     let shut = content.chest_terrain(ChestState::Shut);
-    let currency = (content.shops().map(|s| s.currency)).or_else(|| content.object_id(GOLD));
     let level = template.item_level;
     for (i, treasure) in rooms {
         let room = template.rooms[i].clone();
@@ -323,25 +322,11 @@ pub(super) fn fill(
             let chest = (&traps[..], visit, &mut *taken);
             super::chest::lay(template, content, &mut rng, (at, shut), chest);
         }
-        for _ in 0..treasure.gold.heaps.roll(&mut rng).max(0) {
-            let Some(&at) = rng.pick(&free) else { break };
-            let coins = treasure.gold.dice.roll(&mut rng).max(0) as u32 * treasure.gold.each;
-            if let (true, Some(currency)) = (coins > 0, currency) {
-                let pile = template.objects.entry(at).or_default();
-                add_to_pile(pile, &[Stack::new(currency, coins)], content);
-            }
-        }
-        for _ in 0..treasure.gems.roll(&mut rng).max(0) {
-            let Some(&at) = rng.pick(&free) else { break };
-            let (Some(gems), Some((gem, cutting))) = (
-                content.gems(),
-                crate::gem::roll(content, &mut rng, level, false),
-            ) else {
-                continue;
-            };
-            let parts = vec![ItemPart::gem(content, None, gem, cutting)];
-            let gem = Stack::one(gems.object).with_parts(parts);
-            add_to_pile(template.objects.entry(at).or_default(), &[gem], content);
+        // Its purse, after its chests: each heap's and each gem's cell drawn before it.
+        let spec = PurseSpec::of(content, Source::Treasury, level, Some(&treasure.purse));
+        let laid = wealth::purse_placed(content, &spec, &mut rng, |rng| rng.pick(&free).copied());
+        for (at, stack) in laid {
+            add_to_pile(template.objects.entry(at).or_default(), &[stack], content);
         }
     }
 }

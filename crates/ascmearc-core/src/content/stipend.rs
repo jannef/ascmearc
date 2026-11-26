@@ -2,26 +2,25 @@
 //! #1405): what each level-up of a character with the Stipend class ability adds to what their
 //! family holds for them, until their servant hands it over (`world/classes/stipend.rs`).
 //!
-//! Each level reached adds `gold.each` plus `gold.dice`, and, by `loot.chance` percent, one loot roll at
+//! Each level reached makes, by `loot.chance` percent, one loot roll at
 //! the level as item level, with the stipend's own finder `loot.finder` (`{ rarity = 100 }`: the
 //! magic and rare rarities twice as likely; [`crate::magic::finder::Finder`]) and a loose gem
 //! `loot.gems` percent more likely (the wealth seam's percent); what is rolled is kept when it is magic or better or of one
-//! of the `loot.keep` item classes, and otherwise thrown away.
+//! of the `loot.keep` item classes, and otherwise thrown away; then its `purse`, the one shape of
+//! `data/purses.toml` (the purse table's `stipend` row, [`crate::wealth`]): its gold.
 //!
 //! The file is optional: without it the stipend never grows.
 
 use super::{Content, ContentError, ItemClassId};
-use crate::dice::Dice;
 use crate::magic::finder::Finder;
+use crate::wealth::Purse;
 use serde::Deserialize;
 
 /// The stipend's rules that live in data.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct StipendRules {
-    /// Gold each level reached adds.
-    pub each: u32,
-    /// Gold rolled on top for each level reached.
-    pub dice: Dice,
+    /// What each level reached puts by after the loot roll: its coins.
+    pub purse: Purse,
     /// The percent chance a level-up makes its loot roll at all.
     pub chance: u32,
     /// The finder of its loot roll (the rarities better than normal `rarity` percent more
@@ -36,15 +35,8 @@ pub struct StipendRules {
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct StipendFile {
-    gold: GoldSpec,
+    purse: Purse,
     loot: LootSpec,
-}
-
-#[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
-struct GoldSpec {
-    each: u32,
-    dice: Dice,
 }
 
 #[derive(Deserialize)]
@@ -63,6 +55,7 @@ impl StipendRules {
     pub(super) fn parse(file: &str, text: &str, content: &Content) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
         let parsed: StipendFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        (parsed.purse.check()).map_err(|m| err(format!("`purse`: {m}")))?;
         let keep = (parsed.loot.keep.iter())
             .map(|name| {
                 (content.item_class_id(name))
@@ -70,8 +63,7 @@ impl StipendRules {
             })
             .collect::<Result<Vec<_>, _>>()?;
         Ok(Self {
-            each: parsed.gold.each,
-            dice: parsed.gold.dice,
+            purse: parsed.purse,
             chance: parsed.loot.chance.min(100),
             finder: parsed.loot.finder,
             gems: parsed.loot.gems,
@@ -102,12 +94,12 @@ mod tests {
             .map(|&c| content.item_class(c).id.as_str())
             .collect();
         assert_eq!(kept, ["potions", "scrolls", "gems"]);
-        assert!(rules.each > 0 && rules.finder.rarity > 0);
+        assert!(rules.purse.coins.is_some_and(|c| c.dice.min() > 0) && rules.finder.rarity > 0);
     }
 
     #[test]
     fn a_bad_file_is_refused_and_none_is_no_stipend() {
-        let text = "gold = { each = 1, dice = \"1d4\" }\nloot = { chance = 50, gems = 0, keep = [\"nothing\"] }\n";
+        let text = "purse = { coins = { dice = \"1d4+1\" } }\nloot = { chance = 50, gems = 0, keep = [\"nothing\"] }\n";
         let mut files = ContentFiles::builtin();
         files.insert(PATH, text);
         let err = Content::load(&files).expect_err(text);

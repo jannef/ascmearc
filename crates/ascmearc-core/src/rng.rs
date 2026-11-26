@@ -93,11 +93,11 @@
 //! |---|---|
 //! | Every rule's roll in play | `<rule>/<decision>/<actor key>@<second>#<n>` ([`crate::draw!`]; the labels are listed at their sites, `docs/dev/merging.md` "Random streams") |
 //! | A rolled quest's draw | `quest/<quest id>` |
-//! | A quarrel's hoard (`world/people/quarrel.rs`) | `hoard/<quest id>` |
+//! | A quarrel's hoard (`world/people/quarrel.rs`): its items, then its purse | `hoard/<quest id>` |
 //! | Appraising | `appraise/<hour>` |
 //! | Whether food is told stale | `freshness/<object>/<died>/<hour>` |
 //! | An investment's week | `invest/<week>` |
-//! | An aristocrat's stipend | `stipend/<level>` |
+//! | An aristocrat's stipend: its loot roll, then its purse | `stipend/<level>` |
 //! | A patron's gift | `patron/<taken>` |
 //! | Scroll labels | `identification` |
 //! | Weather, one-liners' order, mutters | keyed draws (`weather::draw`): `weather`, `weather/start`, `line…`, `mutter…` |

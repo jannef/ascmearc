@@ -239,6 +239,12 @@ impl Content {
         &self.loot_sources
     }
 
+    /// The purse table (`data/purses.toml`, else every purse the caller's data or none:
+    /// [`crate::wealth`]).
+    pub fn purses(&self) -> &super::Purses {
+        &self.purses
+    }
+
     /// How the player hungers, `data/hunger.toml`; `None` without the file:
     /// nobody hungers, nothing is eaten, and food does not rot.
     pub fn hunger(&self) -> Option<&HungerDef> {

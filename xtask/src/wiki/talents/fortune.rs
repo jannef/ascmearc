@@ -3,6 +3,7 @@
 
 use crate::wiki::util::signed;
 use ascmearc_core::content::Content;
+use ascmearc_core::dice::Dice;
 use ascmearc_core::talent::FortuneEffect;
 
 /// What `effect` does, as the talents' tables say it.
@@ -10,21 +11,25 @@ pub(super) fn text(content: &Content, effect: &FortuneEffect) -> String {
     let percent = |v: i32| format!("{} %", signed(v));
     match effect.clone() {
         FortuneEffect::Stipend => match content.stipend() {
-            Some(rules) => format!(
-                "each level you reach puts by {} plus {} gold, and ({} % of the time) one loot \
+            // Its coins' dice, the fixed part said first: "150 plus 10d10".
+            Some(rules) => {
+                let coins = rules.purse.coins.map(|c| c.dice);
+                format!(
+                    "each level you reach puts by {} plus {} gold, and ({} % of the time) one loot \
                  roll at that level with the odds of a magic or rare item {}{}, kept if magic, \
                  rare, a potion, a scroll, or a gem; your servant hands it all over when you \
                  talk to them (see [Stipend](class-aristocrat.md#stipend))",
-                rules.each,
-                rules.dice,
-                rules.chance,
-                percent(rules.finder.rarity),
-                if rules.gems == 0 {
-                    String::new()
-                } else {
-                    format!(" and of a gem {}", percent(rules.gems))
-                },
-            ),
+                    coins.map_or(0, |c| c.bonus()),
+                    coins.map_or(Dice::fixed(0), |c| c.plus(-c.bonus())),
+                    rules.chance,
+                    percent(rules.finder.rarity),
+                    if rules.gems == 0 {
+                        String::new()
+                    } else {
+                        format!(" and of a gem {}", percent(rules.gems))
+                    },
+                )
+            }
             None => "nothing: the stipend is not in this game".to_string(),
         },
         FortuneEffect::StipendMore {

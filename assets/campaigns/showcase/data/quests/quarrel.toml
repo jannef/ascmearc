@@ -51,7 +51,7 @@ text = "Well. That is the end of it, and you have what you came for. Unless you 
 betray = "Ah. I did wonder whether you had read the whole of the bargain."
 
 [quest.hoard]
-gold = "2d10"
+purse = { coins = { dice = "2d10" } }
 rare = 1
 item_level = 5
 grimoires = 1

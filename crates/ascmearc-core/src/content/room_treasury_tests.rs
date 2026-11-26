@@ -10,8 +10,8 @@ fn effect(extra: &str) -> String {
     )
 }
 
-const TREASURE: &str = "treasure = { chests = \"1d2\", gold = { heaps = \"1d4+1\", dice = \"3d6\", \
-                        each = 2 }, gems = \"1d3\" }";
+const TREASURE: &str = "treasure = { chests = \"1d2\", purse = { coins = { heaps = \"1d4+1\", \
+                        dice = \"3d6\", each = 2 }, gems = { dice = \"1d3\" } } }";
 
 #[test]
 fn the_fields_parse_and_are_none_by_default() {
@@ -23,15 +23,17 @@ fn the_fields_parse_and_are_none_by_default() {
     assert_eq!(e.secret_doors, Some(SecretDoors::All));
     assert_eq!(e.arrive.as_deref(), Some("Wealth."));
     let t = e.treasure.expect("treasure");
+    let (coins, gems) = (t.purse.coins.expect("coins"), t.purse.gems.expect("gems"));
     assert_eq!(
         (
             t.chests.to_string(),
-            t.gold.heaps.to_string(),
-            t.gold.dice.to_string()
+            coins.heaps.to_string(),
+            coins.dice.to_string()
         ),
         ("1d2".into(), "1d4+1".into(), "3d6".into())
     );
-    assert_eq!((t.gold.each, t.gems.to_string()), (2, "1d3".into()));
+    assert_eq!((coins.each, coins.chance), (2, 100));
+    assert_eq!((gems.dice.to_string(), gems.chance), ("1d3".into(), 100));
     let plain = RoomEffects::parse("e.toml", &effect(""), |_| None).expect("valid");
     let p = plain.get(RoomEffectId(0));
     assert!(p.secret_doors.is_none() && p.treasure.is_none() && p.arrive.is_none());
@@ -44,7 +46,12 @@ fn the_fields_parse_and_are_none_by_default() {
 fn bad_fields_are_refused() {
     for (extra, message) in [
         ("secret_doors = \"some\"".to_string(), "unknown variant"),
-        (TREASURE.replace("3d6", "1d6-2"), "gold.dice"),
+        (TREASURE.replace("1d4+1", "1d4-2"), "coins.heaps"),
+        (TREASURE.replace("\"1d2\"", "\"1d2-2\""), "treasure.chests"),
+        (
+            TREASURE.replace("each = 2", "each = 2, chance = 101"),
+            "at most 100",
+        ),
         (
             format!("level_chance = 5\npervade = \"P.\"\n{TREASURE}"),
             "needs a `pervade` line",

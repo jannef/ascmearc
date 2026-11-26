@@ -2,12 +2,13 @@
 //! `secret_doors = "all"` (every door of the room is a secret door, `mapgen/treasury.rs`),
 //! `sealed = "dig"` (a greater treasure room: no door at all, a box in the rock opened by breaking
 //! a wall, its one wall guaranteed thin the room's breach, `SpecialRoom::breach`), and `treasure`
-//! (what generators lay inside: chests, heaps of gold, and loose gems).
+//! (what generators lay inside: chests, and a purse of heaps of coins and loose gems).
 
 use super::{Content, SpecialRoom, TerrainId};
 use crate::dice::Dice;
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
+use crate::wealth::Purse;
 use serde::Deserialize;
 
 /// How a special room's doors are hidden (`secret_doors = "all"`).
@@ -28,40 +29,25 @@ pub enum Sealed {
     Dig,
 }
 
-/// What a treasure room holds (`treasure = { chests = "1d2", gold = { ... }, gems = "1d3" }`):
-/// `chests` chests of the floor's item level, `gold.heaps` heaps of `gold.dice` × `gold.each`
-/// coins, and `gems` loose gems (`mapgen/treasury.rs`).
+/// What a treasure room holds (`treasure = { chests = "1d2", purse = { ... } }`): `chests`
+/// chests of the floor's item level, and its purse (the purse table's `treasury` row,
+/// [`crate::wealth`]): heaps of coins and loose gems, each on its own cell
+/// (`mapgen/treasury.rs`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Treasury {
     pub chests: Dice,
-    pub gold: Heaps,
-    pub gems: Dice,
-}
-
-/// A treasure room's gold: `heaps` heaps, each `dice` × `each` coins.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct Heaps {
-    pub heaps: Dice,
-    pub dice: Dice,
-    pub each: u32,
+    pub purse: Purse,
 }
 
 impl Treasury {
-    /// The fault in these numbers, if any: every dice never below 0 (they roll counts).
+    /// The fault in these numbers, if any: the chests never below 0 (they roll a count), and
+    /// the purse's ([`Purse::check`]).
     pub(super) fn check(&self) -> Result<(), String> {
-        for (what, dice) in [
-            ("chests", self.chests),
-            ("gold.heaps", self.gold.heaps),
-            ("gems", self.gems),
-            ("gold.dice", self.gold.dice),
-        ] {
-            if dice.min() < 0 {
-                return Err(format!("treasure.{what} never rolls below 0"));
-            }
+        if self.chests.min() < 0 {
+            return Err("treasure.chests never rolls below 0".into());
         }
-        Ok(())
+        (self.purse.check()).map_err(|m| format!("treasure.purse: {m}"))
     }
 }
 
