@@ -25,11 +25,14 @@
 //!    ([`Rng::secrets`]), only where the stairs and every key are still reached without them,
 //!    then roll its loot from its loot stream ([`Rng::loot`]), then, on a branch with a danger,
 //!    lay its initial population down from its population stream ([`Rng::population`],
-//!    `population.rs`), then its teeming dens' sleepers and hoards from its swarm stream
-//!    ([`Rng::swarm`], `den.rs`), then what its vaults' empty chests hold from its vault chest
-//!    stream ([`Rng::vault_chests`]), then its chests from its chest stream ([`Rng::chests`],
+//!    `population.rs`), then its teeming dens' sleepers from its swarm stream ([`Rng::swarm`],
+//!    `den.rs`); the dens' hoards, the tempting hoards (`hoard.rs`), and the special rooms' own
+//!    loot (`room_loot.rs`) go on drawing from the loot stream, in that order (one loot stream a
+//!    level, [`Loot`]); then what its vaults' empty chests hold from its vault chest stream
+//!    ([`Rng::vault_chests`]), then its chests from its chest stream ([`Rng::chests`],
 //!    `chest.rs`), then its creatures' gear from its gear stream ([`Rng::gear`],
-//!    [`crate::gear::arm`]).
+//!    [`crate::gear::arm`]). Every find of them that came out rare may be a unique of the drop
+//!    pool, none twice on the level ([`Loot::taken`]).
 //!
 //! Generation is integer-only and never iterates a hash map. Seeds are stable within a game
 //! version; the snapshot tests in this module flag any change in generator output.
@@ -69,12 +72,12 @@ use crate::content::{
 use crate::door::Lock;
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
+use crate::magic::LootPool;
 use crate::magic::loot::{self, Finder, Origin, Spec};
-use crate::magic::{LootPool, unique_pool};
 use crate::object::{Stack, add_to_pile};
 use crate::rng::Rng;
 use crate::wealth;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 /// Attempts before giving up on a level (each with its own derived stream).
 const MAX_ATTEMPTS: u32 = 16;
@@ -498,7 +501,7 @@ pub struct Visit<'a> {
     pub player_level: u8,
     pub uniques: Option<&'a std::collections::BTreeSet<String>>,
     pub slain: Option<&'a std::collections::BTreeSet<String>>,
-    /// The drop pool's uniques the run has found (none comes twice; `magic/unique_pool.rs`).
+    /// The drop pool's uniques the run has found (none comes twice; `magic/drop_pool.rs`).
     pub dropped: Option<&'a std::collections::BTreeSet<String>>,
 }
 
@@ -706,10 +709,11 @@ pub fn generate_for(
                 terrain: pal.floor,
                 count: plan.loot,
             };
+            let mut loot = Loot::new(seed, &template.id, visit);
             place_loot(
                 &mut template,
                 content,
-                seed,
+                &mut loot,
                 &canvas.loot,
                 (Some(floor), visit),
             );
@@ -729,21 +733,22 @@ pub fn generate_for(
                     (pal, danger, spawning),
                     (visit, &monsters, &canvas.stamped),
                 );
-                den::fill(&mut template, content, seed, (pal, danger, spawning), visit);
-                hoard::fill(&mut template, content, seed, (pal, danger), visit);
+                let fill = (pal, danger, spawning);
+                den::fill(&mut template, content, seed, fill, (visit, &mut loot));
+                hoard::fill(&mut template, content, (pal, danger), (visit, &mut loot));
             }
             population::leave_unborne(&mut template, content, &monsters);
-            room_loot::fill(&mut template, content, seed, pal);
-            chest::fill_vaults(&mut template, content, (seed, visit));
+            room_loot::fill(&mut template, content, pal, &mut loot);
+            let taken = &mut loot.taken;
+            chest::fill_vaults(&mut template, content, (seed, visit), taken);
             chest::fill(
                 &mut template,
                 content,
-                (seed, visit),
+                (seed, visit, taken),
                 (pal, plan),
                 &canvas.stamped,
             );
-            treasury::fill(&mut template, content, (seed, visit), (pal, plan));
-            unique_pool::fill(&mut template, content, seed, visit.dropped);
+            treasury::fill(&mut template, content, (seed, visit, taken), (pal, plan));
             crate::gear::arm(&mut template, content, seed);
             crate::animated::arm(&mut template, content, seed);
             // Last, from its own stream: only walls change (`vein.rs`).
@@ -939,22 +944,45 @@ pub(crate) struct Floor {
     pub count: [u8; 2],
 }
 
-/// Rolls a generated level's loot at its item level, from its own
-/// stream `loot/<level id>` so that the map is the same with or without it: first an item on
-/// each of `markers` (vaults' loot cells, from their pools), then the floor loot, one draw
-/// for how many (between the fewest and the most) and, for each, one for a cell of `floor`
-/// terrain where nothing lies, stands, shines, or leads away (in row order), then the item,
-/// for the finder `visit` describes (a cell by [`loot_cell::roll`]; the floor's count by
-/// [`loot::count`], each by [`wealth::gem_instead`], then [`loot::find`]).
+/// A generated level's loot as it is laid: the level's one loot stream, and the drop pool's
+/// uniques it may no longer give.
+pub(crate) struct Loot {
+    /// The stream `loot/<level id>`, drawn from first by the vaults' loot cells and the floor
+    /// loot ([`place_loot`]), then by the dens' hoards, the tempting hoards, and the special
+    /// rooms' own loot, in that order and never restarted, so the rest of the level is the same
+    /// with or without its loot, and no two of them draw the same sequence.
+    pub rng: Rng,
+    /// The drop pool's uniques taken: those the run has found ([`Visit::dropped`]) and those the
+    /// level has laid already (its chests' too), so none comes twice (`magic/drop_pool.rs`).
+    pub taken: BTreeSet<String>,
+}
+
+impl Loot {
+    /// The loot of level `id` for the player `visit` describes, before any is laid.
+    pub(crate) fn new(seed: u64, id: &str, visit: &Visit) -> Self {
+        Self {
+            rng: Rng::loot(seed, id),
+            taken: visit.dropped.cloned().unwrap_or_default(),
+        }
+    }
+}
+
+/// Rolls a generated level's loot at its item level, from its loot stream (`loot`, so that the
+/// map is the same with or without it): first an item on each of `markers` (vaults' loot
+/// cells, from their pools), then the floor loot, one draw for how many (between the fewest and
+/// the most) and, for each, one for a cell of `floor` terrain where nothing lies, stands,
+/// shines, or leads away (in row order), then the item, for the finder `visit` describes (a
+/// cell by [`loot_cell::roll`]; the floor's count by [`loot::count`], each by
+/// [`wealth::gem_instead`], then [`loot::find`]).
 pub(crate) fn place_loot(
     template: &mut LevelTemplate,
     content: &Content,
-    seed: u64,
+    loot: &mut Loot,
     markers: &[(Pos, LootPool)],
     (floor, visit): (Option<Floor>, &Visit),
 ) {
     let finder = (&visit.finder, visit.gems);
-    let mut rng = Rng::loot(seed, &template.id);
+    let Loot { rng, taken } = loot;
     let level = template.item_level;
     let place = |template: &mut LevelTemplate, p: Pos, stack: Option<Stack>| {
         if let Some(stack) = stack {
@@ -962,7 +990,7 @@ pub(crate) fn place_loot(
         }
     };
     for (p, pool) in markers {
-        for stack in loot_cell::roll(content, &mut rng, level, pool, finder) {
+        for stack in loot_cell::roll(content, rng, level, pool, (finder, taken)) {
             place(template, *p, Some(stack));
         }
     }
@@ -970,7 +998,7 @@ pub(crate) fn place_loot(
     let [fewest, most] = floor.count.map(i32::from);
     let spec =
         Spec::new(Origin::Floor, level).count(u32::try_from(rng.range(fewest, most)).unwrap_or(0));
-    let count = loot::count(content, &spec, &visit.finder, &mut rng);
+    let count = loot::count(content, &spec, &visit.finder, rng);
     let mut free: Vec<Pos> = (template.terrain.iter())
         .map(|(p, _)| p)
         .filter(|&p| {
@@ -989,8 +1017,8 @@ pub(crate) fn place_loot(
         }
         let p = free.remove(rng.index(free.len()));
         // A loose gem instead by the wealth seam, else a find of the floor row.
-        let stack = wealth::gem_instead(content, &mut rng, level, visit.gems)
-            .or_else(|| loot::find(content, &spec, &visit.finder, &mut rng));
+        let stack = wealth::gem_instead(content, rng, level, visit.gems)
+            .or_else(|| loot::find(content, &spec, &visit.finder, taken, rng));
         place(template, p, stack);
     }
 }

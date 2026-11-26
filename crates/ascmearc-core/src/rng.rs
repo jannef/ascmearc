@@ -48,15 +48,14 @@
 //! | Ore veins | `veins/<level id>` |
 //! | Hidden traps | `traps/<level id>` |
 //! | Secret doors | `secrets/<level id>` |
-//! | Loot | `loot/<level id>` |
+//! | Loot: vaults' loot cells and floor loot, then dens' hoards, tempting hoards, and special rooms' own loot, the stream going on (`mapgen::Loot`) | `loot/<level id>` |
 //! | A wand's rung in a level's, a fixed kit's, or a pack's objects | `objects/<level id>`, `objects/actor/<actor key>`, `objects/pack` |
 //! | Vault monsters | `vault_monsters/<level id>` |
 //! | Initial population (and its leavings) | `population/<level id>` |
-//! | A teeming den's sleepers and hoards | `swarm/<level id>` |
+//! | A teeming den's sleepers | `swarm/<level id>` |
 //! | Vault chests | `vault_chests/<level id>` |
 //! | Chests | `chests/<level id>` |
 //! | Treasure rooms | `treasure/<level id>` |
-//! | The drop pool's uniques (`magic/unique_pool.rs`) | `unique_pool/<level id>` |
 //! | Creatures' gear | `gear/<level id>` |
 //! | Animated creatures' bodies | `animated/<level id>` |
 //! | Gravestones (and which fallen they name) | `graves/<level id>`, `graves/<level id>/fallen` |
@@ -198,8 +197,9 @@ impl Rng {
         Self::stream(run_seed, &format!("secrets/{level}"))
     }
 
-    /// The loot stream of generated level `level`: what lies on its floor
-    /// and in its vaults, rolled once the map is built, so the map is the same without it.
+    /// The loot stream of generated level `level`: what lies on its floor and in its vaults,
+    /// rolled once the map is built, so the map is the same without it, then its dens' hoards,
+    /// tempting hoards, and special rooms' own loot, the stream going on (`mapgen::Loot`).
     pub fn loot(run_seed: u64, level: &str) -> Self {
         Self::stream(run_seed, &format!("loot/{level}"))
     }
@@ -226,9 +226,9 @@ impl Rng {
         Self::stream(run_seed, &format!("vault_monsters/{level}"))
     }
 
-    /// The swarm stream of generated level `level`: its teeming dens'
-    /// sleepers, their cells, and their hoards, drawn once its population is (so the rest of the
-    /// level is the same with or without a den).
+    /// The swarm stream of generated level `level`: its teeming dens' sleepers and their cells,
+    /// drawn once its population is (so the rest of the level is the same with or without a
+    /// den); their hoards are the loot stream's ([`Rng::loot`]).
     pub fn swarm(run_seed: u64, level: &str) -> Self {
         Self::stream(run_seed, &format!("swarm/{level}"))
     }

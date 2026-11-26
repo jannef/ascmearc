@@ -178,9 +178,18 @@ pub(crate) fn draws(world: &World) -> u64 {
     world.state().draws.total()
 }
 
+/// Every unique of the drop pool, as found: a find then never is one (no draw of the pool), so
+/// what it gives is always rolled (`magic/drop_pool.rs`).
+pub(crate) fn pool_found(content: &Content) -> std::collections::BTreeSet<String> {
+    (content.uniques().filter(|u| u.pool))
+        .map(|u| u.id.clone())
+        .collect()
+}
+
 /// A find as a level's floor rolls one at item level `level`, at least of `grade`, with no luck:
 /// at grade any a loose gem instead by the wealth seam ([`crate::wealth::gem_instead`]), else
-/// [`crate::magic::loot::find`] of the floor row.
+/// [`crate::magic::loot::find`] of the floor row, never a unique of the drop pool
+/// ([`pool_found`]): always a rolled item.
 pub(crate) fn found(
     content: &Content,
     rng: &mut Rng,
@@ -209,7 +218,8 @@ pub(crate) fn found_with(
         .then(|| crate::wealth::gem_instead(content, rng, level, gems))
         .flatten();
     let spec = Spec::new(Origin::Floor, level).grade(grade);
-    gem.or_else(|| loot::find(content, &spec, &finder, rng))
+    let found = &mut pool_found(content);
+    gem.or_else(|| loot::find(content, &spec, &finder, found, rng))
 }
 
 /// `count` of `object` made as a kit's magic line makes it ([`crate::magic::loot::make`] of the

@@ -87,10 +87,12 @@ pub(crate) fn of_level(
     let mut kept = Vec::new();
     if rng.chance(chance) {
         let spec = Spec::new(Origin::Stipend, item_level);
+        // Its row asks no drop pool: nothing is found of it.
+        let none = &mut std::collections::BTreeSet::new();
         for _ in 0..loot::count(content, &spec, &finder, &mut rng) {
             // A loose gem instead by the wealth seam, else a find of the stipend row.
             let find = crate::wealth::gem_instead(content, &mut rng, item_level, rules.gems)
-                .or_else(|| loot::find(content, &spec, &finder, &mut rng));
+                .or_else(|| loot::find(content, &spec, &finder, none, &mut rng));
             let find = find.filter(|s| {
                 s.rarity() != Rarity::Normal || rules.keep.contains(&content.object(s.object).class)
             });

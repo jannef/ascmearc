@@ -25,7 +25,6 @@ use crate::geom::{Dir, Pos};
 use crate::hunger::Hunger;
 use crate::lang::Msg;
 use crate::magic::loot::{self, LootGrade};
-use crate::magic::unique_pool;
 use crate::msg;
 use crate::object::{Stack, add_to_pile};
 use crate::rng::draw;
@@ -419,7 +418,7 @@ impl World {
 
     /// An item of loot at the floor's item level plus `bonus`, at least of `grade` (a relic's
     /// `rare`: the top rarity its base allows), at the feature's foot; a rare one perhaps a unique
-    /// of the drop pool instead (`magic/unique_pool.rs`).
+    /// of the drop pool none the run has found (`magic/drop_pool.rs`), found from now on.
     fn leave_loot(&mut self, bonus: u8, grade: LootGrade, feature: Pos) {
         let content = self.content.clone();
         let level = content
@@ -435,13 +434,9 @@ impl World {
             let gem = (grade == LootGrade::Any)
                 .then(|| crate::wealth::gem_instead(&content, &mut rng, level, gems))
                 .flatten();
-            let item = gem.or_else(|| loot::find(&content, &spec, &finder, &mut rng));
-            // A rare one may be a unique of the drop pool instead, on the same stream after it.
-            let item = item.map(|s| {
-                let found = &self.state.uniques_dropped;
-                unique_pool::instead(&content, &mut rng, &s, found).unwrap_or(s)
-            });
-            unique_pool::note(&content, &item, &mut self.state.uniques_dropped);
+            let mut found = self.state.uniques_dropped.clone();
+            let item = gem.or_else(|| loot::find(&content, &spec, &finder, &mut found, &mut rng));
+            self.state.note_dropped(&content, &item);
             if let Some(stack) = item {
                 let at = self.foot_of(feature);
                 self.lay(at, stack);

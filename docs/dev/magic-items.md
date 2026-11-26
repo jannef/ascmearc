@@ -47,11 +47,12 @@ base stats); `dice_text` is the one damage-dice form, which `OwnAttack::damage_t
 Every item a source yields is one pure function (`magic/loot.rs`, docs/design/loot-pipeline.md):
 `loot::find`/`finds` of a `Spec` (the source's `Origin`, the item level, the grade, the classes,
 the count) for a `Finder` (`magic/finder.rs`: `quantity` read at the count, `loot::count`;
-`rarity` at the rarity draw; `unique` carried for the drop pool's check; `Finder::of(talents)`,
+`rarity` at the rarity draw; `unique` at the drop pool's check, step 3b; `Finder::of(talents)`,
 `Finder::NONE` for a row that takes none; the wealth seam's gem percent is passed beside it,
 never in it), and `loot::make`/`make_unfinished` for a base chosen already;
 `Origin::rule` is the source table, `data/loot_sources.toml` (`Content::loot_sources`, one row a
-source: the default grade or the caller's data that gives it, whether the finder counts, curses,
+source: the default grade or the caller's data that gives it, whether the finder counts, the
+drop pool, curses,
 how the material is drawn, a make; the loader refuses a missing row, a row of no source, and a
 grade a source cannot take; without the file every row is `Rule::PLAIN`), and its `[item] ammo`
 the size of a stack of ammunition found. A find is always an item: where a
@@ -614,31 +615,37 @@ id on another rarity than unique, and a unique without its id.
   Defence against every attack, missiles too (Parry counts against melee only), and the one
   kind that adds up (`Category::stacks`), so it always counts in full; Deflection keeps only
   the best, so a +2 there would be lost beside a better ring and a −2 beside any.
-- **The drop pool** (#2103, `magic/unique_pool.rs`): a unique whose data says `pool = true`
-  (`UniqueDef::pool`; opt-in, so a new unique joins by its own line) may stand in for a **rare**
-  find. The placed ones (the outlaws' four, Sigeric's Star, the pedlar's three, the test world's
-  Stonebiter) never say it (`magic/unique_pool_tests.rs` holds them out). `unique_pool::instead`
-  asks of a find that came out `Rarity::Rare`: the open uniques (`open`: of the pool, own item
-  level at most the find's `Magic::level`, not in `WorldState::uniques_dropped`, by id); none
-  open, no draw; else one `below(10_000)` against `rare.unique` of `data/affixes.toml` (200: 1 in
-  50 rare finds) and on a hit one `index` among them. The unique comes as its template stack
-  (unidentified, its curse and all, as any find): no affix or power of it enters a rollable
-  pool. The paths: a generated level's `unique_pool::fill` (branch levels after
-  `treasury::fill` and before `gear::arm`, local areas after `place_loot`), over the piles by
-  cell, the chests' holds by cell, and the spawns' carry (a mimic's chest; gear is not rolled
-  yet), from the level's own stream `unique_pool/<level id>` and none twice on the level
-  (`mapgen::Visit::dropped` is the run's set); `World::loot_of` (a creature's drop, on its
-  `drop/` stream after the roll) and `World::leave_loot` (a feature's loot, on its
-  `outcome/loot` draw after the roll). Never asked: creatures' gear, shops, a trader's offer,
-  quest pay, a quarrel's hoard, a stipend. **Once a run**: `WorldState::uniques_dropped`
-  (saved, left out while empty, so other saves and replays hash as before) takes every pool
-  unique a made level holds (`instantiate_level`: its piles, chests, and spawns' carry, so the
-  quarry's showcase counts) and each creature drop (`World::creature_dies`, after `loot_of`) and feature loot. A level whose
-  generation the pool changes depends on what the run found before, as a unique creature's lair
-  does (`Visit::uniques`). One left on an endless floor that is let go is lost with it. Tests:
-  `magic/unique_pool_tests.rs` (who is in, the item-level gate, no draw for what is not rare or
-  with all found, the odds over 20,000 draws, a level's pass each once and none found),
-  `world/items/unique_pool_tests.rs` (the quarry counts, a creature's drop and none once found).
+- **The drop pool** (#2103, `magic/drop_pool.rs`; inside the find since #2161 S4): a unique whose
+  data says `pool = true` (`UniqueDef::pool`; opt-in, so a new unique joins by its own line) may
+  stand in for a **rare** find. The placed ones (the outlaws' four, Sigeric's Star, the pedlar's
+  three, the test world's Stonebiter) never say it (`magic/drop_pool_tests.rs` holds them out).
+  It is step 3b of `loot::find`, right after the rarity draw, for a source whose row of
+  `data/loot_sources.toml` says `pool = true` (floor, vault cells, chests and a treasure room's,
+  a mimic's carry, hoards, dens, room loot, drops, features; never a stipend, a quarrel's hoard,
+  gear, goods, kits, an animated piece, nor a trader's offer, which is not a find):
+  `drop_pool::draw` asks of a find that came out `Rarity::Rare` the open uniques (`open`: of the
+  pool, own item level at most the find's, none of the find's `found`, by id); none open, no
+  draw; else one `below(10_000)` against `rare.unique` of `data/affixes.toml` (200: 1 in 50 rare
+  finds) scaled by the finder's `unique`, and on a hit one `index` among them. The unique comes
+  as its template stack (unidentified, its curse and all, as any find) and the find ends: no
+  affix, name, ornament, material, or make is drawn, and no affix or power of it enters a
+  rollable pool; the unique joins `found` (`find` takes it `&mut`). `loot::make` never asks (a
+  chosen base). Of any class: a vault cell of armour may give a ring of the pool. The stream is
+  the find's own, so on a shared stream a rare find costs one `below` more. **None twice on a
+  level**: `mapgen::Loot::taken` starts as the run's set (`Visit::dropped`) and every pass of
+  the level hands it to its finds (vault cells, floor, dens' and tempting hoards, room loot,
+  vault chests, chests, treasure rooms, a mimic's carry). **Once a run**:
+  `WorldState::uniques_dropped` (saved, left out while empty, so other saves and replays hash as
+  before), written only by `WorldState::note_dropped`, takes every pool unique a made level
+  holds (`instantiate_level`: its piles, chests, and spawns' carry, so the quarry's showcase
+  counts), each creature drop (`World::creature_dies`, after `loot_of`, which finds with a copy
+  of the run's set), and feature loot (`leave_loot`). A level whose generation the pool changes
+  depends on what the run found before, as a unique creature's lair does (`Visit::uniques`).
+  One left on an endless floor that is let go is lost with it. Tests: `magic/drop_pool_tests.rs`
+  (who is in, the item-level gate, a hit's draws and no affix, no draw for what is not rare, of
+  a row without the pool, or with all found, the odds over 20,000 finds and the finder's
+  `unique`, each once in a run of finds and on a generated level, none found),
+  `world/items/drop_pool_tests.rs` (the quarry counts, a creature's drop and none once found).
   The wiki: the pool's line in "Carried by" (`xtask/src/wiki/uniques.rs::pooled`) and
   `wiki/src/magic-items.md` "The drop pool".
 - **Powers**, a variant each, read in one place each: `Power::Inflict { hit, added }` rides

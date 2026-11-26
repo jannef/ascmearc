@@ -125,9 +125,10 @@ eligibility.
 
 Filling (`mapgen/den.rs`, `den::fill`, called in `mapgen::generate_with` right after
 `population::populate`, only on a branch level with a danger): every special room whose effect has
-a `swarm` gets `Swarm::sleepers(free cells)` sleepers and `Swarm::hoard(placed)` items (one per
-its `per_sleepers`), from the
-level's own stream `Rng::swarm` (`swarm/<level id>`), so nothing else on the level moves. Free
+a `swarm` gets `Swarm::sleepers(free cells)` sleepers from the level's own stream `Rng::swarm`
+(`swarm/<level id>`), and `Swarm::hoard(placed)` items (one per its `per_sleepers`) or corpses
+from the level's loot stream (`mapgen::Loot`, `loot/<level id>`, going on after the floor loot
+and before the tempting hoards: one loot stream a level), so nothing else on the level moves. Free
 cells: the room's cells of plain floor (the palette's) with no stairs, light, trap, or creature.
 Candidates: `Content::candidates` of the branch's population and of the generic list, filtered to
 types hostile to the player (`Content::stance` against the `player` creature) and not unique. The
@@ -213,8 +214,9 @@ Items (`mapgen/hoard.rs`, `hoard::fill`, called in `mapgen::generate_with` right
 `den::fill`, only on a branch level with a danger): every special room whose effect has a
 `hoard` gets `hoard.items` items, a loose gem by the wealth seam (`wealth::gem_instead`) or else
 `loot::find` of the hoard row at the item level + `loot_level` (the visit's luck), each on a plain floor cell of the room (the palette's floor,
-no stairs, light, or trap) drawn anew, from `Rng::swarm` (`swarm/<level id>`; a level with a den
-and a hoard starts the stream afresh for each, which only happens with `per_level` above 1).
+no stairs, light, or trap) drawn anew, from the level's loot stream (`mapgen::Loot`,
+`loot/<level id>`), going on after the dens' hoards and before the rooms' own loot, never
+restarted.
 `population.rs` keeps its creatures out of a hoard and `special::make` refuses one where a
 generator patrol walks, as for a den: it lies unguarded.
 
@@ -327,9 +329,10 @@ light). Loot (`mapgen/room_loot.rs`, `room_loot::fill`, called in `mapgen::gener
 the danger block, so on every generated branch level): every special room whose effect has a
 `loot` gets `rng.range(least, most)` items, each `loot::find` of the room-loot row among the class at the
 floor's item level (no finder's luck), on a cell of the room's plain
-floor (no stairs, light, or trap) drawn after it, all from `Rng::swarm` started afresh (as the den
-and the hoard do). The test `mapgen/scriptorium_tests.rs` checks the level is otherwise the same
-without the loot.
+floor (no stairs, light, or trap) drawn after it, all from the level's loot stream
+(`mapgen::Loot`, `loot/<level id>`) going on after the hoards. The test
+`mapgen/scriptorium_tests.rs` checks the level is otherwise the same without the loot, and that
+the room's loot goes on from where a hoard left the stream.
 
 Training (`world/character/train.rs`, the one hook): `World::train` scales each mark rule's chance by
 `Here::train(skill)` at the player's cell (percents multiply, room and level); each whole hundred is a mark for certain and the rest a chance

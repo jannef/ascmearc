@@ -1,8 +1,8 @@
 //! The drop pool in play (#2103): what a creature drops, and the run's memory of what it found.
 
 use crate::content::CreatureId;
-use crate::magic::unique_pool::member;
-use crate::magic::unique_pool_tests::sure;
+use crate::magic::drop_pool::member;
+use crate::magic::drop_pool_tests::sure;
 use crate::test_support::world;
 use crate::world::{ActorId, ActorKind, World};
 use std::collections::BTreeSet;

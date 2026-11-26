@@ -1540,7 +1540,7 @@ impl World {
         let mut lines: Vec<Msg> = self.break_lines(&actor.level, actor.pos, &broken);
         let loot = self.loot_of(&actor);
         let content = self.content.clone();
-        crate::magic::unique_pool::note(&content, &loot, &mut self.state.uniques_dropped);
+        self.state.note_dropped(&content, &loot);
         dropped.extend(loot);
         // Struck dead by Soulglass, its body is crystals (`crystal.rs`).
         let glass = (!stoned).then(|| self.crystallise(&actor)).flatten();

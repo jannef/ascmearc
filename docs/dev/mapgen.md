@@ -32,7 +32,10 @@ may be). Loot (`mapgen::place_loot`: floor
 items by the branch's `loot`, vault `loot` cells, each a grade or a pool of item classes,
 `mapgen/loot_cell.rs::roll` at the floor's item level, `docs/dev/magic-items.md`) is rolled once a
 map is valid, from its own stream `loot/<level id>`, so adding loot never changes the terrain of a
-generated level. It does shift what follows on that stream, and `hide_traps` avoids a vault's
+generated level. The stream goes on, never restarted, through the dens' hoards, the tempting
+hoards, and the special rooms' own loot, in that order (`mapgen::Loot`, one loot stream a level,
+the owner 2026-11-26, #2161), with the drop pool's uniques the level has laid (`Loot::taken`).
+It does shift what follows on that stream, and `hide_traps` avoids a vault's
 `[[pile]]` but not a `loot` cell, so turning a pile into a loot cell moves the floor's items and
 may move a hidden trap (a trap may lie under a loot cell). A vault's `monsters` cells
 (`content/monster_pool.rs`, `VaultMonsters`; `Canvas::monsters`) are drawn with the population,

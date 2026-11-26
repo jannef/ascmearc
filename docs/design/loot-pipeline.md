@@ -1,8 +1,10 @@
 # Ascmearc — The loot pipeline: one find procedure for every item source
 
-**Status: approved, being built (#2161)**: D1–D5 take their defaults and §9's questions the
-assumptions written here. Written against `origin/main` at 88699d6f6 (version 0.23.1); §8 maps it
-onto implementation slices, one PR each (S1, the function, S2, the table, and S3, the finder, are built). It answers the owner's question (2026-11-26): "it seems like quite convoluted
+**Status: approved, being built (#2161)**: D1–D4 take their defaults, D5 is the owner's own (one
+loot stream per level, 2026-11-26), and §9's questions the assumptions written here. Written
+against `origin/main` at 88699d6f6 (version 0.23.1); §8 maps it onto implementation slices, one
+PR each (S1, the function, S2, the table, S3, the finder, and S4, the pool inside the find, are
+built). It answers the owner's question (2026-11-26): "it seems like quite convoluted
 system in total, built piecemeal. Is there room to make it more elegant, standardized and
 consolidated?" — about how loot is generated, the drop pool of uniques included.
 
@@ -155,18 +157,21 @@ pub struct Spec<'a> {
     pub count: Count,                   // the row's, or the caller's data (a band's dice, a hoard's items)
 }
 pub struct Finder { .. }                // §3.5; `Finder::NONE` for the rows that take none
-pub fn find(content: &Content, spec: &Spec, finder: &Finder, found: &BTreeSet<String>, rng: &mut Rng) -> Option<Stack>;
-pub fn finds(content: &Content, spec: &Spec, finder: &Finder, found: &BTreeSet<String>, rng: &mut Rng) -> Vec<Stack>;
+pub fn find(content: &Content, spec: &Spec, finder: &Finder, found: &mut BTreeSet<String>, rng: &mut Rng) -> Option<Stack>;
+pub fn finds(content: &Content, spec: &Spec, finder: &Finder, found: &mut BTreeSet<String>, rng: &mut Rng) -> Vec<Stack>;
 ```
 
 The parameter set is exactly: the content (data), the spec (origin, item level, grade, classes,
 count), the finder's modifiers, the set of pool uniques found so far, and the stream. The output
 is the stacks, unidentified; `None`/empty when no base item is found at that level. Nothing
 inside reads the world: `loot_of` and `leave_loot` become thin wrappers that build the spec from
-the actor or the feature and hand over `&state.uniques_dropped` and a stream; `place_loot`,
-`chest::fill`, `hoard::fill`, and the rest do the same from the template. The caller notes the
-pool uniques among the result (`drop_pool::note`, as today), so `find` stays `&BTreeSet` and
-the determinism tests that call `loot_of` twice keep passing.
+the actor or the feature and hand over a copy of `state.uniques_dropped` and a stream;
+`place_loot`, `chest::fill`, `hoard::fill`, and the rest hand over the level's `taken` (§3.3).
+`find` adds the unique it gives to the set it is handed (as built in S4: so a run of finds,
+`finds`, a drop's quantity, a level's passes, never gives one twice without a note at each
+caller); `loot_of` hands over a copy, so the determinism tests that call it twice keep passing,
+and the run's set is written in one place, `WorldState::note_dropped`, by what lays or drops
+the stacks.
 
 `make(content, spec, object, count, finder, rng)` is the same function from step 3 on, for a
 chosen base (gear's magic pieces, shop goods, kits, room loot): it takes the row's flags (curses,
@@ -207,8 +212,10 @@ levels do):
   one without the pool, except for that one `below` per rare, which is the price of one home.
 
 Within a level, "none twice" is kept as today: `generate_with` clones `Visit::dropped` into a
-`taken` set, each fill notes its finds into it, and `travel.rs` keeps noting the laid template
-into the run's set when the level is instantiated (the one home of the run's set stays).
+`taken` set (`mapgen::Loot`, beside the level's loot stream), every fill hands it to its finds,
+and `travel.rs` keeps noting the laid template into the run's set when the level is instantiated
+(the one home of the run's set stays). The pool gives a unique of any class: a vault cell of
+`armour` that came out rare may be a ring of the pool, as the level pass gave it.
 
 ### 3.4 The source table (R1, R2)
 
@@ -374,10 +381,14 @@ drops, features. Never: quarrel hoards (grade rare: it would be 1 in 50 a unique
 quest), stipends, gear, goods, kits, the pedlar (his own three). The default keeps that; the
 table makes a change one cell.
 
-**D5 — Streams of their own for hoards and room loot.** `hoard/<level>` and `room_loot/<level>`
-instead of restarting `swarm/<level>` (§2.6). No odds change; moves the snapshot of any level
-with a hoard or a scriptorium (§7). Default: yes, in its own slice (S5), since every other pass
-has its own stream and the restarts are the one exception.
+**D5 — One loot stream per level** (the owner, 2026-11-26, replacing the proposal of streams of
+their own, `hoard/<level>` and `room_loot/<level>`: "no new streams"). The passes that restarted
+`swarm/<level>` (§2.6) go on drawing from the level's one loot stream, `loot/<level>`, in a fixed
+order after the vaults' loot cells and the floor loot, as those two already do: a den's hoard
+(its items or its corpses, and their cells), then the tempting hoards, then the special rooms'
+own loot (`mapgen::Loot`). `swarm/<level>` keeps only the dens' sleepers. Chests, vault chests,
+and treasure rooms keep the streams they have (they draw locks, traps, and mimics too). No odds
+change; built in S4, with the pool, since both move the same snapshots.
 
 ## 6. The wiki and the docs
 
@@ -386,7 +397,8 @@ table (`xtask/src/wiki/loot_sources.rs`, from `loot_sources.toml` and the chest 
 drop pool" keeps its text, now true of every row with `pool = true`. `gems.md` "Finding gems"
 says gems are wealth and points at that page when it exists. `docs/dev/magic-items.md`'s loot
 paragraphs and the module docs of `magic/loot.rs` become one step list (§3.3) and the table's
-column meanings; `rng.rs`'s stream table loses `unique_pool/<level>` and gains D5's two.
+column meanings; `rng.rs`'s stream table loses `unique_pool/<level>`, and its loot and swarm
+rows say what D5 moved (done in S4).
 
 ## 7. Streams: what moves, and how much
 
@@ -397,7 +409,8 @@ stream; the pool check and the quantity fraction are single `below`s on the find
 |---|---|---|
 | S1–S3 (the function, the table, the finder) | none: the gem seam spends the one `chance` it spends today, in the same place; the pool check stays where it is until S4 | none (verified by an unchanged `replay --verify` over the test world and unchanged `insta` snapshots) |
 | S4 (the pool inside the find) | one `below` after every rare find on a shared stream; on a hit (1 in 50 rares) the rare's steps 4–10 vanish | mapgen snapshots of levels that roll a rare before another find on `loot/`, `chests/`, `vault_chests/`, or `treasure/`: the vault-bearing ones with `loot = "rare"` cells (12 vault legends use it) are certain, others at 0.5 % a floor find; of 28 + 6 snapshots expect 8–15 to change by a glyph or two; `unique_pool_tests` (which seed hits), `world/items/unique_pool_tests`; no dump snapshot (the showcase is hand-made, no kill in the dumps); no golden expected (every walk is on a hand-made level; `overworld-noon` passes ruins whose loot markers are few: run `cargo xtask golden --local` and look) |
-| S5 (D5) | the whole hoard and room-loot sequences | the mapgen snapshots of levels with a tempting hoard or a scriptorium (expect 2–4) |
+| S4 (D5, one loot stream) | the whole sequences of dens' hoards, tempting hoards, and room loot (now on `loot/<level>` after the floor loot), and a den's later sleepers (no hoard draws on `swarm/<level>` between dens) | the mapgen snapshots of levels with a den, a tempting hoard, or a scriptorium |
+| S5 (the rename) | none | none |
 | D2's alternative | the gem draw gone | every mapgen snapshot with floor loot (most of the 34), `gem_tests`, `talent_wits_tests` |
 
 Each moved snapshot is reviewed in its PR (`cargo insta review`), never bulk-accepted.
@@ -416,10 +429,11 @@ Each moved snapshot is reviewed in its PR (`cargo insta review`), never bulk-acc
 - **S3 — The finder.** `Luck` → `Finder` with `quantity`, `rarity`, `unique`; `Finder::of`;
   the stipend's `finder` (D3); the invariant test. The talents README gains the effect kinds.
   Zero draw changes (`Luck::gems` goes to the seam's `more` argument unchanged).
-- **S4 — The pool inside.** Step 3b; `unique_pool::fill`, `laid`, and `unique_pool/<level>`
-  removed; `Visit::dropped` cloned into generation's `taken`; the module renamed `drop_pool`.
-  The moved snapshots of §7 reviewed.
-- **S5 — Streams of their own** (D5) and `LootPool` → `LootCell`. Snapshots of §7 reviewed.
+- **S4 — The pool inside, one loot stream.** Step 3b; `unique_pool::fill`, `laid`, and
+  `unique_pool/<level>` removed; `Visit::dropped` cloned into generation's `taken`; the module
+  renamed `drop_pool`; the `pool` column; D5's one loot stream. The moved snapshots of §7
+  reviewed.
+- **S5 — The rename.** `LootPool` → `LootCell`. No draw moves.
 - **S6 — Docs.** `docs/dev/magic-items.md`, `rng.rs`'s table, `wiki/src/magic-items.md`,
   `gems.md`; this file gets its "Built" line.
 
@@ -430,7 +444,7 @@ and removes the seam.
 
 ## 9. Open questions for the owner
 
-1. D1–D5 above: the defaults stand unless said otherwise.
+1. D1–D4 above: the defaults stand unless said otherwise (D5 is decided).
 2. Should the source table be TOML (as written: tunable without a build, the wiki generated
    from it) or a `const` table in Rust (`Origin::rule`, type-checked, no loader)? The design
    assumes TOML for R1; the structural flags (`curses`, `material`, `make`) could stay in code

@@ -1,5 +1,5 @@
 //! Scriptoria in generated levels (`room_loot.rs`): shelves at the
-//! room's middle, two to four scrolls on its floor from the swarm stream, and the rest of the
+//! room's middle, two to four scrolls on its floor from the loot stream, and the rest of the
 //! level the same as without them.
 
 use super::*;
@@ -66,4 +66,72 @@ fn scriptoria_have_shelves_and_two_to_four_scrolls() {
     }
     assert!(rooms >= 40, "{rooms} scriptoria");
     assert!(counts[2..].iter().all(|&n| n > 0), "{counts:?}");
+}
+
+/// The scrolls `level`'s scriptoria hold, by cell.
+fn scrolls(level: &LevelTemplate, content: &Content) -> Vec<(Pos, Vec<Stack>)> {
+    let effect = content
+        .room_effects()
+        .id("scriptorium")
+        .expect("scriptorium");
+    (level.rooms.iter().filter(|r| r.effect == effect))
+        .flat_map(|r| r.cells())
+        .filter_map(|p| Some((p, level.objects.get(&p)?.clone())))
+        .collect()
+}
+
+#[test]
+fn a_hoard_and_a_scriptorium_go_on_drawing_from_one_loot_stream() {
+    // Once a den's hoard, a tempting hoard, and a room's own loot each started the swarm stream
+    // afresh, so on one level they drew the same sequence; now the room's loot goes on from where
+    // the hoard left the level's loot stream.
+    let content = content(true);
+    let pal = Palette::resolve(&content).expect("palette");
+    let (hoard, scriptorium) = (
+        content.room_effects().id("hoard").expect("hoard"),
+        content
+            .room_effects()
+            .id("scriptorium")
+            .expect("scriptorium"),
+    );
+    let visit = Visit::default();
+    let (mut levels, mut differ) = (0, 0);
+    for seed in 0..60 {
+        let level = generate(&content, ("showcase", seed), "depths:2", None).expect("level");
+        // A level with a scriptorium, and a hoard made of the same room's cells.
+        let Some(room) = (level.rooms.iter()).find(|r| r.effect == scriptorium) else {
+            continue;
+        };
+        let mut base = level.clone();
+        base.rooms.push(SpecialRoom::blob(hoard, room.cells()));
+        let fill = |t: &mut LevelTemplate, loot: &mut Loot| {
+            hoard::fill(t, &content, (pal, 3), (&visit, loot));
+        };
+        // One stream, going on: the hoard's items, then the scrolls.
+        let mut on = base.clone();
+        let mut loot = Loot::new(seed, &on.id, &visit);
+        fill(&mut on, &mut loot);
+        room_loot::fill(&mut on, &content, pal, &mut loot);
+        // The old way: each pass from the stream's start.
+        let mut afresh = base.clone();
+        fill(&mut afresh, &mut Loot::new(seed, &base.id, &visit));
+        room_loot::fill(
+            &mut afresh,
+            &content,
+            pal,
+            &mut Loot::new(seed, &base.id, &visit),
+        );
+        levels += 1;
+        if scrolls(&on, &content) != scrolls(&afresh, &content) {
+            differ += 1;
+        }
+        // The same seed, the same loot.
+        let mut again = base.clone();
+        let mut loot = Loot::new(seed, &base.id, &visit);
+        fill(&mut again, &mut loot);
+        room_loot::fill(&mut again, &content, pal, &mut loot);
+        assert_eq!(again.objects, on.objects, "seed {seed}");
+    }
+    assert!(levels >= 20, "{levels} levels with a scriptorium");
+    assert!(differ * 10 >= levels * 9, "{differ} of {levels} differ");
 }

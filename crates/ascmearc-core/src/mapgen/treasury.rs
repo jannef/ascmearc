@@ -36,6 +36,7 @@ use crate::grid::Grid;
 use crate::item_parts::ItemPart;
 use crate::object::{Stack, add_to_pile};
 use crate::rng::Rng;
+use std::collections::BTreeSet;
 
 /// The interior (width, height) of a stamped box of at least `min_cells` floor cells (at least
 /// nine): one wider than square.
@@ -281,11 +282,12 @@ pub(super) fn seal(template: &mut LevelTemplate, content: &Content, pal: Palette
 }
 
 /// Lays what every treasure room of generated level `template` of plan `plan` holds (see the
-/// module docs), the finder `visit` describes reaching its chests.
+/// module docs), the finder `visit` describes reaching its chests (none of what they hold a
+/// unique of the drop pool among `taken`).
 pub(super) fn fill(
     template: &mut LevelTemplate,
     content: &Content,
-    (seed, visit): (u64, &super::Visit),
+    (seed, visit, taken): (u64, &super::Visit, &mut BTreeSet<String>),
     (pal, plan): (Palette, &LevelPlan),
 ) {
     let rooms: Vec<(usize, crate::content::Treasury)> = (template.rooms.iter().enumerate())
@@ -318,7 +320,8 @@ pub(super) fn fill(
                 .collect();
             let Some(&at) = rng.pick(&fits) else { break };
             free.retain(|&p| p != at);
-            super::chest::lay(template, content, &mut rng, (at, shut), (&traps, visit));
+            let chest = (&traps[..], visit, &mut *taken);
+            super::chest::lay(template, content, &mut rng, (at, shut), chest);
         }
         for _ in 0..treasure.gold.heaps.roll(&mut rng).max(0) {
             let Some(&at) = rng.pick(&free) else { break };

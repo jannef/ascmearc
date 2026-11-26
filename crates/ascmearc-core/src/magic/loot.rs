@@ -2,13 +2,14 @@
 //!
 //! Every item a source yields comes from one pure function of a stated parameter set: the
 //! content, a [`Spec`] (the source's [`Origin`], the item level, the least grade, the classes it
-//! is drawn from, how many), the [`Finder`]'s modifiers, and the stream. Nothing inside reads the
-//! world. [`find`] makes one item, [`finds`] the spec's count of them; [`make`] (and
-//! [`make_unfinished`], creature gear's, short of the trim) makes a base chosen already from step
-//! 3 on; [`heirloom`] and [`favoured`] make one with a fixed count of affixes. What differs
+//! is drawn from, how many), the [`Finder`]'s modifiers, the drop pool's uniques found so far,
+//! and the stream. Nothing inside reads the world. [`find`] makes one item, [`finds`] the spec's
+//! count of them; [`make`] (and [`make_unfinished`], creature gear's, short of the trim) makes a
+//! base chosen already from step 3 on; [`heirloom`] and [`favoured`] make one with a fixed count of affixes. What differs
 //! between sources is their row of the source table ([`Origin::rule`], `data/loot_sources.toml`):
-//! the grade when the caller's data gives none, whether the finder counts, whether a curse
-//! may roll, how the material is drawn, and whether it gets a make.
+//! the grade when the caller's data gives none, whether the finder counts, whether a rare find
+//! may be a unique of the drop pool, whether a curse may roll, how the material is drawn, and
+//! whether it gets a make.
 //!
 //! [`finds`] first draws how many: the spec's count scaled by the finder's `quantity`
 //! ([`count`]; one draw for the fraction, none without the modifier), for a row that takes the
@@ -27,6 +28,12 @@
 //! 3. **the rarity**: one draw over the weights of `[rarity]` in `data/affixes.toml` (those below
 //!    the grade asked for left out; the finder's `rarity` scales those above it, for a row that
 //!    takes the finder); none for what is never magic (a scroll), which is normal;
+//!
+//!    3b. **the drop pool** ([`super::drop_pool::draw`]), for a find that came out rare of a row
+//!    that says `pool`: one `below(10_000)` against `rare.unique` (the finder's `unique` scales
+//!    it), and on a hit one `index` among the uniques open to it (none of `found`, which the
+//!    unique joins); the unique comes whole, and the find ends there. No draw while none is
+//!    open. [`make`] never asks: what is made of a chosen base is never a unique of the pool;
 //! 4. **how many affixes**: a magic item has a prefix, a suffix, or one of each by the weights
 //!    of `[magic]` (one draw); a rare one draws its count from `rare.affixes` (one draw) and how
 //!    many of them are prefixes (one draw, evenly among the splits that keep at most
@@ -64,6 +71,7 @@
 //! ([`crate::wealth::gem_instead`]), drawn by the callers before the find, and a vault cell's
 //! coins and gems are the cell's own ([`crate::mapgen`]'s `loot_cell`).
 
+use super::drop_pool;
 pub use super::finder::Finder;
 use super::{Affix, AffixKind, Magic, Quality, Rarity, may_roll};
 use crate::content::{AffixDef, Content, FactionId, ItemClassId, ItemKind, ObjectDef, ObjectId};
@@ -72,6 +80,7 @@ use crate::object::Stack;
 use crate::rng::Rng;
 use crate::variant::{self, Source};
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeSet;
 use std::ops::Range;
 
 /// The least an item of loot may be: anything, magic or better, or rare (a vault's `loot`, what
@@ -198,6 +207,8 @@ pub struct Rule {
     /// Whether the [`Finder`] counts (its every modifier, each at its step); `false`: a find
     /// with [`Finder::NONE`] whatever is passed.
     pub finder: bool,
+    /// Whether a rare find may be a unique of the drop pool (step 3b; a find's only).
+    pub pool: bool,
     /// Whether a curse may roll (step 5).
     pub curses: bool,
     /// How the material is drawn (step 8).
@@ -208,10 +219,11 @@ pub struct Rule {
 
 impl Rule {
     /// The row of every source in content without `data/loot_sources.toml`: anything, the
-    /// finder and curses left out, its own material, no make.
+    /// finder, the drop pool, and curses left out, its own material, no make.
     pub const PLAIN: Rule = Rule {
         grade: Some(LootGrade::Any),
         finder: false,
+        pool: false,
         curses: false,
         material: Material::Own,
         make: false,
@@ -357,9 +369,16 @@ impl<'a> Spec<'a> {
     }
 }
 
-/// One item `spec` yields for `finder`, from `rng` (the module docs give the draws). `None` when
-/// content has no base item found at that level.
-pub fn find(content: &Content, spec: &Spec, finder: &Finder, rng: &mut Rng) -> Option<Stack> {
+/// One item `spec` yields for `finder`, from `rng` (the module docs give the draws): a unique of
+/// the drop pool none of `found` (step 3b), which then joins it. `None` when content has no base
+/// item found at that level.
+pub fn find(
+    content: &Content,
+    spec: &Spec,
+    finder: &Finder,
+    found: &mut BTreeSet<String>,
+    rng: &mut Rng,
+) -> Option<Stack> {
     let object = base(content, spec, rng)?;
     // A spell scroll may be its grimoire: one draw, a scroll's.
     let object = content.grimoire_or(rng, object);
@@ -369,13 +388,30 @@ pub fn find(content: &Content, spec: &Spec, finder: &Finder, rng: &mut Rng) -> O
     } else {
         1
     };
-    Some(make(content, spec, object, count, finder, rng))
+    let rarity = rarity(content, spec, object, finder, rng);
+    // Step 3b: a rare find may be a unique of the drop pool, whole, and nothing more is drawn.
+    if rarity == Rarity::Rare && spec.origin.rule(content).pool {
+        let finder = taken(content, spec, finder);
+        let level = spec.level.max(1);
+        if let Some(unique) = drop_pool::draw(content, rng, level, &finder, found) {
+            return Some(unique);
+        }
+    }
+    let made = made(content, spec, (object, count), rarity, rng);
+    Some(finished(content, rng, made))
 }
 
-/// The spec's items: [`count`] of them ([`find`] each, those found), in order.
-pub fn finds(content: &Content, spec: &Spec, finder: &Finder, rng: &mut Rng) -> Vec<Stack> {
+/// The spec's items: [`count`] of them ([`find`] each, those found, `found` as [`find`] keeps
+/// it), in order.
+pub fn finds(
+    content: &Content,
+    spec: &Spec,
+    finder: &Finder,
+    found: &mut BTreeSet<String>,
+    rng: &mut Rng,
+) -> Vec<Stack> {
     (0..count(content, spec, finder, rng))
-        .filter_map(|_| find(content, spec, finder, rng))
+        .filter_map(|_| find(content, spec, finder, found, rng))
         .collect()
 }
 
@@ -444,11 +480,20 @@ pub fn make_unfinished(
     finder: &Finder,
     rng: &mut Rng,
 ) -> Stack {
-    let rule = spec.origin.rule(content);
-    let level = spec.level.max(1);
-    let def = content.object(object);
-    // Step 3, the one step that reads the finder's `rarity`.
-    let rarity = match def.kind {
+    let rarity = rarity(content, spec, object, finder, rng);
+    made(content, spec, (object, count), rarity, rng)
+}
+
+/// Step 3: the rarity of `object` found as `spec`, the one step that reads the finder's
+/// `rarity`; no draw for what is never magic (no `kind`), which is normal.
+fn rarity(
+    content: &Content,
+    spec: &Spec,
+    object: ObjectId,
+    finder: &Finder,
+    rng: &mut Rng,
+) -> Rarity {
+    match content.object(object).kind {
         Some(_) => roll_rarity(
             content,
             rng,
@@ -456,7 +501,20 @@ pub fn make_unfinished(
             taken(content, spec, finder).rarity,
         ),
         None => Rarity::Normal,
-    };
+    }
+}
+
+/// Steps 4 to 9: `count` of `object` of `rarity` made as `spec`'s row makes it, short of the trim.
+fn made(
+    content: &Content,
+    spec: &Spec,
+    (object, count): (ObjectId, u32),
+    rarity: Rarity,
+    rng: &mut Rng,
+) -> Stack {
+    let rule = spec.origin.rule(content);
+    let level = spec.level.max(1);
+    let def = content.object(object);
     let magic = match rarity {
         Rarity::Normal => None,
         rarity => roll_magic(content, rng, def, (level, rule.curses), rarity),

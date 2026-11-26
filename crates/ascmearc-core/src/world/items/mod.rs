@@ -58,6 +58,7 @@ cfg_if! {
         mod affix_utility_tests;
         mod body_slots_tests;
         mod curse_tests;
+        mod drop_pool_tests;
         mod equip_tests;
         mod fyrwit_tests;
         pub(in crate::world) mod gear_tests;
@@ -69,6 +70,5 @@ cfg_if! {
         mod parts_tests;
         mod quiver_tests;
         mod siphon_tests;
-        mod unique_pool_tests;
     }
 }

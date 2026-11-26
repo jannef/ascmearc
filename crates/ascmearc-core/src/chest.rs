@@ -27,6 +27,7 @@ use crate::magic::loot::{self, Finder, Origin, Spec};
 use crate::object::{Stack, add_to_pile};
 use crate::rng::Rng;
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeSet;
 
 /// A chest on a cell (ground truth).
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -132,7 +133,8 @@ pub fn destroyed(
 }
 
 /// What a generated chest of `level` holds, rolled from its band's loot table for `finder` and
-/// the wealth seam's `gems` percent, as a pile (the last rolled on top, like stacks joined).
+/// the wealth seam's `gems` percent, as a pile (the last rolled on top, like stacks joined); a
+/// rare item perhaps a unique of the drop pool none of `found` ([`loot::find`]'s step 3b).
 /// Draws, in order: the `items` dice, scaled by the finder's `quantity` ([`loot::count`]; no
 /// draw without it); per item one `below(100)` for its grade (under `rare` rare, under `magic`
 /// at least magic, else any) and at `level + loot_level`, at grade any a loose gem by the wealth
@@ -146,6 +148,7 @@ pub fn roll_contents(
     rng: &mut Rng,
     level: u8,
     (finder, gems): (&Finder, i32),
+    found: &mut BTreeSet<String>,
 ) -> Vec<Stack> {
     let Some(band) = content.chests().band_of(level) else {
         return Vec::new();
@@ -172,7 +175,7 @@ pub fn roll_contents(
             .then(|| crate::wealth::gem_instead(content, rng, at, gems))
             .flatten();
         let spec = Spec::new(Origin::Chest, at).grade(grade);
-        if let Some(stack) = gem.or_else(|| loot::find(content, &spec, finder, rng)) {
+        if let Some(stack) = gem.or_else(|| loot::find(content, &spec, finder, found, rng)) {
             add_to_pile(&mut holds, &[stack], content);
         }
     }
