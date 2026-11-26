@@ -195,6 +195,8 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
                     Power::Burst(_) => "burst",
                     Power::Feller { .. } => "feller",
                     Power::Quarry { .. } => "quarry",
+                    Power::Pilfer(_) => "pilfer",
+                    Power::Approach(_) => "approach",
                 },
             };
             (u.id.as_str(), power)
@@ -210,6 +212,7 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
             ("domgeorn", "credit"),
             ("entbana", "feller"),
             ("eorthfaest", "plant"),
+            ("fambles", "pilfer"),
             ("feolaga", "quarry"),
             ("gar", "thrust"),
             ("gorthak", "roar"),
@@ -227,6 +230,8 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
             ("scrift", "shrive"),
             ("silverstrike", "range"),
             ("smoulder", "zone"),
+            ("snaffle", "pilfer"),
+            ("stampers", "approach"),
             ("swige", "none"),
             ("tiptoe", "trapwise"),
             ("wergild", "tally"),
@@ -811,8 +816,8 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
     // Hushfoot (#2139, #2141, #2133); Wergild, the Oath, and the Wrecend (#2109, #2117, #2131);
     // Onrǣs (#2123) and Gār (#2124); Scrift, Swīge, and Wyrtruma (#2111-#2113); Beornhama
     // (#2110), Gorthak (#2136), and the Dōmgeorn (#2130); the three launchers (#2114, #2134,
-    // #2118).
-    assert_eq!(ids.len(), 39, "{ids:?}");
+    // #2118); the Fambles, the Stampers, and Snaffle (#2119, #2120, #2138).
+    assert_eq!(ids.len(), 42, "{ids:?}");
     let widowmaker = unique(&w, "widowmaker");
     let magic = widowmaker.magic().expect("magic");
     let stiletto = content.object(widowmaker.object);

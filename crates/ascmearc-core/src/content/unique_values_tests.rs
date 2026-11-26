@@ -76,6 +76,16 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "fambles",
+        24,
+        &[
+            ("of_the_cutpurse", 6),
+            ("of_the_picklock", 4),
+            ("accurate", 3),
+            ("supple", 2),
+        ],
+    ),
+    (
         "feolaga",
         28,
         &[
@@ -275,6 +285,26 @@ const UNIQUES: &[Written] = &[
             ("keen", 4),
             ("steady", 6),
             ("of_precision", 4),
+        ],
+    ),
+    (
+        "snaffle",
+        30,
+        &[
+            ("sharp", 4),
+            ("of_celerity", 22),
+            ("of_the_lynx", 4),
+            ("of_the_cutpurse", 40),
+        ],
+    ),
+    (
+        "stampers",
+        28,
+        &[
+            ("of_stealth", 30),
+            ("of_the_hare", 10),
+            ("nimble", 2),
+            ("of_the_hare", 4),
         ],
     ),
     ("stick", 6, &[]),

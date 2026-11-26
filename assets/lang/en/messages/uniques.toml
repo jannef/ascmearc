@@ -66,6 +66,16 @@ rings_your_helm = "Your helm rings like a struck kettle!"
 # what they wear.
 scarred = "The blow leaves its scar on your armour."
 
+# The Pilfer power (#2119 the Fambles, #2138 Snaffle; `world/combat/pilfer.rs`): the player's
+# blow takes something its target carries. `what`: what was taken; `who`: the one struck.
+# A worn power's (the Fambles'): the player's hand takes it.
+pilfered = "You lift {what:a} from {who:the}."
+# A weapon's own (Snaffle's).
+snaffled = "Your blade comes away with {what:a}!"
+# The blow takes its target's weapon from its hand instead, which falls at its feet. `what`: the
+# weapon; `who`: the one disarmed.
+plucked = "Your blade plucks {what:the} from {who:poss} hand!"
+
 # A Grudge's grudges (the Wrecend, #2131; `world/combat/tally.rs`), on its description after its
 # power: `n`, the hits the creature `who` (`creature:<id>`) landed on its bearer.
 [grudges]

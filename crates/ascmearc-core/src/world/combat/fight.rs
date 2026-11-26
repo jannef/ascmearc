@@ -971,6 +971,9 @@ impl World {
         // exploit is a sneak attack whatever the target knows (`openings.rs`).
         let unaware = fair && (self.unaware(target, attacker) || self.lurked(attacker, target));
         let low = profile.is_some() && self.sneak_taken(attacker, target) && !dummy;
+        // An approach unseen in a unique's boots is one too (`approach.rs`).
+        let approach = profile.is_some() && self.approach_struck(attacker, kind) && !dummy;
+        let low = low || approach;
         let unseen = fair && self.sneaks(attacker, target, unaware || low, missile);
         // Hair trigger's blow may cut the attacker down before it strikes (`free_blow.rs`); how
         // the blow found its target is told in its words (`surprise.rs`).
@@ -1024,6 +1027,7 @@ impl World {
             combat::strike_with(&profile, &struck, &mut rng, lucky)
         });
         let blow = blow.map(|b| self.ambushed((attacker, target), unseen, b));
+        self.approach_opening((attacker, target), (approach, unseen), blow);
         let blow = blow.map(|b| self.exploited((attacker, target), unseen, b));
         let blow = blow.map(|b| self.lore_blow(attacker, target, b));
         // Holy wrath's die (`smite.rs`).
@@ -1108,6 +1112,8 @@ impl World {
         // attack's miss by the target's Shield, Dexterity, or Dodge.
         self.resolve_triggers((attacker, target), (kind, skills), blow, events);
         self.sneak_trigger((attacker, target), (kind, skills), (unseen, blow), events);
+        // A unique's Pilfer power, before the blow may kill (`pilfer.rs`).
+        self.pilfer((attacker, target), (kind, with, skills), blow);
         if let Some(blow) = blow
             && blow.damage > 0
         {

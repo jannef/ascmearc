@@ -45,6 +45,10 @@ message = { text = "Hiljaisuus ei saa ääntäsi vaikenemaan.", of = "3bc6d2" }
 lore = { text = "Nojaa siihen selkäsi, niin vuori on takanasi. Lähde kävelemään, niin se on pelkkää puuta ja rautaa.", of = "5ef9f3" }
 phrase = { text = "Mitä kauemmin sen kantaja seisoo, sitä vaikeampi häntä on haavoittaa, eikä mikään liikuta häntä.", of = "826bf0" }
 
+[fambles]
+lore = { text = "Tuollaiset kädet ovat joko siunaus tai todiste.", of = "98350d" }
+phrase = { text = "Jokainen viilto, jonka sen kantaja veitsellä tekee, tyhjentää viillettävän taskuja.", of = "48cc55" }
+
 [feolaga]
 lore = { text = "Toinen heistä valitsi saaliin. Kukaan ei ole koskaan ollut varma, kumpi.", of = "90ff17" }
 phrase = { text = "Mihin sen nuoli osuu, sen kimppuun kumppanisi syöksyy heti, ja jokainen puraisu, jonka se saaliiseen saa, terävöittää keskittymistäsi.", of = "ddb90b" }
@@ -137,6 +141,14 @@ phrase = { text = "Se tuntuu käyneen painavammaksi.", of = "875914" }
 [smoulder]
 lore = { text = "Ei sijnä ole tulda, ia quitengin se sauhupi.", of = "d1becc" }
 phrase = { text = "Sen nuolet savuavat siellä, mihin ne pysähtyvät, osuivat tai eivät: savun läpi ei näe mikään silmä, ei sinunkaan.", of = "43456b" }
+
+[snaffle]
+lore = { text = "Pistin häntä kahdesti ja sain mukaani hänen kukkaronsa, hänen hattunsa ja hyvin huonon käsityksen hänestä.", of = "f431ee" }
+phrase = { text = "Sen iskut tyhjentävät taskuja ja silloin tällöin kädenkin aseesta.", of = "984b46" }
+
+[stampers]
+lore = { text = "Ne eivät jättäneet jälkiä. Eivät myöskään todistajia, mutta se oli kantajan ansiota.", of = "839ee2" }
+phrase = { text = "Joka pääsee näkymättä vihollisen kylkeen, iskee sitä varoittamatta, eivätkä sen kantajan askeleet päästä ääntäkään.", of = "53c4f0" }
 
 [stonebiter]
 lore = { text = "Lovettu sadassa louhoksen seinässä, eikä yksikään niistä antanut periksi.", of = "fa63dd" }

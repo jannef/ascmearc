@@ -358,6 +358,10 @@ pub struct WorldState {
     /// each once. Left out while empty.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub(crate) uniques_dropped: BTreeSet<String>,
+    /// The player's steps in a row unseen by any hostile, while they wear an Approach power
+    /// (`world/combat/approach.rs`). Left out while 0.
+    #[serde(default, skip_serializing_if = "is_zero_steps")]
+    pub(crate) unseen_steps: u8,
     /// Every profane gift the player has ever taken, by talent id, held or lost since: none is
     /// given twice (`world/character/profane.rs`, #1805).
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
@@ -427,6 +431,10 @@ pub struct WorldState {
 }
 
 fn is_zero(n: &u32) -> bool {
+    *n == 0
+}
+
+fn is_zero_steps(n: &u8) -> bool {
     *n == 0
 }
 
@@ -879,6 +887,7 @@ impl World {
             wares: BTreeMap::new(),
             uniques_offered: BTreeSet::new(),
             uniques_dropped: BTreeSet::new(),
+            unseen_steps: 0,
             gifts_received: BTreeSet::new(),
             stipend: classes::stipend::Stipend::default(),
             fund: classes::invest::Fund::default(),

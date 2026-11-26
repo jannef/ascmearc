@@ -539,6 +539,50 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
              scars it: +1 Armour, +1 maximum hit point, or +1 Toughness, each a third of the \
              time, kept on it for whoever wears it, without end"
             .into(),
+        Some(Power::Pilfer(p)) => {
+            let blows = match p.skill {
+                Some(skill) => {
+                    let name = &content.weapon_skills().skill(skill).name;
+                    format!("every melee blow its wearer lands with a weapon of {name}")
+                }
+                None => "every melee blow it lands".to_string(),
+            };
+            let take = if p.contest {
+                "makes the Steal contest (Dexterity and Steal against the Willpower of the one \
+                 struck; a blow that kills needs none): won, one thing it carries comes away \
+                 into its wearer's pack"
+                    .to_string()
+            } else {
+                format!(
+                    "takes one thing the one struck carries into its wielder's pack {}% of the \
+                     time, no roll against it",
+                    p.chance
+                )
+            };
+            let mut all = vec![format!(
+                "{blows} {take}: its gold coins if it has any, else one thing it neither wears \
+                 nor wields at random, taken before a killing blow's loot falls"
+            )];
+            if p.disarm > 0 {
+                all.push(format!(
+                    "{}% of the time the weapon in its hand falls at its feet instead, and it \
+                     fights on without it",
+                    p.disarm
+                ));
+            }
+            if p.opening {
+                all.push("a take gives an opening, as a feint does".into());
+            }
+            all.push("never from an animated thing or a mimic".into());
+            all.join("; ")
+        }
+        Some(Power::Approach(steps)) => format!(
+            "after {steps} steps in a row that no hostile creature sees (one asleep, or whose \
+             eyes do not reach you, sees nothing), its wearer's next attack, if a melee blow, \
+             is a sneak attack whatever the target knows, and one that lands gives two \
+             openings, not one; any attack spends the steps; and its wearer's steps make no \
+             sound while Unburdened"
+        ),
     }
 }
 

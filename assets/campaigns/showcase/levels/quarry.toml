@@ -188,6 +188,7 @@ objects = ["unique:onraes"]
 [[pile]]
 at = [3, 8]
 objects = ["unique:gar"]
+
 # Three more of the pool (#2109, #2117, #2131), along the arrival room's north side: Wergild, the
 # Oath, and the Wrecend.
 [[pile]]
@@ -201,6 +202,7 @@ objects = ["unique:oath"]
 [[pile]]
 at = [9, 6]
 objects = ["unique:wrecend"]
+
 # Three more of the pool (#2110, #2136, #2130), placed nowhere else, along the arrival room's
 # north wall: Beornhama, a fur cloak whose bear rages for its wearer; Gorthak, a great axe whose
 # kills roar; and the Dōmgeorn, a gold amulet that makes every death its wearer sees theirs.
@@ -215,6 +217,21 @@ objects = ["unique:gorthak"]
 [[pile]]
 at = [9, 4]
 objects = ["unique:domgeorn"]
+
+# Three of the pool for a thief, in the row above the start (#2119, #2120, #2138): the Fambles,
+# gloves whose knife-cuts pick pockets; the Stampers, boots for an unseen approach; and Snaffle, a
+# dagger whose hits take what the struck one carries.
+[[pile]]
+at = [5, 7]
+objects = ["unique:fambles"]
+
+[[pile]]
+at = [7, 7]
+objects = ["unique:stampers"]
+
+[[pile]]
+at = [9, 7]
+objects = ["unique:snaffle"]
 
 # What the sealed chamber keeps.
 [[pile]]

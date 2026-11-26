@@ -520,6 +520,19 @@ id on another rarity than unique, and a unique without its id.
   (above), so the owner's numbers stand as written, and no make adds Armour or Protection they
   did not ask for. Tests:
   `world/combat/struck_tests.rs`.
+- **The Fambles, the Stampers, and Snaffle** (#2119, #2120, #2138; the thief's and the goblin's),
+  in the shared `data/uniques/`, each `pool = true`, placed nowhere but the quarry. **The
+  Fambles** (`fambles`, leather gloves, item level 24): of the Cutpurse 6, of the Picklock 4,
+  Accurate 3, Supple 2 (as the design writes it: Supple is a Dexterity limit, which gloves do
+  not have); the Pilfer power with the Steal contest, the Daggers and knives skill, and an
+  opening. **The Stampers** (`stampers`, leather boots, item level 28): of Stealth 30, of the
+  Hare 10, Nimble 2, and of the Hare 4 (the design's "supple=4 (Tumble)": Supple is no Tumble,
+  of the Hare is); the Approach power. **Snaffle** (`snaffle`, a dagger, item level 30): Sharp
+  4, of Celerity 22, of the Lynx 4, of the Cutpurse 40 (off its bases by a unique's hand); the
+  Pilfer power, 30 and a disarm of 10. The Fambles' Supple 2 (no effect on gloves) and the
+  Stampers' of the Hare 4 (below the ladder's 10) are written as designed, a unique
+  following no affix rules (#2152). Tests: `world/combat/pilfer_tests.rs`,
+  `world/combat/approach_tests.rs`.
 - **Wergild, the Oath, and the Wrecend** (#2109, #2117, #2131): three weapons of the drop pool
   (`pool = true`) in the shared `data/uniques/`, each Masterwork, placed nowhere but the quarry.
   Wergild, a great axe of item level 36: Sharp 6, Heavy 2d8, of the Bear 4, Nimble −1 (a
@@ -795,6 +808,30 @@ id on another rarity than unique, and a unique without its id.
   `stagger` degrees of Staggered (a critical's twice; Staggered's `max = 1` keeps it one slowed
   action). **`counts_as_unarmoured`** (a body piece only): `Actor::wears_body_armour` says no
   for it (Mage armour, Fleet, Step of the wind).
+  `Power::Pilfer(Pilfer)` (`{ pilfer = 30, disarm = 10 }`, Snaffle's, #2138, on a weapon; `{
+  pilfer = 100, contest = true, skill = "daggers", opening = true }`, the Fambles', #2119, on a
+  worn piece that is no weapon, which a `skill` needs): read once in `World::resolve`, for the
+  player's melee blow that hit, before its damage is dealt (so a killing blow takes before the
+  carry falls), in `world/combat/pilfer.rs` (its module docs). A weapon's applies to the blows
+  struck with that stack (the first hand's, or the off hand's for its blow), a worn one's to
+  blows whose `AttackSkills::skill` is its skill. One draw (`unique/pilfer/<target>`): below
+  `disarm` the target's first-hand weapon leaves it for the pile on its cell
+  (`uniques.plucked`; a cursed one stays; no creature picks one up again: it fights with its
+  natural attack); below `disarm + chance` the take: `steal.rs`'s `World::pockets` (its gold,
+  `chest::currency`, first, the owner's rule, else every loose stack, one drawn), with
+  `contest` first `World::steal_contest` (not on a blow whose damage reaches the target's hit
+  points), into the player's pack through `World::take_from` (`uniques.pilfered` for a worn
+  power, `uniques.snaffled` for a weapon's); with `opening`, `Build::Feint` on the mark. Never
+  an animated thing or a mimic; no `Deed::Theft`, no training. `Power::Approach(steps)` (`{
+  approach = 3 }`, the Stampers', #2120, worn armour only): `world/combat/approach.rs` (its
+  module docs). `World::count_unseen_step` (from `enter.rs::enter_cell`, after the step's
+  noise) counts the player's steps no hostile on the level sees (`sees_now` and not `unaware`)
+  in `WorldState::unseen_steps` (saved, left out while 0) up to `steps`, a seen step setting it
+  to 0; `World::approach_struck`, asked in `World::resolve` beside `sneak_taken`, takes the
+  count on any attack of the player's and makes a melee blow after a full count a sneak attack
+  whatever the target knows; `World::approach_opening` builds `Build::SneakAttack` once more
+  when that blow lands (so two openings). Its steps are silent while Unburdened (`noise::noise`,
+  as Hide in plain sight's).
 - **Rules beside the power** (#2095, #2097), fields of the unique's table read where the rule
   is, never affixes (so no pool can roll them; `unique_spell_tests.rs::nothing_unique_only_is_ever_rolled`):
   `immune` (kinds; `Actor::resistances` adds them to the immunities) and `resist` (kind to

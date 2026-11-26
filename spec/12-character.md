@@ -114,7 +114,7 @@ Part of the design document; the index is [`specification.md`](../specification.
   - Any try may be repeated at once.
 - **Steal**'s use, in a direction, works on a creature seen there that is not hostile.
   - The contest is the player's Dexterity plus Steal against the victim's Willpower; the tie goes to the thief.
-  - Unnoticed, the player takes one whole stack the victim carries but does not wear or wield, picked at random, because the player never sees a creature's pack. It is a theft deed.
+  - Unnoticed, the player takes one whole stack the victim carries but does not wear or wield: its gold if it carries any (the owner's rule, #2119), else one picked at random, because the player never sees a creature's pack. It is a theft deed.
   - Caught, the victim turns hostile; a shopkeeper is outraged as if robbed. Shop goods are never stolen this way.
   - No limit on trying again.
 - **Survival**'s use is foraging, in the wild only. The owner: "survival can be used on wilderness map, some chance to gather food items".

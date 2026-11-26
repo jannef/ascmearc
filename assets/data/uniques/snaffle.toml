@@ -1,0 +1,17 @@
+# Snaffle (#2138), the goblin's dagger: a dagger for the drop pool (#2103; placed nowhere else but
+# the test world's quarry), item level 30. Its Pilfer power (`world/combat/pilfer.rs`): every hit
+# with it takes one thing from the pack of the one struck by 30 in a hundred (its coins first; no
+# contest, trained or not, hostile or not), or by 10 in a hundred its weapon from its hand
+# instead, which falls at its feet. +4 damage (Sharp), 22% faster attacks (of Celerity), +4
+# Dexterity (of the Lynx), and +40 Steal (of the Cutpurse, on a dagger by a unique's hand). Every
+# value set by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "snaffle"
+name = "Snaffle"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "dagger"
+affixes = ["sharp=4", "of_celerity=22", "of_the_lynx=4", "of_the_cutpurse=40"]
+level = 30
+power = { pilfer = 30, disarm = 10, phrase = "Its hits pick pockets, and now and then a weapon out of a hand." }
+lore = "Stabbed him twice and came away with his purse, his hat, and a very poor opinion of him."

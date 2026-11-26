@@ -107,6 +107,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Gorthak (#2136), a unique great axe: each kill with it is a roar (noise 40); every foe within 6 cells who sees the wielder checks its nerve as against Intimidate and the failed flee Frightened, once a fight; the undead, the mindless, and the fearless pay no heed.
 - The Dōmgeorn (#2130), a unique gold amulet: every death its wearer sees, by any hand or harm, is credited to them as their own kill (experience, tallies, oaths, alignment), a peaceful's too.
 - Three unique launchers of the drop pool: Hagolscūr, a sling whose every stone, hit or miss, brings down hail (cold) on the cell it stops at and the eight about it, sparing only the slinger, and leaves those cells iced (rime) for a few turns; Entbana, a sling whose stones have a bane against every creature larger than Small; Fēolaga, a bow whose hit sets the archer's companion on the creature as Sic 'em does, for nothing, each bite on that quarry giving the archer Focus.
+- Uniques for the thief: the Fambles (#2119) and Snaffle (#2138) pick pockets with the blows that land (the Fambles with a knife, by the Steal contest, an opening for each take; Snaffle by a chance, or the weapon from the hand instead): the gold first, else one thing carried at random, before a killing blow's loot falls. The Stampers (#2120) make the first blow after three steps no hostile saw a sneak attack whatever its target knows, with two openings, and their steps silent while Unburdened.
 
 ### Curses
 

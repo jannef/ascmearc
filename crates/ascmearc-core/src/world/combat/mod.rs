@@ -2,6 +2,7 @@
 //! surprise.md).
 
 mod ambush;
+mod approach;
 pub(in crate::world) mod attacks;
 mod bane;
 mod bleed;
@@ -20,6 +21,7 @@ mod knock_away;
 mod lurk;
 mod natural;
 mod negate;
+mod pilfer;
 pub(in crate::world) mod plant;
 pub(in crate::world) mod reflect;
 mod roar;
@@ -39,6 +41,7 @@ pub(in crate::world) mod weapon_active;
 cfg_if! {
     if #[cfg(test)] {
         mod ambush_tests;
+        mod approach_tests;
         mod attacks_tests;
         mod bane_tests;
         mod balance_probe;
@@ -58,6 +61,7 @@ cfg_if! {
         mod knock_away_tests;
         mod lurk_tests;
         mod negate_tests;
+        mod pilfer_tests;
         mod plant_tests;
         mod protection_tests;
         mod roar_tests;

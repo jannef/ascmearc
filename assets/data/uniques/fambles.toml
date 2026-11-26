@@ -1,0 +1,18 @@
+# The Fambles (#2119), the thief's gloves ("fambles": cant for hands): a pair of leather gloves for
+# the drop pool (#2103; placed nowhere else but the test world's quarry), item level 24. Every blow
+# with a dagger or a knife (the Daggers and knives skill) that lands while they are worn also makes
+# the Steal skill's contest against the one struck (its Pilfer power, `world/combat/pilfer.rs`):
+# won, one thing it carries comes away into the wearer's pack (its coins first) and the wearer
+# gains an opening, as a fooled foe gives; a blow that kills takes without the contest, before the
+# body's carry falls. +6 Steal, +4 Open lock, +3 to hit, and Supple 2 as the design writes it.
+# Every value set by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "fambles"
+name = "the Fambles"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "leather_gloves"
+affixes = ["of_the_cutpurse=6", "of_the_picklock=4", "accurate=3", "supple=2"]
+level = 24
+power = { pilfer = 100, contest = true, skill = "daggers", opening = true, phrase = "Every cut its wearer makes with a knife picks the pocket of the one cut." }
+lore = "Hands like those are either a blessing or evidence."
