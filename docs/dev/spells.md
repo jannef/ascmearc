@@ -952,6 +952,7 @@ What an area spell does to the items lying in it (#1100).
 An area that lies on the floor for a time (`world/magic/zone.rs`; the design's §7 "Zones", #1000).
 Balefire, Reek, Mirk, Slick, and Fume (scroll only) lay one, and so do the flasks of Reek, Mirk, and Slick
 (stinking, darkness, oil: `docs/dev/potions.md`), with `[spell.effect] zone = { kind, turns }`
+(Hagolscūr's hail lays `rime` through `lay_zone_around`: `docs/dev/magic-items.md` "Unique items")
 (`SpellZone`, `ZoneKind` in `content/spell_def.rs`, checked at load: a zone lies on a burst's
 or a line's cells).
 
@@ -963,7 +964,7 @@ or a line's cells).
   overworld (`can_loose_here`).
 - **Hooks**, one line each: `zone_turn_start` first in `ai.rs::creature_turn` (before a sleeper's
   rest and a stride) and in `schedule.rs::run_turn` as the player's next turn begins (`fire`,
-  `fouled`); `zone_tread` in `ice.rs::after_tread`, every step's one hook (`fire` onto, `slick` onto
+  `fouled`, `rime`: the cold type's rule through `zone_fouls`, as a cloud's poison); `zone_tread` in `ice.rs::after_tread`, every step's one hook (`fire` onto, `slick` onto
   or off); `LevelState::darkened` in `LightCache::sources` and `LevelState::shade` in the light pass,
   the player's (`perception/lighting.rs`) and a creature's (`sight.rs::light`) alike (`dark`); the fire's cells
   are sources in `LightCache::sources`, each keyed by `zone_key`, a light of the fire type's
@@ -980,8 +981,8 @@ or a line's cells).
 - **The cast**: `cast_damage` takes the cells before the cast (`zone_cells`: a burst's centre moves
   when who stood in its way falls) and lays after `spell_lands`; `cast_hex` hands a hex with a zone
   to `cast_zone`. A fire's `harm` is rolled once as it is laid (the spell's `Cast::roll`), so nothing
-  draws at a burn; ice under a fire melts as it is laid; `fire` and `slick` lie only on walkable ground
-  out of open water, `fouled`, `dark`, and `smoke` on anything sight passes through.
+  draws at a burn; ice under a fire melts as it is laid; `fire`, `rime`, and `slick` lie only on walkable
+  ground out of open water, `fouled`, `dark`, and `smoke` on anything sight passes through.
 - **Clearing**: `LevelState::clear_zone_cells(cells, kinds)`. Cold's `douses` reads it in
   `spell_type.rs::douse` (`[Fire]`). Gale's `clears` reads it in `spell_rule.rs::cast_gale`
   (`[Fire, Fouled, Dark, Smoke]` from its data) on the cells of its line. Rain clears nothing.

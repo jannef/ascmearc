@@ -5,6 +5,9 @@
 # before the spell's own lines. `who`: a bearer the player sees.
 flames_from_shield = "Flames leap from {who:poss} shield!"
 flames_from_your_shield = "Flames leap from your shield!"
+# A unique sling's hail falls where its stone stopped (Hagolscūr, #2114; `world/combat/hail.rs`),
+# before the spell's own lines; said when the player sees the cell.
+hail_falls = "Hail hammers down!"
 # A spell cast or a scroll read in a unique's silence (Swīge, #2112; `world/magic/hush.rs`),
 # refused.
 hushed = "No word will come in this silence."

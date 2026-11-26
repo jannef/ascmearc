@@ -62,6 +62,7 @@ A **zone** is an area that lies on the floor for a while. [Balefire](magic.md#th
 from the [grimoires](learning-spells.md#learning-a-spell) and [scrolls](scrolls.md#spell-scrolls) you find (and a flask of smoke lays Fume's).
 [Pitch fire](magic.md#spell-pitch-fire) burns too, in a pool where it bursts; it comes from a scroll or
 a [flask](potions.md#flasks) of it.
+[Hagolscūr](magic-items.md#unique-items), a unique sling, leaves rime where its hail falls.
 
 - A zone's cells stay as they were laid, and it never spreads.
 - It takes you and your [allies](allies.md) like anyone else. The caster has no protection from
@@ -74,6 +75,7 @@ a [flask](potions.md#flasks) of it.
 |---|---|---|
 | Fire | whoever starts a turn on it or steps onto it | the spell's [fire](spell-types.md) harm, one number rolled when it is laid and the same for all its time, halved by [Evasion](talents-body.md#talent-evasion); then fire's one chance in four of [burning](status-effects.md#burning). Each cell sheds a fire's light, and the [ice](temperature.md#water-freezes) under it melts as it is laid. It lies only on walkable ground out of the water |
 | Foul cloud | whoever starts a turn in it | [Poisoned](status-effects.md#poisoned) one degree more, no other harm; nothing to the [poison-immune](damage-types.md). It does not block sight |
+| Rime | whoever starts a turn on it | [cold](spell-types.md)'s rule, no harm: [Sluggish](status-list.md#status-sluggish) one degree, and an end to burning; nothing to the cold-immune. It lies only on walkable ground out of the water |
 | Slick ground | whoever steps onto it or off it | a [Dexterity](stats.md#stat-dexterity) check against 12. Failed: [Staggered](status-list.md#status-staggered), the next action half again as slow. The step is still taken. Nothing incorporeal slips. It lies only on walkable ground out of the water |
 | Smoke | no one directly | no eye sees into it or through it, yours and every creature's: your sight stops at its edge as at a wall, and whoever stands in it is seen only from a cell beside them. From inside, you see only the cells beside you. Light, missiles, and spells pass through it. Gale tears it away; rain does not |
 | Darkness | no one directly | no light reaches its cells, the sun's included, and a light inside sheds none, a burning creature's too. Eyes that need light see nothing inside; [darkvision](vision.md#the-four-types) sees in as far as it reaches. Your own eyes follow the same rule: from inside, you see only the cell you stand on and what is lit beyond |

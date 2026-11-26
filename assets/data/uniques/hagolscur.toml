@@ -1,0 +1,19 @@
+# Hagolscūr (#2114): a sling for the drop pool (#2103; placed nowhere else but the test world's
+# quarry), item level 22. The druid's weather thrown: every stone it looses, hit or miss, brings
+# down hail on the cell it stops at and the eight about it (2d6 cold to everyone there, the one
+# struck on top of the stone's hit; its slinger spared, no one else), and ices those cells for 5
+# turns (a zone of rime: the cold's Sluggish on whoever starts a turn there, the slinger too).
+# Its power, Burst, is read once a shot's flight is over (`world/combat/hail.rs`). Its affixes
+# as the design writes them: +4 to hit, +2 range (of Reach, off its bases), Spot +4 (of the Eagle)
+# and 30% cold resistance (of Warmth): hail in the face. Every value set by hand
+# (docs/dev/magic-items.md "Unique items"; a unique follows no affix rules, #2152).
+[[unique]]
+id = "hagolscur"
+name = "Hagolscūr"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "sling"
+affixes = ["of_precision=4", "of_reach=2", "of_the_eagle=4", "of_warmth=30"]
+level = 22
+power = { burst = { spell = "rime", radius = 1, damage = "2d6", ice = 5 }, phrase = "Hail falls where its stones come down, hit or miss, on all about, and leaves ice underfoot. It spares its slinger, and no one else." }
+lore = "The shepherds of the downs still speak of the summer it hailed sideways."

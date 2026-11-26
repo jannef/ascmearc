@@ -230,6 +230,7 @@ fn zone_name(kind: ZoneKind) -> &'static str {
     match kind {
         ZoneKind::Fire => "fire",
         ZoneKind::Fouled => "foul air",
+        ZoneKind::Rime => "rime",
         ZoneKind::Slick => "slick ground",
         ZoneKind::Dark => "darkness",
         ZoneKind::Smoke => "smoke that blocks sight",

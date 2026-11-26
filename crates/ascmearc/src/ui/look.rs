@@ -156,6 +156,7 @@ fn zone_words(kind: ZoneKind) -> Arg {
     let text = match kind {
         ZoneKind::Fire => T::ZONE_FIRE,
         ZoneKind::Fouled => T::ZONE_FOULED,
+        ZoneKind::Rime => T::ZONE_RIME,
         ZoneKind::Slick => T::ZONE_SLICK,
         ZoneKind::Dark => T::ZONE_DARK,
         ZoneKind::Smoke => T::ZONE_SMOKE,

@@ -3,6 +3,8 @@
 # A unique shield's Cast power goes off (Demonsoul, #2095).
 flames_from_shield = { text = "{who:Gen} kilvestä leimahtaa liekkejä!", of = "929475" }
 flames_from_your_shield = { text = "Kilvestäsi leimahtaa liekkejä!", of = "e3fd55" }
+# A unique sling's hail falls where its stone stopped (Hagolscūr, #2114).
+hail_falls = { text = "Rakeita sataa rajusti!", of = "da3adc" }
 # A spell or a scroll refused in a unique's silence (Swīge, #2112).
 hushed = { text = "Tässä hiljaisuudessa ei synny sanaakaan.", of = "643f8b" }
 # A Grudge's grudges (the Wrecend, #2131).

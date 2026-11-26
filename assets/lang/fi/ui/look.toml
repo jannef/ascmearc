@@ -272,6 +272,10 @@ text = "liekkien vallassa"
 of = "73947e"
 text = "löyhkän keskellä"
 
+[zone_rime]
+of = "d3d31f"
+text = "kuuran jäädyttämänä"
+
 [zone_slick]
 of = "86f863"
 text = "liukkaalla pinnalla"

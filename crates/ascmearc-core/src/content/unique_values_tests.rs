@@ -44,6 +44,16 @@ const UNIQUES: &[Written] = &[
         &[("of_the_lion", 4), ("hale", 20), ("of_breath", 20)],
     ),
     (
+        "entbana",
+        40,
+        &[
+            ("sharp", 5),
+            ("of_precision", 4),
+            ("hunters", 4),
+            ("steady", 4),
+        ],
+    ),
+    (
         "eorcanstan",
         12,
         &[
@@ -63,6 +73,17 @@ const UNIQUES: &[Written] = &[
             ("sturdy", 3),
             ("of_the_ox", 4),
             ("of_the_tortoise", 3),
+        ],
+    ),
+    (
+        "feolaga",
+        28,
+        &[
+            ("of_precision", 4),
+            ("steady", 4),
+            ("hunters", 4),
+            ("of_the_hunt", 4),
+            ("keen", 2),
         ],
     ),
     (
@@ -120,6 +141,16 @@ const UNIQUES: &[Written] = &[
             ("of_the_ox", 4),
             ("of_vitality", 12),
             ("of_stillness", 4),
+        ],
+    ),
+    (
+        "hagolscur",
+        22,
+        &[
+            ("of_precision", 4),
+            ("of_reach", 2),
+            ("of_the_eagle", 4),
+            ("of_warmth", 30),
         ],
     ),
     (
