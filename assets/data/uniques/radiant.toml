@@ -15,5 +15,8 @@ object = "war_hammer"
 affixes = ["nimble=2", "hardened=2", "of_precision=4", "of_the_ox=10", "of_vitality=30"]
 level = 40
 quality = "masterwork"
+# Its light has a heart (#2159): a flawless diamond in its pommel, the brightest of stones; it
+# carries no affix rule (a unique follows none).
+parts = [{ part = "pommel", of = "diamond", cut = "flawless" }]
 power = { light = "radiant_hammer", phrase = "It sheds a light like noon about its bearer." }
 lore = "Struck at a holy well, it has not been dark since, though many have tried to put it out."

@@ -361,7 +361,9 @@ id on another rarity than unique, and a unique without its id.
   `"heavy=2d6"`), any light, any number of affixes of a kind or of one category, on any base
   (an affix whose effect has nothing to change there, Smoulder's Steady on a crossbow, simply
   does nothing), and never trimmed to its capacity (`content/level.rs::hand_made`,
-  docs/dev/enchanting.md), so no make, material, or gem is ever needed for room. A value no tier
+  docs/dev/enchanting.md), so no make, material, or gem is ever needed for room: a unique carries one only where it
+  belongs to its story (#2159: the Brosinga Mene's flawless ruby, the Eorcanstān's and Sigeric's
+  Star's flawless sapphires, the Radiant's flawless diamond). A value no tier
   rolls takes the tier nearest it (`affix_value::nearest`: the last for one past the top,
   against the ladder, of more dice than any, or a light no tier gives; else the nearest by dice,
   then by value), which prices it and counts toward the item level; what that tier does not say
@@ -383,7 +385,8 @@ id on another rarity than unique, and a unique without its id.
   the quests that pay one (`rewarded_by`): Sigeric's Star (gold ring, item level 12, #1787) is
   placed only by Master Sigeric's pay in the wizards' quarrel (`docs/dev/towers.md`
   "Steorratorr").
-- **The pedlar's three** (#808): the Brosinga Mene (gold amulet), the Eorcanstān (gold ring),
+- **The pedlar's three** (#808): the Brosinga Mene (gold amulet, a flawless ruby), the Eorcanstān
+  (gold ring, a flawless sapphire),
   and Grendles Grāpe (gauntlets), `campaigns/ascmearc/data/uniques/`, each item level 12 with five or six
   affixes and a `ward`, after ADOM's black torc (resistances, speed, Defence and Protection; the
   caster's and the fighter's counterparts). They are placed only at run time, through a trader's
@@ -393,7 +396,7 @@ id on another rarity than unique, and a unique without its id.
 - **The drop-pool three** (#1976; the owner's numbers, #2091): the Grandmother (a Masterwork
   mithril great sword: +10 damage, 6d6 more, +6 to hit, +6 Strength, −2 to Dodge, and Bleeding
   on half its hits), Silverstrike (a Marvellous long war bow: Range ×2, +6 to hit, Keen 6,
-  Steady 6), and the Radiant (a Masterwork war hammer: Light `radiant_hammer`, radius 20,
+  Steady 6), and the Radiant (a Masterwork war hammer, a flawless diamond in its pommel: Light `radiant_hammer`, radius 20,
   `data/lights.toml`; +4 to hit, +2 to Dodge, +2 Protection, +10 Toughness, +30 hit points), in
   the shared `data/uniques/`, item level 40 (docs/design/item-level-40.md §10: at or above
   §5.8's best roll), every affix written with its value, each `pool = true` (the drop pool, below). Placed

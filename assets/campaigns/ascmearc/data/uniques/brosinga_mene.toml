@@ -9,5 +9,8 @@ name = "the Brosinga Mene"
 object = "gold_amulet"
 affixes = ["shimmering=3", "oaken=3", "hale=12", "of_the_salamander=45", "of_warmth=45", "of_the_wind=10"]
 level = 12
+# The finest neck-ring under heaven is a jewel (#2159): its ruby a flawless one. Its chain stays
+# the legend's gold; the gem carries no affix rule (a unique follows none).
+parts = [{ part = "setting", of = "ruby", cut = "flawless" }]
 power = { ward = "poisoned", message = "The venom finds no hold on you.", phrase = "No venom takes hold of its wearer." }
 lore = "Hama carried it off to the bright city, and nobody since has said where it went."
