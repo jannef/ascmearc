@@ -4,10 +4,11 @@
 //!
 //! Each level reached makes, by `loot.chance` percent, one loot roll at
 //! the level as item level, with the stipend's own finder `loot.finder` (`{ rarity = 100 }`: the
-//! magic and rare rarities twice as likely; [`crate::magic::finder::Finder`]) and a loose gem
-//! `loot.gems` percent more likely (the wealth seam's percent); what is rolled is kept when it is magic or better or of one
-//! of the `loot.keep` item classes, and otherwise thrown away; then its `purse`, the one shape of
-//! `data/purses.toml` (the purse table's `stipend` row, [`crate::wealth`]): its gold.
+//! magic and rare rarities twice as likely; [`crate::magic::finder::Finder`], whose `gems` is the
+//! wealth seam's percent and whose `coins` scales the purse); what is rolled is kept when it is
+//! magic or better or of one of the `loot.keep` item classes, and otherwise thrown away; then
+//! its `purse`, the one shape of `data/purses.toml` (the purse table's `stipend` row,
+//! [`crate::wealth`]), for the same finder: its gold.
 //!
 //! The file is optional: without it the stipend never grows.
 
@@ -23,11 +24,9 @@ pub struct StipendRules {
     pub purse: Purse,
     /// The percent chance a level-up makes its loot roll at all.
     pub chance: u32,
-    /// The finder of its loot roll (the rarities better than normal `rarity` percent more
-    /// likely), Landed noble's added.
+    /// The finder of its loot roll and its purse (the rarities better than normal `rarity`
+    /// percent more likely), Landed noble's added.
     pub finder: Finder,
-    /// Percent more likely a loose gem is (the wealth seam's).
-    pub gems: i32,
     /// The item classes kept whatever their rarity (potions, scrolls, gems).
     pub keep: Vec<ItemClassId>,
 }
@@ -45,7 +44,6 @@ struct LootSpec {
     chance: u32,
     #[serde(default)]
     finder: Finder,
-    gems: i32,
     #[serde(default)]
     keep: Vec<String>,
 }
@@ -66,7 +64,6 @@ impl StipendRules {
             purse: parsed.purse,
             chance: parsed.loot.chance.min(100),
             finder: parsed.loot.finder,
-            gems: parsed.loot.gems,
             keep,
         })
     }
@@ -99,7 +96,7 @@ mod tests {
 
     #[test]
     fn a_bad_file_is_refused_and_none_is_no_stipend() {
-        let text = "purse = { coins = { dice = \"1d4+1\" } }\nloot = { chance = 50, gems = 0, keep = [\"nothing\"] }\n";
+        let text = "purse = { coins = { dice = \"1d4+1\" } }\nloot = { chance = 50, keep = [\"nothing\"] }\n";
         let mut files = ContentFiles::builtin();
         files.insert(PATH, text);
         let err = Content::load(&files).expect_err(text);

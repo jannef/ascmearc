@@ -425,14 +425,14 @@ impl World {
             .item_level(&self.state.current_level)
             .saturating_add(bonus);
         let talents = self.state.player().talent_mods(&content);
-        let (finder, gems) = (loot::Finder::of(&talents), talents.fortune.gem_find_percent);
+        let finder = loot::Finder::of(&talents);
         let mut rng = draw!(self, "outcome/loot/{},{}", feature.x, feature.y);
         let spec = loot::Spec::new(loot::Origin::Feature, level).grade(grade);
         for _ in 0..loot::count(&content, &spec, &finder, &mut rng) {
             // At grade any a loose gem instead, by the wealth seam; else a find of the feature
             // row.
             let gem = (grade == LootGrade::Any)
-                .then(|| crate::wealth::gem_instead(&content, &mut rng, level, gems))
+                .then(|| crate::wealth::gem_instead(&content, &mut rng, level, &finder))
                 .flatten();
             let mut found = self.state.uniques_dropped.clone();
             let item = gem.or_else(|| loot::find(&content, &spec, &finder, &mut found, &mut rng));

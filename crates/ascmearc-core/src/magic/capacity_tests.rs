@@ -342,7 +342,7 @@ fn every_loot_path_holds_its_items_to_their_capacity() {
                 &mut rng,
                 level,
                 (
-                    (&loot::Finder::NONE, 0),
+                    &loot::Finder::NONE,
                     &mut crate::test_support::pool_found(&c),
                 ),
             ))

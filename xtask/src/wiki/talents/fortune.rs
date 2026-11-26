@@ -23,10 +23,10 @@ pub(super) fn text(content: &Content, effect: &FortuneEffect) -> String {
                     coins.map_or(Dice::fixed(0), |c| c.plus(-c.bonus())),
                     rules.chance,
                     percent(rules.finder.rarity),
-                    if rules.gems == 0 {
+                    if rules.finder.gems == 0 {
                         String::new()
                     } else {
-                        format!(" and of a gem {}", percent(rules.gems))
+                        format!(" and of a gem {}", percent(rules.finder.gems))
                     },
                 )
             }
@@ -109,6 +109,11 @@ pub(super) fn text(content: &Content, effect: &FortuneEffect) -> String {
         FortuneEffect::IdentifyCarried { hours } => format!(
             "a magic item you carry for {hours} hours (counted from when you gain this) is \
              identified"
+        ),
+        FortuneEffect::CoinFindPercent { value } => format!(
+            "coins found {}: a purse's coins come that much more often, and where they come \
+             anyway that many more",
+            percent(value)
         ),
         FortuneEffect::GemFindPercent { value } => format!(
             "the chance a find is a loose gem {} (anything found, and what creatures drop)",

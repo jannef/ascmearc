@@ -131,19 +131,17 @@ fn daylight_phase(w: &World) -> crate::daylight::DayPhase {
 #[test]
 fn hoard_sense_finds_magic_and_gems_more_often_from_the_same_draws() {
     let talents = mods(&born_under("griffin", "fire"));
-    let luck = (Finder::of(&talents), talents.fortune.gem_find_percent);
+    let luck = Finder::of(&talents);
     assert_eq!(
         luck,
-        (
-            Finder {
-                rarity: 50,
-                ..Finder::NONE
-            },
-            100
-        )
+        Finder {
+            rarity: 50,
+            gems: 100,
+            ..Finder::NONE
+        }
     );
     let content = &*BUILTIN;
-    let gems = |luck: (Finder, i32)| {
+    let gems = |luck: Finder| {
         let mut rng = Rng::stream(3, "stars-test");
         (0..4000)
             .filter_map(|_| {
@@ -153,7 +151,7 @@ fn hoard_sense_finds_magic_and_gems_more_often_from_the_same_draws() {
             .filter(|s| s.gem(content).is_some())
             .count()
     };
-    let (plain, lucky) = (gems((Finder::NONE, 0)), gems(luck));
+    let (plain, lucky) = (gems(Finder::NONE), gems(luck));
     assert!(
         lucky > plain * 3 / 2,
         "{plain} gems, {lucky} with hoard sense"

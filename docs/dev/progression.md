@@ -262,7 +262,8 @@ wiki's effect text appends "while raging".
 | `favour_percent` | `world::people::shop::favour` (before the cap, `MAX_FAVOUR`) |
 | `gem_worth` | `PerceptionView::appraisal` → `magic::describe::appraised` (the describe screen) |
 | `identify_carried` | `World::appraise_carried` from `live`: `Magic::carried` counts the seconds (saved, left out while 0) |
-| `gem_find_percent` | `wealth::gem_instead` (the gems' chance scaled, at most 100), its `more` argument, passed beside the item `Finder` and never in it (`mapgen::Visit::gems` from `level_template`; `World::loot_of`, `leave_loot`) |
+| `coin_find_percent` | `magic::finder::Finder::coins` (`Finder::of`), read by `wealth::purse` alone (the coins' chance, then past certain their amount, by `wealth::scale`), for a row whose `finder` is true. No talent has it yet, and the player's finder reaches no purse until the wealth seam goes (docs/design/wealth.md §8) |
+| `gem_find_percent` | `magic::finder::Finder::gems` (`Finder::of`), read by `wealth::gem_instead` (the gems' chance scaled by `wealth::scale`, at most 100) and `wealth::purse` (the gems' chance, then their count); the finder reaches the seam through `mapgen::Visit` from `level_template`, `World::loot_of`, `leave_loot` |
 | `skill` (its `skill` left out: the chosen one, Skill focus) | `Actor::skill_effect`, as magic items' skill bonuses |
 | `distrusted` | `World::refusal`: no one budges (Trusted by none) |
 | `checks` | the stat checks: `disease.rs` (both), `search_modifier`, `lockpick.rs`, `disarm_modifier`, `steps_lightly` |

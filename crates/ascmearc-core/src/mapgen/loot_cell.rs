@@ -63,8 +63,7 @@ fn holds(content: &Content, class: ItemClassId, level: u8, grade: LootGrade) -> 
 }
 
 impl LootCell {
-    /// What the cell holds at item level `level` for `finder` and the wealth seam's `gems`
-    /// percent (the module docs give the draws): one stack, or none when none of its classes
+    /// What the cell holds at item level `level` for `finder` (the module docs give the draws): one stack, or none when none of its classes
     /// holds anything there yet (a low item level may leave a cell of things found only higher
     /// empty); an item find's count is the finder's ([`loot::count`]: one, more by its
     /// `quantity`); a rare find perhaps a unique of the drop pool none of `taken`
@@ -74,7 +73,7 @@ impl LootCell {
         content: &Content,
         rng: &mut Rng,
         level: u8,
-        ((finder, gems), taken): ((&Finder, i32), &mut BTreeSet<String>),
+        (finder, taken): (&Finder, &mut BTreeSet<String>),
     ) -> Vec<Stack> {
         let grade = self.grade;
         if self.classes.is_empty() {
@@ -82,7 +81,7 @@ impl LootCell {
             return (0..loot::count(content, &spec, finder, rng))
                 .filter_map(|_| {
                     let gem = (grade == LootGrade::Any)
-                        .then(|| wealth::gem_instead(content, rng, level, gems))
+                        .then(|| wealth::gem_instead(content, rng, level, finder))
                         .flatten();
                     gem.or_else(|| loot::find(content, &spec, finder, taken, rng))
                 })
@@ -96,8 +95,19 @@ impl LootCell {
             return Vec::new();
         };
         match kind_of(content, class) {
-            Kind::Coins => wealth::purse(content, &purse(content, level, wealth::Kind::Coins), rng),
-            Kind::Gem => wealth::purse(content, &purse(content, level, wealth::Kind::Gems), rng),
+            // No finder yet: it reaches the purse as the seam goes (docs/design/wealth.md §8).
+            Kind::Coins => wealth::purse(
+                content,
+                &purse(content, level, wealth::Kind::Coins),
+                &Finder::NONE,
+                rng,
+            ),
+            Kind::Gem => wealth::purse(
+                content,
+                &purse(content, level, wealth::Kind::Gems),
+                &Finder::NONE,
+                rng,
+            ),
             Kind::Item => loot::finds(content, &spec(level, grade, &[class]), finder, taken, rng),
         }
     }

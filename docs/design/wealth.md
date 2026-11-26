@@ -235,7 +235,9 @@ any `gems`, or any `quantity`, `rarity`, or `unique`, the coins are identical to
 `gems` the gem count is never fewer, with a positive `coins` the coins never fewer. (a)–(c) are
 exact equalities, not statistics, which the order of §3.3 and the no-draw coin rounding make
 possible. The existing `the_gem_percent_is_no_part_of_the_finder` turns into (a): the percent
-*is* a field now, and no item step reads it.
+*is* a field now, and no item step reads it. (W2 found (b) and (c) exact only for the purse
+alone and statistical across kinds while the purse shares the items' stream; §8's W2 notes say
+what holds, and W3's fork makes it exact.)
 
 ### 3.6 What leaves code and data
 
@@ -421,7 +423,38 @@ new stream. Each moved snapshot is reviewed in its PR (`cargo insta review`), ne
 - **W2 — The finder.** `Finder::coins`, `Finder::gems`; `Finder::of` reads `gem_find_percent`
   into `gems`; `coin_find_percent` (D7); the stipend's purse finder (D3); `wealth::scale`; the
   seam takes `finder.gems` and the loose `gems: i32` arguments and `Visit::gems` go; the
-  invariant test. Zero draw changes.
+  invariant test. Zero draw changes. Built (#2168's second PR), with these notes:
+  - `purse(content, spec, finder, rng)` reads the finder only for a row whose `finder` is true
+    (the quarrel's is not). Only the stipend's own finder reaches it so far (`coins` = Landed
+    noble's `stipend_gold_percent`, `gems` = the file's, 0; `stipend.toml`'s `loot.gems` folded
+    into its `finder`); the chests, the treasure rooms, and the vault's coins and gems cells pass
+    `Finder::NONE`, so no gem talent moves a draw. W3 passes the player's finder with the seam's
+    end, since it moves those streams anyway.
+  - The stipend's gold was `rolled × (100 + p) / 100` rounded down; the purse rounds to the
+    nearest coin. With Landed noble's 100 the two are equal; another percent would differ by
+    at most a coin.
+  - A kind's chance draw is made when the data's chance or the scaled one is neither certain
+    nor never, so a field of 0 or more draws exactly as the data says (a +50 % on
+    `chance = 80` still draws, against 100). A negative field on a certain kind adds that draw.
+  - A gem count's fraction draw is the purse's last: the gems of a smaller percent are the first
+    gems of a larger one, gem for gem.
+  - **The invariant as it holds** (§3.5's (b) and (c) cannot hold exactly while the purse draws
+    after the items on the same stream: an item modifier that changes the items' draws moves the
+    coins and gems). (1) Exact, for the purse alone given the same stream
+    (`wealth/purse_tests.rs`): the item fields change nothing; `gems`, of any sign, changes no
+    coin; `coins` of 0 or more changes no gem wherever the coins come, or fail to, with it as
+    without it (a raised chance that brings coins draws their heaps before the gems, and a
+    negative `coins` on certain coins adds a chance draw: there the gems move); more of a
+    kind's own field never gives fewer of it, heap for heap and gem for gem. (2) Across kinds,
+    for a source rolled items-then-purse (`magic/finder_tests.rs`): a wealth field changes no
+    item, exactly (§3.5's (a)); an item field never lowers the expected coins or gems,
+    statistically. Until W3 the seam still takes items for gems (§2.1).
+  - **W3 makes cross-kind independence exact by forking**: each find draws one `u64` from its
+    source's stream and seeds a local generator for its items and another for its purse (no new
+    named stream: the forks are seeded from draws, not labels). An item modifier then moves no
+    purse draw, and a wealth modifier no item draw, since W3 moves those draws anyway. Seeding
+    the purse's gems from a fork of their own the same way would make (1)'s coins-to-gems half
+    exact too.
 - **W3 — The seam gone.** `wealth::gem_instead` deleted; `gems.toml`'s `chance` removed; the
   dungeons' (D1), rooms' (D2), outcomes' (D4), and stipend's (D3) purses; the coffer's,
   chest's, and hutch's gem dice re-keyed to their chances (§3.4, left from W1); `place_loot`,

@@ -2,20 +2,23 @@
 //! find of a row that takes the finder (`finder = true` in `data/loot_sources.toml`), from their
 //! talents ([`Finder::of`]) or, for the stipend, its own data (`data/rules/stipend.toml`).
 //!
-//! Each modifier is applied at exactly one step of [`super::loot`]'s procedure and read nowhere
-//! else: `quantity` at the count ([`super::loot::count`]), `rarity` at the rarity draw (step 3),
-//! `unique` at the drop pool's check (step 3b, [`super::drop_pool::draw`]). So a modifier
-//! changes only the quantity or quality it names: more finds take no rarity, likelier rarities take no finds, and none of them touches coins or
-//! gems, which are wealth's ([`crate::wealth`]; a finder's gem percent is the wealth seam's own
-//! argument, never a field here). A new modifier is one field here, one effect kind of the
-//! fortune talents (`talent/fortune.rs`, `data/talents/README.toml`), one line in
-//! [`Finder::of`], and its one step.
+//! Each modifier is applied at exactly one step and read nowhere else: of [`super::loot`]'s
+//! procedure, `quantity` at the count ([`super::loot::count`]), `rarity` at the rarity draw
+//! (step 3), `unique` at the drop pool's check (step 3b, [`super::drop_pool::draw`]); of wealth's
+//! (docs/design/wealth.md §3.5), `coins` and `gems` at their kind's chance and amount in the purse
+//! ([`crate::wealth::purse`], by [`crate::wealth::scale`]), and `gems` at the wealth seam's chance
+//! ([`crate::wealth::gem_instead`]). The item steps never read `coins` or `gems`, and the purse
+//! never reads the item fields. So a modifier changes only the quantity or quality it names:
+//! more finds take no rarity, likelier rarities take no finds, and the item fields touch no
+//! coins or gems. A new modifier is one field here, one effect kind of the fortune talents
+//! (`talent/fortune.rs`, `data/talents/README.toml`), one line in [`Finder::of`], and its one
+//! step.
 
 use crate::rng::Rng;
 use crate::talent::TalentMods;
 use serde::Deserialize;
 
-/// What a finder brings to an item find, each a signed percent (0: nothing).
+/// What a finder brings to a find, its items and its purse, each a signed percent (0: nothing).
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct Finder {
@@ -27,6 +30,12 @@ pub struct Finder {
     pub rarity: i32,
     /// Percent more likely a rare find is a unique of the drop pool: `rare.unique` scaled.
     pub unique: i32,
+    /// Percent more coins: the coins' chance scaled, and past certain their amount
+    /// ([`crate::wealth::scale`]).
+    pub coins: i32,
+    /// Percent more loose gems: the gems' chance scaled, and past certain their count
+    /// ([`crate::wealth::scale`]); the wealth seam's chance too.
+    pub gems: i32,
 }
 
 impl Finder {
@@ -35,15 +44,19 @@ impl Finder {
         quantity: 0,
         rarity: 0,
         unique: 0,
+        coins: 0,
+        gems: 0,
     };
 
-    /// What a finder with `talents` brings (the fortune talents' loot effects).
+    /// What a finder with `talents` brings (the fortune talents' loot and wealth effects).
     pub fn of(talents: &TalentMods) -> Self {
         let fortune = &talents.fortune;
         Self {
             quantity: fortune.loot_quantity_percent,
             rarity: fortune.loot_magic_percent,
             unique: fortune.loot_unique_percent,
+            coins: fortune.coin_find_percent,
+            gems: fortune.gem_find_percent,
         }
     }
 

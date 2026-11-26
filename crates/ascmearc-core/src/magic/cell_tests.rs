@@ -25,7 +25,7 @@ fn roll_many(c: &Content, cell: &LootCell, level: u8, n: u64) -> Vec<Stack> {
                 c,
                 &mut rng,
                 level,
-                ((&Finder::NONE, 0), &mut crate::test_support::pool_found(c)),
+                (&Finder::NONE, &mut crate::test_support::pool_found(c)),
             )
             .pop()
         })
@@ -141,13 +141,13 @@ fn a_grade_alone_rolls_as_it_always_did() {
             let mut celled = Rng::stream(seed, "pool");
             let none = Finder::NONE;
             assert_eq!(
-                crate::test_support::found_with(&c, &mut plain, 7, grade, (none, 0)),
+                crate::test_support::found_with(&c, &mut plain, 7, grade, none),
                 LootCell::from(grade)
                     .roll(
                         &c,
                         &mut celled,
                         7,
-                        ((&none, 0), &mut crate::test_support::pool_found(&c))
+                        (&none, &mut crate::test_support::pool_found(&c))
                     )
                     .pop(),
             );

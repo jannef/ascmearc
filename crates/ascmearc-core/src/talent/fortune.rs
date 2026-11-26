@@ -42,8 +42,12 @@ pub enum FortuneEffect {
     GemWorth,
     /// A magic item it has carried this many hours since it held the effect is identified.
     IdentifyCarried { hours: u32 },
-    /// Loot it finds and creatures drop is a loose gem this percent more often (Hoard sense):
-    /// the gems' chance, never above certain.
+    /// Coins it finds are this percent more: each purse's coins come that much more often, and
+    /// where they come anyway, that many more (`magic::finder::Finder::coins`,
+    /// `wealth::scale`). No talent has it yet.
+    CoinFindPercent { value: i32 },
+    /// Loose gems it finds are this percent more (Hoard sense): the wealth seam's chance, never
+    /// above certain (`magic::finder::Finder::gems`, `wealth::scale`).
     GemFindPercent { value: i32 },
     /// Handed out once, as it is taken (a talent only for character creation: Family wealth):
     /// gold coins, `percent` of those the character carries more, at least `at_least` and at
@@ -82,7 +86,8 @@ pub enum FortuneEffect {
 impl FortuneEffect {
     /// The `kind`s of the data that are effects of the area, one a variant (`TalentEffect`'s
     /// deserializer hands these to [`FortuneEffect`]).
-    pub const KINDS: [&'static str; 17] = [
+    pub const KINDS: [&'static str; 18] = [
+        "coin_find_percent",
         "distrusted",
         "favour_percent",
         "gem_find_percent",
@@ -135,7 +140,9 @@ pub struct FortuneMods {
     /// The hours a magic item must be carried to be identified, if it has the effect (the
     /// fewest counts).
     pub identify_carried: Option<u32>,
-    /// Percent more often its finds are loose gems.
+    /// Percent more coins it finds (`magic::finder::Finder::coins`).
+    pub coin_find_percent: i32,
+    /// Percent more loose gems it finds (`magic::finder::Finder::gems`).
     pub gem_find_percent: i32,
     /// No one makes way for it.
     pub distrusted: bool,
@@ -172,6 +179,7 @@ impl FortuneMods {
             FortuneEffect::IdentifyCarried { hours } => {
                 self.identify_carried = Some(self.identify_carried.map_or(hours, |h| h.min(hours)));
             }
+            FortuneEffect::CoinFindPercent { value } => self.coin_find_percent += value,
             FortuneEffect::GemFindPercent { value } => self.gem_find_percent += value,
             FortuneEffect::Distrusted => self.distrusted = true,
             FortuneEffect::MerchantsEye => self.merchants_eye = true,

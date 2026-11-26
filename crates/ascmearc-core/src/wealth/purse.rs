@@ -1,26 +1,43 @@
-//! The purse (docs/design/wealth.md §3.2–§3.4): what one source's coins and loose gems are, as
+//! The purse (docs/design/wealth.md §3.2–§3.5): what one source's coins and loose gems are, as
 //! data in one shape ([`Purse`]: `{ coins = { chance, heaps, dice, each }, gems = { chance,
 //! dice } }`), and the one function that rolls it, [`purse`].
 //!
 //! Its parameter set is exactly the content (the currency, `data/gems.toml`'s sizes, cuts, and
-//! object, the gem materials' `rarity`), the [`PurseSpec`] (the source, the item level, the purse
-//! to roll, the one kind asked if any), and the stream. The draws, in order:
+//! object, the gem materials' `rarity`, the purse table's rows), the [`PurseSpec`] (the source,
+//! the item level, the purse to roll, the one kind asked if any), the finder's `coins` and `gems`
+//! (its item fields unread; [`Finder::NONE`] for a row whose `finder` is false), and the stream.
+//! Each kind's chance and amount are scaled by its finder field by the one rule,
+//! [`super::scale`]. The draws, in order:
 //!
-//! 1. the coins' `chance` (one `chance` draw; none at 100, and none at 0, which gives no coins);
+//! 1. the coins' chance (one `chance` draw against the scaled chance, made when the data's chance
+//!    or the scaled one is neither certain nor never: so a finder field of 0 or more never adds
+//!    or takes a draw here);
 //! 2. the `heaps` dice (no draw for a fixed number);
 //! 3. per heap, the caller's place for it if it draws one ([`purse_placed`]), then the `dice`
-//!    (× `each` coins of [`super::currency`], a stack when more than none);
-//! 4. the gems' `chance`, as the coins';
-//! 5. the count: the gems' `dice` (0 or less: none);
+//!    (× `each` coins of [`super::currency`], scaled past certain to the nearest coin with no
+//!    draw; a stack when more than none);
+//! 4. the gems' chance, as the coins';
+//! 5. the count: the gems' `dice` (0 or less: none), scaled past certain: the whole part;
 //! 6. per gem, the caller's place for it if any, then [`crate::gem::loose`]'s three draws at the
-//!    item level.
+//!    item level;
+//! 7. the count's fraction, if any: one `below(100)`, and on a hit one gem more as in 6.
 //!
 //! A spec asking one kind alone ([`PurseSpec::only`]: a vault's coins or gems cell, whose class
-//! draw was the chance) rolls only that kind, and certainly: no chance draw. Nothing inside
-//! reads the world: where each stack lies is the caller's.
+//! draw was the chance) rolls only that kind, as certain: no chance draw. Nothing inside reads
+//! the world: where each stack lies is the caller's.
+//!
+//! What a finder field changes, for the same stream (`wealth/purse_tests.rs` tests each):
+//! `gems`, of any sign, changes no coin (the coins are drawn first); `coins` of 0 or more draws
+//! the chance as the data says and scales the amount with no draw, so it changes no gem wherever
+//! the coins come, or fail to, with it as without it; a positive `coins` never gives fewer
+//! coins, heap for heap, and a positive `gems` gives the gems of none and perhaps more after
+//! them. Where a raised chance brings coins that would not have come, their heaps' draws come
+//! before the gems, and the gems move; a negative `coins` on certain coins adds a chance draw,
+//! with the same effect. There only the expectation of the gems holds.
 
 use crate::content::Content;
 use crate::dice::Dice;
+use crate::magic::finder::Finder;
 use crate::object::Stack;
 use crate::rng::Rng;
 use serde::Deserialize;
@@ -208,10 +225,11 @@ impl PurseSpec {
     }
 }
 
-/// What the purse of `spec` holds, drawn from `rng` (the module docs give the draws): a stack of
-/// coins per heap and a stack of one per gem, in that order; empty when nothing came.
-pub fn purse(content: &Content, spec: &PurseSpec, rng: &mut Rng) -> Vec<Stack> {
-    (purse_placed(content, spec, rng, |_| Some(())).into_iter())
+/// What the purse of `spec` holds for `finder`, drawn from `rng` (the module docs give the
+/// draws): a stack of coins per heap and a stack of one per gem, in that order; empty when
+/// nothing came.
+pub fn purse(content: &Content, spec: &PurseSpec, finder: &Finder, rng: &mut Rng) -> Vec<Stack> {
+    (purse_placed(content, spec, finder, rng, |_| Some(())).into_iter())
         .map(|((), stack)| stack)
         .collect()
 }
@@ -222,42 +240,71 @@ pub fn purse(content: &Content, spec: &PurseSpec, rng: &mut Rng) -> Vec<Stack> {
 pub fn purse_placed<T>(
     content: &Content,
     spec: &PurseSpec,
+    finder: &Finder,
     rng: &mut Rng,
     mut place: impl FnMut(&mut Rng) -> Option<T>,
 ) -> Vec<(T, Stack)> {
+    let finder = match content.purses().row(spec.source).finder {
+        true => finder,
+        false => &Finder::NONE,
+    };
     let mut out = Vec::new();
-    let certain = spec.only.is_some();
-    if let Some(coins) = spec.purse.coins.filter(|_| spec.asks(Kind::Coins))
-        && (certain || comes(coins.chance, rng))
-    {
-        let currency = super::currency(content);
-        for _ in 0..coins.heaps.roll(rng).max(0) {
-            let Some(at) = place(rng) else { break };
-            let rolled = u32::try_from(coins.dice.roll(rng).max(0)).unwrap_or(0);
-            let count = rolled.saturating_mul(coins.each);
-            if let (1.., Some(currency)) = (count, currency) {
-                out.push((at, Stack::new(currency, count)));
+    // A kind asked alone is certain: its class draw was the chance.
+    let chance = |c: u8| if spec.only.is_some() { 100 } else { c };
+    if let Some(coins) = spec.purse.coins.filter(|_| spec.asks(Kind::Coins)) {
+        let base = chance(coins.chance);
+        let scaled = super::scale(base, finder.coins);
+        if comes(base, scaled.chance, rng) {
+            let currency = super::currency(content);
+            for _ in 0..coins.heaps.roll(rng).max(0) {
+                let Some(at) = place(rng) else { break };
+                let rolled = u64::try_from(coins.dice.roll(rng).max(0)).unwrap_or(0);
+                let count = scaled.nearest(rolled.saturating_mul(u64::from(coins.each)));
+                let count = u32::try_from(count).unwrap_or(u32::MAX);
+                if let (1.., Some(currency)) = (count, currency) {
+                    out.push((at, Stack::new(currency, count)));
+                }
             }
         }
     }
-    if let Some(gems) = spec.purse.gems.filter(|_| spec.asks(Kind::Gems))
-        && (certain || comes(gems.chance, rng))
-    {
-        for _ in 0..gems.dice.roll(rng).max(0) {
-            let Some(at) = place(rng) else { break };
-            if let Some(gem) = crate::gem::loose(content, rng, spec.level) {
-                out.push((at, gem));
+    if let Some(gems) = spec.purse.gems.filter(|_| spec.asks(Kind::Gems)) {
+        let base = chance(gems.chance);
+        let scaled = super::scale(base, finder.gems);
+        if comes(base, scaled.chance, rng) {
+            let rolled = u64::try_from(gems.dice.roll(rng).max(0)).unwrap_or(0);
+            let hundredths = scaled.hundredths(rolled);
+            let (whole, fraction) = (hundredths / 100, hundredths % 100);
+            let mut gem = |rng: &mut Rng, out: &mut Vec<(T, Stack)>| {
+                let Some(at) = place(rng) else { return false };
+                if let Some(gem) = crate::gem::loose(content, rng, spec.level) {
+                    out.push((at, gem));
+                }
+                true
+            };
+            let mut laid = true;
+            for _ in 0..whole {
+                laid = gem(rng, &mut out);
+                if !laid {
+                    break;
+                }
+            }
+            // The fraction last, so the gems of a smaller percent come first, the same.
+            if laid && fraction > 0 && u64::from(rng.below(100)) < fraction {
+                gem(rng, &mut out);
             }
         }
     }
     out
 }
 
-/// Whether a kind of `chance` percent comes: one draw, none when it is certain or never.
-fn comes(chance: u8, rng: &mut Rng) -> bool {
-    match chance {
-        0 => false,
-        100.. => true,
-        c => rng.chance(u32::from(c)),
+/// Whether a kind of the data's chance `base` comes at its scaled chance `chance` (percent): one
+/// draw when either is neither certain nor never, so a finder of 0 or more draws exactly as the
+/// data says; none otherwise.
+fn comes(base: u8, chance: u8, rng: &mut Rng) -> bool {
+    let draws = |c: u8| (1..100).contains(&c);
+    if draws(base) || draws(chance) {
+        rng.chance(u32::from(chance))
+    } else {
+        chance >= 100
     }
 }
