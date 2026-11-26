@@ -20,6 +20,12 @@ restored = { text = "{who:Nom} kaatuu ja nousee jälleen eheänä!", of = "15db5
 restored_unseen = { text = "Sormesi kivi lämpenee.", of = "621eab" }
 restored_you = { text = "Kuolema päästää sinusta irti: nouset jälleen eheänä!", of = "50e146" }
 
+# The Plant power (#2132): the planted player is not driven from their cell.
+stand_fast = { text = "Seisot lujana paikallasi.", of = "0121fd" }
+
+# Feet that never spring a trap (Tiptoe, Hushfoot; #2141, #2133).
+tread_over_trap = { text = "Astut {trap:counted_gen} yli, eikä se laukea.", of = "a32251" }
+
 # The Ring power (#2127, the Kettle Hat): a blow lands on the helm's wearer.
 rings_helm = { text = "{who:Gen} kypärä kumahtaa kuin lyöty pata!", of = "101ada" }
 rings_your_helm = { text = "Kypäräsi kumahtaa kuin lyöty pata!", of = "8dc87f" }

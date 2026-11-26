@@ -3,7 +3,9 @@
 
 use super::order;
 use super::util::capital;
-use ascmearc_core::content::{Affliction, Content, DialogueId, ItemKind, Power, UniqueDef};
+use ascmearc_core::content::{
+    Affliction, Content, DialogueId, ItemKind, Power, UniqueDef, ZoneKind,
+};
 use ascmearc_core::magic::describe;
 use std::fmt::Write as _;
 
@@ -20,7 +22,7 @@ pub(super) fn uniques(content: &Content) -> String {
     for u in all {
         let def = content.object(u.object);
         let magic = u.magic();
-        let kind = def.kind.unwrap_or(ItemKind::Ring);
+        let kind = def.kind.or(u.kind).unwrap_or(ItemKind::Ring);
         let affixes: Vec<String> = (magic.rolled(content).iter())
             .map(|r| {
                 let does = describe::phrase(r, kind, content);
@@ -304,6 +306,77 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
             }
             when.join("; ")
         }
+        Some(Power::Grows(growth)) => {
+            let every = growth.every;
+            let mut rungs = Vec::new();
+            for (i, dice) in growth.steps.iter().enumerate() {
+                let from = u32::try_from(i).unwrap_or(u32::MAX) * u32::from(every);
+                rungs.push(match i {
+                    0 => format!("{dice} below level {every}"),
+                    _ => format!("{dice} from {from}"),
+                });
+            }
+            format!(
+                "its damage dice come from its wielder's character level (a creature's, its \
+                 own), a step every {every} levels: {}; and +1 to hit every {} levels",
+                rungs.join(", "),
+                growth.to_hit_every
+            )
+        }
+        Some(Power::FirstBlood) => "every hit with it on a foe at full hit points is a sure \
+             critical, with no roll to confirm it (its own multiplier as ever); a hurt foe takes \
+             an ordinary blow"
+            .into(),
+        Some(Power::Plant { per_turn }) => format!(
+            "every turn its bearer ends in the cell they began it in adds {per_turn} Protection, \
+             with no cap; a step (or anything that moves them) takes it all away. While it adds \
+             any, its bearer is never driven from their cell (knockback, a shove, a spell's \
+             push) nor caught flat-footed by an attacker they did not see"
+        ),
+        Some(Power::Barefoot(bare)) => {
+            let slot = content.slot(bare.slot).name.to_lowercase();
+            let mut gives = Vec::new();
+            match bare.noise {
+                0 => gives.push("their steps make no sound at all, on any ground".to_string()),
+                100 => {}
+                n => gives.push(format!("their steps are {n}% as loud")),
+            }
+            if bare.dodge != 0 {
+                gives.push(format!("{:+} Dodge", bare.dodge));
+            }
+            if bare.feel_traps {
+                gives.push(
+                    "every hidden trap on the floor beside and under them is found as they pass \
+                     (no roll), and no trap springs when they step on it (it stays armed)"
+                        .into(),
+                );
+            }
+            format!(
+                "while nothing is worn in its wearer's {slot} slot: {}",
+                gives.join("; ")
+            )
+        }
+        Some(Power::Trapwise(radius)) => format!(
+            "no trap springs when its wearer steps on it, hidden or known (it stays armed for \
+             whoever follows); every hidden trap within {radius} cells of them is found (no roll, \
+             no line of sight needed; not secret doors)"
+        ),
+        Some(Power::Zone {
+            kind,
+            radius,
+            turns,
+        }) => {
+            let reach = match radius {
+                0 => "on the cell".to_string(),
+                1 => "within 1 cell".to_string(),
+                r => format!("within {r} cells"),
+            };
+            format!(
+                "every shot it looses, hit or miss, leaves {} {reach} of where the missile \
+                 stops, for {turns} turns",
+                zone_words(*kind)
+            )
+        }
         Some(Power::Pain {
             resource,
             gain,
@@ -336,5 +409,18 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
              scars it: +1 Armour, +1 maximum hit point, or +1 Toughness, each a third of the \
              time, kept on it for whoever wears it, without end"
             .into(),
+    }
+}
+
+/// A zone a Zone power leaves, in words.
+fn zone_words(kind: ZoneKind) -> &'static str {
+    match kind {
+        ZoneKind::Smoke => {
+            "the Fume spell's smoke (no eye sees into it or through it, the shooter's own neither)"
+        }
+        ZoneKind::Fire => "fire",
+        ZoneKind::Fouled => "a poison cloud",
+        ZoneKind::Slick => "a slick",
+        ZoneKind::Dark => "darkness",
     }
 }

@@ -1,0 +1,19 @@
+# Satisfaction (#2125): a rapier for the drop pool (#2103; placed nowhere else but the test
+# world's quarry), item level 32. The duelist's blade: its FirstBlood power makes every hit on a
+# foe at full health a sure critical (`world/combat/first_blood.rs`), the rapier's own multiplier
+# as ever; a foe already wounded takes an ordinary blow. Keen 4 (past the ladder's top of 2), +4
+# to hit, attacks 12% quicker, +2 Dexterity, and Guarding 2 (+2 Parry, the rapier's own none).
+# Every value set by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "satisfaction"
+name = "Satisfaction"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "rapier"
+affixes = ["guarding=2", "keen=4", "of_celerity=12", "of_precision=4", "of_the_lynx=2"]
+level = 32
+# Five enchantments need its make (docs/dev/enchanting.md): Marvellous and a ruby in the pommel.
+quality = "marvellous"
+parts = [{ part = "pommel", of = "ruby", cut = "flawless" }]
+power = { first_blood = true, phrase = "Its first touch on a foe unhurt is always telling." }
+lore = "He only ever needed the one."

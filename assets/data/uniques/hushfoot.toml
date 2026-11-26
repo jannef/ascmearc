@@ -1,0 +1,19 @@
+# Hushfoot (#2133): a halfling's waistcoat for the drop pool (#2103; placed nowhere else but the
+# test world's quarry), item level 30. A waistcoat is clothing, of no kind, so the table names the
+# kind its affixes work as (`kind = "body"`). Its Barefoot power, while nothing is worn on the
+# feet (`world/skills/trapwise.rs`, `noise::noise`, `Actor::defence`): silent steps, +3 Dodge,
+# the hidden traps beside its wearer found as they pass, and no trap springs under them. Always:
+# +12 hit points, +40 Listen (of the Fox, off its bases), +40 Stealth (of Shadows, past its
+# ladder and off its bases), and 25% less hunger (of Sustenance). Every value set by hand
+# (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "hushfoot"
+name = "Hushfoot"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "waistcoat"
+kind = "body"
+affixes = ["hale=12", "of_the_fox=40", "of_shadows=40", "of_sustenance=25"]
+level = 30
+power = { barefoot = "feet", noise = 0, dodge = 3, feel_traps = true, phrase = "Barefoot, its wearer walks without a sound, dodges more nimbly, and feels every trap underfoot; no trap springs under them." }
+lore = "Me nan said: you can't hear a thing coming in boots, love."

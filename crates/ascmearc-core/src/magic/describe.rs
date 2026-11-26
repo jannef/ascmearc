@@ -509,7 +509,7 @@ fn lines_named(stack: &Stack, content: &Content, name: Phrase, maker: Option<&st
     match stack.known_magic() {
         None => out.push(line(LineKind::Note, msg::describe::MAGIC_UNKNOWN)),
         Some(magic) => {
-            let kind = def.kind.unwrap_or(ItemKind::Ring);
+            let kind = content.item_kind(stack).unwrap_or(ItemKind::Ring);
             for rolled in magic.rolled(content) {
                 let said = affix_line(&rolled, Some(kind), content);
                 out.push(line(LineKind::Affix(rolled.def.kind), said));
@@ -601,7 +601,8 @@ pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> Msg {
         Effect::Protection => by(msg::describe::DOES_PROTECTION),
         Effect::Shield => by(msg::describe::DOES_SHIELD),
         Effect::MaxDex => by(msg::describe::DOES_MAX_DEX),
-        // A unique's penalty (#2127: the Kettle Hat's, a heavy pot).
+        // A unique's penalty (#2127: the Kettle Hat's, a heavy pot; #2132: the Eorðfæst's −30,
+        // heavier and no curse).
         Effect::Weight if v < 0 => Msg::new(msg::describe::DOES_HEAVIER).role("v", num(-v)),
         Effect::Weight => by(msg::describe::DOES_LIGHTER),
         Effect::Proof => msg::describe::DOES_PROOF.into(),

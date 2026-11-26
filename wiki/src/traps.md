@@ -52,6 +52,10 @@ stepped on: it goes off when the door opens (see [Trapped doors](#trapped-doors)
 The [Light step](talents-body.md#talent-light-step) talent's chance comes on top. If you fail to avoid a
 trap, it may still save you, and it works on hidden traps too (see [Talents](talents.md)).
 
+Two [unique items](magic-items.md#unique-items) do better than any chance. While you wear Tiptoe,
+or Hushfoot with nothing on your feet, no trap you step on ever goes off, hidden or known, and
+it stays armed for whoever comes after you. Both also find hidden traps for you as you walk.
+
 ## What traps do
 
 {{#include generated/traps.md}}

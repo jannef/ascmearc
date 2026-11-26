@@ -21,7 +21,7 @@ use super::{Effect, Magic};
 use crate::combat::{CRITS, Profile, THREATS};
 use crate::content::{
     COSTS, Content, DamageTypeId, Group, LightId, MAX_HINDRANCE, MAX_SPEED, OnHit, Power,
-    ResourceId,
+    ResourceId, WeaponGrowth,
 };
 use crate::damage::Rider;
 use crate::dice::Dice;
@@ -62,6 +62,12 @@ pub struct Mods {
     range_times: u8,
     /// What a unique weapon's Tally or Grudge power keeps of the blows its bearer takes (local).
     keeps: Option<crate::content::Keeps>,
+    /// Its damage dice and to-hit by its wielder's level, from a unique weapon's Grows power
+    /// (local: the weapon that hits; `world/combat/grows.rs`).
+    grows: Option<WeaponGrowth>,
+    /// Whether its hits on a foe at full health are sure criticals, from a unique weapon's
+    /// FirstBlood power (local; `world/combat/first_blood.rs`).
+    first_blood: bool,
 }
 
 impl Default for Mods {
@@ -79,6 +85,8 @@ impl Default for Mods {
             banes: Vec::new(),
             range_times: 1,
             keeps: None,
+            grows: None,
+            first_blood: false,
         }
     }
 }
@@ -236,7 +244,7 @@ impl Mods {
 
     /// Adds the effects of `magic`'s affixes on an item of `kind` that are `local` (or not).
     fn add_magic(&mut self, magic: &Magic, local: bool, stack: &Stack, content: &Content) {
-        let Some(kind) = content.object(stack.object).kind else {
+        let Some(kind) = content.item_kind(stack) else {
             return;
         };
         for rolled in magic.rolled(content) {
@@ -296,6 +304,9 @@ impl Mods {
                 Some(&Power::Grudge { per_hit }) => {
                     mods.keeps = Some(crate::content::Keeps::Grudges(per_hit));
                 }
+                // The Stick's dice and to-hit, the wielder's level read where it strikes.
+                Some(Power::Grows(growth)) => mods.grows = Some(growth.clone()),
+                Some(Power::FirstBlood) => mods.first_blood = true,
                 _ => {}
             }
         }
@@ -403,6 +414,10 @@ impl Mods {
         if self.keeps.is_some() {
             profile.keeps = self.keeps;
         }
+        if self.grows.is_some() {
+            profile.grows.clone_from(&self.grows);
+        }
+        profile.first_blood |= self.first_blood;
     }
 
     /// Every effect with a value, in [`Effect::all`] order, and the light.

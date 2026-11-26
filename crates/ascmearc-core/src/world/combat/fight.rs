@@ -928,6 +928,8 @@ impl World {
         ) else {
             return None;
         };
+        // A unique weapon's Grows (`grows.rs`) and FirstBlood (`first_blood.rs`).
+        let profile = profile.map(|p| self.first_blood(target, self.grown_blow(attacker, p)));
         // A thrown exploit's ladder, on the creature it is aimed at only (`openings.rs`).
         let profile = profile.map(|p| self.thrown_exploit_profile(attacker, target, p));
         let profile = profile.map(|p| self.glared(attacker, p));

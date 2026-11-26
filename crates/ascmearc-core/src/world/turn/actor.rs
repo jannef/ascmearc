@@ -320,6 +320,11 @@ pub struct Actor {
         skip_serializing_if = "crate::world::combat::tally::Tallies::is_empty"
     )]
     pub tallies: crate::world::combat::tally::Tallies,
+    /// Where it stood as its last turn ended and how many turns in a row ended there, while it
+    /// bears a unique shield with the Plant power (the Eorðfæst, `world/combat/plant.rs`); `None`
+    /// for everyone else.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub planted: Option<crate::world::Planted>,
 }
 
 fn is_ungraded(n: &i8) -> bool {
@@ -805,7 +810,11 @@ impl Actor {
             .filter(|&d| d != 0)
             .map(|d| (Category::Dodge, d));
         let magic = [
-            (Category::Dodge, mods.get(ItemEffect::Dodge)),
+            // Bare feet under a unique's Barefoot power (Hushfoot's +3, #2133).
+            (
+                Category::Dodge,
+                mods.get(ItemEffect::Dodge) + self.barefoot(content).map_or(0, |b| b.dodge),
+            ),
             (
                 Category::Deflection,
                 mods.get(ItemEffect::Deflection) + talents.defence.deflection + mage_armour,
@@ -860,7 +869,8 @@ impl Actor {
         // A companion's body at its grade, when that is more than its type's own (`companion.rs`).
         let natural = (self.hide(content, race).map_or(0, |h| h.protection))
             .max(self.growth_protection(content));
-        let base = base + self.talent_protection(content) + more;
+        // A planted shield's turns (`plant.rs`).
+        let base = base + self.talent_protection(content) + self.planted_protection(content) + more;
         let adjustments = (worn.iter()).flat_map(|s| s.protects(content).iter().copied());
         if content.damage_types().is_empty() {
             return Protection::plain(base + natural);

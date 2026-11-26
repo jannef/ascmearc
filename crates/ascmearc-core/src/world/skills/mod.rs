@@ -12,6 +12,7 @@ mod lockpick;
 pub(in crate::world) mod search;
 mod sidestep;
 mod steal;
+mod trapwise;
 mod wedge;
 cfg_if! {
     if #[cfg(test)] {
@@ -27,6 +28,7 @@ cfg_if! {
         mod sidestep_tests;
         mod steal_tests;
         mod theft_tests;
+        mod trapwise_tests;
         mod wedge_tests;
     }
 }

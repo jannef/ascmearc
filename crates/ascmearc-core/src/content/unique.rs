@@ -17,8 +17,8 @@ use super::level::{ItemPartSpec, hand_made, item_part, magic_of};
 use super::object::AddedSpec;
 use super::status::{OnHit, OnHitSpec};
 use super::{
-    Build, Content, ContentError, DamageTypeId, LightId, ObjectDef, ObjectId, Rarity, ResourceId,
-    SpellId, StatusId,
+    Build, Content, ContentError, DamageTypeId, ItemKind, LightId, ObjectDef, ObjectId, Rarity,
+    ResourceId, SlotId, SpellId, StatusId, ZoneKind,
 };
 use crate::damage::Rider;
 use crate::dice::Roll;
@@ -36,6 +36,12 @@ pub const UNIQUE: &str = "unique:";
 /// a wiki word (`xtask/src/wiki/uniques.rs`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Power {
+    /// While its wearer's `slot` (the feet) is empty, their steps are this quiet, they dodge
+    /// better, and their toes find the traps beside them (`{ barefoot = "feet", noise = 0, dodge =
+    /// 3, feel_traps = true }`, Hushfoot's, #2133): read through [`crate::world::Actor::barefoot`],
+    /// in `noise::noise` (a step), `Actor::defence` (Dodge), and `world/skills/trapwise.rs` (no
+    /// trap springs under them; the traps beside them found).
+    Barefoot(Barefoot),
     /// Its hits cause a status, by a chance (`{ inflict = "poisoned", chance = 100, severity =
     /// 1 }`): read where a natural attack's `on_hit` is applied (`World::after_blow`), for the
     /// weapon that hit (a launcher's for its shots), through the attack's
@@ -76,6 +82,9 @@ pub enum Power {
     /// #2098): read where a death is decided ([`crate::world::World`]'s `restored`, from
     /// `World::hurt` and the deaths that skip it).
     Restore { chance: u8, radius: u8 },
+    /// No trap springs under its wearer's step, and every hidden trap within this many cells of
+    /// them is found (`{ trapwise = 5 }`, Tiptoe's, #2141): read in `world/skills/trapwise.rs`.
+    Trapwise(u8),
     /// Every blow that lands on its wearer, soaked to nothing too, rings it (`{ ring = 20,
     /// stagger = 1, difficulty = 15 }`, the Kettle Hat's, #2127): a clang heard `cells` away
     /// ([`crate::noise::Act::Clang`]; a critical's twice as far), and every creature beside the
@@ -125,6 +134,29 @@ pub enum Power {
         resource: ResourceId,
         hp_per_point: u8,
     },
+    /// Its damage dice and to-hit grow with its wielder's level (`{ grows = ["1d4", "1d6",
+    /// ...], every = 5, to_hit_every = 10 }`, the Stick's, #2126): read where a blow made with
+    /// it meets its target (`world/combat/grows.rs`, `World::resolve`) and where the player's own
+    /// attacks are shown, by the wielder's level (the player's, a creature's type's).
+    Grows(WeaponGrowth),
+    /// Its every hit on a foe at full health is a sure critical (`{ first_blood = true }`,
+    /// Satisfaction's, #2125): read where a blow made with it meets its target
+    /// (`world/combat/first_blood.rs`, `World::resolve`).
+    FirstBlood,
+    /// Its bearer plants it: each turn that ends where it began adds `per_turn` to their
+    /// Protection, with no cap, and a step takes it all away; planted at all, they are never
+    /// driven from their cell nor caught flat-footed unawares (`{ plant = 1 }`, the Eorðfæst's,
+    /// #2132). Read where a turn ends, where Protection is summed, where an actor is driven,
+    /// and where Defence is caught unawares (`world/combat/plant.rs`).
+    Plant { per_turn: u8 },
+    /// Every shot it looses leaves a zone of this kind where the missile stops, hit or miss
+    /// (`{ zone = "smoke", radius = 1, turns = 8 }`, Smoulder's, #2139; on a launcher): read where
+    /// a missile's flight ends (`world/combat/shoot.rs`, `World::fly`), laid as a miscast's zone is.
+    Zone {
+        kind: ZoneKind,
+        radius: u8,
+        turns: u8,
+    },
 }
 
 /// What a weapon's Tally or Grudge power makes of the blows struck with it: carried by the
@@ -136,6 +168,38 @@ pub enum Keeps {
     Debt,
     /// The Grudge: this much more damage for each hit the one struck landed on its bearer.
     Grudges(u8),
+}
+
+/// A [`Power::Grows`]: the damage dice by the wielder's level, a rung each `every` levels from
+/// level 0 (the last rung from there on), and +1 to hit each `to_hit_every` levels.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct WeaponGrowth {
+    pub steps: Vec<Roll>,
+    pub every: u8,
+    pub to_hit_every: u8,
+}
+
+impl WeaponGrowth {
+    /// The damage dice and the to-hit it gives a wielder of `level`.
+    pub fn at(&self, level: u32) -> (Roll, i32) {
+        let rung = usize::try_from(level / u32::from(self.every)).unwrap_or(usize::MAX);
+        let dice = self.steps[rung.min(self.steps.len() - 1)];
+        let to_hit = i32::try_from(level / u32::from(self.to_hit_every)).unwrap_or(i32::MAX);
+        (dice, to_hit)
+    }
+}
+
+/// A [`Power::Barefoot`]: the slot that must be empty, and what bare feet give.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Barefoot {
+    /// The slot left bare (the feet).
+    pub slot: SlotId,
+    /// How loud its wearer's steps are, in percent of what they would be (0: silent).
+    pub noise: u8,
+    /// What it adds to its wearer's Dodge.
+    pub dodge: i32,
+    /// Whether the hidden traps on the cells beside its wearer are found as they pass.
+    pub feel_traps: bool,
 }
 
 /// A [`Power::Cast`]: the spell, its reach and roll, and the chances, in percent, that a block
@@ -162,6 +226,9 @@ pub struct UniqueDef {
     /// Star"). A list drops that "the" ([`UniqueDef::listed_name`]; #1974).
     pub name: String,
     pub object: ObjectId,
+    /// The kind its affixes work as when its base has none (clothing: `kind = "boots"`, #2141):
+    /// read through [`Content::item_kind`]. `None` for a base with a kind of its own.
+    pub kind: Option<ItemKind>,
     /// The item as placed: one, rare, unidentified, with its affixes, parts, and id.
     pub stack: Stack,
     pub power: Option<Power>,
@@ -262,6 +329,8 @@ struct UniqueSpec {
     #[serde(default)]
     pool: bool,
     object: String,
+    /// The kind its affixes work as, for a base with none (clothing).
+    kind: Option<String>,
     affixes: Vec<String>,
     #[serde(default)]
     parts: Vec<ItemPartSpec>,
@@ -334,8 +403,22 @@ struct PowerSpec {
     scars: Option<bool>,
     /// The chance in a hundred that a death near its wearer is undone.
     restore: Option<u8>,
-    /// How far from its wearer a death is undone (`restore` only).
+    /// How far from its wearer a death is undone (`restore`), or how far a zone reaches (`zone`).
     radius: Option<u8>,
+    /// The slot whose emptiness wakes it (the feet).
+    barefoot: Option<String>,
+    /// How loud a barefoot wearer's steps are, in percent (`barefoot` only).
+    noise: Option<u8>,
+    /// What bare feet add to Dodge (`barefoot` only).
+    dodge: Option<i32>,
+    /// Whether bare feet find the traps beside them (`barefoot` only).
+    feel_traps: Option<bool>,
+    /// The radius within which hidden traps are found, and no trap springs under its wearer.
+    trapwise: Option<u8>,
+    /// A zone its shots leave where they stop (with `radius` and `turns`).
+    zone: Option<ZoneKind>,
+    /// How many turns its zone lies (`zone` only).
+    turns: Option<u8>,
     /// A damage spell its bearer casts free from a shield, by `on_block` and `on_bash`.
     cast: Option<String>,
     /// The cast's reach in cells.
@@ -354,6 +437,16 @@ struct PowerSpec {
     oath: Option<String>,
     /// The hit points a point of that resource costs (`oath` only).
     hp_per_point: Option<u8>,
+    /// The damage dice by its wielder's level, a rung each `every` levels.
+    grows: Option<Vec<String>>,
+    /// How many levels a rung of `grows` lasts.
+    every: Option<u8>,
+    /// How many levels each +1 to hit of `grows` takes.
+    to_hit_every: Option<u8>,
+    /// Its hits on a foe at full health are sure criticals.
+    first_blood: Option<bool>,
+    /// The Protection each turn planted adds.
+    plant: Option<u8>,
     phrase: String,
 }
 
@@ -388,6 +481,21 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
     let object = (content.object_id(&spec.object))
         .ok_or_else(|| format!("unknown object `{}`", spec.object))?;
     let def = content.object(object);
+    let clothed = (spec.kind.as_deref())
+        .map(|k| clothed_kind(k, def))
+        .transpose()?;
+    // A base of no kind (clothing) is made magic as the kind its table names.
+    let as_kind;
+    let def = match clothed {
+        Some(kind) => {
+            as_kind = ObjectDef {
+                kind: Some(kind),
+                ..def.clone()
+            };
+            &as_kind
+        }
+        None => def,
+    };
     let mut magic: Magic = magic_of(
         def,
         &spec.affixes,
@@ -457,6 +565,7 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
         id: spec.id,
         name: name.into(),
         object,
+        kind: clothed,
         stack,
         power,
         immune,
@@ -472,6 +581,27 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
         pool: spec.pool,
         dice,
     })
+}
+
+/// The kind `id` a unique's table gives its base `def`, which has none of its own (clothing):
+/// a kind worn in a slot (armour, a ring, an amulet), on a base that is worn.
+fn clothed_kind(id: &str, def: &ObjectDef) -> Result<ItemKind, String> {
+    if def.kind.is_some() {
+        return Err(format!(
+            "`kind`: {} have a kind of their own; `kind` is for a base of none (clothing)",
+            def.plural
+        ));
+    }
+    let kind = ItemKind::from_id(id).ok_or_else(|| format!("`kind`: unknown kind `{id}`"))?;
+    let worn = kind.is_armour() || matches!(kind, ItemKind::Ring | ItemKind::Amulet);
+    if !worn || def.slot.is_none() || def.attack.is_some() {
+        return Err(format!(
+            "`kind`: {} cannot be {}",
+            def.plural,
+            kind.plural()
+        ));
+    }
+    Ok(kind)
 }
 
 /// The affixes of `written` (already read, `magic_of`) whose dice are more than their affix's
@@ -491,9 +621,11 @@ fn more_dice(written: &[String], content: &Content) -> Vec<(String, u8)> {
 /// The power a `power` table names on base item `def`: exactly one of `inflict` (with `chance`
 /// and `severity`, and perhaps `added`), `vision`, `ward` (with a `message`), `negate` (1 to 99,
 /// with a `message`, on worn armour), `light`, `range` (2 or more, on a base with a range),
-/// `restore` (with a `radius`), `cast` (on a shield), `pain` (with `gain` and `critical`),
-/// `ring` (with `stagger` and `difficulty`), `scars` (on worn armour), and `tally`, `grudge`, and
-/// `oath` (with `hp_per_point`), each on a weapon.
+/// `restore` (with a `radius`), `cast` (on a shield), `grows` (with `every` and `to_hit_every`,
+/// on a weapon), `first_blood` (on a weapon), `plant` (on a shield or armour), `barefoot`,
+/// `trapwise`, `zone`, `pain` (with `gain` and `critical`), `ring` (with `stagger` and
+/// `difficulty`), `scars` (on worn armour), and `tally`, `grudge`, and `oath` (with
+/// `hp_per_point`), each on a weapon.
 fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, String> {
     let named = [
         p.inflict.is_some(),
@@ -504,6 +636,12 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         p.range.is_some(),
         p.restore.is_some(),
         p.cast.is_some(),
+        p.grows.is_some(),
+        p.first_blood.is_some(),
+        p.plant.is_some(),
+        p.barefoot.is_some(),
+        p.trapwise.is_some(),
+        p.zone.is_some(),
         p.pain.is_some(),
         p.ring.is_some(),
         p.scars.is_some(),
@@ -513,9 +651,22 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     ];
     if named.iter().filter(|&&n| n).count() != 1 {
         return Err(
-            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `pain`, `ring`, `scars`, `tally`, `grudge`, and `oath`"
+            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `grows`, `first_blood`, `plant`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, `scars`, `tally`, `grudge`, and `oath`"
                 .into(),
         );
+    }
+    if p.grows.is_none() && (p.every.is_some() || p.to_hit_every.is_some()) {
+        return Err("power: `every` and `to_hit_every` belong to `grows`".into());
+    }
+    if p.restore.is_none() && p.zone.is_none() && p.radius.is_some() {
+        return Err("power: `radius` belongs to `restore` and `zone`".into());
+    }
+    if p.zone.is_none() && p.turns.is_some() {
+        return Err("power: `turns` belongs to `zone`".into());
+    }
+    let bare = [p.noise.is_some(), p.dodge.is_some(), p.feel_traps.is_some()];
+    if p.barefoot.is_none() && bare.iter().any(|&n| n) {
+        return Err("power: `noise`, `dodge`, and `feel_traps` belong to `barefoot`".into());
     }
     if p.pain.is_none() && (p.gain.is_some() || p.critical.is_some()) {
         return Err("power: `gain` and `critical` belong to `pain`".into());
@@ -528,9 +679,6 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     }
     if let Some(power) = wielded_power(p, def, content)? {
         return Ok(power);
-    }
-    if p.restore.is_none() && p.radius.is_some() {
-        return Err("power: `radius` belongs to `restore`".into());
     }
     let cast_fields = [p.length.is_some(), p.damage.is_some()];
     let chances = [p.on_block.is_some(), p.on_bash.is_some()];
@@ -605,6 +753,36 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     if let Some(spell) = &p.cast {
         return cast(p, spell, def, content).map(Power::Cast);
     }
+    if let Some(steps) = &p.grows {
+        return grows(p, steps, def).map(Power::Grows);
+    }
+    if let Some(first) = p.first_blood {
+        if !first || def.attack.is_none() {
+            return Err("power: `first_blood = true` needs a base that attacks (a weapon)".into());
+        }
+        return Ok(Power::FirstBlood);
+    }
+    if let Some(per_turn) = p.plant {
+        let worn = def
+            .kind
+            .is_some_and(|k| k.is_armour() || k == ItemKind::Shield);
+        if per_turn == 0 || !worn {
+            return Err("power: `plant` (1 or more) needs a shield or a piece of armour".into());
+        }
+        return Ok(Power::Plant { per_turn });
+    }
+    if let Some(slot) = &p.barefoot {
+        return barefoot(p, slot, def, content).map(Power::Barefoot);
+    }
+    if let Some(radius) = p.trapwise {
+        if radius == 0 {
+            return Err("power: `trapwise` is a radius in cells, 1 or more".into());
+        }
+        return Ok(Power::Trapwise(radius));
+    }
+    if let Some(kind) = p.zone {
+        return zone(p, kind, def);
+    }
     if let Some(pool) = &p.pain {
         let resource = (content.resource_id(pool))
             .ok_or_else(|| format!("power: unknown resource `{pool}`"))?;
@@ -659,6 +837,32 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     Ok(Power::Ward {
         status,
         message: message.into(),
+    })
+}
+
+/// A `grows` power of rungs `steps` on base item `def`: a weapon, one rung or more, each a roll
+/// of dice, with `every` and `to_hit_every` (1 or more each).
+fn grows(p: &PowerSpec, steps: &[String], def: &ObjectDef) -> Result<WeaponGrowth, String> {
+    if def.attack.is_none() {
+        return Err("power: `grows` needs a base that attacks (a weapon)".into());
+    }
+    let steps = (steps.iter())
+        .map(|s| {
+            s.parse::<Roll>()
+                .map_err(|e| format!("power: `grows`: {e}"))
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    if steps.is_empty() {
+        return Err("power: `grows` needs one rung or more".into());
+    }
+    let every =
+        (p.every.filter(|&n| n > 0)).ok_or("power: `grows` needs an `every` (1 or more)")?;
+    let to_hit_every = (p.to_hit_every.filter(|&n| n > 0))
+        .ok_or("power: `grows` needs a `to_hit_every` (1 or more)")?;
+    Ok(WeaponGrowth {
+        steps,
+        every,
+        to_hit_every,
     })
 }
 
@@ -731,5 +935,48 @@ fn cast(
         damage,
         on_block,
         on_bash,
+    })
+}
+
+/// A `barefoot` power naming `slot` on base item `def`: a slot of the content's that the item
+/// itself does not go in, a `noise` percent (0 to 100), and what bare feet give.
+fn barefoot(
+    p: &PowerSpec,
+    slot: &str,
+    def: &ObjectDef,
+    content: &Content,
+) -> Result<Barefoot, String> {
+    let id = (content.slot_id(slot)).ok_or_else(|| format!("power: unknown slot `{slot}`"))?;
+    if def.slot.as_deref() == Some(slot) {
+        return Err(format!(
+            "power: `barefoot` names `{slot}`, the item's own slot"
+        ));
+    }
+    let noise = p.noise.unwrap_or(100);
+    if noise > 100 {
+        return Err("power: `noise` is a percent of a step's loudness, 0 to 100".into());
+    }
+    Ok(Barefoot {
+        slot: id,
+        noise,
+        dodge: p.dodge.unwrap_or(0),
+        feel_traps: p.feel_traps.unwrap_or(false),
+    })
+}
+
+/// A `zone` power of `kind` on base item `def`: a missile weapon, a kind that does no harm (a
+/// fire's harm is a spell's roll), a `radius` (0: the one cell), and `turns` (1 or more).
+fn zone(p: &PowerSpec, kind: ZoneKind, def: &ObjectDef) -> Result<Power, String> {
+    if def.launches.is_none() {
+        return Err("power: `zone` needs a missile weapon (a base that `launches`)".into());
+    }
+    if kind == ZoneKind::Fire {
+        return Err("power: a `zone` of fire has no harm to roll; name another kind".into());
+    }
+    let turns = (p.turns.filter(|&t| t > 0)).ok_or("power: `zone` needs `turns` (1 or more)")?;
+    Ok(Power::Zone {
+        kind,
+        radius: p.radius.unwrap_or(0),
+        turns,
     })
 }
