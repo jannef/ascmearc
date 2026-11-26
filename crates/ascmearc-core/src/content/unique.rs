@@ -63,6 +63,12 @@ pub enum Power {
     /// Defence are untouched. The player wearing it is told `message` (a line of data, said by its
     /// key: [`super::data_line::ward`]).
     Negate { chance: u8, message: String },
+    /// The onset (Onrǣs', #2123; `{ onset = true, knockback = 1, noise = 200 }`, on worn
+    /// armour): its wearer's Charge costs nothing and goes as far as they see, a charge's blow
+    /// that hits drives the one struck back `knockback` cells (Staggered when it cannot be
+    /// moved), and the charge's steps make `noise` percent of a step's noise. Read in the Charge
+    /// (`world/classes/onset.rs`).
+    Onset { knockback: u8, noise: u16 },
     /// Every blow that lands on its wearer and does damage pays into this resource of theirs
     /// (`{ pain = "ki", gain = 1, critical = 2 }`, Hǣrsceorp's, #2115): `gain` for a hit,
     /// `critical` for a critical, up to the pool's maximum; nothing to one without the pool.
@@ -82,6 +88,11 @@ pub enum Power {
     /// #2098): read where a death is decided ([`crate::world::World`]'s `restored`, from
     /// `World::hurt` and the deaths that skip it).
     Restore { chance: u8, radius: u8 },
+    /// A melee blow of it that hits also strikes whoever stands right behind the one struck
+    /// (the next cell along the line from the wielder), friend or foe, rolled to hit on its
+    /// own, for this percent of the damage (`{ thrust = 50 }`, Gār's, #2124; a melee weapon):
+    /// read at the end of `World::resolve` (`world/combat/thrust.rs`).
+    Thrust(u8),
     /// No trap springs under its wearer's step, and every hidden trap within this many cells of
     /// them is found (`{ trapwise = 5 }`, Tiptoe's, #2141): read in `world/skills/trapwise.rs`.
     Trapwise(u8),
@@ -371,10 +382,17 @@ struct PowerSpec {
     restore: Option<u8>,
     /// How far from its wearer a death is undone (`restore`), or how far a zone reaches (`zone`).
     radius: Option<u8>,
+    /// The onset: a Charge free, as far as its wearer sees (`true`).
+    onset: Option<bool>,
+    /// How many cells the onset's blow drives the one struck back (`onset` only).
+    knockback: Option<u8>,
+    /// The percent of a blow's damage the thrust-through deals the one behind.
+    thrust: Option<u8>,
     /// The slot whose emptiness wakes it (the feet).
     barefoot: Option<String>,
-    /// How loud a barefoot wearer's steps are, in percent (`barefoot` only).
-    noise: Option<u8>,
+    /// How loud a barefoot wearer's steps are (`barefoot`), or the onset's steps (`onset`), in
+    /// percent of a step's.
+    noise: Option<u16>,
     /// What bare feet add to Dodge (`barefoot` only).
     dodge: Option<i32>,
     /// Whether bare feet find the traps beside them (`barefoot` only).
@@ -594,7 +612,8 @@ fn off_tier(
 /// `restore` (with a `radius`), `cast` (on a shield), `grows` (with `every` and `to_hit_every`,
 /// on a weapon), `first_blood` (on a weapon), `plant` (on a shield or armour), `barefoot`,
 /// `trapwise`, `zone`, `pain` (with `gain` and `critical`), `ring` (with `stagger` and
-/// `difficulty`), and `scars` (on worn armour).
+/// `difficulty`), `scars` (on worn armour), `onset` (with a `knockback` and a `noise`, on worn
+/// armour), and `thrust` (1 to 100, on a melee weapon).
 fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, String> {
     let named = [
         p.inflict.is_some(),
@@ -614,10 +633,12 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         p.pain.is_some(),
         p.ring.is_some(),
         p.scars.is_some(),
+        p.onset.is_some(),
+        p.thrust.is_some(),
     ];
     if named.iter().filter(|&&n| n).count() != 1 {
         return Err(
-            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `grows`, `first_blood`, `plant`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, and `scars`"
+            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `grows`, `first_blood`, `plant`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, `scars`, `onset`, and `thrust`"
                 .into(),
         );
     }
@@ -630,9 +651,11 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     if p.zone.is_none() && p.turns.is_some() {
         return Err("power: `turns` belongs to `zone`".into());
     }
-    let bare = [p.noise.is_some(), p.dodge.is_some(), p.feel_traps.is_some()];
-    if p.barefoot.is_none() && bare.iter().any(|&n| n) {
-        return Err("power: `noise`, `dodge`, and `feel_traps` belong to `barefoot`".into());
+    if p.barefoot.is_none() && (p.dodge.is_some() || p.feel_traps.is_some()) {
+        return Err("power: `dodge` and `feel_traps` belong to `barefoot`".into());
+    }
+    if p.barefoot.is_none() && p.onset.is_none() && p.noise.is_some() {
+        return Err("power: `noise` belongs to `barefoot` and `onset`".into());
     }
     if p.pain.is_none() && (p.gain.is_some() || p.critical.is_some()) {
         return Err("power: `gain` and `critical` belong to `pain`".into());
@@ -644,6 +667,9 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     let chances = [p.on_block.is_some(), p.on_bash.is_some()];
     if p.cast.is_none() && cast_fields.iter().chain(&chances).any(|&n| n) {
         return Err("power: `length`, `damage`, `on_block`, and `on_bash` belong to `cast`".into());
+    }
+    if p.onset.is_none() && p.knockback.is_some() {
+        return Err("power: `knockback` belongs to `onset`".into());
     }
     if p.inflict.is_none() && (p.chance.is_some() || p.severity.is_some() || p.added.is_some()) {
         return Err("power: `chance`, `severity`, and `added` belong to `inflict`".into());
@@ -712,6 +738,29 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     }
     if let Some(spell) = &p.cast {
         return cast(p, spell, def, content).map(Power::Cast);
+    }
+    if let Some(onset) = p.onset {
+        if !onset {
+            return Err("power: `onset` is `true` or left out".into());
+        }
+        if !def.kind.is_some_and(|k| k.is_armour()) {
+            return Err("power: `onset` needs a base that is worn armour".into());
+        }
+        let knockback = p.knockback.unwrap_or(0);
+        let noise = p.noise.unwrap_or(100);
+        if noise == 0 {
+            return Err("power: `noise` is a percent of a step's noise, 1 or more".into());
+        }
+        return Ok(Power::Onset { knockback, noise });
+    }
+    if let Some(percent) = p.thrust {
+        if !(1..=100).contains(&percent) {
+            return Err("power: `thrust` is a percent of the blow's damage, 1 to 100".into());
+        }
+        if def.kind != Some(super::ItemKind::Weapon) {
+            return Err("power: `thrust` needs a melee weapon".into());
+        }
+        return Ok(Power::Thrust(percent));
     }
     if let Some(steps) = &p.grows {
         return grows(p, steps, def).map(Power::Grows);
@@ -877,10 +926,10 @@ fn barefoot(
             "power: `barefoot` names `{slot}`, the item's own slot"
         ));
     }
-    let noise = p.noise.unwrap_or(100);
-    if noise > 100 {
-        return Err("power: `noise` is a percent of a step's loudness, 0 to 100".into());
-    }
+    let noise = u8::try_from(p.noise.unwrap_or(100))
+        .ok()
+        .filter(|&n| n <= 100)
+        .ok_or("power: `noise` is a percent of a step's loudness, 0 to 100")?;
     Ok(Barefoot {
         slot: id,
         noise,

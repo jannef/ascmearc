@@ -37,9 +37,14 @@ text = "something thrown at a place you see"
 [aimed]
 text = "{cost:bare}, aimed"
 
-# Charge's stamina: `base` for the charge, `per` for each pace run.
+# Charge costing nothing (Onrǣs worn, #2123).
+[charge_free]
+text = "no stamina"
+
+# Charge's stamina (#2108): `base` for the charge, then `first`, `second`, `third`, and so on for
+# the paces run, each a step dearer.
 [charge_stamina]
-text = "{base:bare} stamina + {per:bare} a pace"
+text = "{base:bare} stamina + {first:bare}, {second:bare}, {third:bare}… a pace"
 
 [close]
 text = "Esc close"

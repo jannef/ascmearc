@@ -12,6 +12,7 @@ pub(in crate::world) mod invest;
 mod jack;
 pub(in crate::world) mod mark;
 mod merchants_eye;
+mod onset;
 mod openings;
 pub(in crate::world) mod orison;
 mod rage;

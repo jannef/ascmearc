@@ -274,6 +274,23 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
             }
             when.join("; ")
         }
+        Some(Power::Onset { knockback, noise }) => {
+            let cells = match knockback {
+                1 => "a cell".to_string(),
+                n => format!("{n} cells"),
+            };
+            format!(
+                "its wearer's Charge costs no stamina at all, so it reaches any foe they see on an \
+                 open way; a charge's blow that hits drives the foe back {cells} along the line, \
+                 and one a wall or another creature stops is Staggered; the charge's steps make \
+                 {noise}% of a step's noise"
+            )
+        }
+        Some(Power::Thrust(percent)) => format!(
+            "a melee blow with it that hits also strikes whoever stands right behind the one \
+             struck (friend or foe, the next cell along the line from the wielder), rolled to \
+             hit on its own, for {percent}% of the damage (at least 1); thrown, it does not"
+        ),
         Some(Power::Grows(growth)) => {
             let every = growth.every;
             let mut rungs = Vec::new();

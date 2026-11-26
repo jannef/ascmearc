@@ -62,12 +62,18 @@ pub(super) fn valued(
 
 /// The tier a unique's value that no tier rolls is counted on (its price, its item level): the
 /// last for a value past its top or against it, more dice than any, or a light no tier gives
-/// (#2044, #2091); else the tier nearest it, by dice first, then by value (#2152).
+/// (#2044, #2091); dice of sides a tier of fewer dice rolls, that tier (#2124: Gār's 2d6 where
+/// the tiers of two dice roll d8 and d10); else the tier nearest it, by dice first, then by value
+/// (#2152).
 fn nearest(a: &AffixDef, value: i32, dice: u8) -> usize {
     let last = a.tiers.len() - 1;
     let top = &a.tiers[last];
     if (top.dice == dice && top.set_past(value)) || dice > top.dice || a.effect == Effect::Light {
         return last;
+    }
+    let fewer = (a.tiers.iter()).position(|t| t.dice < dice && t.holds(value));
+    if let Some(i) = fewer.filter(|_| a.effect.is_dice()) {
+        return i;
     }
     let off = |t: &Tier| {
         let by = if value < t.min {

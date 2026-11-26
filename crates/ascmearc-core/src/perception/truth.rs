@@ -891,6 +891,12 @@ impl<'a> PerceptionView<'a> {
         Some((self.player).spell_cost(self.content, def))
     }
 
+    /// Whether the player's Charge costs them nothing now (Onrǣs' onset worn,
+    /// `world/classes/onset.rs`; they know their own costs).
+    pub fn own_charge_free(&self) -> bool {
+        self.player.onset(self.content).is_some()
+    }
+
     /// What the player's weapon active `id` costs them in stamina now, their talents' discounts
     /// counted (they know their own costs, as a spell's mana).
     pub fn own_weapon_stamina(&self, id: crate::content::WeaponAbilityId) -> u16 {
