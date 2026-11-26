@@ -12,7 +12,7 @@
 //! on a cell of the room's plain floor drawn among those free (no creature, stairs, light, or
 //! trap), keeps no post (it has none to return to until woken), and is placed asleep
 //! ([`CreatureSpawn::asleep`]). The hoard is one item per four sleepers (at least one) at the
-//! floor's item level + `loot_level`, with the finder's luck, each on a plain floor cell of the
+//! floor's item level + `loot_level`, with the finder's talents, each on a plain floor cell of the
 //! room drawn anew.
 //!
 //! A den kind may name `swarm.factions` (a beast den's `wildlife`, `vermin`, and `marsh`): its
@@ -37,7 +37,7 @@ use crate::rng::Rng;
 use crate::wealth;
 
 /// Fills every teeming den of generated level `template` (see the module docs): `danger` its
-/// danger, `spawning` its branch's rules, `visit` whom it is made for (the finder's luck).
+/// danger, `spawning` its branch's rules, `visit` whom it is made for (the finder's talents).
 pub(super) fn fill(
     template: &mut LevelTemplate,
     content: &Content,
@@ -119,11 +119,12 @@ pub(super) fn fill(
             continue;
         }
         let level = template.item_level.saturating_add(swarm.loot_level);
-        for _ in 0..swarm.hoard(placed) {
+        let spec = Spec::new(Origin::Den, level)
+            .count(u32::try_from(swarm.hoard(placed)).unwrap_or(u32::MAX));
+        for _ in 0..loot::count(content, &spec, &visit.finder, &mut rng) {
             let p = floor[rng.index(floor.len())];
-            let luck = &visit.luck;
-            let item = wealth::gem_instead(content, &mut rng, level, luck.gems)
-                .or_else(|| loot::find(content, &Spec::new(Origin::Den, level), luck, &mut rng));
+            let item = wealth::gem_instead(content, &mut rng, level, visit.gems)
+                .or_else(|| loot::find(content, &spec, &visit.finder, &mut rng));
             if let Some(stack) = item {
                 add_to_pile(template.objects.entry(p).or_default(), &[stack], content);
             }

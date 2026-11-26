@@ -118,10 +118,13 @@ fn treasure_hunter_finds_magic_more_often_from_the_same_draws() {
         let mut rng = Rng::stream(11, "wits-test");
         let mut rarities = [0u32; 3];
         for _ in 0..3000 {
-            let luck = loot::Luck {
-                magic: luck,
-                gems: 0,
-            };
+            let luck = (
+                loot::Finder {
+                    rarity: luck,
+                    ..loot::Finder::NONE
+                },
+                0,
+            );
             if let Some(s) = crate::test_support::found_with(content, &mut rng, 6, grade, luck) {
                 rarities[s.rarity() as usize] += 1;
             }
@@ -143,7 +146,13 @@ fn treasure_hunter_finds_magic_more_often_from_the_same_draws() {
         ("showcase", 5),
         id,
         None,
-        loot::Luck { magic: 50, gems: 0 },
+        (
+            loot::Finder {
+                rarity: 50,
+                ..loot::Finder::NONE
+            },
+            0,
+        ),
     )
     .expect("level");
     assert_eq!(plain.terrain, lucky.terrain);

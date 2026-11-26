@@ -172,7 +172,7 @@ fn features(landscape: Landscape) -> Features {
 }
 
 /// Generates the local area `id` (`local:x,y`) for the run with `seed`, its loot rolled with the
-/// finder's luck (Treasure hunter, Hoard sense) and the drop pool's uniques found, as `visit` has
+/// finder's talents (Treasure hunter, Hoard sense) and the drop pool's uniques found, as `visit` has
 /// them.
 pub(super) fn generate(
     content: &Content,
@@ -180,7 +180,6 @@ pub(super) fn generate(
     id: &str,
     visit: &super::Visit,
 ) -> Result<LevelTemplate, GenError> {
-    let luck = visit.luck;
     let area = content
         .local_area(campaign, id)
         .ok_or_else(|| GenError::NotAGeneratedLevel(id.to_string()))?;
@@ -234,7 +233,7 @@ pub(super) fn generate(
         };
         if reach::validate(&template, content).is_ok() {
             // Ruins may hold loot; the land holds none of its own.
-            super::place_loot(&mut template, content, seed, &land.loot, (None, luck));
+            super::place_loot(&mut template, content, seed, &land.loot, (None, visit));
             crate::magic::unique_pool::fill(&mut template, content, seed, visit.dropped);
             crate::gear::arm(&mut template, content, seed);
             crate::animated::arm(&mut template, content, seed);

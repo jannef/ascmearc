@@ -23,7 +23,7 @@ use crate::content::{Content, CreatureId, Grip, LevelTemplate, ObjectDef, Weapon
 use crate::equipment::{self, Equipment};
 use crate::kit::Pack;
 use crate::magic::LootGrade;
-use crate::magic::loot::{self, Luck, Origin, Spec};
+use crate::magic::loot::{self, Finder, Origin, Spec};
 use crate::object::Stack;
 use crate::rng::Rng;
 use crate::variant::{self, Source};
@@ -113,7 +113,7 @@ fn piece(
         None
     };
     let piece = match grade {
-        Some(grade) => loot::make(content, &spec.grade(grade), object, 1, &Luck::NONE, rng),
+        Some(grade) => loot::make(content, &spec.grade(grade), object, 1, &Finder::NONE, rng),
         None => {
             let stack = Stack::new(object, 1);
             let def = content.object(object);

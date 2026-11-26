@@ -3,15 +3,16 @@
 //! family holds for them, until their servant hands it over (`world/classes/stipend.rs`).
 //!
 //! Each level reached adds `gold.each` plus `gold.dice`, and, by `loot.chance` percent, one loot roll at
-//! the level as item level, with the magic and rare rarities `loot.magic` percent more likely
-//! and a loose gem `loot.gems` percent more likely (the finder's luck of
-//! [`crate::magic::loot::Luck`]); what is rolled is kept when it is magic or better or of one
+//! the level as item level, with the stipend's own finder `loot.finder` (`{ rarity = 100 }`: the
+//! magic and rare rarities twice as likely; [`crate::magic::finder::Finder`]) and a loose gem
+//! `loot.gems` percent more likely (the wealth seam's percent); what is rolled is kept when it is magic or better or of one
 //! of the `loot.keep` item classes, and otherwise thrown away.
 //!
 //! The file is optional: without it the stipend never grows.
 
 use super::{Content, ContentError, ItemClassId};
 use crate::dice::Dice;
+use crate::magic::finder::Finder;
 use serde::Deserialize;
 
 /// The stipend's rules that live in data.
@@ -23,9 +24,10 @@ pub struct StipendRules {
     pub dice: Dice,
     /// The percent chance a level-up makes its loot roll at all.
     pub chance: u32,
-    /// Percent more likely the magic and rare rarities are in its loot roll.
-    pub magic: i32,
-    /// Percent more likely a loose gem is.
+    /// The finder of its loot roll (the rarities better than normal `rarity` percent more
+    /// likely), Landed noble's added.
+    pub finder: Finder,
+    /// Percent more likely a loose gem is (the wealth seam's).
     pub gems: i32,
     /// The item classes kept whatever their rarity (potions, scrolls, gems).
     pub keep: Vec<ItemClassId>,
@@ -49,7 +51,8 @@ struct GoldSpec {
 #[serde(deny_unknown_fields)]
 struct LootSpec {
     chance: u32,
-    magic: i32,
+    #[serde(default)]
+    finder: Finder,
     gems: i32,
     #[serde(default)]
     keep: Vec<String>,
@@ -70,7 +73,7 @@ impl StipendRules {
             each: parsed.gold.each,
             dice: parsed.gold.dice,
             chance: parsed.loot.chance.min(100),
-            magic: parsed.loot.magic,
+            finder: parsed.loot.finder,
             gems: parsed.loot.gems,
             keep,
         })
@@ -99,12 +102,12 @@ mod tests {
             .map(|&c| content.item_class(c).id.as_str())
             .collect();
         assert_eq!(kept, ["potions", "scrolls", "gems"]);
-        assert!(rules.each > 0 && rules.magic > 0);
+        assert!(rules.each > 0 && rules.finder.rarity > 0);
     }
 
     #[test]
     fn a_bad_file_is_refused_and_none_is_no_stipend() {
-        let text = "gold = { each = 1, dice = \"1d4\" }\nloot = { chance = 50, magic = 0, gems = 0, keep = [\"nothing\"] }\n";
+        let text = "gold = { each = 1, dice = \"1d4\" }\nloot = { chance = 50, gems = 0, keep = [\"nothing\"] }\n";
         let mut files = ContentFiles::builtin();
         files.insert(PATH, text);
         let err = Content::load(&files).expect_err(text);

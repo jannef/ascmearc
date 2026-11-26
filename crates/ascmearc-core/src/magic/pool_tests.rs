@@ -1,6 +1,6 @@
 //! A vault's loot pools: what they roll, and what is refused.
 
-use super::loot::{self, Luck};
+use super::loot::{self, Finder};
 use super::{LootGrade, LootPool, Rarity};
 use crate::chest;
 use crate::content::{Content, ContentFiles, MAX_ITEM_LEVEL};
@@ -23,7 +23,7 @@ fn roll_many(c: &Content, pool: &LootPool, level: u8, n: u64) -> Vec<Stack> {
     (0..n)
         .filter_map(|seed| {
             let mut rng = Rng::stream(seed, "pool");
-            loot_cell::roll(c, &mut rng, level, pool, Luck::NONE)
+            loot_cell::roll(c, &mut rng, level, pool, (&Finder::NONE, 0)).pop()
         })
         .collect()
 }
@@ -135,10 +135,10 @@ fn a_grade_alone_rolls_as_it_always_did() {
         for seed in 0..100 {
             let mut plain = Rng::stream(seed, "pool");
             let mut pooled = Rng::stream(seed, "pool");
-            let luck = Luck::NONE;
+            let none = Finder::NONE;
             assert_eq!(
-                crate::test_support::found_with(&c, &mut plain, 7, grade, luck),
-                loot_cell::roll(&c, &mut pooled, 7, &grade.into(), luck),
+                crate::test_support::found_with(&c, &mut plain, 7, grade, (none, 0)),
+                loot_cell::roll(&c, &mut pooled, 7, &grade.into(), (&none, 0)).pop(),
             );
             assert_eq!(plain.below(1 << 30), pooled.below(1 << 30));
         }
@@ -153,7 +153,13 @@ fn flooded_cell(c: &Content, seed: u64, level: u8) -> Vec<Stack> {
     let mut template = vault.template.clone();
     template.item_level = level;
     let markers = template.loot.clone();
-    crate::mapgen::place_loot(&mut template, c, seed, &markers, (None, Luck::default()));
+    crate::mapgen::place_loot(
+        &mut template,
+        c,
+        seed,
+        &markers,
+        (None, &crate::mapgen::Visit::default()),
+    );
     assert_eq!(markers.len(), 1);
     assert_eq!(markers[0].0, Pos::new(4, 2));
     assert_eq!(template.objects.len(), 1);

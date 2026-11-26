@@ -23,7 +23,7 @@
 
 use crate::content::{Content, GOLD, MAX_ITEM_LEVEL, ObjectId};
 use crate::magic::LootGrade;
-use crate::magic::loot::{self, Luck, Origin, Spec};
+use crate::magic::loot::{self, Finder, Origin, Spec};
 use crate::object::{Stack, add_to_pile};
 use crate::rng::Rng;
 use serde::{Deserialize, Serialize};
@@ -131,15 +131,22 @@ pub fn destroyed(
     (kept, lost)
 }
 
-/// What a generated chest of `level` holds, rolled from its band's loot
-/// table with the finder's `luck`, as a pile (the last rolled on top, like stacks joined). Draws, in order: the `items` dice; per item one
-/// `below(100)` for its grade (under `rare` rare, under `magic` at least magic, else any) and
-/// at `level + loot_level`, at grade any a loose gem by the wealth seam
-/// ([`crate::wealth::gem_instead`]), else [`loot::find`]'s own (nothing found rolls nothing more); the
+/// What a generated chest of `level` holds, rolled from its band's loot table for `finder` and
+/// the wealth seam's `gems` percent, as a pile (the last rolled on top, like stacks joined).
+/// Draws, in order: the `items` dice, scaled by the finder's `quantity` ([`loot::count`]; no
+/// draw without it); per item one `below(100)` for its grade (under `rare` rare, under `magic`
+/// at least magic, else any) and at `level + loot_level`, at grade any a loose gem by the wealth
+/// seam ([`crate::wealth::gem_instead`]), else [`loot::find`]'s own (nothing found rolls nothing
+/// more); the
 /// purse's dice (`dice` × `each` coins of the shops' currency, else `gold_coin`; none at 0);
 /// the `gems` dice (0 or less: none) and per gem [`crate::gem::roll`]'s. A mimic standing in
 /// for the chest carries the same stacks from the same draws. Empty without bands.
-pub fn roll_contents(content: &Content, rng: &mut Rng, level: u8, luck: Luck) -> Vec<Stack> {
+pub fn roll_contents(
+    content: &Content,
+    rng: &mut Rng,
+    level: u8,
+    (finder, gems): (&Finder, i32),
+) -> Vec<Stack> {
     let Some(band) = content.chests().band_of(level) else {
         return Vec::new();
     };
@@ -148,7 +155,13 @@ pub fn roll_contents(content: &Content, rng: &mut Rng, level: u8, luck: Luck) ->
         .saturating_add(table.loot_level)
         .clamp(1, MAX_ITEM_LEVEL);
     let mut holds = Vec::new();
-    for _ in 0..table.items.roll(rng).max(0) {
+    let items = u32::try_from(table.items.roll(rng).max(0)).unwrap_or(0);
+    for _ in 0..loot::count(
+        content,
+        &Spec::new(Origin::Chest, at).count(items),
+        finder,
+        rng,
+    ) {
         let grade = match rng.below(100) {
             g if g < u32::from(table.rare) => LootGrade::Rare,
             g if g < u32::from(table.magic) => LootGrade::Magic,
@@ -156,10 +169,10 @@ pub fn roll_contents(content: &Content, rng: &mut Rng, level: u8, luck: Luck) ->
         };
         // At grade any a loose gem instead, by the wealth seam; else a find of the chest row.
         let gem = (grade == LootGrade::Any)
-            .then(|| crate::wealth::gem_instead(content, rng, at, luck.gems))
+            .then(|| crate::wealth::gem_instead(content, rng, at, gems))
             .flatten();
         let spec = Spec::new(Origin::Chest, at).grade(grade);
-        if let Some(stack) = gem.or_else(|| loot::find(content, &spec, &luck, rng)) {
+        if let Some(stack) = gem.or_else(|| loot::find(content, &spec, finder, rng)) {
             add_to_pile(&mut holds, &[stack], content);
         }
     }

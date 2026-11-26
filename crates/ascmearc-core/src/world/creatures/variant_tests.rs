@@ -1000,7 +1000,7 @@ fn generated_variants_are_on_their_base_items_lists() {
                 })
                 .chain((0..100).filter_map(|_| {
                     let gear = loot::Spec::new(loot::Origin::Gear, level);
-                    loot::find(&content, &gear, &loot::Luck::NONE, &mut gear_rng)
+                    loot::find(&content, &gear, &loot::Finder::NONE, &mut gear_rng)
                 }));
             for stack in found {
                 seen += 1;

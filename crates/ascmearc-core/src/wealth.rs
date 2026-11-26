@@ -10,7 +10,8 @@ use crate::object::Stack;
 use crate::rng::Rng;
 
 /// Whether a find at item level `level` is a loose gem instead of an item: one draw against the
-/// gems' `chance`, `more` percent higher for a finder with Hoard sense (`Luck::gems`), never
+/// gems' `chance`, `more` percent higher for a finder with Hoard sense (`FortuneMods::gem_find_percent`, passed beside the item
+/// [`crate::magic::finder::Finder`], never in it), never
 /// above certain; on a hit the gem ([`gem::loose`]), a stack of one. No draw without gems or at
 /// a chance of 0.
 pub fn gem_instead(content: &Content, rng: &mut Rng, level: u8, more: i32) -> Option<Stack> {

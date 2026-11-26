@@ -612,7 +612,7 @@ fn creatures_drop_loot_deterministically() {
     for id in 1..400 {
         let mut a = kobold.clone();
         a.id = ActorId(id);
-        if let Some(stack) = w.loot_of(&a) {
+        if let Some(stack) = w.loot_of(&a).pop() {
             drops += 1;
             if stack.gem(w.content()).is_some() {
                 continue;
@@ -653,7 +653,12 @@ fn a_drop_rolls_at_the_creatures_level_at_least_the_floors() {
     let mut seen = 0;
     for id in 1..400 {
         a.id = ActorId(id);
-        if let Some(magic) = w.loot_of(&a).as_ref().and_then(|s| s.magic().cloned()) {
+        if let Some(magic) = w
+            .loot_of(&a)
+            .pop()
+            .as_ref()
+            .and_then(|s| s.magic().cloned())
+        {
             assert_eq!(magic.level, level, "above the floor's 3");
             seen += 1;
         }

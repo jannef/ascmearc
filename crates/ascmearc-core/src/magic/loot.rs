@@ -2,16 +2,20 @@
 //!
 //! Every item a source yields comes from one pure function of a stated parameter set: the
 //! content, a [`Spec`] (the source's [`Origin`], the item level, the least grade, the classes it
-//! is drawn from, how many), the finder's [`Luck`], and the stream. Nothing inside reads the
+//! is drawn from, how many), the [`Finder`]'s modifiers, and the stream. Nothing inside reads the
 //! world. [`find`] makes one item, [`finds`] the spec's count of them; [`make`] (and
 //! [`make_unfinished`], creature gear's, short of the trim) makes a base chosen already from step
 //! 3 on; [`heirloom`] and [`favoured`] make one with a fixed count of affixes. What differs
 //! between sources is their row of the source table ([`Origin::rule`], `data/loot_sources.toml`):
-//! the grade when the caller's data gives none, whether the finder's luck counts, whether a curse
+//! the grade when the caller's data gives none, whether the finder counts, whether a curse
 //! may roll, how the material is drawn, and whether it gets a make.
 //!
-//! [`find`] draws, in this order, from the stream it is given (a level's `loot/<level id>` while
-//! it is generated, `drop/<actor id>` for what a creature drops, ...):
+//! [`finds`] first draws how many: the spec's count scaled by the finder's `quantity`
+//! ([`count`]; one draw for the fraction, none without the modifier), for a row that takes the
+//! finder; a source that draws something of its own before each find (the wealth seam's gem)
+//! takes its count from [`count`] too. Then [`find`] draws, for each, in this order, from the
+//! stream it is given (a level's `loot/<level id>` while it is generated, `drop/<actor id>` for
+//! what a creature drops, ...):
 //!
 //! 1. **the base item** ([`base`]): one draw among the objects that are loot (base items, with a
 //!    `kind`, and scrolls, which are never magic and so left out when the grade asks for magic or
@@ -21,8 +25,8 @@
 //! 2. **the count**: ammunition comes in stacks of `[item] ammo` in `data/loot_sources.toml`
 //!    (one draw); anything else is one;
 //! 3. **the rarity**: one draw over the weights of `[rarity]` in `data/affixes.toml` (those below
-//!    the grade asked for left out; the finder's `Luck::magic` scales those above it, for a row
-//!    that takes the finder); none for what is never magic (a scroll), which is normal;
+//!    the grade asked for left out; the finder's `rarity` scales those above it, for a row that
+//!    takes the finder); none for what is never magic (a scroll), which is normal;
 //! 4. **how many affixes**: a magic item has a prefix, a suffix, or one of each by the weights
 //!    of `[magic]` (one draw); a rare one draws its count from `rare.affixes` (one draw) and how
 //!    many of them are prefixes (one draw, evenly among the splits that keep at most
@@ -60,6 +64,7 @@
 //! ([`crate::wealth::gem_instead`]), drawn by the callers before the find, and a vault cell's
 //! coins and gems are the cell's own ([`crate::mapgen`]'s `loot_cell`).
 
+pub use super::finder::Finder;
 use super::{Affix, AffixKind, Magic, Quality, Rarity, may_roll};
 use crate::content::{AffixDef, Content, FactionId, ItemClassId, ItemKind, ObjectDef, ObjectId};
 use crate::gem;
@@ -136,29 +141,6 @@ impl From<LootGrade> for LootPool {
     }
 }
 
-/// A finder's luck: their talents make the magic and rare
-/// rarities `magic` percent more likely (Treasure hunter), and a loose gem `gems` percent more
-/// likely (Hoard sense, through the wealth seam: [`crate::wealth::gem_instead`]). The same draws
-/// either way.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub struct Luck {
-    pub magic: i32,
-    pub gems: i32,
-}
-
-impl Luck {
-    /// No luck: what a row that takes no finder finds with.
-    pub const NONE: Luck = Luck { magic: 0, gems: 0 };
-
-    /// The luck of a finder with `talents`.
-    pub fn of(talents: &crate::talent::TalentMods) -> Self {
-        Self {
-            magic: talents.fortune.loot_magic_percent,
-            gems: talents.fortune.gem_find_percent,
-        }
-    }
-}
-
 /// Where an item is found or made: a row of the source table ([`Origin::rule`],
 /// `data/loot_sources.toml`, docs/design/loot-pipeline.md §3.4).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -213,7 +195,8 @@ pub struct Rule {
     /// The least grade when the spec gives none; `None`: the caller's data gives it (a legend,
     /// a band, an outcome, a line).
     pub grade: Option<LootGrade>,
-    /// Whether the finder's luck counts (step 3).
+    /// Whether the [`Finder`] counts (its every modifier, each at its step); `false`: a find
+    /// with [`Finder::NONE`] whatever is passed.
     pub finder: bool,
     /// Whether a curse may roll (step 5).
     pub curses: bool,
@@ -225,7 +208,7 @@ pub struct Rule {
 
 impl Rule {
     /// The row of every source in content without `data/loot_sources.toml`: anything, the
-    /// finder's luck and curses left out, its own material, no make.
+    /// finder and curses left out, its own material, no make.
     pub const PLAIN: Rule = Rule {
         grade: Some(LootGrade::Any),
         finder: false,
@@ -306,7 +289,7 @@ pub struct Spec<'a> {
     pub grade: Option<LootGrade>,
     /// The classes the base is drawn from; empty: anything.
     pub classes: &'a [ItemClassId],
-    /// How many [`finds`] makes.
+    /// How many [`finds`] makes, before the finder's `quantity` ([`count`]).
     pub count: u32,
     /// The creature whose gear it is, by its level and faction, for a row whose material is a
     /// creature's ([`Material::Gear`]); `None`: one of the item level and no faction.
@@ -374,9 +357,9 @@ impl<'a> Spec<'a> {
     }
 }
 
-/// One item `spec` yields for a finder with `finder`'s luck, from `rng` (the module docs give the
-/// draws). `None` when content has no base item found at that level.
-pub fn find(content: &Content, spec: &Spec, finder: &Luck, rng: &mut Rng) -> Option<Stack> {
+/// One item `spec` yields for `finder`, from `rng` (the module docs give the draws). `None` when
+/// content has no base item found at that level.
+pub fn find(content: &Content, spec: &Spec, finder: &Finder, rng: &mut Rng) -> Option<Stack> {
     let object = base(content, spec, rng)?;
     // A spell scroll may be its grimoire: one draw, a scroll's.
     let object = content.grimoire_or(rng, object);
@@ -389,11 +372,26 @@ pub fn find(content: &Content, spec: &Spec, finder: &Luck, rng: &mut Rng) -> Opt
     Some(make(content, spec, object, count, finder, rng))
 }
 
-/// The spec's `count` items ([`find`] each, those found), in order.
-pub fn finds(content: &Content, spec: &Spec, finder: &Luck, rng: &mut Rng) -> Vec<Stack> {
-    (0..spec.count)
+/// The spec's items: [`count`] of them ([`find`] each, those found), in order.
+pub fn finds(content: &Content, spec: &Spec, finder: &Finder, rng: &mut Rng) -> Vec<Stack> {
+    (0..count(content, spec, finder, rng))
         .filter_map(|_| find(content, spec, finder, rng))
         .collect()
+}
+
+/// How many finds `spec` yields for `finder`: its `count` scaled by the finder's `quantity`, for
+/// a row that takes the finder ([`Finder::scale`]: one draw for the fraction, none without the
+/// modifier). The one step that reads `quantity`.
+pub fn count(content: &Content, spec: &Spec, finder: &Finder, rng: &mut Rng) -> u32 {
+    taken(content, spec, finder).scale(spec.count, rng)
+}
+
+/// The finder a find of `spec` counts: `finder` for a row that takes it, else [`Finder::NONE`].
+fn taken(content: &Content, spec: &Spec, finder: &Finder) -> Finder {
+    match spec.origin.rule(content).finder {
+        true => *finder,
+        false => Finder::NONE,
+    }
 }
 
 /// Step 1 of [`find`] alone: a base item of `spec` (its classes, its grade, its item level), by
@@ -429,7 +427,7 @@ pub fn make(
     spec: &Spec,
     object: ObjectId,
     count: u32,
-    finder: &Luck,
+    finder: &Finder,
     rng: &mut Rng,
 ) -> Stack {
     let made = make_unfinished(content, spec, object, count, finder, rng);
@@ -443,15 +441,20 @@ pub fn make_unfinished(
     spec: &Spec,
     object: ObjectId,
     count: u32,
-    finder: &Luck,
+    finder: &Finder,
     rng: &mut Rng,
 ) -> Stack {
     let rule = spec.origin.rule(content);
     let level = spec.level.max(1);
     let def = content.object(object);
-    let luck = if rule.finder { finder.magic } else { 0 };
+    // Step 3, the one step that reads the finder's `rarity`.
     let rarity = match def.kind {
-        Some(_) => roll_rarity(content, rng, spec.least(content), luck),
+        Some(_) => roll_rarity(
+            content,
+            rng,
+            spec.least(content),
+            taken(content, spec, finder).rarity,
+        ),
         None => Rarity::Normal,
     };
     let magic = match rarity {
@@ -494,8 +497,8 @@ pub fn finished(content: &Content, rng: &mut Rng, stack: Stack) -> Stack {
 }
 
 /// A rarity by the weights in content, leaving out those below `grade`; the weights of those
-/// better than the least it allows `luck` percent more (Treasure hunter: magic and rare for
-/// any find, rare for a find that is magic at least), rounded down.
+/// better than the least it allows `luck` percent more (the finder's `rarity`, Treasure hunter:
+/// magic and rare for any find, rare for a find that is magic at least), rounded down.
 fn roll_rarity(content: &Content, rng: &mut Rng, grade: LootGrade, luck: i32) -> Rarity {
     let affixes = content.affixes();
     if affixes.is_empty() {

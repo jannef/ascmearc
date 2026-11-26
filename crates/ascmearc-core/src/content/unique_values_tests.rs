@@ -512,7 +512,7 @@ fn a_light_is_written_with_its_light() {
 /// whose `bases` hold the item's kind, at a value within a tier; salvage only takes affixes off.
 #[test]
 fn what_only_a_unique_sets_never_rolls() {
-    use crate::magic::loot::{self, LootPool, Luck};
+    use crate::magic::loot::{self, Finder, LootPool};
     use crate::magic::{LootGrade, may_roll};
     use crate::rng::Rng;
     let content = Content::load(&ContentFiles::builtin()).expect("builtin content");
@@ -561,9 +561,14 @@ fn what_only_a_unique_sets_never_rolls() {
     for level in [12, 40, 60] {
         for seed in 0..400 {
             let mut rng = Rng::stream(seed, "unique-only-pool");
-            let Some(stack) =
-                crate::mapgen::loot_cell::roll(&content, &mut rng, level, &pool, Luck::NONE)
-            else {
+            let Some(stack) = (crate::mapgen::loot_cell::roll(
+                &content,
+                &mut rng,
+                level,
+                &pool,
+                (&Finder::NONE, 0),
+            ))
+            .pop() else {
                 continue;
             };
             let Some(magic) = stack.magic() else { continue };

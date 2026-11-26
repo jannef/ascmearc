@@ -46,7 +46,10 @@ messages keep the phrase), `lines` the description's (`describe::lines` adds the
 base stats); `dice_text` is the one damage-dice form, which `OwnAttack::damage_text` uses too).
 Every item a source yields is one pure function (`magic/loot.rs`, docs/design/loot-pipeline.md):
 `loot::find`/`finds` of a `Spec` (the source's `Origin`, the item level, the grade, the classes,
-the count) for a finder's `Luck`, and `loot::make`/`make_unfinished` for a base chosen already;
+the count) for a `Finder` (`magic/finder.rs`: `quantity` read at the count, `loot::count`;
+`rarity` at the rarity draw; `unique` carried for the drop pool's check; `Finder::of(talents)`,
+`Finder::NONE` for a row that takes none; the wealth seam's gem percent is passed beside it,
+never in it), and `loot::make`/`make_unfinished` for a base chosen already;
 `Origin::rule` is the source table, `data/loot_sources.toml` (`Content::loot_sources`, one row a
 source: the default grade or the caller's data that gives it, whether the finder counts, curses,
 how the material is drawn, a make; the loader refuses a missing row, a row of no source, and a
@@ -216,8 +219,8 @@ shops' goods, and enchanting (`roll_affix_within`) (`magic/tests.rs`,
 "magic"`) it is a find of the vault-cell row at its grade (at `any` the wealth seam's gem first),
 the same draws as a floor find. With classes: one draw among those that hold something at the item level (`holds`), then
 coins (`chest::purse`, the purse of a chest of that level), a loose gem (`gem::loose`; which
-classes these are comes from the currency's and the gem object's `class`, never `Luck::gems`), or
-`loot::find` among the class's objects (no gem instead), with the finder's `Luck::magic`. Tests: `magic/pool_tests.rs`. The aristocrat's stipend (`world/classes/stipend.rs`, #1405) rolls a find of the stipend row (the wealth seam's gem first) once a level-up, by `data/rules/stipend.toml`'s chance, at the level, with its `Luck` from data (plus Landed noble's), on the stream `stipend/<level>`, keeping only magic and rare finds and the `keep` classes. **A drop's item level**
+classes these are comes from the currency's and the gem object's `class`, never the finder's gem percent), or
+`loot::finds` among the class's objects (no gem instead), for the finder. Tests: `magic/pool_tests.rs`. The aristocrat's stipend (`world/classes/stipend.rs`, #1405) rolls a find of the stipend row (the wealth seam's gem first) once a level-up, by `data/rules/stipend.toml`'s chance, at the level, with its own `finder` from data (`loot.finder = { rarity = 100 }`, plus Landed noble's; not the player's), on the stream `stipend/<level>`, keeping only magic and rare finds and the `keep` classes. **A drop's item level**
 (`world/items/loot.rs::drop_level`): the creature type's level, at least the floor's item level, at
 most `MAX_ITEM_LEVEL`; floor loot keeps the floor's (`world/magic/magic_tests.rs`,
 `a_drop_rolls_at_the_creatures_level_at_least_the_floors`). **The floor's item level**

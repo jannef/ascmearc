@@ -2,7 +2,8 @@
 //! [`roll`] from the level's loot stream as `place_loot` reaches it.
 //!
 //! With no classes named, the cell is a find of the vault-cell row at its grade
-//! ([`loot::find`]), at grade `any` a loose gem instead by the wealth seam
+//! ([`loot::find`], as many as [`loot::count`] gives: one without the finder's `quantity`), at
+//! grade `any` each a loose gem instead by the wealth seam
 //! ([`wealth::gem_instead`], drawn first). With classes, one draw among those that hold
 //! something at the item level, then what the class is: coins (the purse of a chest of that
 //! level, [`chest::purse`]), a loose gem ([`gem::loose`]), or a find among the class's objects
@@ -11,7 +12,7 @@
 use crate::chest;
 use crate::content::{Content, ItemClassId, ObjectId};
 use crate::gem;
-use crate::magic::loot::{self, Luck, Origin, Spec};
+use crate::magic::loot::{self, Finder, Origin, Spec};
 use crate::magic::{LootGrade, LootPool};
 use crate::object::Stack;
 use crate::rng::Rng;
@@ -58,31 +59,39 @@ fn holds(content: &Content, class: ItemClassId, level: u8, grade: LootGrade) -> 
     }
 }
 
-/// What a cell of `pool` holds at item level `level` for a finder with `luck` (the module docs
-/// give the draws). `None` when none of its classes holds anything there yet: a low item level
-/// may leave a pool of things found only higher empty.
+/// What a cell of `pool` holds at item level `level` for `finder` and the wealth seam's `gems`
+/// percent (the module docs give the draws): one stack, or none when none of its classes holds
+/// anything there yet (a low item level may leave a pool of things found only higher empty); an
+/// item find's count is the finder's ([`loot::count`]: one, more by its `quantity`).
 pub(crate) fn roll(
     content: &Content,
     rng: &mut Rng,
     level: u8,
     pool: &LootPool,
-    luck: Luck,
-) -> Option<Stack> {
+    (finder, gems): (&Finder, i32),
+) -> Vec<Stack> {
     let grade = pool.grade;
     if pool.classes.is_empty() {
-        let gem = (grade == LootGrade::Any)
-            .then(|| wealth::gem_instead(content, rng, level, luck.gems))
-            .flatten();
-        return gem.or_else(|| loot::find(content, &spec(level, grade, &[]), &luck, rng));
+        let spec = spec(level, grade, &[]);
+        return (0..loot::count(content, &spec, finder, rng))
+            .filter_map(|_| {
+                let gem = (grade == LootGrade::Any)
+                    .then(|| wealth::gem_instead(content, rng, level, gems))
+                    .flatten();
+                gem.or_else(|| loot::find(content, &spec, finder, rng))
+            })
+            .collect();
     }
     let level = level.max(1);
     let open: Vec<ItemClassId> = (pool.classes.iter().copied())
         .filter(|c| holds(content, *c, level, grade))
         .collect();
-    let class = *rng.pick(&open)?;
+    let Some(&class) = rng.pick(&open) else {
+        return Vec::new();
+    };
     match kind_of(content, class) {
-        Kind::Coins => chest::purse(content, rng, level),
-        Kind::Gem => gem::loose(content, rng, level),
-        Kind::Item => loot::find(content, &spec(level, grade, &[class]), &luck, rng),
+        Kind::Coins => chest::purse(content, rng, level).into_iter().collect(),
+        Kind::Gem => gem::loose(content, rng, level).into_iter().collect(),
+        Kind::Item => loot::finds(content, &spec(level, grade, &[class]), finder, rng),
     }
 }

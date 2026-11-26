@@ -24,7 +24,7 @@
 use crate::burden;
 use crate::content::{Content, CreatureId, Keep, LevelTemplate};
 use crate::kit::Pack;
-use crate::magic::loot::{self, Luck, Origin, Spec};
+use crate::magic::loot::{self, Finder, Origin, Spec};
 use crate::object::{self, Stack};
 use crate::rng::Rng;
 use crate::stats::Stat;
@@ -120,7 +120,7 @@ fn make_piece(
             Source::Loot => spec,
         };
         let (object, count) = (stack.object, stack.count);
-        return loot::make_unfinished(content, &spec, object, count, &Luck::NONE, rng);
+        return loot::make_unfinished(content, &spec, object, count, &Finder::NONE, rng);
     }
     if stack.own_parts().is_some() {
         return stack.clone();

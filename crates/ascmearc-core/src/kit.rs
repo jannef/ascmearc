@@ -30,7 +30,7 @@
 use crate::character::Character;
 use crate::content::{Content, Keep, Kit, KitItem, ObjectId, ScenarioDef, SlotId, WeaponSkillId};
 use crate::equipment::{self, Equipment};
-use crate::magic::loot::{self, Luck, Origin, Spec};
+use crate::magic::loot::{self, Finder, Origin, Spec};
 use crate::object::{self, Stack};
 use crate::rng::Rng;
 
@@ -165,7 +165,7 @@ fn give(
             Some(grade) => {
                 let (object, count) = (stack.object, stack.count);
                 let spec = Spec::new(Origin::Kit, ITEM_LEVEL).grade(grade);
-                loot::make(content, &spec, object, count, &Luck::NONE, rng)
+                loot::make(content, &spec, object, count, &Finder::NONE, rng)
             }
             None => {
                 let mut plain = stack.clone();

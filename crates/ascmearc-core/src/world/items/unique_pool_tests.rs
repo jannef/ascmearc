@@ -87,8 +87,8 @@ fn a_creature_s_rare_drop_may_be_a_unique_of_the_pool_but_none_found() {
             .filter_map(|id| {
                 let mut a = a.clone();
                 a.id = ActorId(id);
-                let stack = w.loot_of(&a)?;
-                assert_eq!(w.loot_of(&a).as_ref(), Some(&stack), "the same drop");
+                let stack = w.loot_of(&a).pop()?;
+                assert_eq!(w.loot_of(&a).pop().as_ref(), Some(&stack), "the same drop");
                 member(&content, &stack).map(str::to_string)
             })
             .collect()

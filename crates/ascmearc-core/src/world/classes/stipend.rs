@@ -33,7 +33,7 @@ use crate::content::{
 use crate::equipment::Equipment;
 use crate::geom::Pos;
 use crate::lang::{Arg, Msg};
-use crate::magic::loot::{self, Luck, Origin, Spec};
+use crate::magic::loot::{self, Finder, Origin, Spec};
 use crate::msg;
 use crate::object::{self, Stack};
 use crate::rng::Rng;
@@ -61,43 +61,45 @@ impl Stipend {
     }
 }
 
-/// What level `level` puts by for a character with `mods`: its gold, and its find if kept.
-/// Drawn from the level's own stream.
+/// What level `level` puts by for a character with `mods`: its gold, and its finds kept (one at
+/// most, unless the stipend's finder has `quantity`). Drawn from the level's own stream.
 pub(crate) fn of_level(
     content: &Content,
     seed: u64,
     level: u8,
     mods: &crate::talent::TalentMods,
-) -> Option<(u32, Option<Stack>)> {
+) -> Option<(u32, Vec<Stack>)> {
     let rules = content.stipend()?;
     let mut rng = Rng::stream(seed, &format!("stipend/{level}"));
     let rolled = u32::try_from(rules.dice.roll(&mut rng).max(0)).unwrap_or(0);
     let gold = u64::from(rules.each + rolled)
         * u64::try_from(100 + mods.fortune.stipend_gold_percent).unwrap_or(0)
         / 100;
-    let luck = Luck {
-        magic: rules.magic + mods.fortune.stipend_magic_percent,
-        gems: rules.gems,
+    // The stipend's own finder (data), Landed noble's odds added.
+    let finder = Finder {
+        rarity: rules.finder.rarity + mods.fortune.stipend_magic_percent,
+        ..rules.finder
     };
     let item_level = level.clamp(1, MAX_ITEM_LEVEL);
     let chance = u32::try_from(i64::from(rules.chance) + i64::from(mods.fortune.stipend_chance))
         .unwrap_or(0)
         .min(100);
-    let find = (rng.chance(chance))
-        .then(|| {
+    let mut kept = Vec::new();
+    if rng.chance(chance) {
+        let spec = Spec::new(Origin::Stipend, item_level);
+        for _ in 0..loot::count(content, &spec, &finder, &mut rng) {
             // A loose gem instead by the wealth seam, else a find of the stipend row.
-            let spec = Spec::new(Origin::Stipend, item_level);
-            crate::wealth::gem_instead(content, &mut rng, item_level, luck.gems)
-                .or_else(|| loot::find(content, &spec, &luck, &mut rng))
-        })
-        .flatten();
-    let kept = find.filter(|s| {
-        s.rarity() != Rarity::Normal || rules.keep.contains(&content.object(s.object).class)
-    });
-    let kept = kept.map(|mut s| {
-        s.draw_wand_rung(content, &mut rng);
-        s
-    });
+            let find = crate::wealth::gem_instead(content, &mut rng, item_level, rules.gems)
+                .or_else(|| loot::find(content, &spec, &finder, &mut rng));
+            let find = find.filter(|s| {
+                s.rarity() != Rarity::Normal || rules.keep.contains(&content.object(s.object).class)
+            });
+            if let Some(mut s) = find {
+                s.draw_wand_rung(content, &mut rng);
+                kept.push(s);
+            }
+        }
+    }
     Some((u32::try_from(gold).unwrap_or(u32::MAX), kept))
 }
 
@@ -172,9 +174,7 @@ impl World {
             };
             let stipend = &mut self.state.stipend;
             stipend.gold = stipend.gold.saturating_add(gold);
-            if let Some(find) = find {
-                object::add_to_pile(&mut stipend.items, &[find], &content);
-            }
+            object::add_to_pile(&mut stipend.items, &find, &content);
         }
         self.news.push(msg::classes::STIPEND_GROWN.into());
     }

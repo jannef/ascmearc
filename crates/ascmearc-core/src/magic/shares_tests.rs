@@ -133,7 +133,7 @@ fn trim_shares_hold_every_find_to_its_capacity() {
                     continue;
                 };
                 let spec = spec.grade(grade);
-                let none = &loot::Luck::NONE;
+                let none = &loot::Finder::NONE;
                 let made = loot::make_unfinished(&c, &spec, base, 1, none, &mut rng);
                 let Some(before) = made.magic().map(|m| m.affixes.len()) else {
                     continue;
