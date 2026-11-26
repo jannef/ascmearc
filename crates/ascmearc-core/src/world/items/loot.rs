@@ -17,13 +17,13 @@
 
 use crate::action::Positions;
 use crate::content::{Content, MAX_ITEM_LEVEL, ObjectId};
-use crate::gem;
 use crate::lang::Msg;
-use crate::magic::{LootGrade, loot, unique_pool};
+use crate::magic::loot::{self, Origin, Spec};
+use crate::magic::unique_pool;
 use crate::msg;
 use crate::object::Stack;
 use crate::rng::Rng;
-use crate::variant::Source;
+use crate::wealth;
 use crate::world::{Actor, ActorId, Spent, World};
 
 /// What came of [`World::identify`].
@@ -104,18 +104,15 @@ impl World {
             return None;
         }
         let level = drop_level(&self.content, actor);
-        let gear = Source::Gear {
-            level: self.content.creature(actor.creature).level,
-            faction: actor.faction(&self.content),
-        };
+        let wearer = self.content.creature(actor.creature).level;
+        let spec = Spec::new(Origin::Drop, level).wearer(wearer, actor.faction(&self.content));
         // Treasure hunter, Hoard sense: the player's
         // luck, whoever made the kill.
         let talents = self.state.player().talent_mods(&self.content);
         let luck = loot::Luck::of(&talents);
-        let gem = gem::find_with(&self.content, &mut rng, level, luck.gems);
-        let item = gem.or_else(|| {
-            loot::roll_with(&self.content, &mut rng, level, LootGrade::Magic, gear, luck)
-        })?;
+        // A loose gem instead by the wealth seam, else a find of the drop row.
+        let gem = wealth::gem_instead(&self.content, &mut rng, level, luck.gems);
+        let item = gem.or_else(|| loot::find(&self.content, &spec, &luck, &mut rng))?;
         // A rare one may be a unique of the drop pool instead, on the same stream after it
         // (`magic/unique_pool.rs`); its caller notes it found.
         let found = &self.state.uniques_dropped;

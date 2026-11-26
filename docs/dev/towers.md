@@ -371,7 +371,7 @@ The data is `content/quarrel.rs` (`QuestDef::quarrel`, a `Quarrel`; the fields i
   `refuse_pending` refuses every action that takes time meanwhile ("You must answer first.").
 - **The hoard** (`[quest.hoard]`, `QuarrelHoard`): made by `quarrel_won` from the one-shot
   stream `hoard/<quest id>` (a quarrel is done once) and put in the taker's pack: `gold` coins,
-  `rare` items (`loot::roll_with` at `item_level`, grade rare, the player's luck), `grimoires`
+  `rare` items (`loot::finds` of the quarrel row at `item_level`, grade rare, the player's luck), `grimoires`
   drawn among `Grimoires::all`. Carried, it drops where they die, as everything a creature
   carries does; a wizard killed before anyone won carries none.
 - **The dumps**: the `quests` layer lists the wizards met and where each stands; the JSON dump

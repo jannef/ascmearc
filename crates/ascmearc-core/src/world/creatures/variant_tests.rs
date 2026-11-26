@@ -676,7 +676,7 @@ fn loot_rolls_variants_from_its_list_deterministically() {
     let roll_many = |seed: u64, level: u8| -> Vec<Stack> {
         let mut rng = crate::rng::Rng::stream(seed, "test/variants");
         (0..3000)
-            .filter_map(|_| loot::roll(&content, &mut rng, level, LootGrade::Any))
+            .filter_map(|_| crate::test_support::found(&content, &mut rng, level, LootGrade::Any))
             .collect()
     };
     let shallow = roll_many(1, 1);
@@ -995,10 +995,12 @@ fn generated_variants_are_on_their_base_items_lists() {
             let mut loot_rng = crate::rng::Rng::stream(seed, &format!("test/loot/{level}"));
             let mut gear_rng = crate::rng::Rng::stream(seed, &format!("test/gear/{level}"));
             let found = (0..250)
-                .filter_map(|_| loot::roll(&content, &mut loot_rng, level, LootGrade::Any))
+                .filter_map(|_| {
+                    crate::test_support::found(&content, &mut loot_rng, level, LootGrade::Any)
+                })
                 .chain((0..100).filter_map(|_| {
-                    let gear = Source::gear(level);
-                    loot::roll_from(&content, &mut gear_rng, level, LootGrade::Magic, gear)
+                    let gear = loot::Spec::new(loot::Origin::Gear, level);
+                    loot::find(&content, &gear, &loot::Luck::NONE, &mut gear_rng)
                 }));
             for stack in found {
                 seen += 1;

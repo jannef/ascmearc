@@ -278,7 +278,7 @@ pub(super) fn animated_loot(content: &Content) -> String {
 }
 
 /// The share, by frequency, of the base items of `classes` found at item level `level` that are
-/// two-handed (as `loot::base_in` draws them).
+/// two-handed (as `loot::base` draws them).
 fn two_handed_share(
     content: &Content,
     classes: &[ascmearc_core::content::ItemClassId],

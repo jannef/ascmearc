@@ -1,7 +1,6 @@
 //! The drop pool (#2103): who is in it, its gate by item level, its odds, its draws, and a
 //! level's pass, each unique at most once.
 
-use super::loot;
 use super::unique_pool::{fill, instead, member, open};
 use super::{LootGrade, Rarity};
 use crate::content::{Content, ContentFiles, MAX_ITEM_LEVEL};
@@ -93,7 +92,9 @@ pub(crate) fn sure() -> Content {
 /// Rare finds of item level `level`, one a seed.
 fn rares(c: &Content, level: u8, n: u64) -> Vec<Stack> {
     (0..n)
-        .filter_map(|seed| loot::roll(c, &mut Rng::stream(seed, "rares"), level, LootGrade::Rare))
+        .filter_map(|seed| {
+            crate::test_support::found(c, &mut Rng::stream(seed, "rares"), level, LootGrade::Rare)
+        })
         .filter(|s| s.magic().is_some_and(|m| m.rarity == Rarity::Rare))
         .collect()
 }
@@ -179,7 +180,7 @@ fn only_a_rare_find_draws_and_never_for_a_unique_found() {
     // A normal or magic find, and a gem, ask nothing.
     for seed in 0..300 {
         let mut rng = Rng::stream(seed, "finds");
-        if let Some(s) = loot::roll(&c, &mut rng, MAX_ITEM_LEVEL, LootGrade::Any)
+        if let Some(s) = crate::test_support::found(&c, &mut rng, MAX_ITEM_LEVEL, LootGrade::Any)
             && s.magic().is_none_or(|m| m.rarity != Rarity::Rare)
         {
             untouched(&s, &none);

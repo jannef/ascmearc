@@ -44,6 +44,7 @@ mod hidden;
 mod hoard;
 mod leavings;
 pub mod local;
+pub(crate) mod loot_cell;
 mod mines;
 mod minster;
 mod population;
@@ -68,9 +69,11 @@ use crate::content::{
 use crate::door::Lock;
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
-use crate::magic::{LootGrade, LootPool, loot, loot::Luck, unique_pool};
+use crate::magic::loot::{self, Luck, Origin, Spec};
+use crate::magic::{LootPool, unique_pool};
 use crate::object::{Stack, add_to_pile};
 use crate::rng::Rng;
+use crate::wealth;
 use std::collections::BTreeMap;
 
 /// Attempts before giving up on a level (each with its own derived stream).
@@ -931,7 +934,8 @@ pub(crate) struct Floor {
 /// each of `markers` (vaults' loot cells, from their pools), then the floor loot, one draw
 /// for how many (between the fewest and the most) and, for each, one for a cell of `floor`
 /// terrain where nothing lies, stands, shines, or leads away (in row order), then the item,
-/// with the finder's `luck` ([`loot::roll_pool`]).
+/// with the finder's `luck` (a cell by [`loot_cell::roll`]; the floor's by
+/// [`wealth::gem_instead`], then [`loot::find`]).
 pub(crate) fn place_loot(
     template: &mut LevelTemplate,
     content: &Content,
@@ -941,13 +945,14 @@ pub(crate) fn place_loot(
 ) {
     let mut rng = Rng::loot(seed, &template.id);
     let level = template.item_level;
-    let place = |template: &mut LevelTemplate, rng: &mut Rng, p: Pos, pool: &LootPool| {
-        if let Some(stack) = loot::roll_pool(content, rng, level, pool, luck) {
+    let place = |template: &mut LevelTemplate, p: Pos, stack: Option<Stack>| {
+        if let Some(stack) = stack {
             add_to_pile(template.objects.entry(p).or_default(), &[stack], content);
         }
     };
     for (p, pool) in markers {
-        place(template, &mut rng, *p, pool);
+        let stack = loot_cell::roll(content, &mut rng, level, pool, luck);
+        place(template, *p, stack);
     }
     let Some(floor) = floor else { return };
     let [fewest, most] = floor.count.map(i32::from);
@@ -969,7 +974,10 @@ pub(crate) fn place_loot(
             break;
         }
         let p = free.remove(rng.index(free.len()));
-        place(template, &mut rng, p, &LootGrade::Any.into());
+        // A loose gem instead by the wealth seam, else a find of the floor row.
+        let stack = wealth::gem_instead(content, &mut rng, level, luck.gems)
+            .or_else(|| loot::find(content, &Spec::new(Origin::Floor, level), &luck, &mut rng));
+        place(template, p, stack);
     }
 }
 

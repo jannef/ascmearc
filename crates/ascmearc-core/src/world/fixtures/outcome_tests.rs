@@ -329,7 +329,7 @@ fn glimpse_identifies_and_muddled_forgets_or_says_their_other_line() {
     });
     let ring = ring.expect("a magic base");
     let mut rng = crate::rng::Rng::stream(7, "outcome-test");
-    let stack = crate::magic::loot::make(
+    let stack = crate::test_support::made(
         &content,
         &mut rng,
         ring,

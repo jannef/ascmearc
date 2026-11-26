@@ -138,7 +138,7 @@ at their side (`World::companion()`, made in `begin` before the story). `backgro
    common (whose plain line always fits);
 3. the line: `rng.below(total weight)`;
 4. its effects' dice in order: gold and skill dice, an item's alternative (`KitItem::pick`) and a
-   magic item's loot draws (`loot::make` at `kit::ITEM_LEVEL`, identified).
+   magic item's loot draws (`loot::make` of the kit row at `kit::ITEM_LEVEL`, identified).
 
 The tags it sets are known to the chapters after it. Nothing is counted across chapters, capped,
 dropped, or drawn again. The `only` rule is a

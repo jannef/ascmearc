@@ -9,7 +9,7 @@ use crate::color::Rgb;
 use crate::content::{ContentFiles, Cutting, ObjectId, dull};
 use crate::item_parts::{GemCut, ItemPart};
 use crate::magic::describe::lines;
-use crate::magic::{Affix, LootGrade, Magic, Rarity, loot};
+use crate::magic::{Affix, LootGrade, Magic, Rarity};
 use crate::object::Stack;
 use crate::replay::Replay;
 use crate::rng::Rng;
@@ -519,9 +519,9 @@ fn loot_finds_gems_rarely_and_larger_and_finer_at_higher_item_levels() {
         let mut found = Vec::new();
         for seed in 1..=4 {
             let mut rng = Rng::stream(seed, &format!("test/gems/{level}"));
-            found.extend(
-                (0..5000).filter_map(|_| loot::roll(&content, &mut rng, level, LootGrade::Any)),
-            );
+            found.extend((0..5000).filter_map(|_| {
+                crate::test_support::found(&content, &mut rng, level, LootGrade::Any)
+            }));
         }
         found
     };
@@ -573,7 +573,7 @@ fn loot_sets_rings_often_and_weapons_sometimes() {
     let ring_class = content.object(object(&content, "gold_ring")).class;
     let weapon_class = content.object(object(&content, "long_sword")).class;
     for _ in 0..30_000 {
-        let Some(stack) = loot::roll(&content, &mut rng, 5, LootGrade::Any) else {
+        let Some(stack) = crate::test_support::found(&content, &mut rng, 5, LootGrade::Any) else {
             continue;
         };
         let class = content.object(stack.object).class;

@@ -2,13 +2,12 @@
 //! weapon does, one fewer than other equipment holds by its grade; only what betters a shot, never
 //! a stat; stacks of different magic never join.
 
-use super::loot::{self, finished, make_as_unfinished};
+use super::loot::{Luck, Origin, Spec, finished, make_unfinished};
 use super::{Affix, LootGrade, Magic, Quality, Rarity, capacity, may_roll};
 use crate::content::{ItemKind, ObjectId};
 use crate::object::{Stack, add_to_inventory};
 use crate::rng::Rng;
 use crate::test_support::CONTENT;
-use crate::variant::Source;
 
 fn object(id: &str) -> ObjectId {
     CONTENT.object_id(id).expect(id)
@@ -70,14 +69,8 @@ fn rare_arrows_keep_what_their_grade_holds() {
     let arrow = object("arrow");
     let mut most = 0;
     for _ in 0..200 {
-        let rolled = make_as_unfinished(
-            &CONTENT,
-            &mut rng,
-            arrow,
-            12,
-            (12, LootGrade::Rare),
-            Source::Loot,
-        );
+        let spec = Spec::new(Origin::Floor, 12).grade(LootGrade::Rare);
+        let rolled = make_unfinished(&CONTENT, &spec, arrow, 12, &Luck::NONE, &mut rng);
         // The same roll, plain and Masterwork (whatever make it drew).
         let magic = rolled.magic().expect("rare").clone();
         let fresh = || Stack::with_magic(arrow, 12, magic.clone());
@@ -114,7 +107,7 @@ fn ammunition_never_rolls_a_stat_affix() {
     // Loot's own rolls keep to it.
     let mut rng = Rng::stream(5, "ammo-loot");
     for _ in 0..300 {
-        let stack = loot::make(
+        let stack = crate::test_support::made(
             &CONTENT,
             &mut rng,
             object("arrow"),

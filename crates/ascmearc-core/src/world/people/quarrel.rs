@@ -28,7 +28,7 @@ use super::quest::{QuestRecord, Stage};
 use crate::action::Event;
 use crate::content::{Content, DialogueId, QuestDef, data_line};
 use crate::lang::{Arg, Msg, Phrase};
-use crate::magic::loot::LootGrade;
+use crate::magic::loot::{self, Origin, Spec};
 use crate::msg;
 use crate::object::{self, Stack};
 use crate::perception::PerceptionView;
@@ -418,17 +418,9 @@ impl World {
         {
             stacks.push(Stack::new(coin, gold));
         }
-        let luck = crate::magic::loot::Luck::of(&self.state.player().talent_mods(content));
-        for _ in 0..hoard.rare {
-            stacks.extend(crate::magic::loot::roll_with(
-                content,
-                &mut rng,
-                hoard.item_level,
-                LootGrade::Rare,
-                crate::variant::Source::Loot,
-                luck,
-            ));
-        }
+        let luck = loot::Luck::of(&self.state.player().talent_mods(content));
+        let spec = Spec::new(Origin::Quarrel, hoard.item_level).count(u32::from(hoard.rare));
+        stacks.extend(loot::finds(content, &spec, &luck, &mut rng));
         let grimoires = content.grimoires().all();
         for _ in 0..hoard.grimoires {
             if grimoires.is_empty() {

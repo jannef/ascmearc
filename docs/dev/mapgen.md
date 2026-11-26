@@ -30,7 +30,7 @@ churn with every loot or roster change (#1526); `describe` checks those instead
 (`nothing_on_a_wall_in`: on walkable ground, one creature to a cell, chests and traps where they
 may be). Loot (`mapgen::place_loot`: floor
 items by the branch's `loot`, vault `loot` cells, each a grade or a pool of item classes,
-`magic/loot.rs::roll_pool` at the floor's item level, `docs/dev/magic-items.md`) is rolled once a
+`mapgen/loot_cell.rs::roll` at the floor's item level, `docs/dev/magic-items.md`) is rolled once a
 map is valid, from its own stream `loot/<level id>`, so adding loot never changes the terrain of a
 generated level. It does shift what follows on that stream, and `hide_traps` avoids a vault's
 `[[pile]]` but not a `loot` cell, so turning a pile into a loot cell moves the floor's items and

@@ -259,11 +259,12 @@ fn the_stone_is_never_rolled() {
     for level in [1u8, 12, 24, 30, 40] {
         let mut rng = Rng::stream(9, &format!("restore/{level}"));
         for _ in 0..2_000 {
-            if let Some(s) = loot::roll(&content, &mut rng, level, LootGrade::Rare) {
+            if let Some(s) = crate::test_support::found(&content, &mut rng, level, LootGrade::Rare)
+            {
                 never(&s, "found loot");
             }
             never(
-                &loot::make(&content, &mut rng, ring, 1, level, LootGrade::Rare),
+                &crate::test_support::made(&content, &mut rng, ring, 1, level, LootGrade::Rare),
                 "made",
             );
             never(

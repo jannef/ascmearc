@@ -42,12 +42,12 @@ is a rare still. `capacity::trimmed(content, rng, stack)` trims a stack to its o
 `loot::finished(content, rng, stack)` is the trim as the very last step of making an item,
 after its material, ornament, wand rung, and (for creature gear) its condition:
 
-- `loot::make`, `make_as`, `roll`/`roll_from`/`roll_with`, `roll_pool` (through `drawn`),
-  `heirloom`, and `favoured` (through `heirloom`) end with it, from the stream the item rolled
+- `loot::make`, `find`/`finds` (through `make`), `heirloom`, and `favoured` (through
+  `heirloom`) end with it, from the stream the item rolled
   from. Every caller (floor loot, chests, hoards, dens, room loot, animated things, kits, the
   background's gifts, the stipend, the pedlar's offer, the overworld's outcomes) gets a finished
   item.
-- Creature gear makes its magic pieces with `loot::make_as_unfinished`; `gear::finish` trims the
+- Creature gear makes its magic pieces with `loot::make_unfinished`; `gear::finish` trims the
   whole pack from the gear stream (`gear/<level id>` or `gear/<actor id>`) after
   `gear::condition::apply` (its own `condition/<key>` stream), all three in `gear::equip`, the one
   place gear's last steps are written (#1494), which `gear::arm` and
@@ -75,7 +75,7 @@ them more affixes; the capacity and the trim are unchanged, and everything still
 
 - **The make**: `data/gear_condition.toml`'s `[[item_level]]` rows (`content::ItemLevelRow`, by rising item
   level; `GearConditions::at_item_level`) give per mille of Fine, Marvellous, and Masterwork. Loot
-  (every find `make_from` makes with `Source::Loot`: floor loot, chests, hoards, dens, room loot,
+  (every find `make_unfinished` makes for a row with a make: floor loot, chests, hoards, dens, room loot,
   vault loot) draws its make with `magic/make.rs::make` after the wand's rung and
   before the trim, from the loot stream: one draw, then one per improvement's aspect; none where
   the row gives nothing (item levels 1 and 2 have no row) or for what takes no make (not single
@@ -84,8 +84,8 @@ them more affixes; the capacity and the trim are unchanged, and everything still
   the loot stream after deep arrows, bolts, and stones. Creature gear adds the row of its level's item level to its
   tribe's odds (`Odds::with_row`: damaged gives way to what the improvements leave), in the same one
   condition draw. The loader keeps every row's improvements with any table's within
-  1000. Kits, the background's gifts, the stipend, the pedlar, and animated things (`loot::make`,
-  `make_as` with `Source::Gear`) take none.
+  1000. Kits, the background's gifts, the stipend, the pedlar, and animated things (`loot::make`
+  of the kit, goods, and animated rows) take none.
 - **Gems**: the row's `ornament` adds percent to loot's `[[ornament]]` chance (`gem::ornament`'s
   `more`), the same one draw.
 - **Materials**: in the material files' `rarity` (loot, by item level) and `gear` (a creature's

@@ -31,10 +31,10 @@ use super::{Palette, Visit};
 use crate::content::danger::{self, Candidate, Spawning};
 use crate::content::{Content, CreatureId, CreatureSpawn, Hoard, LevelTemplate, Stance, Swarm};
 use crate::geom::Pos;
-use crate::magic::{LootGrade, loot};
+use crate::magic::loot::{self, Origin, Spec};
 use crate::object::{Stack, add_to_pile};
 use crate::rng::Rng;
-use crate::variant::Source;
+use crate::wealth;
 
 /// Fills every teeming den of generated level `template` (see the module docs): `danger` its
 /// danger, `spawning` its branch's rules, `visit` whom it is made for (the finder's luck).
@@ -121,14 +121,9 @@ pub(super) fn fill(
         let level = template.item_level.saturating_add(swarm.loot_level);
         for _ in 0..Swarm::hoard(placed) {
             let p = floor[rng.index(floor.len())];
-            let item = loot::roll_with(
-                content,
-                &mut rng,
-                level,
-                LootGrade::Any,
-                Source::Loot,
-                visit.luck,
-            );
+            let luck = &visit.luck;
+            let item = wealth::gem_instead(content, &mut rng, level, luck.gems)
+                .or_else(|| loot::find(content, &Spec::new(Origin::Den, level), luck, &mut rng));
             if let Some(stack) = item {
                 add_to_pile(template.objects.entry(p).or_default(), &[stack], content);
             }

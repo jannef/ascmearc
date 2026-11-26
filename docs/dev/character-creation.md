@@ -154,7 +154,7 @@ wielded where no slot takes it stays carried, `Pack::equip`); `RaceDef::kit`, `C
 `kit::roll(content, character, trained, seed)` → `Pack { items, equipment }` from the stream
 `character/kit/<spec>`, the kits in `kits_of` order (class, race, animal, element), a line
 drawing only if `KitItem::applies` (one `rng.index` among alternatives, then
-`magic::loot::make` at `kit::ITEM_LEVEL` for a `magic` line; `kit.rs::give`), every line but
+`magic::loot::make` of the kit row at `kit::ITEM_LEVEL` for a `magic` line; `kit.rs::give`), every line but
 the `fill` ones, then the class's random spell scrolls (#1104: `ClassDef::random_scrolls`, `random_scrolls = { count = "1d3", below_level = 10 }`
 in the class file, resolved by `content/kit.rs::resolve_scrolls` into `RandomScrolls { count,
 scrolls }`, the scroll of each spell below the level, `Content::scroll_of`, in spell order: the

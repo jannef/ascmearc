@@ -16,6 +16,8 @@ How far a design's slices have come is tracked in its issues, not here.
 
 ## Approved, being built
 
+- `loot-pipeline.md` (#2161): one find procedure for every item source; the source table and the
+  finder.
 - `profane-gifts.md` (#1471): the layer bosses' corpses and the gift table.
 
 ## Built

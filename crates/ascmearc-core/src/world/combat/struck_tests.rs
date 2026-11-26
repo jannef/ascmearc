@@ -4,7 +4,7 @@
 use crate::action::AttackKind;
 use crate::combat::{Blow, Category, Strike};
 use crate::content::{ContentFiles, Power};
-use crate::magic::loot::{self, LootGrade};
+use crate::magic::loot::LootGrade;
 use crate::magic::{Rarity, worn_powers};
 use crate::noise::SoundKind;
 use crate::object::Stack;
@@ -365,7 +365,8 @@ fn nothing_rolled_has_these_powers() {
             e
         };
         for _ in 0..500 {
-            let made = loot::make(&CONTENT, &mut rng, def.object, 1, 40, LootGrade::Rare);
+            let made =
+                crate::test_support::made(&CONTENT, &mut rng, def.object, 1, 40, LootGrade::Rare);
             let magic = made.magic().expect("a rare");
             assert!(magic.unique.is_none());
             assert!(made.scars().is_none());

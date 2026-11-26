@@ -21,7 +21,7 @@ fn magic_sword() -> Stack {
     let mut rng = Rng::stream(3, "appraise");
     (0..200)
         .map(|_| {
-            crate::magic::loot::make(
+            crate::test_support::made(
                 &BUILTIN,
                 &mut rng,
                 sword,

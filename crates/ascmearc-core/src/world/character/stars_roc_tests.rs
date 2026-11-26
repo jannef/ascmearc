@@ -143,14 +143,8 @@ fn hoard_sense_finds_magic_and_gems_more_often_from_the_same_draws() {
         let mut rng = Rng::stream(3, "stars-test");
         (0..4000)
             .filter_map(|_| {
-                crate::magic::loot::roll_with(
-                    content,
-                    &mut rng,
-                    6,
-                    crate::magic::LootGrade::Any,
-                    crate::variant::Source::Loot,
-                    luck,
-                )
+                let any = crate::magic::LootGrade::Any;
+                crate::test_support::found_with(content, &mut rng, 6, any, luck)
             })
             .filter(|s| s.gem(content).is_some())
             .count()

@@ -220,7 +220,8 @@ fn the_scroll_of_identify_is_the_commonest_scroll_and_the_general_store_has_it()
     let mut by_type: BTreeMap<ObjectId, u32> = BTreeMap::new();
     for i in 0..2000 {
         let mut rng = Rng::stream(i, "loot-test");
-        let stack = crate::magic::loot::roll(&content, &mut rng, 5, LootGrade::Any).expect("loot");
+        let stack =
+            crate::test_support::found(&content, &mut rng, 5, LootGrade::Any).expect("loot");
         if content.object(stack.object).read.is_some() {
             *by_type.entry(stack.object).or_default() += 1;
         }

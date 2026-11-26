@@ -3,7 +3,7 @@
 //! creature's faction favours its own materials within the item's construction list.
 
 use crate::content::{Content, Fit, MaterialId, ObjectDef};
-use crate::magic::{LootGrade, loot};
+use crate::magic::LootGrade;
 use crate::rng::Rng;
 use crate::variant::{self, PER_MILLION, Source};
 use std::collections::BTreeMap;
@@ -76,7 +76,7 @@ fn drawn_loot_holds_the_targets_by_item_class() {
             let mut rng = Rng::stream(seed, &format!("test/materials/{level}"));
             for _ in 0..4000 {
                 let Some(stack) =
-                    loot::roll_from(&content, &mut rng, level, LootGrade::Any, Source::Loot)
+                    crate::test_support::found(&content, &mut rng, level, LootGrade::Any)
                 else {
                     continue;
                 };

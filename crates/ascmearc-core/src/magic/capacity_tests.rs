@@ -332,26 +332,28 @@ fn every_loot_path_holds_its_items_to_their_capacity() {
     for level in [1, 6, 12, 20] {
         for _ in 0..400 {
             for grade in [LootGrade::Any, LootGrade::Magic, LootGrade::Rare] {
-                if let Some(s) = loot::roll(&c, &mut rng, level, grade) {
+                if let Some(s) = crate::test_support::found(&c, &mut rng, level, grade) {
                     fits(&s, "roll");
                 }
             }
             let pool = LootPool::from(LootGrade::Rare);
-            if let Some(s) = loot::roll_pool(&c, &mut rng, level, &pool, loot::Luck::default()) {
-                fits(&s, "roll_pool");
+            if let Some(s) =
+                crate::mapgen::loot_cell::roll(&c, &mut rng, level, &pool, loot::Luck::NONE)
+            {
+                fits(&s, "vault cell");
             }
             if let Some(s) = loot::favoured(&c, &mut rng, level, &[(6, 1)]) {
                 fits(&s, "favoured");
             }
             let sword = object(&c, "long_sword");
             fits(
-                &loot::make(&c, &mut rng, sword, 1, level, LootGrade::Rare),
+                &crate::test_support::made(&c, &mut rng, sword, 1, level, LootGrade::Rare),
                 "make",
             );
-            let source = crate::variant::Source::gear(level);
+            let spec = loot::Spec::new(loot::Origin::Gear, level).grade(LootGrade::Rare);
             fits(
-                &loot::make_as(&c, &mut rng, sword, 1, (level, LootGrade::Rare), source),
-                "make_as",
+                &loot::make(&c, &spec, sword, 1, &loot::Luck::NONE, &mut rng),
+                "make (gear)",
             );
             fits(
                 &loot::heirloom(&c, &mut rng, sword, 6, (level, None)),

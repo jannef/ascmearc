@@ -575,13 +575,14 @@ fn scrolls_are_loot_but_never_magic() {
     let mut found = 0;
     for i in 0..400 {
         let mut rng = Rng::stream(i, "loot-test");
-        let stack = crate::magic::loot::roll(&content, &mut rng, 3, LootGrade::Any).expect("loot");
+        let stack =
+            crate::test_support::found(&content, &mut rng, 3, LootGrade::Any).expect("loot");
         if scroll(&stack) {
             found += 1;
             assert_eq!(stack.rarity(), Rarity::Normal);
         }
         let mut rng = Rng::stream(i, "loot-test");
-        let magic = crate::magic::loot::roll(&content, &mut rng, 3, LootGrade::Magic);
+        let magic = crate::test_support::found(&content, &mut rng, 3, LootGrade::Magic);
         assert!(
             magic.is_some_and(|s| !scroll(&s)),
             "magic loot is never a scroll"
