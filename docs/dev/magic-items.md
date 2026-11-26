@@ -421,6 +421,16 @@ id on another rarity than unique, and a unique without its id.
   four are the rollable ones with a unique's hand-set values, so no rollable pool changes.
   Tests: `world/combat/negate_tests.rs` (the weight, Defence and Protection, casting, a negated
   hit, a miss never rolling, loot never making one).
+- **Scrift, Swīge, and Wyrtruma** (#2111, #2112, #2113): three of the drop pool (`pool = true`;
+  placed nowhere but the quarry), each for a class. **Scrift**, the priest's Masterwork mace,
+  item level 26: Sharp 4, of undead-bane 4, of the Sage 4 (Willpower), of the Lion 4 (Presence),
+  and its Shrive power (below). **Swīge**, a jade amulet, item level 32: of Warding 4 (past the
+  ladder), of the Sage 6, of Clarity 30, no power, and two fields (`silence = 2`, `strain_decay =
+  200`, below); its words are the table's own `phrase` (a unique with no power may write one).
+  **Wyrtruma**, the druid's Marvellous ironwood staff, item level 30: Guarding 2 (+2 Parry), Oaken
+  3, of Balance 30, of Lingering 2, of the Wanderer 30 (Survival), and its Root power (below).
+  No new affix: their values are the rollable affixes' with a unique's hand. Tests:
+  `world/combat/shrive_tests.rs`, `world/magic/hush_tests.rs`, `world/allies/root_tests.rs`.
 - **Onrǣs** (#2123, `data/uniques/onraes.toml`): iron-shod boots, item level 30, Masterwork, of
   the drop pool, placed nowhere but the quarry: Fleet 10 (steps 10% faster), Hardened 2, of
   Steadiness 4, of the Ox 4, and its Onset power (below). The issue's `of_the_hare=10 (steps 10%
@@ -594,6 +604,16 @@ id on another rarity than unique, and a unique without its id.
   `World::creature_spell_does`, the spell's own code for any caster (a cone from the bearer's
   cell, never holding it), its lines held into the news so they follow the blow's ("Flames leap
   from your shield!", `uniques.flames_from_*`). The spell's data is untouched.
+  `Power::Shrive(Shrive { per_hit, per_crit })` (`{ shrive = 40, critical = 120 }`, a weapon
+  only; #2111): `Mods::local` carries it into `Profile::shrive` (as Inflict's `on_hit`), and
+  `World::resolve` hands it to `world/combat/shrive.rs::World::shriven` once the blow is done:
+  a hit by the player takes `per_hit` of their prayer strain off, a critical `per_crit`, and one
+  that killed (the target gone from `actors`) an undead or `fiend`-tagged creature all of it
+  (`World::ease_strain`, docs/dev/prayer.md); no draw, no word.
+  `Power::Root { cells, renew }` (`{ root = 3, renew = 60 }`, #2113): `world/allies/root.rs::
+  World::root_summons`, first in `World::allies_lapse`: a summoned ally past its time within
+  `cells` (Chebyshev) of a master on its level bearing the power stays `renew` seconds more and is
+  `Ally::rooted` (docs/dev/allies.md "Time"); no draw.
   `Power::Onset { knockback, noise }` (`{ onset = true, knockback = 1, noise = 200 }`, worn
   armour only; Onrǣs, #2123): read in the Charge (`world/classes/onset.rs`, `Actor::onset`):
   the charge costs nothing (`charge.rs` spends nothing, `ability::class_cost` has no cost for it,
@@ -714,7 +734,14 @@ id on another rarity than unique, and a unique without its id.
   source within that Chebyshev distance of the wearer gives no light while it is worn, placed
   lights, fires, fire zones, and every carried light, the wearer's own too, dropped where
   `light/cache.rs`'s `sources` drops a darkened one, so the light map, sight, and the perception
-  snapshot follow; nothing is put out or used up); and `resource_build` (`{ resource, on, amount
+  snapshot follow; nothing is put out or used up); `silence` (cells, #2112:
+  `world/magic/hush.rs::World::hushed` asks whether an actor stands within that Chebyshev distance
+  of a wearer on its level, the wearer too; `World::refuse_hushed`, after `refuse_blocked` in the
+  player's turn, refuses a spell (`Action::Cast`/`CastOn` of a spell id) or the reading of an
+  object with a `read` (a scroll) for no time, `uniques.hushed`; a creature's `casts_now` casts
+  nothing; no status is laid; prayer, class and weapon abilities, wands, rods, songs, and a
+  creature's summoning go on); `strain_decay` (percent, default 100: docs/dev/prayer.md
+  "What items do to the strain"); and `resource_build` (`{ resource, on, amount
   }`, a weapon's, #2117: a talent's `resource_build` while it is wielded, added to the talents'
   in `World::build_resources` through `Actor::worn_uniques`).
 - **Description**: `describe::lines` adds `LineKind::Power` (the `phrase`) and

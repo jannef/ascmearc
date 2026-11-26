@@ -3,6 +3,8 @@
 # A unique shield's Cast power goes off (Demonsoul, #2095).
 flames_from_shield = { text = "{who:Gen} kilvestä leimahtaa liekkejä!", of = "929475" }
 flames_from_your_shield = { text = "Kilvestäsi leimahtaa liekkejä!", of = "e3fd55" }
+# A spell or a scroll refused in a unique's silence (Swīge, #2112).
+hushed = { text = "Tässä hiljaisuudessa ei synny sanaakaan.", of = "643f8b" }
 # A Grudge's grudges (the Wrecend, #2131).
 grudges = { by = "n.number", one = "Se kantaa {who:all} kaunaa yhdestä iskusta.", many = "Se kantaa {who:all} kaunaa {n:num} iskusta.", of = "0bcac4" }
 # A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.

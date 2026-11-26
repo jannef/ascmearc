@@ -530,6 +530,7 @@ mod tests {
             on_hit: Vec::new(),
             thrust: None,
             banes: Vec::new(),
+            shrive: None,
             once: 0,
             keeps: None,
             grows: None,

@@ -1315,6 +1315,9 @@ mod tests {
         files.remove("data/rigs.toml");
         // Skill affixes go with the skills, and the uniques that have them.
         files.remove("campaigns/ascmearc/data/uniques");
+        // Wyrtruma (#2113, placed in the quarry) keeps its other affixes.
+        files.replace_in_table("uniques", "\"of_balance=30\", ", "");
+        files.replace_in_table("uniques", ", \"of_the_wanderer=30\"", "");
         let untrained = |text: &str| -> String {
             let kept: Vec<&str> = (text.lines())
                 .filter(|l| {

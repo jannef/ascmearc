@@ -86,6 +86,10 @@ pub struct Ally {
     /// slain (a companion's, a lasting call's).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub until: Option<GameTime>,
+    /// Its time has run out beside its master and been set again by the Root power they bear
+    /// (Wyrtruma's, #2113; `root.rs`): said "rooted" to the player.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub rooted: bool,
 }
 
 /// What made an actor an ally.
@@ -273,6 +277,7 @@ impl World {
                 order: Order::Follow,
                 retinue: false,
                 until,
+                rooted: false,
             });
         }
         // A rest perceives after the turn something appeared.
@@ -678,6 +683,8 @@ impl World {
     /// departs, said if the player sees it ("The wolf fades away."), and every berserk risen
     /// whose time has (`corpse_spell.rs`). Nothing is left behind.
     pub(in crate::world) fn allies_lapse(&mut self, events: &mut Vec<Event>) {
+        // A called beast beside a master bearing the Root power stays on (`root.rs`).
+        self.root_summons();
         let now = self.state.time;
         let level = self.state.current_level.clone();
         let lapsed: Vec<ActorId> = (self.state.actors.values())

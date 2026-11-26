@@ -78,22 +78,20 @@ mod tests {
 
     const PATH: &str = "data/rules/foes.toml";
 
-    /// The unique that sets a bane by hand (`of_undead_bane=2`, #2117).
-    const OATH: &str = "data/uniques/oath.toml";
-
-    /// The Oath without its undead-bane, which a list without the undead has not.
-    fn oath_without_bane(files: &mut ContentFiles) {
-        let text = (files.table("uniques"))
-            .find(|(path, _)| *path == OATH)
-            .map(|(_, text)| text.replace(", \"of_undead_bane=2\"", ""))
-            .expect("the Oath");
-        files.insert(OATH, &text);
+    /// The built-in content without the uniques' banes, which name a kind: Scrift's
+    /// `of_undead_bane=4` (#2111) and the Oath's `of_undead_bane=2` (#2117).
+    fn without_banes() -> ContentFiles {
+        let mut files = ContentFiles::builtin();
+        files.replace_in_table("uniques", "\"of_undead_bane=4\", ", "");
+        files.replace_in_table("uniques", ", \"of_undead_bane=2\"", "");
+        files
     }
 
+    /// The built-in content with `text` for the list; the uniques' undead-banes go with the
+    /// kinds a list may leave out.
     fn with(text: &str) -> Result<Content, String> {
-        let mut files = ContentFiles::builtin();
+        let mut files = without_banes();
         files.insert(PATH, text);
-        oath_without_bane(&mut files);
         Content::load(&files).map_err(|e| e.message)
     }
 
@@ -136,9 +134,8 @@ mod tests {
 
     #[test]
     fn without_the_file_there_is_no_kind_and_no_bane() {
-        let mut files = ContentFiles::builtin();
+        let mut files = without_banes();
         files.remove(PATH);
-        oath_without_bane(&mut files);
         let content = Content::load(&files).expect("content");
         assert!(content.foe_kinds().is_empty());
         let banes = (content.affixes().all().iter()).filter(|d| d.tag.is_some());

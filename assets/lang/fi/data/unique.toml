@@ -90,6 +90,10 @@ phrase = { text = "Sen ensimmäinen kosketus vahingoittumattomaan viholliseen os
 lore = { text = "Jokaisen siinä näkyvän arven sen ensimmäinen omistaja kantoi ensin omassa nahassaan.", of = "656178" }
 phrase = { text = "Jokainen sen kantajan saama ankara haava kovettaa sitä hieman lisää.", of = "ebed52" }
 
+[scrift]
+lore = { text = "Lue rukouksesi. Sitten varmista.", of = "0e8f22" }
+phrase = { text = "Jokainen sen osuva isku on suoritettu katumustyö.", of = "b43f52" }
+
 [sigerics_star]
 lore = { text = "Sormuksen sisäpuolella, hyvin pienin kirjaimin: SIGERIC MINUT TEKI. Ulkopuolella, suuremmin: SIGERIC.", of = "8aa25a" }
 phrase = { text = "Mikään ei pidä sen kantajan katsetta vangittuna.", of = "e81a46" }
@@ -112,6 +116,10 @@ phrase = { text = "Sen nuolet savuavat siellä, mihin ne pysähtyvät, osuivat t
 [stonebiter]
 lore = { text = "Lovettu sadassa louhoksen seinässä, eikä yksikään niistä antanut periksi.", of = "fa63dd" }
 phrase = { text = "Sen kantaja näkee hämärässä.", of = "95fdf0" }
+
+[swige]
+lore = { text = "Sen kantajat eivät koskaan kertoneet, mitä varten se oli. He eivät kertoneet mitään.", of = "33821f" }
+phrase = { text = "Sen kantajan lähellä ei loitsita eikä kääröjä lueta, ja hänen rukouksensa käyvät keveämmin.", of = "5aeb36" }
 
 [tiptoe]
 lore = { text = "Kyl laattia o iha hyvä. Katto vaa mihe sää seisot.", of = "5a94ee" }
@@ -139,3 +147,7 @@ phrase = { text = "Sen jokainen viilto myrkyttää.", of = "1649e4" }
 [wrecend]
 lore = { text = "Sitä kantoi seitsemän veljestä, ja jokainen veisti siihen loven edellisen muistoksi.", of = "33acfb" }
 phrase = { text = "Se muistaa jokaisen iskun, jonka sen kantaja saa, ja maksaa kunkin takaisin sille, joka löi.", of = "48e441" }
+
+[wyrtruma]
+lore = { text = "Maahan pistettynä se kasvaisi. Kukaan ei ole uskaltanut laskea sitä käsistään niin pitkäksi aikaa, että sen näkisi.", of = "aafcec" }
+phrase = { text = "Sen kantajan kutsumat pedot jäävät, kunhan ne pysyvät hänen vierellään.", of = "f3f402" }

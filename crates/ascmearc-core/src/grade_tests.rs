@@ -229,6 +229,7 @@ fn a_kept_beast_reads_as_ungraded() {
         order: crate::world::Order::Follow,
         retinue: false,
         until: None,
+        rooted: false,
     });
     assert_eq!(a.graded(), 0);
 }

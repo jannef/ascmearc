@@ -292,6 +292,9 @@ pub struct Profile {
     /// arrows of undead-bane), by tag in the order first met: added where the attack meets its
     /// target (`World::resolve`), only when the target's type carries the tag.
     pub banes: Vec<(String, i32)>,
+    /// The prayer strain its hits take off its wielder: the power of the unique weapon it is
+    /// made with (Scrift's Shrive, #2111; `world/combat/shrive.rs`).
+    pub shrive: Option<crate::content::Shrive>,
     /// Damage added once to a hit's roll, after a critical has multiplied it and before the
     /// soak (a Tally's debt paid: `world/combat/tally.rs`).
     pub once: i32,
@@ -433,6 +436,7 @@ impl Profile {
             on_hit: Vec::new(),
             thrust: None,
             banes: Vec::new(),
+            shrive: None,
             once: 0,
             keeps: None,
             grows: None,
@@ -760,6 +764,7 @@ mod tests {
             on_hit: Vec::new(),
             thrust: None,
             banes: Vec::new(),
+            shrive: None,
             once: 0,
             keeps: None,
             grows: None,

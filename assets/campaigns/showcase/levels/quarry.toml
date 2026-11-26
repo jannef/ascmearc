@@ -95,6 +95,20 @@ objects = ["unique:deep_night"]
 at = [11, 10]
 objects = ["unique:cracked_resurrection_stone"]
 
+# Three more of the pool (#2111, #2112, #2113): Scrift, a priest's mace that eases prayer;
+# Swīge, an amulet of silence; and Wyrtruma, a druid's staff that keeps called beasts.
+[[pile]]
+at = [3, 9]
+objects = ["unique:scrift"]
+
+[[pile]]
+at = [3, 10]
+objects = ["unique:swige"]
+
+[[pile]]
+at = [3, 11]
+objects = ["unique:wyrtruma"]
+
 # Stones from the old digging, to throw.
 [[pile]]
 at = [23, 4]

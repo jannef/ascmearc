@@ -176,6 +176,10 @@ text = "You remember {trap:a} here, on {ground:bare}."
 [resistant_to]
 text = "resistant to {kinds:and}"
 
+# A called beast of the player's that the Root power holds past its time (Wyrtruma, #2113).
+[rooted]
+text = "rooted"
+
 # Where the ground lies, after its name: `room`, its list (`listed`: `in_room`, `hallowed`,
 # `dreaded`, a `zone_*`).
 [room]

@@ -88,6 +88,16 @@ pub enum Power {
     /// #2098): read where a death is decided ([`crate::world::World`]'s `restored`, from
     /// `World::hurt` and the deaths that skip it).
     Restore { chance: u8, radius: u8 },
+    /// Its called beasts stay while they stand by its wielder (`{ root = 3, renew = 60 }`,
+    /// Wyrtruma's, #2113): a summon of its wielder's whose time runs out within `cells` of them
+    /// (Chebyshev distance, on their level) has `renew` seconds more instead, again and again.
+    /// Read where an ally's time runs out (`world/allies/root.rs`, from `World::allies_lapse`).
+    Root { cells: u8, renew: u16 },
+    /// Every blow it lands takes prayer strain off its wielder (`{ shrive = 40, critical = 120 }`,
+    /// Scrift's, #2111): `per_hit`, a critical's `per_crit`, and a blow that kills one of the
+    /// undead or a fiend all of it. Rides `Mods::local` of the weapon into the attack's profile
+    /// (`Profile::shrive`), read where a blow is resolved (`world/combat/shrive.rs`).
+    Shrive(Shrive),
     /// A melee blow of it that hits also strikes whoever stands right behind the one struck
     /// (the next cell along the line from the wielder), friend or foe, rolled to hit on its
     /// own, for this percent of the damage (`{ thrust = 50 }`, Gār's, #2124; a melee weapon):
@@ -213,6 +223,13 @@ pub struct Barefoot {
     pub feel_traps: bool,
 }
 
+/// A [`Power::Shrive`]: the prayer strain a hit takes off, and a critical hit.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Shrive {
+    pub per_hit: u16,
+    pub per_crit: u16,
+}
+
 /// A [`Power::Cast`]: the spell, its reach and roll, and the chances, in percent, that a block
 /// and a bash cast it.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -260,6 +277,14 @@ pub struct UniqueDef {
     /// (`douse = 10`, Deep Night's, #2097). Read where a level's light sources are gathered
     /// (`light/cache.rs`); nothing is put out or used up.
     pub douse: u8,
+    /// While it is worn, nobody within this many cells of its wearer (Chebyshev distance, the
+    /// wearer too) can cast a spell or read a scroll (`silence = 2`, Swīge's, #2112). Read where
+    /// a spell or a scroll is refused (`world/magic/hush.rs`); no status is laid.
+    pub silence: u8,
+    /// How fast its wearer's prayer strain passes while it is worn, in percent (`strain_decay =
+    /// 200`: twice as fast, Swīge's, #2112; 100 without one). Read where the strain's pace is
+    /// kept (`world/classes/orison.rs`).
+    pub strain_decay: u16,
     /// What its wielder's events build besides, while it is wielded: `(resource, on, amount)`
     /// (`resource_build = { resource = "zeal", on = "melee_hit", amount = 1 }`, the Oath's,
     /// #2117), as a talent's `resource_build` (read in `World::build_resources`).
@@ -372,6 +397,14 @@ struct UniqueSpec {
     /// The radius in cells within which it douses every light while worn.
     #[serde(default)]
     douse: u8,
+    /// The radius in cells within which no spell is cast and no scroll read while worn.
+    #[serde(default)]
+    silence: u8,
+    /// How fast prayer strain passes while worn, in percent.
+    strain_decay: Option<u16>,
+    /// What it does in words, for one with no power whose fields do something (Swīge's
+    /// silence); a power's own `phrase` otherwise.
+    phrase: Option<String>,
     /// Whether its wearer counts as wearing no body armour.
     #[serde(default)]
     counts_as_unarmoured: bool,
@@ -411,7 +444,7 @@ struct PowerSpec {
     pain: Option<String>,
     /// What a hit pays (`pain` only).
     gain: Option<u16>,
-    /// What a critical pays (`pain` only).
+    /// What a critical pays (`pain`), or the prayer strain it takes off (`shrive`).
     critical: Option<u16>,
     /// How far, in cells, a blow on its wearer rings out.
     ring: Option<u8>,
@@ -425,6 +458,12 @@ struct PowerSpec {
     restore: Option<u8>,
     /// How far from its wearer a death is undone (`restore`), or how far a zone reaches (`zone`).
     radius: Option<u8>,
+    /// How near its wielder a called beast stays on when its time runs out.
+    root: Option<u8>,
+    /// The seconds a rooted beast stays on each time (`root` only).
+    renew: Option<u16>,
+    /// The prayer strain each hit takes off.
+    shrive: Option<u16>,
     /// The onset: a Charge free, as far as its wearer sees (`true`).
     onset: Option<bool>,
     /// How many cells the onset's blow drives the one struck back (`onset` only).
@@ -542,12 +581,15 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
         stack = stack.with_parts(own);
     }
     let stack = hand_made(stack, spec.quality, &spec.id, content)?;
+    if spec.power.is_some() && spec.phrase.is_some() {
+        return Err("`phrase` belongs in its `power` when it has one".into());
+    }
     let (power, phrase) = match spec.power {
         Some(p) => (
             Some(power(&p, def, content)?),
             Some(p.phrase.trim().to_string()),
         ),
-        None => (None, None),
+        None => (None, spec.phrase.as_deref().map(|p| p.trim().to_string())),
     };
     let lore = (spec.lore.map(|l| l.trim().to_string())).filter(|l| !l.is_empty());
     let kind = |name: &str| {
@@ -575,6 +617,10 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
         return Err("`bash` needs a base that bashes (a shield)".into());
     }
     let (dice, lights) = off_tier(&spec.affixes, &stack, content);
+    let strain_decay = spec.strain_decay.unwrap_or(100);
+    if strain_decay == 0 {
+        return Err("`strain_decay` is a percent of the usual pace, 1 or more".into());
+    }
     let resource_build = (spec.resource_build)
         .map(|b| {
             let id = (content.resource_id(&b.resource))
@@ -600,6 +646,8 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
         bash,
         invisible: spec.invisible,
         douse: spec.douse,
+        silence: spec.silence,
+        strain_decay,
         unarmoured: spec.counts_as_unarmoured,
         resource_build,
         phrase,
@@ -678,8 +726,9 @@ fn off_tier(
 /// on a weapon), `first_blood` (on a weapon), `plant` (on a shield or armour), `barefoot`,
 /// `trapwise`, `zone`, `pain` (with `gain` and `critical`), `ring` (with `stagger` and
 /// `difficulty`), `scars` (on worn armour), `onset` (with a `knockback` and a `noise`, on worn
-/// armour), `thrust` (1 to 100, on a melee weapon), and `tally`, `grudge`, and `oath` (with
-/// `hp_per_point`), each on a weapon.
+/// armour), `thrust` (1 to 100, on a melee weapon), `tally`, `grudge`, and `oath` (with
+/// `hp_per_point`), each on a weapon, `root` (with a `renew`), and `shrive` (perhaps with a
+/// `critical`, on a weapon).
 fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, String> {
     let named = [
         p.inflict.is_some(),
@@ -704,10 +753,12 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         p.oath.is_some(),
         p.onset.is_some(),
         p.thrust.is_some(),
+        p.root.is_some(),
+        p.shrive.is_some(),
     ];
     if named.iter().filter(|&&n| n).count() != 1 {
         return Err(
-            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `grows`, `first_blood`, `plant`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, `scars`, `onset`, `thrust`, `tally`, `grudge`, and `oath`"
+            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `grows`, `first_blood`, `plant`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, `scars`, `onset`, `thrust`, `tally`, `grudge`, `oath`, `root`, and `shrive`"
                 .into(),
         );
     }
@@ -726,8 +777,11 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     if p.barefoot.is_none() && p.onset.is_none() && p.noise.is_some() {
         return Err("power: `noise` belongs to `barefoot` and `onset`".into());
     }
-    if p.pain.is_none() && (p.gain.is_some() || p.critical.is_some()) {
-        return Err("power: `gain` and `critical` belong to `pain`".into());
+    if p.pain.is_none() && p.gain.is_some() {
+        return Err("power: `gain` belongs to `pain`".into());
+    }
+    if p.pain.is_none() && p.shrive.is_none() && p.critical.is_some() {
+        return Err("power: `critical` belongs to `pain` and `shrive`".into());
     }
     if p.ring.is_none() && (p.stagger.is_some() || p.difficulty.is_some()) {
         return Err("power: `stagger` and `difficulty` belong to `ring`".into());
@@ -742,6 +796,9 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     let chances = [p.on_block.is_some(), p.on_bash.is_some()];
     if p.cast.is_none() && cast_fields.iter().chain(&chances).any(|&n| n) {
         return Err("power: `length`, `damage`, `on_block`, and `on_bash` belong to `cast`".into());
+    }
+    if p.root.is_none() && p.renew.is_some() {
+        return Err("power: `renew` belongs to `root`".into());
     }
     if p.onset.is_none() && p.knockback.is_some() {
         return Err("power: `knockback` belongs to `onset`".into());
@@ -813,6 +870,21 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     }
     if let Some(spell) = &p.cast {
         return cast(p, spell, def, content).map(Power::Cast);
+    }
+    if let Some(cells) = p.root {
+        let renew = (p.renew.filter(|&r| r > 0))
+            .ok_or("power: `root` needs a `renew` (seconds, 1 or more)")?;
+        if cells == 0 {
+            return Err("power: `root` is a distance in cells, 1 or more".into());
+        }
+        return Ok(Power::Root { cells, renew });
+    }
+    if let Some(per_hit) = p.shrive {
+        if def.kind != Some(super::ItemKind::Weapon) {
+            return Err("power: `shrive` needs a weapon".into());
+        }
+        let per_crit = p.critical.unwrap_or(per_hit);
+        return Ok(Power::Shrive(Shrive { per_hit, per_crit }));
     }
     if let Some(onset) = p.onset {
         if !onset {
