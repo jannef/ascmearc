@@ -283,6 +283,9 @@ text = "wreathed in fire"
 [zone_fouled]
 text = "under a foul reek"
 
+[zone_rime]
+text = "iced over with rime"
+
 [zone_slick]
 text = "slick underfoot"
 

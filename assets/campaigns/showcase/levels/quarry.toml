@@ -95,6 +95,21 @@ objects = ["unique:deep_night"]
 at = [11, 10]
 objects = ["unique:cracked_resurrection_stone"]
 
+# Three launchers of the pool (#2114, #2134, #2118), down the arrival room's east wall: Hagolscūr,
+# a sling whose stones bring down hail; Entbana, a sling against all bigger than Small (both with
+# stones to sling); Fēolaga, a bow whose arrows set a ranger's companion on what they strike.
+[[pile]]
+at = [13, 5]
+objects = ["unique:hagolscur", "sling_stone*20"]
+
+[[pile]]
+at = [13, 6]
+objects = ["unique:entbana", "sling_stone*20"]
+
+[[pile]]
+at = [13, 7]
+objects = ["unique:feolaga", "arrow*20"]
+
 # Stones from the old digging, to throw.
 [[pile]]
 at = [23, 4]

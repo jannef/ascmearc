@@ -10,6 +10,7 @@ const fn tint(kind: ZoneKind) -> (Rgb, u16) {
     match kind {
         ZoneKind::Fire => (Rgb::new(110, 40, 14), 28),
         ZoneKind::Fouled => (Rgb::new(58, 70, 22), 32),
+        ZoneKind::Rime => (Rgb::new(150, 190, 215), 30),
         ZoneKind::Slick => (Rgb::new(60, 82, 94), 35),
         ZoneKind::Dark => (Rgb::new(10, 6, 16), 60),
         ZoneKind::Smoke => (Rgb::new(92, 92, 88), 40),

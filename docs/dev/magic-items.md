@@ -412,6 +412,17 @@ id on another rarity than unique, and a unique without its id.
   four are the rollable ones with a unique's hand-set values, so no rollable pool changes.
   Tests: `world/combat/negate_tests.rs` (the weight, Defence and Protection, casting, a negated
   hit, a miss never rolling, loot never making one).
+- **Three launchers** (#2114, #2134, #2118), each `pool = true`, placed nowhere but the quarry,
+  their affixes as the designs write them: **Hagolscūr** (a sling, item level 22: of Precision 4,
+  of Reach 2, of Warmth 30; Burst of Rime's cold, radius 1, 2d6, ice 5 turns), **Entbana** (a
+  sling, item level 40: Sharp 5, of Precision 4, Hunter's 4; Feller past Small, +6), and
+  **Fēolaga** (a Marvellous composite bow, item level 28: of Precision 4, Steady 4, Hunter's 4, of
+  the Hunt 4, Keen 2; Quarry of Focus, 1 a bite). Two design affixes wait for #2152 (uniques
+  follow no affix rules), left out of the data with a note there: Hagolscūr's of the Eagle 4 (a
+  fourth suffix) and Entbana's Steady 4 (no draw on a sling). A unique is never trimmed to its
+  capacity (`level::hand_made`). Tests: `world/combat/hail_tests.rs`,
+  `world/combat/bane_tests.rs` (`entbana_fells_the_big_and_spares_the_small`),
+  `world/allies/quarry_tests.rs`.
 - **What only a unique sets** (#2091), each refused to any other item by `Magic::check` and
   never rolled (`content/unique_values_tests.rs::what_only_a_unique_sets_never_rolls`: every
   random affix, loot's, a vault's, a shop's, enchanting's and its recast's, comes of
@@ -473,6 +484,25 @@ id on another rarity than unique, and a unique without its id.
   base's range plus what affixes add, times it, read by `Actor::launcher_range`,
   `Actor::throw_range`, and `Numbers::of` (talents add after). A creature's AI still judges
   its reach by its launcher's plain `range` (`world/creatures/ai.rs`), as it ignores Hunter's.
+  The launcher powers (#2114, #2134, #2118; `unique::launcher_power`, each a nested table, only
+  on a launcher): `Power::Burst(BurstPower)` (`{ burst = { spell = "rime", radius = 1, damage =
+  "2d6", ice = 5 } }`, a damage spell): `world/combat/hail.rs::World::shot_hail`, called at the
+  end of `World::fly` for a shot (never a throw), bursts at the cell the missile stopped, hit or
+  miss, through `cast_burst_reaching` as `Caster::Actor(shooter)` with `Reach::own` (the burst
+  spares its caster) and `full`, the spell's effect, kind, and noise; then `spell_lands` (the
+  type's rule on those harmed, the spell's words), then a `ZoneKind::Rime` zone of `ice` turns
+  over the burst (`lay_zone_around`; `docs/dev/spells.md` "Zones"). One roll on
+  `spell/burst/<shooter>`. `Power::Feller { larger_than, bonus }` (`{ feller = { larger_than =
+  "small", bonus = 6 } }`, a size of `data/sizes.toml`): `world/combat/bane.rs::World::felled`,
+  a hook of `World::resolve` beside `baned`, adds the bonus to a shot's to-hit and damage when
+  the target's `size_of` is past it. `Power::Quarry { resource, per_bite }` (`{ quarry = {
+  resource = "focus", per_bite = 1 } }`): `world/allies/quarry.rs`: `quarry_struck`, after
+  `missile_hits`' `resolve`, sets the player's companion on a hostile creature the player's shot
+  hit (`Order::Hunt`, `CompanionData::quarry`, the Savage of the Sic talent's data,
+  `quarry::sic_savage`, if it has none; "goes for the throat" on a new quarry; nothing spent or
+  drawn); `quarry_bitten`, beside `savage_spent` in `resolve`, adds `per_bite` of the resource
+  (to its maximum) for each melee hit of the companion on its quarry while the player wields
+  the launcher.
   `Power::Negate { chance, message }` (`{ negate = 50, message = "..." }`, 1 to 99, worn armour
   only; #2100): `world/combat/negate.rs::World::negated` asks it of a blow rolled against
   Defence once it has hit, in `World::resolve` (after the strike's own changes, Holy wrath's

@@ -17,7 +17,8 @@ use super::level::{ItemPartSpec, hand_made, item_part, magic_of};
 use super::object::AddedSpec;
 use super::status::{OnHit, OnHitSpec};
 use super::{
-    Content, ContentError, DamageTypeId, LightId, ObjectDef, ObjectId, Rarity, SpellId, StatusId,
+    Content, ContentError, DamageTypeId, LightId, ObjectDef, ObjectId, Rarity, ResourceId, SpellId,
+    StatusId,
 };
 use crate::damage::Rider;
 use crate::dice::Roll;
@@ -35,6 +36,15 @@ pub const UNIQUE: &str = "unique:";
 /// a wiki word (`xtask/src/wiki/uniques.rs`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Power {
+    /// Every shot it looses ends in a burst of a damage spell's kind around the cell the missile
+    /// stops at, hit or miss, sparing the shooter, and leaves that spell's ice there for a time
+    /// (`{ burst = { spell = "rime", radius = 1, damage = "2d6", ice = 5 } }`, Hagolscūr's hail,
+    /// #2114; on a launcher only): read once a shot's flight is over (`world/combat/hail.rs`).
+    Burst(BurstPower),
+    /// Its shots have a bane against every creature larger than a size: that much more to hit
+    /// and damage (`{ feller = { larger_than = "small", bonus = 6 } }`, Entbana's, #2134; on a
+    /// launcher only): read where the banes are summed (`world/combat/bane.rs`).
+    Feller { larger_than: usize, bonus: i32 },
     /// Its hits cause a status, by a chance (`{ inflict = "poisoned", chance = 100, severity =
     /// 1 }`): read where a natural attack's `on_hit` is applied (`World::after_blow`), for the
     /// weapon that hit (a launcher's for its shots), through the attack's
@@ -56,6 +66,12 @@ pub enum Power {
     /// Defence are untouched. The player wearing it is told `message` (a line of data, said by its
     /// key: [`super::data_line::ward`]).
     Negate { chance: u8, message: String },
+    /// A creature its shot strikes becomes its wielder's companion's quarry, set on at once as
+    /// by Sic 'em, for nothing, and each bite the companion lands on its quarry gives the wielder
+    /// `per_bite` of `resource` (`{ quarry = { resource = "focus", per_bite = 1 } }`, Fēolaga's,
+    /// #2118; on a launcher only): read where a missile's blow and a blow's hit are resolved
+    /// (`world/allies/quarry.rs`).
+    Quarry { resource: ResourceId, per_bite: u16 },
     /// It shoots (or is thrown) this many times as far (`{ range = 2 }`, #1976): a multiplier on
     /// its range and what its affixes add, read where its reach is computed
     /// ([`crate::magic::Mods::local`], `Mods::range`); only on a base with a `range`.
@@ -96,6 +112,16 @@ pub struct CastPower {
     pub on_block: u8,
     /// The chance its bearer's bash with it casts it at the one bashed.
     pub on_bash: u8,
+}
+
+/// A [`Power::Burst`]: the damage spell whose kind, words, and look the burst has, its radius
+/// in cells, its damage, and how many turns its cells stay iced (a zone of rime, 0: none).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct BurstPower {
+    pub spell: SpellId,
+    pub radius: u8,
+    pub damage: Roll,
+    pub ice: u8,
 }
 
 /// A unique item as data.
@@ -255,7 +281,41 @@ struct PowerSpec {
     on_block: Option<u8>,
     /// The chance, in percent, a bash casts it.
     on_bash: Option<u8>,
+    /// A burst where each of its shots ends (a launcher's).
+    burst: Option<BurstSpec>,
+    /// A bane of its shots against creatures larger than a size (a launcher's).
+    feller: Option<FellerSpec>,
+    /// Its shots set the wielder's companion on what they strike (a launcher's).
+    quarry: Option<QuarrySpec>,
     phrase: String,
+}
+
+/// A `burst` power as data: `{ spell = "rime", radius = 1, damage = "2d6", ice = 5 }`.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct BurstSpec {
+    spell: String,
+    radius: u8,
+    damage: String,
+    /// Turns its cells stay iced.
+    #[serde(default)]
+    ice: u8,
+}
+
+/// A `feller` power as data: `{ larger_than = "small", bonus = 6 }`.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct FellerSpec {
+    larger_than: String,
+    bonus: i32,
+}
+
+/// A `quarry` power as data: `{ resource = "focus", per_bite = 1 }`.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct QuarrySpec {
+    resource: String,
+    per_bite: u16,
 }
 
 /// Parses the uniques table (`table`: its files in order), against `content`'s objects,
@@ -385,12 +445,18 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         p.range.is_some(),
         p.restore.is_some(),
         p.cast.is_some(),
+        p.burst.is_some(),
+        p.feller.is_some(),
+        p.quarry.is_some(),
     ];
     if named.iter().filter(|&&n| n).count() != 1 {
         return Err(
-            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, and `cast`"
+            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `burst`, `feller`, and `quarry`"
                 .into(),
         );
+    }
+    if let Some(power) = launcher_power(p, def, content)? {
+        return Ok(power);
     }
     if p.restore.is_none() && p.radius.is_some() {
         return Err("power: `radius` belongs to `restore`".into());
@@ -482,6 +548,63 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         status,
         message: message.into(),
     })
+}
+
+/// The power of a launcher's own a `power` table names, if it names one (`burst`, `feller`,
+/// `quarry`), checked: on a launcher; a burst's spell a damage spell, its radius 0 to 3 and its
+/// damage a roll; a feller's size one of `data/sizes.toml` and its bonus above 0; a quarry's
+/// resource one of `data/resources.toml` and its `per_bite` above 0.
+fn launcher_power(
+    p: &PowerSpec,
+    def: &ObjectDef,
+    content: &Content,
+) -> Result<Option<Power>, String> {
+    let named = ["burst", "feller", "quarry"];
+    let given = [p.burst.is_some(), p.feller.is_some(), p.quarry.is_some()];
+    let Some(at) = given.iter().position(|&g| g) else {
+        return Ok(None);
+    };
+    if def.kind != Some(super::ItemKind::Launcher) {
+        return Err(format!("power: `{}` needs a launcher", named[at]));
+    }
+    if let Some(burst) = &p.burst {
+        let spell = (content.spell_id(&burst.spell))
+            .ok_or_else(|| format!("power: unknown spell `{}`", burst.spell))?;
+        if content.spell(spell).kind != super::SpellPurpose::Damage {
+            return Err(format!("power: `{}` is no damage spell", burst.spell));
+        }
+        if burst.radius > 3 {
+            return Err("power: a `burst`'s `radius` is 0 to 3".into());
+        }
+        let damage = (burst.damage.parse::<Roll>()).map_err(|e| format!("power: {e}"))?;
+        return Ok(Some(Power::Burst(BurstPower {
+            spell,
+            radius: burst.radius,
+            damage,
+            ice: burst.ice,
+        })));
+    }
+    if let Some(feller) = &p.feller {
+        let larger_than = (content.size_index(&feller.larger_than))
+            .ok_or_else(|| format!("power: unknown size `{}`", feller.larger_than))?;
+        if feller.bonus <= 0 {
+            return Err("power: a `feller`'s `bonus` is above 0".into());
+        }
+        return Ok(Some(Power::Feller {
+            larger_than,
+            bonus: feller.bonus,
+        }));
+    }
+    let quarry = p.quarry.as_ref().expect("the one named");
+    let resource = (content.resource_id(&quarry.resource))
+        .ok_or_else(|| format!("power: unknown resource `{}`", quarry.resource))?;
+    if quarry.per_bite == 0 {
+        return Err("power: a `quarry`'s `per_bite` is above 0".into());
+    }
+    Ok(Some(Power::Quarry {
+        resource,
+        per_bite: quarry.per_bite,
+    }))
 }
 
 /// A `cast` power naming `spell` on base item `def`: a damage spell, on a shield, with its

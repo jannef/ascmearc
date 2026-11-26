@@ -354,6 +354,20 @@ Its power works while it is worn or wielded, identified or not:
   farther counts.
 - **Range**: it [shoots](ranged.md#distance) that many times as far: its own range and what its
   affixes add are multiplied, and a talent's extra range is added after.
+- **Burst**: every shot it looses, hit or miss, bursts where it stops. Hagolscūr's stones bring
+  down hail: [cold](spell-types.md) damage to everyone on that cell and the eight around it,
+  your allies too, and the one the stone hit takes it on top. Cold's rule follows, so whoever it
+  harms turns [Sluggish](status-list.md#status-sluggish). It never hurts you. The nine cells stay
+  [iced](spell-rules.md#zones) for a few turns, and the ice chills whoever starts a turn on it,
+  you too.
+- **Feller**: a [bane](affixes.md#banes) by size. Entbana's stones strike every creature larger
+  than Small surer and harder, and nothing more against the small.
+- **Quarry**: a creature hostile to you that its arrow hits becomes your
+  [companion](companions.md#companions)'s quarry at once, as
+  [Sic 'em](abilities.md#ability-sic) would make it. It costs you nothing, and you need not have
+  Sic 'em: your companion turns [Savage](status-list.md#status-savage) too, if it is not
+  already. Each creature you hit next is the new quarry. Every bite your companion lands on its
+  quarry gives you a point of [Focus](focus.md).
 - **Restore**: whatever dies within the number of cells the table gives of its wearer may come
   back to life instead, by the table's chance. That is anyone: the wearer, their allies, and
   their foes. No line of sight is needed, and every death rolls again, so one creature can come

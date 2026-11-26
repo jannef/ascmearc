@@ -29,6 +29,11 @@ const UNIQUES: &[Written] = &[
     ("deep_night", 40, &[("of_the_lynx", 4)]),
     ("demonsoul", 40, &[("sturdy", 3)]),
     (
+        "entbana",
+        40,
+        &[("sharp", 5), ("of_precision", 4), ("hunters", 4)],
+    ),
+    (
         "eorcanstan",
         12,
         &[
@@ -37,6 +42,17 @@ const UNIQUES: &[Written] = &[
             ("of_the_scholar", 29),
             ("of_clarity", 50),
             ("of_thrift", 25),
+        ],
+    ),
+    (
+        "feolaga",
+        28,
+        &[
+            ("of_precision", 4),
+            ("steady", 4),
+            ("hunters", 4),
+            ("of_the_hunt", 4),
+            ("keen", 2),
         ],
     ),
     (
@@ -60,6 +76,15 @@ const UNIQUES: &[Written] = &[
             ("of_the_bear", 4),
             ("of_celerity", 16),
             ("of_the_ox", 4),
+        ],
+    ),
+    (
+        "hagolscur",
+        22,
+        &[
+            ("of_precision", 4),
+            ("of_reach", 2),
+            ("of_warmth", 30),
         ],
     ),
     (

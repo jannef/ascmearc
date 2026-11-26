@@ -168,6 +168,9 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
                 Power::Range(_) => "range",
                 Power::Restore { .. } => "restore",
                 Power::Cast(_) => "cast",
+                Power::Burst(_) => "burst",
+                Power::Feller { .. } => "feller",
+                Power::Quarry { .. } => "quarry",
             };
             (u.id.as_str(), power)
         })
@@ -178,7 +181,10 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
             ("cracked_resurrection_stone", "restore"),
             ("deep_night", "vision"),
             ("demonsoul", "cast"),
+            ("entbana", "feller"),
+            ("feolaga", "quarry"),
             ("grandmother", "inflict"),
+            ("hagolscur", "burst"),
             ("masterpiece", "negate"),
             ("radiant", "light"),
             ("silverstrike", "range"),
@@ -699,8 +705,8 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
     }
     // The outlaws' four, Sigeric's Star, the pedlar's three, the drop pool's five (#1976, #2095,
     // #2097), the Cracked Resurrection Stone (#2098), the test world's Stonebiter, and the
-    // Masterpiece (#2100).
-    assert_eq!(ids.len(), 16, "{ids:?}");
+    // Masterpiece (#2100), and the three launchers (#2114, #2134, #2118).
+    assert_eq!(ids.len(), 19, "{ids:?}");
     let widowmaker = unique(&w, "widowmaker");
     let magic = widowmaker.magic().expect("magic");
     let stiletto = content.object(widowmaker.object);

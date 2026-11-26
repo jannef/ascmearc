@@ -11,6 +11,7 @@ mod extra_limbs;
 pub(in crate::world) mod fight;
 pub(in crate::world) mod free_blow;
 mod frenzy;
+mod hail;
 pub(in crate::world) mod hurl;
 pub(in crate::world) mod item_damage;
 mod knock_away;
@@ -40,6 +41,7 @@ cfg_if! {
         mod fight_tests;
         mod free_blow_tests;
         mod frenzy_tests;
+        mod hail_tests;
         mod hurl_tests;
         mod item_damage_tests;
         mod knock_away_tests;

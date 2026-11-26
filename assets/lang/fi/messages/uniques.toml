@@ -3,6 +3,8 @@
 # A unique shield's Cast power goes off (Demonsoul, #2095).
 flames_from_shield = { text = "{who:Gen} kilvestä leimahtaa liekkejä!", of = "929475" }
 flames_from_your_shield = { text = "Kilvestäsi leimahtaa liekkejä!", of = "e3fd55" }
+# A unique sling's hail falls where its stone stopped (Hagolscūr, #2114).
+hail_falls = { text = "Rakeita sataa rajusti!", of = "da3adc" }
 # A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.
 no_craft = { text = "Se on ainutlaatuinen: mikään taitosi ei muuta sitä.", of = "749215" }
 

@@ -8,6 +8,7 @@ pub(in crate::world) mod collar;
 pub(in crate::world) mod companion;
 pub(in crate::world) mod familiar;
 mod pack;
+mod quarry;
 mod sic;
 pub(in crate::world) mod tame;
 cfg_if! {
@@ -17,6 +18,7 @@ cfg_if! {
         mod charm_tests;
         mod collar_tests;
         mod pack_tests;
+        mod quarry_tests;
         mod sic_tests;
         mod tame_tests;
     }

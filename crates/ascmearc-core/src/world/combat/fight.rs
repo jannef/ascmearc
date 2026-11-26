@@ -888,8 +888,11 @@ impl World {
         events: &mut Vec<Event>,
     ) -> Option<Blow> {
         let skills = self.skills_of(attacker, kind, Some(with));
-        let kind = (kind, Some(with), skills);
-        self.resolve(attacker, target, kind, Some(profile), false, events)
+        let made = (kind, Some(with), skills);
+        let blow = self.resolve(attacker, target, made, Some(profile), false, events);
+        // A unique launcher's Quarry: the companion set on what it hit (`quarry.rs`).
+        self.quarry_struck((attacker, target), kind, blow, events);
+        blow
     }
 
     /// The weapon skill and fighting style actor `id`'s attack of `kind` made `with` a missile,
@@ -934,6 +937,8 @@ impl World {
         let profile = profile.map(|p| self.season_threat(attacker, p));
         // Its banes, against a creature of their tags (`bane.rs`).
         let profile = profile.map(|p| self.baned(target, p));
+        // A unique launcher's Feller: a bane by size (`bane.rs`).
+        let profile = profile.map(|p| self.felled((attacker, target), kind, p));
         // Favoured prey and a sneak attack.
         let profile = profile.map(|p| self.favoured(attacker, target, p));
         // An ally's master's gifts to it (Beast-bond).
@@ -1012,6 +1017,8 @@ impl World {
         let blow = blow.map(|b| self.negated(target, b));
         if blow.is_some_and(|b| b.strike.is_hit()) {
             self.savage_spent(attacker, events);
+            // A companion's bite on its quarry pays a Quarry power (`quarry.rs`).
+            self.quarry_bitten((attacker, target), kind);
         }
         self.glimpse(attacker, target, blow.is_some_and(|b| b.strike.is_hit()));
         // Diamond soul's catch (`ascetic.rs`): a missile's hit undone for a point of ki.

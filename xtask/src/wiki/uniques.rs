@@ -171,6 +171,44 @@ fn power_text(content: &Content, u: &UniqueDef) -> String {
 fn own_power(content: &Content, u: &UniqueDef) -> String {
     match &u.power {
         None => "-".into(),
+        Some(Power::Burst(burst)) => {
+            let def = content.spell(burst.spell);
+            let kind = (def.damage_type).map_or(String::new(), |k| {
+                format!(" {}", content.damage_type(k).name)
+            });
+            let cells = match burst.radius {
+                0 => "the cell".to_string(),
+                1 => "the cell and the 8 around it".to_string(),
+                r => format!("every cell within {r} of it"),
+            };
+            let mut text = format!(
+                "every shot it looses, hit or miss, bursts on {cells} where the missile stops: \
+                 {}{kind} damage to everyone there, allies too (the one struck takes it on top of \
+                 the shot), as a {} spell does, its rule and all; its shooter is spared",
+                burst.damage, def.name
+            );
+            if burst.ice > 0 {
+                let _ = write!(
+                    text,
+                    "; those cells are iced for {} turns ({} seconds): whoever starts a turn \
+                     there suffers the cold's rule, its shooter too",
+                    burst.ice,
+                    u32::from(burst.ice) * 6
+                );
+            }
+            text
+        }
+        Some(Power::Feller { larger_than, bonus }) => format!(
+            "its shots have {bonus:+} to hit and {bonus:+} damage against every creature larger \
+             than {}, and nothing more against the rest",
+            content.size(*larger_than).name
+        ),
+        Some(Power::Quarry { resource, per_bite }) => format!(
+            "a creature hostile to you that its shot hits becomes your companion's quarry at once, \
+             as Sic 'em makes it, for nothing (the Savage Sic 'em gives, if your companion has \
+             none); every bite your companion lands on its quarry gives you {per_bite} {}",
+            content.resource(*resource).name
+        ),
         Some(Power::Inflict { hit, added }) => {
             let Affliction::Status {
                 status, severity, ..
