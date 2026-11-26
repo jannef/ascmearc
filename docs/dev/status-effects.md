@@ -70,36 +70,29 @@ drip hook `drip_blood` (#127's stains go there). The player's statuses beginning
 the rest loop keeps them from the turns it does not perceive). Presentation reads
 `PerceptionView::own_effects` (status bar after HP, character screen `Status` row) and
 `effects_of(actor)` (look mode; only statuses with `seen`), never severities. **A buff status
-carries `seen`, whatever its source** (owner, 2026-11-01; docs/design/buff-circles.md §9): a
+carries `seen`, whatever its source** (owner, 2026-11-01): a
 status that lends something (a positive `penalty`, a `combat` bonus, a `cost` under 100, a
 `vision`, a `resist`, or a `light`) shows on creatures: `hasted` "quickened", `barkskin`
 "bark-skinned", the potions' boosts, visions, and resistances by their names, `spell_ward`
 "warded", `light_footed` "light-footed". Not buffs, never shown: `disguised` (a mimic's disguise),
-`lurking`, the cooldowns, and harms. `content/circles.rs`'s `every_buff_status_is_seen` test keeps
-it. **Circled statuses**: `data/circles.toml` (`content/circles.rs`,
-`CircleStatuses`, `Content::circles()`; the rows' statuses and schools fingerprinted) gives each
-buff and hex spell's status a school, whose colour its spell circle about the actor is drawn in:
-`lit` (evocation), `hasted`, `barkskin`, `branded_blade`, `water_borne` (transmutation), `blessed`,
-`fire_cloaked` (abjuration); `ill_wished`,
-`drowsy` (enchantment), `weakened` (necromancy), `sluggish` (transmutation); `webbed` has none (webs are strands, docs/dev/webs.md). A circled
-status must have `seen` (a load-time check: the circle shows only what look mode may say) and be
-laid by a buff or hex spell (which makes its circle a buff's or a hex's), or name its own `kind`
-(`"buff"` or `"hex"`) when no spell lays it: the lure quest's `bound` (enchantment, a buff; #1446,
-`world/people/lure.rs`), permanent (no `eases`), on the crystal guardian once bound; a buff or hex
-spell's status without a row has no circle. **The circle's light** (docs/design/buff-circles.md §8):
-`circles::shed_lights` fills `StatusDef::light` at load with the school's `circle_<school>` preset
-(`data/lights.toml`: radius 1, steady, luma 40 to 52 and UV 90 at the source) for every circled
-status without a light of its
-own (`lit` keeps `spell_light`; `fire_cloaked` and `branded_blade` `ember`, the one light of these that flickers). Nothing new reads it: `light/cache.rs` already pushes one source
+`lurking`, the cooldowns, and harms. **Glowing statuses**: `data/spell_glow.toml` (`content/spell_glow.rs`, `SpellGlow`,
+`Content::spell_glow()`; presentation only, not fingerprinted) gives each buff and hex spell's
+status a school, whose colour its bearer's glyph glows in (docs/dev/rendering.md "Spell glow"):
+`lit` (evocation), `hasted`, `barkskin`, `branded_blade`, `water_borne` (transmutation),
+`blessed`, `fire_cloaked` (abjuration); `ill_wished`, `drowsy` (enchantment), `weakened`
+(necromancy), `sluggish` (transmutation); `webbed` has none (webs are strands, docs/dev/webs.md).
+A glowing status must have `seen` (a load-time check: the glow shows only what look mode may
+say) and be laid by a buff or hex spell (which makes it a buff's or a hex's), or name its own
+`kind` (`"buff"` or `"hex"`) when no spell lays it: the lure quest's `bound` (enchantment, a buff;
+#1446, `world/people/lure.rs`), permanent (no `eases`), on the crystal guardian once bound; a buff
+or hex spell's status without a row does not glow. **The glow sheds no light** (#2173: the spell
+circles and their `circle_<school>` lights are gone): only a status's own `light` does (`lit`'s
+`spell_light`, `fire_cloaked`'s and `branded_blade`'s `ember`); `light/cache.rs` pushes one source
 per actor for its status lights, the widest, the first in status order on a tie (key `CARRIED |
-LIT | id`, so the mask stays cached while the actor stands); severity and time left never scale
-it, and it ends with the status. An actor that hides (`disguised`) sheds no status light. So a
-circled actor is seen by normal eyes on its own cell in the dark, by low-light eyes a cell away,
-plainly by UV eyes; creatures see the player the same way (a buffed sneak is seen), and it adds
-to a light-blind player's glare. Tests: `world/magic/circle_tests.rs` (the alcove archer of
-`--scenario circles` seen by its glow alone, the eyes, the tie, a cast's light and its end, the
-disguise, the drow at noon) and `content/circles.rs` (the presets, a missing one refused, the
-fingerprint). Saved and hashed
+LIT | id`); an actor that hides (`disguised`) sheds none. Tests: `world/magic/buff_hall_tests.rs`
+(the `--scenario glow` hall: its spells, its kobolds' statuses, what perception shows, the
+alcove archer unseen in the dark) and `content/spell_glow.rs` (the rows, bad files, no light, not
+in the fingerprint). Saved and hashed
 (`Actor::regen` counts hundredths of a second at the normal pace). The dev
 action `afflict:ID` (`Action::Afflict`) gives the player a degree, for tests and captures. Tests:
 `status.rs`, `content/status.rs`, `world/health/status_tests.rs`.

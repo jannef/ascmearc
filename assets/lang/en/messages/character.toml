@@ -53,11 +53,6 @@ choice_tag = "a kind of creature"
 choice_weapon_skill = "a weapon skill"
 # `talents`: the free talents the pick may be, a list of names.
 choose_your_free_first = "You must choose your free {talents:or} first."
-# A character's classes as the character screen and the Characters list name them, a label
-# (`character::class_arg`): `class` and `prestige`, a class and a prestige class by name
-# (`class:<id>`, `prestige:<id>`, or a `class_level`); `level`, a number ("Bard 30, Hunter 4").
-class_level = "{class:label} {level:bare}"
-classes = "{class:label}, {prestige:label}"
 clean_warmth ="A clean warmth runs through your blood."
 # `talent`: the hunger softener the craving took.
 craving_takes = "The craving takes {talent:bare} from you."

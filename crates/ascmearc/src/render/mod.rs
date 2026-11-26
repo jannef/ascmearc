@@ -1,7 +1,7 @@
 //! Rendering: the glyph atlas, console buffers, and the layers they are drawn in.
 //!
 //! Layers, bottom to top: the map grid (terrain, in-cell animation; [`grid`]), the spell
-//! circles about buffed and hexed actors ([`circles`], their glyphs' glow from [`glyph_glow`]), the free-glyph
+//! glow of buffed and hexed actors' glyphs (drawn by the circle renderer, [`circles`], from [`glyph_glow`]), the free-glyph
 //! layer (creatures, particles, and glyphs that move or grow; [`free_glyph`], [`particles`]), and
 //! the UI console (text, panels, overlays). Both consoles are drawn by the same console material;
 //! the map grid's is lit by the visual light ([`lighting`], with creature [`shadows`] and each

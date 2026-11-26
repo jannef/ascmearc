@@ -98,18 +98,6 @@ name = { by = "slot.form", gen = "kulkukauppiaan", par = "kulkukauppiasta", else
 [ascmearc.road_villagers]
 name = { by = "slot.form", gen = "matkalla olevien kyläläisten", par = "matkalla olevia kyläläisiä", else = "joukko kyläläisiä matkalla", of = "80a81d" }
 
-[ascmearc.strange_spirit_downs]
-name = { by = "slot.form", gen = "oudon hengen", par = "outoa henkeä", else = "outo henki", of = "35ead9" }
-
-[ascmearc.strange_spirit_roads]
-name = { by = "slot.form", gen = "oudon hengen", par = "outoa henkeä", else = "outo henki", of = "35ead9" }
-
-[ascmearc.strange_spirit_vale]
-name = { by = "slot.form", gen = "oudon hengen", par = "outoa henkeä", else = "outo henki", of = "35ead9" }
-
-[ascmearc.strange_spirit_woods]
-name = { by = "slot.form", gen = "oudon hengen", par = "outoa henkeä", else = "outo henki", of = "35ead9" }
-
 [ascmearc.vale_badger]
 name = { by = "slot.form", gen = "mäyrän", par = "mäyrää", else = "mäyrä", of = "a6a7f2" }
 

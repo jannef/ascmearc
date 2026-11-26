@@ -1006,11 +1006,7 @@ id on another rarity than unique, and a unique without its id.
   in `World::build_resources` through `Actor::worn_uniques`).
 - **Description**: `describe::lines` adds `LineKind::Power` (the `phrase`) and
   `LineKind::Lore` after the affixes, only through `known_magic`; the UI labels the first
-  "Power" and dims the lore in a section of its own. A spirit weapon (`Stack::spirit`, the
-  Hunter's Spirit weapon, #881; plain, never magic) gets a power line too: the `spirit_weapon`
-  effect's `phrase` (`world::spirit_gift`), with its gifts folded into its numbers
-  (`Numbers::of`: `+3 hit`), its critical range, and "Pierces armour"; `Lore::listed` marks it
-  `(spirit)`.
+  "Power" and dims the lore in a section of its own.
 - **Adding a power**: a `Power` variant, its parse in `unique::power`, its one read, and its
   words in `xtask/src/wiki/uniques.rs` (`power_text`); the item's own words are its `phrase`.
 - **Tests**: `world/creatures/unique_tests.rs` (the table and the values set by hand, hiding

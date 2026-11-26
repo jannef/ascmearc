@@ -1,24 +1,23 @@
-# Spell circles (docs/design/buff-circles.md): the school of every
-# buff's and hex's status, and each school's colour. The renderer draws a circle about every actor
-# the player sees with a circled status, in its first effect's school's colour. One rule reads it: a
-# circled status without a light of its own sheds its school's,
-# `circle_<school>` in lights.toml, so the rows' statuses and schools are in the content
-# fingerprint.
+# Spell glow (docs/dev/rendering.md "Spell glow"): the school of every buff's and hex's status, and
+# each school's colour. The renderer makes the glyph of every actor the player sees with a glowing
+# status glow and glint in its first effect's school's colour: the one sign on the map that a
+# creature is buffed or hexed. Presentation only: no rule reads it (a buff is a buff spell's
+# status whether it glows or not), so it is not in the content fingerprint.
 #
 # [[school]]   one row per school of magic (data/spells: `school`)
 #   id         the school
-#   color      its colour, "#rrggbb", through the palette as every content colour is; the school
-#              must have a light `circle_<id>` in lights.toml
+#   color      its colour, "#rrggbb", through the palette as every content colour is
 #
-# [[status]]   one row per circled status: a `kind = "buff"` or `"hex"` spell's status (one without
-#              a row has no circle; a sleep's, `sleeps`, never has one: Slumber's `asleep`, a den's),
+# [[status]]   one row per glowing status: a `kind = "buff"` or `"hex"` spell's status (one without
+#              a row does not glow; a sleep's, `sleeps`, never does: Slumber's `asleep`, a den's),
 #              or a status no spell lays that names its own `kind` (a lure quest's binding)
 #   status     an id in data/status/; it must have `seen` (others see it on a creature)
-#   school     the school whose colour it is drawn in
+#   school     the school whose colour it glows in
 #   kind       "buff" or "hex", only for a status no spell lays (a spell's status takes its
 #              spell's)
 #
-# Rows are in no particular order: a circle orders its effects by status order (data/status/).
+# Rows are in no particular order: a glow takes its colour from the first in status order
+# (data/status/), a buff's before a hex's.
 
 [[school]]
 id = "evocation"
@@ -143,7 +142,7 @@ school = "transmutation"
 status = "drowsy"
 school = "enchantment"
 
-# Webbed has no circle: webs are strands on the ground (data/rules/webs.toml), a spider's or the
+# Webbed does not glow: webs are strands on the ground (data/rules/webs.toml), a spider's or the
 # Web spell's alike, and Bramble's thorns hold as they do.
 
 # Bind.

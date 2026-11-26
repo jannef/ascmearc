@@ -8,10 +8,10 @@ use crate::test_support::run;
 use crate::time::Duration;
 use crate::world::*;
 
-/// The spell-circle hall, the player wielding Wyrtruma if `wielded`, with one rat called for a
+/// The buffs and hexes hall, the player wielding Wyrtruma if `wielded`, with one rat called for a
 /// minute beside them.
 fn world(wielded: bool) -> World {
-    let mut w = crate::test_support::world("circles");
+    let mut w = crate::test_support::world("glow");
     let content = w.content().clone();
     if wielded {
         let staff = content.unique("wyrtruma").expect("Wyrtruma").stack.clone();

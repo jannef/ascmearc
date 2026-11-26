@@ -570,7 +570,7 @@ fn an_ally_survives_a_save_as_it_was() {
 #[test]
 fn beast_bond_is_read_through_the_master_with_the_shipped_talent() {
     let content = builtin();
-    let mut w = World::new(content.clone(), "circles", None).expect("world");
+    let mut w = World::new(content.clone(), "glow", None).expect("world");
     run(&mut w, "ally:rat");
     let rat = allies(&w)[0].id;
     let plain = w.protection_of(rat).base;

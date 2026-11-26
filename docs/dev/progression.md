@@ -29,7 +29,6 @@ hit points a level gives) is `docs/dev/experience.md`.
 | `world/classes/rage.rs` | The berserker's Rage on the Rage resource (R1, #249): `World::rage` (`grant_resource_with_status`), `World::unstoppable` (from `hurt`). |
 | `world/classes/volley.rs` | `use_class_at` (`Action::UseAt`, a class active aimed at a cell: `use:volley:12,5`) and the ranger's Volley (#244), on 6 Focus (#250). |
 | `world/classes/charge.rs` | The warrior's Charge (#1466, `use:charge:12,5`): the way to a hostile the player sees checked whole before a step (`charge_path`: walkable, no deep water, ice, known trap, or seen creature; at least a cell; no way out of a shop's door owing, `World::owing_exit`, the test `turned_back` makes, #1488), then the steps without `step_away`/`step_up` (no free blows provoked), each priced by `step_price` and entered through `World::enter_cell` (`world/levels/enter.rs`, #1615: what every step does on arriving, shared with `player_moves`), an unknown trap or someone unseen stopping it short, then `player_attacks`, free; 1 stamina (the talent's `resource`) + `per_cell` × 1, 2, 3, ... for the cells (#2108: `charge_price`, `1 + n(n+1)/2` with the shipped `per_cell` 1), checked and spent by the charge itself (`Content::charge_cost` for the menu row, which says "1 stamina + 1, 2, 3… a pace"). Onrǣs' onset (#2123, `world/classes/onset.rs`, `Actor::onset`): free (no `class_cost`, the menu says "no stamina", `PerceptionView::own_charge_free`), its steps' noise the power's percent (`Entry::noise`, `enter.rs`), and a blow whose first strike hits (`player_attacks` returns it) drives the foe back `knockback` cells (`World::drive_back`), Staggered where it cannot be moved. Whirling charge (`whirling_charge`, the warrior's at 50, #1467; `MartialMods::whirling_charge`): `World::whirl` after each step strikes every hostile beside the new cell but the target, each once a charge (`strike_free` with `Free::Cleave`: no time, no exertion, the mark untouched). Tests: `world/classes/charge_tests.rs`. |
-| `world/classes/spirit_weapon.rs` | `use_class_shape` (`Action::Shape`, a class active in a weapon's shape: `use:spirit_weapon:long_sword`) and the Hunter's Spirit weapon (#881): `shapes` (every `melee_weapons` object with an attack that a hand holds, by weapon skill then id), `World::call_weapon` (a `Stack::spirit` into the pack, wielded through `World::equip_saying`, one held faded first; priced by the swap: a wield plus what the hands held), `gifts` (read in `Actor::melee`/`off_hand_blow`), `World::fade_spirit` and `release_spirit` (the invariant, `docs/dev/equipment.md`), `gift` (the content's numbers and phrase, for the description). |
 | `world/magic/scribe.rs` | `start_scribe` (`Action::Scribe`, `scribe:fireball`, its own action: a class active on a spell known) and the wizard's Scribe (#906): `Actor::scribe_base`/`scribe_cost` (`spell_base` × `mana_times`, then `mana_cost`), `scribe_turns` (a study's, no Quick study), `World::scribe` through `keep_at` (`Spent::Scribe(Writing)`), `finish_scribe` (the mana through `spend_mana`, one blank used up, `Content::scroll_of` made and `learn_scroll`, the `scribe` stat use); `docs/dev/scrolls.md` "Writing scrolls". |
 | `world/classes/merchants_eye.rs` | `use_class_on` (`Action::UseOn`, a class active on a stack carried: `use:merchants_eye:c`) and the merchant's Merchant's eye (#816): `World::identify` on the stack for the time of a `read`; no mana, cooldown, check, or limit; refused, no time, for a stack not carried or already known. |
 | `world/classes/focus.rs` | The ranger's Focus (R2, #250): `hold` (what a talent's `grants_resource` grants, from `class::hand_out` and `World::grant_class`), `World::rapid_shot` (from `shoot.rs::fire`). `docs/dev/resources.md`. |
@@ -62,7 +61,7 @@ speed), `delving` (searching, traps, chests, rooms, doors, digging), `fortune` (
 investments, prices, gems, loot, what is handed down), `growth` (experience, picks, ranks,
 skills), `craft` (trades, salvage, tempering, fletching, the craftsperson's actives), `sign`
 (the birth signs' actives), `faith` (altars, temples, smites, rites, prayer, Retribution),
-`martial` (the warrior's, berserker's, ascetic's, and hunter's actives), `resource`, `song`,
+`martial` (the warrior's, berserker's, ascetic's, and ranger's actives), `resource`, `song`,
 `ally` (Beast-bond, the summon bias, Sic 'em: `AllyMods`, the sum an ally reads), `beast`
 (companion, familiar, taming, the bond, Beast-friend and `kin_to`), and `slots` (the equipment
 slots a body bars or opens, #1628).
@@ -216,7 +215,6 @@ wiki's effect text appends "while raging".
 | `charge` | `world/classes/charge.rs` (`Action::UseAt`, `World::use_class_at`; `ClassActive::aims_cell`, `Aim::Cell`; `ClassActive::cost` is `Step`, so what blocks a step blocks it; the UI aims it on the line to the foe, `ui/target.rs`, and the menu row says its stamina, `Content::charge_cost`) |
 | `volley` | `world/classes/volley.rs` (`Action::UseAt`, `World::use_class_at`; `ClassActive::aims_cell`, `Aim::Cell`; the UI aims it as a shot, `ui/target.rs`) |
 | `sic` | `world/allies/sic.rs` (`Action::UseAt`, `World::use_class_at`; `ClassActive::aims_cell`, `Aim::Cell`; `Content::sic_range` the aiming mode's reach; `docs/dev/companion.md`) |
-| `spirit_weapon` | `world/classes/spirit_weapon.rs` (`Action::Shape`, `World::use_class_shape`; `ClassActive::aims_shape`, `Aim::Shape`; the UI opens the shape list, `ui/shape_screen.rs`); the gifts in `Actor::melee` and `Actor::off_hand_blow` (`spirit_weapon::gifts`: `to_hit`, `threat` lower, `penetration = ALL_PROTECTION`); `magic::Numbers::of` and `describe::lines` (`spirit_gift`) |
 | `scribe` | `world/magic/scribe.rs` (`Action::Scribe`, `World::start_scribe`; `ClassActive::aims_spell`, `Aim::Spell`; the UI opens the scribe list, `ui/scribe_screen.rs`, from `PerceptionView::scribes` and `blank_scrolls`); `Ability::unavailable` (a status blocking `cast` greys it) |
 | `merchants_eye` | `world/classes/merchants_eye.rs` (`Action::UseOn`, `World::use_class_on`; `ClassActive::aims_item`, `Aim::Item`, `Ability::action_on`; the UI opens the identify list, `IdentifyBy::Class`) |
 | `favoured_prey` | `World::resolve` → `World::favoured` (`world/combat/ambush.rs`), against `Quests::prey` |
@@ -415,8 +413,8 @@ Landed noble (#1405; `heritage`, `needs = { creation = true, class = "aristocrat
 hand-down: its `stipend_more` (`FortuneMods::stipend_gold_percent`, `stipend_chance`,
 `stipend_magic_percent`) is read by `world/classes/stipend.rs::of_level`, as the aristocrat's class
 ability Stipend's `stipend` effect (`FortuneMods::stipend`, level 1 of the class table) is read by
-`grow_stipend`, one line in `experience.rs::rise_from` after `level_up` (every level reached,
-a prestige class's too). The rule and its numbers: `docs/dev/npcs.md` "The aristocrat's servant",
+`grow_stipend`, one line in `experience.rs::rise_from` after `level_up` (every level
+reached). The rule and its numbers: `docs/dev/npcs.md` "The aristocrat's servant",
 `data/rules/stipend.toml`. The merchant's Invest (`invest`, `FortuneMods::invest`, #1407) gates the
 business partner's deals (`world/classes/invest.rs`); the partner is placed by the talent id, as the
 servant is: `docs/dev/npcs.md` "The merchant's business partner", `data/rules/invest.toml`.
@@ -545,25 +543,17 @@ characters are thieves, the forest's and the world's rangers: their runs start w
 or Favoured prey. `world/classes/class_tests.rs` covers the grants, bonus picks,
 restores, replays, and every hook; `content::class::tests` the table checks.
 
-A table row is `{ level = 25, talent = "x" }` (`ClassDef::abilities` and
-`PrestigeDef::abilities` hold `(level, talent)`; the shared `class::table_rows` and `check_rows`).
+A table row is `{ level = 25, talent = "x" }` (`ClassDef::abilities` holds `(level, talent)`;
+`class::table_rows` and `check_rows`).
 The loader refuses a talent named twice in a table. `class::grant` gives each talent the table
 names up to the level that the player does not hold (a restore too), with its hand-out; the news
 is "You gain Jack of all trades.", then the hand-out's own `news`. `held_already` counts a
 pickable held. `class_rogue_tests.rs` covers the bard's Jack of all trades and Master of none, a restore past
 both, and a skill the content adds being taken up.
 
-A class's table stops at its `max_level` (`ClassDef::settle_cap`: never past the curve's top; a
-row past it never comes), and a **prestige class's** table (`data/prestige/`, `PrestigeDef`, #876) is a second
-one at its own levels, read once the character is called (`docs/dev/experience.md` "Prestige
-classes"): `class::grant` walks `Character::class_levels` (every table with the level reached in
-it), `held_already` and the bonus pick of a level read `Character::class_of`, and each `Due`'s
-bonus trees are the class of its level's (`World::bonus_trees_at`). A prestige class's abilities
-are class abilities too (`Content::check_class_tables` checks both tables) and are marked `(class)` in the dumps like a class's. One ships, the Hunter (`data/prestige/hunter.toml`,
-#881): the warrior's hit points, two rolls, Athletics and Survival known for, bonus picks at its 5,
-10, 15, 23, and 28 from Weaponcraft and Guard, and one row, Spirit weapon at its level 1; its door
-is a campaign's calling. The tests' Warden (`world/classes/calling_tests.rs`) gives Fencing at its level 1
-and Riposte at 2.
+Every class's table ends at 60, the curve's top (`data/experience.toml` `max_level`; the
+prestige classes that went past it were removed, #2174), and the bonus pick of a level and each
+`Due`'s bonus trees are the class's (`World::bonus_trees_at`).
 
 ## The trees so far
 

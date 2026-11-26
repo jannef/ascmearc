@@ -60,11 +60,9 @@
 //! (and its replay) is reproduced by its scenario, seed, and character.
 
 use crate::alignment::Score;
-use crate::content::{
-    ClassDef, Content, CreatureId, PrestigeDef, RaceDef, ScenarioDef, Sign, Table, WeaponSkillId,
-};
+use crate::content::{ClassDef, Content, CreatureId, RaceDef, ScenarioDef, Sign, WeaponSkillId};
 use crate::kit::{self, Pack};
-use crate::lang::{Arg, Msg};
+use crate::lang::Arg;
 use crate::rng::Rng;
 use crate::skills::{self, Skills};
 use crate::stats::{self, AVERAGE, PerStat, Stat, Stats, adjusted};
@@ -197,34 +195,14 @@ impl BirthDate {
     }
 }
 
-/// The classes `class` and `prestige` (ids) at total `level`, as the character screen and the
-/// Characters list name them ([`Character::class_arg`]), said as a label (the `label` form):
-/// `Bard` until the class is full, `Bard 30` at its cap (`character.class_level`), `Bard 30,
-/// Hunter 4` once the prestige class has levels (`character.classes`); a class the content lacks
-/// by its id, as text.
-pub fn class_arg(content: &Content, class: &str, prestige: Option<&str>, level: u8) -> Arg {
-    let Some(def) = content.class(class) else {
-        return Arg::id(class);
-    };
-    let at = |name: crate::lang::Phrase, level: u8| -> Arg {
-        (Msg::new(crate::msg::character::CLASS_LEVEL).role("class", name))
-            .role("level", Arg::Number(level.into()))
-            .into()
-    };
-    let class = match level >= def.max_level {
-        true => at(content.class_phrase(&def.id), def.max_level),
-        false => content.class_phrase(&def.id).into(),
-    };
-    let Some(p) = prestige.filter(|p| content.prestige(p).is_some()) else {
-        return class;
-    };
-    let prestige = match level.saturating_sub(def.max_level) {
-        0 => content.prestige_phrase(p).into(),
-        n => at(content.prestige_phrase(p), n),
-    };
-    (Msg::new(crate::msg::character::CLASSES).role("class", class))
-        .role("prestige", prestige)
-        .into()
+/// The class `class` (an id), as the character screen and the Characters list name it
+/// ([`Character::class_arg`]), said as a label (the `label` form); a class the content lacks by
+/// its id, as text.
+pub fn class_arg(content: &Content, class: &str) -> Arg {
+    match content.class(class) {
+        Some(def) => content.class_phrase(&def.id).into(),
+        None => Arg::id(class),
+    }
 }
 
 /// Who the player is in a run: the choice and what came of it.
@@ -248,11 +226,6 @@ pub struct Character {
     /// nobody chose.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub story: Vec<crate::background::Told>,
-    /// The prestige class the character has been called into, by
-    /// id (`data/prestige/`): set once by the calling (`World::call`), never cleared. Left out
-    /// of the JSON while none.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub prestige: Option<String>,
     /// The witch's familiar as she remembers it: the kind
     /// and name of the first that came to her, set as it comes (`World::make_familiar`) and
     /// kept after it dies, so a calling brings that one back. Left out of the JSON while none.
@@ -274,60 +247,9 @@ impl Character {
         self.born.age_on(date)
     }
 
-    /// The prestige class the character has been called into, if any.
-    pub fn prestige<'c>(&self, content: &'c Content) -> Option<&'c PrestigeDef> {
-        content.prestige(self.prestige.as_deref()?)
-    }
-
-    /// The highest level the character's class reaches (its `max_level`; the curve's top for a
-    /// class the content lacks): their levels past it are the prestige class's.
-    pub fn class_cap(&self, content: &Content) -> u8 {
-        (self.spec.class(content))
-            .map_or_else(|_| content.experience().max_level(), |c| c.max_level)
-    }
-
-    /// The highest level the character may reach now: their
-    /// class's `max_level`, plus their prestige class's `levels` once called, never past the
-    /// curve's top.
-    pub fn level_cap(&self, content: &Content) -> u8 {
-        let base = self.class_cap(content);
-        let more = self.prestige(content).map_or(0, |p| p.levels);
-        base.saturating_add(more)
-            .min(content.experience().max_level())
-    }
-
-    /// The class total level `level` falls in and its level in that class: the character's
-    /// own class up to its `max_level`, then the prestige class from its level 1 (total 31 is
-    /// Hunter 1 after a bard's 30). `None` for a class the content lacks.
-    pub fn class_of<'c>(&self, content: &'c Content, level: u8) -> Option<(Table<'c>, u8)> {
-        let class = self.spec.class(content).ok()?;
-        match self.prestige(content) {
-            Some(p) if level > class.max_level => {
-                Some((Table::Prestige(p), level - class.max_level))
-            }
-            _ => Some((Table::Class(class), level)),
-        }
-    }
-
-    /// Every class table the character has levels in at total `level`, each with its own level
-    /// reached: the class at `min(level, max_level)`, then the prestige class at what is past
-    /// the cap (0 while none is). Class abilities are granted table by table from this.
-    pub fn class_levels<'c>(&self, content: &'c Content, level: u8) -> Vec<(Table<'c>, u8)> {
-        let Ok(class) = self.spec.class(content) else {
-            return Vec::new();
-        };
-        let mut tables = vec![(Table::Class(class), level.min(class.max_level))];
-        if let Some(p) = self.prestige(content) {
-            tables.push((Table::Prestige(p), level.saturating_sub(class.max_level)));
-        }
-        tables
-    }
-
-    /// The Class row of the character screen at total `level`: `Bard` until the class is full,
-    /// `Bard 30` at its cap, `Bard 30, Hunter 4` once the prestige class has levels ([`class_arg`]), said
-    /// as a label.
-    pub fn class_arg(&self, content: &Content, level: u8) -> Arg {
-        class_arg(content, &self.spec.class, self.prestige.as_deref(), level)
+    /// The Class row of the character screen ([`class_arg`]), said as a label.
+    pub fn class_arg(&self, content: &Content) -> Arg {
+        class_arg(content, &self.spec.class)
     }
 
     /// Whether the character was born in a year of `element` (an id: "is this character
@@ -591,7 +513,6 @@ impl CharacterSpec {
             born,
             sign,
             story: Vec::new(),
-            prestige: None,
             familiar: None,
         };
         Ok(Start {
@@ -1332,7 +1253,6 @@ mod tests {
         };
         files.edit_table("races", untrained);
         files.edit_table("classes", untrained);
-        files.edit_table("prestige", untrained);
         files.edit_table("creatures", untrained);
         // Quest rewards teach none (Grave goods' Heal, #1329): the reward's other fields kept.
         files.edit_table("quests", |text| {

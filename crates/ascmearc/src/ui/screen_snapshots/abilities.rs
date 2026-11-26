@@ -91,21 +91,6 @@ cases! {
         screen: Some("abilities"),
         ..BASE
     },
-    // The Hunter's Spirit weapon asks for a shape (#881): every melee weapon by weapon skill,
-    // as plain ones; the list is the game's objects, whoever opens it.
-    shape_list: Case {
-        name: "shape-list",
-        run: true,
-        screen: Some("shape"),
-        ..BASE
-    },
-    shape_list_second_page: Case {
-        name: "shape-list-second-page",
-        run: true,
-        screen: Some("shape"),
-        keys: Some(">"),
-        ..BASE
-    },
     // The wizard's Scribe asks for a spell (#906): the spells known by school, each with its
     // price and its time in words; no blank scroll carried, which the line above says.
     scribe_list: Case {
@@ -336,13 +321,13 @@ cases! {
         keys: Some("Down Down Down Down"),
         ..BASE
     },
-    // A bard of level 25 with too little mana (#244): Throw your voice aimed at a place, Inspire
+    // A bard past level 40 with too little mana (#244): Throw your voice aimed at a place, Inspire
     // greyed out for inspiration (a song costs one thing, #870), the Lullaby for mana (#873),
     // Music no row (read by rules).
     abilities_menu_bard: Case {
         name: "abilities-menu-bard",
         character: Some("human,female,bard"),
-        actions: "xp:266667 levelup:auto drain:106",
+        actions: "xp:1300000 levelup:auto drain:206",
         screen: Some("abilities"),
         ..BASE
     },

@@ -9,14 +9,11 @@
 //! good speaker to an Evil or Wicked character in place of its greeting and lines, and
 //! `greet_good`, by an evil one to a Good or Saintly character), optional `[[dialogue.topic]]`s (`id`, `name`,
 //! `reply`, an optional `route`: the way it describes, marked on the player's overworld map
-//! as they ask, and an optional `calls`: a calling of its campaign, the topic offered only while
-//! the calling is open and asking it calling the player, with `departs` the speaker then leaving;
-//! `world/classes/calling.rs`) asked about on the dialogue screen, optional `[[dialogue.service]]`s (`id`, `name`,
+//! as they ask) asked about on the dialogue screen, optional `[[dialogue.service]]`s (`id`, `name`,
 //! `price`, `does`, `reply`, `nothing`, and `train` for a training: a cure, a mending, an
 //! identification, or a skill taught for gold, asked for like a topic;
 //! `world/people/service.rs`), an optional `[dialogue.offer]` (one item at a fixed price, asked for
-//! like a topic; `content/offer.rs`, `world/people/wares.rs`), an optional `speaks_to` (the alignment
-//! bands it talks to at all) with its `silent` (what it does for anyone else), and an optional `mutter`: the percent chance per
+//! like a topic; `content/offer.rs`, `world/people/wares.rs`), and an optional `mutter`: the percent chance per
 //! action that it mutters one of the mutter's `lines` (with a `verb`, "mutters" by default) while
 //! the player is near enough to hear it. `[[dialogue.after]]` (`quest`, `lines`): one-liners
 //! that join its `lines` once the player has done that quest (Kerensa's about the bound crystal
@@ -68,8 +65,6 @@ struct DialogueSpec {
     #[serde(default)]
     service: Vec<Service>,
     offer: Option<super::offer::OfferSpec>,
-    speaks_to: Option<crate::alignment::Requirement>,
-    silent: Option<String>,
     mutter: Option<MutterSpec>,
     stipend: Option<ServantWords>,
     partner: Option<PartnerWords>,
@@ -135,13 +130,6 @@ pub struct Topic {
     /// `world/people/rumour.rs`). Empty for most topics.
     #[serde(default)]
     pub route: Vec<[i32; 2]>,
-    /// A calling of the dialogue's campaign, by its prestige class's id: the topic is offered only
-    /// while the calling is open to the player, and asking it calls them
-    /// (`world/classes/calling.rs`).
-    pub calls: Option<String>,
-    /// The speaker leaves the level once it has answered (a creature's dialogue only).
-    #[serde(default)]
-    pub departs: bool,
 }
 
 impl Topic {
@@ -341,10 +329,6 @@ pub struct Dialogue {
     pub services: Vec<Service>,
     /// The one item it offers for a fixed price, listed after the services (`world/people/wares.rs`).
     pub offer: Option<super::TradeOffer>,
-    /// The alignment bands it talks to; `None`: everyone. Outside them it says `silent`.
-    pub speaks_to: Option<crate::alignment::Requirement>,
-    /// What it does for a character outside `speaks_to`: "The spirit looks through you."
-    pub silent: Option<String>,
     pub mutter: Option<Mutter>,
     /// A family servant's words: the speaker hands over the stipend (`world/classes/stipend.rs`).
     pub stipend: Option<ServantWords>,
@@ -405,41 +389,6 @@ impl Content {
                 {
                     return Err(bad("a `route` needs its campaign's overworld".into()));
                 }
-            }
-        }
-        Ok(())
-    }
-
-    /// Checks every topic's `calls` once the callings have loaded: a calling of the dialogue's
-    /// own campaign (or, for a dialogue outside every campaign, one outside every campaign too).
-    pub(super) fn check_topic_callings(&self) -> Result<(), ContentError> {
-        for dialogue in &self.dialogues {
-            let campaign = dialogue.campaign.as_deref();
-            for topic in &dialogue.topics {
-                let Some(class) = &topic.calls else {
-                    continue;
-                };
-                let found = (self.callings.iter()).any(|c| {
-                    &c.class == class && (c.campaign.as_deref() == campaign || c.campaign.is_none())
-                });
-                if found {
-                    continue;
-                }
-                let file = match campaign {
-                    Some(c) => format!("campaigns/{c}/data/dialogue"),
-                    None => "data/dialogue.toml".into(),
-                };
-                let who = match &dialogue.speaker {
-                    Speaker::Creature(c) => format!("creature `{}`", self.creature(*c).id),
-                    Speaker::Npc(npc) => format!("npc `{npc}`"),
-                };
-                return Err(ContentError::new(
-                    &file,
-                    format!(
-                        "dialogue of {who}: topic `{}`: no calling `{class}` in its campaign",
-                        topic.id
-                    ),
-                ));
             }
         }
         Ok(())
@@ -585,13 +534,6 @@ fn parse_file<'a>(
             }
             None => None,
         };
-        match (spec.speaks_to, &spec.silent) {
-            (Some(_), None) => return Err(bad("`speaks_to` needs a `silent` line".into())),
-            (None, Some(_)) => {
-                return Err(bad("`silent` is said only outside a `speaks_to`".into()));
-            }
-            (Some(_), Some(_)) | (None, None) => {}
-        }
         if let Some(r) = spec.register.as_deref().filter(|r| !is_id(r)) {
             return Err(bad(format!("register `{r}`: {ID_SHAPE}")));
         }
@@ -629,8 +571,6 @@ fn parse_file<'a>(
             topics: spec.topic,
             services: spec.service,
             offer,
-            speaks_to: spec.speaks_to,
-            silent: spec.silent,
             mutter,
             stipend: spec.stipend,
             partner: spec.partner,

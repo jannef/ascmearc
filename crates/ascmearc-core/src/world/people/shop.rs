@@ -248,9 +248,8 @@ pub fn haggling(content: &Content, shops: &Shops, actor: &crate::world::Actor) -
 
 /// How many of `object` `stacks` hold.
 pub fn count_of(stacks: &[Stack], object: crate::content::ObjectId) -> u32 {
-    // A spirit weapon is nothing anyone may be given (`spirit_weapon.rs`).
     (stacks.iter())
-        .filter(|s| s.object == object && !s.is_spirit())
+        .filter(|s| s.object == object)
         .map(|s| s.count)
         .sum()
 }
@@ -526,11 +525,6 @@ impl World {
         if chosen.is_empty() {
             return Some(Spent::Nothing);
         }
-        // A spirit weapon is not let go: it fades, and the shop never sees it.
-        let (chosen, faded) = self.release_spirit(&chosen);
-        if chosen.is_empty() {
-            return Some(self.price_for(&faded));
-        }
         let inventory = self.state.player().inventory.clone();
         let content = self.content.clone();
         let shop = self.state.current().shops[i].clone();
@@ -554,16 +548,12 @@ impl World {
             self.say(offers.role("gold", i64::from(deal.offer)));
         }
         if deal.back.is_empty() && deal.sold.is_empty() {
-            return Some(match faded.is_empty() {
-                true => Spent::Nothing,
-                false => self.price_for(&faded),
-            });
+            return Some(Spent::Nothing);
         }
         // What leaves whole is taken off first, if worn or wielded.
         let gone =
             Positions::of((0..inventory.len()).filter(|&k| deal.leaving[k] == inventory[k].count));
-        let mut kinds = faded;
-        kinds.extend(self.take_off_before_dropping(gone.iter()));
+        let mut kinds = self.take_off_before_dropping(gone.iter());
         kinds.push(ActionKind::Drop);
         // Priced at the load the player has as they begin.
         let spent = self.price_for(&kinds);

@@ -3,8 +3,7 @@
 # the enchanting choice's and the wiki's), a grimoire's, a wand's, a rod's, and a potion's lines,
 # what it can bear, its maker's mark, and what the Eye for the make reads of it (`make_*`). Ids
 # alphabetical (`docs/dev/localization.md` "Literal lines"), the plain ones first, then the
-# tables. A unique item's power and lore and a spirit weapon's power are the data's, said as
-# literal lines.
+# tables. A unique item's power and lore are the data's, said as literal lines.
 #
 # Roles: `what` is the item (a phrase, or a message of it); `n` and `v` numbers (an affix's value
 # `v`, said after a sign the template writes: "+{v:bare}"); `dice`, `critical`, `weight`, `made`,

@@ -1,6 +1,7 @@
-// Spell circles (`circles.rs`): one quad per circled actor, all in one
-// mesh and one draw. Every vertex of a quad carries the circle (flat): the cell height, the
-// darkening, the actor's cell, and each circle's head and motion.
+// The circle renderer (`circles.rs`): one quad per actor, all in one mesh and one draw. Today it
+// draws the spell glow alone (`params.lines` 0): the actor's glyph's halo and glints, no lines.
+// Every vertex of a quad carries the circle (flat): the cell height, the darkening, the actor's
+// cell, and each circle's head and motion.
 //
 // The fragment works in pixels from the actor's centre (`local`, y down): thin anti-aliased
 // rings at signed distances with a faint glow about them and a soft arc running round each, and
@@ -36,6 +37,8 @@ struct CircleParams {
     bloom: f32,
     // 1: the pass over the free-glyph layer, the actors' glyphs' glints alone.
     top: u32,
+    // 1: the rings and the polygon are drawn; 0: the glyph's glow alone (`Circles::lines`).
+    lines: u32,
     // The school colours, palette-mapped, linear (rgb), by `School::ALL` position.
     schools: array<vec4<f32>, 8>,
 }
@@ -282,7 +285,7 @@ fn circle(
     var ink = Ink(0.0, 0.0, vec3(0.0));
     let n = c.x & 15u;
     let fade = m.y;
-    if n == 0u || fade <= 0.0 {
+    if params.lines == 0u || n == 0u || fade <= 0.0 {
         return ink;
     }
     let angle = m.x;

@@ -6,7 +6,7 @@
 //!
 //! - **Which pieces**: every single piece [`crate::gear::roll`] made that an anvil or a knife
 //!   could work (a weapon, a missile weapon, armour, or a shield with something to better; not a
-//!   stack of several, ammunition, a ring, or a spirit weapon), and that is not protected
+//!   stack of several, ammunition, or a ring), and that is not protected
 //!   ([`crate::magic::worked::protected`]: a unique, of Proof, or what any quest may ask for). A
 //!   fixed kit (a level file's placed gear, a vault's) is never rolled, so it stays as made.
 //! - **The draw**: one draw below [`PER_MILLE`] per piece, in pack order, against the odds of the

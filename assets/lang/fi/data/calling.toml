@@ -1,7 +1,0 @@
-# Lines of data: callings (`calling:<campaign>.<class>.message`), the narrator's.
-
-[ascmearc.hunter]
-message = { text = "Vala on nyt sinussa kuin terä tupessaan. Olet metsästäjä.", of = "5f1a2d" }
-
-[showcase.hunter]
-message = { text = "Vala on nyt sinussa kuin terä tupessaan. Olet metsästäjä.", of = "5f1a2d" }

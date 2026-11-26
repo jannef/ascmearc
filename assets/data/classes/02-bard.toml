@@ -26,29 +26,25 @@ kit = [
 ]
 # Spell scrolls more, each a random spell below spell level 10 (#1104).
 random_scrolls = { count = "1d4", below_level = 10 }
-# The bard's levels end at 30 (the bard design §5): experience past it still counts and buys
-# nothing until a calling opens a prestige class (the Hunter), when the levels banked come at once.
-max_level = 30
-# Bonus talents from any tree (the bard design's Q13), on the halved cadence.
-bonus_talents = { levels = [5, 10, 15, 23, 28] }
-# The level table, every ability by 30 (the bard design §5: the old
-# 1, 6, 12, 18, 25, 32, 40, 50, 60 halved). Fast healer is the Vigour talent, given (#790: a
-# table names the pickable, never a clone). Inspire is a song paid in Inspiration (#870).
-# Travelled hands takes Blessing's place (Blessing is a priest's abjuration, off the bard's
-# schools). Jack of all trades takes every skill up at 12, and Master of none raises every
-# skill 5 at 25 (#872). The Lullaby, the song against foes, at 20 (#873).
+# Bonus talents from any tree (the bard design's Q13).
+bonus_talents = { levels = [10, 20, 30, 45, 55] }
+# The level table (the bard design's cadence, 1, 6, 12, 18, 25, 32, 40, 50, 60). Fast healer is
+# the Vigour talent, given (#790: a table names the pickable, never a clone). Inspire is a song
+# paid in Inspiration (#870). Travelled hands takes Blessing's place (Blessing is a priest's
+# abjuration, off the bard's schools). Jack of all trades takes every skill up at 25, and Master
+# of none raises every skill 5 at 50 (#872). The Lullaby, the song against foes, at 40 (#873).
 abilities = [
     { level = 1, talent = "mend" },
-    { level = 3, talent = "travelled_hands" },
-    { level = 6, talent = "fast_healer" },
-    { level = 8, talent = "mesmerise" },
-    { level = 9, talent = "inspire" },
-    { level = 12, talent = "thunderclap" },
-    { level = 12, talent = "jack_of_all_trades" },
-    { level = 16, talent = "throw_voice" },
-    { level = 16, talent = "bind" },
-    { level = 20, talent = "sense_the_quick" },
-    { level = 20, talent = "lullaby" },
-    { level = 25, talent = "master_of_none" },
-    { level = 30, talent = "virtuoso" },
+    { level = 6, talent = "travelled_hands" },
+    { level = 12, talent = "fast_healer" },
+    { level = 16, talent = "mesmerise" },
+    { level = 18, talent = "inspire" },
+    { level = 25, talent = "thunderclap" },
+    { level = 25, talent = "jack_of_all_trades" },
+    { level = 32, talent = "throw_voice" },
+    { level = 32, talent = "bind" },
+    { level = 40, talent = "sense_the_quick" },
+    { level = 40, talent = "lullaby" },
+    { level = 50, talent = "master_of_none" },
+    { level = 60, talent = "virtuoso" },
 ]

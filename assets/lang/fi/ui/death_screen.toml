@@ -20,10 +20,6 @@ text = "{by:bare},"
 of = "2b5d5e"
 text = "{class:counted_nom},"
 
-[epitaph_class_prestige]
-of = "9dc8b5"
-text = "{class:counted_nom} ja {prestige:nom},"
-
 [epitaph_here_lies]
 of = "14e22d"
 text = "Tässä lepää {name:bare},"

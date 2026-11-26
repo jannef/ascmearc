@@ -163,7 +163,7 @@ fn the_three_tables_come_with_the_levels() {
     assert!(said(&t).contains(&"You gain Evasion.".to_string()));
     let mut b = world("bard");
     assert_eq!(class_rows(&b), ["Mend"]);
-    reach(&mut b, 3);
+    reach(&mut b, 6);
     assert_eq!(class_rows(&b), ["Mend", "Travelled hands"]);
     let restored = World::from_state(b.content().clone(), b.state().clone()).expect("restored");
     assert_eq!(class_rows(&restored), class_rows(&b));
@@ -184,9 +184,9 @@ fn travelled_hands_raises_every_weapon_skill_and_style_held_at_nothing_to_one() 
     let before = held(&b);
     assert_eq!(rank(&b, "long_blades"), 0);
     assert_eq!(rank(&b, "marksman"), 0);
-    reach(&mut b, 2);
-    assert_eq!(held(&b), before, "nothing before level 3");
-    reach(&mut b, 3);
+    reach(&mut b, 5);
+    assert_eq!(held(&b), before, "nothing before level 6");
+    reach(&mut b, 6);
     for ((id, skill), was) in table.ids().zip(&before) {
         let now = b.state.player().weapon_skills.rank(id);
         let left = skill.hidden;
@@ -217,7 +217,7 @@ fn weapon_ranks_walks_the_content_or_the_rows_it_names() {
              role = \"melee\"\ncurve = \"melee\"\nto_hit = [0, 1, 1, 2, 2, 3, 3, 4, 5, 6, 7]\n"
         )
     });
-    // And a hand-out that names its rows (the Hunter's trade, later) raises only those.
+    // And a hand-out that names its rows raises only those.
     files.insert(
         "data/talents/fixture_trade.toml",
         "[[talent]]\nid = \"fixture_trade\"\nname = \"Trade\"\ntree = \"class\"\n\
@@ -229,7 +229,7 @@ fn weapon_ranks_walks_the_content_or_the_rows_it_names() {
     let state = world("bard").state().clone();
     let mut b = World::from_state(content.clone(), state).expect("restores");
     let flails = table.id("flails").expect("flails");
-    reach(&mut b, 3);
+    reach(&mut b, 6);
     assert_eq!(b.state.player().weapon_skills.rank(flails), 1);
     let mut actor = b.state.player().clone();
     actor.weapon_skills = Default::default();
@@ -618,7 +618,7 @@ fn the_burden_line_fast_healer_and_jack_of_all_trades() {
     let mut b = world("bard");
     // Fast healer, the Vigour talent the table gives (Song of rest before #790): resting's pace
     // half again (`healing_rate` reads it).
-    reach(&mut b, 6);
+    reach(&mut b, 12);
     let after = b
         .state
         .player()
@@ -646,15 +646,15 @@ fn the_burden_line_fast_healer_and_jack_of_all_trades() {
         let bonus: Vec<_> = me.skills.iter().map(|(s, _)| (s, 5)).collect();
         me.skills.effect_with(&content, effect, &bonus)
     };
-    // Jack of all trades (12) takes skills up and adds nothing to them; Master of none (25) does.
-    reach(&mut b, 12);
+    // Jack of all trades (25) takes skills up and adds nothing to them; Master of none (50) does.
+    reach(&mut b, 25);
     let plain = b.state.player().skills.effect(&content, effect);
     assert_eq!(b.state.player().skill_effect(&content, effect), plain);
     assert_eq!(
         b.state.player().talent_mods(&content).growth.trained_skills,
         0
     );
-    reach(&mut b, 25);
+    reach(&mut b, 50);
     assert_eq!(b.state.player().skill_effect(&content, effect), raised(&b));
     assert_eq!(
         b.state.player().talent_mods(&content).growth.trained_skills,
@@ -672,10 +672,10 @@ fn skill_values(w: &World) -> Vec<(String, u16)> {
 #[test]
 fn jack_of_all_trades_takes_up_every_skill_but_sneak_attack_then_master_of_none_raises_them() {
     let mut b = world("bard");
-    reach(&mut b, 11);
+    reach(&mut b, 24);
     let before = skill_values(&b);
     assert!(!b.state.player().talents.has("jack_of_all_trades"));
-    reach(&mut b, 12);
+    reach(&mut b, 25);
     assert!(b.state.player().talents.holds("jack_of_all_trades", None));
     let after = skill_values(&b);
     let content = b.content().clone();
@@ -699,9 +699,9 @@ fn jack_of_all_trades_takes_up_every_skill_but_sneak_attack_then_master_of_none_
         rows.iter().any(|r| r == "Jack of all trades (class)"),
         "{rows:?}"
     );
-    reach(&mut b, 24);
+    reach(&mut b, 49);
     let kept = skill_values(&b);
-    reach(&mut b, 25);
+    reach(&mut b, 50);
     assert!(b.state.player().talents.holds("master_of_none", None));
     assert!(said(&b).contains(&"You gain Master of none.".to_string()));
     // Master of none takes nothing up: the skills only grow by the level's rolls.
@@ -709,7 +709,7 @@ fn jack_of_all_trades_takes_up_every_skill_but_sneak_attack_then_master_of_none_
 }
 
 #[test]
-fn a_restored_bard_past_25_is_given_both_and_a_skill_added_later_is_taken_up() {
+fn a_restored_bard_past_50_is_given_both_and_a_skill_added_later_is_taken_up() {
     // A skill the content adds later is the bard's too: the hand-out reads the content.
     let mut files = ContentFiles::builtin();
     files.flatten_table("skills");
@@ -721,7 +721,7 @@ fn a_restored_bard_past_25_is_given_both_and_a_skill_added_later_is_taken_up() {
     });
     let content = Arc::new(Content::load(&files).expect("test content is valid"));
     let mut b = world("bard");
-    reach(&mut b, 25);
+    reach(&mut b, 50);
     let mut state = b.state().clone();
     let player = state.player;
     let me = state.actors.get_mut(&player).expect("player");
@@ -750,7 +750,7 @@ fn inspire_costs_inspiration_and_virtuoso_sings_longer_for_none() {
     let mut w = world("bard");
     let inspire = Ability::Class(ClassActive::Inspire);
     assert_eq!(own(&w, inspire), None);
-    reach(&mut w, 9);
+    reach(&mut w, 18);
     let pool = w.content().resource_id("inspiration").expect("inspiration");
     assert_eq!(own(&w, inspire), Some(Some(Unavailable::Short(pool))));
     run(&mut w, "use:inspire");
@@ -769,7 +769,7 @@ fn inspire_costs_inspiration_and_virtuoso_sings_longer_for_none() {
         me.effects.sharpen(&content, profile.clone()).to_hit,
         profile.to_hit + 1
     );
-    reach(&mut w, 30);
+    reach(&mut w, 60);
     w.player_mut().resources.set(pool, 0);
     assert_eq!(own(&w, inspire), Some(None), "Virtuoso: free");
     run(&mut w, "use:inspire");
@@ -784,7 +784,7 @@ fn throw_your_voice_is_the_bards_alone() {
     run(&mut w, &format!("throw_voice:{},{}", at.x, at.y));
     assert_eq!(last(&w), "You do not know how to throw your voice.");
     let mut b = world("bard");
-    reach(&mut b, 16);
+    reach(&mut b, 32);
     assert_eq!(own(&b, Ability::ThrowVoice), Some(None));
 }
 

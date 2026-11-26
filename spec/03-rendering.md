@@ -33,11 +33,11 @@ Part of the design document; the index is [`specification.md`](../specification.
 ## Effects
 
 - Effects are subtle: sparse, short-lived particles, gentle glow, barely visible distortion, short fades. Spell effects are the one place where effects may be loud, and they are short, never garish.
-- Every effect has its own switch. Reduced effects turns them all off. Blood is a content preference, not an effect, so reduced effects leaves it alone. Spell circles are information, so reduced effects only stills them.
-- No information depends on an effect. With animation off, heard sounds keep a still marker, and spell circles stand still rather than vanish.
+- Every effect has its own switch. Reduced effects turns them all off. Blood is a content preference, not an effect, so reduced effects leaves it alone. The spell glow is information, so reduced effects only stills it.
+- No information depends on an effect. With animation off, heard sounds keep a still marker, and the spell glow stays without its glints rather than vanish.
 - Weather is drawn: rain falls only on visible cells under the open sky and is lit like other particles. The darker look of a rainy day comes from the gameplay light, not from an effect.
 - Blood and char tint cells by amount and dry with time. A little is barely there; only many deaths in one place look gory.
-- Spell circles: a thin turning circle about an actor with a buff (whole, clockwise) or a hex (broken, counter-clockwise). Corners count the effects. They are drawn only over clear, seen floor. The owner: "the transmutation circles are enough": no runes or other characters.
+- Spell glow: an actor with a buff or a hex has its glyph glow and glint in the colour of its first effect's school, only where the player sees. It sheds no light. Spell circles about buffed and hexed actors are gone (the owner, #2173); the circle renderer is kept for a later use, such as a summoning circle.
 
 ## Readability
 

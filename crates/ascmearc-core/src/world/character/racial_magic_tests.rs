@@ -210,14 +210,13 @@ fn school_focus_follows_glamour_into_illusion() {
         .talents
         .take("school_focus", Some("illusion"));
     assert!(cost(&w) < 8);
-    // Illusion is a school a choice may name, its circle has a colour and a light, and the
+    // Illusion is a school a choice may name, its glow has a colour, and the
     // wizard's and the bard's affinities name it.
     let options = crate::content::Choice::School.options(&QUIET);
     assert!(options.iter().any(|o| o == "illusion"), "{options:?}");
     let glamoured = QUIET.status_id("glamoured").expect("status");
-    let row = QUIET.circles().of(glamoured).expect("circled");
+    let row = QUIET.spell_glow().of(glamoured).expect("glows");
     assert_eq!(row.school, School::Illusion);
-    assert_eq!(Some(row.light), QUIET.light_id("circle_illusion"));
     for class in ["wizard", "bard"] {
         let def = (QUIET.classes().iter())
             .find(|c| c.id == class)

@@ -259,15 +259,6 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
             if let Some(title) = c.title(content) {
                 character["lucky"] = json!(title);
             }
-            // The prestige class once called, and every class with its own level.
-            if let Some(prestige) = &c.prestige {
-                character["prestige"] = json!(prestige);
-            }
-            let level = view.own_experience().level;
-            let classes: Vec<Value> = (c.class_levels(content, level).into_iter())
-                .map(|(table, own)| json!({ "class": table.id(), "level": own }))
-                .collect();
-            character["classes"] = json!(classes);
             // The background story's lines by id, if told.
             if !c.story.is_empty() {
                 character["story"] = c.story.iter().map(|t| t.id()).collect();
@@ -375,19 +366,6 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
         out["danger"] = json!(world.content().floor_danger(level, world.player_level()));
         // The encounter tables matching the player's overworld cell (ground truth).
         out["encounter_tables"] = json!(world.encounter_tables_here());
-        // The callings of the campaign and where the player stands with each.
-        let callings: Vec<Value> = (world.content().callings_of(world.campaign()))
-            .map(|c| {
-                let status = match world.calling_status(c) {
-                    CallingStatus::Open => "open",
-                    CallingStatus::LevelNotMet => "level_not_met",
-                    CallingStatus::NotFrom => "not_from",
-                    CallingStatus::Called => "called",
-                };
-                json!({ "class": c.class, "level": c.level, "from": c.from, "status": status })
-            })
-            .collect();
-        out["callings"] = json!(callings);
         // The priest's prayer: its strain, lock, face, and uses (ground truth).
         if let Some(p) = world.prayer_state() {
             out["prayer"] = json!({

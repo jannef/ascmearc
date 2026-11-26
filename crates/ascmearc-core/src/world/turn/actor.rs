@@ -1431,7 +1431,7 @@ impl Actor {
     /// (it shatters, with no point to put into a gap).
     pub fn exploit_throw_range(&self, item: usize, content: &Content) -> Option<i32> {
         let stack = self.inventory.get(item)?;
-        if content.object(stack.object).shatters() || stack.is_spirit() {
+        if content.object(stack.object).shatters() {
             return None;
         }
         let range = self.throw_range(item, content)?;
@@ -1603,10 +1603,6 @@ impl Actor {
         profile.riders.extend(self.effects.blows(content));
         profile.bonus += talents.offence.melee_damage;
         profile.penetration += talents.offence.penetration_for(&profile.kinds);
-        // A spirit weapon's gifts (the Hunter's Spirit weapon, `spirit_weapon.rs`).
-        if let Some(stack) = weapon {
-            crate::world::classes::spirit_weapon::gifts(&talents, stack, &mut profile);
-        }
         // Brutal critical: a two-handed weapon's criticals hit harder.
         if talents.offence.two_handed_crit > 0
             && weapon.is_some_and(|s| content.object(s.object).two_handed)
@@ -1692,7 +1688,6 @@ impl Actor {
         // Tentacles (a Kraken's pick): the off hand's blows harder.
         profile.bonus += talents.offence.melee_damage + talents.offence.off_hand_damage;
         profile.penetration += talents.offence.penetration_for(&profile.kinds);
-        crate::world::classes::spirit_weapon::gifts(&talents, stack, &mut profile);
         Some((stack.object, self.stanced(content, profile)))
     }
 

@@ -100,7 +100,7 @@ pub struct ScenarioDef {
     pub wield: Vec<crate::object::Stack>,
     /// Spells the player knows at the start of a run of it (`spells = ["haste"]`, ids in
     /// `data/spells/`), on top of what their class gives, for the scenario's own character and a
-    /// chosen one alike (a test world's fixture: `circles`).
+    /// chosen one alike (a test world's fixture: `glow`).
     #[serde(default, rename = "spells")]
     pub(super) spells_spec: Vec<String>,
     /// The spells of `spells`; filled in by the loader.

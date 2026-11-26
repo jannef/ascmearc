@@ -71,15 +71,6 @@ extend the profile's riders with `Effects::blows` right after `Mods::sharpen` ha
 reads a rider. Fists and natural attacks take it through `melee`; `kick`, `bash_with`, and the
 missile profiles do not.
 
-**Spirit weapons** (the Hunter's Spirit weapon, #881, `world/classes/spirit_weapon.rs`): a `Stack::spirit`
-exists only in a hand slot. `World::equip_saying` (what `World::equip` calls, with the call's own
-line, "A long sword of pale light is in your hand.") and `World::remove` end with
-`World::fade_spirit`: any spirit stack in the pack and out of the hands (taken off, swapped for
-steel, moved to the missile weapon slot) is removed, its positions followed. A drop and a shop's
-trade first pass their positions through `World::release_spirit` (the spirit stacks taken off and
-faded, the rest renumbered), so neither the floor nor a shop ever holds one; `World::throw`
-refuses one; `shop::count_of` and the quests' counts skip it. What takes a stack out of the pack
-(an outcome's `remove_stacks`) needs nothing: the stack is gone either way.
 A kept beast's collar (`world/allies/collar.rs`, `docs/dev/companion.md`) is the one thing handed over to
 a creature's `equipment` in play: the `neck` slot, by the Give ability.
 Creatures wield and wear from their spawn

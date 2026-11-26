@@ -379,11 +379,7 @@ shop.
 A vault's named places (a legend's `name` and `note`) are stamped with it (`vault::stamp` into
 `Canvas::places`, then `LevelTemplate::places`), and `LevelState::from_template` keeps a
 generated level's in `LevelState::places` (saved, hashed, left out while empty; a hand-made
-level's stay in its template in `Content`, and `LevelState::place` reads both). The Ascmearc's
-`hunters_statue` (a worn `statue` with the inscription as its note, the hint of the Hunter's
-oath, `docs/design/prestige-classes.md` §8) is pinned on `fyrdelf:11`; `describe` lists places
-(`place NAME at (x, y): NOTE`), and `mapgen/fyrdelf_tests.rs` checks it there in every seed and
-snapshots seed 1's floor 11.
+level's stay in its template in `Content`, and `LevelState::place` reads both). `describe` lists places (`place NAME at (x, y): NOTE`).
 
 Which vaults a level may get (#337): `generate_for` keeps those whose `Vault::stamps_on(def,
 depth)` holds (a dungeon vault, shared or of the branch's campaign, on a branch or level its

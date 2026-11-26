@@ -1,5 +1,5 @@
-//! The circled actors' glyphs (a circled actor's glyph glows and
-//! glints): each glyph a circled actor shows, rasterised once from the map font into a square
+//! The glowing actors' glyphs (the spell glow: a buffed or hexed actor's glyph glows and
+//! glints): each glyph a glowing actor shows, rasterised once from the map font into a square
 //! slot a cell height wide, ink centred, so the circle shader can draw its halo and its glints
 //! about the glyph the free-glyph layer draws.
 //!
@@ -10,7 +10,7 @@
 //! blurred by [`GLOW_SIGMA`]), and two glints (blue and alpha: a tiny bright point with four
 //! rays, each at a place deep in a stroke, [`glint_points`]), which the shader brings in and out,
 //! each on its own beat. Slot `i` is [`GlyphGlow::chars`]'s `i`: the atlas starts with `@` and
-//! grows when a circled actor shows a glyph it lacks (at most [`MAX_GLYPHS`]), and is rebuilt
+//! grows when a glowing actor shows a glyph it lacks (at most [`MAX_GLYPHS`]), and is rebuilt
 //! when the font size or the cell height changes, never per frame.
 
 use bevy::asset::RenderAssetUsages;
@@ -71,7 +71,7 @@ pub fn rasterize(font: &fontdue::Font, chars: &[char], px: f32, h: f32) -> GlowB
     let square = pad as i32..(pad + inner) as i32;
     for (i, &c) in chars.iter().enumerate() {
         let (m, bitmap) = font.rasterize(c, px * ss);
-        // The ink centred in the slot's square: an actor's circle is centred on its glyph's ink.
+        // The ink centred in the slot's square: an actor's glow is centred on its glyph's ink.
         let mut ink = vec![0.0f32; (slot * slot) as usize];
         let left = pad as i32 + (inner as i32 - m.width as i32) / 2;
         let top = pad as i32 + (inner as i32 - m.height as i32) / 2;
@@ -168,7 +168,7 @@ fn blur(src: &[f32], side: u32, sigma: f32) -> Vec<f32> {
     pass(&pass(src, (1, 0)), (0, 1))
 }
 
-/// The circled actors' glyphs as rendering uses them.
+/// The glowing actors' glyphs as rendering uses them.
 #[derive(Resource, Debug)]
 pub struct GlyphGlow {
     pub image: Handle<Image>,

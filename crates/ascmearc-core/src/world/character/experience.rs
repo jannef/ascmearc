@@ -116,21 +116,10 @@ impl Discovered {
 }
 
 impl World {
-    /// The player's level: off the curve, at most their classes' cap
-    /// ([`World::level_cap`]).
+    /// The player's level, off the curve.
     pub fn player_level(&self) -> u8 {
         let factor = self.experience_factor();
-        (self.content.experience()).level_for(self.state.experience, factor, self.level_cap())
-    }
-
-    /// The highest level the player may reach now: their class's
-    /// `max_level` plus a prestige class's levels once called; the default class cap
-    /// (`[levels] class_max`) without a character.
-    pub fn level_cap(&self) -> u8 {
-        match &self.state.character {
-            Some(c) => c.level_cap(&self.content),
-            None => self.content.experience().class_max(),
-        }
+        (self.content.experience()).level_for(self.state.experience, factor)
     }
 
     /// The player's experience total.
@@ -240,7 +229,7 @@ impl World {
         }
         let hp: i32 = (before + 1..=after)
             .filter(|&l| l <= rules.hp_level())
-            .map(|l| self.level_hp(&content, l))
+            .map(|_| self.level_hp(&content))
             .sum();
         if let Some(player) = self.state.actors.get_mut(&self.state.player) {
             player.hp_base += hp;
@@ -255,14 +244,11 @@ impl World {
         self.restock_shops();
     }
 
-    /// What total level `level` adds to the player's hit points: half the hit points of the
-    /// class the level falls in (the scenario's `hp` without a
-    /// character) plus the Toughness modifier, at least 1.
-    pub(in crate::world) fn level_hp(&self, content: &Content, level: u8) -> i32 {
+    /// What a level adds to the player's hit points: half the hit points of their class (the
+    /// scenario's `hp` without a character) plus the Toughness modifier, at least 1.
+    pub(in crate::world) fn level_hp(&self, content: &Content) -> i32 {
         let class_hp = match &self.state.character {
-            Some(c) => c
-                .class_of(content, level)
-                .map_or(0, |(table, _)| table.hp()),
+            Some(c) => c.spec.class(content).map_or(0, |class| class.hp),
             None => content
                 .scenario(&self.state.scenario)
                 .map_or(0, |s| i32::from(s.hp)),

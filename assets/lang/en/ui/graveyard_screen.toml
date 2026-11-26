@@ -3,10 +3,6 @@
 # The keys named in the hint lines are fixed (`Esc`): translate the words around them. The screen
 # fits each text to its panel (docs/dev/localization.md "UI text").
 
-# Race and class with a prestige class: `what`, the first two; `prestige`.
-[and_prestige]
-text = "{what:bare} and {prestige:bare}"
-
 # How they died; `who`, the killer as a phrase; the language gives its article.
 [cause_altar]
 text = "Struck down at a forgotten altar"

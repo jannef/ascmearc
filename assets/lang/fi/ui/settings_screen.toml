@@ -29,13 +29,13 @@ text = "Veri"
 of = "2e0da4"
 text = "Veri kovista iskuista ja tapoista; ei esiasetuksessa."
 
-[effect_circles]
-of = "111426"
-text = "Loitsukehät"
+[effect_spell_glow]
+of = "316f10"
+text = "Loitsuhehku"
 
-[effect_circles_help]
-of = "e884d6"
-text = "Kehät siunattujen ja kirottujen yllä (ei esiasetuksessa)."
+[effect_spell_glow_help]
+of = "3ca88d"
+text = "Siunatut ja kirotut hehkuvat (pysäytettynä esiasetuksessa)."
 
 [effect_distortion]
 of = "a7224a"

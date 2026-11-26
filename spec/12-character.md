@@ -48,7 +48,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - The deeds are data: killing by alignment, attacking a keeper, theft, paying a debt, eating kin, a profane meal, Consecrate, prayer, consuming a crystal, a quest's own alignment. A new deed is a new entry plus one hook.
 - Crossing into another band says so; smaller moves are silent.
 - Good creatures scorn Evil or Wicked characters, and evil creatures scorn Good or Saintly ones: a cold greeting, but their quests are still offered. A good shopkeeper's prices move with the band.
-- **Alignment bars nothing**: no class, talent, or ability is refused or greyed by band, and nothing remembers a drop. A holy gift outside its bands is still listed and used, and does nothing. The owner's exceptions: the Hunter's calling spirit speaks only to the Kind or better, and a quest may name the bands it is offered to.
+- **Alignment bars nothing**: no class, talent, or ability is refused or greyed by band, and nothing remembers a drop. A holy gift outside its bands is still listed and used, and does nothing. The owner's exception: a quest may name the bands it is offered to.
 - A sin empties the paladin's zeal; it bars nothing.
 - **The two laws** (#1764): the First Law, never call up a fiend (`fiend`) by your own act, and the Second Law, never eat the flesh of a thinking creature (one tagged `sapient`). Each is counted on the player and told once, the first time, in words from data. **The ratfolk craving** (#1804, docs/dev/craving.md): a ratfolk who eats the thinking hears "The ancient craving awakens in you." in place of the law's line; each such corpse trains a random stat by a mark, and at counts set in data (10, 25, 50, 100, 200, 300, 400, and 500) a granted talent of the Craving tree changes them for good, each a step toward evil: stronger, faster, hungrier, the calmer stances lost and every stance fought one step more aggressive, hunger's harm doubled and every talent that eases hunger taken for good at 100, immune to disease at 200 and to poison at 400; from 500 a profane gift drawn, and one more every 100 after, each a heavier step toward evil, until the thirteenth gift ever received ends them. **Surrender to hunger** (#1827): one of another race who has eaten 100 of the thinking may take this Grit talent at a level's pick and crave from then on, the count starting at the pick and every count half again as far (15, 38, 75, … 750, then every 150), their own race's hunger pace growing as a ratfolk's does.
 
@@ -163,19 +163,9 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Casters' actives are spells, paid in mana, cast by the one cast path. A full caster starts with a cantrip and has about four spells by mid-levels; the bard, paladin, and ranger a cantrip or a boon.
 - The priest's prayer is one active that answers what ails them most, in a fixed order, its reach growing with level. A hidden strain limits it. The band at the moment picks who answers (holy or dark), and the dark answer comes with a twist.
 - The thief's Openings build on one marked foe. The mark's death carries the pool to the next foe. Exploit spends every opening on one blow that the class talents grow. Trained wind is off the thief's table: "the thief already gets Exploit at level 1" (the owner).
-- The bard's songs are paid in one thing each, heard by everyone in earshot; hostile hearers resist. The bard's class ends at level 30.
+- The bard's songs are paid in one thing each, heard by everyone in earshot; hostile hearers resist.
 - Reprieves (Rise from the ashes, Hag's bargain, and their kin) save from death once in a life each. Starving and choking still kill.
 - Every kill of the player's is tallied by creature type; the most-killed type is the ranger's favoured prey.
-
-## Prestige classes
-
-- The owner: "this is not going to be general multiclass thing. More like prestige classes achievable by finding a "hidden" mechanism."
-- A character has one level. It stops at their class's cap; a prestige class adds its own levels past the cap once the character is called.
-- Every per-level read uses the class of that level. Talent picks, stat checks, and the experience factor are unchanged.
-- The calling is never offered or chosen: the right words said to the right creature open it. Nothing in the game names the condition; the wiki states it.
-- On the calling, the character gets exactly the experience the next level costs, so the first prestige level comes at once.
-- The Hunter (from a bard of 30, called by the Strange Spirit, which speaks only to the good): "regular martial progression with no abilities above level 1 for now" (the owner). Its one ability, Spirit weapon, calls a weapon of any shape into the hand.
-- A spirit weapon exists only in a hand. It fades when it leaves the hands and is never dropped, sold, thrown, or counted by quests.
 
 ## Weapon skills
 

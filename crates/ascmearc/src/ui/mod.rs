@@ -4,7 +4,7 @@
 //! of each pile go into the map grid layer, creatures and glyphs that outgrow their cell into the
 //! free-glyph layer ([`glyphs`]), and text and panels into the UI console on top. [`motion`]
 //! moves the camera and slides creatures between cells; [`effects`] adds particles, glow, heat
-//! haze, and fades; [`circles`] circles the buffed and hexed; [`missiles`] flies shots and throws; [`rain`] lets it rain under the open
+//! haze, and fades; [`spell_glow`] makes the buffed and hexed glow; [`missiles`] flies shots and throws; [`rain`] lets it rain under the open
 //! sky; [`sounds`] marks where unseen sounds were heard; [`target`] aims shots and throws (the
 //! line of fire and its cursor); [`blood`] stains the cells blood lies on. Terrain and objects are
 //! drawn in their base colors: the map grid's shader lights them with the visual light
@@ -30,7 +30,6 @@ mod characters_screen;
 mod chargen_screen;
 mod chargen_talents_screen;
 mod circle_tracks;
-mod circles;
 mod controls_screen;
 mod craft_pick_screen;
 mod cursor;
@@ -75,10 +74,10 @@ mod screens;
 mod scribe_screen;
 mod sensed;
 mod settings_screen;
-mod shape_screen;
 mod sign_screen;
 mod skills_screen;
 mod sounds;
+mod spell_glow;
 mod spells;
 #[cfg(test)]
 mod stale_list_tests;
@@ -188,7 +187,7 @@ impl Plugin for UiPlugin {
                         (missiles::lights, spells::lights),
                         shadows::update,
                         lighting::update,
-                        circles::emit,
+                        spell_glow::emit,
                         effects::emit,
                         rain::emit,
                         sounds::emit,

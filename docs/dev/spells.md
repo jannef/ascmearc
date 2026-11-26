@@ -462,17 +462,17 @@ cast path shares.
     (burst radius 3, fire, no blast). Each has its `scroll_of_<id>` at the README's numbers;
     Acid arrow, Grave spear, Slumber, and Glamour come only from scrolls. Class rows (§8; a row
     is a way to meet a spell, not part of it, Q13): witch 8 Flay, 36 Fear; druid 15 Rime; wizard
-    36 Sunfire; priest 9 Renewal, 12 Silence; bard 8 Mesmerise, 16 Bind; ranger 9 Nightsight;
+    36 Sunfire; priest 9 Renewal, 12 Silence; bard 16 Mesmerise, 32 Bind; ranger 9 Nightsight;
     paladin 20 Unbinding, each a granted `talents/<id>.toml` of `kind = "spell"`. Rules they
     needed: `spell_def` allows a `degrees` ladder on a damage spell with an `effect.status`
     (Flay), and `World::spell_lands` lays the spell's own status at the cast's degrees
     (`Cast::degrees`, the base without a cast); Bleeding refuses the bloodless (Q7, below and
     `docs/dev/status-effects.md`); and a status `regen` above 100 quickens healing when no status
     or disease slows it (`Effects::regen`, `World::healing_rate_at`: the slowest counts while any
-    is below 100, else the fastest). Each new buff's and hex's status has a circle row
-    (`data/circles.toml`: `cat_eyed`, `glamoured`, `renewing`, `pinned`, `frightened`,
-    `silenced`, `transfixed`, `asleep`), so it sheds its school's faint light whatever laid it
-    (a Trip's Pinned, Intimidate's Frightened too), and Malison's `status_damage` rows name the
+    is below 100, else the fastest). Each new buff's and hex's status has a glow row
+    (`data/spell_glow.toml`: `cat_eyed`, `glamoured`, `renewing`, `pinned`, `frightened`,
+    `silenced`, `transfixed`), so its bearer's glyph glows whatever laid it (a Trip's Pinned,
+    Intimidate's Frightened too), and Malison's `status_damage` rows name the
     five new hex statuses. `spell_list_tests`' class check: a full caster three to twelve spells
     (Q13), a hybrid (bard, paladin, ranger) up to five (the bard's: Mend, Mesmerise,
     Thunderclap, Bind, Sense the quick), of any level or kind: spells are not class-specific
@@ -1104,7 +1104,7 @@ Ten spells with one rule each (#1001; the design `docs/design/spell-types-and-ne
 entries 4, 6, 11, 18, 21, 31, 32, 33, 35, 36; §8 for their class rows and scrolls). Every one has
 its scroll (`objects/scroll_of_<id>.toml`) and a class row (`talents/<id>.toml`, granted: wizard 6
 Blink, 9 Shatter; priest 18 Rebuke, 24 Benison; druid 9 Bramble, 20 Gale, 30 Cloudburst; witch 24
-Leech; bard 12 Thunderclap, 20 Sense the quick). The rules live in `world/magic/spell_rule.rs`, each
+Leech; bard 25 Thunderclap, 40 Sense the quick). The rules live in `world/magic/spell_rule.rs`, each
 behind one line of `cast.rs`; the fields in `[spell.effect]` (`spell_def::effect`, which now takes
 the shape too and refuses each field off its kind and shape).
 
@@ -1182,12 +1182,11 @@ the shape too and refuses each field off its kind and shape).
   that is not undead, a construct, an elemental (by tag), or an animated thing. Perception's `noise::perceive`
   leaves out the ones the player sees and places the rest roughly; `Exact::All` (Tracker) never
   places a heartbeat exactly. The deaf feel nothing. `SoundKind::Heartbeat`, "a heartbeat", `q` in
-  the sound layer. The circled status (`data/circles.toml`, divination) sheds its circle's light,
-  as every circled buff does.
+  the sound layer. Its status glows (`data/spell_glow.toml`, divination).
 - **See invisible** (divination, level 7, a buff on `self`): Seeing (`seeing`, five minutes),
   a status that `sees_unseen`: while it lasts `world::unseen_by_player` hides no one, the
   invisible and the shadowy in the dim alike (docs/dev/creatures.md "The unseen"). The potion of
-  seeing gives the same status (a `vision` drink whose status `sees_unseen`). Circled
+  seeing gives the same status (a `vision` drink whose status `sees_unseen`). It glows
   (divination).
 - **Shatter**: data only on force's rules, with the `shatter` burst effect (`data/effects.toml`:
   white and brief); Thunderclap's look too.

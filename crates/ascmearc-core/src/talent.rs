@@ -61,9 +61,7 @@ pub use fortune::{FortuneEffect, FortuneMods};
 pub use growth::{GrowthEffect, GrowthMods};
 pub use hunger::{HungerEffect, HungerMods};
 pub use magic::{BloodMagic, Cackle, Knock, MagicEffect, MagicMods};
-pub use martial::{
-    MartialEffect, MartialMods, PalmBlow, RapidShot, SpiritWeapon, Unstoppable, Volley, WarCry,
-};
+pub use martial::{MartialEffect, MartialMods, PalmBlow, RapidShot, Unstoppable, Volley, WarCry};
 pub use movement::{MovementEffect, MovementMods, StepBonus, WarmthBand};
 pub use offence::{OffenceEffect, OffenceMods, Way, WayAttacks, WeaponBonus};
 pub use resource::{ResourceEffect, ResourceMods};
@@ -429,7 +427,6 @@ impl TalentMods {
             A::FieldForge => self.craft.field_forge.is_some(),
             A::MakeDo => self.craft.make_do.is_some(),
             A::Rig => self.craft.rigs,
-            A::SpiritWeapon => self.martial.spirit_weapon.is_some(),
             A::Inspire | A::Lullaby => self.song.songs.iter().any(|s| s.active == active),
             A::CallFamiliar => self.beast.familiar,
             A::Consecrate => self.faith.consecrate.is_some(),

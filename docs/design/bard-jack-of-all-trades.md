@@ -1,6 +1,9 @@
 # Warlock — The bard: a jack of all trades, mediocre at everything
 
 **Built; this file is history.** Current behaviour is in spec §8 "The ranger's, thief's, and bard's tables" and `docs/dev/progression.md`.
+The cap at 30 is gone: the owner removed the prestige classes on 2026-11-27 (#2174), and the bard
+is a 60-level class again, its table back on the old cadence (1, 6, 12, 18, 25, 32, 40, 50, 60)
+with bonus picks at 10, 20, 30, 45, and 55.
 
 Design document for the owner's review (issue #819; first draft 2026-11-02, **second round
 2026-11-02** after the owner's answers on PR #835; the third round, 2026-11-02, changed only

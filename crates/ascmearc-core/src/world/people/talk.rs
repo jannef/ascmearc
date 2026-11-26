@@ -28,10 +28,7 @@
 
 use crate::action::Event;
 use crate::content::StatUse;
-use crate::content::data_line;
-use crate::content::{
-    ActionKind, Budge, Dialogue, DialogueId, DialogueLine, Service, Stance, Topic,
-};
+use crate::content::{ActionKind, Budge, Dialogue, DialogueId, DialogueLine, Service, Stance};
 use crate::geom::{Dir, Pos};
 use crate::lang::{Arg, Msg, Phrase};
 use crate::msg;
@@ -276,14 +273,9 @@ impl World {
         let Some(id) = self.dialogue_of(actor) else {
             return Vec::new();
         };
-        if !self.speaks_to(id) {
-            return Vec::new();
-        }
         let mut topics = self.quest_topics(id);
         let dialogue = self.content.dialogue(id);
-        // A calling's topic only while the calling is open to the player (`calling.rs`).
-        let open = |t: &&Topic| (t.calls.as_ref()).is_none_or(|class| self.calling_open(class));
-        topics.extend(dialogue.topics.iter().filter(open).map(|t| TopicView {
+        topics.extend(dialogue.topics.iter().map(|t| TopicView {
             id: t.id.clone(),
             name: TopicName::Line(t.name_key.clone()),
             price: None,
@@ -391,9 +383,6 @@ impl World {
         if let Some(spent) = self.ask_invest(id, dialogue, topic, events) {
             return spent;
         }
-        if let Some(spent) = self.ask_calling(id, dialogue, topic, events) {
-            return spent;
-        }
         let content = self.content.clone();
         let reply = (content.dialogue(dialogue).topic(topic)).map(|t| self.said(id, &t.reply));
         match reply {
@@ -407,8 +396,7 @@ impl World {
     }
 
     /// The dialogue of creature `id` if it will talk to the player; if not, says why: it has
-    /// nothing to say, it is hostile to them, or the player is outside its `speaks_to` (its
-    /// `silent` line).
+    /// nothing to say, or it is hostile to them.
     pub(super) fn listens(&mut self, id: ActorId) -> Option<DialogueId> {
         let actor = &self.state.actors[&id];
         let who = self.called_phrase(actor);
@@ -418,10 +406,6 @@ impl World {
         match dialogue {
             None => self.say(answer),
             Some(_) if hostile => self.say(Msg::new(msg::talk::IN_NO_MOOD).role("who", who)),
-            Some(d) if !self.speaks_to(d) => match self.content.dialogue(d).silent {
-                Some(_) => self.say(data_line::said(data_line::silent(&self.content, d))),
-                None => self.say(answer),
-            },
             Some(d) => return Some(d),
         }
         None
@@ -431,13 +415,6 @@ impl World {
     pub(super) fn knows_nothing(&mut self, id: ActorId) {
         let who = self.called_phrase(&self.state.actors[&id]);
         self.say(Msg::new(msg::talk::KNOWS_NOTHING).role("who", who));
-    }
-
-    /// Whether whoever speaks dialogue `d` talks to the player: their alignment band is in its
-    /// `speaks_to`, if it has one (an NPC's reaction, as a cold greeting is).
-    fn speaks_to(&self, d: DialogueId) -> bool {
-        let band = || self.state.player().band(&self.content);
-        (self.content.dialogue(d).speaks_to).is_none_or(|r| r.allows(band()))
     }
 
     /// Says what creature `id` answered and records the conversation for presentation.

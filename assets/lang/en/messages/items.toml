@@ -31,12 +31,10 @@ it_would_sink = "It would sink."
 # `what`: the light, the player's.
 light = "You light {what:the}."
 # A stack as the item lists name it (`Lore::listed`): `what`, the stack; `numbers`,
-# `listed_numbers` or empty; `spirit`, `listed_spirit` or empty.
-listed = "{what:counted}{numbers:bare}{spirit:bare}"
+# `listed_numbers` or empty.
+listed = "{what:counted}{numbers:bare}"
 # What the stack gives in numbers, after its name: `numbers`, the parts (`numbers_listed`).
 listed_numbers = " ({numbers:bare})"
-# A spirit weapon's mark, after its numbers.
-listed_spirit = " (spirit)"
 # `what`: the light, the player's.
 lower_hood = "You lower the hood of {what:the}."
 no_light_ready = "You have no light ready to use."

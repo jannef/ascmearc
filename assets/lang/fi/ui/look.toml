@@ -24,8 +24,8 @@ of = "f591c5"
 text = "{name:bare}, {who:nom} ({state:bare}){writhing:bare}{moves:bare}{wielding:bare}{wearing:bare}{ready:bare}"
 
 [creature]
-of = "b572a4"
-text = "{who:Counted_nom} ({state:bare}){services:bare}{waits:bare}{writhing:bare}{moves:bare}{wielding:bare}{wearing:bare}{ready:bare}"
+of = "f329d0"
+text = "{who:Counted_nom} ({state:bare}){services:bare}{writhing:bare}{moves:bare}{wielding:bare}{wearing:bare}{ready:bare}"
 
 [cures]
 of = "b75bb9"
@@ -231,10 +231,6 @@ text = "Et tiedä, mitä siellä on."
 [vulnerable_to]
 of = "78915e"
 text = "altis {kinds:all}"
-
-[waits]
-of = "21c756"
-text = ", joka odottaa"
 
 [wearing]
 of = "159a6f"

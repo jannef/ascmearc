@@ -1,9 +1,5 @@
 # The graveyard screen (`crates/ascmearc/src/ui/graveyard_screen.rs`).
 
-[and_prestige]
-of = "cd005a"
-text = "{what:bare} ja {prestige:bare}"
-
 [cause_altar]
 of = "33a1d8"
 text = "Kaatui unohdetulla alttarilla"

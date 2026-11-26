@@ -65,7 +65,6 @@
 - [Abilities](abilities.md)
 - [Weapon skills](weapon-skills.md)
   - [Fighting styles](fighting-styles.md)
-- [Prestige classes](prestige-classes.md)
 
 # Fighting and surviving
 
@@ -101,7 +100,7 @@
   - [Mana](mana.md)
   - [Schools and caster styles](schools.md)
   - [Miscasts](miscasts.md)
-  - [Spell circles](spell-circles.md)
+  - [Spell glow](spell-glow.md)
   - [Wands and rods](wands-and-rods.md)
 - [Prayer](prayer.md)
 

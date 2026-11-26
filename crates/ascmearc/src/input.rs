@@ -362,8 +362,6 @@ impl Gameplay<'_> {
             (true, ability::Aim::Throw) => {
                 return Some(ScreenAction::Open(ScreenName::ThrownExploit));
             }
-            // The shape list asks which weapon (the Hunter's Spirit weapon).
-            (true, ability::Aim::Shape) => return Some(ScreenAction::Open(ScreenName::Shape)),
             // The rig list asks which trap, then the way (the craftsperson's Trapwright).
             (true, ability::Aim::Rig) => return Some(ScreenAction::Open(ScreenName::Rig)),
             // The scribe list asks which spell (the wizard's Scribe).

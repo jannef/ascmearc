@@ -14,8 +14,7 @@ did before you set out. Your class:
 
 No [spells](magic.md) come with it at the start. Each class also gives
 **class abilities** as you reach its levels, and bonus
-[talents](talents.md) (see [Levels](#levels) below). You keep your class for good, but a class may
-later open onto a [prestige class](prestige-classes.md).
+[talents](talents.md) (see [Levels](#levels) below). You keep your class for good.
 
 The first eleven classes are adventurers. The last four are everyday folk: an
 [aristocrat](class-aristocrat.md), a [commoner](class-commoner.md), a
@@ -67,9 +66,8 @@ Elves and dwarves keep no [witches](class-witch.md). Among the drow, only women 
 ## Levels
 
 Each class's level table gives an ability at levels 1, 6, 12, 18, 25, 32, 40, 50, and 60. It also
-gives a bonus [talent](talents.md) at a few levels in between, from the trees it names. The
-[bard](class-bard.md)'s table is shorter. It stops at level 30,
-with its abilities at 1, 3, 6, 9, 12, 16, 20, 25, and 30.
+gives a bonus [talent](talents.md) at a few levels in between, from the trees it names. Every
+class ends at level 60.
 
 An ability comes the moment you reach its level ("You gain Fencing.") and works from then on. The
 game describes each in words; the class's page gives the exact numbers. A stat an ability raises rises
@@ -87,5 +85,4 @@ ranger one or two (see [What your class gives](magic.md#what-your-class-gives) a
 [Casting a spell](spellcasting.md#casting-a-spell)). Some fight from a pool of their own, such as
 the berserker's rage or the thief's openings (see [Resources](resources.md)).
 
-See also: [Races](races.md), [Starting kit](starting-kit.md), and
-[Prestige classes](prestige-classes.md).
+See also: [Races](races.md) and [Starting kit](starting-kit.md).

@@ -32,7 +32,6 @@ aimed_at_nothing = { text = "Se ei osoita mihinkään.", of = "dfa95b" }
 attack_damage = { text = "{dice:bare} {kinds:bare}", of = "7fa298" }
 attack_kind_or = { text = "{first:bare} tai {rest:bare}", of = "269c79" }
 attack_listed = { text = "{first:bare}, {rest:bare}", of = "a51d07" }
-attack_pierces = { text = "läpäisee panssarin", of = "90ce22" }
 attack_range = { text = "kantama {n:bare}", of = "d7fa6a" }
 attack_source_main_hand = { text = "pääkäsi", of = "f81a7c" }
 attack_source_missile = { text = "ammus", of = "ef6827" }
@@ -119,7 +118,6 @@ verb_shoots = { text = "ampuu", of = "fb2639" }
 where = { text = "Mihin?", of = "76a927" }
 which_way = { text = "Mihin suuntaan?", of = "bd07cf" }
 whirls = { text = "{who:Nom} pyörähtää sinua kohti.", of = "1ec9f2" }
-will_not_leave_hand = { text = "Se ei irtoa kädestäsi.", of = "f33ddb" }
 you_die = { text = "Kuolet...", of = "d1e389" }
 
 [attacks]

@@ -12,7 +12,7 @@ A spell's school matters for:
   gnomes' *[Gnomish illusionist](races.md#race-gnome)*, which helps only illusion spells;
 - your class's affinity with each school, which makes its spells easier or harder to
   [learn](learning-spells.md#your-learning);
-- the colour of a [spell circle](spell-circles.md).
+- the colour of a [spell glow](spell-glow.md).
 
 How well you cast depends on your stats, your [talents](talents.md), your items, and the
 [caster style](#caster-styles) a spell is cast in.

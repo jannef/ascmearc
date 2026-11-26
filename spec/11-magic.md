@@ -14,7 +14,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - A status that kills at its maximum by turning to stone leaves a statue.
 - Cooldowns are statuses that only time lifts: a visible limit; nothing counts uses.
 - Every buff shows, whatever its source; every hex shows on creatures. The player sees statuses by name, never a severity or a timer. A mimic's disguise and the thief's lurking are not buffs and never show.
-- A buff or hex carries a spell circle, and a circled status sheds its school's dim light.
+- A buff or hex makes its bearer's glyph glow in its school's colour. The glow is only drawn: it sheds no light.
 
 ## Healing
 

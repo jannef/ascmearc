@@ -298,12 +298,8 @@ fn class_of(content: &Content, active: ClassActive) -> String {
                 .is_some_and(|t| (book.get(t).effects.iter()).any(|e| e.active() == Some(active)))
         })
     };
-    let anchor = |name: &str| name.to_lowercase().replace(' ', "-");
     if let Some(c) = (content.classes().iter()).find(|c| gives(&c.abilities)) {
         return format!("[{}]({})", c.name, super::character::class_page(&c.id));
-    }
-    if let Some(p) = (content.prestiges().iter()).find(|p| gives(&p.abilities)) {
-        return format!("[{}](prestige-classes.md#{})", p.name, anchor(&p.name));
     }
     "[Classes](classes.md#levels)".to_string()
 }
@@ -352,24 +348,7 @@ fn table_holders(content: &Content, has: impl Fn(&TalentEffect) -> bool) -> Stri
     let mut parts: Vec<String> = (who.iter())
         .map(|(class, level)| format!("{} from level {level}", plural(class)))
         .collect();
-    // A prestige class's table counts its own levels (Hunter 1 is the level after its base
-    // class's highest).
-    let mut prestige: Vec<(String, u8)> = (content.prestiges().iter())
-        .filter_map(|p| {
-            let (level, _) = p.abilities.iter().find(|(_, talent)| {
-                (book.id(talent)).is_some_and(|t| (book.get(t).effects.iter()).any(&has))
-            })?;
-            Some((p.name.clone(), *level))
-        })
-        .collect();
-    prestige.sort();
     parts.splice(0..0, races);
-    parts.extend((prestige.iter()).map(|(class, level)| {
-        format!(
-            "{} from {class} level {level}",
-            plural(&class.to_lowercase())
-        )
-    }));
     parts.join(", ")
 }
 
@@ -446,7 +425,6 @@ fn aim(aim: Aim) -> &'static str {
         Aim::Ailment => "what to treat, when there is more than one",
         Aim::Item(_) => "an item you carry",
         Aim::Throw => "something to throw (never a flask), then a place you see",
-        Aim::Shape => "a weapon's shape, from every melee weapon",
         Aim::Rig => "a rig, from the list of them with what each takes, then a direction",
         Aim::Spell => "a spell you know, from the list of them with their prices",
         Aim::Recipes => "a recipe, from the profession's list",
@@ -639,7 +617,7 @@ mod tests {
             songs.contains("[Inspire](abilities.md#ability-inspire)"),
             "{songs}"
         );
-        assert!(songs.contains("bards from level 20"), "{songs}");
+        assert!(songs.contains("bards from level 40"), "{songs}");
         assert!(songs.contains("6 [mana]"), "{songs}");
         let music = song_music(&content);
         assert!(music.contains("| 100 | +2 | +4 |"), "{music}");

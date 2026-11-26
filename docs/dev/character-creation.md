@@ -52,11 +52,8 @@ uses it for damage. Scenarios name their character (`character = { race, gender,
 Some(&spec))` as another, `World::with_character_named(.., name)` named, and
 `World::start_run(.., kit)` with the starting kit or without (below); `WorldState::character`
 (the `Character`, saved, hashed) and `PerceptionView::character` (the player knows it;
-`PerceptionView::time` for their age). `Character::prestige` (the prestige class once called,
-`docs/dev/experience.md` "Prestige classes"; left out of the JSON while none) is the one field
-set after creation, by `World::call` alone; `Character::class_of`, `class_levels`, `level_cap`,
-`class_arg` (the Class row, a label: `Bard 30, Hunter 4`), and `class_phrase` (the epitaph's "a bard and
-hunter") read it. Replays record the spec, the name (`Replay::name`), and
+`PerceptionView::time` for their age). `Character::class_arg` is the Class row, a label
+(`Bard`). Replays record the spec, the name (`Replay::name`), and
 whether the run started with the kit (`Replay::kit`). A run with the kit also takes its creation talents
 (`CharacterSpec::talents`, else the Random picks; the Talents step after the class,
 `ui/chargen_talents_screen.rs`, and `--talents`; `docs/dev/progression.md` "Creation picks"),
@@ -198,7 +195,7 @@ than a kit's flag): `World::begin` puts `kit::known_types(content, &pack.items)`
 Magic items stay unidentified. A scenario's `spells` (`ScenarioDef::spells`, `spells = ["haste"]`, resolved by
 the loader, an unknown id refused) go into `Actor::spells` in `World::begin`, for its own
 character and a chosen one alike, on top of the class's: known from the start as a spell learned from a grimoire
-is (saved and hashed as `Actor::spells` always is). Only the test world's `circles` uses it, and
+is (saved and hashed as `Actor::spells` always is). Only the test world's `glow` uses it, and
 it is the one built-in scenario with no `character` (it gives the eyes, stats, hit points, and
 300 mana itself; `world/character/character_tests.rs` and `content/tests.rs`'s scenario test name it). The heritage talents (Family wealth's gold and gems, Father's sword's
 heirloom; #697) come on top as they are taken, after the pack (`world/character/heirloom.rs`,

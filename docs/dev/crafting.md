@@ -846,7 +846,7 @@ dispatched from `World::start_craft` by one arm to `World::start_set`; its turns
 - **What can be set** (`settable`, `ornament_part`): an item whose object names its `ornament`
   part, else whose class has an `[[ornament]]` row in `data/gems.toml`, with no part of a gem's
   material (`MaterialDef::gem`) in that place: a gold amulet's base ruby setting counts as set. A
-  loose gem, a piece, a spirit weapon, and a unique (#1975) are not.
+  loose gem, a piece, and a unique (#1975) are not.
 - **Refused, no time**, in order: below `from` ("That is beyond your skill."), no item pick ("You
   must choose the item."), no gem pick ("You must choose the gem."), more than two ("That is more
   than the work takes."), no such stack ("You carry no such thing."), a unique ("It is unique:

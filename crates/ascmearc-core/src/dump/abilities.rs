@@ -53,7 +53,6 @@ pub(super) fn aim_word(aim: Aim) -> &'static str {
         Aim::Ailment => "what to treat",
         Aim::Item(_) => "an item you carry",
         Aim::Throw => "something to throw, then a target",
-        Aim::Shape => "a weapon's shape",
         Aim::Rig => "a rig and a direction",
         Aim::Spell => "a spell you know",
         Aim::Recipes => "a recipe",

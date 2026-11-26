@@ -24,7 +24,7 @@
 //! is looked for there and xtask's own output (`xtask/`, `web/`) goes there too.
 
 mod bench;
-mod bench_circles;
+mod bench_glow;
 mod docs_check;
 mod golden;
 mod lang;

@@ -218,7 +218,7 @@ struct BoonSpec {
 }
 
 /// What becomes of a lure quest's creature once it is brought home (`world/people/lure.rs`): bound by
-/// the giver, it carries `status` for good (a circled one: its spell circle shows it), joins
+/// the giver, it carries `status` for good (a glowing one: its bearer's glyph shows it), joins
 /// `faction`, walks to `post` on the quest's level and stays there, and gives its `boon`.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Binding {

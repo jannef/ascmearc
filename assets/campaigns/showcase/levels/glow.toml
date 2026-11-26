@@ -1,9 +1,8 @@
-# Spell circles: a lit hall of peaceful kobolds to buff and hex, each already in
-# one state the circle must show (docs/design/buff-circles.md §13). West, a dark alcove with
-# a bark-skinned kobold archer in it: seen by the faint light its circle sheds, and by nothing
-# else.
+# Buffs and hexes: a lit hall of peaceful kobolds to buff and hex, each already in one state
+# whose glow shows on its glyph (docs/dev/rendering.md "Spell glow"). West, a dark alcove with a
+# bark-skinned kobold archer in it: the glow sheds no light, so it stays unseen.
 arrival = "Kobolds stand about the hall, placid, each with a mark of magic on it."
-name = "The Circles"
+name = "The Hall of Marks"
 ambient = [6, 7, 9, 0]
 map = '''
 #########################
@@ -25,15 +24,15 @@ map = '''
 "t" = "sconce"
 # Two plain kobolds side by side for the casts: a Sleep burst (radius 1) takes both, a ray one.
 "k" = { terrain = "floor", creature = "kobold", faction = "peaceful" }
-# One buff: a triangle of シ on one solid ring.
+# One buff: its glyph glows in abjuration's colour.
 "b" = { terrain = "floor", creature = "kobold", faction = "peaceful", status = ["blessed"] }
-# Two hexes: a dashed square 小 止 小 止 on two dashed rings, turning the other way.
+# Two hexes: necromancy's colour (the first in status order).
 "h" = { terrain = "floor", creature = "kobold", faction = "peaceful", status = ["weakened", "sluggish"] }
-# Both: a solid triangle of シ inside a dashed triangle of 目, counter-rotating.
+# Both: the buff's colour.
 "x" = { terrain = "floor", creature = "kobold", faction = "peaceful", status = ["blessed", "ill_wished"] }
-# Many: three buffs, a triangle シ ハ 木 on three rings.
+# Many: three buffs, the first's colour.
 "m" = { terrain = "floor", creature = "kobold", faction = "peaceful", status = ["blessed", "hasted", "barkskin"] }
-# In the dark alcove, in line with the player through the gap: a bark-skinned kobold, seen by
-# its circle's green glow alone. An archer, which carries no torch: a
-# kobold's own would light the alcove.
+# In the dark alcove, in line with the player through the gap: a bark-skinned kobold, unseen
+# (a glow is drawn only where the player sees, and sheds no light). An archer, which carries no
+# torch: a kobold's own would light the alcove.
 "d" = { terrain = "floor", creature = "kobold_archer", faction = "peaceful", status = ["barkskin"] }

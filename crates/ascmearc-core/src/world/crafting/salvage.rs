@@ -4,7 +4,7 @@
 //!
 //! - **Where, with what**: anywhere, with nothing.
 //! - **What**: a stack carried with at least one part of a material a profession works
-//!   ([`salvageable`]: `data/stock.toml`, [`World::profession_of`]), not a spirit weapon, not a
+//!   ([`salvageable`]: `data/stock.toml`, [`World::profession_of`]), not a
 //!   unique (refused first, "It is unique: no craft of yours will change it.", and never listed;
 //!   #1975).
 //!   Refused, taking no time: one worn or wielded ("Take it off first."), one protected from
@@ -61,7 +61,7 @@ use crate::stats::Stat;
 use crate::world::items::stacks_arg;
 use crate::world::{Spent, World};
 
-/// Whether `stack` has anything to salvage: not a spirit weapon or a unique (#1975), with a part
+/// Whether `stack` has anything to salvage: not a unique (#1975), with a part
 /// of a material some profession works, not money (the currency is never melted down: gold
 /// ingots come from salvaged gold, never from gold coins, docs/design/recipes.md; copper coins
 /// are not money), and not stock already (#1777): a piece (an ingot, a billet, a hide) or a
@@ -72,8 +72,7 @@ pub fn salvageable(content: &Content, stack: &Stack) -> bool {
     let money = content.shops().is_some_and(|s| s.currency == stack.object);
     let stock = content.object(stack.object).id == crate::piece::ID
         || content.gems().is_some_and(|g| g.object == stack.object);
-    !stack.is_spirit()
-        && !stack.is_unique()
+    !stack.is_unique()
         && !money
         && !stock
         && (stack.parts(content).iter())

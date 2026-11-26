@@ -79,11 +79,6 @@ pub struct Stack {
     /// (`WorldState::carried_light`). Unlit for everything else.
     #[serde(default, skip_serializing_if = "LightMode::is_unlit")]
     light: LightMode,
-    /// A weapon of spirit-stuff (the Hunter's Spirit weapon), made
-    /// only by `World::call_weapon` and only ever in a hand: it fades the moment it leaves one
-    /// (`world/classes/spirit_weapon.rs`). Otherwise it is its base object in every rule.
-    #[serde(default, skip_serializing_if = "is_false")]
-    spirit: bool,
     /// What an anvil's work has done to it (Temper; [`Worked`]), or the make of a stack of
     /// ammunition as found or fletched; `None` for an item no one has worked. Boxed: most stacks
     /// have none. A worked item is like no other and never stacks, but for ammunition of one
@@ -160,7 +155,6 @@ impl Stack {
             charges: None,
             wand_rung: None,
             light: LightMode::Unlit,
-            spirit: false,
             worked: None,
             scars: None,
         }
@@ -176,19 +170,6 @@ impl Stack {
             died: Some(died),
             ..Self::new(object, 1)
         }
-    }
-
-    /// One `object` of spirit-stuff (`World::call_weapon`'s): plain, and known for what it is.
-    pub(crate) fn spirit(object: ObjectId) -> Self {
-        Self {
-            spirit: true,
-            ..Self::one(object)
-        }
-    }
-
-    /// Whether it is a weapon of spirit-stuff, which fades when it leaves the hand.
-    pub fn is_spirit(&self) -> bool {
-        self.spirit
     }
 
     /// `count` of `object` that rolled `magic`.
@@ -742,7 +723,6 @@ impl Stack {
             && (self.charges).is_none_or(|c| def.wand.is_some_and(|w| c.used <= w.charges))
             && (self.wand_rung.is_none() || def.wand.is_some())
             && (self.light.is_unlit() || def.carried_light.is_some())
-            && (!self.spirit || (self.count == 1 && def.attack.is_some()))
             && (self.worked()).is_none_or(|w| {
                 (self.count == 1 || crate::magic::worked::ammunition(def)) && w.is_valid(def)
             })

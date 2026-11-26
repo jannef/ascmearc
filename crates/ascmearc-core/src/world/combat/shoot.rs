@@ -174,11 +174,6 @@ impl World {
             self.say(msg::combat::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
-        // A spirit weapon is not thrown: it would fade as it left the hand.
-        if stack.is_spirit() {
-            self.say(msg::combat::WILL_NOT_LEAVE_HAND);
-            return Spent::Nothing;
-        }
         // A cursed weapon is never thrown: it leaps into the main hand (`curse.rs`).
         let main = content.hand_slots().next();
         if stack.is_cursed(&content) && main.is_some_and(|s| content.fits(stack.object, s)) {

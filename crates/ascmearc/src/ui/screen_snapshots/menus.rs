@@ -4,7 +4,7 @@
 use super::*;
 
 /// A few of the fallen as the file keeps them, the oldest first: one written before experience
-/// was kept (it reads 0 and sorts last), a prestige class, and causes of each kind.
+/// was kept (it reads 0 and sorts last), and causes of each kind.
 const GRAVEYARD_XP: &str = r#"
 [[fallen]]
 name = "Wynn"
@@ -29,7 +29,6 @@ when = 1793318400
 name = "Tamsin"
 race = "elf"
 class = "bard"
-prestige = "hunter"
 level = 31
 xp = 412000
 cause = "kobold"

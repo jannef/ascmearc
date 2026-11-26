@@ -1,7 +1,6 @@
 //! Classes and their abilities (docs/dev/progression.md, openings.md, prayer.md).
 
 mod ascetic;
-pub(in crate::world) mod calling;
 mod charge;
 pub(in crate::world) mod class;
 mod class_ability;
@@ -20,7 +19,6 @@ mod rage;
 pub(in crate::world) mod sanctuary;
 mod smite;
 mod song;
-pub(in crate::world) mod spirit_weapon;
 pub(in crate::world) mod stipend;
 mod thief;
 mod volley;
@@ -29,7 +27,6 @@ mod witch;
 cfg_if! {
     if #[cfg(test)] {
         mod ascetic_tests;
-        mod calling_tests;
         mod charge_tests;
         pub(in crate::world) mod class_active_tests;
         mod class_rogue_tests;
@@ -49,7 +46,6 @@ cfg_if! {
         mod smite_tests;
         mod smite_wrath_tests;
         mod song_tests;
-        mod spirit_weapon_tests;
         mod stipend_tests;
         pub(in crate::world) mod war_cry_tests;
         mod witch_tests;

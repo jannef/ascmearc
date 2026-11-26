@@ -21,7 +21,7 @@ enum Effect {
     Distortion,
     Particles,
     /// Information as much as an effect: reduced effects only stills it.
-    Circles,
+    SpellGlow,
     ScreenFades,
     ScreenShake,
     Weather,
@@ -38,7 +38,7 @@ impl Effect {
             Effect::Glow => T::EFFECT_GLOW,
             Effect::Distortion => T::EFFECT_DISTORTION,
             Effect::Particles => T::EFFECT_PARTICLES,
-            Effect::Circles => T::EFFECT_CIRCLES,
+            Effect::SpellGlow => T::EFFECT_SPELL_GLOW,
             Effect::ScreenFades => T::EFFECT_SCREEN_FADES,
             Effect::ScreenShake => T::EFFECT_SCREEN_SHAKE,
             Effect::Weather => T::EFFECT_WEATHER,
@@ -54,7 +54,7 @@ impl Effect {
             Effect::Glow => T::EFFECT_GLOW_HELP,
             Effect::Distortion => T::EFFECT_DISTORTION_HELP,
             Effect::Particles => T::EFFECT_PARTICLES_HELP,
-            Effect::Circles => T::EFFECT_CIRCLES_HELP,
+            Effect::SpellGlow => T::EFFECT_SPELL_GLOW_HELP,
             Effect::ScreenFades => T::EFFECT_SCREEN_FADES_HELP,
             Effect::ScreenShake => T::EFFECT_SCREEN_SHAKE_HELP,
             Effect::Weather => T::EFFECT_WEATHER_HELP,
@@ -70,7 +70,7 @@ impl Effect {
             Effect::Glow => &mut e.glow,
             Effect::Distortion => &mut e.distortion,
             Effect::Particles => &mut e.particles,
-            Effect::Circles => &mut e.circles,
+            Effect::SpellGlow => &mut e.spell_glow,
             Effect::ScreenFades => &mut e.screen_fades,
             Effect::ScreenShake => &mut e.screen_shake,
             Effect::Weather => &mut e.weather,
@@ -80,7 +80,7 @@ impl Effect {
 
     /// Whether the reduced-effects preset turns it off.
     fn in_preset(self) -> bool {
-        !matches!(self, Effect::Blood | Effect::Circles)
+        !matches!(self, Effect::Blood | Effect::SpellGlow)
     }
 }
 
@@ -111,7 +111,7 @@ const ROWS: &[Row] = &[
     Row::Effect(Effect::ScreenFades),
     Row::Effect(Effect::ScreenShake),
     Row::Effect(Effect::Weather),
-    Row::Effect(Effect::Circles),
+    Row::Effect(Effect::SpellGlow),
     Row::Effect(Effect::Blood),
     Row::Palette,
     Row::Clock,
@@ -207,7 +207,7 @@ impl SettingsScreen {
                     } else {
                         on_off(own)
                     };
-                    // The preset's switches sit under it; spell circles and blood are settings
+                    // The preset's switches sit under it; the spell glow and blood are settings
                     // of their own.
                     let indent = if e.in_preset() { "  " } else { "" };
                     (format!("{indent}{}", ui(e.label())), value)
@@ -439,10 +439,10 @@ mod tests {
         press(&mut screen, &mut s, Nav::Down);
         press(&mut screen, &mut s, Nav::Enter);
         assert!(!s.effects.weather);
-        // Then the spell circles.
+        // Then the spell glow.
         press(&mut screen, &mut s, Nav::Down);
         press(&mut screen, &mut s, Nav::Enter);
-        assert!(!s.effects.circles && s.effects.blood);
+        assert!(!s.effects.spell_glow && s.effects.blood);
         // Then blood.
         press(&mut screen, &mut s, Nav::Down);
         press(&mut screen, &mut s, Nav::Enter);

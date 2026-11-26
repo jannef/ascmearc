@@ -31,5 +31,5 @@ not required. Avoid being overtly verbose."
 - [`spec/09-creatures.md`](spec/09-creatures.md) — **Creatures**: behaviour, stair followers, gimmicks, allies, kept beasts, what creatures are made of, talking, quests
 - [`spec/10-combat.md`](spec/10-combat.md) — **Combat**: the blow, experience, stances, free blows, surprise, ranged combat, traps, doors, chests, statues, searching, digging
 - [`spec/11-magic.md`](spec/11-magic.md) — **Statuses and magic**: status effects, healing, mana, spells, resources, checks, diseases, blood and char, magic items, scrolls, wands and rods, potions
-- [`spec/12-character.md`](spec/12-character.md) — **The character**: creation, the birth sign, the background story, alignment, stats, burden, hunger, skills, professions, talents, classes, prestige classes, weapon skills, fighting styles, weapon abilities
+- [`spec/12-character.md`](spec/12-character.md) — **The character**: creation, the birth sign, the background story, alignment, stats, burden, hunger, skills, professions, talents, classes, weapon skills, fighting styles, weapon abilities
 - [`spec/13-development.md`](spec/13-development.md) — **Development**: the development interface, the quality bar, technology, the workflow

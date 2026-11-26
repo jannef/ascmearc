@@ -51,7 +51,7 @@ pub fn escort_slot(content: &Content, equipment: &Equipment, object: ObjectId) -
 
 /// Whether an escort could put `stack` on: what the Give list shows beside an escort.
 pub fn fits_escort(content: &Content, stack: &Stack) -> bool {
-    !stack.is_spirit() && escort_slot(content, &Equipment::default(), stack.object).is_some()
+    escort_slot(content, &Equipment::default(), stack.object).is_some()
 }
 
 impl Actor {
@@ -218,9 +218,7 @@ impl World {
             return Spent::Nothing;
         };
         let equipment = &self.state.actors[&escort].equipment;
-        let Some(slot) =
-            (escort_slot(&content, equipment, stack.object)).filter(|_| !stack.is_spirit())
-        else {
+        let Some(slot) = escort_slot(&content, equipment, stack.object) else {
             self.say(Msg::new(msg::allies::NO_USE_FOR_THAT).role("who", name));
             return Spent::Nothing;
         };

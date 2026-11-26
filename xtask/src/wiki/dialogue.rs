@@ -1,8 +1,7 @@
 //! Dialogue and quests: who talks and who gives quests.
 
-use super::util::word;
 use super::util::{capital, yes};
-use ascmearc_core::content::{Content, Dialogue, QuestDef, Reward, Speaker};
+use ascmearc_core::content::{Content, QuestDef, Reward, Speaker};
 use ascmearc_core::world::quest_asks;
 use std::fmt::Write as _;
 
@@ -94,127 +93,6 @@ pub(super) fn rumoured_ways(content: &Content) -> String {
         let _ = writeln!(out, "| {who} | {topic} | {way} | {region} |");
     }
     out
-}
-
-/// Whom dialogue `d` speaks to at all, by alignment band: "Kind or better", or "anyone".
-fn speaks_to_text(d: &Dialogue) -> String {
-    d.speaks_to.map_or_else(
-        || "anyone".to_string(),
-        |r| match (r.min, r.max) {
-            (Some(min), Some(max)) => format!(
-                "{} to {}",
-                word(min.name(), "Bare"),
-                word(max.name(), "Bare")
-            ),
-            (Some(min), None) => format!("{} or better", word(min.name(), "Bare")),
-            (None, Some(max)) => format!("{} or worse", word(max.name(), "Bare")),
-            (None, None) => "anyone".to_string(),
-        },
-    )
-}
-
-/// Each campaign's callings, stated plain: who the calling is
-/// open to, who grants it when spoken to (the speakers with a topic that `calls` it, in the
-/// calling's campaign), whom the speaker speaks to, and the encounter tables
-/// that bring the speaker (entries whose `when.calling` is the class). By campaign, then class.
-pub(super) fn callings(content: &Content) -> String {
-    let mut rows: Vec<(String, String, String)> = Vec::new();
-    for c in content.callings() {
-        let Some(campaign) = c.campaign.as_deref() else {
-            continue;
-        };
-        if !super::order::described(content, Some(campaign)) {
-            continue;
-        }
-        let place = (content.campaigns().iter())
-            .find(|k| k.id == campaign)
-            .map_or(campaign, |k| k.name.as_str());
-        let who = calling_text(content, Some(campaign), &c.class);
-        let mut ways: Vec<String> = Vec::new();
-        for d in (content.dialogues().iter()).filter(|d| d.campaign.as_deref() == Some(campaign)) {
-            let speaker = match (&d.speaker, &d.name) {
-                (Speaker::Creature(id), _) => {
-                    let def = content.creature(*id);
-                    format!(
-                        "the [{}](creatures.md#creature-{})",
-                        def.name,
-                        def.id.replace('_', "-")
-                    )
-                }
-                (Speaker::Npc(_), Some(name)) => name.clone(),
-                (Speaker::Npc(npc), None) => format!("`{npc}`"),
-            };
-            let band = match d.speaks_to {
-                Some(_) => format!(" (who speaks only to the {})", speaks_to_text(d)),
-                None => String::new(),
-            };
-            if (d.topics.iter()).any(|t| t.calls.as_deref() == Some(c.class.as_str())) {
-                ways.push(format!("{speaker}{band} grants it when spoken to"));
-            }
-        }
-        let tables: Vec<String> = (content.encounter_tables(campaign))
-            .filter(|t| {
-                (t.entries.iter()).any(|e| e.when.calling.as_deref() == Some(c.class.as_str()))
-            })
-            .map(|t| {
-                format!(
-                    "[{}](encounters.md#encounter-table-{})",
-                    t.id,
-                    t.id.replace('_', "-")
-                )
-            })
-            .collect();
-        let met = match tables.is_empty() {
-            true => String::new(),
-            false => format!(", met on the way ({})", tables.join(", ")),
-        };
-        let how = match ways.is_empty() {
-            true => "nothing there calls you yet".to_string(),
-            false => ways.join(", or "),
-        };
-        let line = format!(
-            "- **{place}**, for {who}: {how}{met}. You are told: \"{}\"",
-            c.message
-        );
-        rows.push((place.to_string(), c.class.clone(), line));
-    }
-    if rows.is_empty() {
-        return "No world calls anyone into a prestige class yet.\n".into();
-    }
-    rows.sort();
-    let mut out = String::new();
-    for (_, _, line) in rows {
-        out.push_str(&line);
-        out.push('\n');
-    }
-    out
-}
-
-/// Who a calling is open to, and into what, by the prestige class
-/// `class` it opens, as the wiki says it: "a [bard](class-bard.md) of level 30 or more, not
-/// yet called, to be a Hunter". The calling of `campaign` (or of none) if there is one, else the
-/// first of that class.
-pub(super) fn calling_text(content: &Content, campaign: Option<&str>, class: &str) -> String {
-    let callings = content.callings();
-    let calling = (callings.iter())
-        .find(|c| c.class == class && (c.campaign.as_deref() == campaign || c.campaign.is_none()))
-        .or_else(|| callings.iter().find(|c| c.class == class));
-    let Some(calling) = calling else {
-        return format!("into `{class}`");
-    };
-    let from: Vec<String> = (calling.from.iter())
-        .map(|f| {
-            let name = content.class(f).map_or(f.as_str(), |c| c.name.as_str());
-            let page = super::character::class_page(f);
-            format!("[{}]({page})", name.to_lowercase())
-        })
-        .collect();
-    let name = content.prestige(class).map_or(class, |p| p.name.as_str());
-    format!(
-        "a {} of level {} or more, not yet called, to be a {name}",
-        from.join(" or "),
-        calling.level
-    )
 }
 
 /// Who gives quests (`data/quests.toml` and the campaigns' `data/quests/`, those the wiki

@@ -161,10 +161,6 @@ fn a_line_that_names_a_role_is_refused() {
 fn the_classes_lines_read_as_the_data_writes_them() {
     let content = &CONTENT;
     let said = |key: String| said_text(content, key);
-    assert!(!content.callings().is_empty(), "a calling");
-    for def in content.callings() {
-        assert_eq!(said(calling(def)), def.message);
-    }
     let book = content.talents();
     let hands = book.get(book.id("travelled_hands").expect("talent"));
     let (key, text) = handed_news(hands).next().expect("news");

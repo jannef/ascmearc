@@ -69,10 +69,6 @@ impl Content {
                 .map(|a| a.id.as_str())
                 .collect(),
             self.statuses.iter().map(|s| s.id.as_str()).collect(),
-            // A circled status sheds its school's light (`data/circles.toml`).
-            (self.circles.rows().iter())
-                .flat_map(|r| [self.status(r.status).id.as_str(), r.school.id()])
-                .collect(),
             self.diseases.iter().map(|d| d.id.as_str()).collect(),
             self.traps.iter().map(|t| t.id.as_str()).collect(),
             self.damage_types.iter().map(|t| t.id.as_str()).collect(),

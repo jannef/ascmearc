@@ -1,7 +1,7 @@
 //! The Graveyard screen (#1252), from the main menu
 //! once anyone has died: every fallen character of `graveyard.toml` (`crate::graveyard`), the
 //! most experienced at death first (`graveyard::by_experience`). Each takes a few lines: the
-//! name, race and class (and prestige class), level, and experience; then what killed them and
+//! name, race and class, level, and experience; then what killed them and
 //! where; then when, by the wall clock, and at what age.
 //!
 //! Read-only: nothing is chosen. The list is shown a page at a time, as many entries as fit
@@ -39,7 +39,7 @@ const INDENT: i32 = 2;
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct Entry {
     name: String,
-    /// Race and class: `Dwarf Warrior`, `Elf Bard and Hunter`.
+    /// Race and class: `Dwarf Warrior`, `Elf Bard`.
     what: String,
     level: u32,
     xp: u32,
@@ -67,20 +67,11 @@ impl Entry {
             content.class_phrase(&fallen.class),
             &fallen.class,
         );
-        let mut what = [race, class]
+        let what = [race, class]
             .into_iter()
             .filter(|s| !s.is_empty())
             .collect::<Vec<_>>()
             .join(" ");
-        if !fallen.prestige.is_empty() {
-            let prestige = named(
-                content.prestige(&fallen.prestige).is_some(),
-                content.prestige_phrase(&fallen.prestige),
-                &fallen.prestige,
-            );
-            let args = [("what", Arg::text(what)), ("prestige", Arg::text(prestige))];
-            what = ui_with(T::AND_PRESTIGE, &args);
-        }
         let death = ui_with(
             T::DEATH_LINE,
             &[("death", Arg::text(death_words(fallen, content)))],
@@ -378,7 +369,11 @@ cause = "bleeding"
             "{text}"
         );
         assert!(text.contains("Dwarf Warrior"), "{text}");
-        assert!(text.contains("Elf Bard and Hunter"), "{text}");
+        assert!(text.contains("Elf Bard"), "{text}");
+        assert!(
+            !text.contains("Hunter"),
+            "an old entry's prestige class is passed over: {text}"
+        );
         assert!(
             text.contains("level 7") && text.contains("2900 xp"),
             "{text}"

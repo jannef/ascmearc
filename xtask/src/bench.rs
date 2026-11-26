@@ -2,8 +2,7 @@
 //! generated level of the depths, the sunlit courtyard at dawn, the overworld, a generated
 //! forest area of the overworld at dawn, the courtyard and the forest area at midnight under the
 //! full moon, the arena, where a dozen creatures fight, a generated 120×60 cave floor at
-//! full population, 80 creatures of danger 8, the same with all but its kobolds shedding a spell
-//! circle's light, the same of animated panoplies at danger 40, the deepest floor of a
+//! full population, 80 creatures of danger 8, the same of animated panoplies at danger 40, the deepest floor of a
 //! 40-floor cave branch fresh and after visiting the other 39 (a long run's actors, #1507),
 //! each wearing and wielding up to ten things (the vast level's budget; a generated 80×21
 //! level, the courtyard, the 100×50 overworld, an 80×40 local area, and the 72×21 arena get the
@@ -51,35 +50,10 @@ const DELF_SCENARIO: &str = "name = \"Bench delf\"\nstart_level = \"bench_delf:1
 const PET_SCENARIO: &str = "name = \"Bench pet\"\nstart_level = \"bench_delf:1\"\nseed = 1\n\
                             character = { race = \"human\", gender = \"male\", class = \"ranger\" }\n";
 
-/// The same cave floor with every creature but the torch-bearing kobolds circled: each sheds a
-/// spell circle's light, radius 1, as a hexed creature does (bench copies, `bench_hexed_<id>`,
-/// carrying the light as a creature's own: the same one source per actor, keyed by the actor, its
-/// mask recomputed when it moves). The design's "delf floor of twenty hexed creatures"
-/// (docs/design/buff-circles.md §8.3), more of them; the budget is the vast level's.
-const HEXED_BRANCH: &str = r#"
-[[dungeon]]
-id = "bench_hexed"
-name = "Bench hexed"
-depth = 1
-[dungeon.level]
-generator = { kind = "caves" }
-size = [120, 60]
-danger = 8
-population = ["bench_hexed_bat", "bench_hexed_beetle", "kobold", "bench_hexed_kobold_archer", "bench_hexed_kobold_shaman", "bench_hexed_rat"]
-room_effects = { chance = 100, per_level = 1, favoured = { teeming = 100 } }
-"#;
-const HEXED_SCENARIO: &str = "name = \"Bench hexed\"\nstart_level = \"bench_hexed:1\"\nseed = 1\n\
-                              wield = [\"lantern\"]\nhp = 900\n";
-/// The circle's light the bench's hexed creatures shed.
-const HEXED_LIGHT: &str = "circle_enchantment";
-/// Rows whose rest is shown but not judged. `d-hex`'s walk ends where the rest runs the whole
-/// night among 96 creatures (about 0.07 ms a turn, 500 ms or so), where `delf`'s is cut short
-/// at once; rested from the same state with the copies dark it is cut short too (60 turns), and
-/// no rest turn costs more lit than dark: a full night on that floor is the cost, not the light.
-/// `d-pet`'s rest runs the whole night (7600 turns, about 0.33 ms a turn): fewer neutral animals
+/// Rows whose rest is shown but not judged. `d-pet`'s rest runs the whole night (7600 turns, about 0.33 ms a turn): fewer neutral animals
 /// interrupt it, and only a hostile within five steps stops it (#1216). `l-1`'s and `long`'s
 /// run the whole night among 75 creatures too (about 0.1 ms a turn): shown to compare the two.
-const UNJUDGED_REST: [&str; 4] = ["d-hex", "d-pet", "l-1", "long"];
+const UNJUDGED_REST: [&str; 3] = ["d-pet", "l-1", "long"];
 
 /// The same cave floor at danger 40, all of it animated panoplies:
 /// each wears and wields its pieces, whose magic every rule reads through `Mods::worn`, the
@@ -121,7 +95,7 @@ const LONG_DEPTH: u32 = 40;
 const LONG: &str = "long";
 
 /// (scenario, level label, budget in ms, minutes skipped before the walk)
-const CASES: [(&str, &str, f64, u64); 15] = [
+const CASES: [(&str, &str, f64, u64); 14] = [
     ("showcase", "hub", 5.0, 0),
     ("vast", "vast", 16.0, 0),
     ("depths", "depths", 5.0, 0),
@@ -140,8 +114,6 @@ const CASES: [(&str, &str, f64, u64); 15] = [
     ("bench_delf", "delf", 16.0, 0),
     // The same with a ranger and their companion beside the player (`PET_SCENARIO`).
     ("bench_pet", "d-pet", 16.0, 0),
-    // The same with every creature but the kobolds circled (`HEXED_BRANCH`).
-    ("bench_hexed", "d-hex", 16.0, 0),
     // The same at danger 40, of panoplies (`PANOPLY_BRANCH`).
     ("bench_panoply", "panop", 16.0, 0),
     // The deepest floor of a 40-floor cave branch (`LONG_BRANCH`), fresh: the only level.
@@ -154,38 +126,14 @@ const CASES: [(&str, &str, f64, u64); 15] = [
 fn content() -> Result<Content, String> {
     let mut files = ascmearc_assets::files();
     let dungeons = format!(
-        "{}{DELF_BRANCH}{HEXED_BRANCH}{PANOPLY_BRANCH}{LONG_BRANCH}",
+        "{}{DELF_BRANCH}{PANOPLY_BRANCH}{LONG_BRANCH}",
         include_str!("../../assets/data/dungeons.toml")
     );
     files.insert("data/dungeons.toml", &dungeons);
     files.insert("scenarios/bench_delf.toml", DELF_SCENARIO);
     files.insert("scenarios/bench_panoply.toml", PANOPLY_SCENARIO);
-    files.insert("scenarios/bench_hexed.toml", HEXED_SCENARIO);
     files.insert("scenarios/bench_long.toml", LONG_SCENARIO);
     files.insert("scenarios/bench_pet.toml", PET_SCENARIO);
-    for (id, text) in [
-        ("bat", include_str!("../../assets/data/creatures/bat.toml")),
-        (
-            "beetle",
-            include_str!("../../assets/data/creatures/beetle.toml"),
-        ),
-        (
-            "kobold_archer",
-            include_str!("../../assets/data/creatures/kobold_archer.toml"),
-        ),
-        (
-            "kobold_shaman",
-            include_str!("../../assets/data/creatures/kobold_shaman.toml"),
-        ),
-        ("rat", include_str!("../../assets/data/creatures/rat.toml")),
-    ] {
-        let line = format!("id = \"{id}\"\n");
-        let hexed = text.replace(
-            &line,
-            &format!("id = \"bench_hexed_{id}\"\nlight = \"{HEXED_LIGHT}\"\n"),
-        );
-        files.insert(&format!("data/creatures/bench_hexed_{id}.toml"), &hexed);
-    }
     Content::load(&files).map_err(|e| e.to_string())
 }
 
@@ -244,21 +192,6 @@ fn measure(
     let mut deaths = 0;
     if scenario == "bench_pet" {
         eprintln!("{scenario}: companion {}", world.companion().is_some());
-    }
-    if scenario == "bench_hexed" {
-        // How many are circled: all but the kobolds (the dev `actors` layer, a row an actor).
-        let layer = ascmearc_core::dump::parse_layers("actors")?;
-        let rows = ascmearc_core::dump::layer_rows(&world, layer[0]);
-        let actors: Vec<&String> = (rows.iter()).filter(|r| r.contains(" at (")).collect();
-        let kobolds = (actors.iter())
-            .filter(|r| r.contains(" kobold at ("))
-            .count();
-        // The player is the first row.
-        let circled = actors.len().saturating_sub(kobolds + 1);
-        eprintln!(
-            "{scenario}: {circled} of {} creatures shed a circle's light",
-            actors.len() - 1
-        );
     }
     let mut rng = 1u64;
     let mut heading = Dir::E;
@@ -395,9 +328,9 @@ fn fight_rest(content: &Arc<Content>) -> Result<(u64, f64), String> {
     Ok((world.turn() - turn, start.elapsed().as_secs_f64() * 1000.0))
 }
 
-/// What fifty spell circles may cost a frame at 2560x1440, in ms (docs/design/buff-circles.md
-/// §10.3).
-const CIRCLES_BUDGET: f64 = 0.2;
+/// What fifty glowing actors may cost a frame at 2560x1440, in ms (the spell circles' budget,
+/// which the glow alone keeps).
+const GLOW_BUDGET: f64 = 0.2;
 
 /// Frame-time measurement: runs the release game offscreen with `--capture-after-frames` N and
 /// M, and divides the wall-clock difference by M - N, which cancels startup and capture cost.
@@ -439,14 +372,14 @@ pub fn frames(window: &str) -> Result<(), String> {
         "budget ms",
         HIGH - LOW
     );
-    // Fifty spell circles (`bench_circles.rs`), and the same hall with circles off, whose
-    // difference is the circles' own cost.
-    let (content, replay) = crate::bench_circles::fixture()?;
-    let off = target.join("xtask/bench-circles/off");
+    // Fifty glowing actors (`bench_glow.rs`), and the same hall with the spell glow off, whose
+    // difference is the glow's own cost.
+    let (content, replay) = crate::bench_glow::fixture()?;
+    let off = target.join("xtask/bench-glow/off");
     std::fs::create_dir_all(&off).map_err(|e| e.to_string())?;
-    std::fs::write(off.join("settings.toml"), "[effects]\ncircles = false\n")
+    std::fs::write(off.join("settings.toml"), "[effects]\nspell_glow = false\n")
         .map_err(|e| e.to_string())?;
-    let circles = |config: Option<&std::path::Path>| {
+    let glow = |config: Option<&std::path::Path>| {
         let mut args = vec!["--content-dir".into(), content.clone().into_os_string()];
         args.extend(["--replay".into(), replay.clone().into_os_string()]);
         if let Some(dir) = config {
@@ -467,8 +400,8 @@ pub fn frames(window: &str) -> Result<(), String> {
         ("hub", scenario("showcase")),
         ("steady", flat),
         ("vast", scenario("vast")),
-        ("circle", circles(None)),
-        ("c-off", circles(Some(&off))),
+        ("glow", glow(None)),
+        ("g-off", glow(Some(&off))),
     ];
     let mut failed = false;
     let mut times = Vec::new();
@@ -507,8 +440,8 @@ pub fn frames(window: &str) -> Result<(), String> {
     // Shown, not judged: the difference of two best-of-five runs carries noise of about the
     // budget's size (0.05 to 0.1 ms between runs on the same build).
     println!(
-        "fifty circles cost {:.3} ms a frame at {window} (circle - c-off; design budget \
-         {CIRCLES_BUDGET} ms at 2560x1440)",
+        "fifty glows cost {:.3} ms a frame at {window} (glow - g-off; budget {GLOW_BUDGET} ms \
+         at 2560x1440)",
         times[3] - times[4]
     );
     if failed {

@@ -1,7 +1,7 @@
 //! Player summons (`summon_spell.rs`): the spell kind's checks, the
 //! call, its count, cap, and time, the oldest giving way, the global cap, the `ally_mod` reads,
 //! the draw's bias, a slain summon's nothing, `study_difficulty`, saves, and determinism. On the
-//! built-in content's spell-circle hall (peaceful kobolds) with fixture spells and talents, and
+//! built-in content's buffs and hexes hall (peaceful kobolds) with fixture spells and talents, and
 //! the druid's Pack leader (the druid's calls themselves: `caster_tests.rs`).
 
 use crate::content::ContentFiles;
@@ -105,9 +105,9 @@ fn content() -> Arc<Content> {
     Arc::new(Content::load(&files()).expect("the fixtures load"))
 }
 
-/// The spell-circle hall, the player knowing the fixture calls.
+/// The buffs and hexes hall, the player knowing the fixture calls.
 fn world() -> World {
-    world_on("circles")
+    world_on("glow")
 }
 
 fn world_on(scenario: &str) -> World {
@@ -293,7 +293,7 @@ fn a_slain_call_leaves_no_corpse_and_nothing_else() {
 #[test]
 fn study_difficulty_makes_a_study_a_check_at_any_learning() {
     let content = content();
-    let w = World::new(content.clone(), "circles", None).expect("world");
+    let w = World::new(content.clone(), "glow", None).expect("world");
     let decipher = content.skill_id("decipher_script").expect("skill");
     // Two spells of level 1, one made ten harder.
     let hard = content.spell_id("zz_hard").expect("the spell");

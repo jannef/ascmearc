@@ -49,10 +49,6 @@ pub fn word_ids(content: &Content) -> BTreeSet<String> {
         .iter()
         .for_each(|d| add("resource", &d.id));
     content.classes().iter().for_each(|d| add("class", &d.id));
-    content
-        .prestiges()
-        .iter()
-        .for_each(|d| add("prestige", &d.id));
     (content.weapon_abilities().iter()).for_each(|d| add("weapon_ability", &d.id));
     for def in content.weapon_skills().skills() {
         add("weapon_skill", &def.id);

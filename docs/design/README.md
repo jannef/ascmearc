@@ -25,8 +25,15 @@ How far a design's slices have come is tracked in its issues, not here.
 `chests-and-treasure.md`, `combat-progression.md`, `craftsperson.md`, `druid-and-summons.md`,
 `enchanting.md`, `generic-vaults.md`, `horoscope.md`, `ki-tricks.md`, `localization.md`,
 `loot-pipeline.md`, `magic.md`, `miscasts-review.md`, `monster-dread.md`, `no-caster-level.md`,
-`overworld-encounters.md`, `paladin-smites.md`, `potions-wave-2.md`, `prestige-classes.md`,
-`priest.md`, `professions.md`, `progression.md`, `ranger-companion.md`, `recipes.md`,
-`skill-uses.md`, `special-rooms.md`, `spell-scaling.md`, `spell-types-and-new-spells.md`,
-`stat-training.md`, `surprise-and-sneak-attacks.md`, `talent-ranks.md`, `thief-openings.md`,
-`wealth.md`, `witch-and-wizard.md`, `witch-familiar.md`.
+`overworld-encounters.md`, `paladin-smites.md`, `potions-wave-2.md`, `priest.md`, `professions.md`,
+`progression.md`, `ranger-companion.md`, `recipes.md`, `skill-uses.md`, `special-rooms.md`,
+`spell-scaling.md`, `spell-types-and-new-spells.md`, `stat-training.md`,
+`surprise-and-sneak-attacks.md`, `talent-ranks.md`, `thief-openings.md`, `wealth.md`,
+`witch-and-wizard.md`, `witch-familiar.md`.
+
+## Removed
+
+Built, then taken out of the game by the owner; kept as history.
+
+- `prestige-classes.md` (#819): the prestige classes, the Hunter, and the calling; removed
+  2026-11-27 (#2174).

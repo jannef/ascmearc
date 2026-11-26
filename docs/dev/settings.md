@@ -18,8 +18,9 @@ temperature unit (`temperature = "celsius"`/`"fahrenheit"`, `settings::Temperatu
 applied only where the pause menu tells the temperature (`TemperatureUnit::show`, `ui/almanac.rs`). Effects:
 `reduced_effects` is a preset over the `[effects]` switches (`EffectSwitches`: glyph_animation,
 flicker, motion, glow, distortion, particles, screen_fades, screen_shake, weather; all on by default), all but
-`blood` (on by default too), a content preference the preset leaves as set, and `circles` (the
-spell circles, on by default: information the preset only stills, as `motion` off does)
+`blood` (on by default too), a content preference the preset leaves as set, and `spell_glow` (the
+glow of the buffed and hexed, on by default: information the preset only stills, as `motion` off
+does)
 (`EffectSwitches::effective`; their settings rows are not indented and never say "(preset)";
 the gap before the settings screen's actions goes first when the window is short). Each consumer reads
 its own switch from the `render::Effects` resource (the effective values, synced every frame from

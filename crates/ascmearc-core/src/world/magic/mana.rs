@@ -137,23 +137,21 @@ impl World {
         let rules = content.experience();
         let mana: i32 = (before + 1..=after)
             .filter(|&l| l <= rules.mana_level())
-            .map(|l| self.level_mana(&content, l))
+            .map(|_| self.level_mana(&content))
             .sum();
         if let Some(player) = self.state.actors.get_mut(&self.state.player) {
             player.grow_mana_base(&content, mana);
         }
     }
 
-    /// What total level `level` adds to the player's mana: half the mana of the class the
-    /// level falls in (the scenario's `mana` without a character)
+    /// What a level adds to the player's mana: half the mana of their class (the scenario's
+    /// `mana` without a character)
     /// plus the best of the mental stats' modifiers, at least 0 (the progression
     /// design, `docs/design/progression.md` §3.7). The stats as what the player wears raises
     /// them, not as a status lowers them: the penalty passes, this mana stays.
-    pub(in crate::world) fn level_mana(&self, content: &Content, level: u8) -> i32 {
+    pub(in crate::world) fn level_mana(&self, content: &Content) -> i32 {
         let class_mana = match &self.state.character {
-            Some(c) => c
-                .class_of(content, level)
-                .map_or(0, |(table, _)| table.mana()),
+            Some(c) => c.spec.class(content).map_or(0, |class| class.mana),
             None => content
                 .scenario(&self.state.scenario)
                 .map_or(0, |s| i32::from(s.mana)),

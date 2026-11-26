@@ -48,9 +48,6 @@ choice_tag = { text = "olentolaji", of = "bef7b0" }
 choice_weapon_skill = { text = "asetaito", of = "f06e15" }
 # `talents`: the free talents the pick may be, a list of names.
 choose_your_free_first = { text = "Sinun on ensin valittava ilmainen kykysi: {talents:or}.", of = "67d1ae" }
-# A character's classes as a label: `class` and `prestige`; `level`, a number ("Bardi 30").
-class_level = { text = "{class:label} {level:bare}", of = "2a4ae0" }
-classes = { text = "{class:label}, {prestige:label}", of = "01f2a9" }
 clean_warmth = { text = "Puhdas lämpö virtaa veressäsi.", of = "b3d35c" }
 # `talent`: the hunger softener the craving took.
 craving_takes = { text = "Himo vie sinulta {talent:acc}.", of = "6141c6" }

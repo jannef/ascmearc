@@ -121,7 +121,6 @@ impl World {
         worn.take_off(item);
         worn.put(&taken, item);
         self.say(Msg::new(msg::items::TWISTS_IN_GRIP).role("what", title));
-        self.fade_spirit();
         Spent::Turn(price)
     }
 

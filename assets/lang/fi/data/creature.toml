@@ -2710,9 +2710,6 @@ message = { text = "Se pistelee kielellä.", of = "04774d" }
 [storm_giant.throw]
 verb = { text = "sinkoaa", of = "29f535" }
 
-[strange_spirit]
-depart = { text = "haalistuu ja katoaa", of = "fb4f27" }
-
 [succubus]
 first_sight = { text = "Sukkubus. Hänen suudelmansa ottaa enemmän kuin antaa.", of = "c385f3" }
 

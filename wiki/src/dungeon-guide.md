@@ -223,12 +223,6 @@ keeps watch. Behind a plank wall it keeps a spare [pick-axe](digging.md#digging)
 [Duergar traders](creatures.md#creature-duergar-trader) keep [general stores](shops.md) in the
 galleries: every gallery floor has one, in one of its chambers, and the deep workings have none.
 
-On the eleventh floor, in a small chamber off a passage, stands a **hunter's statue**: a
-[worn statue](terrain.md#terrain-statue) of a hooded figure on a raised floor between two torches,
-and nothing else. Coming beside it reads its plinth: *"Letters are cut deep into the plinth, in the
-old tongue: LĪF ǢR DĒAÞE. Below, in a later hand: 'Life before death. So the hunters swore, to the
-one who waited for them on the road; and the road gave them each a blade.'"*
-
 At the very bottom lies the **drake's hoard**: a hall ringed with lava where the
 [fire drake](creatures.md#creature-fire-drake) sleeps on its gold, with a rare treasure and a magic
 one. The drake lives nowhere else. Near the hoard, a second stair climbs from the drake's floor

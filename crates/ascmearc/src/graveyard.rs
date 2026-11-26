@@ -47,9 +47,6 @@ pub struct Fallen {
     pub gender: String,
     /// The class, by id (`warrior`).
     pub class: String,
-    /// The prestige class they were called into, by id; empty for none.
-    #[serde(skip_serializing_if = "String::is_empty")]
-    pub prestige: String,
     /// The experience level reached.
     pub level: u32,
     /// The experience total at the moment of death (#1252); 0 in entries written before it.
@@ -116,7 +113,6 @@ impl Fallen {
             race: character.spec.race.clone(),
             gender: character.spec.gender.id().to_string(),
             class: character.spec.class.clone(),
-            prestige: character.prestige.clone().unwrap_or_default(),
             level: u32::from(progress.level),
             xp: progress.xp,
             cause,
@@ -330,7 +326,7 @@ name = 12
         assert_eq!(names, ["Brakka", "Tamsin", "Wynn"]);
         assert_eq!(all[0].level, 7);
         assert!(all[0].petrified());
-        assert_eq!(all[1].prestige, "hunter");
+        // A field this version no longer has (the prestige class, #2174) is passed over.
         assert_eq!(all[1].killer, "kobold");
         // Missing fields default.
         assert_eq!(

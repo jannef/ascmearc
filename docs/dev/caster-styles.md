@@ -7,7 +7,7 @@ CLAUDE.md says.
 The schools of magic were trained skills with ranks, marks, benefits, talents (Schooled,
 Devotee, Magister), and abilities (Thunderstruck, Wasting, Aegis, Lulling) until #1263 removed
 them. A spell's `school` (`content::School`) is now only its category: a spell tag (Keen mind,
-School focus), a class's study `affinity`, and a spell circle's colour. No weapon skill row is a
+School focus), a class's study `affinity`, and a spell glow's colour. No weapon skill row is a
 school's, and no rank anywhere lifts a school's spells.
 
 ## How one casts: the caster styles

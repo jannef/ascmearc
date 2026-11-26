@@ -531,7 +531,7 @@ pub struct CreatureSpawn {
     /// `asleep` status).
     pub asleep: bool,
     /// The statuses it is placed with, at their degrees (`status = ["blessed", "weakened*2"]`;
-    /// a test world's fixture: the `circles` hall's buffed and hexed kobolds).
+    /// a test world's fixture: the `glow` hall's buffed and hexed kobolds).
     pub status: Vec<(StatusId, u16)>,
 }
 

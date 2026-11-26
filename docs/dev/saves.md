@@ -101,7 +101,7 @@ failure (`Replay::version_note`).
 a slug of its name and the lowest free number (`characters::fresh_id`: `brakka-1`, then
 `brakka-2`; an id is taken while any file of it is left: its save, a kept `.sav.bad`, its summary,
 its snapshot), and the files `saves/<id>.sav` (the world, `ascmearc_core::save`) and, beside it,
-`saves/<id>.toml` (`save::Summary`: name, race, class, and prestige class by id, named as the list
+`saves/<id>.toml` (`save::Summary`: name, race, and class by id, named as the list
 shows them by `Summary::race_and_class` (a summary another version wrote with the names shows them
 as written), level, place (the level's name as the game says it, `Summary::place_name`; text
 another version wrote reads as text), the campaign's name
@@ -131,12 +131,9 @@ last (`docs/dev/merging.md`). An incompatible `WorldState` change, or adding or 
 terrain, creatures, lights, levels, objects, equipment slots, skills, weapon skills (fighting
 styles too), statuses, diseases, traps, or dungeon branches, invalidates development saves of
 the same version too (affixes are saved by id: adding them does not, removing one a save uses
-does); say so in the PR. A new optional field (`Character::prestige`, #876: `#[serde(default,
-skip_serializing_if)]`) changes nothing a save from before holds; prestige classes and callings
-are not fingerprinted (they are read by id). `Stack::spirit` (#881, a spirit weapon in the hand)
-is the same: left out while false, saved and hashed while held. So are a level's zones
-(`LevelState::zones` and `zone_memory`, #1000; `docs/dev/spells.md` "Zones"), left out while
-empty, as its hallows are. `Actor::grade` (#1135, `grade.rs`) too: left out at 0, so a level
+does); say so in the PR. A new optional field (`#[serde(default, skip_serializing_if)]`) changes
+nothing a save from before holds: a level's zones (`LevelState::zones` and `zone_memory`, #1000;
+`docs/dev/spells.md` "Zones") are left out while empty, as its hallows are. `Actor::grade` (#1135, `grade.rs`) too: left out at 0, so a level
 of ungraded creatures saves and hashes as before.
 
 **Permadeath**: when the player dies, `screens::on_death` deletes that character's files, and no
@@ -149,7 +146,7 @@ for the page being hidden.
 `on_death` also appends the character to `graveyard.toml` beside `settings.toml` (the config
 folder; portable mode's `ascmearc-data/config`; the web's `localStorage` key
 `ascmearc/graveyard.toml`), one `[[fallen]]` table each (`name`, `race`, `gender`, `class`,
-`prestige`, `level`, `xp` (the experience total at death, #1252; 0 in older entries), `cause` (`stone`, a status id, `starved`, a trap's id, a creature's id, ...),
+`level`, `xp` (the experience total at death, #1252; 0 in older entries), `cause` (`stone`, a status id, `starved`, a trap's id, a creature's id, ...),
 `killer`, `place`, `turn`, `age`, `when`, `version`, `gifts` (the profane gifts held at death by talent id, #1809; left out when none; `cause = "profane"` is a character the thirteenth gift took)), through `Backend::append`: the file is
 never rewritten, and the death screen says "Remembered in the graveyard." when the entry went in.
 Captures and replays keep none unless `--config-dir` names one. **This file is the one

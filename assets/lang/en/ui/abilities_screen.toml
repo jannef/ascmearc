@@ -23,9 +23,6 @@ text = "on something you carry"
 [aim_rig]
 text = "a trap beside you"
 
-[aim_shape]
-text = "in a weapon's shape"
-
 [aim_spell]
 text = "a scroll of a spell you know"
 

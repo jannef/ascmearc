@@ -196,7 +196,7 @@ made if it is nowhere. The example: Ysella the Binder's `crystal_guardian`
 (`campaigns/ascmearc/data/quests/ysella.toml`), revealing Gimmwīc's hidden `meyn_bew` (the
 crystal portal, `opens` said instead of the map line) as given; reward 1200 gold, 4000
 experience, an uncut sapphire; the bound guardian keeps Kerensa's Stones' corner (67, 4), its
-`bound` circle (enchantment) on it, and gives Jewelcraft's Cut and Set +2 in Gimmwīc. Tests:
+`bound` glow (enchantment) on it, and gives Jewelcraft's Cut and Set +2 in Gimmwīc. Tests:
 `world/campaigns/crystal_guardian_tests.rs`.
 **Guilds** and their ranks, derived from these records and named as a quest is given or done,
 are `docs/dev/guild.md`.
