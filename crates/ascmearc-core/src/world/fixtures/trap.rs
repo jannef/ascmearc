@@ -3,7 +3,8 @@
 //! A trap lies on a cell of a level ([`crate::content::Trap`], in the level state), hidden until
 //! the player sets it off or sees a creature do it; then it is known, shown, and remembered.
 //! Whoever steps onto a trap sets it off, the player and creatures alike (creatures know nothing
-//! of traps yet, so they walk onto them, and luring them is a tactic): [`World::step_onto_trap`].
+//! of traps yet, so they walk onto them, and luring them is a tactic): [`World::step_onto_trap`],
+//! but for feet no trap springs under (a unique's Trapwise or Barefoot: `world/skills/trapwise.rs`).
 //! A trap on a door is the door's, not the floor's: walking through
 //! the doorway never sets it off; opening the door does, and kicking it (`world/fixtures/door.rs`), at
 //! whoever opened or kicked it from the next cell. [`World::spring_trap`] is the one way a trap
@@ -74,7 +75,9 @@ impl World {
     ) -> i64 {
         let level = self.state.current();
         let fixture = level.is_door(&self.content, at) || level.is_shut_chest(&self.content, at);
-        let climb = if fixture || self.steps_lightly(at, victim) {
+        // Feet that never spring a trap (Tiptoe, Hushfoot: `trapwise.rs`), before Light step's
+        // draws.
+        let climb = if fixture || self.treads_safely(at, victim) || self.steps_lightly(at, victim) {
             0
         } else {
             // A creature knows nothing of traps; the player knows those they have found.

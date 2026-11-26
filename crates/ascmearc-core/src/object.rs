@@ -32,6 +32,7 @@ use crate::combat::Attack;
 use crate::content::{Content, Cutting, DamageTypeId, MaterialId, ObjectId, Part, Rarity};
 use crate::item_parts::{self, ItemPart};
 use crate::lang::{Modifier, Phrase, Word};
+use crate::magic::scars::{Scar, Scars};
 use crate::magic::{Effect, Magic, Mods, Worked, name};
 use crate::rng::Rng;
 use crate::scroll_label::Lore;
@@ -89,6 +90,10 @@ pub struct Stack {
     /// make. Its attempts are ground truth, for the rules and the dev dump.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     worked: Option<Box<Worked>>,
+    /// The scars a unique with the Scars power took from its wearers' critical hits
+    /// ([`crate::magic::scars`]); `None` for every other item, and for one unscarred.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    scars: Option<Box<Scars>>,
 }
 
 /// The mode of a carried light ([`Stack`]'s `light`): what `u`, the
@@ -157,6 +162,7 @@ impl Stack {
             light: LightMode::Unlit,
             spirit: false,
             worked: None,
+            scars: None,
         }
     }
 
@@ -242,6 +248,16 @@ impl Stack {
     /// Sets what an anvil's work has done to it (`world/crafting/temper.rs`).
     pub(crate) fn set_worked(&mut self, worked: Worked) {
         self.worked = Some(Box::new(worked));
+    }
+
+    /// The scars it bears (the Scars power, [`crate::magic::scars`]), if any.
+    pub fn scars(&self) -> Option<&Scars> {
+        self.scars.as_deref()
+    }
+
+    /// It takes one more scar of `scar` (`world/combat/struck.rs`).
+    pub(crate) fn add_scar(&mut self, scar: Scar) {
+        self.scars.get_or_insert_with(Box::default).add(scar);
     }
 
     /// What its anvil work calls it, ahead of the rest of its name, whatever is identified:
@@ -730,6 +746,7 @@ impl Stack {
             && (self.worked()).is_none_or(|w| {
                 (self.count == 1 || crate::magic::worked::ammunition(def)) && w.is_valid(def)
             })
+            && (self.scars.is_none() || self.is_unique())
     }
 
     /// The same goods as `other`: the same object made the same way, and as worked at an anvil

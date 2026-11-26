@@ -25,16 +25,22 @@ const PLACED: [&str; 9] = [
 ];
 
 /// The uniques of the drop pool, every one `pool = true` in its data.
-const POOL: [&str; 9] = [
+const POOL: [&str; 15] = [
     "cracked_resurrection_stone",
     "deep_night",
     "demonsoul",
     "gar",
     "grandmother",
+    "haersceorp",
+    "hushfoot",
+    "kettle_hat",
     "masterpiece",
     "onraes",
     "radiant",
+    "scarhide",
     "silverstrike",
+    "smoulder",
+    "tiptoe",
 ];
 
 /// The built-in content with its every rare find a unique of the pool (`rare.unique` 10,000).

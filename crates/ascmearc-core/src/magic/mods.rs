@@ -236,7 +236,7 @@ impl Mods {
 
     /// Adds the effects of `magic`'s affixes on an item of `kind` that are `local` (or not).
     fn add_magic(&mut self, magic: &Magic, local: bool, stack: &Stack, content: &Content) {
-        let Some(kind) = content.object(stack.object).kind else {
+        let Some(kind) = content.item_kind(stack) else {
             return;
         };
         for rolled in magic.rolled(content) {
@@ -257,6 +257,20 @@ impl Mods {
                     continue;
                 }
                 self.add(rolled.def.group(), (value, dice), light, content);
+            }
+        }
+        // A Scars power's scars (`scars.rs`), as its affixes of the same effects would be.
+        if let Some(scars) = stack.scars() {
+            let scarred = [
+                (Effect::Armour, scars.armour),
+                (Effect::MaxHp, scars.max_hp),
+                (Effect::Stat(crate::stats::Stat::Toughness), scars.toughness),
+            ];
+            for (effect, n) in scarred {
+                if n > 0 && effect.is_local_on(kind) == local {
+                    let slot = &mut self.values[effect.index()];
+                    *slot = slot.saturating_add(i32::from(n));
+                }
             }
         }
     }

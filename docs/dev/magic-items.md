@@ -422,6 +422,48 @@ id on another rarity than unique, and a unique without its id.
   2d6 is as many dice as Heavy's two-dice tiers but fewer sides than they roll: `affix_value::valued`
   takes the first tier of fewer dice whose range holds the sides (a tier of one die, 6), and
   `UniqueDef::dice` keeps the count (`more_dice` compares with the tier taken), as for 6d6.
+- **Smoulder, Tiptoe, Hushfoot** (#2139, #2141, #2133), in the shared `data/uniques/`, each of
+  the drop pool (`pool = true`) and placed nowhere but the quarry. **Smoulder**: a Masterwork
+  heavy crossbow, item level 40: Sharp 5 (on a launcher by a unique's hand), Keen 4 (past the
+  ladder), of Precision 4, and the Zone power (smoke, radius 1, 8 turns). The owner's Steady +6
+  is left out: Steady lowers a bow's Strength to draw and a crossbow has none, so the load
+  refuses it ("its effect does nothing"). **Tiptoe**: footwraps, item level 20: Nimble 3, Fleet
+  11, of Wariness 60, of Shadows 30, and the Trapwise power (radius 5). **Hushfoot**: a
+  waistcoat, item level 30: Hale 12, of the Fox 40, of Shadows 40, of Sustenance 25, and the
+  Barefoot power (the feet; noise 0, Dodge 3, `feel_traps`). Tests:
+  `world/combat/shot_zone_tests.rs` (smoke where a bolt falls and where it stops at a creature,
+  the shooter blinded too, its fading, none from a plain crossbow or a throw) and
+  `world/skills/trapwise_tests.rs` (the traps found within 5, a door's too; none sprung by the
+  player or a creature, the trap left armed; Hushfoot's bare feet against shoes: noise, Dodge,
+  the traps beside found but not a door's; the load's refusals; nothing rolled).
+- **A unique on clothing** (#2141, #2133): clothing has no `kind` and is never magic
+  (docs/dev/equipment.md), so a unique on it names the kind its affixes work as (`kind =
+  "boots"`, `UniqueDef::kind`: an armour kind, a ring, or an amulet, on a worn base without a
+  kind of its own; refused on a base with one). The unique is made against its base as that
+  kind (`content/unique.rs`, a copy of the base with the kind), and `Content::item_kind` (the
+  base's kind, else the unique's) is what `Mods` (`add_magic`), `Magic::check_set`, and the
+  description's affix lines read. Everything else keeps the base's own: plain footwraps stay
+  clothing, never loot, never enchanted, and the description shows no capacity line.
+  Like every unique, it is never trimmed (`content/level.rs::hand_made`,
+  docs/dev/enchanting.md): four on cloth (capacity 2) stay four. A test that drops the skills
+  (`character.rs`'s `skill_free_content`) drops the shared uniques' skill affixes with them
+  (Hushfoot's of the Fox).
+- **Hǣrsceorp, the Kettle Hat, and Scarhide** (#2115, #2127, #2137; the class and race uniques'
+  first three), in the shared `data/uniques/`, each `pool = true`, placed nowhere but the quarry.
+  **Hǣrsceorp** (`haersceorp`, a padded coat, item level 24): Featherweight 50, Nimble 4 (+4
+  Dodge), Reinforced −1 (a penalty, `describe.does_armour_less`: the coat's Armour 1 written to
+  0), of the Ox 4 (the issue's "`of_the_tortoise` (Toughness)": that affix is Natural armour, so
+  Toughness's own affix stands in), of Vitality 12, of Stillness 4 (ki); its Pain power, and
+  `counts_as_unarmoured`. **The Kettle Hat** (`kettle_hat`, an iron helm, item level 12):
+  Featherweight −67 (a penalty, said "67% heavier": 2,505 g, the design's 2.5 kg), Hardened 3,
+  of the Ox 4; its Ring power, no ward. **Scarhide** (`scarhide`, item level 30): the issue's
+  hide tunic is clothing (no `kind`, #1173), which no magic may sit on (`Magic::check`,
+  `Mods::add_magic`), so it is a leather jerkin, the lightest hide armour with a kind: Reinforced
+  2, Hale 20, of the Ox 4, of Health 3 (disease checks); its Scars power. All three are plain
+  makes holding more than a plain base's capacity: a unique is never trimmed
+  (`content/level.rs::hand_made`, docs/dev/enchanting.md), so the owner's numbers stand as
+  written, and no make adds Armour or Protection they did not ask for. Tests:
+  `world/combat/struck_tests.rs`.
 - **What only a unique sets** (#2091), each refused to any other item by `Magic::check` and
   never rolled (`content/unique_values_tests.rs::what_only_a_unique_sets_never_rolls`: every
   random affix, loot's, a vault's, a shop's, enchanting's and its recast's, comes of
@@ -536,7 +578,45 @@ id on another rarity than unique, and a unique without its id.
   The player's thrust is said through `player_strikes`, held into the news so it follows the
   first blow's line, whose `died` now asks for its own target's death only; a creature's is said
   by its event. Tests: `world/combat/thrust_tests.rs`.
+  `Power::Zone { kind, radius, turns }` (`{ zone = "smoke", radius = 1, turns = 8 }`, only on
+  a missile weapon and never fire, which has no harm to roll; #2139): read once a flight is
+  over (`World::fly`, for a shot, never a throw; `world/combat/shot_zone.rs`): the zone, by the
+  shooter, around the cell the missile stopped at (hit or miss; `lay_zone_around`, a miscast's
+  zone: within the radius in that cell's line of sight, none on the overworld). No draw.
+  `Power::Trapwise(radius)` (`{ trapwise = 5 }`, #2141) and `Power::Barefoot(Barefoot)` (`{
+  barefoot = "feet", noise = 0, dodge = 3, feel_traps = true }`, #2133; the slot must be
+  empty, never the item's own): `world/skills/trapwise.rs` (its module docs). One rule for both:
+  `Actor::treads_over_traps` (Trapwise, or Barefoot with `feel_traps` on bare feet) makes
+  `World::treads_safely` keep a trap stepped on from springing (`step_onto_trap`, asked first,
+  the player and a creature alike; `sidesteps` skips its draw for them), the trap staying armed;
+  the player finds it and is told `uniques.tread_over_trap`. After each of the player's turns
+  (`notice_hidden`, first) `World::feel_traps` finds every hidden trap within Trapwise's radius
+  (Chebyshev, no line of sight, a door's or a chest's too) and those on the floor beside and
+  under bare feet (not a door's or a chest's), through `search.rs`'s `reveal`, with no draw. The
+  Barefoot's `noise` (a percent of a step's loudness, after stealth and talents) is read in
+  `noise::noise` for `Act::Step`, its `dodge` with the magic Dodge in `Actor::defence`, both
+  through `Actor::barefoot`. No bare-feet harm exists yet for Hushfoot's drawback to read.
   `magic::worn_powers` lists the powers of what an actor has equipped.
+  `Power::Pain { resource, gain, critical }` (`{ pain = "ki", gain = 1, critical = 2 }`, #2115),
+  `Power::Ring { cells, stagger, difficulty }` (`{ ring = 20, stagger = 1, difficulty = 15 }`,
+  worn armour only, #2127), and `Power::Scars` (`{ scars = true }`, worn armour only, #2137) are
+  read in one place, `world/combat/struck.rs::World::struck`, which `World::resolve` calls for
+  a hit (after Negate, before the damage is taken; so a blow, a shot, a throw, never a spell,
+  breath, blast, or trap). Pain: a hit that does damage adds `gain` (a critical `critical`) to
+  that pool, up to `World::resource_max`; none to one without it. Scars: a critical makes one
+  draw (`unique/scar/<wearer>`) among `magic::scars::Scar::ALL` and adds it to the worn stack's
+  `Stack::scars` (saved with the stack, left out while none; `Stack::is_valid_for` allows it on
+  a unique only), which `Mods::add_magic` reads as the affixes of those effects (Armour local
+  on armour, maximum hit points and Toughness global), without end; the player is told
+  `uniques.scarred`, and the description counts them (`uniques.scars`, only once identified).
+  Ring: any hit, soaked to nothing too, makes `noise::Act::Clang` (a new `SoundKind::Clang`, `n`
+  in the dump's sound layer) at the wearer, `cells × STEP_LOSS` loud (a critical's twice,
+  capped at `MAX_LOUDNESS`: 30 cells), says `uniques.rings_your_helm` or `rings_helm` (seen),
+  and every actor beside the wearer (not in the retinue), friend or foe, that fails
+  `World::resists` (Toughness against `difficulty`; `drain/resist/<key>`'s two draws) gets
+  `stagger` degrees of Staggered (a critical's twice; Staggered's `max = 1` keeps it one slowed
+  action). **`counts_as_unarmoured`** (a body piece only): `Actor::wears_body_armour` says no
+  for it (Mage armour, Fleet, Step of the wind).
 - **Rules beside the power** (#2095, #2097), fields of the unique's table read where the rule
   is, never affixes (so no pool can roll them; `unique_spell_tests.rs::nothing_unique_only_is_ever_rolled`):
   `immune` (kinds; `Actor::resistances` adds them to the immunities) and `resist` (kind to

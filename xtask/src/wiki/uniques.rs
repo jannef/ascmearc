@@ -3,7 +3,9 @@
 
 use super::order;
 use super::util::capital;
-use ascmearc_core::content::{Affliction, Content, DialogueId, ItemKind, Power, UniqueDef};
+use ascmearc_core::content::{
+    Affliction, Content, DialogueId, ItemKind, Power, UniqueDef, ZoneKind,
+};
 use ascmearc_core::magic::describe;
 use std::fmt::Write as _;
 
@@ -20,7 +22,7 @@ pub(super) fn uniques(content: &Content) -> String {
     for u in all {
         let def = content.object(u.object);
         let magic = u.magic();
-        let kind = def.kind.unwrap_or(ItemKind::Ring);
+        let kind = def.kind.or(u.kind).unwrap_or(ItemKind::Ring);
         let affixes: Vec<String> = (magic.rolled(content).iter())
             .map(|r| {
                 let does = describe::phrase(r, kind, content);
@@ -162,6 +164,12 @@ fn power_text(content: &Content, u: &UniqueDef) -> String {
             u.douse
         ));
     }
+    if u.unarmoured {
+        all.push(
+            "its wearer counts as wearing no body armour (for Mage armour and Step of the wind)"
+                .into(),
+        );
+    }
     if all.is_empty() {
         "-".into()
     } else {
@@ -282,5 +290,94 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
              struck (friend or foe, the next cell along the line from the wielder), rolled to \
              hit on its own, for {percent}% of the damage (at least 1); thrown, it does not"
         ),
+        Some(Power::Barefoot(bare)) => {
+            let slot = content.slot(bare.slot).name.to_lowercase();
+            let mut gives = Vec::new();
+            match bare.noise {
+                0 => gives.push("their steps make no sound at all, on any ground".to_string()),
+                100 => {}
+                n => gives.push(format!("their steps are {n}% as loud")),
+            }
+            if bare.dodge != 0 {
+                gives.push(format!("{:+} Dodge", bare.dodge));
+            }
+            if bare.feel_traps {
+                gives.push(
+                    "every hidden trap on the floor beside and under them is found as they pass \
+                     (no roll), and no trap springs when they step on it (it stays armed)"
+                        .into(),
+                );
+            }
+            format!(
+                "while nothing is worn in its wearer's {slot} slot: {}",
+                gives.join("; ")
+            )
+        }
+        Some(Power::Trapwise(radius)) => format!(
+            "no trap springs when its wearer steps on it, hidden or known (it stays armed for \
+             whoever follows); every hidden trap within {radius} cells of them is found (no roll, \
+             no line of sight needed; not secret doors)"
+        ),
+        Some(Power::Zone {
+            kind,
+            radius,
+            turns,
+        }) => {
+            let reach = match radius {
+                0 => "on the cell".to_string(),
+                1 => "within 1 cell".to_string(),
+                r => format!("within {r} cells"),
+            };
+            format!(
+                "every shot it looses, hit or miss, leaves {} {reach} of where the missile \
+                 stops, for {turns} turns",
+                zone_words(*kind)
+            )
+        }
+        Some(Power::Pain {
+            resource,
+            gain,
+            critical,
+        }) => {
+            let pool = &content.resource(*resource).name;
+            format!(
+                "every hit on its wearer that does damage (a blow, a shot, a throw) gives them \
+                 {gain} {pool}, a critical hit {critical}, up to their most; one without {pool} \
+                 gains nothing"
+            )
+        }
+        Some(Power::Ring {
+            cells,
+            stagger,
+            difficulty,
+        }) => {
+            let (status, loudest) = ("Staggered", ascmearc_core::noise::MAX_REACH);
+            let degrees = if *stagger == 1 { "degree" } else { "degrees" };
+            format!(
+                "every hit on its wearer (a blow, a shot, a throw), even one its armour soaks \
+                 whole, rings it: a clang heard up to {cells} cells away (a critical hit's \
+                 twice as far, at most {loudest}), and every creature beside the wearer, \
+                 friend or foe, that fails a Toughness check against {difficulty} is \
+                 {status}, {stagger} {degrees} (a critical hit's twice as many, as far as the \
+                 status holds); never the wearer"
+            )
+        }
+        Some(Power::Scars) => "every critical hit its wearer suffers (a blow, a shot, a throw) \
+             scars it: +1 Armour, +1 maximum hit point, or +1 Toughness, each a third of the \
+             time, kept on it for whoever wears it, without end"
+            .into(),
+    }
+}
+
+/// A zone a Zone power leaves, in words.
+fn zone_words(kind: ZoneKind) -> &'static str {
+    match kind {
+        ZoneKind::Smoke => {
+            "the Fume spell's smoke (no eye sees into it or through it, the shooter's own neither)"
+        }
+        ZoneKind::Fire => "fire",
+        ZoneKind::Fouled => "a poison cloud",
+        ZoneKind::Slick => "a slick",
+        ZoneKind::Dark => "darkness",
     }
 }

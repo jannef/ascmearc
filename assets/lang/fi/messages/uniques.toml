@@ -10,3 +10,20 @@ no_craft = { text = "Se on ainutlaatuinen: mikään taitosi ei muuta sitä.", of
 restored = { text = "{who:Nom} kaatuu ja nousee jälleen eheänä!", of = "15db52" }
 restored_unseen = { text = "Sormesi kivi lämpenee.", of = "621eab" }
 restored_you = { text = "Kuolema päästää sinusta irti: nouset jälleen eheänä!", of = "50e146" }
+
+# Feet that never spring a trap (Tiptoe, Hushfoot; #2141, #2133).
+tread_over_trap = { text = "Astut {trap:counted_gen} yli, eikä se laukea.", of = "a32251" }
+
+# The Ring power (#2127, the Kettle Hat): a blow lands on the helm's wearer.
+rings_helm = { text = "{who:Gen} kypärä kumahtaa kuin lyöty pata!", of = "101ada" }
+rings_your_helm = { text = "Kypäräsi kumahtaa kuin lyöty pata!", of = "8dc87f" }
+
+# The Scars power (#2137, Scarhide): a critical hit on the player scars what they wear.
+scarred = { text = "Isku jättää arpensa haarniskaasi.", of = "17a6ea" }
+
+# The scars a Scars power's item bears, on its description: `n`, how many.
+[scars]
+of = "29a270"
+by = "n.number"
+one = "Siinä on {n:num} arpi."
+many = "Siinä on {n:num} arpea."

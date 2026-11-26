@@ -798,7 +798,11 @@ impl Actor {
             .filter(|&d| d != 0)
             .map(|d| (Category::Dodge, d));
         let magic = [
-            (Category::Dodge, mods.get(ItemEffect::Dodge)),
+            // Bare feet under a unique's Barefoot power (Hushfoot's +3, #2133).
+            (
+                Category::Dodge,
+                mods.get(ItemEffect::Dodge) + self.barefoot(content).map_or(0, |b| b.dodge),
+            ),
             (
                 Category::Deflection,
                 mods.get(ItemEffect::Deflection) + talents.defence.deflection + mage_armour,
@@ -863,11 +867,17 @@ impl Actor {
 
     /// Whether it wears body armour: armour in a slot worn as body armour (`body_armor`, the
     /// Body slot), anything there that defends, protects, or is a base item; clothing (a robe,
-    /// a tunic: none of those, #1173) is no armour. Mage armour and Fleet ask for none.
+    /// a tunic: none of those, #1173) is no armour, nor is a unique that counts as none
+    /// (`counts_as_unarmoured`, Hǣrsceorp's, #2115). Mage armour and Fleet ask for none.
     pub fn wears_body_armour(&self, content: &Content) -> bool {
         (self.equipment.items().into_iter()).any(|(slot, item)| {
             let armour = |s: &Stack| {
                 let def = content.object(s.object);
+                let unique =
+                    (s.magic().and_then(|m| m.unique.as_deref())).and_then(|id| content.unique(id));
+                if unique.is_some_and(|u| u.unarmoured) {
+                    return false;
+                }
                 def.armour != 0 || def.protection != 0 || def.kind.is_some()
             };
             content.slot(slot).action == ActionKind::BodyArmor
