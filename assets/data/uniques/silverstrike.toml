@@ -12,7 +12,7 @@ pool = true
 object = "long_bow"
 affixes = ["keen=6", "steady=6", "of_precision=6"]
 level = 40
-# Three enchantments need its make (docs/dev/enchanting.md): Marvellous.
+# A make, as the uniques of #1976 have.
 quality = "marvellous"
 power = { range = 2, phrase = "Its arrows fly twice as far as a bow's." }
 lore = "Its string, the bowyers swore, was spun from a hair of the moon."

@@ -390,6 +390,8 @@ pub fn noise(
     let loudness = match act {
         // Hide in plain sight: no footsteps at all while Unburdened.
         Act::Step(_) if talents.stealth.silent_unburdened && burden == Burden::Unburdened => 0,
+        // So are a unique's with the Approach power (the Stampers, #2120).
+        Act::Step(_) if burden == Burden::Unburdened && actor.approach(content).is_some() => 0,
         Act::Step(_) => {
             let quieter = actor.mods(content).get(ItemEffect::Stealth);
             let loudness = crate::magic::mods::less(u64::from(loudness), quieter);

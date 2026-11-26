@@ -234,6 +234,7 @@ fn the_strain_passes_by_the_clock_however_it_is_cut() {
         value: 180,
         at,
         locked: false,
+        pace: None,
     };
     assert_eq!(s.now(rules, at + Duration::seconds(30 * 60 + 59)), 150);
     assert_eq!(s.now(rules, at + Duration::seconds(180 * 60)), 0);
@@ -265,6 +266,7 @@ fn a_strained_prayer_fizzles_by_its_chance_and_locks() {
                 value: strain_found,
                 at,
                 locked: false,
+                pace: None,
             });
             let mut mirror = crate::test_support::peek(&w, "orison/fizzle/player");
             let fizzles = mirror.below(100) < u32::from(strain_found) / 10;
@@ -290,6 +292,7 @@ fn a_locked_prayer_fizzles_without_a_draw_until_the_strain_is_gone() {
         value: 20,
         at,
         locked: true,
+        pace: None,
     });
     let rng = draws(&w);
     run(&mut w, "use:orison");

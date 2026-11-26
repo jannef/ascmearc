@@ -219,6 +219,12 @@ pub(super) fn actor_rows(world: &World) -> Vec<String> {
                         None => ally.order.id().to_string(),
                     };
                     let retinue = if ally.retinue { "; retinue" } else { "" };
+                    // Held past its time by its master's Root power (`world/allies/root.rs`).
+                    let retinue = if ally.rooted {
+                        format!("{retinue}; rooted")
+                    } else {
+                        retinue.to_string()
+                    };
                     let source = ally.source.id();
                     // A kept beast's name and grade (`world/allies/companion.rs`, `familiar.rs`).
                     let named = match ally.source.data() {

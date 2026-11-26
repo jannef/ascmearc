@@ -27,9 +27,12 @@ pub(super) fn uniques(content: &Content) -> String {
             .map(|r| {
                 let does = describe::phrase(r, kind, content);
                 let does = ascmearc_core::messages::english_msg(content, &does);
-                // One its table sets by hand ("mystic=30") is beyond the tiers or the bases.
+                // One its table sets by hand ("mystic=30") is beyond the tiers or the bases, or
+                // rolls dice or gives a light its tier does not.
                 let set = !(r.def.tier(r.tier)).is_some_and(|t| (t.min..=t.max).contains(&r.value))
-                    || !r.def.bases.contains(&kind);
+                    || !r.def.bases.contains(&kind)
+                    || u.dice(&r.def.id).is_some()
+                    || u.light(&r.def.id).is_some();
                 let tier = if set {
                     "set".to_string()
                 } else {
@@ -133,7 +136,8 @@ fn rewarded_by(content: &Content, u: &UniqueDef) -> Vec<String> {
 }
 
 /// What a unique's power does, exactly, and what more it gives besides its affixes (an
-/// immunity, a resistance, a bash's damage, invisibility, a douse; #2095, #2097).
+/// immunity, a resistance, a bash's damage, invisibility, a douse, a silence, a strain's pace;
+/// #2095, #2097, #2112).
 fn power_text(content: &Content, u: &UniqueDef) -> String {
     let mut all: Vec<String> = (u.power.as_ref())
         .map(|_| own_power(content, u))
@@ -155,11 +159,36 @@ fn power_text(content: &Content, u: &UniqueDef) -> String {
     if u.invisible {
         all.push("its wearer is invisible, as the Invisible status makes one".into());
     }
+    if let Some((resource, on, amount)) = u.resource_build {
+        all.push(format!(
+            "while it is wielded, {} builds {amount} more {}",
+            on.words(),
+            content.resource(resource).name.to_lowercase()
+        ));
+    }
     if u.douse > 0 {
         all.push(format!(
             "every light source within {} cells of its wearer gives no light (lamps, torches, \
              fires, and lights carried, the wearer's own too; nothing is used up)",
             u.douse
+        ));
+    }
+    if u.silence > 0 {
+        let side = 2 * u.silence + 1;
+        all.push(format!(
+            "nobody within {} cells of its wearer ({side} by {side} cells, the wearer and their \
+             allies too) can cast a spell or read a scroll; prayer, wands, rods, and abilities \
+             that are no spells still work, and a spell already cast goes on",
+            u.silence
+        ));
+    }
+    if u.strain_decay != 100 {
+        all.push(format!(
+            "its wearer's prayer strain passes {}",
+            match u.strain_decay {
+                200 => "twice as fast".to_string(),
+                p => format!("at {p}% of the usual pace"),
+            }
         ));
     }
     if u.unarmoured {
@@ -179,6 +208,44 @@ fn power_text(content: &Content, u: &UniqueDef) -> String {
 fn own_power(content: &Content, u: &UniqueDef) -> String {
     match &u.power {
         None => "-".into(),
+        Some(Power::Burst(burst)) => {
+            let def = content.spell(burst.spell);
+            let kind = (def.damage_type).map_or(String::new(), |k| {
+                format!(" {}", content.damage_type(k).name)
+            });
+            let cells = match burst.radius {
+                0 => "the cell".to_string(),
+                1 => "the cell and the 8 around it".to_string(),
+                r => format!("every cell within {r} of it"),
+            };
+            let mut text = format!(
+                "every shot it looses, hit or miss, bursts on {cells} where the missile stops: \
+                 {}{kind} damage to everyone there, allies too (the one struck takes it on top of \
+                 the shot), as a {} spell does, its rule and all; its shooter is spared",
+                burst.damage, def.name
+            );
+            if burst.ice > 0 {
+                let _ = write!(
+                    text,
+                    "; those cells are iced for {} turns ({} seconds): whoever starts a turn \
+                     there suffers the cold's rule, its shooter too",
+                    burst.ice,
+                    u32::from(burst.ice) * 6
+                );
+            }
+            text
+        }
+        Some(Power::Feller { larger_than, bonus }) => format!(
+            "its shots have {bonus:+} to hit and {bonus:+} damage against every creature larger \
+             than {}, and nothing more against the rest",
+            content.size(*larger_than).name
+        ),
+        Some(Power::Quarry { resource, per_bite }) => format!(
+            "a creature hostile to you that its shot hits becomes your companion's quarry at once, \
+             as Sic 'em makes it, for nothing (the Savage Sic 'em gives, if your companion has \
+             none); every bite your companion lands on its quarry gives you {per_bite} {}",
+            content.resource(*resource).name
+        ),
         Some(Power::Inflict { hit, added }) => {
             let Affliction::Status {
                 status, severity, ..
@@ -246,6 +313,45 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
              {chance}% of the time, rolled anew at every death; never the undead. A creature \
              brought back did not die: no experience, no loot, no corpse, no kill counted"
         ),
+        Some(Power::Root { cells, renew }) => format!(
+            "a creature its wielder called with a spell, whose time runs out within {cells} cells \
+             of them, stays {renew} seconds more, and again each time its time runs out that \
+             near (shown as rooted); farther off, it leaves as ever"
+        ),
+        Some(Power::Shrive(s)) => format!(
+            "every blow it lands takes {} points of its wielder's prayer strain off ({} for a \
+             critical hit); a blow that kills one of the undead or a fiend takes it all; never \
+             below 0, and nothing for one who does not pray",
+            s.per_hit, s.per_crit
+        ),
+        Some(Power::Tally { cap_per_level }) => format!(
+            "while its wielder is Raging, every hit point a creature's attack takes from them is \
+             owed to it, up to {cap_per_level} × their level ({} at level 30); the next blow \
+             struck with it that lands (a hit, soaked or resisted too) adds the whole debt to \
+             its damage once (after a critical multiplies the rest; soaked by armour as its own \
+             damage is), and the debt is paid. A miss keeps it; the rage's end forgives it. \
+             Its description says how much it is owed while you rage: a little (a third of the \
+             most or less), much (two thirds or less), a fortune (more)",
+            u32::from(*cap_per_level) * 30
+        ),
+        Some(Power::Grudge { per_hit }) => format!(
+            "every attack of a creature's that costs one who carries it (wielded or in the pack) \
+             hit points is a grudge against that one creature, not its kind: its blows deal \
+             +{per_hit} damage to that creature for each grudge (a critical multiplies it with the \
+             rest), without a cap, for as long as both live (across levels too). Its description \
+             counts the grudges"
+        ),
+        Some(Power::Oath {
+            resource,
+            hp_per_point,
+        }) => {
+            let name = content.resource(*resource).name.to_lowercase();
+            format!(
+                "while it is wielded, a class ability paid in {name} may be used with too \
+                 little: what you hold is spent, and each point short costs you {hp_per_point} \
+                 hit points once the ability is done. Nothing protects you: it may kill you"
+            )
+        }
         Some(Power::Cast(cast)) => {
             let def = content.spell(cast.spell);
             let kind = (def.damage_type).map_or(String::new(), |k| {
@@ -271,6 +377,65 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
             }
             when.join("; ")
         }
+        Some(Power::Wakes {
+            below,
+            every,
+            resource,
+        }) => {
+            let def = content.resource(*resource);
+            let rage = def
+                .status
+                .map_or("-".to_string(), |s| content.status(s).name.clone());
+            format!(
+                "when a harm leaves its wearer alive below {below}% of their hit points and they \
+                 are not {rage}, they become {rage} at once, free, even while Exhausted (which \
+                 ends): one with the {} ability gets their {} filled to its maximum; anyone else \
+                 a pool of {} that only decays (nothing builds it, no frenzy). The rage ends as \
+                 any does, in Exhausted. It then sleeps for {every} turns",
+                def.name, def.name, def.start
+            )
+        }
+        Some(Power::Roar(roar)) => {
+            let status = &content.status(roar.status);
+            format!(
+                "each kill with a blow of it is a roar (noise {}): every foe within {} cells that \
+                 sees the wielder rolls 2d12 + its Willpower modifier against {} + the wielder's \
+                 Strength modifier + what their Intimidate adds (the Intimidate skill's check); \
+                 on a fail it is {} for {} turns (at most {}) and flees, and it is not checked \
+                 again until the fight is over for it. The undead, those without vitals, and \
+                 those that never suffer {} pay no heed",
+                roar.noise,
+                roar.radius,
+                content.intimidate().map_or(0, |r| r.difficulty),
+                status.name,
+                roar.turns,
+                status.max,
+                status.name
+            )
+        }
+        Some(Power::Credit) => "whatever dies where its wearer sees it, by anyone's hand or of \
+             anything (a monster's blow, an ally's, a trap, bleeding, a fall, fire), counts as \
+             their own kill: the full experience and the first-kill bonus, quest and bounty \
+             counts, oaths, and the alignment change of the kill (a peaceful creature's death \
+             too). An ally's kill so counted pays the full experience, not the ally's share"
+            .into(),
+        Some(Power::Onset { knockback, noise }) => {
+            let cells = match knockback {
+                1 => "a cell".to_string(),
+                n => format!("{n} cells"),
+            };
+            format!(
+                "its wearer's Charge costs no stamina at all, so it reaches any foe they see on an \
+                 open way; a charge's blow that hits drives the foe back {cells} along the line, \
+                 and one a wall or another creature stops is Staggered; the charge's steps make \
+                 {noise}% of a step's noise"
+            )
+        }
+        Some(Power::Thrust(percent)) => format!(
+            "a melee blow with it that hits also strikes whoever stands right behind the one \
+             struck (friend or foe, the next cell along the line from the wielder), rolled to \
+             hit on its own, for {percent}% of the damage (at least 1); thrown, it does not"
+        ),
         Some(Power::Grows(growth)) => {
             let every = growth.every;
             let mut rungs = Vec::new();
@@ -297,6 +462,31 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
              with no cap; a step (or anything that moves them) takes it all away. While it adds \
              any, its bearer is never driven from their cell (knockback, a shove, a spell's \
              push) nor caught flat-footed by an attacker they did not see"
+        ),
+        Some(Power::Fork { cells, percent }) => format!(
+            "every damage spell its wielder casts at one target (a ray, a bolt, a touch; never a \
+             cone, a burst, a line, or a hex), hit or miss, also strikes the hostile creature \
+             nearest the first within {cells} cells of it, in a clear line, for {percent}% of the \
+             damage it rolls, with its own roll to hit where the spell rolls one; never the caster \
+             or an ally, and none with no foe there"
+        ),
+        Some(Power::Spread(cells)) => format!(
+            "every hit with it on a creature it leaves alive spreads each hex its wielder laid on \
+             that creature to every creature within {cells} cells of it (no line of sight needed), \
+             friend or foe but never the wielder, at the same degrees; one that has that hex \
+             already keeps the longer. A hit of its wielder's familiar counts while the familiar \
+             stands beside them"
+        ),
+        Some(Power::Nightside {
+            dark_below,
+            lit_from,
+            to_hit,
+        }) => format!(
+            "its wearer is never dazzled by strong light and never stunned by a Flare's flash. \
+             While the light on their own cell is below {dark_below}, every attack they make that \
+             rolls to hit (a blow, a shot, a throw, a spell) on a creature whose cell's light is \
+             {lit_from} or more gets {to_hit:+} to hit and finds it flat-footed: no Dexterity or \
+             Dodge counts, and sneak attack dice apply"
         ),
         Some(Power::Barefoot(bare)) => {
             let slot = content.slot(bare.slot).name.to_lowercase();
@@ -401,6 +591,50 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
                 super::util::stat_name(parley.stat)
             )
         }
+        Some(Power::Pilfer(p)) => {
+            let blows = match p.skill {
+                Some(skill) => {
+                    let name = &content.weapon_skills().skill(skill).name;
+                    format!("every melee blow its wearer lands with a weapon of {name}")
+                }
+                None => "every melee blow it lands".to_string(),
+            };
+            let take = if p.contest {
+                "makes the Steal contest (Dexterity and Steal against the Willpower of the one \
+                 struck; a blow that kills needs none): won, one thing it carries comes away \
+                 into its wearer's pack"
+                    .to_string()
+            } else {
+                format!(
+                    "takes one thing the one struck carries into its wielder's pack {}% of the \
+                     time, no roll against it",
+                    p.chance
+                )
+            };
+            let mut all = vec![format!(
+                "{blows} {take}: its gold coins if it has any, else one thing it neither wears \
+                 nor wields at random, taken before a killing blow's loot falls"
+            )];
+            if p.disarm > 0 {
+                all.push(format!(
+                    "{}% of the time the weapon in its hand falls at its feet instead, and it \
+                     fights on without it",
+                    p.disarm
+                ));
+            }
+            if p.opening {
+                all.push("a take gives an opening, as a feint does".into());
+            }
+            all.push("never from an animated thing or a mimic".into());
+            all.join("; ")
+        }
+        Some(Power::Approach(steps)) => format!(
+            "after {steps} steps in a row that no hostile creature sees (one asleep, or whose \
+             eyes do not reach you, sees nothing), its wearer's next attack, if a melee blow, \
+             is a sneak attack whatever the target knows, and one that lands gives two \
+             openings, not one; any attack spends the steps; and its wearer's steps make no \
+             sound while Unburdened"
+        ),
     }
 }
 
@@ -412,6 +646,7 @@ fn zone_words(kind: ZoneKind) -> &'static str {
         }
         ZoneKind::Fire => "fire",
         ZoneKind::Fouled => "a poison cloud",
+        ZoneKind::Rime => "rime (ice that chills whoever starts a turn on it)",
         ZoneKind::Slick => "a slick",
         ZoneKind::Dark => "darkness",
     }

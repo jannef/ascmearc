@@ -1,0 +1,17 @@
+# The Dōmgeorn (#2130): a gold amulet for the drop pool (#2103; placed nowhere else but the
+# test world's quarry), item level 40 as the pool's uniques are (docs/design/item-level-40.md
+# §10). Whatever dies where its wearer sees it, by whoever's hand or of whatever, is credited to
+# them as their own kill (its Credit power, `world/character/credit.rs`): the experience and the
+# first-kill bonus, the quests' tallies, the oaths, and the alignment's judgement, a peaceful
+# one's death and a friend's too. +4 Presence (of the Lion), +20 hit points (Hale), and stamina
+# back 20% faster (of Breath). Every value set by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "domgeorn"
+name = "the Dōmgeorn"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "gold_amulet"
+affixes = ["of_the_lion=4", "hale=20", "of_breath=20"]
+level = 40
+power = { credit = true, phrase = "Every death its wearer sees is theirs: the glory, and the blame." }
+lore = "He wore it to the field, and came home with the song. The others came home with the wounds."

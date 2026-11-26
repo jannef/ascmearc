@@ -15,7 +15,8 @@ impl World {
     /// perception finds), reaches its glare. `None` for anyone else.
     fn dazzles(&mut self, id: ActorId) -> Option<LightBlind> {
         let actor = self.state.actors.get(&id)?;
-        let blind = self.state.race_of(&self.content, actor)?.light_blind?;
+        // Never with a Nightside unique on (`nightside.rs`).
+        let blind = self.state.light_blind(&self.content, actor)?;
         let pos = actor.pos;
         let vision = self.state.base_vision(&self.content);
         let eye = &self.content.vision_profiles()[vision];

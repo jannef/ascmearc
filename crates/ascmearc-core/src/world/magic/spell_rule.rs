@@ -66,9 +66,11 @@ impl World {
     }
 
     /// Whether `a` is reached by a hex that reaches `only_sighted` (Flare): any creature with
-    /// eyes, never one tagged [`crate::content::EYELESS`].
+    /// eyes, never one tagged [`crate::content::EYELESS`] nor one wearing a Nightside unique
+    /// (the Sonneles, `world/combat/nightside.rs`).
     pub(in crate::world) fn sees_flash(&self, a: &Actor, only_sighted: bool) -> bool {
-        !only_sighted || !self.content.has_tag(a.creature, crate::content::EYELESS)
+        let dark_eyed = crate::world::combat::nightside::nightside(a, &self.content).is_some();
+        !only_sighted || !(self.content.has_tag(a.creature, crate::content::EYELESS) || dark_eyed)
     }
 
     /// Whether cell `p` of the current level is the ground `only` asks for (none: anywhere).

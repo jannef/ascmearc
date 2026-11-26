@@ -1,0 +1,19 @@
+# Scrift (#2111, "shrift": confession and the penance set for it): a mace for the drop pool
+# (#2103; placed nowhere else but the test world's quarry), item level 26, the fighting priest's.
+# Its Shrive power: every blow it lands takes 40 points of its wielder's prayer strain off, a
+# critical 120, and a blow that kills one of the undead or a fiend all of it, never below 0
+# (`world/combat/shrive.rs`, docs/dev/prayer.md); one who does not pray feels nothing. +4 damage,
+# undead-bane 4 (+4 to hit and damage against the undead), +4 Willpower, +4 Presence. Every value
+# set by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "scrift"
+name = "Scrift"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "mace"
+affixes = ["sharp=4", "of_undead_bane=4", "of_the_sage=4", "of_the_lion=4"]
+level = 26
+# Masterwork, as its design names it.
+quality = "masterwork"
+power = { shrive = 40, critical = 120, phrase = "Every blow it lands is a penance done." }
+lore = "Say your prayers. Then make sure."

@@ -14,7 +14,7 @@ magic crystals: see [Enchanting](enchanting.md).
 | Normal | none | "long sword" | white |
 | Magic | a [prefix](affixes.md#prefixes), a [suffix](affixes.md#suffixes), or one of each (most have one) | "Sharp long sword of the Bear" | blue |
 | Rare | three to six affixes (most often three), at most three prefixes and three suffixes, fewer if the item cannot bear them ([Capacity](#capacity)) | "Grim Bite, long sword" | yellow |
-| Unique | set by hand, at most three prefixes and three suffixes | "Widowmaker, stiletto" | golden orange |
+| Unique | set by hand, any number | "Widowmaker, stiletto" | golden orange |
 
 The color is the color of the item's name, in your pack, on the equipment screen, and in its
 description. The item's glyph keeps its own color. Loot never rolls a unique, but a rare find
@@ -311,12 +311,15 @@ A unique item is one of a kind, a [rarity](#rarity) of its own: an item whose na
 and [item level](affixes.md#base-items) are set by hand. Its name is shown in golden orange. It
 also has a **power**, a rule of its own that no affix gives.
 
-Its affixes may go past what loot ever rolls: a value above an affix's highest
-[tier](affixes.md), more dice than any tier gives (the Grandmother's 6d6), a penalty (her −2 to
+A unique follows none of the rules for affixes. It may have any number of them, of any value,
+on any item, however few its make could hold: a value above an affix's highest
+[tier](affixes.md), dice no tier gives (the Grandmother's 6d6, Gār's 2d6), a penalty (her −2 to
 [Dodge](combat.md#defence), which lowers your Defence against every attack), or an affix on a
 kind of item it never rolls on (High Toby, a bow, has +2 damage; the Radiant, a hammer, has +2
-Protection and +2 Dodge). The table below marks such an affix "set" where the
-others name their tier. No random item, shop's ware, or enchantment ever gets one of these.
+Protection and +2 Dodge). An affix with nothing to change on its item does nothing (Smoulder's
+Steady eases a bow's draw, and a crossbow has none). The table below marks such an affix "set"
+where the others name their tier. No random item, shop's ware, or enchantment ever gets one of
+these.
 
 It is found unidentified like any magic item, but its rarity shows ("a stiletto (unique)"). Its
 affixes work as a rare item's do. A [shop](shops.md#magic-items) prices it as a rare item, but by its own item level instead of its affixes' tiers. Once identified, it shows its
@@ -354,6 +357,20 @@ Its power works while it is worn or wielded, identified or not:
   farther counts.
 - **Range**: it [shoots](ranged.md#distance) that many times as far: its own range and what its
   affixes add are multiplied, and a talent's extra range is added after.
+- **Burst**: every shot it looses, hit or miss, bursts where it stops. Hagolscūr's stones bring
+  down hail: [cold](spell-types.md) damage to everyone on that cell and the eight around it,
+  your allies too, and the one the stone hit takes it on top. Cold's rule follows, so whoever it
+  harms turns [Sluggish](status-list.md#status-sluggish). It never hurts you. The nine cells stay
+  [iced](spell-rules.md#zones) for a few turns, and the ice chills whoever starts a turn on it,
+  you too.
+- **Feller**: a [bane](affixes.md#banes) by size. Entbana's stones strike every creature larger
+  than Small surer and harder, and nothing more against the small.
+- **Quarry**: a creature hostile to you that its arrow hits becomes your
+  [companion](companions.md#companions)'s quarry at once, as
+  [Sic 'em](abilities.md#ability-sic) would make it. It costs you nothing, and you need not have
+  Sic 'em: your companion turns [Savage](status-list.md#status-savage) too, if it is not
+  already. Each creature you hit next is the new quarry. Every bite your companion lands on its
+  quarry gives you a point of [Focus](focus.md).
 - **Restore**: whatever dies within the number of cells the table gives of its wearer may come
   back to life instead, by the table's chance. That is anyone: the wearer, their allies, and
   their foes. No line of sight is needed, and every death rolls again, so one creature can come
@@ -369,6 +386,46 @@ Its power works while it is worn or wielded, identified or not:
   it off. When you bash with it, hit or miss, the spell goes at the one you bashed. The spell
   works as it always does, with the reach and damage the table gives, whatever your own magic.
   A cone never reaches you.
+- **Wakes**: when anything leaves you alive below the share of your hit points the table gives,
+  and you are not [raging](status-list.md#status-raging), you fly into a rage at once, free. It
+  comes even while you are [Exhausted](status-list.md#status-exhausted): that ends first. A
+  berserker's own [Rage](rage.md) is filled to its maximum. Anyone else gets a rage of 12 that only
+  runs down: no blow, critical, or kill adds to it, and it brings no frenzy. The rage ends as any
+  does, in Exhausted. Then the power sleeps for the number of turns the table gives, and the
+  cloak's description says "The bear in it sleeps." until it wakes. While raging you cannot read
+  or cast, so the rage may cost you a quiet potion or scroll.
+- **Roar**: every kill you make with a blow of the weapon is a roar. Each foe within the table's
+  cells that sees you checks its nerve, just as against your
+  [Intimidate](skill-uses.md#intimidating): your Strength and Intimidate against its
+  Willpower. One that fails is [frightened](status-list.md#status-frightened) and flees, and is not
+  checked again until the fight is over for it (it goes back to what it was doing). The undead,
+  creatures with no vitals, and those that cannot be frightened pay no heed. The roar is also a
+  [noise](hearing.md#what-makes-noise) as loud as the table says. A kick, or a blow with
+  anything else, never roars.
+- **Credit**: whatever dies where its wearer can see it counts as their own kill, whoever or
+  whatever killed it: a monster, an ally, a trap, bleeding, a fall, or fire. You get the full
+  [experience](experience.md) (and the bonus for the first of its kind), it counts for
+  [quests](quests.md) and the dwarves' [oaths](races.md#the-dwarves-oaths), and your
+  [alignment](alignment.md#what-moves-you) moves as if you had done it. That includes a peaceful
+  townsperson a monster kills in front of you, or a friend. An ally's kill pays you in full
+  rather than your usual share. A creature that comes back and dies again counts again.
+- **Shrive**: every blow it lands takes some of its wielder's prayer
+  [strain](prayer.md#strain) away, a critical hit more, and a blow that kills one of the
+  [undead](spell-rules.md#healing-harms-the-undead) or a fiend takes all of it. Strain never goes
+  below nothing. One who does not pray gets nothing from it, and a blow with another weapon takes
+  nothing away.
+- **Root**: a creature you called with a [summon spell](allies.md#summons) whose time runs out
+  while it stands within the number of cells the table gives of you does not leave. It stays
+  another minute, and again each time its minute ends that near. Looking at it says "rooted".
+  Farther off when its time ends, it leaves as ever.
+- **Onset**: your [Charge](abilities.md#ability-charge) costs no stamina at all, so you can charge any
+  foe you see on an open way, however far. A charge's blow that hits drives the foe back a cell
+  along the line; if a wall or another creature stops it, it is
+  [Staggered](status-list.md#status-staggered) instead. The charge is loud: its steps are heard
+  twice as far.
+- **Thrust**: a melee blow with it that hits also strikes whoever stands right behind the one
+  you struck, in the next cell along the line from you. That blow rolls to hit on its own and
+  deals half the damage. It strikes friends as well as foes. Thrown, it is an ordinary spear.
 - **Grows**: a weapon whose damage dice and to-hit come from the wielder's character level, not
   from the weapon. Every five levels its dice go up a step, and every ten levels it gets +1 to
   hit, as the table says. Everything else that adds to its damage, such as Strength and your
@@ -393,7 +450,7 @@ Its power works while it is worn or wielded, identified or not:
   to see it, on a door or a chest too. A trap set off another way still strikes you: a door you
   open, a chest, or a blast that someone else set off.
 - **Barefoot**: it works only while nothing is on your feet. Your
-  [footsteps](hearing.md#what-makes-noise) make no sound at all, on any ground. You get the
+  footsteps make no sound at all, on any ground. You get the
   [Dodge](combat.md#defence) the table gives. Every hidden trap on the floor beside you or under
   you is found as you pass, with no roll (not one on a door or a chest), and no trap springs when
   you step on it. Put on boots and it is just a waistcoat.
@@ -429,8 +486,59 @@ Its power works while it is worn or wielded, identified or not:
   anything else that does not think never check. Attack it, cast at it, or try to steal from it
   (you or an ally), and it is hostile again for good. Each creature checks once, on its own. Ones
   already hunting you when you put the amulet on never check. Making peace this way is a little
-  [good](alignment.md#what-moves-you). A creature holding back still blocks a corridor, and
+  good. A creature holding back still blocks a corridor, and
   gives no experience or loot unless you break the peace.
+- **Fork**: a staff whose wielder's harmful spells at one target leap on. A
+  [ray, a bolt, or a touch](spellcasting.md#shapes) that does damage, hit or miss, also strikes
+  the foe nearest the first within the number of cells the table gives, in a clear line from it,
+  for half the damage. The second rolls to hit on its own where the spell rolls one, and the
+  spell's status falls on it too. It never strikes you or an ally, and with no foe there it
+  does nothing. A cone, a burst, a line, and a hex never fork.
+- **Spread**: a knife that passes on its wielder's [hexes](buffs.md#hexes). When it hits a
+  creature and leaves it alive, every hex you laid on that creature spreads to every creature
+  within 3 cells of it, at the same strength: foes, your allies, and your
+  [familiar](familiars.md#familiars) alike, but never you. No line of sight is needed. One that
+  has that hex already keeps whichever is longer. Your familiar's
+  [touch](familiars.md#the-touch) counts as a hit with the knife while it stands beside you.
+- **Nightside**: its wearer is never [dazzled](races.md#race-drow) by strong light, and a
+  [Flare](spell-rules.md) never stuns them. While the [light](light.md#what-light-is) on your own
+  cell is below 12 (too dark for normal eyes), every attack you make that rolls to hit, a blow,
+  a shot, a throw, or a spell, on a creature whose cell's light is 250 or more (a bright fire
+  close by, or the sun well up) gets +3 to hit, and finds it
+  flat-footed: its Dexterity and Dodge count for nothing, and
+  your [sneak attack](surprise.md#sneak-attacks) dice apply.
+- **Pilfer**: your melee blows that land take something from the one you hit. It goes into your
+  pack: their gold if they carry any, else one thing from their pack at random (never
+  what they wear or hold). It works on anyone, hostile or not, and a blow that kills takes before
+  the body's loot falls. Snaffle takes 30% of the time with no roll, or 10% of the time knocks
+  the weapon from their hand instead, which falls at their feet; they fight on without it. The
+  Fambles take with every blow you land with a dagger or a knife, but each try is the
+  [Stealing](skill-uses.md#stealing) contest (a killing blow needs none). A take gives you an
+  [opening](openings.md), as a feint does. A failed try is nothing more: you are fighting already.
+  An animated thing or a mimic has nothing to take.
+- **Approach**: take 3 steps in a row that no hostile creature sees (one asleep, or whose eyes
+  do not reach you, sees nothing). Your next melee blow is then a
+  sneak attack, even on a foe that hunts you or sees you now, and
+  if it lands it gives two openings, not one. Any attack you make uses up the
+  steps; standing still neither adds nor loses any. Your footsteps
+  make no sound while you are [Unburdened](burden.md#burden-levels).
+- **Tally** (Wergild): while you rage, every hit point a creature's attack takes from
+  you is owed to the axe, up to 3 × your level (90 at level 30). Your next blow with it that
+  lands adds the whole debt to its damage, once. [Armour](combat.md#protection) soaks it as it
+  soaks the axe's own damage, and a critical does not multiply it. Then the debt is paid. A miss keeps it, and so
+  does a kick. When the rage ends, the debt is forgiven. While you rage, its description says
+  how much it is owed: a little (a third of the most or less), much (two thirds or less), or a
+  fortune.
+- **Grudge** (the Wrecend): every time a creature's attack costs you hit points while you carry
+  it, wielded or in your pack, is a grudge against that one creature, not its kind. Its blows
+  deal +2 damage to that creature for each grudge, with no cap, for as long as you both live, on
+  any level. A [critical hit](combat.md#criticals) multiplies it with the rest. Ten hits from a
+  troll is +20 against that troll. Its description counts the grudges: "It bears three grudges
+  against the troll."
+- **Oath** (the Oath): while you wield it, a class ability paid in [zeal](zeal.md) (a smite, Lay
+  on hands) can be used with too little. You spend what you have, and each point short costs
+  you 5 hit points once the ability is done: a smite costing 3 with no zeal takes 15. You are
+  told "You pay the rest of your oath in blood." Nothing protects you: the price can kill you.
 
 Some uniques are made of clothing, such as footwraps or a waistcoat. Ordinary clothing is never
 magic, but these work as the boots or body armour they are worn as.
@@ -442,6 +550,14 @@ that many cells of you gives no light, the lamps, the fires, and the lights othe
 own too. Nothing is used up: the lights shine again once you are gone or take it off.
 Hǣrsceorp counts as no body armour at all, so [Mage armour](class-wizard.md#talent-mage-armour)
 and [Step of the wind](class-ascetic.md#talent-step-of-the-wind) work in it.
+The Oath's melee hits also build a second point of zeal, 2 a hit in place of 1.
+
+One has no power at all, only rules of its own: Swīge keeps a silence about its wearer. Nobody
+within two cells of you, you and your allies too, can cast a [spell](magic.md) or read a
+[scroll](scrolls.md) ("No word will come in this silence."). Nothing else is stopped: you can
+still [pray](prayer.md), use a wand or a rod, and use any ability that is not a spell, and a spell
+already cast goes on. To cast, take it off (a turn) or have the caster step out of the square.
+It also lets your prayer strain pass twice as fast.
 
 {{#include generated/uniques.md}}
 

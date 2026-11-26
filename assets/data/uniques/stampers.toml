@@ -1,0 +1,18 @@
+# The Stampers (#2120), the thief's boots ("stampers": cant for shoes): a pair of leather boots for
+# the drop pool (#2103; placed nowhere else but the test world's quarry), item level 28. Its
+# Approach power (`world/combat/approach.rs`): after three steps in a row that no hostile sees,
+# the wearer's first blow is a sneak attack whatever its target knows, and one that lands builds
+# two openings, not one; and the wearer's steps are silent while Unburdened. +30 Stealth, +10
+# Tumble (of the Hare), +2 Dodge (Nimble), and +4 Tumble more: the design's "supple=4 (Tumble)"
+# named Supple, which is a Dexterity limit, so the Tumble affix stands in for it. Every value set
+# by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "stampers"
+name = "the Stampers"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "leather_boots"
+affixes = ["of_stealth=30", "of_the_hare=10", "nimble=2", "of_the_hare=4"]
+level = 28
+power = { approach = 3, phrase = "Whoever comes unseen to a foe's side strikes it unawares, and its wearer's steps make no sound." }
+lore = "They left no prints. They also left no witnesses, but that was the wearer."

@@ -160,6 +160,10 @@ text = "Tässä oli muistaaksesi {trap:counted_nom} {ground:bare}."
 of = "7349aa"
 text = "vastustuskykyinen {kinds:all}"
 
+[rooted]
+of = "f855c7"
+text = "juurtunut"
+
 [room]
 of = "b592c8"
 text = " {room:bare}"
@@ -267,6 +271,10 @@ text = "liekkien vallassa"
 [zone_fouled]
 of = "73947e"
 text = "löyhkän keskellä"
+
+[zone_rime]
+of = "d3d31f"
+text = "kuuran jäädyttämänä"
 
 [zone_slick]
 of = "86f863"

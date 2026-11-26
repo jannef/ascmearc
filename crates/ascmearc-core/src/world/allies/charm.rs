@@ -85,6 +85,7 @@ impl World {
                 order: Order::Follow,
                 retinue: false,
                 until: Some(until),
+                rooted: false,
             });
         }
         let who = self.called_phrase(&self.state.actors[&target]);

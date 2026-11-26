@@ -473,7 +473,10 @@ pub use tower::Tower;
 pub use town::{InvestShare, TownDef, TownRestock, TownServant};
 pub use trap::{Trap, TrapAvoid, TrapDef, TrapDisarm, TrapEffect, TrapHarm, TrapId, TrapNoise};
 pub use tuning::Tuning;
-pub use unique::{Barefoot, CastPower, Power, UNIQUE, UniqueDef, Uniques, WeaponGrowth};
+pub use unique::{
+    Barefoot, CastPower, Keeps, Pilfer, Power, RoarPower, Shrive, UNIQUE, UniqueDef, Uniques,
+    WeaponGrowth,
+};
 pub use unique_parley::Parley;
 pub(crate) use unseen::fading;
 pub use unseen::{Fading, Invisible};

@@ -514,6 +514,10 @@ impl World {
             },
         });
         events.extend(attacks);
+        // A shot's burst where it stopped (Hagolscūr's hail: `hail.rs`).
+        if flight.kind == AttackKind::Ranged {
+            self.shot_hail(shooter, end, events);
+        }
         events.extend(fell);
         // A shot's zone where it stopped (Smoulder's smoke: `shot_zone.rs`).
         if flight.kind == AttackKind::Ranged {

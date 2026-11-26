@@ -177,6 +177,7 @@ fn a_blow_a_spell_or_a_theft_of_the_players_side_breaks_it_for_good() {
         order: Order::Follow,
         retinue: false,
         until: None,
+        rooted: false,
     });
     assert_eq!(
         w.stance(kobold, ally),

@@ -6,15 +6,15 @@
 # `world/combat/gather.rs`). 15% faster steps (Fleet: the issue named `of_the_hare`, which is
 # Tumble), +2 Dodge (Nimble). Every value set by hand (docs/dev/magic-items.md "Unique items").
 # The issue's +6 Balance (`of_balance=6`) and +4 Tumble (its `supple=4`: Supple is a Dexterity
-# limit, `of_the_hare` the Tumble affix) lie below their ladders' first tier, which the loader
-# refuses yet: add back after #2152: "of_balance=6", "of_the_hare=4".
+# limit, `of_the_hare` the Tumble affix), below their ladders' first tier, as a unique may
+# (#2152).
 [[unique]]
 id = "leohtfot"
 name = "Lēohtfōt"
 # Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
 pool = true
 object = "leather_boots"
-affixes = ["fleet=15", "nimble=2"]
+affixes = ["fleet=15", "nimble=2", "of_balance=6", "of_the_hare=4"]
 level = 20
 power = { momentum = 3, die = 6, phrase = "Each step its wearer takes gathers into their next bare-handed blow." }
 lore = "The first step is a step. The third is already a blow."

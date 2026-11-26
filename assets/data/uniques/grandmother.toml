@@ -13,7 +13,7 @@ pool = true
 object = "great_sword"
 affixes = ["sharp=10", "heavy=6d6", "nimble=-2", "of_precision=6", "of_the_bear=6"]
 level = 40
-# Its make holds six enchantments (docs/dev/enchanting.md): Masterwork mithril.
+# A mithril blade of a high make (#1976).
 quality = "masterwork"
 parts = [{ of = "mithril" }]
 power = { inflict = "bleeding", chance = 50, severity = 1, phrase = "Its cuts are slow to close." }
