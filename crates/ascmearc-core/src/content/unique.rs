@@ -18,7 +18,7 @@ use super::object::AddedSpec;
 use super::status::{OnHit, OnHitSpec};
 use super::{
     Content, ContentError, DamageTypeId, ItemKind, LightId, ObjectDef, ObjectId, Rarity,
-    ResourceId, SlotId, SpellId, StatusId, ZoneKind,
+    ResourceId, SlotId, SpellId, StatusId, WeaponSkillId, ZoneKind,
 };
 use crate::damage::Rider;
 use crate::dice::Roll;
@@ -36,6 +36,12 @@ pub const UNIQUE: &str = "unique:";
 /// a wiki word (`xtask/src/wiki/uniques.rs`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Power {
+    /// Its wearer's approach unseen (`{ approach = 3 }`, the Stampers', #2120): after this many
+    /// steps in a row taken unseen by every hostile creature, the wearer's first blow is a
+    /// sneak attack whatever its target knows, and one that lands builds the sneak attack's
+    /// openings twice; and the wearer's steps are silent while Unburdened. Read in
+    /// `world/combat/approach.rs` (the steps counted, the blow) and `noise::noise` (the steps).
+    Approach(u8),
     /// While its wearer's `slot` (the feet) is empty, their steps are this quiet, they dodge
     /// better, and their toes find the traps beside them (`{ barefoot = "feet", noise = 0, dodge =
     /// 3, feel_traps = true }`, Hushfoot's, #2133): read through [`crate::world::Actor::barefoot`],
@@ -72,6 +78,11 @@ pub enum Power {
         gain: u16,
         critical: u16,
     },
+    /// Its wielder's or wearer's blows take from what their target carries (`{ pilfer = 30,
+    /// disarm = 10 }`, Snaffle's, #2138; `{ pilfer = 100, contest = true, skill = "daggers",
+    /// opening = true }`, the Fambles', #2119): read where a blow lands (`world/combat/pilfer.rs`,
+    /// `World::resolve`), taking as the Steal skill does (`world/skills/steal.rs`).
+    Pilfer(Pilfer),
     /// It shoots (or is thrown) this many times as far (`{ range = 2 }`, #1976): a multiplier on
     /// its range and what its affixes add, read where its reach is computed
     /// ([`crate::magic::Mods::local`], `Mods::range`); only on a base with a `range`.
@@ -138,6 +149,22 @@ pub struct Barefoot {
     pub dodge: i32,
     /// Whether the hidden traps on the cells beside its wearer are found as they pass.
     pub feel_traps: bool,
+}
+
+/// A [`Power::Pilfer`]: when a blow takes, and what more comes of it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Pilfer {
+    /// The chance in a hundred that a hit takes one thing from its target's pack.
+    pub chance: u8,
+    /// Whether a take must also win the Steal skill's contest against the target.
+    pub contest: bool,
+    /// The chance in a hundred that a hit takes the target's weapon from its hand instead.
+    pub disarm: u8,
+    /// A worn power's: the weapon skill of the blows it works with. `None`: the power is the
+    /// weapon's own, and works with its blows.
+    pub skill: Option<WeaponSkillId>,
+    /// Whether a take gives an opening (the feint's, `Build::Feint`), as a fooled foe does.
+    pub opening: bool,
 }
 
 /// A [`Power::Cast`]: the spell, its reach and roll, and the chances, in percent, that a block
@@ -324,6 +351,18 @@ struct PowerSpec {
     difficulty: Option<i32>,
     /// Whether criticals suffered scar it.
     scars: Option<bool>,
+    /// The chance in a hundred that a hit takes from its target's pack.
+    pilfer: Option<u8>,
+    /// Whether a take must win the Steal contest (`pilfer` only).
+    contest: Option<bool>,
+    /// The chance in a hundred that a hit takes the target's weapon instead (`pilfer` only).
+    disarm: Option<u8>,
+    /// The weapon skill whose blows a worn power works with (`pilfer` only).
+    skill: Option<String>,
+    /// Whether a take gives an opening (`pilfer` only).
+    opening: Option<bool>,
+    /// How many steps unseen make an approach.
+    approach: Option<u8>,
     /// The chance in a hundred that a death near its wearer is undone.
     restore: Option<u8>,
     /// How far from its wearer a death is undone (`restore`), or how far a zone reaches (`zone`).
@@ -530,12 +569,23 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         p.pain.is_some(),
         p.ring.is_some(),
         p.scars.is_some(),
+        p.pilfer.is_some(),
+        p.approach.is_some(),
     ];
     if named.iter().filter(|&&n| n).count() != 1 {
         return Err(
-            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, and `scars`"
+            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, `scars`, `pilfer`, and `approach`"
                 .into(),
         );
+    }
+    let pilfers = [
+        p.contest.is_some(),
+        p.disarm.is_some(),
+        p.skill.is_some(),
+        p.opening.is_some(),
+    ];
+    if p.pilfer.is_none() && pilfers.iter().any(|&n| n) {
+        return Err("power: `contest`, `disarm`, `skill`, and `opening` belong to `pilfer`".into());
     }
     if p.restore.is_none() && p.zone.is_none() && p.radius.is_some() {
         return Err("power: `radius` belongs to `restore` and `zone`".into());
@@ -670,6 +720,18 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
             difficulty,
         });
     }
+    if let Some(chance) = p.pilfer {
+        return pilfer(p, chance, def, content).map(Power::Pilfer);
+    }
+    if let Some(steps) = p.approach {
+        if steps == 0 {
+            return Err("power: `approach` is how many steps unseen, 1 or more".into());
+        }
+        if !def.kind.is_some_and(|k| k.is_armour()) {
+            return Err("power: `approach` needs a base that is worn armour".into());
+        }
+        return Ok(Power::Approach(steps));
+    }
     if let Some(scars) = p.scars {
         if !scars {
             return Err("power: `scars = false` is no power".into());
@@ -729,6 +791,44 @@ fn cast(
         damage,
         on_block,
         on_bash,
+    })
+}
+
+/// A `pilfer` power of `chance` on base item `def`: a chance (1 to 100) and a `disarm` chance
+/// that together make at most 100. With a `skill` (a weapon skill), a worn base that is no
+/// weapon; without one, a weapon, whose own blows it works with.
+fn pilfer(p: &PowerSpec, chance: u8, def: &ObjectDef, content: &Content) -> Result<Pilfer, String> {
+    let disarm = p.disarm.unwrap_or(0);
+    if chance == 0 || u16::from(chance) + u16::from(disarm) > 100 {
+        return Err(
+            "power: `pilfer` and `disarm` are chances in a hundred, 1 to 100 together".into(),
+        );
+    }
+    let skill = (p.skill.as_deref())
+        .map(|s| {
+            (content.weapon_skills().id(s))
+                .ok_or_else(|| format!("power: unknown weapon skill `{s}`"))
+        })
+        .transpose()?;
+    match skill {
+        Some(_) if def.attack.is_some() || def.slot.is_none() => {
+            return Err(
+                "power: a `pilfer` with a `skill` needs a worn base that is no weapon".into(),
+            );
+        }
+        None if def.attack.is_none() => {
+            return Err(
+                "power: `pilfer` needs a weapon, or a `skill` its blows are made with".into(),
+            );
+        }
+        _ => {}
+    }
+    Ok(Pilfer {
+        chance,
+        contest: p.contest.unwrap_or(false),
+        disarm,
+        skill,
+        opening: p.opening.unwrap_or(false),
     })
 }
 

@@ -136,6 +136,21 @@ objects = ["unique:kettle_hat"]
 at = [9, 12]
 objects = ["unique:scarhide"]
 
+# Three of the pool for a thief, in the row above the start (#2119, #2120, #2138): the Fambles,
+# gloves whose knife-cuts pick pockets; the Stampers, boots for an unseen approach; and Snaffle, a
+# dagger whose hits take what the struck one carries.
+[[pile]]
+at = [5, 7]
+objects = ["unique:fambles"]
+
+[[pile]]
+at = [7, 7]
+objects = ["unique:stampers"]
+
+[[pile]]
+at = [9, 7]
+objects = ["unique:snaffle"]
+
 # What the sealed chamber keeps.
 [[pile]]
 at = [48, 8]

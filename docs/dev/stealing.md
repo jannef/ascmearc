@@ -27,8 +27,9 @@ is the Steal skill's use: `Action::Steal(Dir)` (replay text `steal:DIR`, cost `s
   (`World::stance`). Else priced first (`price_of(player, ActionKind::Steal)`, before the load
   changes), then the contest `check::contest(rng, Dexterity modifier + Steal benefit, victim's
   Willpower modifier)` (effective scores; four keyed draws, the victim's roll first; ties go
-  to the thief). Unnoticed: `lift` takes one stack the victim neither wears nor wields
-  (`Equipment::holds`), uniformly (`rng.index(n)`, a draw only when there are two or more),
+  to the thief). Unnoticed: `lift` takes one stack the victim neither wears nor wields (`Equipment::holds`): its
+  gold coins (`chest::currency`) when it carries any, the owner's rule (#2119), else one picked
+  uniformly (`rng.index(n)`, a draw only when there are two or more; `World::pockets`),
   `Equipment::after_removal` follows the victim's letters, and the stack joins the player's pack.
   Caught: `World::caught_stealing` (`shop.rs`) outrages a keeper of an open shop on the level as
   a robbery does (`outrage`), else the victim's `faction_override` becomes `StealRules::caught`
@@ -56,3 +57,7 @@ is the Steal skill's use: `Action::Steal(Dir)` (replay text `steal:DIR`, cost `s
   blink"). It picks the stack as `lift` does (loose stacks only, `index(n)` with two or more),
   in the other direction, with no contest and no deed. Steal does not take it back while the
   thief is hostile (refused, as at anyone hostile): what it took falls where it dies.
+- **Shared with the Pilfer power** (#2119, #2138; docs/dev/magic-items.md "Unique items"):
+  `World::pockets` (what may be taken), `World::take_from` (the stack moved into the player's
+  pack), and `World::steal_contest` (the contest) are the Steal skill's taking, which
+  `world/combat/pilfer.rs` calls for the Fambles' and Snaffle's blows, without `got_away_with`.

@@ -21,6 +21,12 @@ rings_your_helm = { text = "Kypäräsi kumahtaa kuin lyöty pata!", of = "8dc87f
 # The Scars power (#2137, Scarhide): a critical hit on the player scars what they wear.
 scarred = { text = "Isku jättää arpensa haarniskaasi.", of = "17a6ea" }
 
+# The Pilfer power (#2119 the Fambles, #2138 Snaffle): the player's blow takes something its
+# target carries.
+pilfered = { text = "Nappaat {who:abl} {what:counted_acc}.", of = "98a7cf" }
+snaffled = { text = "Teräsi tuo mukanaan {what:counted_acc}!", of = "18f67e" }
+plucked = { text = "Teräsi nappaa {what:acc} {who:gen} kädestä!", of = "63b22c" }
+
 # The scars a Scars power's item bears, on its description: `n`, how many.
 [scars]
 of = "29a270"

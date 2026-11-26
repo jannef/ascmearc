@@ -394,6 +394,21 @@ Its power works while it is worn or wielded, identified or not:
 - **Scars**: every critical hit you suffer leaves a scar on it, chosen at random: +1 Armour, +1
   maximum hit point, or +1 Toughness. The scars stay on it for whoever wears it next, and there
   is no limit to them. Its description counts them once you have identified it.
+- **Pilfer**: your melee blows that land take something from the one you hit. It goes into your
+  pack: their gold if they carry any, else one thing from their pack at random (never
+  what they wear or hold). It works on anyone, hostile or not, and a blow that kills takes before
+  the body's loot falls. Snaffle takes 30% of the time with no roll, or 10% of the time knocks
+  the weapon from their hand instead, which falls at their feet; they fight on without it. The
+  Fambles take with every blow you land with a dagger or a knife, but each try is the
+  [Stealing](skill-uses.md#stealing) contest (a killing blow needs none). A take gives you an
+  [opening](openings.md), as a feint does. A failed try is nothing more: you are fighting already.
+  An animated thing or a mimic has nothing to take.
+- **Approach**: take 3 steps in a row that no hostile creature sees (one asleep, or whose eyes
+  do not reach you, sees nothing). Your next melee blow is then a
+  [sneak attack](surprise.md#sneak-attacks), even on a foe that hunts you or sees you now, and
+  if it lands it gives two openings, not one. Any attack you make uses up the
+  steps; standing still neither adds nor loses any. Your footsteps
+  make no sound while you are [Unburdened](burden.md#burden-levels).
 
 Some uniques are made of clothing, such as footwraps or a waistcoat. Ordinary clothing is never
 magic, but these work as the boots or body armour they are worn as.

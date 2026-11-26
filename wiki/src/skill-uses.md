@@ -44,9 +44,9 @@ Only the difference between the two sides matters, your **edge**:
 
 {{#include generated/stealing.md}}
 
-- **Unnoticed**: you take one stack of what they carry in their pack, all of it, such as a whole
-  purse. You never see what someone carries in their pack, so you do not choose: your fingers find
-  something. What they wear or hold in their hands stays where it is. If their pack is empty, you
+- **Unnoticed**: you take one stack of what they carry in their pack, all of it. If they carry
+  gold coins, your fingers find the purse first, every coin of it. Otherwise you take one thing at
+  random: you never see what someone carries in their pack, so you do not choose. What they wear or hold in their hands stays where it is. If their pack is empty, you
   come away empty-handed ("You find nothing to take from the gardener."), and they notice nothing
   all the same.
 - **Caught**: they turn on you and come after you, for good ("The kobold catches you stealing and

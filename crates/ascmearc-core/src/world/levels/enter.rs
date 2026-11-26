@@ -67,6 +67,8 @@ impl World {
         });
         self.after_tread(player, (from, to), footing, events);
         self.make_step_noise(player, to, fleeing);
+        // An approach unseen counts its steps (`approach.rs`).
+        self.count_unseen_step();
         // Wading through a marsh may give a disease, by how long the step takes.
         let speed = self.state.player().speed(&self.content);
         self.wade(

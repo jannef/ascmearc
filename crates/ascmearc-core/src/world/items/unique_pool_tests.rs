@@ -21,6 +21,7 @@ fn a_level_s_uniques_of_the_pool_are_found_once_it_is_made() {
             "cracked_resurrection_stone",
             "deep_night",
             "demonsoul",
+            "fambles",
             "grandmother",
             "haersceorp",
             "hushfoot",
@@ -30,6 +31,8 @@ fn a_level_s_uniques_of_the_pool_are_found_once_it_is_made() {
             "scarhide",
             "silverstrike",
             "smoulder",
+            "snaffle",
+            "stampers",
             "tiptoe",
         ])
     );
