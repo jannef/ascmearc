@@ -120,6 +120,36 @@ objects = ["unique:satisfaction"]
 at = [9, 5]
 objects = ["unique:eorthfaest"]
 
+# Three more of the pool (#2139, #2141, #2133), down the arrival room's west wall: Smoulder (with
+# bolts to shoot), whose bolts smoke where they land; Tiptoe and Hushfoot, on whose feet no trap
+# springs.
+[[pile]]
+at = [3, 5]
+objects = ["unique:smoulder", "bolt*20"]
+
+[[pile]]
+at = [3, 6]
+objects = ["unique:tiptoe"]
+
+[[pile]]
+at = [3, 7]
+objects = ["unique:hushfoot"]
+
+# Three more of the pool along the south wall (#2115, #2127, #2137): Hǣrsceorp, a hair shirt
+# that turns pain into ki; the Kettle Hat, which rings when struck; and Scarhide, which keeps the
+# scars of every critical hit its wearer takes.
+[[pile]]
+at = [5, 12]
+objects = ["unique:haersceorp"]
+
+[[pile]]
+at = [7, 12]
+objects = ["unique:kettle_hat"]
+
+[[pile]]
+at = [9, 12]
+objects = ["unique:scarhide"]
+
 # What the sealed chamber keeps.
 [[pile]]
 at = [48, 8]

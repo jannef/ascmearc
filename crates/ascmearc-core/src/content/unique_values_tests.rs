@@ -74,6 +74,18 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "haersceorp",
+        24,
+        &[
+            ("featherweight", 50),
+            ("nimble", 4),
+            ("reinforced", -1),
+            ("of_the_ox", 4),
+            ("of_vitality", 12),
+            ("of_stillness", 4),
+        ],
+    ),
+    (
         "high_toby",
         12,
         &[
@@ -82,6 +94,21 @@ const UNIQUES: &[Written] = &[
             ("steady", 4),
             ("of_precision", 4),
         ],
+    ),
+    (
+        "hushfoot",
+        30,
+        &[
+            ("hale", 12),
+            ("of_the_fox", 40),
+            ("of_shadows", 40),
+            ("of_sustenance", 25),
+        ],
+    ),
+    (
+        "kettle_hat",
+        12,
+        &[("featherweight", -67), ("hardened", 3), ("of_the_ox", 4)],
     ),
     (
         "masterpiece",
@@ -116,6 +143,16 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "scarhide",
+        30,
+        &[
+            ("reinforced", 2),
+            ("hale", 20),
+            ("of_the_ox", 4),
+            ("of_health", 3),
+        ],
+    ),
+    (
         "sigerics_star",
         12,
         &[
@@ -130,8 +167,23 @@ const UNIQUES: &[Written] = &[
         40,
         &[("keen", 6), ("steady", 6), ("of_precision", 6)],
     ),
+    (
+        "smoulder",
+        40,
+        &[("sharp", 5), ("keen", 4), ("of_precision", 4)],
+    ),
     ("stick", 6, &[]),
     ("stonebiter", 6, &[("sharp", 2), ("of_the_ox", 2)]),
+    (
+        "tiptoe",
+        20,
+        &[
+            ("nimble", 3),
+            ("fleet", 11),
+            ("of_wariness", 60),
+            ("of_shadows", 30),
+        ],
+    ),
     (
         "turncoat",
         12,

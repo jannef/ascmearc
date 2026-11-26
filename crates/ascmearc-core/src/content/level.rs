@@ -1541,7 +1541,8 @@ fn parse_item(spec: &ItemSpec, content: &Content) -> Result<Stack, String> {
 /// A hand-made item (a level's `[[item]]`, a unique item) finished as every item made is: of
 /// `quality` if given (refused for an item with no aspect to better, a ring), then trimmed to its
 /// capacity (docs/dev/enchanting.md) from the stream `trim/<key>` of seed 0. The shipped ones are
-/// given the make their affixes need, so the trim never fires on them (a test holds it).
+/// given the make their affixes need, so the trim never fires on them (a test holds it). A
+/// unique item is never trimmed: it holds what its table sets (#2115).
 pub(super) fn hand_made(
     mut stack: Stack,
     quality: Option<Quality>,
@@ -1553,6 +1554,10 @@ pub(super) fn hand_made(
         let worked = (quality.worked(def))
             .ok_or_else(|| format!("`quality`: {} have nothing to better", def.plural))?;
         stack.set_worked(worked);
+    }
+    // A unique holds every affix its table sets (#2115): no trim, whatever its capacity.
+    if stack.is_unique() {
+        return Ok(stack);
     }
     let mut rng = crate::rng::Rng::stream(0, &format!("trim/{key}"));
     Ok(crate::magic::loot::finished(content, &mut rng, stack))

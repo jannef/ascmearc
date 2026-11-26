@@ -61,6 +61,7 @@ damage_shot = { text = "Vahinko {dice:bare} laukausta kohden; kriittinen osuma {
 # `dig`: its digging power.
 digs = { text = "Kaivuteho {dig:bare}", of = "1c430d" }
 does_armour = { text = "panssari +{v:bare}", of = "b7f507" }
+does_armour_less = { text = "panssari −{v:bare}", of = "09190d" }
 does_attack_speed = { text = "hyökkää {speed:bare}", of = "2a67bc" }
 does_attack_speed_all = { text = "kaikki hyökkäyksesi käyvät {speed:bare}", of = "87e297" }
 does_bane = { text = "+{v:bare} osumaan ja vahinkoon {bane:pl_par} vastaan", of = "7d228a" }

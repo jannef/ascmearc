@@ -23,11 +23,17 @@ fn a_level_s_uniques_of_the_pool_are_found_once_it_is_made() {
             "demonsoul",
             "eorthfaest",
             "grandmother",
+            "haersceorp",
+            "hushfoot",
+            "kettle_hat",
             "masterpiece",
             "radiant",
             "satisfaction",
+            "scarhide",
             "silverstrike",
+            "smoulder",
             "stick",
+            "tiptoe",
         ])
     );
 }

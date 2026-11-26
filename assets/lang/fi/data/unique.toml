@@ -44,9 +44,21 @@ phrase = { text = "Mikään isku ei horjuta sen kantajaa.", of = "847eb1" }
 [grendles_grape.power]
 message = { text = "Pysyt jaloillasi.", of = "dada06" }
 
+[haersceorp]
+lore = { text = "Se kutittaa. Siinä koko ajatus.", of = "d5e89e" }
+phrase = { text = "Jokaisen sen kantajaan osuvan iskun kipu kertyy ki-voimaksi.", of = "c086da" }
+
 [high_toby]
 lore = { text = "Moni vaunu on pysähtynyt sen tähden, ja moni kuski juossut karkuun.", of = "6c3884" }
 phrase = { text = "Sen nuolet jättävät vuotavia haavoja.", of = "0f05cd" }
+
+[hushfoot]
+lore = { text = "Mummo sano: suappaat jalassa et kuule yhtikäs mittään tulovan, kultaseni.", of = "78f9b5" }
+phrase = { text = "Paljain jaloin sen kantaja kulkee äänettä, väistää ketterämmin ja tuntee jokaisen ansan jalkojensa alla; yksikään ansa ei laukea hänen allaan.", of = "e013b2" }
+
+[kettle_hat]
+lore = { text = "Se piti sateen poissa ja keiton sisällä. Sitten tuli sota, ja se piti miekankin poissa.", of = "d2d11a" }
+phrase = { text = "Jokainen siihen osuva isku kumahtaa kauas, ja meteli horjuttaa jokaista sen kantajan vieressä seisovaa.", of = "6e7327" }
 
 [masterpiece]
 lore = { text = "Sen tehnyt seppä laski vasaransa sen jälkeen, sillä parannettavaa ei enää ollut.", of = "98c4d7" }
@@ -63,6 +75,10 @@ phrase = { text = "Se luo kantajansa ympärille valon kuin keskipäivällä.", o
 lore = { text = "Hän ei koskaan tarvinnut kuin sen yhden.", of = "ae7b4b" }
 phrase = { text = "Sen ensimmäinen kosketus vahingoittumattomaan viholliseen osuu aina syvälle.", of = "f368a7" }
 
+[scarhide]
+lore = { text = "Jokaisen siinä näkyvän arven sen ensimmäinen omistaja kantoi ensin omassa nahassaan.", of = "656178" }
+phrase = { text = "Jokainen sen kantajan saama ankara haava kovettaa sitä hieman lisää.", of = "ebed52" }
+
 [sigerics_star]
 lore = { text = "Sormuksen sisäpuolella, hyvin pienin kirjaimin: SIGERIC MINUT TEKI. Ulkopuolella, suuremmin: SIGERIC.", of = "8aa25a" }
 phrase = { text = "Mikään ei pidä sen kantajan katsetta vangittuna.", of = "e81a46" }
@@ -78,9 +94,17 @@ phrase = { text = "Sen nuolet lentävät kaksi kertaa niin kauas kuin tavallisen
 lore = { text = "Se oli keppi, kun he lähtivät matkaan. Kukaan ei muista, milloin se lakkasi olemasta.", of = "65158f" }
 phrase = { text = "Se tuntuu käyneen painavammaksi.", of = "875914" }
 
+[smoulder]
+lore = { text = "Ei sijnä ole tulda, ia quitengin se sauhupi.", of = "d1becc" }
+phrase = { text = "Sen nuolet savuavat siellä, mihin ne pysähtyvät, osuivat tai eivät: savun läpi ei näe mikään silmä, ei sinunkaan.", of = "43456b" }
+
 [stonebiter]
 lore = { text = "Lovettu sadassa louhoksen seinässä, eikä yksikään niistä antanut periksi.", of = "fa63dd" }
 phrase = { text = "Sen kantaja näkee hämärässä.", of = "95fdf0" }
+
+[tiptoe]
+lore = { text = "Kyl laattia o iha hyvä. Katto vaa mihe sää seisot.", of = "5a94ee" }
+phrase = { text = "Yksikään ansa ei laukea sen kantajan jalkojen alla, ja hän näkee jokaisen lähellään olevan ansan.", of = "fd7e71" }
 
 [turncoat]
 lore = { text = "Rykmentin värit leikattiin siitä irti kauan sitten; ompeleet näkyvät yhä.", of = "d825c0" }

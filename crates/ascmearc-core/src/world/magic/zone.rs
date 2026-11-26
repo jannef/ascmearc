@@ -346,7 +346,7 @@ impl World {
 
     /// A miscast's zone (`miscast.rs`): `kind` by `by` around `center`, within `radius` in its
     /// line of sight, for `turns`; no harm, and none on the overworld. Draws nothing.
-    pub(super) fn lay_zone_around(
+    pub(in crate::world) fn lay_zone_around(
         &mut self,
         (kind, by): (ZoneKind, ActorId),
         (center, radius): (Pos, i32),

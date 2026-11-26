@@ -58,7 +58,10 @@ after its material, ornament, wand rung, and (for creature gear) its condition:
 - Hand-made items are trimmed too, at load (`content/level.rs::hand_made`, for a level's
   `[[item]]` and a unique item), from the stream `trim/<key>` of seed 0 (`<key>` the unique's id,
   or `<object>@x,y` for an `[[item]]`). The shipped ones are given the make their affixes need, so
-  it never fires on them: `magic/capacity_tests.rs::hand_made_items_are_never_trimmed` reads the
+  it never fires on them. A unique item is never trimmed (#2115): it holds every affix its table
+  sets, whatever its make's capacity (Hǣrsceorp's six on a plain padded coat), and identified,
+  Appraise says "It bears all it can." of one past its capacity; nothing else reads a unique's
+  capacity (it is never enchanted). `magic/capacity_tests.rs::hand_made_items_are_never_trimmed` reads the
   affixes written in every asset file's `[[unique]]` and `[[item]]` and fails with the item and
   its shortfall, and checks the heirloom (every race's weapon at the effect's `max`).
 

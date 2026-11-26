@@ -1075,8 +1075,10 @@ impl World {
                 self.gain_resource(attacker, Build::Critical);
             }
         }
-        if blow.is_some_and(|b| b.strike.is_hit()) {
+        if let Some(blow) = blow.filter(|b| b.strike.is_hit()) {
             self.gain_resource(target, Build::Struck);
+            // A unique armour's Pain, Scars, and Ring powers (`struck.rs`).
+            self.struck(target, blow, events);
         }
         // Weapon abilities (`weapon_ability.rs`) fire on the same events, and on a melee
         // attack's miss by the target's Shield, Dexterity, or Dodge.
