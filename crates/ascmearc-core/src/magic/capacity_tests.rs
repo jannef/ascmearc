@@ -480,6 +480,10 @@ fn hand_made_items_are_never_trimmed() {
             // A vault's `[[item]]` is placed when the vault is: not checked here.
             continue;
         };
+        // A unique on clothing (no kind) has no capacity and is never trimmed (#2141).
+        if c.object(stack.object).kind.is_none() {
+            continue;
+        }
         let room = usize::from(capacity(&stack, &c));
         let held = stack.magic().map_or(0, |m| m.affixes.len());
         if n > room || held < n {

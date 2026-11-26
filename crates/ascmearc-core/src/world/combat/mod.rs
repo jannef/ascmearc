@@ -20,6 +20,7 @@ mod negate;
 pub(in crate::world) mod reflect;
 mod sear;
 pub(in crate::world) mod shoot;
+mod shot_zone;
 pub(in crate::world) mod slip;
 pub(crate) mod surprise;
 mod two_shields;
@@ -49,6 +50,7 @@ cfg_if! {
         mod sear_tests;
         pub(in crate::world) mod shoot_tests;
         mod shot_range_tests;
+        mod shot_zone_tests;
         mod silent_tests;
         mod slip_tests;
         mod stunning_strike_tests;

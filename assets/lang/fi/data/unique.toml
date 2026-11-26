@@ -44,8 +44,12 @@ message = { text = "Pysyt jaloillasi.", of = "dada06" }
 lore = { text = "Moni vaunu on pysähtynyt sen tähden, ja moni kuski juossut karkuun.", of = "6c3884" }
 phrase = { text = "Sen nuolet jättävät vuotavia haavoja.", of = "0f05cd" }
 
+[hushfoot]
+lore = { text = "Mummo sano: suappaat jalassa et kuule yhtikäs mittään tulovan, kultaseni.", of = "78f9b5" }
+phrase = { text = "Paljain jaloin sen kantaja kulkee äänettä, väistää ketterämmin ja tuntee jokaisen ansan jalkojensa alla; yksikään ansa ei laukea hänen allaan.", of = "e013b2" }
+
 [masterpiece]
-lore = { text = "Sen tehnyt seppä laski vasaransa sen jälkeen, sillä parannettavaa ei enää ollut.", of = "98c4d7" }
+lore ={ text = "Sen tehnyt seppä laski vasaransa sen jälkeen, sillä parannettavaa ei enää ollut.", of = "98c4d7" }
 phrase = { text = "Moni sen tavoittanut isku raukeaa tyhjiin.", of = "75ac3a" }
 
 [masterpiece.power]
@@ -66,12 +70,20 @@ message = { text = "Mikään ei vangitse katsettasi kauaksi aikaa.", of = "124df
 lore = { text = "Sen jänne, niin jousentekijät vannoivat, oli kehrätty kuun hiuksesta.", of = "87875c" }
 phrase = { text = "Sen nuolet lentävät kaksi kertaa niin kauas kuin tavallisen jousen.", of = "7eb75c" }
 
+[smoulder]
+lore = { text = "Ei sijnä ole tulda, ia quitengin se sauhupi.", of = "d1becc" }
+phrase = { text = "Sen nuolet savuavat siellä, mihin ne pysähtyvät, osuivat tai eivät: savun läpi ei näe mikään silmä, ei sinunkaan.", of = "43456b" }
+
 [stonebiter]
 lore = { text = "Lovettu sadassa louhoksen seinässä, eikä yksikään niistä antanut periksi.", of = "fa63dd" }
 phrase = { text = "Sen kantaja näkee hämärässä.", of = "95fdf0" }
 
+[tiptoe]
+lore = { text = "Kyl laattia o iha hyvä. Katto vaa mihe sää seisot.", of = "5a94ee" }
+phrase = { text = "Yksikään ansa ei laukea sen kantajan jalkojen alla, ja hän näkee jokaisen lähellään olevan ansan.", of = "fd7e71" }
+
 [turncoat]
-lore = { text = "Rykmentin värit leikattiin siitä irti kauan sitten; ompeleet näkyvät yhä.", of = "d825c0" }
+lore ={ text = "Rykmentin värit leikattiin siitä irti kauan sitten; ompeleet näkyvät yhä.", of = "d825c0" }
 phrase = { text = "Sen kantaja ei tunne pelkoa.", of = "ff336e" }
 
 [turncoat.power]

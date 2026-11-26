@@ -369,6 +369,23 @@ Its power works while it is worn or wielded, identified or not:
   it off. When you bash with it, hit or miss, the spell goes at the one you bashed. The spell
   works as it always does, with the reach and damage the table gives, whatever your own magic.
   A cone never reaches you.
+- **Zone**: a missile weapon whose every shot, hit or miss, leaves the
+  [Fume](magic.md#spell-fume) spell's smoke around the cell where the missile stops, for the
+  turns the table gives. Nobody sees into the smoke or through it, and that includes you. A
+  thrown weapon leaves none.
+- **Trapwise**: no trap springs when its wearer steps on it, hidden or
+  [known](traps.md#finding-traps). The trap stays armed for whoever comes after. Every hidden
+  trap within the number of cells the table gives is found as you go, with no roll and no need
+  to see it, on a door or a chest too. A trap set off another way still strikes you: a door you
+  open, a chest, or a blast that someone else set off.
+- **Barefoot**: it works only while nothing is on your feet. Your
+  [footsteps](hearing.md#what-makes-noise) make no sound at all, on any ground. You get the
+  [Dodge](combat.md#defence) the table gives. Every hidden trap on the floor beside you or under
+  you is found as you pass, with no roll (not one on a door or a chest), and no trap springs when
+  you step on it. Put on boots and it is just a waistcoat.
+
+Some uniques are made of clothing, such as footwraps or a waistcoat. Ordinary clothing is never
+magic, but these work as the boots or body armour they are worn as.
 
 Some give more besides their power, as the table says: an immunity or a weakness to a kind of
 [damage](damage-types.md#armour-and-resistance), damage added to a shield's

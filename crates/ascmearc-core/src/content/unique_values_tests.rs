@@ -73,6 +73,16 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "hushfoot",
+        30,
+        &[
+            ("hale", 12),
+            ("of_the_fox", 40),
+            ("of_shadows", 40),
+            ("of_sustenance", 25),
+        ],
+    ),
+    (
         "masterpiece",
         40,
         &[
@@ -108,7 +118,22 @@ const UNIQUES: &[Written] = &[
         40,
         &[("keen", 6), ("steady", 6), ("of_precision", 6)],
     ),
+    (
+        "smoulder",
+        40,
+        &[("sharp", 5), ("keen", 4), ("of_precision", 4)],
+    ),
     ("stonebiter", 6, &[("sharp", 2), ("of_the_ox", 2)]),
+    (
+        "tiptoe",
+        20,
+        &[
+            ("nimble", 3),
+            ("fleet", 11),
+            ("of_wariness", 60),
+            ("of_shadows", 30),
+        ],
+    ),
     (
         "turncoat",
         12,

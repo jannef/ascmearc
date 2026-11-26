@@ -798,7 +798,11 @@ impl Actor {
             .filter(|&d| d != 0)
             .map(|d| (Category::Dodge, d));
         let magic = [
-            (Category::Dodge, mods.get(ItemEffect::Dodge)),
+            // Bare feet under a unique's Barefoot power (Hushfoot's +3, #2133).
+            (
+                Category::Dodge,
+                mods.get(ItemEffect::Dodge) + self.barefoot(content).map_or(0, |b| b.dodge),
+            ),
             (
                 Category::Deflection,
                 mods.get(ItemEffect::Deflection) + talents.defence.deflection + mage_armour,

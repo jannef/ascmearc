@@ -10,3 +10,6 @@ no_craft = { text = "Se on ainutlaatuinen: mikään taitosi ei muuta sitä.", of
 restored = { text = "{who:Nom} kaatuu ja nousee jälleen eheänä!", of = "15db52" }
 restored_unseen = { text = "Sormesi kivi lämpenee.", of = "621eab" }
 restored_you = { text = "Kuolema päästää sinusta irti: nouset jälleen eheänä!", of = "50e146" }
+
+# Feet that never spring a trap (Tiptoe, Hushfoot; #2141, #2133).
+tread_over_trap = { text = "Astut {trap:counted_gen} yli, eikä se laukea.", of = "a32251" }

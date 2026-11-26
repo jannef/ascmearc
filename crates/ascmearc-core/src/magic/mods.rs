@@ -233,7 +233,7 @@ impl Mods {
 
     /// Adds the effects of `magic`'s affixes on an item of `kind` that are `local` (or not).
     fn add_magic(&mut self, magic: &Magic, local: bool, stack: &Stack, content: &Content) {
-        let Some(kind) = content.object(stack.object).kind else {
+        let Some(kind) = content.item_kind(stack) else {
             return;
         };
         for rolled in magic.rolled(content) {

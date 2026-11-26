@@ -309,6 +309,8 @@ impl World {
     /// every hidden feature on the cells around them that they notice in passing at all. Draws
     /// nothing when there is none.
     pub(in crate::world) fn notice_hidden(&mut self) {
+        // What a unique's Trapwise or bare feet find, first (`trapwise.rs`).
+        self.feel_traps();
         let hidden = self.hidden_near(1);
         if hidden.is_empty() {
             return;
@@ -340,7 +342,7 @@ impl World {
 
     /// The player found `hidden` at `at`: a secret door becomes its door, a trap is known, and
     /// either is remembered at once (in the dark too) and said, which stops a rest.
-    fn reveal(&mut self, at: Pos, hidden: Hidden) {
+    pub(super) fn reveal(&mut self, at: Pos, hidden: Hidden) {
         self.found += 1;
         match hidden {
             Hidden::Mimic(id) => {
