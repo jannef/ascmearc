@@ -356,10 +356,6 @@ fn when_text(content: &Content, w: &EncounterWhen) -> Vec<String> {
     if let Some(d) = w.before_days {
         out.push(format!("before day {d} of the run"));
     }
-    if let Some(class) = &w.calling {
-        let who = super::dialogue::calling_text(content, None, class);
-        out.push(format!("only for {who}"));
-    }
     out
 }
 
@@ -494,9 +490,5 @@ mod tests {
         assert!(!tables.contains("up to level"), "no level gates: {tables}");
         let talked = tables.matches("[talked past]").count();
         assert_eq!(talked, 6, "the flagged entries: {tables}");
-        assert!(
-            tables.contains("only for a [bard](class-bard.md) of level"),
-            "the Strange Spirit's calling: {tables}"
-        );
     }
 }

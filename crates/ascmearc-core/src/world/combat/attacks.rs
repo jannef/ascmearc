@@ -80,9 +80,6 @@ pub struct OwnAttack {
     pub riders: Vec<Rider>,
     /// How far it reaches, in cells: a shot's or a throw's; `None` for a blow.
     pub range: Option<i32>,
-    /// Whether it ignores every point of Protection (a spirit weapon's blow): only that it
-    /// does is said, as an item's description says "Pierces armour".
-    pub pierces: bool,
 }
 
 impl OwnAttack {
@@ -97,7 +94,6 @@ impl OwnAttack {
             source,
             kind,
             name,
-            pierces: crate::world::pierces_all(&profile),
             to_hit: profile.to_hit,
             damage: profile.damage.plus(profile.bonus),
             extra: profile.extra,
@@ -152,7 +148,7 @@ impl OwnAttack {
     /// The whole line as the character screen and the dump write it, its parts listed by
     /// `combat.attack_listed`: `+4 to hit, 1d8+2 slashing`, `+3 to hit, 1d6 piercing, range 10`.
     pub fn summary(&self, content: &Content) -> Msg {
-        // After the to-hit: the damage, then the range and whether it pierces.
+        // After the to-hit: the damage, then the range.
         let mut rest = vec![self.damage(content)];
         if let Some(range) = self.range {
             rest.push(
@@ -160,9 +156,6 @@ impl OwnAttack {
                     .role("n", i64::from(range))
                     .into(),
             );
-        }
-        if self.pierces {
-            rest.push(msg::combat::ATTACK_PIERCES.into());
         }
         let list = |first: Arg, rest: Arg| {
             Msg::new(msg::combat::ATTACK_LISTED)

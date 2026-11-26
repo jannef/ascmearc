@@ -74,7 +74,6 @@ mod screens;
 mod scribe_screen;
 mod sensed;
 mod settings_screen;
-mod shape_screen;
 mod sign_screen;
 mod skills_screen;
 mod sounds;

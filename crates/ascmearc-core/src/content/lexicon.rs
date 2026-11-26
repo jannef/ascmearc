@@ -29,7 +29,7 @@
 //! | `song:<id>` | a song's (its talent's) `name` in lower case |
 //! | `sign:<element>.<animal>` | a birth sign as players say it ("Fire Manticore") |
 //! | `sign_animal:<id>`, `sign_element:<id>` | a birth sign's animal's and element's `name` as written ("Manticore", "Fire") |
-//! | `class:<id>`, `prestige:<id>` | a class's and a prestige class's `name` in lower case ("warrior") |
+//! | `class:<id>` | a class's `name` in lower case ("warrior") |
 //! | `stance:<id>` | a combat stance's `name` in lower case ("aggressive") |
 //! | `spell:<id>`, `school:<id>`, `damage_type:<id>`, `recipe:<id>`, `slot:<id>`, `item_class:<id>`, `guild:<id>`, `sign_noun:<active>` | magic and gear data names ([`super::magic_word`], #1994) |
 //! | `label:scroll`, `label:wand`, `label:rod`, `label:potion` | an unidentified type's `name` and `plural`, with its `{label}` and `{colour}` slots (`data/scroll_labels.toml`, …) |
@@ -150,7 +150,6 @@ impl Lexicon for Content {
             | "sign_animal"
             | "sign_element"
             | "class"
-            | "prestige"
             | "stance" => self.character_word(kind, key),
             // Magic and gear data names (#1994).
             "spell" | "school" | "damage_type" | "recipe" | "slot" | "item_class" | "guild"
@@ -229,7 +228,6 @@ impl Content {
                 .find(|e| e.id == key)
                 .map(|e| LexWord::new(&e.name)),
             "class" => lower(&self.class(key)?.name),
-            "prestige" => lower(&self.prestige(key)?.name),
             "stance" => lower(&self.stance_def(key.parse().ok()?).name),
             _ => None,
         }
@@ -356,11 +354,6 @@ impl Content {
         Phrase::id(format!("class:{id}"))
     }
 
-    /// A prestige class by its name: `prestige:<id>`.
-    pub fn prestige_phrase(&self, id: &str) -> Phrase {
-        Phrase::id(format!("prestige:{id}"))
-    }
-
     /// A race by its name: `race:<id>` ("{race:a}": "a halfling").
     pub fn race_phrase(&self, id: &str) -> Phrase {
         Phrase::id(format!("race:{id}"))
@@ -484,26 +477,9 @@ mod tests {
             "Evocation",
             "no label form: Bare"
         );
-        // The classes: the class until it is full, with its cap, then the prestige class.
-        let cap = content.class("wizard").expect("a wizard").max_level;
-        let classes = |prestige, level| {
-            english_arg(
-                &content,
-                &class_arg(&content, "wizard", prestige, level),
-                LABEL_FORM,
-            )
-        };
-        assert_eq!(classes(None, cap - 1), "Wizard");
-        assert_eq!(classes(None, cap), format!("Wizard {cap}"));
-        assert_eq!(
-            classes(Some("hunter"), cap),
-            format!("Wizard {cap}, Hunter")
-        );
-        assert_eq!(
-            classes(Some("hunter"), cap + 4),
-            format!("Wizard {cap}, Hunter 4")
-        );
-        let missing = class_arg(&content, "jester", None, 3);
+        let class = english_arg(&content, &class_arg(&content, "wizard"), LABEL_FORM);
+        assert_eq!(class, "Wizard");
+        let missing = class_arg(&content, "jester");
         assert_eq!(missing, Arg::id("jester"), "a class the content lacks");
     }
 

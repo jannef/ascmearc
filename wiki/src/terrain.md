@@ -57,9 +57,7 @@ big [explosion](digging.md#explosions) blows the softer ones apart. A broken wal
 [rubble](#terrain-rubble). The edge of a level never breaks. See [Digging and walls](digging.md).
 
 A [worn statue](#terrain-statue) stands in the way as a wall does, but you can see past it. Step up
-beside one and you are told what it is, and what is cut into it, if anything. Some carry words in
-the old tongue worth reading; one deep in Fyrdelf keeps an oath (see
-[Prestige classes](prestige-classes.md#prestige-classes)).
+beside one and you are told what it is, and what is cut into it, if anything.
 
 ## Water
 

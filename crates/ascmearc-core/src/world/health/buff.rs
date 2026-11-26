@@ -98,8 +98,7 @@ impl World {
             Action::Use(active, _)
             | Action::UseAt(active, _)
             | Action::UseOn(active, _)
-            | Action::UseThrow(active, ..)
-            | Action::Shape(active, _) => active.cost(),
+            | Action::UseThrow(active, ..) => active.cost(),
             Action::Gift(active, _) => active.cost(),
             // A `use:ID` of a weapon active (no spell's id) is the action its energy names.
             Action::Cast(id, _) | Action::Act(id, _)
@@ -142,7 +141,6 @@ impl World {
             | Action::Advance(_)
             | Action::LevelUpAuto
             | Action::GrantXp(_)
-            | Action::Call(_)
             | Action::SetRank { .. }
             | Action::Freeze { .. }
             | Action::Thaw { .. }

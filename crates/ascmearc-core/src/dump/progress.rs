@@ -1,34 +1,9 @@
-//! The `progress` layer (dev-only): level-up choices, callings, rolled quests, and marks.
+//! The `progress` layer (dev-only): level-up choices, rolled quests, and marks.
 
 use super::*;
 
 /// The player's progression (dev): the choices due, the talents they may take now with the
 /// choices each may be taken for, and the creature types whose first kill has paid.
-/// Each calling a run of the campaign may walk through and where the player stands with it
-/// (`progress`, dev-only).
-pub(super) fn calling_rows(world: &World) -> Vec<String> {
-    let content = world.content();
-    (content.callings_of(world.campaign()))
-        .map(|c| match world.calling_status(c) {
-            CallingStatus::Open => format!("calling {}: open", c.class),
-            CallingStatus::LevelNotMet => format!("calling {}: level {} not met", c.class, c.level),
-            CallingStatus::NotFrom => {
-                let class = (world.character())
-                    .and_then(|k| k.spec.class(content).ok())
-                    .map_or("nobody".to_string(), |k| {
-                        format!(
-                            "{} {}",
-                            crate::text::article(&k.name),
-                            k.name.to_lowercase()
-                        )
-                    });
-                format!("calling {}: not for {class}", c.class)
-            }
-            CallingStatus::Called => format!("called {} at {}", c.class, c.level),
-        })
-        .collect()
-}
-
 pub(super) fn progress_rows(world: &World) -> Vec<String> {
     let view = world.perception();
     let content = view.content();
@@ -91,10 +66,6 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
     if !takeable.is_empty() {
         rows.push(format!("takeable {}", takeable.join(", ")));
     }
-    // The callings of the run's campaign and where the player stands with each: `calling hunter:
-    // open`, `calling hunter: level 30 not met`,
-    // `calling hunter: not for a thief`, and once called `called hunter at 30`.
-    rows.extend(calling_rows(world));
     let kills: Vec<&str> = progress
         .discovered
         .kills

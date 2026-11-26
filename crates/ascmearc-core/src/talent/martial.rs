@@ -1,6 +1,6 @@
-//! The martial talents (#1495): the warrior's, berserker's, ascetic's, and hunter's class actives
+//! The martial talents (#1495): the warrior's, berserker's, ascetic's, and ranger's class actives
 //! and what changes them: Veteran's wind, Rage, War cry, Charge, the ascetic's strikes and steps,
-//! Rapid shot, Volley, and the spirit weapon. [`MartialEffect`] is the data (a talent's
+//! Rapid shot, and Volley. [`MartialEffect`] is the data (a talent's
 //! `[[effect]]` of one of [`MartialEffect::KINDS`]), [`MartialMods`] the sum every rule reads
 //! (`TalentMods::martial`). A new effect of the area is a variant here, its field and its arm in
 //! [`MartialMods::add`] here, its wiki text in `xtask/src/wiki/talents/martial.rs`, and its one
@@ -81,23 +81,12 @@ pub enum MartialEffect {
     /// The class active Volley: `shots` shots at a cell for the price of one (what it costs is
     /// the talent's `resource`, if anything).
     Volley { shots: u8 },
-    /// The class active Spirit weapon: a melee weapon of spirit-stuff called into the hand in a
-    /// shape chosen (`world/classes/spirit_weapon.rs`), which strikes
-    /// `to_hit` surer, threatens `threat` lower, and ignores all Protection if
-    /// `ignores_protection`; `phrase` is its description's power line.
-    SpiritWeapon {
-        to_hit: i32,
-        threat: u8,
-        #[serde(default)]
-        ignores_protection: bool,
-        phrase: String,
-    },
 }
 
 impl MartialEffect {
     /// The `kind`s of the data that are effects of the area, one a variant (`TalentEffect`'s
     /// deserializer hands these to [`MartialEffect`]).
-    pub const KINDS: [&'static str; 16] = [
+    pub const KINDS: [&'static str; 15] = [
         "catch_missiles",
         "charge",
         "flurry_cost",
@@ -105,7 +94,6 @@ impl MartialEffect {
         "rage",
         "rapid_shot",
         "roundhouse",
-        "spirit_weapon",
         "stillness",
         "stunning_strike",
         "unstoppable",
@@ -147,8 +135,6 @@ pub struct MartialMods {
     pub wind_step: Option<StatusId>,
     /// The active Stillness, if it has it: the statuses it ends.
     pub stillness: Option<Vec<StatusId>>,
-    /// The active Spirit weapon, and what a spirit weapon in its hand gives, if it has it.
-    pub spirit_weapon: Option<SpiritWeapon>,
     /// Rapid shot's quicker shots on a resource, if it has it.
     pub rapid_shot: Option<RapidShot>,
     /// What each second blow of its flurry costs, if anything (Flurry, on Ki).
@@ -222,18 +208,6 @@ impl MartialMods {
                 }
             }
             MartialEffect::Roundhouse => self.roundhouse = true,
-            MartialEffect::SpiritWeapon {
-                to_hit,
-                threat,
-                ignores_protection,
-                ..
-            } => {
-                self.spirit_weapon = Some(SpiritWeapon {
-                    to_hit,
-                    threat,
-                    ignores_protection,
-                });
-            }
             MartialEffect::RapidShot {
                 resource,
                 cost,
@@ -296,15 +270,6 @@ pub struct WarCry {
     pub status: StatusId,
     pub severity: u16,
     pub difficulty: i32,
-}
-
-/// The active Spirit weapon (`world/classes/spirit_weapon.rs`): what a
-/// spirit weapon in the hand gives, more to hit, a threat lower, and Protection ignored.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct SpiritWeapon {
-    pub to_hit: i32,
-    pub threat: u8,
-    pub ignores_protection: bool,
 }
 
 /// A bare-handed blow that leaves a wounded foe `severity` degrees of `status`: the actives

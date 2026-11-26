@@ -604,8 +604,7 @@ mod tests {
         assert_eq!(press(Press::nav(Nav::Enter)), ask("rooms"));
         assert_eq!(press(Press::nav(Nav::Up)), ScreenAction::Stay);
         assert_eq!(press(Press::nav(Nav::Enter)), ask("quest-rats"));
-        // Up from the top wraps to the last topic (the oath's is not offered: the calling is
-        // not open to the showcase's character).
+        // Up from the top wraps to the last topic.
         assert_eq!(press(Press::nav(Nav::Up)), ScreenAction::Stay);
         assert_eq!(press(Press::nav(Nav::Enter)), ask("stairs"));
         // The numpad moves the selection, whatever digit it types with Num Lock on: 2 wraps

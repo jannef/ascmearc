@@ -15,9 +15,8 @@ pub(super) fn stat_rows(view: &PerceptionView<'_>) -> Vec<String> {
         let race = spec
             .race(content)
             .map_or(spec.race.as_str(), |r| r.name.as_str());
-        // The classes as the character screen's Class row says them: `Bard`, `Bard 30` at the cap,
-        // `Bard 30, Hunter 4` once called.
-        let class = c.class_arg(content, view.own_experience().level);
+        // The class as the character screen's Class row says it.
+        let class = c.class_arg(content);
         let class = crate::messages::english_arg(content, &class, crate::lang::LABEL_FORM);
         rows.push(format!("Race {race}"));
         rows.push(match spec.gender {

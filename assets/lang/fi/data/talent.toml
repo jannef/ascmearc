@@ -2,8 +2,7 @@
 # text the talents screen shows: plain, exact, said to "sinä". The effects' lines are messages:
 # `bars_slot.<slot>.refused` (something put on in a barred slot), `reprieve.message` (saved from
 # death), `temperature_speed.bands.<n>.slower`/`.faster` (cold blood entering band n),
-# `take_up_skills.news` and `weapon_ranks.news` (what a class talent hands out), and
-# `spirit_weapon.phrase` (the spirit weapon's description). Game terms keep the screens' words,
+# `take_up_skills.news` and `weapon_ranks.news` (what a class talent hands out). Game terms keep the screens' words,
 # lowercase inside a sentence as `messages/describe.toml` writes them (suojaus +1, väistö,
 # kimmotus, torjunta, a skill's or a stat's word); another talent is named by its
 # `lexicon/talent.toml` name, capitalized ("Halkaisu-kyvyn"). "(a spell, paid in mana)" is
@@ -1142,12 +1141,6 @@ description = { text = "Olit loitsusepän oppipoikana: aloitat lumoamiseen koulu
 
 [spinners_blood]
 description = { text = "Hänen myrkkynsä virtaa nyt sinussa: myrkky vaivaa sinua vähän, seitit valuvat sinusta, ja lyöt kovaa varomattomia.", of = "2c8ffa" }
-
-[spirit_weapon]
-description = { text = "Vedä esiin henkiaineesta tehty ase valitsemassasi muodossa (kyky). Se osuu varmemmin ja löytää raot mistä tahansa haarniskasta, ja se palaa sinne, mistä tuli, heti kun se lähtee otteestasi; vedä se esiin uudestaan.", of = "fb45e6" }
-
-[spirit_weapon.effects.spirit_weapon]
-phrase = { text = "Henkiaineesta tehty ase: se löytää raot mistä tahansa haarniskasta ja haihtuu, kun se lähtee kädestäsi.", of = "79dc0a" }
 
 [staggering_blow]
 description = { text = "Parhaat iskusi horjuttavat vihollista: kriittinen osuma lähitaistelussa jättää sen horjumaan, hitaaksi toimimaan seuraavaksi.", of = "81a6be" }

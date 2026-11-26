@@ -1,8 +1,8 @@
-# The classes: class actives and their refusals, ki, Charge, Consecrate, the calling, talents
-# given, openings, the business partner's stake, the prayer, Sanctuary, smites, songs, the spirit
-# weapon, the stipend, Rage, Lurk, Volley, War cry, Cackle. Roles as in the English file: `who` a
-# creature, `keeper` a shopkeeper, `missile` what flew, `what` a stack or a list or an object
-# type; `status`, `name`, `talent`, `song`, `class` phrases; `reason`, `came` nested messages;
+# The classes: class actives and their refusals, ki, Charge, Consecrate, talents given, openings,
+# the business partner's stake, the prayer, Sanctuary, smites, songs, the stipend, Rage, Lurk,
+# Volley, War cry, Cackle. Roles as in the English file: `who` a creature, `keeper` a shopkeeper,
+# `missile` what flew, `what` a stack or a list or an object type; `status`, `name`, `talent`,
+# `song` phrases; `reason`, `came` nested messages;
 # `id` typed text; `gold` digits.
 
 aims_at_no_place = { text = "`{id:bare}` ei tähtää mihinkään paikkaan.", of = "4b0c30" }
@@ -11,8 +11,6 @@ already_light_on_feet = { text = "Askeleesi ovat jo kevyet.", of = "fb068b" }
 ask_where = { text = "Mihin?", of = "76a927" }
 beside_it_already = { text = "Olet jo sen vieressä.", of = "396427" }
 cackle = { text = "Räkätät.", of = "bfce68" }
-call_in_what_shape = { text = "Minkä muotoisena vedät sen esiin?", of = "09295a" }
-cannot_call_no_weapon = { text = "Et voi vetää esiin {what:counted_par}: se ei ole käteen sopiva ase.", of = "dab990" }
 cannot_charge_on_overworld = { text = "Et voi rynnäköidä maailmankartalla.", of = "ff3e23" }
 cannot_charge_while_swimming = { text = "Et voi rynnäköidä uidessasi.", of = "2270f8" }
 cannot_exploit_with = { text = "Et voi iskeä aukkoon {what:counted_ade}.", of = "01a1fd" }
@@ -25,7 +23,6 @@ does_not_flinch = { text = "{who:Nom} ei hätkähdäkään.", of = "ed6dd9" }
 draw_old_soldiers_wind = { text = "Ammennat voimaa vanhan soturin sitkeydestä.", of = "183d64" }
 dread_settles = { text = "Kammo laskeutuu maahan ympärilläsi.", of = "cc0d6d" }
 eyes_grow_heavy = { text = "{who:Gen} silmäluomet alkavat painaa.", of = "552fb3" }
-fades_from_hand = { by = "what.number", one = "{what:Nom} haihtuu kädestäsi.", many = "{what:Nom} haihtuvat kädestäsi.", of = "e658e7" }
 gain_talent = { text = "Saat {talent:acc}.", of = "a9e72d" }
 ground_already_hallowed = { text = "Tämä maa on jo pyhitetty.", of = "25b48d" }
 ground_hallowed = { text = "Maa ympärilläsi on pyhitetty.", of = "ffb783" }
@@ -38,23 +35,18 @@ in_the_way = { text = "Jokin on tiellä.", of = "ce360b" }
 keeper_steps_into_way = { text = "{keeper:Nom} astuu tiellesi: et ole maksanut.", of = "d8fc0a" }
 kneel_and_pray = { text = "Polvistut rukoilemaan.", of = "2934e5" }
 kneel_to_consecrate = { text = "Polvistut ja rukoilet pyhittääksesi tämän paikan.", of = "0bbe1d" }
-knows_nothing_about_that = { text = "{who:Nom} ei tiedä siitä mitään.", of = "eb6c6f" }
 lacking = { text = "{words:Bare}.", of = "65c517" }
 level_consecrated = { text = "Hiljaisuus laskeutuu koko kerroksen ylle: se on pyhitetty.", of = "620227" }
 look_over_merchants_eye = { text = "Tarkastelet {what:counted_par} kauppiaan silmin.", of = "b396cd" }
 loose_a_volley = { text = "Ammut laukaussarjan!", of = "5487a9" }
 mind_already_still = { text = "Mielesi on jo tyyni.", of = "d9b486" }
-no_calling_opens_dev = { text = "Mikään tämän maailman kutsumus ei avaa arvoluokkaa `{id:bare}` {class:counted_all} (dev).", of = "1c0302" }
-no_character_to_call_dev = { text = "Kutsuttavaa hahmoa ei ole (dev).", of = "1104f3" }
 no_missile_weapon_ready = { text = "Sinulla ei ole ampuma-asetta valmiina.", of = "1c1e1e" }
 no_one_there = { text = "Siellä ei ole ketään.", of = "17fcac" }
 no_one_under_hex = { text = "Kukaan näkemistäsi ei ole kirouksesi alaisena.", of = "08559f" }
-no_prestige_class_dev = { text = "Arvoluokkaa `{id:bare}` ei ole (dev).", of = "9a0702" }
 no_quarrel_there = { text = "Sinulla ei ole siellä riitaa kenenkään kanssa.", of = "9803b9" }
 no_quarrel_with = { text = "Sinulla ei ole riitaa {who:gen} kanssa.", of = "017b57" }
 no_such_ability = { text = "Sinulla ei ole sellaista kykyä.", of = "f10090" }
 no_vital_spot = { text = "Sillä ei ole heikkoa kohtaa.", of = "897edd" }
-no_weapon_to_call = { text = "Asetta `{id:bare}` ei voi vetää esiin.", of = "a3801f" }
 nobody_beside_to_kick = { text = "Vierelläsi ei ole ketään potkaistavaa.", of = "321715" }
 nobody_there_to_charge = { text = "Siellä ei näy ketään, jota kohti rynnäköidä.", of = "4b63a1" }
 nobody_there_to_strike = { text = "Siellä ei ole ketään lyötävää.", of = "efe8e1" }
@@ -67,12 +59,9 @@ openings_in_guard_unseen = { text = "Olet löytänyt aukkoja näkymättömän vi
 openings_lost = { text = "Menetät löytämäsi aukot {who:gen} puolustuksessa.", of = "0d6c88" }
 openings_lost_unseen = { text = "Menetät löytämäsi aukot näkymättömän vihollisen puolustuksessa.", of = "0553db" }
 out_of_reach = { text = "Se on ulottumattomissa.", of = "12c2fe" }
-pale_light_in_hand = { text = "Kädessäsi on kalpeasta valosta tehty {what:counted_nom}.", of = "b75517" }
-pale_light_in_hands = { text = "Käsissäsi on kalpeasta valosta tehty {what:counted_nom}.", of = "f5d4a5" }
 peace_broken = { text = "Rauha on rikottu.", of = "239e85" }
 pluck_from_air = { text = "Nappaat {missile:acc} ilmasta.", of = "4e04d6" }
 press_your_openings = { text = "Käytät löytämiäsi aukkoja hyväksesi.", of = "4fb79e" }
-prestige_already_dev = { text = "Olet jo `{id:bare}` (dev).", of = "5610a6" }
 quails = { text = "{who:Nom} kavahtaa!", of = "1113b9" }
 quails_and_flees = { text = "{who:Nom} kavahtaa ja pakenee luotasi.", of = "8ea511" }
 receive = { text = "Sinulle ojennetaan {what:counted_nom}.", of = "2a907a" }
@@ -100,7 +89,6 @@ stop_prayer_came = { text = "{came:bare}; keskeytät rukouksesi.", of = "6555d8"
 stop_your_prayer = { text = "Keskeytät rukouksesi.", of = "b20d16" }
 strike_at_opening = { text = "Isket aukkoon.", of = "f6c4de" }
 stun = { text = "Tainnutat {who:acc}.", of = "8022ac" }
-takes_no_shape = { text = "`{id:bare}` ei ota muotoa.", of = "4c9b85" }
 tear_into_every_opening = { text = "Iskeydyt jokaiseen aukkoon!", of = "b78a27" }
 throw_what_where = { text = "Mitä heität, ja minne?", of = "ba6c34" }
 throws_nothing = { text = "`{id:bare}` ei heitä mitään.", of = "f73bee" }

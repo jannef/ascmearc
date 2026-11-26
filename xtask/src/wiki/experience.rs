@@ -26,8 +26,8 @@ fn extremes(content: &Content) -> Option<[(String, Factor); 2]> {
 
 /// The XP needed for each level, every level to the curve's top: the
 /// kills of the player's own level the level costs, its XP, the total for a character of 100 %,
-/// the totals for the quickest and the slowest race and class, whether it grows hit points and
-/// mana, and the classes whose last level it is (`ClassDef::max_level`).
+/// the totals for the quickest and the slowest race and class, and whether it grows hit points
+/// and mana.
 pub(super) fn experience_levels(content: &Content) -> String {
     let rules = content.experience();
     let examples = extremes(content);
@@ -39,7 +39,7 @@ pub(super) fn experience_levels(content: &Content) -> String {
     }
     let _ = writeln!(
         out,
-        " Hit points gained | Mana gained | The last level of |\n{align}:---:|:---:|---|"
+        " Hit points gained | Mana gained |\n{align}:---:|:---:|"
     );
     let yes = |grows: bool| if grows { "yes" } else { "no" };
     for level in 2..=rules.max_level() {
@@ -55,26 +55,12 @@ pub(super) fn experience_levels(content: &Content) -> String {
         }
         let _ = writeln!(
             out,
-            " {} | {} | {} |",
+            " {} | {} |",
             yes(level <= rules.hp_level()),
             yes(level <= rules.mana_level()),
-            last_level_of(content, level)
         );
     }
     out
-}
-
-/// The classes whose last level is `level`, by name: "every class" when it is all of them.
-fn last_level_of(content: &Content, level: u8) -> String {
-    let mut names: Vec<&str> = (content.classes().iter())
-        .filter(|c| c.max_level == level)
-        .map(|c| c.name.as_str())
-        .collect();
-    if !names.is_empty() && names.len() == content.classes().len() {
-        return "every class".to_string();
-    }
-    names.sort_unstable();
-    names.join(", ")
 }
 
 /// The race's and the class's experience factors, with what the game says of them.

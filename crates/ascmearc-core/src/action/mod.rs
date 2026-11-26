@@ -344,11 +344,6 @@ pub enum Action {
     /// thief's Thrown exploit (`use:thrown_exploit:c:12,5`). Takes the time of a throw; refused (no
     /// time) without the ability, without an opening, or for a throw it may not make.
     UseThrow(ClassActive, usize, Pos),
-    /// Use a class active in a weapon's shape, by the object's id:
-    /// the Hunter's Spirit weapon (`use:spirit_weapon:long_sword`) calls a weapon of that shape
-    /// into the main hand, for the time of a wield. Refused (no time) without the ability, or
-    /// for an id that is no melee weapon's.
-    Shape(ClassActive, String),
     /// Use a birth sign's active gift (the abilities menu's Birth sign
     /// group): Horn's grace, Blaze, and, aimed at a cell, the Transfixing stare
     /// (`use:horns_grace`, `use:blaze`, `use:transfixing_stare:12,5`). Takes the time of its
@@ -475,12 +470,6 @@ pub enum Action {
     /// Dev command: the player gains this much experience, and any levels it brings, for tests and
     /// captures. Takes no game time; recorded in replays.
     GrantXp(u32),
-    /// Dev command: the player is called into prestige class `ID` now, whatever their level,
-    /// through the calling of the run's campaign that opens it to their class, as saying its words
-    /// would: the class is theirs, and the experience the first prestige level costs with it.
-    /// Refused with no such prestige class, one held already, or no calling open to their class.
-    /// For tests and captures. Takes no game time; recorded in replays.
-    Call(String),
     /// Dev command: the player's rank in weapon skill or fighting style `skill` (an id in
     /// `data/weapon_skills.toml`) becomes `rank` (0 to 10), its marks starting from 0, as a
     /// rank risen would (the skills it raises by default rise too, and what the ranks teach is

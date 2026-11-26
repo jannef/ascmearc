@@ -355,9 +355,9 @@ choice a `weapon_skill:`, `skill:`, `damage_type:`, or `school:` phrase (a kind 
 ability `weapon_ability:<id>` (lower case, `combat.learned_ability`); an ability
 `ability:<id>`, by `Ability::id` (a weapon ability's `<weapon skill>.<id>`), the abilities menu's name ("Shield bash"); a song `song:<id>`
 (its talent's name in lower case); a birth sign `sign:<element>.<animal>` ("Fire Manticore",
-`Character::sign_arg`); a class, a prestige class, and a stance `class:<id>`, `prestige:<id>`,
+`Character::sign_arg`); a class and a stance `class:<id>`,
 `stance:<id>` (lower case, as `race:<id>`). The chargen name question is `class:` with a `race:`
-adjective; the epitaph `{class:a}` (with `prestige`); a named statue `look.fallen` ("Brakka the
+adjective; the epitaph `{class:a}`; a named statue `look.fallen` ("Brakka the
 dwarf"). Left as text: the `--character` refusal
 (`ClassDef::refuses`, developer text).
 
@@ -381,7 +381,7 @@ summary, the epitaph's "miscast {spell}").
 
 **A name shown alone, as a label** (#2000: a list row, a heading, a status bar segment) is its
 lexicon id in the `label` form (`render.rs::LABEL_FORM`, which every language has; the app's
-`ui::text::label`). A name a sentence says in lower case (a race, a class, a prestige class, a
+`ui::text::label`). A name a sentence says in lower case (a race, a class, a
 stance, a resource, a skill, a status, a weapon skill, a weapon ability, a song, a spell, a slot,
 an item class) keeps the data's name as written as its lexicon `label` form
 (`content/lexicon.rs::labelled`), so a label reads as the data writes it, internal capitals and
@@ -389,13 +389,12 @@ all ("Twin Blades", where a sentence says "twin blades"); any other phrase, a ne
 a word without a `label` form is said `bare` with a capital ("Cold-blooded", "Evocation"), and
 text as written. A translation's lexicon gives a word its own `label` form where a capital on the
 first letter is not the label. The screens that take their labels so: the status bar's effects
-and stance (`ui::conditions`), the character screen's race, classes, stance, resources, and
+and stance (`ui::conditions`), the character screen's race, class, stance, resources, and
 sign's gifts, the skills, talents, level-up, chargen (race, class, the summary's skills and
-talents), chargen talents, sign, weapon skills, magic, scribe (the school headings), shape,
+talents), chargen talents, sign, weapon skills, magic, scribe (the school headings),
 profession, craft pick, and equipment screens' rows and headings, `PagedList::new`'s item
-classes, and the Characters list and the graveyard's race and classes. A character's classes
-(`character::class_arg`) are a phrase or the nested `character.class_level` ("Bard 30") and
-`character.classes` ("Bard 30, Hunter 4"), said `label`; the dump says them in English. The
+classes, and the Characters list and the graveyard's race and class. A character's class
+(`character::class_arg`) is a phrase said `label`; the dump says it in English. The
 rest (#2028): a talent's choices in the level-up list are `Content::choice_phrase` said in
 `Choice::listed_form`, `label` for a weapon skill or a skill ("Long Blades"), `bare` for the rest
 ("fire"); the sign screen's animal and element `sign_animal:<id>` and `sign_element:<id>`; the
@@ -630,13 +629,13 @@ saved by their keys; its quest-log view (`patron.rs::commission`) is named `comm
 "what it takes" is a message (`rig.rs::takes_words`, "Reasons core composes"), as are the craft
 dialog's plan (`CraftPlan`) and a recipe's row's `takes` (#2028).
 
-`world/classes/`'s first half (`messages/classes.toml`, L4c: `ascetic`, `calling`, `charge`,
+`world/classes/`'s first half (`messages/classes.toml`, L4c: `ascetic`, `charge`,
 `class_ability`, `class`, `consecrate`, `invest`, `mark`) says the lines its data writes as
-lines of data: a calling's `message`, a talent's handed-out `news`, and a resource's `lacking`
+lines of data: a talent's handed-out `news` and a resource's `lacking`
 (`{words:Bare}.`). A missile caught is its object (`object:<id>`) or a trap's noun or "missile"
 (`word:`); a shopkeeper in the way a literal phrase of their name; the mark the player cannot
 see is a line of its own (`openings_lost_unseen`, "an unseen foe"), not a phrase. A status, a
-resource, a talent, and a dev action's class (`{class:a}`) are their lexicon ids.
+resource, and a talent are their lexicon ids.
 
 `world/turn/` (`messages/turn.toml`, L4o) and the two lines of `world/mod.rs` (`world.toml`)
 converted resting, running, the run to the stairs, the voice thrown, the glare, the weather
@@ -655,13 +654,10 @@ core composes"), a room entered its effect's line of data (`fixtures/shrine.rs::
 and the draught of an unseen shadow `creatures.cold_draught`.
 
 Its second half (L4d: `merchants_eye`, `openings`, `orison`, `rage`, `sanctuary`, `smite`,
-`song`, `spirit_weapon`, `stipend`, `thief`, `volley`, `war_cry`, `witch`) says the prayer's
+`song`, `stipend`, `thief`, `volley`, `war_cry`, `witch`) says the prayer's
 words as lines of data (`prayer:words.<face>.<field>`, `prayer:use.<id>.<face>`). A line that
 differs by how many openings an exploit spends is an entry per band. Stacks handed over or set
-down are a list of their phrases (`stipend.rs::listed_arg`, `{what:a}`); a spirit weapon's
-shape `object:<id>`, also in the line it is called with (`pale_light_in_hand`, `_hands` for a
-two-handed one: "A long sword of pale light is in your hand."), which `World::equip_saying`
-says as its `put_on`. A song is `song:<id>`. Text roles until their words are converted
+down are a list of their phrases (`stipend.rs::listed_arg`, `{what:a}`). A song is `song:<id>`. Text roles until their words are converted
 (#1949): the ids typed in a dev-style refusal (`id`).
 
 `world/skills/` (`messages/skills.toml`, L4n) names a trap by `trap:<id>` (`{trap:the}`,
@@ -939,10 +935,9 @@ joined it by hand, `{x:and}` where it said `and_list`. A wand's line nests its r
 (`wand_does`, `Option<Msg>`, the aim prompt's too). Text roles: the dice and a critical range
 (notation), the parts' and the weight's words (`Content::describe_parts`, `format_weight`), a gem's
 part name, a weapon's noun (`weapon_noun`), and what salvage would give (`object::phrase`). A
-spell's and a rod effect's description, a rod effect's name, a unique's power and lore, and a
-spirit weapon's power are lines of data (#2035: `spell:<id>.description`,
-`rod_effect:<id>.name`, `.description`, `unique:<id>.phrase`, `.lore`,
-`talent:<id>.effects.spirit_weapon.phrase`). The seal refusals (`seal::check`) are `crafting.seal_*` and
+spell's and a rod effect's description, a rod effect's name, and a unique's power and lore are
+lines of data (#2035: `spell:<id>.description`, `rod_effect:<id>.name`, `.description`,
+`unique:<id>.phrase`, `.lore`). The seal refusals (`seal::check`) are `crafting.seal_*` and
 `crystal(s)_hold(s)_nothing_of` messages; `piece::any_arg` ("an iron or brass ingot", inside a
 recipe's stock words) is composed of messages since #2035 ("Language-neutral text").
 
@@ -1319,7 +1314,6 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `talent:<id>.effects.temperature_speed.bands.<n>.slower`, `.faster` | cold blood coming into band `n` (from 0) from a quicker or a slower one |
 | `recipes:profession.<skill>.failed`, `.fumbled` | a recipe with a `failure` object failing, or its `fumble` object made on a natural 2 |
 | `rigs:rig.<id>.made`, `.snaps` | a trap rigged, or sprung on its rigger by a natural 2 |
-| `calling:<campaign>.<class>.message` | a calling made (`data` for one outside every campaign, as a dialogue's scope) |
 | `talent:<id>.effects.weapon_ranks.news`, `.take_up_skills.news` | what a talent a class table gives hands out |
 | `resources:resource.<id>.lacking` | a class active refused for too little of the resource (in `classes.lacking`) |
 | `resources:resource.<id>.ended` | the resource ending (L4o) |
@@ -1340,7 +1334,7 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `story:<scope>.<chapter>.<line>` | a background story's line (`data` for a shared chapter, else its campaign; `Chapter::line_key`, `crate::background::lines`), given `who` (the character) and its slot words `guardian`, `home`, `trade` (`story_word:` lexicon ids, `Chapter::word_id`); the data's `{name}`, `{they}`, `{Home}` are made `{who:name}`, `{who:they}`, `{home:Bare}` (`story_template`, #2062) |
 | `resources:resource.<id>.short` | a resource's status bar label ("Sta", #2062) |
 | `scenario:<id>.arrival` | a scenario's first line after the welcome (#2035) |
-| `unique:<id>.phrase`, `.lore`; `talent:<id>.effects.spirit_weapon.phrase`; `spell:<id>.description`; `rod_effect:<id>.name`, `.description`; `slot:<id>.mark` | an item's description's words from the data, and a slot's mark in the inventory (#2035, `data_line::describe_lines`) |
+| `unique:<id>.phrase`, `.lore`; `spell:<id>.description`; `rod_effect:<id>.name`, `.description`; `slot:<id>.mark` | an item's description's words from the data, and a slot's mark in the inventory (#2035, `data_line::describe_lines`) |
 | `race:<id>.description`, `class:<id>.description`, `talent:<id>.description`, `skill:<id>.description`, `scenario:<id>.description`, `terrain:<id>.description`, `chest:<band>.description`, `sign_animal:<id>.description`, `sign_element:<id>.description`, `lucky:<element>.<animal>.<day>.description`, `animated:<body>.moves`, `status:<id>.death` | what the screens and the look line show of the data (#2035, `data_line::shown_lines`; the app's `ui::text::data_line`) |
 | `dialogue:<scope>.mutter_verb` | how a creature mutters, its dialogue's `mutter` `verb` (`dialogue_line.rs`; without one, `talk.verb_mutters`) |
 | `quest:<id>.name`, `shop:<id>.title`, `encounter:<campaign>.<entry>.name`, `calendar:months.<n>`, `level:<id>.burial.epitaph`, `level:<id>.legend.<char>.epitaph` | names kept in saves ("Names kept in saves", below) |
@@ -1367,7 +1361,7 @@ the character screen's date), a burial ground's `level:<id>.burial.epitaph` (its
 `death`; without one, the message `fixtures.epitaph`) and a fixed grave's
 `level:<id>.legend.<char>.epitaph`, which `LevelState::graves` keeps by key. The patron is a
 phrase and their offer a `Speech` in the saved commission. A save's summary (the Characters
-list) keeps the race, the class, and the prestige class by id (`Summary::race_and_class` names
+list) keeps the race and the class by id (`Summary::race_and_class` names
 them as labels, `race:<id>` and `character::class_arg`, #2000); a summary another version wrote
 with the names shows them as written. A grave names its dead by `fixtures.grave_name*` with
 their race and class as `race:`/`class:` phrases (#2035, `Fallen::grave_name`); how they died
@@ -1691,10 +1685,10 @@ the clause. A unique keeps its name as the data writes it. A scroll or wand of a
 spell's genitive and its head ("tulipallon käärö").
 
 **The other towns (#2056)**: the dialogue of Holtwīc, Līctūn, Gimmwīc, Alberich's delving,
-the three wizards' towers, the roads, and the strange spirit (`dialogue/<file>.toml`, one per
+the three wizards' towers, and the roads (`dialogue/<file>.toml`, one per
 campaign file); every quest's lines (`data/quest.toml`: a giver's words in their dialect, the
 rewards' and a lure's binding in the narrator's standard); the profane gifts
-(`data/profane.toml`), the hunter's calling (`data/calling.toml`); and the campaign's place
+(`data/profane.toml`); and the campaign's place
 names, notes, arrivals, and epitaphs (`data/level.toml`, `dungeon.toml`, `town.toml`). Gimmwīc
 speaks Karelian with fixed words for the deep's Cornish (its file's header names them), Alberich
 South Ostrobothnian, the wizards kirjakieli, the rest Stadin slangi. The showcase's dialogue,
@@ -1711,7 +1705,7 @@ ally). A speaker's proper name is `speaker:<scope>` (`Content::proper_name_phras
 `lexicon/speaker.toml`: a title before a name in lower case, "kylänvanhin Peran", an old one's
 by-name after it, "Tregear-vaari"); a trader's offer's name `dialogue:<scope>.offer_name`; the
 Gilde and its ranks `guild:`/`guild_rank:` (`lexicon/guild.toml`, `guild_rank.toml`: "Weyfarerien
-killan tinaksi"); a prestige class `prestige:` (`lexicon/prestige.toml`); the background story's
+killan tinaksi"); the background story's
 lines `story:<scope>.<chapter>.<line>` and their slot words `story_word:` ("Lines of data";
 `data/story.toml`, `lexicon/story_word.toml`); a resource's status bar label
 `resources:resource.<id>.short` (`data/resources.toml`); a study's chance `words.chance_*`; and
@@ -1783,9 +1777,7 @@ perään", "Menet koboldijoukkoa vastaan" (`data/encounter.toml` names carry `ge
 `slot.form`, dropping "joukko" for the members); hardened leather is the adjective **karkaistu**
 ("karkaistu nahkalakki", not "kovanahkainen nahkalakki"; its `compound` stays "kovanahka"); and
 the materials' explicit `gen` forms ("piikiven") are gone, since they hijacked the agreeing
-adjective's genitive ("piikivisen sidonnan käärö") and nothing said a material "of". A spirit
-weapon "of pale light" is made of spirit-stuff, so "kalpeasta valosta tehty" stands (in the game
-the shape is always a bare melee weapon).
+adjective's genitive ("piikivisen sidonnan käärö") and nothing said a material "of".
 
 **Owner review 3 (#2074)**: a third rendered sample (`fi-review-3.md`), six corrections, each a
 class, swept over the files. **Names**: an adjective epithet is part of the name and agrees

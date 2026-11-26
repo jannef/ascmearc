@@ -36,7 +36,6 @@ aimed_at_nothing = "That is aimed at nothing."
 attack_damage = "{dice:bare} {kinds:bare}"
 attack_kind_or = "{first:bare} or {rest:bare}"
 attack_listed = "{first:bare}, {rest:bare}"
-attack_pierces = "pierces armour"
 attack_range = "range {n:bare}"
 # Where an attack comes from, a label said `Bare` ("Main hand").
 attack_source_main_hand = "main hand"
@@ -155,7 +154,6 @@ verb_shoots = "shoots"
 where = "Where?"
 which_way = "Which way?"
 whirls = "{who:The} whirls to face you."
-will_not_leave_hand = "It will not leave your hand."
 you_die = "You die..."
 
 [parries]

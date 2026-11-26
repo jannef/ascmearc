@@ -191,8 +191,7 @@ impl<'a> Lore<'a> {
 
     /// `stack` as the item lists name it (`items.listed`): [`Lore::phrase`] counted, with what
     /// it gives in numbers after it, as the player knows it (`magic::numbers`): "a long sword (+0
-    /// hit, 1d8)", "a leather jerkin (Dv +1, Pv 1)"; a spirit weapon marked so, "a long sword
-    /// (+3 hit, 1d9) (spirit)". A message the screens render in their language
+    /// hit, 1d8)", "a leather jerkin (Dv +1, Pv 1)". A message the screens render in their language
     /// ([`crate::messages::english_msg`] in English).
     pub fn listed(&self, stack: &Stack) -> Msg {
         let numbers = crate::magic::Numbers::of(stack, self.content).words(self.content);
@@ -201,13 +200,7 @@ impl<'a> Lore<'a> {
                 .role("numbers", n)
                 .into()
         });
-        let spirit = match stack.is_spirit() {
-            true => msg::items::LISTED_SPIRIT.into(),
-            false => empty(),
-        };
-        (Msg::new(msg::items::LISTED).role("what", self.phrase(stack)))
-            .role("numbers", numbers)
-            .role("spirit", spirit)
+        (Msg::new(msg::items::LISTED).role("what", self.phrase(stack))).role("numbers", numbers)
     }
 
     /// What `stack` is called as the player knows it, without an article or count: "scroll

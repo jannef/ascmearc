@@ -54,22 +54,17 @@ impl RollCount {
     }
 }
 
-/// The skill rolls total level `level` gives `player` (of `character`): the `rolls` of the
-/// class the level falls in, their race's, Intelligence's (the
+/// The skill rolls a level gives `player` (of `character`): the `rolls` of their class, their
+/// race's, Intelligence's (the
 /// score as the character screen shows it without status effects), and their talents' (Quick
 /// learner); none while they are trained in no skill.
-pub fn roll_count(
-    content: &Content,
-    player: &Actor,
-    character: Option<&Character>,
-    level: u8,
-) -> RollCount {
+pub fn roll_count(content: &Content, player: &Actor, character: Option<&Character>) -> RollCount {
     if player.skills.is_empty() {
         return RollCount::default();
     }
     let (class, race) = match character {
         Some(c) => (
-            (c.class_of(content, level)).map_or(0, |(table, _)| table.rolls()),
+            c.spec.class(content).map_or(0, |class| class.rolls),
             c.spec.race(content).map_or(0, |race| race.rolls),
         ),
         None => (0, 0),
@@ -121,7 +116,7 @@ impl SkillRoll {
 
 /// The level-up roll on `skill`, trained as `trained`, of a player of `character` whose trades
 /// are `trades` (`CraftMods::trades`): the die the skill's marks set on the ladder, one step up
-/// for a skill the class is known for (or the prestige class, once called: the union of both) or a
+/// for a skill the class is known for or a
 /// trade (the step is one, whatever gives it), +1 for any other skill the class trains or a skill
 /// the race trains, halved from the soft cap on.
 pub fn skill_roll(
@@ -132,10 +127,8 @@ pub fn skill_roll(
     trained: Trained,
 ) -> SkillRoll {
     let class = character.and_then(|c| c.spec.class(content).ok());
-    let prestige = character.and_then(|c| c.prestige(content));
     let race = character.and_then(|c| c.spec.race(content).ok());
-    let classes = class.is_some_and(|c| c.is_known_for(skill))
-        || prestige.is_some_and(|p| p.known_for.contains(&skill));
+    let classes = class.is_some_and(|c| c.is_known_for(skill));
     let trade = !classes && trades.contains(&skill);
     let known = classes || trade;
     let trains = class.is_some_and(|c| c.trains(skill) && !classes);
@@ -159,10 +152,10 @@ pub fn skill_roll(
 }
 
 impl World {
-    /// The skill rolls total level `level` gives the player ([`roll_count`]).
-    pub(super) fn level_rolls(&self, level: u8) -> u8 {
+    /// The skill rolls a level gives the player ([`roll_count`]).
+    pub(super) fn level_rolls(&self) -> u8 {
         let character = self.state.character.as_ref();
-        roll_count(&self.content, self.state.player(), character, level).total()
+        roll_count(&self.content, self.state.player(), character).total()
     }
 
     /// `advance:SKILL` ([`crate::action::Action::Advance`]): one of the level's skill rolls on

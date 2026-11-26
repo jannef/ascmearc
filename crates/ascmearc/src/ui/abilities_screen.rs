@@ -394,7 +394,6 @@ pub(super) fn needs(aim: Aim) -> String {
         Aim::Ailment => T::AIM_AILMENT,
         Aim::Item(_) => T::AIM_ITEM,
         Aim::Throw => T::AIM_THROW,
-        Aim::Shape => T::AIM_SHAPE,
         Aim::Rig => T::AIM_RIG,
         Aim::Spell => T::AIM_SPELL,
         // It opens the profession's list, as the ellipsis in its name says.

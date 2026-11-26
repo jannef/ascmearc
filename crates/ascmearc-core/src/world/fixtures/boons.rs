@@ -72,7 +72,7 @@ impl World {
     pub(super) fn gain_level(&mut self) -> bool {
         let rules = self.content.experience();
         let level = self.player_level();
-        if level >= self.level_cap() {
+        if level >= rules.max_level() {
             return false;
         }
         let factor = self.experience_factor();
@@ -103,14 +103,14 @@ impl World {
         let mods = self.state.player().talent_mods(&content).into_owned();
         let mut hp = mods.vigour.hp_at(level) - mods.vigour.hp_at(below);
         if level <= rules.hp_level() {
-            hp += self.level_hp(&content, level);
+            hp += self.level_hp(&content);
         }
         if let Some(bonus) = mods.vigour.hardened.filter(|_| level > rules.hp_level()) {
-            hp += self.level_hp(&content, level) + bonus;
+            hp += self.level_hp(&content) + bonus;
         }
         let mut mana = mods.magic.mana_at(level) - mods.magic.mana_at(below);
         if level <= rules.mana_level() {
-            mana += self.level_mana(&content, level);
+            mana += self.level_mana(&content);
         }
         self.state.experience = rules.threshold_for(below, factor);
         let me = self.player_mut();

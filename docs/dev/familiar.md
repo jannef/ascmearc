@@ -80,7 +80,7 @@ familiar". `world/allies/familiar.rs`:
   the start, or a later Familiar talent), `calling_draw` on its keyed stream `familiar/calling/player` (two draws: the
   jackpot, then the pick;
   `bargain_kinds` join the race's list, never the rares, from `bargain_level` of the character's
-  class level, the first of `Character::class_levels`), and that one is remembered. `familiar_cell` (the player's cell on the
+  level), and that one is remembered. `familiar_cell` (the player's cell on the
   overworld, where `make_familiar` puts it in the retinue; else `free_cell_near`, `None` when that
   has only the player's own cell: "Nothing comes.", the hour spent; `bring_familiar` then makes none
   either). The last turn's perception did not know the new actor, so it perceives once more.

@@ -340,17 +340,6 @@ fn a_unique_is_never_worked() {
 }
 
 #[test]
-fn a_spirit_weapon_is_refused() {
-    let mut w = world(false);
-    let sword = object(&w, "long_sword");
-    w.player_mut().inventory.push(Stack::spirit(sword));
-    let before = w.state.time;
-    w.apply(&Action::Temper { item: 0 });
-    assert!(said(&w, "Only metal can be worked at an anvil."));
-    assert_eq!(w.state.time, before, "refused, no time");
-}
-
-#[test]
 fn an_attempt_takes_ten_minutes_identifies_and_trains_metalcraft() {
     let mut w = world(false);
     magic_sword(&mut w);

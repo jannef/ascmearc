@@ -102,11 +102,11 @@ impl World {
         let every = content.experience().talent_every();
         let character = self.state.character.clone();
         for level in from.saturating_add(1)..=to {
-            // Its skill rolls and bonus pick are the class of the level's.
-            let rolls = self.level_rolls(level);
+            // Its skill rolls, and the class's bonus pick.
+            let rolls = self.level_rolls();
             let bonus = (character.as_ref())
-                .and_then(|c| c.class_of(&content, level))
-                .map_or(0, |(table, own)| table.bonus_at(own));
+                .and_then(|c| c.spec.class(&content).ok())
+                .map_or(0, |class| class.bonus_at(level));
             // Versatile (the humans'): one more pick at its levels.
             let more = self
                 .state
@@ -158,7 +158,7 @@ impl World {
             // Hardened: every level past the hit point levels adds a level's hit points again.
             let hardened = self.state.player().talent_mods(&content).vigour.hardened;
             if let Some(bonus) = hardened.filter(|_| level > content.experience().hp_level()) {
-                let hp = self.level_hp(&content, level) + bonus;
+                let hp = self.level_hp(&content) + bonus;
                 let player = self.player_mut();
                 player.hp_base += hp;
                 player.hp += hp;

@@ -1,10 +1,9 @@
 # The classes (`world/classes/`): the class actives and their refusals, the ascetic's ki tricks,
-# Charge, Consecrate, the calling, the classes' talents given, the mark of openings, and the
-# business partner's stake; Exploit, the merchant's eye, the prayer, Sanctuary, the smites, the
-# songs, the spirit weapon, the stipend, Rage, Lurk, Volley, War cry, and Cackle. Ids
-# alphabetical (`docs/dev/localization.md` "Literal lines"). The lines the data writes (a
-# calling's `message`, a talent's handed-out `news`, a resource's `lacking`, the prayer's words)
-# are lines of data, said by their keys (`content/data_line.rs`).
+# Charge, Consecrate, the classes' talents given, the mark of openings, and the business
+# partner's stake; Exploit, the merchant's eye, the prayer, Sanctuary, the smites, the songs, the
+# stipend, Rage, Lurk, Volley, War cry, and Cackle. Ids alphabetical (`docs/dev/localization.md`
+# "Literal lines"). The lines the data writes (a talent's handed-out `news`, a resource's
+# `lacking`, the prayer's words) are lines of data, said by their keys (`content/data_line.rs`).
 #
 # Roles: `who` is a creature a line is about, as the player calls it ("the kobold", "Grimbold");
 # `keeper` a shopkeeper by name; `missile` what flew ("the arrow"); `what` a stack as the player
@@ -12,9 +11,8 @@
 # "raging"), `name` a resource's (`resource:<id>`), `talent` a talent's
 # (`talent:<id>`), and `song` a song's (`song:<id>`); `reason` is why an ability cannot be used, a
 # message of its own (`messages/ability.toml`). `came` is who came and how ("The kobold comes
-# close"), from `turn/rest.rs`. `class` is a class by its name (`class:<id>`, dev) and `id` an id
-# as typed: a prestige
-# class's (dev), a class active's, or a shape's. `gold` is a number, said in digits.
+# close"), from `turn/rest.rs`. `id` is a class active's id as typed (dev). `gold` is a number,
+# said in digits.
 
 # `id`: the class active as typed (dev).
 aims_at_no_place = "`{id:bare}` aims at no place."
@@ -24,9 +22,6 @@ already_light_on_feet = "You are already light on your feet."
 ask_where = "Where?"
 beside_it_already = "You are beside it already."
 cackle = "You cackle."
-call_in_what_shape = "Call it in what shape?"
-# `what`: the object type asked for, which is no weapon for the hand.
-cannot_call_no_weapon = "You cannot call {what:a}: it is no weapon for the hand."
 cannot_charge_on_overworld = "You cannot charge on the overworld."
 cannot_charge_while_swimming = "You cannot charge while swimming."
 # `what`: the stack, as the player knows it.
@@ -43,8 +38,6 @@ draw_old_soldiers_wind = "You draw on an old soldier's wind."
 dread_settles = "A dread settles on the ground about you."
 # `who`: the creature the lullaby made drowsy.
 eyes_grow_heavy = "{who:Poss} eyes grow heavy."
-# `what`: the spirit weapon's shape, an object type.
-fades_from_hand = "{what:The} fade{what:s} from your hand."
 # `talent`: the talent the player's class gave them.
 gain_talent = "You gain {talent:bare}."
 ground_already_hallowed = "This ground is already hallowed."
@@ -60,8 +53,6 @@ in_the_way = "Something is in the way."
 keeper_steps_into_way = "{keeper:The} step{keeper:s} into your way: you haven't paid."
 kneel_and_pray = "You kneel and pray."
 kneel_to_consecrate = "You kneel and pray to consecrate this place."
-# `who`: the one the player asked about a calling not open to them.
-knows_nothing_about_that = "{who:The} know{who:s} nothing about that."
 # `words`: the resource's `lacking`, a line of data ("you have not the rage for it").
 lacking = "{words:Bare}."
 level_consecrated = "A stillness settles over the whole level: it is consecrated."
@@ -69,20 +60,14 @@ level_consecrated = "A stillness settles over the whole level: it is consecrated
 look_over_merchants_eye = "You look over {what:a} with a merchant's eye."
 loose_a_volley = "You loose a volley!"
 mind_already_still = "Your mind is already still."
-# A dev action's: `id`, the prestige class as typed; `class`, the player's class.
-no_calling_opens_dev = "No calling of this world opens `{id:bare}` to {class:a} (dev)."
-no_character_to_call_dev = "There is no character to call (dev)."
 no_missile_weapon_ready = "You have no missile weapon ready."
 no_one_there = "There is no one there."
 no_one_under_hex = "No one you see is under your hex."
-no_prestige_class_dev = "There is no prestige class `{id:bare}` (dev)."
 no_quarrel_there = "You have no quarrel there."
 # `who`: the creature that is no foe of the player's.
 no_quarrel_with = "You have no quarrel with {who:the}."
 no_such_ability = "You have no such ability."
 no_vital_spot = "It has no vital spot."
-# `id`: the shape as typed.
-no_weapon_to_call = "There is no weapon `{id:bare}` to call."
 nobody_beside_to_kick = "There is nobody beside you to kick."
 nobody_there_to_charge = "There is nobody there you see to charge."
 nobody_there_to_strike = "There is nobody there to strike."
@@ -97,16 +82,10 @@ openings_in_guard_unseen = "Your openings are in an unseen foe's guard."
 openings_lost = "Your openings on {who:the} are lost."
 openings_lost_unseen = "Your openings on an unseen foe are lost."
 out_of_reach = "That is out of reach."
-# `what`: the spirit weapon called, an object type; a one-handed one is in the hand, a
-# two-handed one in both.
-pale_light_in_hand = "{what:A} of pale light is in your hand."
-pale_light_in_hands = "{what:A} of pale light is in your hands."
 peace_broken = "The peace is broken."
 # `missile`: what flew, a shot's or a throw's object or a trap's noun.
 pluck_from_air = "You pluck {missile:the} from the air."
 press_your_openings = "You press your openings."
-# A dev action's: `id`, the prestige class the player holds.
-prestige_already_dev = "You are a {id:bare} already (dev)."
 # `who`: the creature the smite frightened.
 quails = "{who:The} quail{who:s}!"
 # `who`: the creature the war cry cowed.
@@ -145,8 +124,6 @@ stop_your_prayer = "You stop your prayer."
 strike_at_opening = "You strike at the opening."
 # `who`: the creature the player's palm stunned.
 stun = "You stun {who:the}."
-# `id`: the class active as typed (dev).
-takes_no_shape = "`{id:bare}` takes no shape."
 tear_into_every_opening = "You tear into every opening!"
 throw_what_where = "Throw what, and where?"
 # `id`: the class active as typed (dev).

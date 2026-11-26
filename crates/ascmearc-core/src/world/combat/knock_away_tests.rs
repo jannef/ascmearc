@@ -195,28 +195,6 @@ fn with_no_open_cell_beside_the_player_the_weapon_stays_in_hand() {
 }
 
 #[test]
-fn a_spirit_weapon_knocked_away_fades() {
-    let mut w = arena(7);
-    w.player_mut().inventory.clear();
-    w.player_mut().equipment = Default::default();
-    let sword = object(&w, "long_sword");
-    wield(&mut w, Stack::spirit(sword));
-    let me = w.player_pos();
-    let foe = put(&mut w, "ultroloth", me.step(Dir::E));
-    w.perceive(&mut Vec::new());
-    knock_until(&mut w, foe, 200).expect("knocked from the hand");
-    assert!(swords_on_floor(&w).is_empty(), "nothing lies anywhere");
-    assert!(w.state.player().inventory.is_empty());
-    assert_eq!(
-        last(&w),
-        [
-            "The ultroloth knocks your long sword from your hand!",
-            "The long sword fades from your hand."
-        ]
-    );
-}
-
-#[test]
 fn only_a_bearer_s_melee_hit_disarms() {
     let mut w = arena(7);
     let me = w.player_pos();

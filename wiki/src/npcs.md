@@ -61,22 +61,6 @@ few words' time: half a normal action, 3 seconds (see
 Some people have work for you. Their [quests](quests.md) are topics too, listed first. See
 [Quests](quests.md).
 
-### The Strange Spirit
-
-In the Ascmearc a **[strange spirit](creatures.md#creature-strange-spirit)** may be met by day on
-the roads, in the vales, on the downs, and in the woods (see [Encounters](encounters.md)). Only a
-[bard](class-bard.md) who has reached level 30, the top of the class, and who has not yet been called into another, meets
-it.
-
-It is [peaceful](encounters.md): hail it and it stands where it is and waits. It speaks only to
-the good (Kind or better on the [alignment](alignment.md) scale) and looks through anyone else.
-Speak to it and it grants you the calling: you become a Hunter (see
-[Prestige classes](prestige-classes.md#prestige-classes)), and it fades.
-
-It has one hit point and never fights back. Killed, it leaves no corpse and is worth no
-experience, and killing it is killing a peaceful good soul. The road may bring it again while the
-class is still open to you.
-
 ### Morwenna
 
 **Morwenna** reads [magic crystals](crystals.md). She is a deep gnome who stands by a brazier on

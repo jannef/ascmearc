@@ -12,7 +12,7 @@
 //! - **`both`** (the rust monster's feelers and the black pudding, #1138): each of the two, at
 //!   the chance.
 //! - The chance is halved for a player who resists the damage type of the kind's id at all
-//!   (acid, fire; rust has none). A spirit weapon and a stack of several are left be.
+//!   (acid, fire; rust has none). A stack of several is left be.
 //! - The piece drawn then takes the harm ([`World::harm_item`]): its material withstands it by
 //!   its `resists` chance of the kind (mithril and gold nearly always, iron seldom), else it is
 //!   damaged, and one damaged already is destroyed: "The acid eats your chain mail away."
@@ -153,7 +153,7 @@ impl World {
 
     /// Where in the player's pack lies what acid of `what` may reach, the body armour first: what
     /// they wear (armour and shields) for `armour`, what struck (`with`, else the main hand's
-    /// weapon) for `weapon`. Never a spirit weapon or a stack of several.
+    /// weapon) for `weapon`. Never a stack of several.
     fn exposed(&self, what: CorrodesWhat, with: Option<ObjectId>) -> Vec<usize> {
         let content = &self.content;
         let me = self.state.player();
@@ -188,7 +188,7 @@ impl World {
         };
         items.retain(|&item| {
             let stack = &me.inventory[item];
-            stack.count == 1 && !stack.is_spirit()
+            stack.count == 1
         });
         items
     }

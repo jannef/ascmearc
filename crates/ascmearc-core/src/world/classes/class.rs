@@ -58,35 +58,32 @@ fn raise_ranks(content: &Content, actor: &mut Actor, to: u8, skills: &[String]) 
     }
 }
 
-/// Gives `actor` (of `character`; none without one) the talents their classes give up to total
-/// level `level` that it does not hold yet, table by table (the class's to its cap, a prestige
-/// class's to its own level), each with what it hands out; returns
-/// each talent given, in table order.
+/// Gives `actor` (of `character`; none without one) the talents their class gives up to level
+/// `level` that it does not hold yet, each with what it hands out; returns each talent given, in
+/// table order.
 pub(in crate::world) fn grant(
     content: &Content,
     character: Option<&Character>,
     actor: &mut Actor,
     level: u8,
 ) -> Vec<TalentId> {
-    let Some(character) = character else {
+    let Some(class) = character.and_then(|c| c.spec.class(content).ok()) else {
         return Vec::new();
     };
     let book = content.talents();
     let mut given = Vec::new();
-    for (table, own) in character.class_levels(content, level) {
-        for id in table.abilities_to(book, own) {
-            let def = book.get(id);
-            if !actor.talents.holds(&def.id, None) {
-                actor.talents.take(&def.id, None);
-                hand_out(content, actor, def, level);
-                given.push(id);
-            }
+    for id in class.abilities_to(book, level) {
+        let def = book.get(id);
+        if !actor.talents.holds(&def.id, None) {
+            actor.talents.take(&def.id, None);
+            hand_out(content, actor, def, level);
+            given.push(id);
         }
     }
     given
 }
 
-/// The talents the class of total level `level` gives at exactly that level that `actor`
+/// The talents the class gives at exactly level `level` that `actor`
 /// already holds: a pickable the table names (Fast healer, Beast-friend, Evasion, Riposte) that
 /// the player took as a pick before the class gave it. Each brings a talent pick in its place
 /// (#790), so a pick made early is never lost to the table.
@@ -96,22 +93,22 @@ pub(in crate::world) fn held_already(
     actor: &Actor,
     level: u8,
 ) -> Vec<TalentId> {
-    let Some((table, own)) = character.and_then(|c| c.class_of(content, level)) else {
+    let Some(class) = character.and_then(|c| c.spec.class(content).ok()) else {
         return Vec::new();
     };
     let book = content.talents();
     if !book.has_class_tree() {
         return Vec::new();
     }
-    (table.abilities().iter())
-        .filter(|(l, _)| *l == own)
+    (class.abilities.iter())
+        .filter(|(l, _)| *l == level)
         .filter_map(|(_, id)| book.id(id))
         .filter(|&id| actor.talents.holds(&book.get(id).id, None))
         .collect()
 }
 
 impl World {
-    /// Gives the player what their classes give up to `level` that they lack ([`grant`]); with
+    /// Gives the player what their class gives up to `level` that they lack ([`grant`]); with
     /// `news`, each is news of the level ("You gain Fencing.").
     pub(in crate::world) fn grant_class(&mut self, level: u8, news: bool) {
         let content = self.content.clone();
@@ -144,8 +141,8 @@ impl World {
         }
     }
 
-    /// The trees a bonus talent pick brought by total level `level` may come from (the class of
-    /// that level's `bonus_talents`; level 1's, the creation bonus picks, the class's
+    /// The trees a bonus talent pick brought by level `level` may come from (the class's
+    /// `bonus_talents`; level 1's, the creation bonus picks, the class's
     /// `creation_bonus`), in display order; `None`: any tree.
     pub(crate) fn bonus_trees_at(&self, level: u8) -> Option<Vec<crate::content::TreeId>> {
         let character = self.state.character.as_ref()?;
@@ -156,8 +153,8 @@ impl World {
         if creation.is_some() {
             return creation;
         }
-        let (table, _) = character.class_of(&self.content, level)?;
-        table.bonus_trees(self.content.talents())
+        let class = character.spec.class(&self.content).ok()?;
+        class.bonus_trees(self.content.talents())
     }
 
     /// `seconds` of carrying pass for the player (Connoisseur, or the Fyrwit's Sense power,

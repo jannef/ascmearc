@@ -276,7 +276,7 @@ Over a run (e.g. after a `--replay` that walks onto a pile):
   be taken apart, as the Salvage ability asks), `make-do` (the damaged things carried, as Make do
   and mend asks), `cut` (the loose gems, as Jewelcraft's Cut asks), `give` (what fits a neck, as
   the Give ability asks).
-- `shape` (the Spirit weapon's shape list), `scribe` (the Scribe ability's spell list), `rig`
+- `scribe` (the Scribe ability's spell list), `rig`
   (Trapwright's rig list), `profession` (the first profession's recipes, Metalcraft's, as its row
   of the abilities menu opens them), `craft-pick` (the forging wizard of the first recipe with a
   choice, the dagger; its steps are reached from `profession` with `--keys`), and `abilities`
@@ -397,8 +397,7 @@ and are **dev-only**.
 
 - `inventory`: what the player carries, grouped by item class under `Class:` header lines as the
   screens group it (`Melee weapons:`), each stack by its position as action text names it with
-  its numbers as the lists show them, `a long sword (+0 hit, 1d8)`, a spirit weapon marked
-  `(spirit)`, a wand whose type is known with its rung, `(rung 2)`, a flask whose type is known
+  its numbers as the lists show them, `a long sword (+0 hit, 1d8)`, a wand whose type is known with its rung, `(rung 2)`, a flask whose type is known
   with its throw's range, `(throw 6)`, a base item the affixes it truly holds against its
   capacity, `(holds 1/2)` (docs/dev/enchanting.md), and weighs, worn and wielded things marked,
   `b - a leather jerkin (being worn) (3.5 kg)`, and in a shop what is unpaid, `c - a dagger
@@ -408,8 +407,7 @@ and are **dev-only**.
 - `equipment`: the player's slots by letter, `c Body: a leather jerkin (b)`, `-` when empty,
   `- (horns)` when a talent bars the slot (a profane gift; docs/dev/equipment.md).
 - `stats`: the player's name, race, gender, and class (`Name Brakka`, `Race Dwarf`, `Class
-  Bard`; `Class Bard 30` at the class's cap; `Class Bard 30, Hunter 4` once called into a
-  prestige class), age, birth date, and sign with a lucky day's title (`Age 27`, `Born 3
+  Bard`), age, birth date, and sign with a lucky day's title (`Age 27`, `Born 3
   Seedtide 1417`, `Sign Wood Salamander, the Racer`), then their own scores as the rules read
   them (`Strength 12`), then their alignment band, `Alignment Kind` (never the score), then their
   combat stance when it is not neutral, `Stance Frenzy`, then each guild they belong to with
@@ -424,7 +422,7 @@ and are **dev-only**.
   marked `Duelist 1 (0%), in use`.
 - `attacks`: the player's ready attacks as the character screen shows them: `Main hand long
   sword: +4 to hit, 1d9+2 slashing`, `Off hand dagger: ...`, `Missile short bow: +3 to hit, 1d6
-  piercing, range 10`, a spirit weapon's ending `, pierces armour`; unidentified magic left out.
+  piercing, range 10`; unidentified magic left out.
 - `talents`: the player's talents in the order taken, `Hardy`, `Skill focus (stealth)`, `Weapon
   focus (long blades)`, a birth sign's gifts first, `Fleet-footed (sign)`, `Slight (sign,
   flaw)`, those their class gives marked `Haggler (class)`, a profane gift `Oak-hearted
@@ -495,9 +493,7 @@ On a level with a danger, `truth` and `actors` start with `danger 3 population 2
 - `progress`: the level-up choices due, `due level 3: 1 talent`, `due level 30: 1 talent, 1
   bonus talent`, a dwarf's free Sworn foe `due level 10: 2 skill rolls, 1 free talent`; the talents the player may take now by id with their choices, `takeable
   healthy, weapon_focus:{bows,slings}`; the first kills that paid; each rolled quest's draw and
-  the size of its pool now, `roll slug_charm scroll_of_lightning x1 of 4`; each calling of the
-  run's campaign and where the player stands with it, `calling hunter: open`, `calling hunter:
-  level 30 not met`, `calling hunter: not for a thief`, `called hunter at 30`; the named monsters
+  the size of its pool now, `roll slug_charm scroll_of_lightning x1 of 4`; the named monsters
   dead, `slain fire_drake`; a dwarf's oath kills and the bands crossed, once there are any
   (`docs/dev/oaths.md`), `oath kills 75, 3 bands`; the two laws broken (`docs/dev/alignment.md`), once either is,
   `laws broken: ate 1 sapient, summoned 0 fiend`, and for a ratfolk the craving's rows crossed
@@ -549,8 +545,7 @@ messages, heard sounds, and, with `--state`, the full world state; and:
 - `parting`: a quarrel's parting pending: `who` (the wizard), `text`, `choices` (the ids), or null.
 - `encounter`: the overworld encounter pending: `entry`, `name`, `outcome`, `text`, `choices`
   (`id`), or null; with `--state` also the dev `encounter_tables`, those
-  matching the player's cell, and the dev `callings`, each of the campaign's with its `class`,
-  `level`, `from`, and `status`: `open`, `level_not_met`, `not_from`, `called`.
+  matching the player's cell.
 - `effects` (status ids), `diseases` (the known ones' ids).
 - `death`: `{turn, time, place, by, of, cause, trap}` or null; `of` the status that killed,
   `cause` when neither a creature nor a status effect killed them ("Starved to death", choking,
@@ -569,9 +564,8 @@ messages, heard sounds, and, with `--state`, the full world state; and:
 - `talents` (in the order taken: `id`, `name`, `choice`, `class`, `granted`, `flaw`, and
   `profane`, a profane gift's kind, `boon`, `mixed`, or `bane`, left out otherwise).
 - `character`: `name`, `race`, `gender`, `class`, `raised`, `age`, `born` (`{year, month,
-  day}`), `sign` (`{animal, element}`), and `lucky`, a lucky day's title, only for one born on it,
-  `prestige`, the prestige class once called, and `classes`, every class with its own level,
-  `[{ class, level }]`; or null.
+  day}`), `sign` (`{animal, element}`), and `lucky`, a lucky day's title, only for one born on it;
+  or null.
 - `due`: the level-up choices due: `level`, `talents`, `rolls`, `bonus`, or null.
 - `abilities` (in menu order: `id`, `source`, `aim`, and `unavailable`, the reason's id or null).
 - `quests`: the log: `id`, `name`, `kind`, `active`, `completed`, `giver`, `target` (what a
@@ -820,7 +814,7 @@ All in docs/dev/crafting.md unless named.
   `data/rules/salvage.toml`'s difficulty plus the material's `work`; made, half its weight back as
   stock, never more than it weighs, a material too little for a piece as scrap, a gem whole; failed, lost, a gem a cut or a size less and shattered only on a natural 2;
   the item gone either way; refused, with no time, for a stack worn or wielded, protected,
-  unpaid, a spirit weapon, with nothing a profession works, or too few of a stackable thing).
+  unpaid, with nothing a profession works, or too few of a stackable thing).
 - `rig:tripwire:E` rigs a trap on the cell east of the player (the craftsperson's Trapwright,
   from level 25: a rig of `data/rigs.toml`, its `seconds` of `craft` turns, then a Dexterity
   check plus Woodcraft's `craft` points; made, the trap placed, known, and rigged, its kills the
@@ -862,9 +856,6 @@ All in docs/dev/crafting.md unless named.
 - A spell the player knows too, by its id in `assets/data/spells/`, paid in mana, `use:haste`,
   or aimed at a cell, `use:magic_missile:12,5`, or cast on inventory stack `c`,
   `use:identify:c` (any `use:ID` that is no class or birth sign ability is a spell).
-- A class active in a weapon's shape by the object's id, `use:spirit_weapon:long_sword` (the
-  Hunter's Spirit weapon: a weapon of spirit-stuff in the main hand, for a wield; it fades when
-  it leaves the hand, `docs/dev/equipment.md`).
 - A weapon active after those, for its stamina and time, `use:lunge:E` aimed in a direction (in
   upper case: a lower-case letter is a stack), `use:shield_wall`, or aimed at a cell,
   `use:piercing_shot:12,5` (docs/dev/weapon-abilities.md).
@@ -877,9 +868,7 @@ All in docs/dev/crafting.md unless named.
   declining (#422); a service is asked for by its id the same way, `ask:E:cure`, paid in gold and
   taking a chat's time (`ask:E:train_mining` Alberich's, a skill taught, offered only while
   untrained in it), and a trader's one offer too, `ask:E:wares` buying it (the pedlar's;
-  docs/dev/npcs.md "A trader's offer"), and a calling's, `ask:E:life_before_death`, offered only
-  while the calling is open, calling the player and taking a chat's time (the strange spirit's;
-  docs/dev/npcs.md "Callings by topic"); docs/dev/npcs.md).
+  docs/dev/npcs.md "A trader's offer"); docs/dev/npcs.md).
 - `throw_voice:X,Y` throws the player's voice to level cell (X, Y) (one they see, within 6; the
   bard's, refused without the ability).
 - `order:follow`, `order:stay`, and `order:hunt:X,Y` give every ally of the player's on the level
@@ -911,11 +900,6 @@ None takes game time unless said.
   level 3).
 - `rank:long_blades:5`: a weapon skill or style at that rank, 0 to 10, and saying what it
   teaches, as a rank risen would (docs/dev/weapon-abilities.md).
-- `call:hunter`: the player is called into prestige class `hunter`, an id in
-  `assets/data/prestige/`, whatever their level, through the calling of the run's campaign that
-  opens it to their class: the class is theirs and exactly the experience the first prestige
-  level costs with it, so the level-up comes at once; refused with no such class, one held
-  already, or no calling open to their class (docs/dev/experience.md "Prestige classes").
 - `skip:DURATION` skips hours of game time (the dev hour skip; F6 records `skip:1h`).
 - `weather:KIND` is the weather override, `KIND` = `clear`, `overcast`, `rain`, `heavy`, for
   three hours of game time.

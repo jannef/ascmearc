@@ -1063,7 +1063,7 @@ impl<'a> PerceptionView<'a> {
     /// Where a level's skill rolls come from now: the level-up screen names
     /// it (the owner's call: numbers on that screen).
     pub fn roll_count(&self) -> RollCount {
-        world::roll_count(self.content, self.player, self.character, self.due_level())
+        world::roll_count(self.content, self.player, self.character)
     }
 
     /// What a level-up roll on trained skill `skill` would be: the dice and what set them (the
@@ -1102,13 +1102,11 @@ impl<'a> PerceptionView<'a> {
     pub fn own_talents(&self) -> Vec<OwnTalent> {
         let book = self.content.talents();
         let level = self.own_experience().level;
-        // The class abilities held: every table's (the prestige class's too), to its level.
+        // The class abilities held, to the player's level.
         let class: Vec<crate::content::TalentId> = (self.character)
-            .map(|c| c.class_levels(self.content, level))
-            .unwrap_or_default()
-            .into_iter()
-            .flat_map(|(table, own)| table.abilities_to(book, own))
-            .collect();
+            .and_then(|c| c.spec.class(self.content).ok())
+            .map(|class| class.abilities_to(book, level))
+            .unwrap_or_default();
         // The rising is spent once it is used up: the first with no Second rising, else both; a
         // profane gift's (Twice-born) once its own once is.
         let risen = self.progress.happened(crate::world::RISEN);

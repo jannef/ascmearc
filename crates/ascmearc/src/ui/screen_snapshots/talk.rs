@@ -176,22 +176,6 @@ fn quest_refused_as_too_early() {
     check_with(&case, content);
 }
 
-/// The hermit's oath (#1174): a calling's topic, offered to a bard whose class is full (the dev
-/// experience and level-ups bring the showcase's bard to 30). Asking it is the core's
-/// (`world/campaigns/strange_spirit_tests.rs`): the level-up it brings would cover this screen.
-#[test]
-fn the_oath_topic() {
-    let content = Arc::new(ascmearc_assets::content().expect("content"));
-    let case = Case {
-        name: "dialogue-calling-topic",
-        character: Some("human,male,bard"),
-        actions: concat!(hermit!(), " xp:363777 levelup:auto chat:SE"),
-        screen: Some("dialogue"),
-        ..BASE
-    };
-    check_with(&case, content);
-}
-
 /// The test quarrel's parting (#1785) waits for the thanks: asked on the dialogue screen, the
 /// hand-in reopens the screen on the scholar's words, and the one dialog asks the parting only
 /// once every screen is closed; then it must be answered.

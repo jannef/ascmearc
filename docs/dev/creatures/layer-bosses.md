@@ -29,8 +29,9 @@ this file holds the roster.
 | 100 | `nithdraca` | Nīðdraca the Hate-Wyrm | 100 | a dragon and a summoner: 22d8 fire in a twelve-cell cone every 30 s, 1d2 demons of levels 40 to 70 every minute (4 at most), claws that set alight; 680 hit points; immune to fire, cold −25 | `nithdracas_hoard`, a long hall, lava in its corners, a hoard |
 
 Depths 60 to 100 are #1122; past 100 a tenth floor is ordinary. **Levels past 70** (the owner: "can
-be whatever level you deem suitable"): 81, 91, and 100, not 101, so the deepest keeper stands at
-the player's own cap (`experience.toml`'s `max_level`, 100). Nothing had to be extended for them:
+be whatever level you deem suitable"): 81, 91, and 100, not 101, the highest a creature's level
+may be (`content::MAX_LEVEL`), far above the player's own cap (`experience.toml`'s `max_level`,
+60). Nothing had to be extended for them:
 a creature's level is a `u8` with no cap at load, the XP guideline (5 × level + 10) and
 `Experience::kill_xp` take any level, and the body rule is a formula by
 level. Tests: `world/levels/layer_boss_tests.rs` (the content checks

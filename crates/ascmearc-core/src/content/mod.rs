@@ -29,7 +29,6 @@ mod burial;
 mod burial_tests;
 mod burst;
 mod calendar;
-mod calling;
 mod campaign;
 mod chest;
 mod class;
@@ -146,7 +145,6 @@ pub mod place_word;
 mod plural;
 mod potion;
 mod prayer;
-mod prestige;
 mod profane;
 mod purse;
 #[cfg(test)]
@@ -279,7 +277,6 @@ pub use breath::Breath;
 pub use burial::{Burial, BurialStairs, EPITAPH_ROLES};
 pub use burst::{BurstWhen, CreatureBurst};
 pub use calendar::Calendar;
-pub use calling::CallingDef;
 pub use campaign::{CAMPAIGNS, CampaignDef, CampaignKind};
 pub use chest::{ChestBand, ChestLoot, ChestRules};
 #[cfg(test)]
@@ -393,7 +390,6 @@ pub use pipe::PipeRules;
 pub use plural::Plurals;
 pub use potion::{Draught, Drink, Flask, Splash};
 pub use prayer::{Face, FaceWords, Faced, PrayerRules, PrayerUse, UseDef};
-pub use prestige::{PrestigeDef, Table};
 pub use profane::{GiftDef, GiftKind, GiftTier, ProfaneRolls, ProfaneTable};
 pub use purse::{PurseRow, Purses, RowCoins, RowPurse};
 pub use quarrel::{PartingDef, Quarrel, QuarrelHoard, SideDef, Taker};
@@ -805,8 +801,6 @@ pub struct Content {
     /// Names offered to new characters, by race (`data/names.toml`): flavour, not fingerprinted.
     names: Names,
     classes: Vec<ClassDef>,
-    /// The prestige classes (`data/prestige/`), in table order.
-    prestige: Vec<PrestigeDef>,
     /// The alignment rules (`data/alignment.toml`): none without it.
     alignment: Option<AlignmentRules>,
     experience: Experience,
@@ -900,8 +894,6 @@ pub struct Content {
     guilds: Vec<GuildDef>,
     /// Towns and the goodwill their quests earn (each campaign's `data/towns/`), in table order.
     towns: Vec<TownDef>,
-    /// The callings into prestige classes (each campaign's `data/callings/`), in table order.
-    callings: Vec<CallingDef>,
     /// Shops (`data/shops.toml`); none without the file.
     shops: Option<Shops>,
     /// The ids the engine names in code, resolved at load (`content/required.rs`).
@@ -1005,23 +997,8 @@ impl Content {
                 class.check_races(|id| content.race(id).is_some())?;
             }
         }
-        // Prestige classes: a class in what a level reads.
-        {
-            let skill_id = |id: &str| content.skill_id(id);
-            let is_class = |id: &str| content.class(id).is_some();
-            let table = files.table("prestige");
-            content.prestige = PrestigeDef::parse(table, skill_id, is_class)?;
-        }
         content.alignment = content.load_optional(files)?;
         content.experience = content.load_or_default(files)?;
-        // Each class's highest level: its own, else the experience file's default.
-        let (default, highest) = (
-            content.experience.class_max(),
-            content.experience.max_level(),
-        );
-        for class in &mut content.classes {
-            class.settle_cap(default, highest)?;
-        }
         // Statuses before talents, which may name them (a cooldown, a critical's status).
         content.load_statuses(files)?;
         // Resources before talents, whose actives may cost them.
@@ -1391,13 +1368,11 @@ impl Content {
         content.guilds = guild::parse(files.table("guilds"), &content)?;
         content.towns = town::parse(files.table("towns"), &content)?;
 
-        content.callings = calling::parse(files.table("callings"), &content)?;
         content.encounter_tables = encounter::parse(files.table("encounters"), &content)?;
         content.ids = required::resolve(&content)?;
         data_line::add_all(&mut content)?;
         content.validate()?;
         content.check_topic_routes()?;
-        content.check_topic_callings()?;
         content.check_campaigns()?;
         files.check_all_read()?;
         Ok(content)

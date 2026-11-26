@@ -1,11 +1,11 @@
-//! Content's accessors for characters: races, names, classes and prestige classes, skills, talents,
+//! Content's accessors for characters: races, names, classes, skills, talents,
 //! experience, the horoscope, and weapon skills.
 
 use super::{
     AlignmentRules, ClassActive, ClassDef, CombatStance, Content, Experience, Flavour, Horoscope,
-    Lucky, Names, PrestigeDef, ProfaneTable, RaceDef, Races, Sign, SignActive, SkillDef, SpellData,
-    SpellId, StanceDef, Stances, TalentBook, TalentDef, TalentEffect, WeaponAbility,
-    WeaponAbilityId, WeaponSkillId, WeaponSkillTable,
+    Lucky, Names, ProfaneTable, RaceDef, Races, Sign, SignActive, SkillDef, SpellData, SpellId,
+    StanceDef, Stances, TalentBook, TalentDef, TalentEffect, WeaponAbility, WeaponAbilityId,
+    WeaponSkillId, WeaponSkillTable,
 };
 use crate::skills::Ladder;
 use crate::skills::RollRules;
@@ -59,16 +59,6 @@ impl Content {
         (self.classes.iter())
             .filter(|c| c.offered_to(race, gender))
             .collect()
-    }
-
-    /// The prestige classes of `data/prestige/`, in table order.
-    pub fn prestiges(&self) -> &[PrestigeDef] {
-        &self.prestige
-    }
-
-    /// The prestige class with id `id`.
-    pub fn prestige(&self, id: &str) -> Option<&PrestigeDef> {
-        self.prestige.iter().find(|p| p.id == id)
     }
 
     /// The birth sign's gift that is active `active`: the talent of the stars tree with its

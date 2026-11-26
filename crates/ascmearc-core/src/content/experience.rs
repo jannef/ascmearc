@@ -62,10 +62,6 @@ pub struct Levels {
     /// Talent picks at creation for a character the player chose (a class may add more).
     #[serde(default)]
     pub creation_talents: u8,
-    /// The highest level a class reaches unless its file says otherwise (`ClassDef::max_level`); 0,
-    /// or no table: the curve's `max_level`.
-    #[serde(default)]
-    pub class_max: u8,
 }
 
 #[derive(Deserialize)]
@@ -399,15 +395,6 @@ impl Experience {
         self.levels.creation_talents
     }
 
-    /// The highest level a class reaches when its file names none (`[levels] class_max`): the
-    /// curve's top without it.
-    pub fn class_max(&self) -> u8 {
-        match self.levels.class_max {
-            0 => self.max_level,
-            cap => cap,
-        }
-    }
-
     /// The XP total needed to reach `level` at a factor of 100 % (0 for level 1 and below; the
     /// highest level's beyond it).
     pub fn threshold(&self, level: u8) -> u32 {
@@ -439,11 +426,10 @@ impl Experience {
         u32::try_from(rounded(numerator, denominator * 100)).unwrap_or(u32::MAX)
     }
 
-    /// The level a character of `factor` with `xp` has reached, at most `cap` (their classes'
-    /// highest level; the curve's top caps it too). XP past the cap
-    /// counts, and buys nothing until the cap rises.
-    pub fn level_for(&self, xp: u32, factor: Factor, cap: u8) -> u8 {
-        (1..=self.max_level.min(cap))
+    /// The level a character of `factor` with `xp` has reached, at most the curve's top: XP past
+    /// it counts and buys nothing.
+    pub fn level_for(&self, xp: u32, factor: Factor) -> u8 {
+        (1..=self.max_level)
             .take_while(|&l| self.threshold_for(l, factor) <= xp)
             .last()
             .unwrap_or(1)
@@ -524,7 +510,7 @@ mod tests {
     #[test]
     fn the_curve_is_written_in_kills() {
         let x = builtin();
-        assert_eq!(x.max_level(), 100);
+        assert_eq!(x.max_level(), 60);
         // Level 2: 213 × 1/6 + 2.85 = 38.35 kills of level-2 creatures worth 20 (767 XP), at
         // the scale's two thirds (#1468) 25.57 kills (511.33 XP), and at the early discount's
         // 25 %: 6.39 kills, 127.83 XP.
@@ -537,25 +523,20 @@ mod tests {
         assert_eq!((x.kills_for(20), x.threshold(20)), (149, 136_806));
         assert_eq!((x.kills_for(40), x.kills_for(60)), (200, 243));
         assert_eq!(x.threshold(60), 1_897_239);
-        // The curve carried on to 100 (docs/design/prestige-classes.md §5).
         let row = |l: u8| (x.kills_for(l), x.xp_for(l), x.threshold(l));
         assert_eq!(row(30), (176, 28_195, 363_777));
         assert_eq!(row(31), (179, 29_488, 393_265));
         assert_eq!(row(40), (200, 41_992, 720_024));
         assert_eq!(row(50), (222, 57_707, 1_224_803));
-        assert_eq!(row(70), (264, 94_862, 2_756_402));
-        assert_eq!(row(80), (284, 116_296, 3_821_338));
-        assert_eq!(row(90), (304, 139_632, 5_111_074));
-        assert_eq!(row(100), (323, 164_869, 6_644_628));
         assert_eq!((x.threshold(1), x.threshold(0), x.xp_for(1)), (0, 0, 0));
-        assert_eq!(x.threshold(101), 6_644_628, "past the cap: the cap's");
+        assert_eq!(x.threshold(61), 1_897_239, "past the cap: the cap's");
         // About 1 700 even-level kills to level 20, 9 700 to 60 (2 000 and 10 000 before the
         // early discount).
         let kills = |to: u8| (2..=to).map(|l| x.kills_for(l)).sum::<u32>();
         assert!((1_680..=1_780).contains(&kills(20)), "{}", kills(20));
         assert!((9_650..=9_800).contains(&kills(60)), "{}", kills(60));
         // Every level costs more than the last, in XP and in kills.
-        for l in 3..=100 {
+        for l in 3..=60 {
             assert!(x.xp_for(l) > x.xp_for(l - 1), "level {l}");
             assert!(x.kills_for(l) >= x.kills_for(l - 1), "level {l}");
         }
@@ -581,7 +562,7 @@ mod tests {
         )
         .expect("parses");
         assert_eq!((plain.threshold(2), plain.threshold(10)), (511, 30_034));
-        for l in 12..=100 {
+        for l in 12..=60 {
             assert_eq!(x.xp_for(l), plain.xp_for(l), "level {l}");
             assert_eq!(x.kills_for(l), plain.kills_for(l), "level {l}");
         }
@@ -589,7 +570,6 @@ mod tests {
             assert!(x.xp_for(l) < plain.xp_for(l), "level {l}");
         }
         assert_eq!(plain.threshold(60) - x.threshold(60), 10_592);
-        assert_eq!(plain.threshold(100) - x.threshold(100), 10_592);
     }
 
     #[test]
@@ -604,7 +584,7 @@ mod tests {
             }
         }
         assert_eq!(
-            hash, 0xfe50_d605_0322_71f1,
+            hash, 0x0ac2_ef5b_1c7b_ad9e,
             "experience table hash {hash:#018x}"
         );
     }
@@ -625,57 +605,28 @@ mod tests {
         assert_eq!(factor(115, 115).percent(), 132);
         // The level follows the character's own thresholds.
         let wizard = factor(140, 125);
-        assert_eq!(x.level_for(223, wizard, MAX_LEVEL), 1);
-        assert_eq!(x.level_for(224, wizard, MAX_LEVEL), 2);
-        assert_eq!(
-            x.level_for(331, factor(90, 80), MAX_LEVEL),
-            2,
-            "461 × 72 %: 332"
-        );
-        assert_eq!(x.level_for(332, factor(90, 80), MAX_LEVEL), 3);
+        assert_eq!(x.level_for(223, wizard), 1);
+        assert_eq!(x.level_for(224, wizard), 2);
+        assert_eq!(x.level_for(331, factor(90, 80)), 2, "461 × 72 %: 332");
+        assert_eq!(x.level_for(332, factor(90, 80)), 3);
         // The steepest factor still counts to the top.
         let steepest = factor(*FACTORS.end(), *FACTORS.end());
-        assert_eq!(x.level_for(u32::MAX, steepest, MAX_LEVEL), 100);
-        assert_eq!(x.threshold_for(100, steepest), 4 * 6_644_628);
+        assert_eq!(x.level_for(u32::MAX, steepest), 60);
+        assert_eq!(x.threshold_for(60, steepest), 4 * 1_897_239);
     }
 
     #[test]
     fn level_follows_xp() {
         let x = builtin();
         let normal = Factor::default();
-        assert_eq!(x.level_for(0, normal, MAX_LEVEL), 1);
-        assert_eq!(x.level_for(127, normal, MAX_LEVEL), 1);
-        assert_eq!(x.level_for(128, normal, MAX_LEVEL), 2);
-        assert_eq!(x.level_for(460, normal, MAX_LEVEL), 2);
-        assert_eq!(x.level_for(461, normal, MAX_LEVEL), 3);
-        assert_eq!(x.level_for(1_897_238, normal, MAX_LEVEL), 59);
-        assert_eq!(x.level_for(1_897_239, normal, MAX_LEVEL), 60);
-        assert_eq!(x.level_for(6_644_627, normal, MAX_LEVEL), 99);
-        assert_eq!(x.level_for(6_644_628, normal, MAX_LEVEL), 100);
-        assert_eq!(x.level_for(u32::MAX, normal, MAX_LEVEL), 100, "capped");
-        // The default class cap, 60, below the curve's end.
-        let class_max = x.class_max();
-        assert_eq!(x.level_for(u32::MAX, normal, class_max), 60);
-        assert_eq!(x.level_for(1_897_238, normal, class_max), 59);
-        // A class cap below the curve's top holds the level there; XP past it still counts.
-        assert_eq!(x.level_for(u32::MAX, normal, 30), 30);
-        assert_eq!(x.level_for(363_777, normal, 30), 30);
-        assert_eq!(x.level_for(363_776, normal, 30), 29);
-        assert_eq!(
-            x.level_for(u32::MAX, normal, 0),
-            1,
-            "a cap below 1 is level 1"
-        );
-    }
-
-    #[test]
-    fn class_max_is_the_default_class_cap() {
-        let shipped = Experience::parse("x", SHIPPED).expect("valid");
-        assert_eq!(shipped.class_max(), 60);
-        let none = SHIPPED.replace("class_max = 60\n", "");
-        assert_ne!(none, SHIPPED, "class_max is in the file");
-        let without = Experience::parse("x", &none).expect("valid");
-        assert_eq!(without.class_max(), 100, "the curve's top without it");
+        assert_eq!(x.level_for(0, normal), 1);
+        assert_eq!(x.level_for(127, normal), 1);
+        assert_eq!(x.level_for(128, normal), 2);
+        assert_eq!(x.level_for(460, normal), 2);
+        assert_eq!(x.level_for(461, normal), 3);
+        assert_eq!(x.level_for(1_897_238, normal), 59);
+        assert_eq!(x.level_for(1_897_239, normal), 60);
+        assert_eq!(x.level_for(u32::MAX, normal), 60, "capped");
     }
 
     #[test]
@@ -729,10 +680,6 @@ mod tests {
             [zd(50), zd(54), zd(55), zd(59), zd(60)],
             [15, 15, 16, 16, 17]
         );
-        // One more every five levels from 60 to 100.
-        for l in 60..=100u8 {
-            assert_eq!(zd(l), 17 + (l - 60) / 5, "level {l}");
-        }
     }
 
     #[test]
@@ -823,7 +770,7 @@ mod tests {
     #[test]
     fn bad_files_are_refused() {
         for (from, to) in [
-            ("max_level = 100", "max_level = 0"),
+            ("max_level = 60", "max_level = 0"),
             ("plateau = 213", "plateau = 100001"),
             ("plateau = 213\nramp = 5\nslope_per_100 = 285", "ramp = 5"),
             ("bonus_levels = 4", "bonus_levels = 4\nlinear = 10"),
@@ -838,7 +785,9 @@ mod tests {
             assert!(Experience::parse("x", &text).is_err(), "{to}");
         }
         // A curve too steep to count at the top is refused, not wrapped.
-        let steep = SHIPPED.replace("plateau = 213", "plateau = 100000");
+        let steep = SHIPPED
+            .replace("max_level = 60", "max_level = 100")
+            .replace("plateau = 213", "plateau = 100000");
         assert!(Experience::parse("x", &steep).is_err());
         // Without a scale the curve is unscaled: level 2 at the discount, 38.35 × 20 × 25 %.
         let unscaled = SHIPPED.replace("scale = { times = 2, over = 3 }\n", "");

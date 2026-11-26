@@ -71,7 +71,7 @@ fn is_set(content: &Content, stack: &Stack, part: PartId) -> bool {
 }
 
 /// Whether `stack` is an item the Set step offers: one with an ornament part, unset, not a loose
-/// gem, a piece of stock, a spirit weapon, or a unique (worn or wielded ones are left out by the
+/// gem, a piece of stock, or a unique (worn or wielded ones are left out by the
 /// caller).
 pub fn settable(content: &Content, stack: &Stack) -> bool {
     !stack.is_unique() && refusal(content, stack).is_none()
@@ -82,8 +82,7 @@ fn refusal(content: &Content, stack: &Stack) -> Option<MessageId> {
     let def = content.object(stack.object);
     let loose = content.gems().is_some_and(|g| g.object == stack.object);
     let piece = def.id == crate::piece::ID;
-    let Some(part) = ornament_part(content, def).filter(|_| !loose && !piece && !stack.is_spirit())
-    else {
+    let Some(part) = ornament_part(content, def).filter(|_| !loose && !piece) else {
         return Some(msg::crafting::NO_GEM_CAN_BE_SET);
     };
     is_set(content, stack, part).then_some(msg::crafting::SET_ALREADY)

@@ -334,7 +334,7 @@
 #             with a weapon in their main hand and an open cell beside them, tries by its chance
 #             (1 to 100) to knock it away: the player's Dexterity check against the difficulty
 #             (2 to 40), plus the weapon's skill rank and their grip, keeps it; failed, it lies on
-#             a random open cell beside them (a spirit weapon fades instead)
+#             a random open cell beside them
 #   resist    what it resists, in percent per damage type:
 #             { acid = 50 }; negative is a vulnerability. Any amount: it adds up with what it
 #             wears, its statuses, and the rest uncapped, and at most 75 of the total counts, at

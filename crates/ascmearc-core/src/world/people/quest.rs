@@ -272,9 +272,8 @@ pub(crate) fn progress(
     let def = &*quests.given(content, def);
     let record = quests.records.get(&def.id);
     let carried = |object| -> u32 {
-        // A spirit weapon is nothing that may be handed in (`spirit_weapon.rs`).
         (inventory.iter())
-            .filter(|s| s.object == object && !s.is_spirit())
+            .filter(|s| s.object == object)
             .map(|s| s.count)
             .sum()
     };
@@ -1119,7 +1118,7 @@ impl World {
     fn take_from_pack(&mut self, object: crate::content::ObjectId, count: u32) -> Vec<Stack> {
         let player = self.player_mut();
         let mut order: Vec<usize> = (0..player.inventory.len())
-            .filter(|&i| player.inventory[i].object == object && !player.inventory[i].is_spirit())
+            .filter(|&i| player.inventory[i].object == object)
             .collect();
         order.sort_by_key(|&i| (player.equipment.holds(i), std::cmp::Reverse(i)));
         let (mut left, mut emptied) = (count, Positions::default());

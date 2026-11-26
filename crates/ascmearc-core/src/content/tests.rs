@@ -1128,7 +1128,6 @@ fn vaults_are_validated() {
             "gnaegans_midden",
             "grundwyrgens_mere",
             "hrimwyrms_bed",
-            "hunters_statue",
             "kobolds_cache",
             "ligetdrys_stones",
             "moss_bower",

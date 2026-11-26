@@ -462,7 +462,7 @@ cast path shares.
     (burst radius 3, fire, no blast). Each has its `scroll_of_<id>` at the README's numbers;
     Acid arrow, Grave spear, Slumber, and Glamour come only from scrolls. Class rows (§8; a row
     is a way to meet a spell, not part of it, Q13): witch 8 Flay, 36 Fear; druid 15 Rime; wizard
-    36 Sunfire; priest 9 Renewal, 12 Silence; bard 8 Mesmerise, 16 Bind; ranger 9 Nightsight;
+    36 Sunfire; priest 9 Renewal, 12 Silence; bard 16 Mesmerise, 32 Bind; ranger 9 Nightsight;
     paladin 20 Unbinding, each a granted `talents/<id>.toml` of `kind = "spell"`. Rules they
     needed: `spell_def` allows a `degrees` ladder on a damage spell with an `effect.status`
     (Flay), and `World::spell_lands` lays the spell's own status at the cast's degrees
@@ -1104,7 +1104,7 @@ Ten spells with one rule each (#1001; the design `docs/design/spell-types-and-ne
 entries 4, 6, 11, 18, 21, 31, 32, 33, 35, 36; §8 for their class rows and scrolls). Every one has
 its scroll (`objects/scroll_of_<id>.toml`) and a class row (`talents/<id>.toml`, granted: wizard 6
 Blink, 9 Shatter; priest 18 Rebuke, 24 Benison; druid 9 Bramble, 20 Gale, 30 Cloudburst; witch 24
-Leech; bard 12 Thunderclap, 20 Sense the quick). The rules live in `world/magic/spell_rule.rs`, each
+Leech; bard 25 Thunderclap, 40 Sense the quick). The rules live in `world/magic/spell_rule.rs`, each
 behind one line of `cast.rs`; the fields in `[spell.effect]` (`spell_def::effect`, which now takes
 the shape too and refuses each field off its kind and shape).
 

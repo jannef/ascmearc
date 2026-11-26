@@ -1,6 +1,8 @@
 # Warlock — Prestige classes: the oath, the Strange Spirit, the Hunter, and the curve to 100
 
-**Built; this file is history.** Current behaviour is in spec §7 "Prestige classes and callings" and `docs/dev/experience.md`.
+**Removed; this file is history.** The owner removed the prestige classes, the Hunter, its spirit
+weapon, and the calling (the Strange Spirit, its oath, the Fyrdelf statue) on 2026-11-27 (#2174),
+and the level curve went back to 60. Nothing described here is in the game.
 
 Design document for the owner's review (2026-11-02; issue #819, the bard's second and **third**
 rounds on PR #835). Written against `origin/main` at 38c5085d (Allies A1–A3 and the summon spell

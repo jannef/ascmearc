@@ -120,14 +120,12 @@ shops = { chance = 0 }
 temperature = 20
 dread_one_in = 60
 
-# The second floor from the bottom: a worn statue of a hunter, its plinth inscribed
-# (docs/design/prestige-classes.md §8).
+# The second floor from the bottom.
 [[dungeon.levels]]
 from = 11
 size = [120, 60]
 shops = { chance = 0 }
 temperature = 20
-vaults = ["hunters_statue"]
 dread_one_in = 50
 
 # The bottom: the fire drake on its hoard. Ūtgang's `below` names this floor, so it also has

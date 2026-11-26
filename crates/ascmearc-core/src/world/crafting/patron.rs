@@ -246,9 +246,9 @@ impl World {
                 let object = recipe.and_then(|r| r.result.as_ref()).map(|r| r.object);
                 let inventory = &self.state.player().inventory;
                 let equipment = &self.state.player().equipment;
-                // One not worn first; a spirit weapon is nothing to hand over.
+                // One not worn first.
                 let found = object.and_then(|o| {
-                    let ok = |(_, s): &(usize, &Stack)| fine(s, o) && !s.is_spirit();
+                    let ok = |(_, s): &(usize, &Stack)| fine(s, o);
                     let all = || inventory.iter().enumerate().filter(ok);
                     (all().find(|(i, _)| !equipment.holds(*i)))
                         .or_else(|| all().next())

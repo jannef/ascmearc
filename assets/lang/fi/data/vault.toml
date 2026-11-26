@@ -23,9 +23,6 @@ note = { text = "Vesi helmeilee sen pinnalla ja valuu.", of = "ae5549" }
 [hoar_stone.legend.O]
 note = { text = "Rajakivi, vanhempi kuin yksikään raja, jota se on merkinnyt.", of = "07bbf5" }
 
-[hunters_statue.legend.S]
-note = { text = "Sen tyhjät kädet ovat koholla kuin kahvan ympärillä, jota ei ole. Jalustaan on hakattu syvään kirjaimia vanhalla kielellä: LĪF ǢR DĒAÞE. Alla myöhemmällä käsialalla: 'Elämä ennen kuolemaa. Niin metsästäjät vannoivat sille, joka odotti heitä tiellä; ja tie antoi kullekin heistä terän.'", of = "e87901" }
-
 [moss_bower.legend.M]
 note = { text = "Sammalta, syvää ja pehmeää ja painunutta kerälle käpertyneen nukkujan muotoon, kuin joku olisi maannut tässä kauan.", of = "0f9323" }
 

@@ -474,7 +474,6 @@ impl TalentEffect {
             TalentEffect::Craft(CraftEffect::FieldForge { .. }) => A::FieldForge,
             TalentEffect::Craft(CraftEffect::MakeDo { .. }) => A::MakeDo,
             TalentEffect::Craft(CraftEffect::Rigs) => A::Rig,
-            TalentEffect::Martial(MartialEffect::SpiritWeapon { .. }) => A::SpiritWeapon,
             _ => return None,
         })
     }

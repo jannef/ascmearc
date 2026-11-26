@@ -19,8 +19,7 @@
 //!
 //! **What**: the whole stack leaves the pack and the hands (every slot it filled: a two-handed
 //! weapon leaves both) and lies on top of the pile on that cell, where the player picks it up
-//! as anything else (a turn, and the step to it). A spirit weapon (`spirit_weapon.rs`) is not
-//! let go: it fades, as one leaving the hand always does. No noise of its own: the fight's is
+//! as anything else (a turn, and the step to it). No noise of its own: the fight's is
 //! heard already.
 //!
 //! **Words**: "The drow blademaster knocks your scimitar from your hand!" (by the type's name,
@@ -128,12 +127,6 @@ impl World {
         let what = what.owned_by(self.you());
         let line = Msg::new(msg::combat::KNOCKED_FROM_HAND).role("who", who);
         self.say(line.role("what", what));
-        if self.state.player().inventory[item].is_spirit() {
-            // Spirit-stuff out of the hand fades (`spirit_weapon.rs`), and says so.
-            self.player_mut().equipment.take_off(item);
-            self.fade_spirit();
-            return;
-        }
         let me = self.player_mut();
         let stack = me.inventory.remove(item);
         me.equipment.after_removal(&Positions::of([item]));

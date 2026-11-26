@@ -4,7 +4,6 @@
 
 use crate::action::Rest;
 use crate::content::ContentFiles;
-use crate::test_support::builtin;
 use crate::time::Duration;
 use crate::world::*;
 
@@ -189,41 +188,6 @@ fn a_statue_is_named_with_its_note_on_arriving_beside_it_once() {
     // Look mode reads the same note.
     let place = w.perception().place(Pos::new(3, 2)).expect("named");
     assert_eq!(place.note.as_deref(), Some("Letters say: hello."));
-}
-
-/// On Fyrdelf's eleventh floor (a generated level), arriving beside the hunter's statue reads
-/// its inscription: the vault's note is stamped into the level's state, and look mode reads it.
-#[test]
-fn the_hunters_statue_on_fyrdelf_reads_its_inscription() {
-    let content = builtin();
-    let mut w = World::new(Arc::clone(&content), "fyrdelf", Some(1)).expect("world");
-    let id = "fyrdelf:11";
-    let template =
-        crate::mapgen::generate(&content, ("ascmearc", w.state.seed), id, None).expect("made");
-    let statue = content.terrain_id("statue").expect("statue");
-    let (at, _) = (template.terrain.iter())
-        .find(|(_, t)| **t == statue)
-        .expect("the statue");
-    crate::world::levels::travel::instantiate_level(&mut w.state, &content, &template);
-    let beside = (Dir::ALL.into_iter())
-        .map(|d| at.step(d))
-        .find(|&p| w.state.actor_at(id, p).is_none())
-        .expect("a free cell beside it");
-    w.state.current_level = id.into();
-    let me = w.state.player;
-    w.state.actors.set_level(me, id);
-    let player = w.player_mut();
-    player.pos = beside;
-    w.apply(&Action::Wait);
-    let log = w.messages();
-    let said: Vec<&str> = (log.iter())
-        .map(|m| m.text.as_str())
-        .filter(|t| t.starts_with("There is a worn statue here."))
-        .collect();
-    assert_eq!(said.len(), 1, "{said:?}");
-    assert!(said[0].contains("LĪF ǢR DĒAÞE"), "{}", said[0]);
-    let place = w.perception().place(at).expect("look mode names it");
-    assert_eq!(place.name, "a hooded figure");
 }
 
 /// A row of walkable cells: webs (`W`; here they catch no one, `data/rules/webs.toml` left out), glowing fungus (`F`), a test terrain named in the

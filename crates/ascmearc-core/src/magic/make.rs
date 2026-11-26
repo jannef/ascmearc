@@ -49,7 +49,7 @@ pub(crate) fn make(content: &Content, rng: &mut Rng, level: u8, stack: &mut Stac
 /// Whether `stack` is ammunition that may take a make ([`ammunition`]): of this world, and of
 /// no make yet.
 pub(crate) fn graded_ammunition(content: &Content, stack: &Stack) -> bool {
-    !stack.is_spirit() && stack.worked().is_none() && ammunition(content.object(stack.object))
+    stack.worked().is_none() && ammunition(content.object(stack.object))
 }
 
 /// `stack` given `improved` improvements (at most `rules/temper.toml`'s `most`), each one attempt,
@@ -72,7 +72,6 @@ pub(crate) fn improve(content: &Content, rng: &mut Rng, improved: u8, stack: &mu
 /// of this world, and worked by nobody yet.
 pub(crate) fn improvable(content: &Content, stack: &Stack) -> bool {
     stack.count == 1
-        && !stack.is_spirit()
         && stack.worked().is_none()
         && arms(content, stack)
         && !aspects(content.object(stack.object)).is_empty()

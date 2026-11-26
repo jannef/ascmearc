@@ -9,7 +9,7 @@
 //! several of Imbue's crystals, one each.
 //!
 //! - **What**: an item carried, not worn or wielded: a base item (one with a kind; ammunition is
-//!   one, the whole stack worked at once), not a spirit weapon, its magic identified, not a
+//!   one, the whole stack worked at once), its magic identified, not a
 //!   unique ([`refusal`]); a quest's object is refused at the start ("It will not take your
 //!   will."), unpaid goods as everywhere ([`World::may_loose`]). Then each kind's own: **Kindle**
 //!   a plain item; **Quicken** a magic item with one affix and room for another
@@ -144,7 +144,7 @@ pub(super) fn refusal(
         return Some(msg::crafting::CARRY_NO_SUCH_THING);
     };
     let def = content.object(stack.object);
-    if def.kind.is_none() || stack.is_spirit() {
+    if def.kind.is_none() {
         return Some(msg::crafting::NO_MAGIC_BOUND);
     }
     if !stack.is_identified() {

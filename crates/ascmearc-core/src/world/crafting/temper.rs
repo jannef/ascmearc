@@ -10,7 +10,7 @@
 //!   temper ([`crate::content::Content::offer`]); the first such cell around the player in
 //!   [`Dir::ALL`] order. Refused, taking no time, anywhere else ("There is no anvil here.").
 //! - **What**: a weapon, launcher, armour, or shield whose main part is of a metal, and not a
-//!   spirit weapon or a unique ([`temperable`]; a unique is refused first, "It is unique: no craft
+//!   unique ([`temperable`]; a unique is refused first, "It is unique: no craft
 //!   of yours will change it.", #1975). Refused otherwise, taking no time, and so is an item with
 //!   all its improvements ([`workable`] is what the list offers). Ammunition is refused first,
 //!   by its own line ([`AMMUNITION`]), and so by Whittle: its make (Fine arrows) is set where it
@@ -163,12 +163,10 @@ pub(super) const AMMUNITION: MessageId = msg::crafting::AMMUNITION_SET_WHEN_FLET
 /// one of a `proof` material).
 pub(super) const WITHSTOOD: MessageId = msg::crafting::NO_HARM_DONE;
 
-/// Whether `stack` is of the craft's material, by its main part, and of this world: a spirit
-/// weapon is not.
+/// Whether `stack` is of the craft's material, by its main part.
 fn of_material(content: &Content, stack: &Stack, craft: Craft) -> bool {
-    !stack.is_spirit()
-        && (stack.parts(content).first())
-            .is_some_and(|p| content.material(p.material).group.as_deref() == Some(craft.group()))
+    (stack.parts(content).first())
+        .is_some_and(|p| content.material(p.material).group.as_deref() == Some(craft.group()))
 }
 
 /// Whether `stack` may be worked by `craft` at all: arms or armour, of its material, with
