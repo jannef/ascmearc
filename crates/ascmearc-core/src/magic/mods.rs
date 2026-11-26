@@ -55,6 +55,8 @@ pub struct Mods {
     /// The damage its hits add, from a unique item's Inflict power's `added` (local, as
     /// `on_hit`).
     added: Vec<Rider>,
+    /// The thrust-through's percent, from a unique weapon's Thrust power (local, as `on_hit`).
+    thrust: Option<u8>,
     /// What bane affixes add against creatures of each tag, in the order first met.
     banes: Vec<(String, i32)>,
     /// How many times as far it shoots or is thrown, from a unique item's Range power (local;
@@ -82,6 +84,7 @@ impl Default for Mods {
             pools: Vec::new(),
             on_hit: Vec::new(),
             added: Vec::new(),
+            thrust: None,
             banes: Vec::new(),
             range_times: 1,
             keeps: None,
@@ -304,6 +307,7 @@ impl Mods {
                 Some(&Power::Grudge { per_hit }) => {
                     mods.keeps = Some(crate::content::Keeps::Grudges(per_hit));
                 }
+                Some(&Power::Thrust(percent)) => mods.thrust = Some(percent),
                 // The Stick's dice and to-hit, the wielder's level read where it strikes.
                 Some(Power::Grows(growth)) => mods.grows = Some(growth.clone()),
                 Some(Power::FirstBlood) => mods.first_blood = true,
@@ -381,7 +385,8 @@ impl Mods {
     /// Changes an attack by these effects: to-hit, damage (added to every roll), extra damage
     /// dice, a wider critical threat range, a larger critical multiplier, and the damage of
     /// other kinds elemental affixes add (one rider per kind, after those the attack has); and
-    /// what a unique weapon's Inflict power makes its hits cause (`Profile::on_hit`) and add; and its
+    /// what a unique weapon's Inflict power makes its hits cause (`Profile::on_hit`) and add, and
+    /// its Thrust power's thrust-through (`Profile::thrust`); and its
     /// banes (`Profile::banes`), which count only against their creatures.
     pub fn sharpen(&self, profile: &mut Profile) {
         profile.to_hit += self.get(Effect::ToHit);
@@ -408,6 +413,7 @@ impl Mods {
             profile.add_rider(rider);
         }
         profile.on_hit.extend_from_slice(&self.on_hit);
+        profile.thrust = profile.thrust.or(self.thrust);
         for (tag, value) in &self.banes {
             add_bane(&mut profile.banes, tag, *value);
         }

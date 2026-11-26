@@ -150,6 +150,15 @@ objects = ["unique:kettle_hat"]
 at = [9, 12]
 objects = ["unique:scarhide"]
 
+# Two more of the pool (#2123, #2124): Onrǣs, boots that make a charge free, at the south wall's
+# east end, and Gār, a spear that thrusts through to the one behind, on the west wall.
+[[pile]]
+at = [11, 12]
+objects = ["unique:onraes"]
+
+[[pile]]
+at = [3, 8]
+objects = ["unique:gar"]
 # Three more of the pool (#2109, #2117, #2131), along the arrival room's north side: Wergild, the
 # Oath, and the Wrecend.
 [[pile]]

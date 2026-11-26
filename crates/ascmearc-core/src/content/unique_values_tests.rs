@@ -51,6 +51,17 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
+        "gar",
+        32,
+        &[
+            ("sharp", 4),
+            ("heavy", 6),
+            ("guarding", 2),
+            ("of_precision", 2),
+            ("of_the_bear", 4),
+        ],
+    ),
+    (
         "grandmother",
         40,
         &[
@@ -130,6 +141,16 @@ const UNIQUES: &[Written] = &[
             ("of_the_lion", 4),
             ("of_vitality", 20),
             ("of_undead_bane", 2),
+        ],
+    ),
+    (
+        "onraes",
+        30,
+        &[
+            ("fleet", 10),
+            ("hardened", 2),
+            ("of_steadiness", 4),
+            ("of_the_ox", 4),
         ],
     ),
     (

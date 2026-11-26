@@ -88,7 +88,8 @@ impl Content {
     }
 
     /// What the warrior's Charge costs (`world/classes/charge.rs`), as its talent says: the stamina
-    /// every charge costs, and what each cell moved costs on top.
+    /// every charge costs, and what the first cell moved costs on top (the second twice that, the
+    /// third three times, and so on: `charge.rs::charge_price`).
     pub fn charge_cost(&self) -> Option<(u16, u16)> {
         let def = self.class_active(ClassActive::Charge)?;
         let per_cell = def.effects.iter().find_map(|e| match e {

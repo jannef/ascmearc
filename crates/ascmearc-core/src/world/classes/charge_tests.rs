@@ -1,5 +1,6 @@
 //! The warrior's Charge in the world (#1466, `world/classes/charge.rs`): the rush ends beside the
-//! target with a blow, it moves at least a cell, it costs a point and a point a cell, it
+//! target with a blow, it moves at least a cell, it costs a point and 1, 2, 3, ... for the cells
+//! (#2108), it
 //! provokes no free blows, its refusals take no time and spend nothing, and a warrior holds
 //! stamina from level 1; Whirling charge strikes the hostiles beside the way, and Battle rhythm
 //! gives stamina back for melee hits and kills (#1467); each cell is entered as a step enters
@@ -22,6 +23,17 @@ speed = 100
 base_hp = 1000
 
 [[creature]]
+id = "ch_ear"
+name = "ear"
+glyph = "e"
+fg = "#806040"
+weight = 60000
+faction = "vermin"
+speed = 100
+base_hp = 1000
+hearing = 1
+
+[[creature]]
 id = "ch_friend"
 name = "friend"
 glyph = "f"
@@ -42,12 +54,13 @@ map = '''
 "@" = {{ terrain = "floor", spawn = "player" }}
 "p" = {{ terrain = "floor", creature = "ch_post" }}
 "f" = {{ terrain = "floor", creature = "ch_friend" }}
+"e" = {{ terrain = "floor", creature = "ch_ear" }}
 "+" = {{ terrain = "door_closed" }}
 "##
     )
 }
 
-/// A world on `map` where nobody but the player acts, the player has Charge and 12 stamina.
+/// A world on `map` where nobody but the player acts, the player has Charge and 40 stamina.
 fn world(map: &str) -> World {
     world_with(map, "")
 }
@@ -72,7 +85,7 @@ fn world_with(map: &str, more: &str) -> World {
     w.player_mut().talents.take("charge", None);
     let stamina = w.content().resource_id(STAMINA).expect("stamina");
     w.grant_resource(player, stamina);
-    set_stamina(&mut w, 12);
+    set_stamina(&mut w, 40);
     w
 }
 
@@ -104,7 +117,7 @@ fn blows_by(outcome: &Outcome, by: ActorId) -> usize {
 }
 
 #[test]
-fn a_charge_ends_beside_the_target_with_a_blow_for_a_point_and_a_point_a_cell() {
+fn a_charge_ends_beside_the_target_with_a_blow_for_a_point_and_1_2_3_for_the_cells() {
     let mut w = world("##########\n#@.....p.#\n##########\n");
     let player = w.player_id();
     let post = at(&w, 7, 1);
@@ -126,7 +139,14 @@ fn a_charge_ends_beside_the_target_with_a_blow_for_a_point_and_a_point_a_cell() 
         &mut events,
     );
     assert_eq!(spent, Spent::Turn(5 * step));
-    assert_eq!(stamina(&w), 12 - (1 + 5), "1 and 1 for each of the 5 cells");
+    assert_eq!(
+        stamina(&w),
+        40 - (1 + 1 + 2 + 3 + 4 + 5),
+        "1, and 1, 2, 3, 4, 5 for the 5 cells"
+    );
+    assert_eq!(super::charge::charge_price(1, 1, 5), 16);
+    assert_eq!(super::charge::charge_price(1, 1, 1), 2);
+    assert_eq!(super::charge::charge_price(1, 2, 3), 13);
 }
 
 #[test]
@@ -143,25 +163,27 @@ fn a_charge_moves_at_least_a_cell_and_its_refusals_take_no_time() {
         ("#######\n#@...f#\n#######\n", "use:charge:5,1"),
     ] {
         let mut w = world(map);
+        // At the pool's maximum, which the turn holds it to.
+        set_stamina(&mut w, 12);
         let before = (stamina(&w), w.state.player().pos, w.state.turn);
         let outcome = use_(&mut w, target);
         assert!(!outcome.took_turn, "{map}: {:#?}", said(&w));
         let after = (stamina(&w), w.state.player().pos, w.state.turn);
         assert_eq!(after, before, "{map}");
     }
-    // Short of the distance's stamina: refused, nothing spent.
-    let mut w = world("##########\n#@.....p.#\n##########\n");
-    set_stamina(&mut w, 5);
-    let outcome = use_(&mut w, "use:charge:7,1");
+    // Short of the distance's stamina (four cells: 1 + 1 + 2 + 3 + 4): refused, nothing spent.
+    let mut w = world("##########\n#@....p..#\n##########\n");
+    set_stamina(&mut w, 10);
+    let outcome = use_(&mut w, "use:charge:6,1");
     assert!(!outcome.took_turn, "{:#?}", said(&w));
-    assert_eq!(stamina(&w), 5);
+    assert_eq!(stamina(&w), 10);
     assert_eq!(w.state.player().pos, Pos::new(1, 1));
     // Exactly enough: it goes.
-    set_stamina(&mut w, 6);
+    set_stamina(&mut w, 11);
     let mut events = Vec::new();
     let spent = w.use_class_at(
         crate::content::ClassActive::Charge,
-        Pos::new(7, 1),
+        Pos::new(6, 1),
         &mut events,
     );
     assert!(matches!(spent, Spent::Turn(_)));
@@ -384,4 +406,106 @@ fn a_charge_enters_each_cell_as_a_step_does() {
     assert!(!seen(&w));
     w.apply(&Action::Move(Dir::E));
     assert!(seen(&w), "{:#?}", said(&w));
+}
+
+/// The player wears Onrǣs (#2123) on their feet, and carries nothing else.
+fn wear_onraes(w: &mut World) {
+    let content = w.content().clone();
+    let boots = content.unique("onraes").expect("Onrǣs").stack.clone();
+    let me = w.player_mut();
+    me.inventory = vec![boots];
+    me.equipment = Default::default();
+    me.equipment
+        .put(&[content.slot_id("feet").expect("the feet slot")], 0);
+}
+
+#[test]
+fn onraes_makes_a_charge_free_however_long() {
+    let map = "##################\n#@..............p#\n##################\n";
+    // Without it, fourteen cells cost 1 + 105: far past any warrior's breath.
+    let mut w = world(map);
+    let outcome = use_(&mut w, "use:charge:16,1");
+    assert!(!outcome.took_turn);
+    // With it, out of breath, the charge goes the whole way and costs nothing.
+    let mut w = world(map);
+    wear_onraes(&mut w);
+    set_stamina(&mut w, 0);
+    let charge = crate::ability::Ability::Class(crate::content::ClassActive::Charge);
+    assert_eq!(charge.unavailable(w.state.player(), w.content()), None);
+    let mut events = Vec::new();
+    let spent = w.use_class_at(
+        crate::content::ClassActive::Charge,
+        Pos::new(16, 1),
+        &mut events,
+    );
+    assert!(matches!(spent, Spent::Turn(_)), "{:#?}", said(&w));
+    assert_eq!(w.state.player().pos, Pos::new(15, 1));
+    assert_eq!(stamina(&w), 0);
+    // Without it and out of breath, the menu says so.
+    let mut w = world(map);
+    set_stamina(&mut w, 0);
+    assert!(charge.unavailable(w.state.player(), w.content()).is_some());
+}
+
+#[test]
+fn the_onset_drives_the_foe_back_or_staggers_it_where_it_is_stopped() {
+    let staggered = |w: &World, id: ActorId| {
+        let status = w.content().ids().staggered.expect("staggered");
+        w.state.actors[&id].effects.has(status)
+    };
+    // Room behind: a cell back, along the line, and not staggered.
+    let mut w = world("#######\n#.@p..#\n#######\n");
+    let post = at(&w, 3, 1);
+    w.onset_drives(post, 1, &mut Vec::new());
+    assert_eq!(w.state.actors[&post].pos, Pos::new(4, 1));
+    assert!(!staggered(&w, post));
+    // A wall behind: it stays, staggered.
+    let mut w = world("#####\n#.@p#\n#####\n");
+    let post = at(&w, 3, 1);
+    w.onset_drives(post, 1, &mut Vec::new());
+    assert_eq!(w.state.actors[&post].pos, Pos::new(3, 1));
+    assert!(staggered(&w, post));
+    // Another creature behind: the same.
+    let mut w = world("#######\n#.@pp.#\n#######\n");
+    let post = at(&w, 3, 1);
+    w.onset_drives(post, 1, &mut Vec::new());
+    assert_eq!(w.state.actors[&post].pos, Pos::new(3, 1));
+    assert!(staggered(&w, post));
+    // A whole charge: a blow that hits drives the post a cell on; one that misses, nowhere.
+    let mut w = world("##########\n#@....p..#\n##########\n");
+    wear_onraes(&mut w);
+    let post = at(&w, 6, 1);
+    let outcome = use_(&mut w, "use:charge:6,1");
+    let player = w.player_id();
+    let first_hit = (outcome.events.iter()).find_map(|e| match e {
+        Event::Attacked {
+            attacker, strike, ..
+        } if *attacker == player => Some(strike.is_some_and(|s| s.is_hit())),
+        _ => None,
+    });
+    let to = if first_hit.expect("a blow") { 7 } else { 6 };
+    assert_eq!(w.state.actors[&post].pos, Pos::new(to, 1));
+}
+
+#[test]
+fn an_iron_shod_charge_is_heard_louder() {
+    // The ear stands 8 cells past the charge's last step: past a plain step's reach (60
+    // loudness, 10 lost a cell), within twice that.
+    let map = "####################\n#@....p......e.....#\n####################\n";
+    let heard = |onraes: bool| {
+        let mut w = world(map);
+        if onraes {
+            wear_onraes(&mut w);
+        }
+        let outcome = use_(&mut w, "use:charge:6,1");
+        assert!(outcome.took_turn, "{:#?}", said(&w));
+        let ear = at(&w, 13, 1);
+        (w.state.actors[&ear].heard.iter())
+            .filter(|h| h.kind == crate::noise::SoundKind::Footsteps)
+            .map(|h| h.loudness)
+            .max()
+            .unwrap_or(0)
+    };
+    assert_eq!(heard(false), 0);
+    assert!(heard(true) > 0);
 }

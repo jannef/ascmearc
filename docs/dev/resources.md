@@ -212,8 +212,9 @@ statuses).
   gets it from the first weapon active a rank teaches (`fight.rs::grant_stamina`). The weapon
   actives spend it (#564, `world/combat/weapon_active.rs::pay_active`, through `spend_resource`, after
   their refusals), and so does Charge (`world/classes/charge.rs`: its talent's `resource`, 1, plus
-  `per_cell` a cell moved, checked and spent by the charge itself, since the price is the
-  distance's); its `lacking` words ("you are short of breath") are how `Unavailable::Short` reads
+  `per_cell` times 1, 2, 3, ... for the cells moved (#2108, `charge_price`), checked and spent by
+  the charge itself, since the price is the distance's; nothing with Onrǣs worn, #2123, so
+  `ability::class_cost` has none for it then); its `lacking` words ("you are short of breath") are how `Unavailable::Short` reads
   for it. Its talents (`[[system]] id =
   "stamina"`): Charge, Deep lungs (`resource_max` +4), Steady breathing (`resource_rate`
   +50, a weapon skill at 5). Tests:

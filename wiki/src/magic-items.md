@@ -312,7 +312,7 @@ and [item level](affixes.md#base-items) are set by hand. Its name is shown in go
 also has a **power**, a rule of its own that no affix gives.
 
 Its affixes may go past what loot ever rolls: a value above an affix's highest
-[tier](affixes.md), more dice than any tier gives (the Grandmother's 6d6), a penalty (her −2 to
+[tier](affixes.md), more dice than any tier gives (the Grandmother's 6d6, Gār's 2d6), a penalty (her −2 to
 [Dodge](combat.md#defence), which lowers your Defence against every attack), or an affix on a
 kind of item it never rolls on (High Toby, a bow, has +2 damage; the Radiant, a hammer, has +2
 Protection and +2 Dodge). The table below marks such an affix "set" where the
@@ -369,6 +369,14 @@ Its power works while it is worn or wielded, identified or not:
   it off. When you bash with it, hit or miss, the spell goes at the one you bashed. The spell
   works as it always does, with the reach and damage the table gives, whatever your own magic.
   A cone never reaches you.
+- **Onset**: your [Charge](abilities.md#ability-charge) costs no stamina at all, so you can charge any
+  foe you see on an open way, however far. A charge's blow that hits drives the foe back a cell
+  along the line; if a wall or another creature stops it, it is
+  [Staggered](status-list.md#status-staggered) instead. The charge is loud: its steps are heard
+  twice as far.
+- **Thrust**: a melee blow with it that hits also strikes whoever stands right behind the one
+  you struck, in the next cell along the line from you. That blow rolls to hit on its own and
+  deals half the damage. It strikes friends as well as foes. Thrown, it is an ordinary spear.
 - **Grows**: a weapon whose damage dice and to-hit come from the wielder's character level, not
   from the weapon. Every five levels its dice go up a step, and every ten levels it gets +1 to
   hit, as the table says. Everything else that adds to its damage, such as Strength and your

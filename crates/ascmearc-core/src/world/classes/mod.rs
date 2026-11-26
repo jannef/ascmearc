@@ -13,6 +13,7 @@ mod jack;
 pub(in crate::world) mod mark;
 mod merchants_eye;
 mod oath_paid;
+mod onset;
 mod openings;
 pub(in crate::world) mod orison;
 mod rage;

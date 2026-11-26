@@ -528,6 +528,7 @@ mod tests {
             kinds: Default::default(),
             riders: Vec::new(),
             on_hit: Vec::new(),
+            thrust: None,
             banes: Vec::new(),
             once: 0,
             keeps: None,
