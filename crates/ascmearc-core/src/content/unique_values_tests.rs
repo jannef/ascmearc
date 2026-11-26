@@ -54,16 +54,6 @@ const UNIQUES: &[Written] = &[
         ],
     ),
     (
-        "fambles",
-        24,
-        &[
-            ("of_the_cutpurse", 6),
-            ("of_the_picklock", 4),
-            ("accurate", 3),
-            ("supple", 2),
-        ],
-    ),
-    (
         "eorcanstan",
         12,
         &[
@@ -83,6 +73,16 @@ const UNIQUES: &[Written] = &[
             ("sturdy", 3),
             ("of_the_ox", 4),
             ("of_the_tortoise", 3),
+        ],
+    ),
+    (
+        "fambles",
+        24,
+        &[
+            ("of_the_cutpurse", 6),
+            ("of_the_picklock", 4),
+            ("accurate", 3),
+            ("supple", 2),
         ],
     ),
     (
