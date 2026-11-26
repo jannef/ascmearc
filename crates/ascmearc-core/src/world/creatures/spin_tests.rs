@@ -139,6 +139,7 @@ fn an_ally_spins_nothing() {
         order: Order::Follow,
         retinue: false,
         until: None,
+        rooted: false,
     });
     rig_spin(&mut w, id, true);
     let before = draws(&w);

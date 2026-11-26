@@ -14,8 +14,8 @@ pool = true
 object = "chain_mail"
 affixes = ["featherweight=70", "hardened=5", "mage_wrought=10", "of_warding=5"]
 level = 40
-# Mithril binds two more enchantments (docs/dev/enchanting.md): its four need no better make, and
-# a make's improvements would add Defence and Protection past the owner's +5 each.
+# Mithril, the owner's; no better make, whose improvements would add Defence and Protection past
+# the owner's +5 each.
 parts = [{ of = "mithril" }]
 power = { negate = 50, message = "The blow comes to nothing against your mail.", phrase = "Many a blow that finds it comes to nothing." }
 lore = "The smith who made it laid down his hammer after, for there was nothing left to better."

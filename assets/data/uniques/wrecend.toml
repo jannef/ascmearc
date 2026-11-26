@@ -1,0 +1,18 @@
+# The Wrecend (#2131): a battle axe for the drop pool (#2103; placed nowhere else but the test
+# world's quarry), item level 40, Masterwork steel. The dwarf's: every hit a creature lands on one
+# who carries it, wielded or not, makes its blows deal 2 more damage to that creature, uncapped,
+# for as long as both live (a Grudge, `world/combat/tally.rs`). +6 damage, two more d8, +4 to hit,
+# +6 Toughness, and of Fury 20 (more Rage, for whoever has it). Every value set by hand
+# (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "wrecend"
+name = "the Wrecend"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "battle_axe"
+affixes = ["sharp=6", "heavy=2d8", "of_precision=4", "of_the_ox=6", "of_fury=20"]
+level = 40
+quality = "masterwork"
+parts = [{ of = "steel" }]
+power = { grudge = 2, phrase = "It remembers every blow its bearer takes, and repays each one against the creature that struck it." }
+lore = "It was carried by seven brothers, and each carved a notch for the one before."

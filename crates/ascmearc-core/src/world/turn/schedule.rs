@@ -424,6 +424,8 @@ impl World {
         }
         // Allies whose time has run out depart (`ally.rs`).
         self.allies_lapse(events);
+        // The prayer strain passes at the pace of what the player wears (`orison.rs`).
+        self.keep_strain_pace();
         // The player's next action is under way from here.
         self.acting = Some(player);
         self.fresh.clear();

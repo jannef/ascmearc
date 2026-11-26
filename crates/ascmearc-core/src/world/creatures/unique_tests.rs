@@ -154,34 +154,54 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     let mut other = bedes.magic().clone();
     other.unique = None;
     assert!(other.check(content.object(bedes.object), &content).is_err());
-    // The drop pool's of level 12 or more (#1976, #2095, #2097, #2098, #2100, #2115, #2125,
-    // #2127, #2132, #2133, #2137, #2139, #2141; #2121, #2122, #2140, the shared table first),
+    // The drop pool's of level 12 or more (#1976, #2095, #2097, #2098, #2100, #2109, #2115,
+    // #2117, #2123, #2124, #2125, #2127, #2131, #2132, #2133, #2137, #2139, #2141, the shared
+    // table first, #2110, #2111, #2113, #2114, #2118, #2121, #2122, #2130, #2134, #2136, #2140),
     // the criminals' four,
-    // the pedlar's three (#808), and Sigeric's (#1787), each with its power.
+    // the pedlar's three (#808), and Sigeric's (#1787), each with its power (Swīge, #2112, has
+    // none: its rules are fields).
     let powers: Vec<(&str, &str)> = (content.uniques())
         .filter(|u| u.stack.magic().is_some_and(|m| m.level >= 12))
         .map(|u| {
-            let power = match u.power.as_ref().expect("a power") {
-                Power::Inflict { .. } => "inflict",
-                Power::Vision(_) => "vision",
-                Power::Ward { .. } => "ward",
-                Power::Negate { .. } => "negate",
-                Power::Light(_) => "light",
-                Power::Range(_) => "range",
-                Power::Restore { .. } => "restore",
-                Power::Cast(_) => "cast",
-                Power::Grows(_) => "grows",
-                Power::FirstBlood => "first_blood",
-                Power::Plant { .. } => "plant",
-                Power::Fork { .. } => "fork",
-                Power::Spread(_) => "spread",
-                Power::Nightside { .. } => "nightside",
-                Power::Barefoot(_) => "barefoot",
-                Power::Trapwise(_) => "trapwise",
-                Power::Zone { .. } => "zone",
-                Power::Pain { .. } => "pain",
-                Power::Ring { .. } => "ring",
-                Power::Scars => "scars",
+            let power = match u.power.as_ref() {
+                None => "none",
+                Some(power) => match power {
+                    Power::Inflict { .. } => "inflict",
+                    Power::Vision(_) => "vision",
+                    Power::Ward { .. } => "ward",
+                    Power::Negate { .. } => "negate",
+                    Power::Light(_) => "light",
+                    Power::Range(_) => "range",
+                    Power::Restore { .. } => "restore",
+                    Power::Cast(_) => "cast",
+                    Power::Grows(_) => "grows",
+                    Power::FirstBlood => "first_blood",
+                    Power::Plant { .. } => "plant",
+                    Power::Barefoot(_) => "barefoot",
+                    Power::Trapwise(_) => "trapwise",
+                    Power::Zone { .. } => "zone",
+                    Power::Pain { .. } => "pain",
+                    Power::Ring { .. } => "ring",
+                    Power::Scars => "scars",
+                    Power::Tally { .. } => "tally",
+                    Power::Grudge { .. } => "grudge",
+                    Power::Oath { .. } => "oath",
+                    Power::Onset { .. } => "onset",
+                    Power::Thrust(_) => "thrust",
+                    Power::Root { .. } => "root",
+                    Power::Shrive(_) => "shrive",
+                    Power::Wakes { .. } => "wakes",
+                    Power::Roar(_) => "roar",
+                    Power::Credit => "credit",
+                    Power::Burst(_) => "burst",
+                    Power::Feller { .. } => "feller",
+                    Power::Quarry { .. } => "quarry",
+                    Power::Pilfer(_) => "pilfer",
+                    Power::Approach(_) => "approach",
+                    Power::Fork { .. } => "fork",
+                    Power::Spread(_) => "spread",
+                    Power::Nightside { .. } => "nightside",
+                },
             };
             (u.id.as_str(), power)
         })
@@ -189,24 +209,41 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert_eq!(
         powers,
         [
+            ("beornhama", "wakes"),
             ("cracked_resurrection_stone", "restore"),
             ("deep_night", "vision"),
             ("demonsoul", "cast"),
+            ("domgeorn", "credit"),
+            ("entbana", "feller"),
             ("eorthfaest", "plant"),
+            ("fambles", "pilfer"),
+            ("feolaga", "quarry"),
+            ("gar", "thrust"),
+            ("gorthak", "roar"),
             ("grandmother", "inflict"),
             ("haersceorp", "pain"),
+            ("hagolscur", "burst"),
             ("hushfoot", "barefoot"),
             ("kettle_hat", "ring"),
             ("masterpiece", "negate"),
+            ("oath", "oath"),
+            ("onraes", "onset"),
             ("radiant", "light"),
             ("satisfaction", "first_blood"),
             ("scarhide", "scars"),
+            ("scrift", "shrive"),
             ("silverstrike", "range"),
             ("smitte", "spread"),
             ("smoulder", "zone"),
+            ("snaffle", "pilfer"),
             ("sonneles", "nightside"),
+            ("stampers", "approach"),
+            ("swige", "none"),
             ("tiptoe", "trapwise"),
             ("twifeald", "fork"),
+            ("wergild", "tally"),
+            ("wrecend", "grudge"),
+            ("wyrtruma", "root"),
             ("brosinga_mene", "ward"),
             ("eorcanstan", "ward"),
             ("grendles_grape", "ward"),
@@ -228,7 +265,7 @@ fn unidentified_it_hides_its_name_affixes_power_and_lore() {
     let stack = |w: &World| w.state.actors[&player].inventory[item].clone();
     let hidden = stack(&w);
     assert!(hidden.known_magic().is_none());
-    assert_eq!(hidden.title(&content), "Marvellous stiletto");
+    assert_eq!(hidden.title(&content), "stiletto");
     assert!(!hidden.describe(&content).contains("Widowmaker"));
     let lines = describe::lines(&hidden, &content);
     let shown = |lines: &[describe::Line], kind: LineKind| {
@@ -249,10 +286,7 @@ fn unidentified_it_hides_its_name_affixes_power_and_lore() {
     run(&mut w, "identify");
     let known = stack(&w);
     assert_eq!(known.title(&content), "Widowmaker");
-    assert_eq!(
-        known.describe(&content),
-        "Widowmaker, a Marvellous stiletto"
-    );
+    assert_eq!(known.describe(&content), "Widowmaker, a stiletto");
     let lines = describe::lines(&known, &content);
     assert_eq!(shown(&lines, LineKind::Power), ["Its every cut poisons."]);
     assert_eq!(
@@ -267,7 +301,7 @@ fn unidentified_it_hides_its_name_affixes_power_and_lore() {
 }
 
 /// The form `"mystic=30"` (#2001, #2044): a unique's affixes are written so, never with a tier,
-/// and take the first tier that rolls the value, or past the ladder its last; checked at load.
+/// and take the first tier that rolls the value, or past the ladder its last; read at load.
 #[test]
 fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
     let load = |object: &str, affixes: &str| {
@@ -314,37 +348,97 @@ fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
     // A bow takes flat damage set by hand, though Sharp never rolls on one.
     load("long_bow", "\"sharp=2\"").expect("an effect a bow's shots use");
     for (object, affixes, needle) in [
-        // A penalty (`mystic=-3`, #2091) is a unique's to set; nothing is no value.
-        ("gold_ring", "\"mystic=0\"", "no tier of `mystic` rolls it"),
-        ("gold_ring", "\"mystic=1\"", "no tier of `mystic` rolls it"),
         ("gold_ring", "\"mystic=x\"", "must be a number"),
         ("gold_ring", "\"mystic:2\"", "not a tier"),
         ("gold_ring", "\"mystic\"", "not a tier"),
         ("gold_ring", "\"nothing=3\"", "unknown affix"),
         ("dagger", "\"heavy=8\"", "the value is dice"),
-        // More dice than a tier (`heavy=3d8`, #2091) are a unique's to set; fewer sides not.
-        ("dagger", "\"heavy=1d1\"", "no tier of `heavy` rolls it"),
-        ("dagger", "\"heavy=2d6\"", "no tier of `heavy` rolls it"),
         ("dagger", "\"sharp=1d4\"", "must be a number"),
         ("gold_ring", "\"of_light=3\"", "a light's value is a light"),
-        // Range on a ring does nothing, set by hand or not.
-        ("gold_ring", "\"hunters=3\"", "does nothing"),
-        ("gold_ring", "\"mystic=30\", \"mystic=31\"", "category"),
     ] {
         let e = load(object, affixes).expect_err(affixes).to_string();
         assert!(e.contains(needle), "{affixes}: {e}");
     }
-    // The save's check: a value past the top on the last tier alone, the unique's alone.
+    // Two dice of six sides (Gār's, #2124): a tier of one die that rolls 6, the count kept.
+    let content = load("dagger", "\"heavy=2d6\"").expect("two dice of a tier of one");
+    let unique = content.unique("test_set").expect("loaded");
+    assert_eq!(unique.dice("heavy"), Some(2));
+    let heavy = &unique.magic().affixes[0];
+    let tier = content
+        .affixes()
+        .get("heavy")
+        .and_then(|a| a.tier(heavy.tier));
+    assert_eq!((heavy.value, tier.map(|t| t.dice)), (6, Some(1)));
+    // The save's check: the unique's affixes as set, but the same magic on any other item
+    // is held to every rule.
     let content = load("gold_ring", "\"mystic=40\"").expect("past the top");
     let unique = content.unique("test_set").expect("loaded");
     let ring = content.object(unique.object);
     unique.magic().check(ring, &content).expect("as set");
-    let mut lower = unique.magic().clone();
-    lower.affixes[0].tier = 1;
+    let mut rare = unique.magic().clone();
+    rare.unique = None;
+    rare.rarity = crate::magic::Rarity::Rare;
     assert!(
-        lower.check(ring, &content).is_err(),
-        "past a tier not the last"
+        rare.check(ring, &content).is_err(),
+        "past the top on a rare"
     );
+}
+
+/// A unique follows no affix rule (the owner, #2152): its table is taken as written, any value,
+/// any dice, any light, any number of one kind or category, on any base, never trimmed; the one
+/// check left is that each affix exists.
+#[test]
+fn a_unique_follows_no_affix_rule() {
+    let load = |object: &str, affixes: &str| {
+        let mut files = files();
+        files.insert(
+            "data/uniques/test_set.toml",
+            &format!(
+                "[[unique]]\nid = \"test_set\"\nname = \"Test Set\"\nobject = \"{object}\"\n\
+                 affixes = [{affixes}]\nlevel = 12\n"
+            ),
+        );
+        Content::load(&files)
+    };
+    for (object, affixes) in [
+        // Nothing, or less than the first tier rolls.
+        ("gold_ring", "\"mystic=0\""),
+        ("gold_ring", "\"mystic=1\""),
+        ("gold_ring", "\"mystic=-3\""),
+        // Dice no tier rolls.
+        ("dagger", "\"heavy=1d1\""),
+        ("dagger", "\"heavy=2d6\""),
+        ("dagger", "\"heavy=9d20\""),
+        // An effect with nothing to change on its base (Range on a ring, a draw on a crossbow).
+        ("gold_ring", "\"hunters=3\""),
+        ("heavy_crossbow", "\"steady=6\""),
+        // Two of one category, and more suffixes than a rare's three.
+        ("gold_ring", "\"mystic=30\", \"mystic=31\""),
+        (
+            "gold_ring",
+            "\"of_the_ox=2\", \"of_the_bear=2\", \"of_the_lynx=2\", \"of_the_owl=2\", \"of_vitality=9\"",
+        ),
+    ] {
+        let content = load(object, affixes).unwrap_or_else(|e| panic!("{affixes}: {e}"));
+        let unique = content.unique("test_set").expect("loaded");
+        let count = affixes.matches('=').count();
+        assert_eq!(
+            unique.magic().affixes.len(),
+            count,
+            "{affixes}: every affix kept"
+        );
+        let def = content.object(unique.object);
+        unique.magic().check(def, &content).expect(affixes);
+    }
+    // Dice between the tiers' counts keep their count; a light no tier gives keeps its light.
+    let content = load("dagger", "\"heavy=2d6\"").expect("two dice");
+    let magic = content.unique("test_set").expect("loaded").magic();
+    let rolled = magic.rolled(&content);
+    assert_eq!((rolled[0].dice, rolled[0].value), (2, 6));
+    let content = load("gold_ring", "\"of_light=radiant_hammer\"").expect("a light");
+    let magic = content.unique("test_set").expect("loaded").magic();
+    let rolled = magic.rolled(&content);
+    assert_eq!(rolled[0].light, content.light_id("radiant_hammer"));
 }
 
 /// A level's `[[item]]` may write an affix with its value (#2044), held within the ladder and
@@ -726,9 +820,12 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
     // #2097), the Cracked Resurrection Stone (#2098), the test world's Stonebiter, and the
     // Masterpiece (#2100), the Stick (#2126), Satisfaction (#2125), and the Eorðfæst (#2132);
     // Hǣrsceorp, the Kettle Hat, and Scarhide (#2115, #2127, #2137); Smoulder, Tiptoe, and
-    // Hushfoot (#2139, #2141, #2133);
-    // Twifeald, Smitte, and the Sonneles (#2121, #2122, #2140).
-    assert_eq!(ids.len(), 28, "{ids:?}");
+    // Hushfoot (#2139, #2141, #2133); Wergild, the Oath, and the Wrecend (#2109, #2117, #2131);
+    // Onrǣs (#2123) and Gār (#2124); Scrift, Swīge, and Wyrtruma (#2111-#2113); Beornhama
+    // (#2110), Gorthak (#2136), and the Dōmgeorn (#2130); the three launchers (#2114, #2134,
+    // #2118); the Fambles, the Stampers, and Snaffle (#2119, #2120, #2138); Twifeald, Smitte,
+    // and the Sonneles (#2121, #2122, #2140).
+    assert_eq!(ids.len(), 45, "{ids:?}");
     let widowmaker = unique(&w, "widowmaker");
     let magic = widowmaker.magic().expect("magic");
     let stiletto = content.object(widowmaker.object);
@@ -751,15 +848,10 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
         "a rare of the same roll"
     );
     // Unidentified it says it is unique, as a rare says it is rare.
-    assert_eq!(
-        widowmaker.describe(&content),
-        "a Marvellous stiletto (unique)"
-    );
+    assert_eq!(widowmaker.describe(&content), "a stiletto (unique)");
     let lines = describe::lines(&widowmaker, &content);
     assert!(
-        lines[0]
-            .english(&content)
-            .starts_with("Unique Marvellous stiletto"),
+        lines[0].english(&content).starts_with("Unique stiletto"),
         "{}",
         lines[0].english(&content)
     );

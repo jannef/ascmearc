@@ -2,6 +2,7 @@
 //! surprise.md).
 
 mod ambush;
+mod approach;
 pub(in crate::world) mod attacks;
 mod bane;
 mod bleed;
@@ -13,6 +14,7 @@ mod first_blood;
 pub(in crate::world) mod free_blow;
 mod frenzy;
 mod grows;
+mod hail;
 pub(in crate::world) mod hurl;
 pub(in crate::world) mod item_damage;
 mod knock_away;
@@ -20,15 +22,20 @@ mod lurk;
 mod natural;
 mod negate;
 pub(in crate::world) mod nightside;
+mod pilfer;
 pub(in crate::world) mod plant;
 pub(in crate::world) mod reflect;
+mod roar;
 mod sear;
 pub(in crate::world) mod shoot;
 mod shot_zone;
+mod shrive;
 pub(in crate::world) mod slip;
 mod spread;
 mod struck;
 pub(crate) mod surprise;
+pub(crate) mod tally;
+mod thrust;
 mod two_shields;
 mod unique_spell;
 pub(in crate::world) mod weapon_ability;
@@ -36,6 +43,7 @@ pub(in crate::world) mod weapon_active;
 cfg_if! {
     if #[cfg(test)] {
         mod ambush_tests;
+        mod approach_tests;
         mod attacks_tests;
         mod bane_tests;
         mod balance_probe;
@@ -49,16 +57,20 @@ cfg_if! {
         mod free_blow_tests;
         mod frenzy_tests;
         mod grows_tests;
+        mod hail_tests;
         mod hurl_tests;
         mod item_damage_tests;
         mod knock_away_tests;
         mod lurk_tests;
         mod negate_tests;
         mod nightside_tests;
+        mod pilfer_tests;
         mod plant_tests;
         mod protection_tests;
+        mod roar_tests;
         mod sear_tests;
         pub(in crate::world) mod shoot_tests;
+        mod shrive_tests;
         mod shot_range_tests;
         mod shot_zone_tests;
         mod silent_tests;
@@ -69,7 +81,9 @@ cfg_if! {
         mod style_tests;
         mod surprise_tests;
         mod surprise_words_tests;
+        mod tally_tests;
         mod thrown_exploit_tests;
+        mod thrust_tests;
         mod two_shield_tests;
         mod unique_spell_tests;
         pub(in crate::world) mod vitals_tests;

@@ -76,12 +76,14 @@ impl World {
 }
 
 /// Whom a burst strikes, and how hard: those of the tags `only` (Rebuke's; none: everyone), but
-/// creatures of the type `spare`; half (at least 1) beyond radius − 1 unless `full`.
+/// creatures of the type `spare`, and the casting actor if `own` (a unique's hail knows its own,
+/// `hail.rs`); half (at least 1) beyond radius − 1 unless `full`.
 #[derive(Clone, Copy, Debug)]
 pub(in crate::world) struct Reach<'a> {
     pub only: &'a [String],
     pub spare: Option<crate::content::CreatureId>,
     pub full: bool,
+    pub own: bool,
 }
 
 /// The cells a burst around `center` of `radius` reaches: within the radius (rounded, like every
@@ -286,6 +288,7 @@ impl World {
             only,
             spare: None,
             full: false,
+            own: false,
         };
         self.cast_burst_reaching(caster, at, (burst, reach), events)
     }
@@ -319,10 +322,10 @@ impl World {
         let inner = radius2(radius - 1);
         let level = self.state.current_level.clone();
         let reached: BTreeSet<Pos> = cells.iter().copied().collect();
-        // Scroll savant: a caster's own burst may spare it.
+        // Scroll savant: a caster's own burst may spare it; a unique's hail always does.
         let spared = |a: &Actor| {
             matches!(caster, Caster::Actor(id) if id == a.id)
-                && a.talent_mods(&self.content).magic.spares_self
+                && (reach.own || a.talent_mods(&self.content).magic.spares_self)
         };
         let caught: Vec<(ActorId, Pos)> = (self.state.actors.values())
             .filter(|a| a.level == level && reached.contains(&a.pos) && !spared(a))

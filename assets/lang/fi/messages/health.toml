@@ -34,6 +34,7 @@ epitaph_fall = { text = "Sortuneen lattian läpi pudonnut", of = "d7d45a" }
 epitaph_fire = { text = "Kuoliaaksi palanut", of = "b820aa" }
 epitaph_miscast = { text = "Oman väärin lausutun {spell:gen_nsa} surmaama", of = "2ce77c" }
 # "oma" agrees with the item in number ("Omien loitsukirjojensa surmaama").
+epitaph_oath = { text = "Valansa verellä maksanut", of = "1efb2d" }
 epitaph_own = { by = "what.number", one = "Oman {what:gen_nsa} surmaama", many = "Omien {what:pl_gen_nsa} surmaama", of = "8a277c" }
 epitaph_own_spell = { text = "Oman {noun:gen_nsa} surmaama", of = "1fcea8" }
 epitaph_profane = { text = "Epäpyhän viemä", of = "1badfe" }

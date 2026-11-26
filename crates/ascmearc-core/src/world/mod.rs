@@ -358,6 +358,10 @@ pub struct WorldState {
     /// each once. Left out while empty.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub(crate) uniques_dropped: BTreeSet<String>,
+    /// The player's steps in a row unseen by any hostile, while they wear an Approach power
+    /// (`world/combat/approach.rs`). Left out while 0.
+    #[serde(default, skip_serializing_if = "is_zero_steps")]
+    pub(crate) unseen_steps: u8,
     /// Every profane gift the player has ever taken, by talent id, held or lost since: none is
     /// given twice (`world/character/profane.rs`, #1805).
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
@@ -427,6 +431,10 @@ pub struct WorldState {
 }
 
 fn is_zero(n: &u32) -> bool {
+    *n == 0
+}
+
+fn is_zero_steps(n: &u8) -> bool {
     *n == 0
 }
 
@@ -570,6 +578,9 @@ pub struct World {
     /// The creature a spell with `crystal` is striking now (not saved; Soulglass, `crystal.rs`):
     /// if it dies of the blow it leaves crystals, not a corpse.
     glassing: Option<ActorId>,
+    /// The thrust-through under way (not saved; Gār's, `thrust.rs`): its percent of the blow's
+    /// damage, taken by the next `World::resolve`.
+    thrusting: Option<u8>,
     /// Traps sprung since this world was created or loaded (not saved): a rest perceives every
     /// turn in which one went off (a teleport moves someone farther than a step).
     sprung: u64,
@@ -876,6 +887,7 @@ impl World {
             wares: BTreeMap::new(),
             uniques_offered: BTreeSet::new(),
             uniques_dropped: BTreeSet::new(),
+            unseen_steps: 0,
             gifts_received: BTreeSet::new(),
             stipend: classes::stipend::Stipend::default(),
             fund: classes::invest::Fund::default(),
@@ -930,6 +942,8 @@ impl World {
             npc: None,
             talk: Talk::default(),
             home: None,
+            rage_sleeps: None,
+            tallies: Default::default(),
             planted: None,
             // The scenario's spells, known from the start (a test world's fixture).
             spells: def.spells.iter().map(|&s| (s, 1)).collect(),
@@ -1146,6 +1160,7 @@ impl World {
             sleeper_struck: None,
             caught: false,
             glassing: None,
+            thrusting: None,
             sprung: 0,
             rigger: None,
             spawned: 0,
@@ -1481,6 +1496,10 @@ impl World {
             return spent;
         }
         if let Some(refused) = self.refuse_blocked(action) {
+            return refused;
+        }
+        // A unique's vow of silence (`hush.rs`).
+        if let Some(refused) = self.refuse_hushed(action) {
             return refused;
         }
         let here = self.player_pos();

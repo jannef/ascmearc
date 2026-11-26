@@ -131,6 +131,7 @@ impl World {
             only: &[],
             spare: Some(creature),
             full: true,
+            own: false,
         };
         let cells = {
             let level = self.state.current();

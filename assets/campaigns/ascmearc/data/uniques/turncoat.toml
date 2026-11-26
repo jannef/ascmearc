@@ -6,7 +6,5 @@ name = "the Turncoat"
 object = "banded_mail"
 affixes = ["reinforced=3", "hardened=3", "hale=9", "of_the_ox=2"]
 level = 12
-# Four enchantments need its make (docs/dev/enchanting.md): Masterwork.
-quality = "masterwork"
 power = { ward = "frightened", message = "Fear finds no hold on you.", phrase = "Its wearer knows no fear." }
 lore = "The regiment's colours were cut from it long ago; the stitching shows where."

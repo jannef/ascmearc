@@ -25,25 +25,42 @@ const PLACED: [&str; 9] = [
 ];
 
 /// The uniques of the drop pool, every one `pool = true` in its data.
-const POOL: [&str; 19] = [
+const POOL: &[&str] = &[
+    "beornhama",
     "cracked_resurrection_stone",
     "deep_night",
     "demonsoul",
+    "domgeorn",
+    "entbana",
     "eorthfaest",
+    "fambles",
+    "feolaga",
+    "gar",
+    "gorthak",
     "grandmother",
     "haersceorp",
+    "hagolscur",
     "hushfoot",
     "kettle_hat",
     "masterpiece",
+    "oath",
+    "onraes",
     "radiant",
     "satisfaction",
     "scarhide",
+    "scrift",
     "silverstrike",
     "smitte",
     "smoulder",
+    "snaffle",
     "sonneles",
+    "stampers",
     "stick",
+    "swige",
     "tiptoe",
+    "wergild",
+    "wrecend",
+    "wyrtruma",
     "twifeald",
 ];
 
@@ -88,7 +105,8 @@ fn the_placed_uniques_never_join_the_pool() {
         assert!(!def.pool, "{id} is placed, never of the pool");
         assert_eq!(member(c, &def.stack), None);
     }
-    assert_eq!(pool_ids(c), BTreeSet::from(POOL.map(String::from)));
+    let listed: BTreeSet<String> = POOL.iter().map(|id| id.to_string()).collect();
+    assert_eq!(pool_ids(c), listed);
     let pool = pool_ids(c);
     // At the top item level every unique of the pool is open, and nothing else.
     let open: BTreeSet<String> = (open(c, MAX_ITEM_LEVEL, &BTreeSet::new()).into_iter())
@@ -107,8 +125,11 @@ fn the_placed_uniques_never_join_the_pool() {
     let stone = c.unique("cracked_resurrection_stone").expect("the stone");
     assert!(stone.stack.magic().expect("magic").cursed(c));
     let rare = rares(&sure, stone.magic().level, 1).remove(0);
-    let unique = instead(&sure, &mut Rng::stream(0, "pool"), &rare, &found).expect("a sure pool");
-    assert_eq!(member(&sure, &unique), Some("cracked_resurrection_stone"));
+    // Whichever stream draws it: the pool at its level holds others too.
+    let unique = (0..1000)
+        .map(|i| instead(&sure, &mut Rng::stream(i, "pool"), &rare, &found).expect("a sure pool"))
+        .find(|u| member(&sure, u) == Some("cracked_resurrection_stone"))
+        .expect("the stone, from some stream");
     assert!(unique.magic().expect("magic").cursed(&sure));
 }
 

@@ -135,6 +135,8 @@ pub enum ZoneKind {
     Fire,
     /// Poisons who starts a turn in it.
     Fouled,
+    /// Ice: chills who starts a turn on it, as a cold spell does (Hagolscūr's hail, #2114).
+    Rime,
     /// Trips who steps onto it or off it.
     Slick,
     /// No light reaches it, and a source on it sheds none.
@@ -148,6 +150,7 @@ impl ZoneKind {
     pub const ALL: &'static [ZoneKind] = &[
         Self::Fire,
         Self::Fouled,
+        Self::Rime,
         Self::Slick,
         Self::Dark,
         Self::Smoke,
@@ -158,6 +161,7 @@ impl ZoneKind {
         match self {
             Self::Fire => "fire",
             Self::Fouled => "fouled",
+            Self::Rime => "rime",
             Self::Slick => "slick",
             Self::Dark => "dark",
             Self::Smoke => "smoke",
@@ -169,6 +173,7 @@ impl ZoneKind {
         match self {
             Self::Fire => Some("fire"),
             Self::Fouled => Some("poison"),
+            Self::Rime => Some("cold"),
             Self::Slick | Self::Dark | Self::Smoke => None,
         }
     }
@@ -176,7 +181,7 @@ impl ZoneKind {
     /// Whether it lies on the ground, so only on walkable ground out of the water: a cloud, a
     /// darkness, and smoke hang over anything sight passes through.
     pub const fn on_ground(self) -> bool {
-        matches!(self, Self::Fire | Self::Slick)
+        matches!(self, Self::Fire | Self::Rime | Self::Slick)
     }
 }
 

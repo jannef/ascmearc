@@ -71,12 +71,13 @@ impl World {
         })
     }
 
-    /// Whether creature `id` may cast at all now: its casting is not blocked and it is not on
-    /// the overworld.
+    /// Whether creature `id` may cast at all now: its casting is not blocked, it stands in no
+    /// unique's silence (`hush.rs`), and it is not on the overworld.
     fn casts_now(&self, id: ActorId) -> bool {
         let me = &self.state.actors[&id];
         self.state.current().kind != LevelKind::Overworld
             && (me.effects.blocking(&self.content, ActionKind::Cast)).is_none()
+            && !self.hushed(id)
     }
 
     /// Whether creature `id` has the mana for `def`, and, a harmful area spell, its area
