@@ -306,6 +306,12 @@ the cost a wait's). `Content::sic_range` is `Ability::reach` for the aiming mode
   still takes a plain hit. `World::savage_spent`, after the strike, spends a degree for each blow
   that hits (`Strike::is_hit`: soaked or resisted too), the status gone at none.
 
+**Fēolaga** (a unique bow's Quarry power, #2118; `world/allies/quarry.rs`, `docs/dev/magic-items.md`
+"Unique items"): a hit by the player's shot sets the companion on a hostile creature as Sic 'em
+does (the order, then the quarry; the Savage of the Sic talent's data, `quarry::sic_savage`, only
+if it has none), for nothing and without the talent; each melee hit of the companion on its
+quarry pays the player a point of Focus.
+
 **Hunter's bond** never carries Savage to the ranger: its door (`bond.rs::is_buff`) passes only
 what a buff spell's circle row or a potion lends, and Savage is neither (nor does `circles.toml`
 list it). It reads only on the companion's blows and is the price of Focus.

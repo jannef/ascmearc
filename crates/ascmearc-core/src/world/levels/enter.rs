@@ -75,6 +75,8 @@ impl World {
         } else {
             self.make_noise_at(player, crate::noise::Act::Step(to), u32::from(noise));
         }
+        // An approach unseen counts its steps (`approach.rs`).
+        self.count_unseen_step();
         // Wading through a marsh may give a disease, by how long the step takes.
         let speed = self.state.player().speed(&self.content);
         self.wade(

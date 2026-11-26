@@ -10,6 +10,8 @@
 //!   laid; a cold spell's `douses` puts it out cell by cell ([`LevelState::clear_zone_cells`]).
 //! - **fouled** (Reek): a creature that starts its turn in it suffers the poison type's rule, no
 //!   harm (the poison-immune nothing, `afflict`). It does not block sight.
+//! - **rime** (Hagolscūr's hail, `world/combat/hail.rs`): ice on the ground; a creature that
+//!   starts its turn on it suffers the cold type's rule (Sluggish), no harm, as in a cloud.
 //! - **slick** (Slick): a step onto it or off it is a Dexterity check against
 //!   the `[slick]` difficulty of `data/rules/tuning.toml`; failed, Staggered, the step already
 //!   spent. Nothing incorporeal slips.
@@ -360,14 +362,16 @@ impl World {
         self.lay_cells((kind, by, 0, None), cells, turns * TURN_SECONDS, events);
     }
 
-    /// Actor `id`'s turn starts where it stands: a fire burns it, a cloud poisons it.
+    /// Actor `id`'s turn starts where it stands: a fire burns it, a cloud poisons it, rime chills it.
     pub(in crate::world) fn zone_turn_start(&mut self, id: ActorId, events: &mut Vec<Event>) {
         let Some(pos) = self.zoned(id) else {
             return;
         };
         match self.zone_here(pos) {
             Some((ZoneKind::Fire, zone)) => self.zone_burns(id, pos, zone, events),
-            Some((ZoneKind::Fouled, zone)) => self.zone_fouls(id, zone, events),
+            Some((kind @ (ZoneKind::Fouled | ZoneKind::Rime), zone)) => {
+                self.zone_fouls(id, kind, zone, events);
+            }
             _ => {}
         }
     }
@@ -454,10 +458,10 @@ impl World {
     }
 
     /// A foul cloud poisons actor `id` by the poison type's rule, which a poison-immune creature
-    /// takes nothing of. A creature the player's cloud reaches turns on them, as their spells do.
-    fn zone_fouls(&mut self, id: ActorId, zone: ZoneOf, events: &mut Vec<Event>) {
-        let kind =
-            (self.content).damage_type_id(ZoneKind::Fouled.damage_type().unwrap_or_default());
+    /// takes nothing of; rime chills it by the cold type's (`of`: the zone's kind). A creature
+    /// the player's zone reaches turns on them, as their spells do.
+    fn zone_fouls(&mut self, id: ActorId, of: ZoneKind, zone: ZoneOf, events: &mut Vec<Event>) {
+        let kind = (self.content).damage_type_id(of.damage_type().unwrap_or_default());
         if zone.by == self.state.player && id != zone.by {
             self.provoke(id);
         }

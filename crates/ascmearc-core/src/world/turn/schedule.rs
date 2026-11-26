@@ -363,6 +363,8 @@ impl World {
         self.spend_actions(player, events);
         // A planted shield counts the turn (`plant.rs`).
         self.plant_turn(player);
+        // Unique boots' momentum builds or empties (`gather.rs`).
+        self.gather_turn(player);
         self.acting = None;
         // Holds whose holder no longer holds end (`hold.rs`): after the player's action, after
         // every creature's turn, and as the turn ends.
@@ -403,6 +405,7 @@ impl World {
             schedule[next].energy = schedule[next].energy.saturating_sub(price.max(1));
             self.spend_actions(id, events);
             self.plant_turn(id);
+            self.gather_turn(id);
             self.acting = None;
             self.loosen_holds(events);
             // Those who died are gone from the schedule (the player stays, first).
@@ -424,6 +427,8 @@ impl World {
         }
         // Allies whose time has run out depart (`ally.rs`).
         self.allies_lapse(events);
+        // The prayer strain passes at the pace of what the player wears (`orison.rs`).
+        self.keep_strain_pace();
         // The player's next action is under way from here.
         self.acting = Some(player);
         self.fresh.clear();

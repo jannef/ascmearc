@@ -3,6 +3,10 @@
 # and `lore` are sentences of their own, its `power.message` what its wearer is told as it wards
 # off a status. Old in tone, as the lore of heirlooms is.
 
+[beornhama]
+lore = { text = "Karhu ei kysy, oletko valmis.", of = "c7ad73" }
+phrase = { text = "Kun sen kantaja on kuoleman partaalla, karhu siinä herää ja raivoaa hänen puolestaan, väsyneenä tai ei; sitten se nukkuu pitkään.", of = "cf2b50" }
+
 [brosinga_mene]
 lore = { text = "Hama vei sen mukanaan kirkkaaseen kaupunkiin, eikä kukaan ole sittemmin kertonut, minne se joutui.", of = "7f1af7" }
 phrase = { text = "Mikään myrkky ei tartu sen kantajaan.", of = "78b2f2" }
@@ -26,6 +30,14 @@ phrase = { text = "Se vastaa iskuihin tulella. Sen kantaja ei pelkää liekkejä
 lore = { text = "Kukaan ei kuullut mitään. Siinäpä se juju olikin.", of = "d61a0f" }
 phrase = { text = "Sen iskut eivät päästä ääntä eivätkä vuodata verta.", of = "15e84c" }
 
+[domgeorn]
+lore = { text = "Hän kantoi sitä kentälle ja toi kotiin laulun. Muut toivat kotiin haavat.", of = "2f6633" }
+phrase = { text = "Jokainen kuolema, jonka sen kantaja näkee, on hänen: niin maine kuin syykin.", of = "d5ca0b" }
+
+[entbana]
+lore = { text = "Kivi, hihna ja vakaa silmä. Loput on lauluissa.", of = "6935f5" }
+phrase = { text = "Mitä suurempi vastus, sitä varmemmin ja kovemmin sen kivet siihen osuvat. Pieniä vastaan se on pelkkä linko.", of = "1b252e" }
+
 [eorcanstan]
 lore = { text = "Kivi on tumma, kunnes sen lähellä lausutaan loitsu; silloin se tummuu entisestään.", of = "5dc3aa" }
 phrase = { text = "Mikään hiljaisuus ei vaienna sen kantajan ääntä.", of = "b8013d" }
@@ -36,6 +48,22 @@ message = { text = "Hiljaisuus ei saa ääntäsi vaikenemaan.", of = "3bc6d2" }
 [eorthfaest]
 lore = { text = "Nojaa siihen selkäsi, niin vuori on takanasi. Lähde kävelemään, niin se on pelkkää puuta ja rautaa.", of = "5ef9f3" }
 phrase = { text = "Mitä kauemmin sen kantaja seisoo, sitä vaikeampi häntä on haavoittaa, eikä mikään liikuta häntä.", of = "826bf0" }
+
+[faegerfot]
+lore = { text = "Ne eivät ole koskaan koskettaneet maata kahdesti samassa kohdassa.", of = "7a62c0" }
+phrase = { text = "Jokainen kantajansa ohi mennyt isku tekee seuraavasta vaikeamman osua.", of = "eeff6c" }
+
+[fambles]
+lore = { text = "Tuollaiset kädet ovat joko siunaus tai todiste.", of = "98350d" }
+phrase = { text = "Jokainen viilto, jonka sen kantaja veitsellä tekee, tyhjentää viillettävän taskuja.", of = "48cc55" }
+
+[feolaga]
+lore = { text = "Toinen heistä valitsi saaliin. Kukaan ei ole koskaan ollut varma, kumpi.", of = "90ff17" }
+phrase = { text = "Mihin sen nuoli osuu, sen kimppuun kumppanisi syöksyy heti, ja jokainen puraisu, jonka se saaliiseen saa, terävöittää keskittymistäsi.", of = "ddb90b" }
+
+[frithwebbe]
+lore = { text = "Se oli häälahja, ja liitto kesti. Sotaa ei tullut.", of = "06898e" }
+phrase = { text = "Ajatteleva vihollinen, joka ensi kertaa kohtaa sen kantajan, saattaa pidättäytyä.", of = "eac6be" }
 
 [fyrwit]
 lore = { text = "Se ei siedä kiinni olevaa laatikkoa.", of = "9cd2a3" }
@@ -48,6 +76,10 @@ phrase = { text = "Sen pisto menee läpi: sekin, joka seisoo lyödyn takana, saa
 [gorb]
 lore = { text = "No, se on vain pikku suupala.", of = "18867e" }
 phrase = { text = "Minkä se tappaa, sen sen kantaja syö heti, kokonaan, eikä koskaan oksenna sitä.", of = "ccf04f" }
+
+[gorthak]
+lore = { text = "Kun se iskee alas, kuuluu huuto, eikä kukaan tiedä varmasti kenen.", of = "233c45" }
+phrase = { text = "Sen jokainen tappo on karjaisu: sen nähneet viholliset voivat menettää rohkeutensa ja paeta.", of = "7b132f" }
 
 [grandmother]
 lore = { text = "Hän on elänyt kauemmin kuin kolme sukua ja haudannut jokaisen pojan, joka häntä kantoi.", of = "3ccae1" }
@@ -64,6 +96,10 @@ message = { text = "Pysyt jaloillasi.", of = "dada06" }
 lore = { text = "Se kutittaa. Siinä koko ajatus.", of = "d5e89e" }
 phrase = { text = "Jokaisen sen kantajaan osuvan iskun kipu kertyy ki-voimaksi.", of = "c086da" }
 
+[hagolscur]
+lore = { text = "Nummien paimenet puhuvat yhä siitä kesästä, jona rakeita satoi vaakasuoraan.", of = "af2881" }
+phrase = { text = "Missä sen kivet putoavat, osui tai ei, sataa rakeita kaikkien ympärillä olevien niskaan, ja maa jäätyy. Se säästää linkoajansa, eikä ketään muuta.", of = "affb75" }
+
 [high_toby]
 lore = { text = "Moni vaunu on pysähtynyt sen tähden, ja moni kuski juossut karkuun.", of = "6c3884" }
 phrase = { text = "Sen nuolet jättävät vuotavia haavoja.", of = "0f05cd" }
@@ -76,12 +112,20 @@ phrase = { text = "Paljain jaloin sen kantaja kulkee äänettä, väistää kett
 lore = { text = "Se piti sateen poissa ja keiton sisällä. Sitten tuli sota, ja se piti miekankin poissa.", of = "d2d11a" }
 phrase = { text = "Jokainen siihen osuva isku kumahtaa kauas, ja meteli horjuttaa jokaista sen kantajan vieressä seisovaa.", of = "6e7327" }
 
+[leohtfot]
+lore = { text = "Ensimmäinen askel on askel. Kolmas on jo isku.", of = "461f8b" }
+phrase = { text = "Jokainen kantajan askel kertyy hänen seuraavaan paljain käsin lyötyyn iskuunsa.", of = "0609ac" }
+
 [masterpiece]
 lore = { text = "Sen tehnyt seppä laski vasaransa sen jälkeen, sillä parannettavaa ei enää ollut.", of = "98c4d7" }
 phrase = { text = "Moni sen tavoittanut isku raukeaa tyhjiin.", of = "75ac3a" }
 
 [masterpiece.power]
 message = { text = "Isku raukeaa tyhjiin rengaspaitaasi vasten.", of = "5a42d8" }
+
+[oath]
+lore = { text = "Kerran vannottu. Siitä asti pidetty, maksoi mitä maksoi.", of = "038086" }
+phrase = { text = "Sen kantaja voi maksaa verellään puuttuvan intonsa, ja sen iskut sytyttävät intoa kaksin verroin.", of = "1e9a8b" }
 
 [onraes]
 lore = { text = "Rivi piti. Hän ei.", of = "9806da" }
@@ -99,6 +143,10 @@ phrase = { text = "Sen ensimmäinen kosketus vahingoittumattomaan viholliseen os
 lore = { text = "Jokaisen siinä näkyvän arven sen ensimmäinen omistaja kantoi ensin omassa nahassaan.", of = "656178" }
 phrase = { text = "Jokainen sen kantajan saama ankara haava kovettaa sitä hieman lisää.", of = "ebed52" }
 
+[scrift]
+lore = { text = "Lue rukouksesi. Sitten varmista.", of = "0e8f22" }
+phrase = { text = "Jokainen sen osuva isku on suoritettu katumustyö.", of = "b43f52" }
+
 [sigerics_star]
 lore = { text = "Sormuksen sisäpuolella, hyvin pienin kirjaimin: SIGERIC MINUT TEKI. Ulkopuolella, suuremmin: SIGERIC.", of = "8aa25a" }
 phrase = { text = "Mikään ei pidä sen kantajan katsetta vangittuna.", of = "e81a46" }
@@ -114,6 +162,10 @@ phrase = { text = "Sen nuolet lentävät kaksi kertaa niin kauas kuin tavallisen
 lore = { text = "Kuule, ei se ole kuin vähän lämmin.", of = "d31df8" }
 phrase = { text = "Sen kantaja kävelee laavalla ja tulen läpi palamatta. Hänen potkunsa polttavat, ja maa, jolta hän astuu, jää palamaan.", of = "8ad7b5" }
 
+[smitte]
+lore = { text = "Mitä yhdellä on, se on pian kaikilla. Hänen tarvitsee koskettaa vain ensimmäistä.", of = "630b73" }
+phrase = { text = "Kun se viiltää, sen kantajan kiroukset tarttuvat viillellystä kaikkiin lähellä oleviin, ystäviin ja vihollisiin.", of = "f593a1" }
+
 [stick]
 lore = { text = "Se oli keppi, kun he lähtivät matkaan. Kukaan ei muista, milloin se lakkasi olemasta.", of = "65158f" }
 phrase = { text = "Se tuntuu käyneen painavammaksi.", of = "875914" }
@@ -122,9 +174,25 @@ phrase = { text = "Se tuntuu käyneen painavammaksi.", of = "875914" }
 lore = { text = "Ei sijnä ole tulda, ia quitengin se sauhupi.", of = "d1becc" }
 phrase = { text = "Sen nuolet savuavat siellä, mihin ne pysähtyvät, osuivat tai eivät: savun läpi ei näe mikään silmä, ei sinunkaan.", of = "43456b" }
 
+[snaffle]
+lore = { text = "Pistin häntä kahdesti ja sain mukaani hänen kukkaronsa, hänen hattunsa ja hyvin huonon käsityksen hänestä.", of = "f431ee" }
+phrase = { text = "Sen iskut tyhjentävät taskuja ja silloin tällöin kädenkin aseesta.", of = "984b46" }
+
+[sonneles]
+lore = { text = "Sinä seisot päiwän paistes ia luulet itzes turwas olewan. Cuca näke kenen?", of = "bdb3e6" }
+phrase = { text = "Sen kantajaa ei valo koskaan häikäise, ja pimeästä hän iskee varmasti niihin, jotka seisovat valossa.", of = "bd8050" }
+
+[stampers]
+lore = { text = "Ne eivät jättäneet jälkiä. Eivät myöskään todistajia, mutta se oli kantajan ansiota.", of = "839ee2" }
+phrase = { text = "Joka pääsee näkymättä vihollisen kylkeen, iskee sitä varoittamatta, eivätkä sen kantajan askeleet päästä ääntäkään.", of = "53c4f0" }
+
 [stonebiter]
 lore = { text = "Lovettu sadassa louhoksen seinässä, eikä yksikään niistä antanut periksi.", of = "fa63dd" }
 phrase = { text = "Sen kantaja näkee hämärässä.", of = "95fdf0" }
+
+[swige]
+lore = { text = "Sen kantajat eivät koskaan kertoneet, mitä varten se oli. He eivät kertoneet mitään.", of = "33821f" }
+phrase = { text = "Sen kantajan lähellä ei loitsita eikä kääröjä lueta, ja hänen rukouksensa käyvät keveämmin.", of = "5aeb36" }
 
 [tiptoe]
 lore = { text = "Kyl laattia o iha hyvä. Katto vaa mihe sää seisot.", of = "5a94ee" }
@@ -137,10 +205,26 @@ phrase = { text = "Sen kantaja ei tunne pelkoa.", of = "ff336e" }
 [turncoat.power]
 message = { text = "Pelko ei saa sinusta otetta.", of = "345b88" }
 
+[twifeald]
+lore = { text = "Yksi sana, ja kaksi kaatui.", of = "10f46e" }
+phrase = { text = "Jokainen loitsu, jonka sen kantaja langettaa yhteen viholliseen, haarautuu: puolet siitä loikkaa lähimpään viholliseen.", of = "162dde" }
+
 [unhalwed_bedes]
 lore = { text = "Jokainen helmi on rystyluu, eikä yksikään niistä pyhimyksen.", of = "93ec1f" }
 phrase = { text = "Sen kantaja näkee pimeässä.", of = "8a8773" }
 
+[wergild]
+lore = { text = "Jokainen pisara kirjataan, ja jokainen velka maksetaan täysimääräisenä.", of = "fca7ae" }
+phrase = { text = "Kun sen kantaja raivoaa, jokainen hänen saamansa haava kirjataan siihen, ja sen seuraava isku perii velan.", of = "3d823c" }
+
 [widowmaker]
 lore = { text = "Ohut kuin hattuneula, eikä koskaan aivan puhdas.", of = "a463c4" }
 phrase = { text = "Sen jokainen viilto myrkyttää.", of = "1649e4" }
+
+[wrecend]
+lore = { text = "Sitä kantoi seitsemän veljestä, ja jokainen veisti siihen loven edellisen muistoksi.", of = "33acfb" }
+phrase = { text = "Se muistaa jokaisen iskun, jonka sen kantaja saa, ja maksaa kunkin takaisin sille, joka löi.", of = "48e441" }
+
+[wyrtruma]
+lore = { text = "Maahan pistettynä se kasvaisi. Kukaan ei ole uskaltanut laskea sitä käsistään niin pitkäksi aikaa, että sen näkisi.", of = "aafcec" }
+phrase = { text = "Sen kantajan kutsumat pedot jäävät, kunhan ne pysyvät hänen vierellään.", of = "f3f402" }

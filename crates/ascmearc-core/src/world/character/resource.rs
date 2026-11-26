@@ -204,13 +204,21 @@ impl World {
         let Some(actor) = self.state.actors.get(&id) else {
             return;
         };
-        let talents = actor
+        let mut talents = actor
             .talent_mods(&self.content)
             .into_owned()
             .resource
             .resource_builds;
+        // A unique it wields builds as a talent does (the Oath's zeal, #2117).
+        talents.extend(
+            actor
+                .worn_uniques(&self.content)
+                .filter_map(|u| u.resource_build),
+        );
         let gains: Vec<(ResourceId, u16, u16)> = (actor.resources.iter())
             .filter(|pool| marked || !self.content.resource(pool.resource).marked)
+            // A rage a unique lent only decays (`wakes.rs`).
+            .filter(|pool| !actor.lent_pool(&self.content, pool.resource))
             .filter_map(|pool| {
                 let more = (talents.iter())
                     .filter(|(r, b, _)| *r == pool.resource && *b == on)

@@ -33,6 +33,15 @@ text = "Dig in which direction? (Esc to cancel)"
 [disarm_way]
 text = "Disarm in which direction? (Esc to cancel)"
 
+# A condition in the status bar: Lēohtfōt's momentum at its most (a unique's, #2116).
+[full_tilt]
+text = "Full tilt"
+
+# A condition in the status bar: misses gathered into Dodge (Fǣgerfōt, a unique's, #2128):
+# `count`, how many.
+[gathered]
+text = "Gathered {count:bare}"
+
 [give_way]
 text = "Give it to which side? (Esc to cancel)"
 
@@ -62,6 +71,14 @@ text = "Looking: direction keys move, Esc or {own:bare} to stop."
 # The same without a look key.
 [look_hint_esc]
 text = "Looking: direction keys move, Esc to stop."
+
+# A condition in the status bar: Lēohtfōt's momentum (a unique's, #2116), one step built, and
+# two.
+[momentum_one]
+text = "One step"
+
+[momentum_two]
+text = "Two steps"
 
 # The status bar's mana: `mp`, now; `max`, at most.
 [mp]

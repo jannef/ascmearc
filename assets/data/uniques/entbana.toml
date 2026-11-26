@@ -1,0 +1,19 @@
+# Entbana (#2134, the owner's design): a sling for the drop pool (#2103; placed nowhere else but
+# the test world's quarry), item level 40 as the pool's are (docs/design/item-level-40.md §10).
+# The giant-slayer: a bane against every creature larger than Small, +6 to hit and damage, and
+# nothing against the small (its power, Feller, read where banes are summed:
+# `world/combat/bane.rs`; a power, never an affix, so no pool rolls it). Sharp +5, of Precision
+# +4, Hunter's +4 (range), and Steady +4, as the design writes them (Steady lowers a bow's
+# Strength to draw, and a sling has none, so it does nothing here: kept as designed, a unique
+# following no affix rules, #2152). Every value set by hand (docs/dev/magic-items.md "Unique
+# items").
+[[unique]]
+id = "entbana"
+name = "Entbana"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "sling"
+affixes = ["sharp=5", "of_precision=4", "hunters=4", "steady=4"]
+level = 40
+power = { feller = { larger_than = "small", bonus = 6 }, phrase = "The bigger they are, the surer and the harder its stones strike them. Against the small it is only a sling." }
+lore = "A stone, a strap, and a steady eye. The rest is in the songs."

@@ -12,6 +12,10 @@ expression: words
         "A scorched stone floor under a foul reek.",
     ),
     (
+        Rime,
+        "A scorched stone floor iced over with rime.",
+    ),
+    (
         Slick,
         "A scorched stone floor slick underfoot.",
     ),

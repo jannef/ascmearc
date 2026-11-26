@@ -1,0 +1,18 @@
+# The Sonneles (#2140, "sunless"): a bone amulet for the drop pool (#2103; placed nowhere else
+# but the test world's quarry), item level 40, the drow's. Its Nightside power: its wearer is
+# never dazzled by strong light (the drow's flaw does not bite) nor stunned by a Flare's flash;
+# and while their own cell is dark (light below 12, the low-light eye's threshold), every attack
+# they make (a blow, a shot, a throw, a spell that rolls to hit) on a creature standing in bright
+# light (250 or more) gets +3 to hit and finds it flat-footed: no Dexterity or Dodge, and their
+# sneak dice (`world/combat/nightside.rs`). +4 Dexterity, +40 Stealth, +16 mana, 40% poison
+# resistance. Every value set by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "sonneles"
+name = "the Sonneles"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "bone_amulet"
+affixes = ["mystic=16", "of_shadows=40", "of_the_adder=40", "of_the_lynx=4"]
+level = 40
+power = { nightside = 12, lit_from = 250, to_hit = 3, phrase = "Its wearer is never dazzled, and strikes surely from the dark at those who stand in the light." }
+lore = "Thou standest in the sun and thinkest thyself safe. Who seeth whom?"

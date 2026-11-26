@@ -96,3 +96,65 @@ fn every_shipped_bane_has_its_creatures() {
         assert!(tags.contains(&tag), "no creature is a {tag}");
     }
 }
+
+/// Entbana's Feller (#2134): its shots have +6 to hit and damage against every creature larger
+/// than Small, nothing against the small, nothing in melee, and a plain sling has none.
+#[test]
+fn entbana_fells_the_big_and_spares_the_small() {
+    use crate::action::AttackKind;
+    use crate::content::Power;
+    let u = CONTENT.unique("entbana").expect("Entbana");
+    let small = CONTENT.size_index("small").expect("small");
+    assert_eq!(
+        u.power,
+        Some(Power::Feller {
+            larger_than: small,
+            bonus: 6
+        })
+    );
+    assert_eq!(u.magic().level, 40);
+    let mut w = world("berserker");
+    let me = w.player_pos();
+    let orc = foe_at(&mut w, "orc_warrior", Pos::new(me.x + 2, me.y), 10);
+    let kobold = foe_at(&mut w, "kobold", Pos::new(me.x + 3, me.y), 10);
+    let player = w.player_id();
+    let (orc_size, kobold_size) = {
+        let s = &w.state;
+        (
+            s.size_of(&CONTENT, &s.actors[&orc]),
+            s.size_of(&CONTENT, &s.actors[&kobold]),
+        )
+    };
+    assert!(orc_size > small && kobold_size == small);
+    let hold = |w: &mut World, stack: Stack| {
+        let me = w.player_mut();
+        me.inventory = vec![stack];
+        me.equipment = Default::default();
+        me.equipment.put(&[slot("missile_weapon")], 0);
+    };
+    hold(&mut w, u.stack.clone());
+    let shot = w.state.player().ranged(&CONTENT).expect("a shot");
+    let at_orc = w.felled((player, orc), AttackKind::Ranged, shot.clone());
+    assert_eq!(
+        (at_orc.to_hit, at_orc.bonus),
+        (shot.to_hit + 6, shot.bonus + 6)
+    );
+    assert_eq!(
+        w.felled((player, kobold), AttackKind::Ranged, shot.clone()),
+        shot,
+        "a kobold is small"
+    );
+    assert_eq!(
+        w.felled((player, orc), AttackKind::Melee, shot.clone()),
+        shot,
+        "its shots only"
+    );
+    let plain = Stack::one(CONTENT.object_id("sling").expect("a sling"));
+    hold(&mut w, plain);
+    let shot = w.state.player().ranged(&CONTENT).expect("a shot");
+    assert_eq!(
+        w.felled((player, orc), AttackKind::Ranged, shot.clone()),
+        shot,
+        "a plain sling"
+    );
+}

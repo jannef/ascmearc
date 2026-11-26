@@ -9,8 +9,9 @@
 //! may earn the skill a training mark ([`Use::Steal`]).
 //!
 //! - **Unnoticed**: the player takes one stack of what the victim carries and neither wears nor
-//!   wields, all of it, picked uniformly (one more gameplay draw when there are two or more to
-//!   pick from); with nothing like that on it, they come away empty-handed. The player never
+//!   wields, all of it: its coins when it has any (the owner's rule, #2119), else one picked
+//!   uniformly (one more gameplay draw when there are two or more to pick from;
+//!   [`World::pockets`]); with nothing like that on it, they come away empty-handed. The player never
 //!   sees a creature's pack ([`crate::perception::PerceptionView::gear`] is what it wears and
 //!   wields), so there is nothing to choose from: the rules pick. [`World::got_away_with`] is
 //!   the one place a theft that took something has its consequences beyond the goods.
@@ -32,7 +33,7 @@ use crate::geom::Dir;
 use crate::lang::Msg;
 use crate::msg;
 use crate::object::{self, Stack};
-use crate::rng::draw;
+use crate::rng::{Rng, draw};
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
 use crate::world::character::alignment::Deed;
@@ -75,13 +76,10 @@ impl World {
         }
         // Priced before anything changes hands.
         let price = self.price_of(player, ActionKind::Steal);
-        let thief = self.state.player();
-        let modifier = thief.effective_stats(&content).modifier(Stat::Dexterity)
-            + thief.skill_effect(&content, Effect::Steal);
-        let against =
-            (self.state.actors[&victim].effective_stats(&content)).modifier(Stat::Willpower);
+        // A Parley's truce is broken by the try (`parley.rs`).
+        self.break_truce(player, victim);
         let mut rng = draw!(self, "steal/{}", self.state.actors.key(victim));
-        if check::contest(&mut rng, modifier, against) {
+        if self.steal_contest(victim, &mut rng) {
             self.lift(victim);
         } else {
             if !self.caught_stealing(victim) {
@@ -100,13 +98,11 @@ impl World {
     }
 
     /// The player's hand goes unnoticed into `victim`'s pack: one stack of what it neither wears
-    /// nor wields comes out, picked uniformly (a gameplay draw only with two or more), and goes
-    /// into the player's.
+    /// nor wields comes out ([`World::pockets`]: its coins first, else picked uniformly, a
+    /// gameplay draw only with two or more) and goes into the player's.
     fn lift(&mut self, victim: ActorId) {
+        let loose = self.pockets(victim);
         let actor = &self.state.actors[&victim];
-        let loose: Vec<usize> = (0..actor.inventory.len())
-            .filter(|&i| !actor.equipment.holds(i))
-            .collect();
         let pick = match loose.len() {
             0 => {
                 let who = self.called_phrase(actor);
@@ -116,14 +112,57 @@ impl World {
             1 => loose[0],
             n => loose[draw!(self, "steal/lift/{}", actor.key).index(n)],
         };
-        let Some(actor) = self.state.actors.get_mut(&victim) else {
-            return;
+        if let Some(stack) = self.take_from(victim, pick) {
+            self.got_away_with(victim, &stack);
+        }
+    }
+
+    /// Where in `victim`'s pack what a thief's hand may take lies: its coins (the shops'
+    /// currency, [`crate::chest::currency`]) when it carries any loose, the owner's rule (#2119);
+    /// else every stack it neither wears nor wields. The Steal ability and a unique's Pilfer
+    /// power (`world/combat/pilfer.rs`) take one of these, picked uniformly.
+    pub(in crate::world) fn pockets(&self, victim: ActorId) -> Vec<usize> {
+        let Some(actor) = self.state.actors.get(&victim) else {
+            return Vec::new();
         };
+        let loose: Vec<usize> = (0..actor.inventory.len())
+            .filter(|&i| !actor.equipment.holds(i))
+            .collect();
+        let coins = crate::chest::currency(&self.content);
+        let purse: Vec<usize> = (loose.iter().copied())
+            .filter(|&i| Some(actor.inventory[i].object) == coins)
+            .take(1)
+            .collect();
+        if purse.is_empty() { loose } else { purse }
+    }
+
+    /// Stack `pick` of `victim`'s pack, all of it, leaves it (its letters follow) for the
+    /// player's pack; returns what was taken.
+    pub(in crate::world) fn take_from(&mut self, victim: ActorId, pick: usize) -> Option<Stack> {
+        let actor = self.state.actors.get_mut(&victim)?;
+        if pick >= actor.inventory.len() {
+            return None;
+        }
         let stack = actor.inventory.remove(pick);
         actor.equipment.after_removal(&Positions::of([pick]));
         let content = self.content.clone();
         object::add_to_inventory(self.state.inventory_mut(), stack.clone(), &content);
-        self.got_away_with(victim, &stack);
+        Some(stack)
+    }
+
+    /// The Steal skill's contest of the player's hand against `victim`'s notice
+    /// ([`check::contest`]: Dexterity modifier and the Steal benefit against its Willpower
+    /// modifier, four draws from `rng`): whether the hand goes unnoticed.
+    pub(in crate::world) fn steal_contest(&self, victim: ActorId, rng: &mut Rng) -> bool {
+        let content = &self.content;
+        let thief = self.state.player();
+        let modifier = thief.effective_stats(content).modifier(Stat::Dexterity)
+            + thief.skill_effect(content, Effect::Steal);
+        let Some(them) = self.state.actors.get(&victim) else {
+            return false;
+        };
+        let against = them.effective_stats(content).modifier(Stat::Willpower);
+        check::contest(rng, modifier, against)
     }
 
     /// The player stole `stack` from `victim` unnoticed: says so, and it is a [`Deed::Theft`]

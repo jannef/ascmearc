@@ -169,6 +169,8 @@ impl World {
         self.fades(id, events);
         // Frightened (Hound's bay, `sign_picks.rs`), it runs; held fast (Drowning grip,
         // `lucky.rs`), it fights back instead of stepping.
+        // Aware of the player wearing a Parley, it may hold its hand (`parley.rs`).
+        self.parley_turn(id);
         let plan = self.decide(id, &heard);
         let plan = self.frightened(id, plan);
         let plan = self.held_back(id, plan);
@@ -348,6 +350,7 @@ impl World {
         self.nearest_in_sight(id, &|state, content, me, a| {
             content.stance_of(me.faction(content), a.faction(content)) == Stance::Hostile
                 && !beast_friend::befriended(state, content, me, a)
+                && !super::parley::holds_hand(state, me, a)
         })
     }
 
@@ -499,6 +502,8 @@ impl World {
                 Route::There | Route::Unreachable => mind.post = None,
             }
         }
+        // Back to its routine, the fight is over: a roar may frighten it again (`roar.rs`).
+        mind.heard_roar = false;
         Plan::Patrol
     }
 

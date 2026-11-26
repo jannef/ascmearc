@@ -1585,8 +1585,8 @@ fn parse_magic(spec: &ItemSpec, content: &Content) -> Result<Magic, String> {
 /// An affix is written with its value, `"mystic=30"`, `"heavy=1d8"`, `"of_light=item_glow"`
 /// ([`super::affix_value`], #2044), or, an `[[item]]`'s alone, as an id with an optional tier
 /// (default 1) whose value is the top of the tier's range. A `unique` item's are always written
-/// with their values, and [`Magic::check_set`] lets them lie past their last tier and off the
-/// affix's bases.
+/// with their values and follow no rule but that each affix exists (#2152): [`Magic::check_set`]
+/// asks no more of them.
 pub(super) fn magic_of(
     def: &super::ObjectDef,
     written: &[String],
@@ -1599,7 +1599,7 @@ pub(super) fn magic_of(
     let mut highest = 1;
     for text in written {
         if let Some((id, value)) = text.split_once('=') {
-            let (affix, level) = super::affix_value::valued(def, id, value, unique, content)?;
+            let (affix, level) = super::affix_value::valued(id, value, unique, content)?;
             highest = highest.max(level);
             affixes.push(affix);
             continue;
@@ -1644,11 +1644,7 @@ pub(super) fn magic_of(
         curse_known: false,
         unique: None,
     };
-    // A unique may have no affix at all, its power its magic (#2126, the Stick).
-    if !(unique && magic.affixes.is_empty()) {
-        let set = if unique { &magic.affixes[..] } else { &[] };
-        magic.check_set(def, content, set)?;
-    }
+    magic.check_set(def, content, unique)?;
     Ok(magic)
 }
 

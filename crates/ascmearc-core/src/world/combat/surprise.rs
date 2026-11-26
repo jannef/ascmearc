@@ -37,7 +37,7 @@ use crate::world::creatures::unseen::invisible_to;
 use crate::world::{ActorId, ActorKind, World, WorldState};
 
 /// What counts nothing toward a flat-footed target's Defence: the categories that react.
-const FLAT_FOOTED: [Category; 2] = [Category::Dexterity, Category::Dodge];
+pub(in crate::world) const FLAT_FOOTED: [Category; 2] = [Category::Dexterity, Category::Dodge];
 
 /// Creature `id`'s half of [`World::unaware`], of actor `other`: asleep or disguised, whatever
 /// it sees; else it hunts no one it has seen and has been slipped past, or its eyes do not see
@@ -274,6 +274,8 @@ impl World {
             );
         if !made {
             self.afflict(target, status, 1, by, events);
+            // Flat-footed, what unique boots gathered is lost (`gather.rs`).
+            self.lose_gathering(target);
         }
         let player = self.state.player;
         // A check made, whatever came of it, marks the player's Initiative (training stream).

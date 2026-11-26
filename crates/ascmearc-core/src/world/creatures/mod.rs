@@ -14,6 +14,7 @@ mod first_sight;
 mod gaze;
 mod incorporeal;
 pub(in crate::world) mod mimic;
+pub(in crate::world) mod parley;
 mod path;
 mod rooted;
 mod snatch;
@@ -46,6 +47,7 @@ cfg_if! {
         mod gaze_tests;
         mod incorporeal_tests;
         mod mimic_tests;
+        mod parley_tests;
         mod retribution_tests;
         mod rooted_tests;
         mod spawn_tests;

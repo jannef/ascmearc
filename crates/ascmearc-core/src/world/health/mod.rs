@@ -28,6 +28,7 @@ mod regen;
 mod restore;
 pub(in crate::world) mod rot;
 mod status;
+mod wakes;
 cfg_if! {
     if #[cfg(test)] {
         mod buff_field_tests;
@@ -52,6 +53,7 @@ cfg_if! {
         mod potion_tests;
         mod potion_utility_tests;
         mod restore_tests;
+        mod wakes_tests;
         mod rot_tests;
         mod second_breakfast_tests;
         mod smoke_tests;

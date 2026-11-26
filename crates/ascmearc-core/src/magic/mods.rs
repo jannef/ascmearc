@@ -62,6 +62,11 @@ pub struct Mods {
     /// How many times as far it shoots or is thrown, from a unique item's Range power (local;
     /// 1 without one: [`Mods::range`]).
     range_times: u8,
+    /// The prayer strain its hits take off, from a unique weapon's Shrive power (local, as
+    /// `on_hit`).
+    shrive: Option<crate::content::Shrive>,
+    /// What a unique weapon's Tally or Grudge power keeps of the blows its bearer takes (local).
+    keeps: Option<crate::content::Keeps>,
     /// Its damage dice and to-hit by its wielder's level, from a unique weapon's Grows power
     /// (local: the weapon that hits; `world/combat/grows.rs`).
     grows: Option<WeaponGrowth>,
@@ -74,6 +79,9 @@ pub struct Mods {
     /// Whether what it kills is eaten, from a unique weapon's Devour power (local;
     /// `world/combat/devour.rs`).
     devour: bool,
+    /// How far its wielder's hexes spread from the one it hits, from a unique weapon's Spread
+    /// power (local; `world/combat/spread.rs`).
+    spreads: Option<u8>,
 }
 
 impl Default for Mods {
@@ -91,10 +99,13 @@ impl Default for Mods {
             thrust: None,
             banes: Vec::new(),
             range_times: 1,
+            shrive: None,
+            keeps: None,
             grows: None,
             first_blood: false,
             silent: None,
             devour: false,
+            spreads: None,
         }
     }
 }
@@ -257,8 +268,7 @@ impl Mods {
         };
         for rolled in magic.rolled(content) {
             if rolled.def.effect.is_local_on(kind) == local {
-                let tier = rolled.def.tier(rolled.tier);
-                let light = tier.and_then(|t| t.light);
+                let light = rolled.light;
                 let dice = rolled.dice;
                 // A curse works its effect the other way (#1754): hunger faster, heavier, slower.
                 let value = match rolled.def.cursed {
@@ -308,12 +318,18 @@ impl Mods {
                     mods.added.extend(*added);
                 }
                 Some(&Power::Range(times)) => mods.range_times = times,
+                Some(&Power::Shrive(shrive)) => mods.shrive = Some(shrive),
+                Some(Power::Tally { .. }) => mods.keeps = Some(crate::content::Keeps::Debt),
+                Some(&Power::Grudge { per_hit }) => {
+                    mods.keeps = Some(crate::content::Keeps::Grudges(per_hit));
+                }
                 Some(&Power::Thrust(percent)) => mods.thrust = Some(percent),
                 // The Stick's dice and to-hit, the wielder's level read where it strikes.
                 Some(Power::Grows(growth)) => mods.grows = Some(growth.clone()),
                 Some(Power::FirstBlood) => mods.first_blood = true,
                 Some(&Power::Silent { blood }) => mods.silent = Some(blood),
                 Some(Power::Devour) => mods.devour = true,
+                Some(&Power::Spread(cells)) => mods.spreads = Some(cells),
                 _ => {}
             }
         }
@@ -416,9 +432,13 @@ impl Mods {
             profile.add_rider(rider);
         }
         profile.on_hit.extend_from_slice(&self.on_hit);
+        profile.shrive = profile.shrive.or(self.shrive);
         profile.thrust = profile.thrust.or(self.thrust);
         for (tag, value) in &self.banes {
             add_bane(&mut profile.banes, tag, *value);
+        }
+        if self.keeps.is_some() {
+            profile.keeps = self.keeps;
         }
         if self.grows.is_some() {
             profile.grows.clone_from(&self.grows);
@@ -429,6 +449,9 @@ impl Mods {
             profile.bloodless |= !blood;
         }
         profile.devour |= self.devour;
+        if self.spreads.is_some() {
+            profile.spreads = self.spreads;
+        }
     }
 
     /// Every effect with a value, in [`Effect::all`] order, and the light.

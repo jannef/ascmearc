@@ -88,6 +88,11 @@ pub struct Mind {
     /// player sees it for that turn. Not part of its routine: [`Mind::is_calm`] ignores it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub glimpsed: Option<u64>,
+    /// It quailed at a roaring weapon's kill (`world/combat/roar.rs`): it is not checked again
+    /// until it goes back to its routine, the fight over for it. Not part of its routine:
+    /// [`Mind::is_calm`] ignores it.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub heard_roar: bool,
 }
 
 impl Mind {
@@ -313,11 +318,30 @@ pub struct Actor {
     /// never followed.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub home: Option<String>,
+    /// Until when the rage of a unique's Wakes power it wears sleeps, once it woke in it
+    /// (Beornhama's, `world/health/wakes.rs`); `None` before it ever woke.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub rage_sleeps: Option<GameTime>,
+    /// What its unique weapons keep of the blows it took: a Tally's debt, a Grudge's grudges
+    /// (`world/combat/tally.rs`). Left out of saves and hashes while empty.
+    #[serde(
+        default,
+        skip_serializing_if = "crate::world::combat::tally::Tallies::is_empty"
+    )]
+    pub tallies: crate::world::combat::tally::Tallies,
     /// Where it stood as its last turn ended and how many turns in a row ended there, while it
     /// bears a unique shield with the Plant power (the Eorðfæst, `world/combat/plant.rs`); `None`
     /// for everyone else.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub planted: Option<crate::world::Planted>,
+    /// What its unique boots have gathered (Lēohtfōt's momentum, Fǣgerfōt's Dodge,
+    /// `world/combat/gather.rs`); `None` for everyone else.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub gathered: Option<crate::world::Gathered>,
+    /// Whether it has checked against a unique's Parley, and whether it holds its hand
+    /// (the Friþwebbe's, `world/creatures/parley.rs`); `None` for one that never checked.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub truce: Option<crate::world::Truce>,
 }
 
 fn is_ungraded(n: &i8) -> bool {
@@ -803,10 +827,13 @@ impl Actor {
             .filter(|&d| d != 0)
             .map(|d| (Category::Dodge, d));
         let magic = [
-            // Bare feet under a unique's Barefoot power (Hushfoot's +3, #2133).
+            // Bare feet under a unique's Barefoot power (Hushfoot's +3, #2133); Fǣgerfōt's
+            // gathered misses (#2128, `gather.rs`).
             (
                 Category::Dodge,
-                mods.get(ItemEffect::Dodge) + self.barefoot(content).map_or(0, |b| b.dodge),
+                mods.get(ItemEffect::Dodge)
+                    + self.barefoot(content).map_or(0, |b| b.dodge)
+                    + self.gathered_dodge(content),
             ),
             (
                 Category::Deflection,

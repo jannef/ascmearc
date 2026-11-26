@@ -118,6 +118,7 @@ pub(super) fn growth_table(content: &Content, beasts: &[CreatureId]) -> String {
                 order: Order::Follow,
                 retinue: false,
                 until: None,
+                rooted: false,
             });
             let hp = actor.max_hp(content);
             let blow = actor.melee(content);

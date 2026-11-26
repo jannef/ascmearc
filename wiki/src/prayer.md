@@ -55,6 +55,11 @@ earlier prayers has fizzled:
 So a prayer now and then is always answered. A priest who prays every few minutes in a long fight
 starts to fail, and once a prayer has fizzled, the rest of that fight goes without.
 
+Two [unique items](magic-items.md#unique-items) change this. Scrift, a mace, takes 40 points of
+strain off with every blow it lands, 120 with a critical hit, and all of it with a blow that kills
+one of the undead or a fiend. Swīge, an amulet, makes the strain pass twice as fast while you
+wear it. Neither ever takes the strain below nothing, and both end a lock once the strain is gone.
+
 ## The holy and the dark
 
 Who answers depends on your [alignment](alignment.md) at the moment you pray. If you are Neutral or

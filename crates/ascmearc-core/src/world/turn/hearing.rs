@@ -27,6 +27,8 @@ impl World {
             _ => 100,
         };
         self.make_noise_at(actor, Act::Step(to), percent);
+        // A step builds a unique's momentum (`gather.rs`).
+        self.note_step(actor);
     }
 
     /// [`World::make_noise`] with the noise's loudness scaled to `percent`.

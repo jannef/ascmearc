@@ -1,0 +1,21 @@
+# Twifeald (#2121, "twofold"): a quarterstaff for the drop pool (#2103; placed nowhere else but
+# the test world's quarry), item level 40, the evoker's. Its Fork power: every harmful spell its
+# wielder casts at one target (a ray, a bolt, a touch: one target and a damage roll; never a cone,
+# a burst, a line, or a hex) strikes a second creature too, the hostile one nearest the first
+# within 3 cells of it, for half the damage, rolled to hit on its own where the spell rolls to hit
+# (`world/magic/fork.rs`). Never the caster or an ally. +3 on every spell's roll, +20 mana, spells
+# 2 cells farther, +2 to hit with spells, +4 Willpower; the staff's own Parry 1. Every value set
+# by hand (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "twifeald"
+name = "Twifeald"
+# Of the drop pool: a rare find may be it instead (#2103; docs/dev/magic-items.md "The drop pool").
+pool = true
+object = "quarterstaff"
+affixes = ["mystic=20", "potent=3", "of_farcasting=2", "of_the_magus=2", "of_the_sage=4"]
+level = 40
+# Marvellous, with a flawless sapphire in its tip.
+quality = "marvellous"
+parts = [{ part = "tip", of = "sapphire", cut = "flawless" }]
+power = { fork = 3, percent = 50, phrase = "Every spell its wielder casts at one foe forks: half of it leaps to the foe nearest." }
+lore = "One word, and two things fell down."

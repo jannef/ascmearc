@@ -415,6 +415,19 @@ impl<'a> PerceptionView<'a> {
         let maker = self.character.map(|c| c.name.as_str());
         let mut lines =
             describe::appraised_for(stack, self.lore, self.appraisal(), Some(self.player), maker);
+        // What a unique weapon keeps of the blows the player took, after its power (`tally.rs`).
+        let level = self.own_experience().level;
+        let kept = self.player.tally_lines(self.content, stack, level);
+        if !kept.is_empty() {
+            let at = (lines.iter())
+                .rposition(|l| l.kind == LineKind::Power)
+                .map_or(lines.len(), |i| i + 1);
+            let kept = kept.into_iter().map(|msg| describe::Line {
+                kind: LineKind::Power,
+                msg,
+            });
+            lines.splice(at..at, kept);
+        }
         if self.player.talent_mods(self.content).craft.eye_for_make {
             let percent = crate::world::salvage_percent(self.content, self.player);
             let protected = crate::world::protected_in(self.content, self.quests, stack);
@@ -429,6 +442,21 @@ impl<'a> PerceptionView<'a> {
                 .rposition(|l| !matches!(l.kind, LineKind::Power | LineKind::Lore))
                 .map_or(lines.len(), |i| i + 1);
             lines.splice(at..at, make);
+        }
+        // A Wakes power's rage, asleep in what the player wears, says so after its power
+        // (`world/health/wakes.rs`).
+        let wakes = (stack.known_magic().and_then(|m| m.unique.as_deref()))
+            .and_then(|id| self.content.unique(id))
+            .is_some_and(|u| matches!(u.power, Some(crate::content::Power::Wakes { .. })));
+        if wakes && self.player.rage_asleep(self.content, self.time) {
+            let at = (lines.iter())
+                .rposition(|l| l.kind == LineKind::Power)
+                .map_or(lines.len(), |i| i + 1);
+            let line = describe::Line {
+                kind: LineKind::Note,
+                msg: crate::msg::uniques::RAGE_SLEEPS.into(),
+            };
+            lines.insert(at, line);
         }
         lines
     }
@@ -579,6 +607,25 @@ impl<'a> PerceptionView<'a> {
     /// what they suffer, never how badly or for how long.
     pub fn own_effects(&self) -> impl Iterator<Item = StatusId> + 'a {
         self.player.effects.iter().map(|e| e.status)
+    }
+
+    /// What the player's unique boots have gathered (Lēohtfōt's momentum, Fǣgerfōt's misses),
+    /// while they wear them and it is something.
+    pub fn own_gathered(&self) -> Option<super::OwnGathered> {
+        use super::OwnGathered;
+        match self.player.gathered? {
+            world::Gathered::Momentum(_) => {
+                let (n, max, _) = self.player.momentum(self.content)?;
+                Some(if n >= max {
+                    OwnGathered::FullTilt
+                } else {
+                    OwnGathered::Steps(n)
+                })
+            }
+            world::Gathered::Dodge(n) => {
+                (self.player.gathered_dodge(self.content) > 0).then_some(OwnGathered::Dodge(n))
+            }
+        }
     }
 
     /// The diseases the player knows they have, in disease order: those

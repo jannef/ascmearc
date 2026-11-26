@@ -62,6 +62,8 @@ pub enum Deed {
     /// Prayed at a forgotten altar of this side: a good altar's
     /// prayer is a little good, an evil one's evil, a neutral one's nothing.
     Prayed(Alignment),
+    /// A thinking creature held its hand under their Parley (the Friþwebbe, #2129): peace made.
+    MadePeace,
 }
 
 impl Deed {
@@ -78,6 +80,7 @@ impl Deed {
             Deed::CravingGift => Some(shift.craving_gift),
             Deed::Consecrated => Some(shift.consecrate),
             Deed::ConsumedCrystal => Some(shift.consume_crystal),
+            Deed::MadePeace => Some(shift.make_peace),
             Deed::Prayed(Alignment::Good) => Some(shift.prayed_good),
             Deed::Prayed(Alignment::Evil) => Some(shift.prayed_evil),
             Deed::Prayed(Alignment::Neutral) => Some(0),

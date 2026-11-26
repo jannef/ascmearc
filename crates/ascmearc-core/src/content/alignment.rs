@@ -93,6 +93,9 @@ pub struct Shifts {
     /// Consuming a magic crystal (docs/design/enchanting.md §5), a crystal.
     #[serde(default)]
     pub consume_crystal: i32,
+    /// A thinking creature holding its hand under the player's Parley (the Friþwebbe, #2129).
+    #[serde(default)]
+    pub make_peace: i32,
     /// Praying at a good forgotten altar.
     #[serde(default)]
     pub prayed_good: i32,
@@ -173,6 +176,7 @@ impl AlignmentRules {
             s.craving_gift,
             s.consecrate,
             s.consume_crystal,
+            s.make_peace,
         ];
         if amounts.iter().any(|a| a.abs() > MAX) {
             return Err(err(format!("every [shift] is -{MAX} to {MAX}")));

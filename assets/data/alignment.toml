@@ -41,6 +41,8 @@
 #   consecrate         consecrating an unholy place (the class ability Consecrate); default 0
 #   consume_crystal    consuming a magic crystal (from the Consume list, `e`; crystals.toml), a
 #                      crystal; default 0
+#   make_peace         a thinking creature holding its hand under your Parley (the Friþwebbe,
+#                      a unique amulet); default 0
 #   prayed_good        praying at a good forgotten altar (a neutral
 #   prayed_evil        altar's prayer moves nothing), and at an evil one
 #
@@ -108,6 +110,7 @@ craving_threshold = -100
 craving_gift = -300
 consecrate = 20
 consume_crystal = -20
+make_peace = 5
 prayed_good = 5
 prayed_evil = -10
 

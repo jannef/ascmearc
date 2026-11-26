@@ -530,11 +530,15 @@ mod tests {
             on_hit: Vec::new(),
             thrust: None,
             banes: Vec::new(),
+            shrive: None,
+            once: 0,
+            keeps: None,
             grows: None,
             first_blood: false,
             silent: false,
             bloodless: false,
             devour: false,
+            spreads: None,
         };
         let sharp = effects.sharpen(&content, profile);
         assert_eq!((sharp.to_hit, sharp.bonus), (5, 0));

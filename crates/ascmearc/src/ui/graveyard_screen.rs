@@ -157,6 +157,7 @@ fn cause_words(fallen: &Fallen, content: &Content) -> String {
         "choked" => return ui(T::CAUSE_CHOKED),
         "drowning" => return ui(T::CAUSE_DROWNED),
         "altar" => return ui(T::CAUSE_ALTAR),
+        "oath" => return ui(T::CAUSE_OATH),
         PROFANE => return ui(T::CAUSE_PROFANE),
         "own_spell" => return ui(T::CAUSE_OWN_SPELL),
         "unseen" => return ui(T::CAUSE_UNSEEN),

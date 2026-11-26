@@ -168,6 +168,7 @@ pub use classes::spirit_weapon::{gift as spirit_gift, pierces_all, shapes as wea
 pub use combat::attacks::{AttackSource, OwnAttack};
 pub use combat::fight::{Cause, Death};
 pub use combat::free_blow::FreeBlows;
+pub use combat::gather::Gathered;
 pub(crate) use combat::item_damage::protected_in;
 pub use combat::plant::Planted;
 pub(crate) use crafting::craft::recipe_rows;
@@ -189,6 +190,7 @@ pub use crafting::salvage::{chipped, salvage_percent, salvageable};
 pub use crafting::seal::MOST_SEALS;
 pub use crafting::set::{SetBand, set_band, settable};
 pub use crafting::temper::{temperable, whittleable, workable, workable_wood};
+pub use creatures::parley::Truce;
 pub use creatures::statue::Statue;
 pub(crate) use creatures::unseen::{Concealed, fade_refused, unseen_by_player};
 pub use fixtures::curse::{Rising, rise_candidates, rises_as};
@@ -358,6 +360,10 @@ pub struct WorldState {
     /// each once. Left out while empty.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub(crate) uniques_dropped: BTreeSet<String>,
+    /// The player's steps in a row unseen by any hostile, while they wear an Approach power
+    /// (`world/combat/approach.rs`). Left out while 0.
+    #[serde(default, skip_serializing_if = "is_zero_steps")]
+    pub(crate) unseen_steps: u8,
     /// Every profane gift the player has ever taken, by talent id, held or lost since: none is
     /// given twice (`world/character/profane.rs`, #1805).
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
@@ -427,6 +433,10 @@ pub struct WorldState {
 }
 
 fn is_zero(n: &u32) -> bool {
+    *n == 0
+}
+
+fn is_zero_steps(n: &u8) -> bool {
     *n == 0
 }
 
@@ -620,6 +630,8 @@ pub struct World {
     /// The player's weapon active under way (not saved): what its attack does beyond a plain
     /// one, read where that is resolved (`weapon_active.rs`).
     technique: combat::weapon_active::Technique,
+    /// What the action under way did toward a unique's momentum (not saved: `gather.rs`).
+    footwork: combat::gather::Underway,
     /// What an overworld encounter has under way within the action (not saved:
     /// `encounter.rs`).
     encounter: levels::encounter::Underway,
@@ -879,6 +891,7 @@ impl World {
             wares: BTreeMap::new(),
             uniques_offered: BTreeSet::new(),
             uniques_dropped: BTreeSet::new(),
+            unseen_steps: 0,
             gifts_received: BTreeSet::new(),
             stipend: classes::stipend::Stipend::default(),
             fund: classes::invest::Fund::default(),
@@ -933,7 +946,11 @@ impl World {
             npc: None,
             talk: Talk::default(),
             home: None,
+            rage_sleeps: None,
+            tallies: Default::default(),
             planted: None,
+            gathered: None,
+            truce: None,
             // The scenario's spells, known from the start (a test world's fixture).
             spells: def.spells.iter().map(|&s| (s, 1)).collect(),
             streak: None,
@@ -1166,6 +1183,7 @@ impl World {
             fresh: Vec::new(),
             reflection: Default::default(),
             technique: combat::weapon_active::Technique::default(),
+            footwork: combat::gather::Underway::default(),
             encounter: Default::default(),
         }
     }
@@ -1487,6 +1505,10 @@ impl World {
         if let Some(refused) = self.refuse_blocked(action) {
             return refused;
         }
+        // A unique's vow of silence (`hush.rs`).
+        if let Some(refused) = self.refuse_hushed(action) {
+            return refused;
+        }
         let here = self.player_pos();
         // Whether the action was done, and what kind of action it was for its cost (the same on
         // any level: taking stairs ends on another).
@@ -1670,6 +1692,10 @@ pub(crate) fn stance_between(
 ) -> Stance {
     // A faction friendly to nothing is hostile to its own, never to itself.
     if a.id == b.id || allies::beast_friend::befriended(state, content, a, b) {
+        return Stance::Neutral;
+    }
+    // A creature holding its hand under a Parley (`parley.rs`).
+    if creatures::parley::holds_hand(state, a, b) {
         return Stance::Neutral;
     }
     content.stance_of(a.faction(content), b.faction(content))

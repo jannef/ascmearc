@@ -8,6 +8,8 @@ mod concentration;
 mod corpse_spell;
 pub(in crate::world) mod decipher;
 mod forget;
+mod fork;
+mod hush;
 pub(in crate::world) mod learn;
 mod malison;
 pub(in crate::world) mod mana;
@@ -39,6 +41,8 @@ cfg_if! {
         mod corpse_spell_tests;
         mod decipher_tests;
         mod forget_tests;
+        mod fork_tests;
+        mod hush_tests;
         mod identify_spell_tests;
         mod learn_tests;
         mod magic_tests;

@@ -141,7 +141,11 @@ allies in the retinue at once.
 ## Time
 
 `Ally::until` is the clock. `World::allies_lapse` runs at the end of `run_turn` (after the
-actors' energies are written back, before `spawn_tick`): every ally on the current level past
+actors' energies are written back, before `spawn_tick`). It first lets a master's Root power hold
+its called beasts (`world/allies/root.rs`, Wyrtruma's, #2113; docs/dev/magic-items.md "Unique
+items"): a summoned ally (`AllySource::Summoned`) past its time within the power's `cells` of a
+master on its level who wears or wields it gets `until` = now + `renew` and `Ally::rooted` (saved,
+left out while false; `AllyView::rooted`, look mode's "rooted"). Then every ally on the current level past
 its time departs through `World::ally_departs` (removed from `actors`, nothing left behind, no
 corpse or pile, `Event::Departed { actor, at }`, pushed to `fallen` so the turn's reports may
 name it, "The wolf fades away." when the player sees its cell, or the type's own `depart` words, "The wolf
@@ -272,10 +276,10 @@ it (`xtask/src/wiki/talents.rs::effect_text`).
 - The header line: `allies N` while the player has any on the level or in the retinue
   (`PerceptionView::allies_with`).
 - `actors` (dev): `; ally of #0 (summoned, 4 min; follow)`, `(summoned; stay at (12, 5))`,
-  `(summoned; follow; retinue)`, `(companion; follow; named Snel, grade 12)`; the minutes are
-  rounded up.
+  `(summoned; follow; retinue)`, `(summoned, 1 min; follow; rooted)`, `(companion; follow;
+  named Snel, grade 12)`; the minutes are rounded up.
 - JSON: `allies` (`id`, `creature`, `name`, `health`, `order`, `at` (the order's cell or null),
-  `source`, `lasts` (minutes, or null), `retinue`, `here`), from `PerceptionView::allies()`
+  `source`, `lasts` (minutes, or null), `retinue`, `rooted`, `here`), from `PerceptionView::allies()`
   (`AllyView`, the snapshot's `allies`: the player knows their own; its `source` carries a
   companion's data, `PerceptionView::companion()`); each seen actor's `ally: true`
   (`SeenActor::ally`, for A3's mark and look mode; `companion` for the player's own); the
