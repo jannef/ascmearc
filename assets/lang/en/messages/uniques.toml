@@ -19,3 +19,19 @@ restored_you = "Death lets go of you: you rise whole again!"
 # Feet that never spring a trap (Tiptoe's Trapwise, Hushfoot's bare feet; #2141, #2133;
 # `world/skills/trapwise.rs`): the player steps onto a trap, which stays armed. `trap`: the trap.
 tread_over_trap = "You tread over {trap:a}, and it does not spring."
+
+# The Ring power (#2127, the Kettle Hat; `world/combat/struck.rs`): a blow lands on the helm's
+# wearer. `who`: a wearer the player sees.
+rings_helm = "{who:poss} helm rings like a struck kettle!"
+# The player wears it.
+rings_your_helm = "Your helm rings like a struck kettle!"
+
+# The Scars power (#2137, Scarhide; `world/combat/struck.rs`): a critical hit on the player scars
+# what they wear.
+scarred = "The blow leaves its scar on your armour."
+
+# The scars a Scars power's item bears, on its description (`magic/describe.rs`): `n`, how many.
+[scars]
+by = "n.number"
+one = "It bears {n:num} scar."
+many = "It bears {n:num} scars."

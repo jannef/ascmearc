@@ -13,8 +13,7 @@
 //!   (prefix or suffix) it has more of goes, one of that kind at random (one `rng.index` draw), a
 //!   suffix on a tie. Its rarity and name stay: a trimmed rare is a rare still. It is the very
 //!   last step of making an item ([`super::loot::finished`]), so an item that needs no trim draws
-//!   nothing more. A base of no kind is never trimmed: a unique on clothing keeps every
-//!   affix its table sets.
+//!   nothing more.
 //! - **Over capacity** after the trim is only a damaged piece (its improvements gone): nothing
 //!   strips it; [`Magic::check`] does not read the capacity, so saves always load.
 
@@ -86,13 +85,8 @@ pub fn trim(magic: &mut Magic, capacity: u8, rng: &mut Rng, content: &Content) {
     }
 }
 
-/// `stack` trimmed to its capacity from `rng` ([`trim`]): the last step of making an item. A
-/// base of no kind has no capacity: the only magic one is a unique on clothing (#2141), which
-/// keeps every affix its table sets.
+/// `stack` trimmed to its capacity from `rng` ([`trim`]): the last step of making an item.
 pub fn trimmed(content: &Content, rng: &mut Rng, mut stack: Stack) -> Stack {
-    if content.object(stack.object).kind.is_none() {
-        return stack;
-    }
     let room = capacity(&stack, content);
     if let Some(magic) = stack.magic_mut() {
         trim(magic, room, rng, content);

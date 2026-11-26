@@ -162,6 +162,12 @@ fn power_text(content: &Content, u: &UniqueDef) -> String {
             u.douse
         ));
     }
+    if u.unarmoured {
+        all.push(
+            "its wearer counts as wearing no body armour (for Mage armour and Step of the wind)"
+                .into(),
+        );
+    }
     if all.is_empty() {
         "-".into()
     } else {
@@ -309,6 +315,38 @@ fn own_power(content: &Content, u: &UniqueDef) -> String {
                 zone_words(*kind)
             )
         }
+        Some(Power::Pain {
+            resource,
+            gain,
+            critical,
+        }) => {
+            let pool = &content.resource(*resource).name;
+            format!(
+                "every hit on its wearer that does damage (a blow, a shot, a throw) gives them \
+                 {gain} {pool}, a critical hit {critical}, up to their most; one without {pool} \
+                 gains nothing"
+            )
+        }
+        Some(Power::Ring {
+            cells,
+            stagger,
+            difficulty,
+        }) => {
+            let (status, loudest) = ("Staggered", ascmearc_core::noise::MAX_REACH);
+            let degrees = if *stagger == 1 { "degree" } else { "degrees" };
+            format!(
+                "every hit on its wearer (a blow, a shot, a throw), even one its armour soaks \
+                 whole, rings it: a clang heard up to {cells} cells away (a critical hit's \
+                 twice as far, at most {loudest}), and every creature beside the wearer, \
+                 friend or foe, that fails a Toughness check against {difficulty} is \
+                 {status}, {stagger} {degrees} (a critical hit's twice as many, as far as the \
+                 status holds); never the wearer"
+            )
+        }
+        Some(Power::Scars) => "every critical hit its wearer suffers (a blow, a shot, a throw) \
+             scars it: +1 Armour, +1 maximum hit point, or +1 Toughness, each a third of the \
+             time, kept on it for whoever wears it, without end"
+            .into(),
     }
 }
 

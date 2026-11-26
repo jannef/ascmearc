@@ -256,6 +256,20 @@ impl Mods {
                 self.add(rolled.def.group(), (value, dice), light, content);
             }
         }
+        // A Scars power's scars (`scars.rs`), as its affixes of the same effects would be.
+        if let Some(scars) = stack.scars() {
+            let scarred = [
+                (Effect::Armour, scars.armour),
+                (Effect::MaxHp, scars.max_hp),
+                (Effect::Stat(crate::stats::Stat::Toughness), scars.toughness),
+            ];
+            for (effect, n) in scarred {
+                if n > 0 && effect.is_local_on(kind) == local {
+                    let slot = &mut self.values[effect.index()];
+                    *slot = slot.saturating_add(i32::from(n));
+                }
+            }
+        }
     }
 
     /// What `stack`'s affixes do to itself and to the attacks made with it (its local effects),

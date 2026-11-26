@@ -31,6 +31,7 @@ pub(crate) mod make;
 pub mod mods;
 pub(crate) mod name;
 pub mod numbers;
+pub mod scars;
 pub mod unique_pool;
 pub mod worked;
 

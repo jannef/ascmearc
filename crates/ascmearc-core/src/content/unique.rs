@@ -17,8 +17,8 @@ use super::level::{ItemPartSpec, hand_made, item_part, magic_of};
 use super::object::AddedSpec;
 use super::status::{OnHit, OnHitSpec};
 use super::{
-    Content, ContentError, DamageTypeId, ItemKind, LightId, ObjectDef, ObjectId, Rarity, SlotId,
-    SpellId, StatusId, ZoneKind,
+    Content, ContentError, DamageTypeId, ItemKind, LightId, ObjectDef, ObjectId, Rarity,
+    ResourceId, SlotId, SpellId, StatusId, ZoneKind,
 };
 use crate::damage::Rider;
 use crate::dice::Roll;
@@ -63,6 +63,15 @@ pub enum Power {
     /// Defence are untouched. The player wearing it is told `message` (a line of data, said by its
     /// key: [`super::data_line::ward`]).
     Negate { chance: u8, message: String },
+    /// Every blow that lands on its wearer and does damage pays into this resource of theirs
+    /// (`{ pain = "ki", gain = 1, critical = 2 }`, Hǣrsceorp's, #2115): `gain` for a hit,
+    /// `critical` for a critical, up to the pool's maximum; nothing to one without the pool.
+    /// Read where an attack's blow lands (`world/combat/struck.rs`, `World::resolve`).
+    Pain {
+        resource: ResourceId,
+        gain: u16,
+        critical: u16,
+    },
     /// It shoots (or is thrown) this many times as far (`{ range = 2 }`, #1976): a multiplier on
     /// its range and what its affixes add, read where its reach is computed
     /// ([`crate::magic::Mods::local`], `Mods::range`); only on a base with a `range`.
@@ -76,6 +85,23 @@ pub enum Power {
     /// No trap springs under its wearer's step, and every hidden trap within this many cells of
     /// them is found (`{ trapwise = 5 }`, Tiptoe's, #2141): read in `world/skills/trapwise.rs`.
     Trapwise(u8),
+    /// Every blow that lands on its wearer, soaked to nothing too, rings it (`{ ring = 20,
+    /// stagger = 1, difficulty = 15 }`, the Kettle Hat's, #2127): a clang heard `cells` away
+    /// ([`crate::noise::Act::Clang`]; a critical's twice as far), and every creature beside the
+    /// wearer, friend and foe, that fails a Toughness check against `difficulty` is Staggered,
+    /// `stagger` degrees (a critical's twice as many). Read where an attack's blow lands
+    /// (`world/combat/struck.rs`).
+    Ring {
+        cells: u8,
+        stagger: u16,
+        difficulty: i32,
+    },
+    /// Every critical hit its wearer suffers scars it: +1 Armour, +1 maximum hit point, or +1
+    /// Toughness, chosen at random, kept on the item for whoever wears it, without end (`{ scars
+    /// = true }`, Scarhide's, #2137; worn armour only). Read where an attack's blow lands
+    /// (`world/combat/struck.rs`); the scars are [`crate::object::Stack`]'s, read with its
+    /// affixes ([`crate::magic::Mods`]).
+    Scars,
     /// Its wearer sees with this vision profile (an index into
     /// [`Content::vision_profiles`]) where it is better than their own (`{ vision =
     /// "darkvision" }`): read where an actor's eyes are chosen.
@@ -165,6 +191,10 @@ pub struct UniqueDef {
     pub phrase: Option<String>,
     /// The item description's last line.
     pub lore: Option<String>,
+    /// Its wearer counts as wearing no body armour (`counts_as_unarmoured = true`, Hǣrsceorp's,
+    /// #2115): read where body armour is asked for (`Actor::wears_body_armour`: Mage armour,
+    /// Step of the wind).
+    pub unarmoured: bool,
     /// The campaign whose table it is in (`None`: shared, `data/uniques/`).
     pub campaign: Option<String>,
     /// Whether it is of the drop pool (`pool = true`): a rare find may be it instead, once a run
@@ -256,6 +286,9 @@ struct UniqueSpec {
     /// The radius in cells within which it douses every light while worn.
     #[serde(default)]
     douse: u8,
+    /// Whether its wearer counts as wearing no body armour.
+    #[serde(default)]
+    counts_as_unarmoured: bool,
     lore: Option<String>,
 }
 
@@ -277,6 +310,20 @@ struct PowerSpec {
     light: Option<String>,
     /// How many times as far it shoots (2 or more).
     range: Option<u8>,
+    /// A resource a blow landing on its wearer pays into.
+    pain: Option<String>,
+    /// What a hit pays (`pain` only).
+    gain: Option<u16>,
+    /// What a critical pays (`pain` only).
+    critical: Option<u16>,
+    /// How far, in cells, a blow on its wearer rings out.
+    ring: Option<u8>,
+    /// The degrees of Staggered the din gives (`ring` only).
+    stagger: Option<u16>,
+    /// The Toughness check's difficulty against the din (`ring` only).
+    difficulty: Option<i32>,
+    /// Whether criticals suffered scar it.
+    scars: Option<bool>,
     /// The chance in a hundred that a death near its wearer is undone.
     restore: Option<u8>,
     /// How far from its wearer a death is undone (`restore`), or how far a zone reaches (`zone`).
@@ -399,6 +446,9 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
         })
         .collect::<Result<Vec<_>, _>>()?;
     let bash = spec.bash.unwrap_or(0);
+    if spec.counts_as_unarmoured && def.slot.as_deref() != Some("body") {
+        return Err("`counts_as_unarmoured` needs a base worn on the body".into());
+    }
     if spec.bash.is_some() && def.bash.is_none() {
         return Err("`bash` needs a base that bashes (a shield)".into());
     }
@@ -415,6 +465,7 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
         bash,
         invisible: spec.invisible,
         douse: spec.douse,
+        unarmoured: spec.counts_as_unarmoured,
         phrase,
         lore,
         campaign: None,
@@ -461,7 +512,8 @@ fn more_dice(written: &[String], content: &Content) -> Vec<(String, u8)> {
 /// The power a `power` table names on base item `def`: exactly one of `inflict` (with `chance`
 /// and `severity`, and perhaps `added`), `vision`, `ward` (with a `message`), `negate` (1 to 99,
 /// with a `message`, on worn armour), `light`, `range` (2 or more, on a base with a range),
-/// `restore` (with a `radius`), and `cast` (on a shield).
+/// `restore` (with a `radius`), `cast` (on a shield), `pain` (with `gain` and `critical`),
+/// `ring` (with `stagger` and `difficulty`), and `scars` (on worn armour).
 fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, String> {
     let named = [
         p.inflict.is_some(),
@@ -475,10 +527,13 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
         p.barefoot.is_some(),
         p.trapwise.is_some(),
         p.zone.is_some(),
+        p.pain.is_some(),
+        p.ring.is_some(),
+        p.scars.is_some(),
     ];
     if named.iter().filter(|&&n| n).count() != 1 {
         return Err(
-            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `barefoot`, `trapwise`, and `zone`"
+            "power: name one of `inflict`, `vision`, `ward`, `negate`, `light`, `range`, `restore`, `cast`, `barefoot`, `trapwise`, `zone`, `pain`, `ring`, and `scars`"
                 .into(),
         );
     }
@@ -491,6 +546,12 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     let bare = [p.noise.is_some(), p.dodge.is_some(), p.feel_traps.is_some()];
     if p.barefoot.is_none() && bare.iter().any(|&n| n) {
         return Err("power: `noise`, `dodge`, and `feel_traps` belong to `barefoot`".into());
+    }
+    if p.pain.is_none() && (p.gain.is_some() || p.critical.is_some()) {
+        return Err("power: `gain` and `critical` belong to `pain`".into());
+    }
+    if p.ring.is_none() && (p.stagger.is_some() || p.difficulty.is_some()) {
+        return Err("power: `stagger` and `difficulty` belong to `ring`".into());
     }
     let cast_fields = [p.length.is_some(), p.damage.is_some()];
     let chances = [p.on_block.is_some(), p.on_bash.is_some()];
@@ -576,6 +637,47 @@ fn power(p: &PowerSpec, def: &ObjectDef, content: &Content) -> Result<Power, Str
     }
     if let Some(kind) = p.zone {
         return zone(p, kind, def);
+    }
+    if let Some(pool) = &p.pain {
+        let resource = (content.resource_id(pool))
+            .ok_or_else(|| format!("power: unknown resource `{pool}`"))?;
+        let gain = p
+            .gain
+            .filter(|&g| g > 0)
+            .ok_or("power: `pain` needs a `gain` (1 or more)")?;
+        let critical = p.critical.unwrap_or(gain);
+        return Ok(Power::Pain {
+            resource,
+            gain,
+            critical,
+        });
+    }
+    if let Some(cells) = p.ring {
+        if cells == 0 {
+            return Err("power: `ring` is how far it is heard, 1 cell or more".into());
+        }
+        if !def.kind.is_some_and(|k| k.is_armour()) {
+            return Err("power: `ring` needs a base that is worn armour".into());
+        }
+        let stagger = p
+            .stagger
+            .filter(|&s| s > 0)
+            .ok_or("power: `ring` needs a `stagger` (1 or more)")?;
+        let difficulty = p.difficulty.ok_or("power: `ring` needs a `difficulty`")?;
+        return Ok(Power::Ring {
+            cells,
+            stagger,
+            difficulty,
+        });
+    }
+    if let Some(scars) = p.scars {
+        if !scars {
+            return Err("power: `scars = false` is no power".into());
+        }
+        if !def.kind.is_some_and(|k| k.is_armour()) {
+            return Err("power: `scars` needs a base that is worn armour".into());
+        }
+        return Ok(Power::Scars);
     }
     if let Some(vision) = &p.vision {
         let index = (content.vision_index(vision))

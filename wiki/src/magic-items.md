@@ -383,6 +383,17 @@ Its power works while it is worn or wielded, identified or not:
   [Dodge](combat.md#defence) the table gives. Every hidden trap on the floor beside you or under
   you is found as you pass, with no roll (not one on a door or a chest), and no trap springs when
   you step on it. Put on boots and it is just a waistcoat.
+- **Pain**: every blow, shot, or thrown thing that hits you and does damage gives you
+  [ki](ki.md): 1 point, or 2 for a [critical hit](combat.md#criticals), up to your most. With no
+  ki of your own, it gives nothing. A hit your armour soaks to nothing gives none.
+- **Ring**: every blow, shot, or thrown thing that hits you rings your helm, even one your
+  armour soaks whole. The clang [carries](hearing.md#how-loud) up to 20 cells, a critical hit's twice
+  as far (30 at most), and whatever hears it may come to look. Everyone standing
+  beside you, friend or foe, makes a [Toughness](stats.md#stat-toughness)
+  [check](stats.md#the-checks) or is [Staggered](status-list.md#status-staggered). You never are.
+- **Scars**: every critical hit you suffer leaves a scar on it, chosen at random: +1 Armour, +1
+  maximum hit point, or +1 Toughness. The scars stay on it for whoever wears it next, and there
+  is no limit to them. Its description counts them once you have identified it.
 
 Some uniques are made of clothing, such as footwraps or a waistcoat. Ordinary clothing is never
 magic, but these work as the boots or body armour they are worn as.
@@ -392,6 +403,8 @@ Some give more besides their power, as the table says: an immunity or a weakness
 [bashes](abilities.md#ability-shield-bash), going [unseen](creature-tricks.md#when-you-are-invisible), or a darkness about you: while you wear it, every light within
 that many cells of you gives no light, the lamps, the fires, and the lights others carry, your
 own too. Nothing is used up: the lights shine again once you are gone or take it off.
+Hǣrsceorp counts as no body armour at all, so [Mage armour](class-wizard.md#talent-mage-armour)
+and [Step of the wind](class-ascetic.md#talent-step-of-the-wind) work in it.
 
 {{#include generated/uniques.md}}
 
