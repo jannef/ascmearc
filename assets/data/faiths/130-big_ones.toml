@@ -1,0 +1,8 @@
+# The Big Ones: the goblins' whoever-is-listening (religions.md §6.1).
+[[faith]]
+id = "big_ones"
+name = "the Big Ones"
+description = "No god of the goblins' own: they pay fear to whatever is biggest, and pray to whoever is listening."
+face = "none"
+stranger = "cold"
+listens = "altar"

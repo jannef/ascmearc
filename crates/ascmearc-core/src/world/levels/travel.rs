@@ -749,6 +749,7 @@ pub(in crate::world) fn make_creature(
         mark: None,
         alignment: None,
         alignment_override: spawn.alignment,
+        faith: None,
         npc: spawn.npc.clone(),
         talk: Talk::default(),
         home: None,

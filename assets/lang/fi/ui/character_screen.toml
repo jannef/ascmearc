@@ -69,6 +69,10 @@ text = "Kokemus"
 of = "fd1ff7"
 text = "{xp:bare} / {next:bare}"
 
+[faith]
+of = "b93fb7"
+text = "Usko"
+
 [gender]
 of = "8539fc"
 text = "Sukup."

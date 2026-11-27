@@ -3,7 +3,7 @@
 //! character), their score in each stat with its abbreviation and full name (as the rules read it:
 //! a score a status effect or stat damage lowers is shown lowered, in a warning color), their hit
 //! points, Defence, and Protection (the totals only), their alignment band (`Kind`, never
-//! the score), the status effects they suffer, by name, the diseases they know they have, by name (`Diseased  Filth
+//! the score) and their faith, the status effects they suffer, by name, the diseases they know they have, by name (`Diseased  Filth
 //! fever`), what they weigh and carry, their burden, and the weights at which it changes (they follow from
 //! scores the player knows). Beside the stats, the attacks they have ready (main hand, off hand,
 //! missile weapon), each with its to-hit, damage, and range as a strike would roll them now
@@ -139,6 +139,8 @@ pub struct CharacterScreen {
     /// Their alignment band's name, never the score; `None` without
     /// alignment rules.
     alignment: Option<String>,
+    /// The faith they profess, by name (`the Mynster`); `None`: none.
+    faith: Option<String>,
     /// Their oath kills (a dwarf with a Slayer's Oath, `docs/dev/oaths.md`): the tally, which
     /// they could keep themselves; `None` without an oath.
     oath_kills: Option<u32>,
@@ -196,6 +198,7 @@ impl CharacterScreen {
                 resources: Vec::new(),
                 talents: 0,
                 alignment: None,
+                faith: None,
                 oath_kills: None,
                 guilds: Vec::new(),
                 attacks: Vec::new(),
@@ -282,6 +285,7 @@ impl CharacterScreen {
                 .collect(),
             talents: view.own_talents().iter().filter(|t| !t.class).count(),
             alignment: view.own_alignment().map(|b| word(b.name(), "Bare")),
+            faith: (view.own_faith()).map(|f| label(content.faith_phrase(f))),
             oath_kills: view.own_oath_kills(),
             guilds: (view.own_guilds().iter())
                 .map(|g| {
@@ -359,6 +363,7 @@ impl CharacterScreen {
         conditions[..last].iter_mut().for_each(|l| l.push(','));
         let status_rows = self.resources.len() as i32
             + i32::from(self.alignment.is_some())
+            + i32::from(self.faith.is_some())
             + i32::from(self.oath_kills.is_some())
             + self.guilds.len() as i32
             + conditions.len() as i32
@@ -501,6 +506,14 @@ impl CharacterScreen {
             if fits(y) {
                 console.print_in(x + 4, y, &ui(T::ALIGNMENT), TEXT, NAME_W - 1);
                 console.print(x + 4 + NAME_W, y, band, TEXT);
+            }
+            y += 1;
+        }
+        // `    Faith         the Mynster`: the faith they profess.
+        if let Some(faith) = &self.faith {
+            if fits(y) {
+                console.print_in(x + 4, y, &ui(T::FAITH), TEXT, NAME_W - 1);
+                console.print(x + 4 + NAME_W, y, faith, TEXT);
             }
             y += 1;
         }

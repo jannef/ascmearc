@@ -1,9 +1,9 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: "render(case, content.clone())"
+expression: shown
 ---
 
-              ┌─ Choose your class (3 of 5) ─────────────────────────────────────────┐
+              ┌─ Choose your class (3 of 6) ─────────────────────────────────────────┐
               │                                                                      │
               │   Berserker                                                          │
               │   Bard                                                               │

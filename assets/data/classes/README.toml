@@ -20,7 +20,11 @@
 #   hidden        `true`: never offered at character creation (no class now); the
 #                 class keeps its data and stays usable through `--character` and a scenario's
 #                 own character, for development and tests (default false)
-#   stats         adjustments to the starting scores by stat id (strength, dexterity, toughness,
+#   faith         the face the character's faith must have (../faiths/): "holy" (the
+#                 paladin) or "any", any face but none (the priest); character creation lists
+#                 only the race's faiths that fit, and `--character` refuses another (default
+#                 none: any faith open to the race). Every race the class is open to must keep one
+#   stats        adjustments to the starting scores by stat id (strength, dexterity, toughness,
 #                 intelligence, willpower, presence; a missing one 0): a number (`1`) or
 #                 dice (`"1d3+1"`), rolled in the background when the character is made,
 #                 ADOM-like; the score is kept within 1 to 40. Each class rolls its key stats.

@@ -271,6 +271,11 @@ pub struct Actor {
     /// `alignment` in a level legend entry). Read the one that counts with [`Actor::nature`].
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub alignment_override: Option<Alignment>,
+    /// The faith it professes (`content/faith.rs`): the player's, chosen at creation; `None`
+    /// professes nothing (every creature, and a character of content without faiths). Left out
+    /// of saves and hashes while `None`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub faith: Option<crate::content::FaithId>,
     /// How fed it is: the player's, when the content has hunger; creatures
     /// do not hunger (`None`).
     #[serde(default, skip_serializing_if = "Option::is_none")]

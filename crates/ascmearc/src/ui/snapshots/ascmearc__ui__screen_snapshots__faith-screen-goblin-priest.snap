@@ -1,0 +1,27 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: shown
+---
+
+
+
+
+
+
+
+              ┌─ Choose your faith (4 of 6) ─────────────────────────────────────────┐
+              │                                                                      │
+              │   the Mynster                                                        │
+              │   the Dark                                                           │
+              │ > the Howl                                                           │
+              │   Random                                                             │
+              │                                                                      │
+              │   The orcs' Wrath, the fury that fills a body and spends it:         │
+              │   strength, fearlessness, and a quick death unregretted.             │
+              │                                                                      │
+              │                                                                      │
+              │                                                                      │
+              │                                                                      │
+              │                                                                      │
+              │ ↑↓ choose   Enter next   Esc back                                    │
+              └──────────────────────────────────────────────────────────────────────┘

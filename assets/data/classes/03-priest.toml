@@ -4,6 +4,8 @@ name = "Priest"
 description = "A servant of a god, schooled in rite and scripture: strong of will and voice, soft of hand."
 # Among the drow only women are priests.
 only = [{ race = "drow", genders = ["female"] }]
+# A servant of a god: any faith whose prayers something answers (faiths/), holy or dark.
+faith = "any"
 stats = { intelligence = 1, willpower = "1d3+1", presence = "1d2" }
 hp = 4
 mana = 9

@@ -339,7 +339,7 @@ fn describe_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
 // --- What screens and the look line show of the data (#2035) -----------------------------------
 
 /// The data's words the screens and the look line show as written: a race's, a class's, a
-/// talent's, a skill's, a scenario's, and a birth sign animal's and element's `description`, a
+/// faith's, a talent's, a skill's, a scenario's, and a birth sign animal's and element's `description`, a
 /// lucky day's, a terrain's and a chest band's `description` (the look
 /// line and a feature underfoot), an animated body's `moves`, a status's `death` (the death
 /// and graveyard screens: "Bled to death"), and a resource's `short` (the status bar).
@@ -352,6 +352,9 @@ fn shown_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     }
     for def in content.classes() {
         add(description("class", &def.id), &def.description);
+    }
+    for (_, def) in content.faiths().list() {
+        add(description("faith", &def.id), &def.description);
     }
     for (_, def) in content.talents().iter() {
         add(description("talent", &def.id), &def.description);
@@ -401,7 +404,7 @@ pub fn lucky_description(day: &super::Lucky) -> String {
     )
 }
 
-/// A `description` the screens show: `<kind>:<id>.description` (`race`, `class`, `talent`,
+/// A `description` the screens show: `<kind>:<id>.description` (`race`, `class`, `faith`, `talent`,
 /// `skill`, `terrain`, `chest`, `scenario`, `sign_animal`, `sign_element`: the kinds of their
 /// lexicon ids).
 pub fn description(kind: &str, id: &str) -> String {

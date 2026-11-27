@@ -621,6 +621,7 @@ fn the_retinue_crosses_the_overworld_and_steps_out_at_the_next_level() {
         gender: crate::character::Gender::Male,
         class: "commoner".into(),
         talents: Vec::new(),
+        faith: None,
     };
     let mut w = World::with_character(content.clone(), "world", None, Some(&spec)).expect("world");
     assert_eq!(w.state.current_level, "overworld");

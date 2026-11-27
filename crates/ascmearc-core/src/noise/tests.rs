@@ -143,6 +143,7 @@ fn actor(content: &Content, creature: &str) -> Actor {
         mark: None,
         alignment: None,
         alignment_override: None,
+        faith: None,
         npc: None,
         talk: Default::default(),
         home: None,

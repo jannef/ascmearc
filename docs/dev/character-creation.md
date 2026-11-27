@@ -88,6 +88,15 @@ a replay, and a save are never checked. Tests: `character.rs`
 `ascmearc-cli`'s `characters_are_race_gender_class`, the text snapshots `class-screen-drow-male`
 and `class-screen-dwarf`; the wiki's `class-limits.md` (`xtask/src/wiki/character.rs`).
 
+**Faith** (#2179, `docs/dev/faith.md`): the step after the class (`Step::Faith`, `--screen
+faith`) lists the race's faiths (`races.toml` `faith` and `faiths`) that the class allows (a
+class file's `faith`: the paladin a holy one, the priest any with a face), the one they profess
+unless they choose preselected (`Content::default_faith`). `CharacterSpec::faith` names another
+(`None`: that default; `--character human,male,priest,dark`), `Start::faith` carries it to
+`Actor::faith`. The faith moves no roll: the spec's `Display`, which names the random streams,
+leaves it out. The summary's Faith row goes back to the step; the character screen shows it after
+Alignment.
+
 **Races in the rules** (#255). `WorldState::race_of(content, actor)` is the one lookup of the
 player's race (`None` for a creature, or a run without a character); `load`, `size_of`, and every
 race trait go through it. The traits, each read in one place:

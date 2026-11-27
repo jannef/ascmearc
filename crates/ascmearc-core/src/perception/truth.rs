@@ -1217,6 +1217,11 @@ impl<'a> PerceptionView<'a> {
         (self.content.alignment()).map(|_| self.player.band(self.content))
     }
 
+    /// The faith the player professes, which they know; `None`: none (or no faiths).
+    pub fn own_faith(&self) -> Option<crate::content::FaithId> {
+        self.player.faith
+    }
+
     /// What the player carries against what they can: their burden, and the
     /// weights at which it changes, which follow from scores they know.
     pub fn own_load(&self) -> Load {

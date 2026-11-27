@@ -1,6 +1,6 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: "render(case, content.clone())"
+expression: shown
 ---
  Wat One-Eye says: "There's a price on a goblin, see. Bring the beast down, wherever you find it,
 ┌─ Character ──────────────────────────────────────────────────────────────────────────────────────┐
@@ -28,6 +28,7 @@ expression: "render(case, content.clone())"
 │     Stance        Neutral                                                                        │
 │     Stamina       10/10                                                                          │
 │     Alignment     Neutral                                                                        │
+│     Faith         the Mynster                                                                    │
 │     Guild         Tin of the Weyfarers' Gilde                                                    │
 │     Resistant to  fire                                                                           │
 │                                                                                                  │

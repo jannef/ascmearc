@@ -1,0 +1,7 @@
+# The Reckoner: Greed, the duergar's (religions.md §5.4).
+[[faith]]
+id = "reckoner"
+name = "the Reckoner"
+description = "The duergar's god of Greed, who keeps the ledger of all that is owed and held, and forgives nothing."
+face = "dark"
+stranger = "bane"

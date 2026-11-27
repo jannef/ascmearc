@@ -1,0 +1,28 @@
+# Faiths: what a character professes, one file per faith holding one `[[faith]]`. A new
+# character chooses one at creation among their race's (races.toml: `faith`, the default, and
+# `faiths`, the others open), after the class; a class's `faith` narrows the list by face
+# (classes/README.toml). The design is docs/design/prayer.md (§3, §10.1), the lore
+# docs/design/religions.md. This file holds only the notes below: a file of comments defines
+# nothing.
+#
+# The faiths are listed at creation in path order, so the files are named `NNN-id.toml`
+# (`010-mynster.toml`). Saves name a faith by its index: a new faith takes a free number where it
+# belongs.
+#
+# Fields:
+#   id, name      the faith's id (for the command line and saves) and how the game names it, a
+#                 proper name with its own article ("the Mynster")
+#   description   one line, shown when choosing
+#   face          who answers its prayers: "holy" (the Light, every church of it), "dark" (the
+#                 Dark and the powers under the hills), or "none" (nothing answers as a god
+#                 does); a faith with no face says how it does not answer, with `answers` or
+#                 `listens`
+#   shared        the faiths whose faithful its altars and shrines hear as their own, by id
+#                 (default none; each Light church lists the other four)
+#   stranger      what its altars do with another faith's prayer: "cold" (unheard, the
+#                 default), "hears" (heard, in its own face), or "bane" (the god wants you gone)
+#   answers       false: it never answers a prayer (the Frogs Beyond; default true)
+#   listens       "anywhere" (the default) or "altar": heard only beside an altar, as that
+#                 altar's stranger (the Big Ones)
+#
+# Creation reads the face; prayer and the altars read the rest as they are built (prayer.md §11).

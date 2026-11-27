@@ -13,8 +13,8 @@ use super::kit::{Kit, KitLineSpec};
 use super::skill::{OptionalSkill, OptionalSpec};
 use super::weapon_skill::Ranked;
 use super::{
-    ContentError, DamageTypeId, FACTORS, Hide, PassiveSearch, SlotId, TalentBook, WeaponSkillId,
-    WeaponSkillTable,
+    ContentError, DamageTypeId, FACTORS, FaithId, Hide, PassiveSearch, SlotId, TalentBook,
+    WeaponSkillId, WeaponSkillTable,
 };
 use crate::dice::Dice;
 use crate::light::Light;
@@ -116,6 +116,9 @@ struct RaceSpec {
     kit: Vec<KitLineSpec>,
     #[serde(default)]
     bare: Vec<String>,
+    faith: Option<String>,
+    #[serde(default)]
+    faiths: Vec<String>,
 }
 
 /// Resolves the races' granted talents against the talents: each exists.
@@ -251,6 +254,15 @@ pub struct RaceDef {
     /// The slots every kit leaves bare for the race: nothing of any kit is worn or wielded
     /// there (the halflings' feet); filled in by the loader once slots are known.
     pub bare: Vec<SlotId>,
+    /// The faith as written (`faith`) and the others open (`faiths`); resolved into `faith` and
+    /// `faiths` once the faiths are known ([`super::faith`]).
+    pub(super) faith_spec: Option<String>,
+    pub(super) faiths_spec: Vec<String>,
+    /// The faith a new character of the race professes unless they choose another (`None`
+    /// without faiths).
+    pub faith: Option<FaithId>,
+    /// The other faiths open to them at creation, as the race lists them.
+    pub faiths: Vec<FaithId>,
 }
 
 impl RaceDef {
@@ -402,6 +414,10 @@ impl Races {
                 kit: Kit::default(),
                 bare_spec: spec.bare,
                 bare: Vec::new(),
+                faith_spec: spec.faith,
+                faiths_spec: spec.faiths,
+                faith: None,
+                faiths: Vec::new(),
             });
         }
         Ok(Self {

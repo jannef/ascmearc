@@ -1,0 +1,27 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: shown
+---
+
+
+
+
+
+
+
+              ┌─ Choose your faith (4 of 6) ─────────────────────────────────────────┐
+              │                                                                      │
+              │ > the Mynster                                                        │
+              │   the Hearth                                                         │
+              │   the Dark                                                           │
+              │   Random                                                             │
+              │                                                                      │
+              │   The humans' church of the Light: mercy, burial, and the sick, and  │
+              │   penance before healing.                                            │
+              │   The faith of your people.                                          │
+              │                                                                      │
+              │                                                                      │
+              │                                                                      │
+              │                                                                      │
+              │ ↑↓ choose   Enter next   Esc back                                    │
+              └──────────────────────────────────────────────────────────────────────┘

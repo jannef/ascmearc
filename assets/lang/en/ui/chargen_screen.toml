@@ -1,4 +1,4 @@
-# Character creation: the race, gender, and class steps and the summary
+# Character creation: the race, gender, class, and faith steps and the summary
 # (`crates/ascmearc/src/ui/chargen_screen.rs`). Ids alphabetical.
 #
 # The keys named in the hint lines are fixed (`Esc`, and the ones passed as `{confirm}`, `{keys}`):
@@ -18,6 +18,11 @@ text = "Esc back"
 [choose]
 text = "{keys:bare} choose"
 
+# The faith step's line under the race's own faith: the one they profess unless they choose
+# another.
+[faith_default]
+text = "The faith of your people."
+
 # The footer's hint to go on: `confirm`, the key.
 [confirm_next]
 text = "{confirm:bare} next"
@@ -28,16 +33,19 @@ text = "{confirm:bare} start or change"
 
 # The step's title. The panel pads it with spaces.
 [class_title]
-text = "Choose your class (3 of 5)"
+text = "Choose your class (3 of 6)"
+
+[faith_title]
+text = "Choose your faith (4 of 6)"
 
 [gender_title]
-text = "Choose your gender (2 of 5)"
+text = "Choose your gender (2 of 6)"
 
 [name_title]
-text = "Choose your name (5 of 5)"
+text = "Choose your name (6 of 6)"
 
 [race_title]
-text = "Choose your race (1 of 5)"
+text = "Choose your race (1 of 6)"
 
 # What each gender gives. The "other" gender never names the stat it raises.
 [gender_female]
@@ -84,6 +92,9 @@ text = "Random"
 [random_class]
 text = "Let chance pick your class."
 
+[random_faith]
+text = "Let chance pick your faith."
+
 [random_gender]
 text = "Let chance pick your gender."
 
@@ -103,6 +114,9 @@ text = "{scenario:bare}, seed {seed:bare}"
 # The summary's rows, each of which goes back to its step.
 [row_class]
 text = "Class"
+
+[row_faith]
+text = "Faith"
 
 [row_gender]
 text = "Gender"

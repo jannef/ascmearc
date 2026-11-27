@@ -96,6 +96,11 @@
 #   bare          slots no kit puts anything in for the race, by id in slots.toml (default
 #                 none): a `wield` or `wear` line's item for one is left out (halflings go
 #                 barefoot, `bare = ["feet"]`)
+#   faith         the faith a new character of the race professes unless they choose another,
+#                 by id in faiths/ (required when there are faiths)
+#   faiths        the other faiths open to them at creation, by id (default none), in the order
+#                 a class that cannot take the default falls back to them (a goblin priest: the
+#                 Howl)
 #
 # A new character's score in each stat is 10 (the average), plus the race's adjustment, plus the
 # gender's (male: strength +1; female: dexterity +1; other: +1 to a stat picked from the run
@@ -113,6 +118,7 @@ base_potential = 15
 id = "elf"
 name = "Elf"
 description = "Graceful and long-lived, keen of mind and eye but frail; elven eyes need little light."
+faith = "elder_light"
 vision = "low_light"
 age = [90, 300]
 stats = { strength = -1, dexterity = "1d2+1", toughness = -2, intelligence = 1, presence = 1 }
@@ -145,6 +151,8 @@ kit = [
 id = "half_elf"
 name = "Half-elf"
 description = "Of two peoples and at home in neither: adaptable and charming, with some of the elves' eyes."
+faith = "mynster"
+faiths = ["elder_light", "hearth"]
 vision = "low_light"
 age = [20, 60]
 stats = { dexterity = 1, presence = "1d2" }
@@ -174,6 +182,8 @@ kit = [
 id = "human"
 name = "Human"
 description = "Short-lived, ambitious, and everywhere: no gift and no flaw."
+faith = "mynster"
+faiths = ["hearth", "dark"]
 vision = "normal"
 age = [16, 35]
 potential = { strength = "1d2", dexterity = "1d2", toughness = "1d2", intelligence = "1d2", willpower = "1d2", presence = "1d2" }
@@ -206,6 +216,8 @@ kit = [
 id = "dwarf"
 name = "Dwarf"
 description = "Stout, stubborn folk of the deep halls: hard to kill, hard to hurry, and at home in the dark."
+faith = "spark"
+faiths = ["glimmering"]
 vision = "darkvision"
 age = [40, 120]
 stats = { strength = 1, dexterity = -1, toughness = "1d2+2", willpower = 1, presence = -2 }
@@ -242,6 +254,8 @@ kit = [
 id = "halfling"
 name = "Halfling"
 description = "Small, quick, and unflappable, with nimble fingers and quiet feet; no match for anything big."
+faith = "hearth"
+faiths = ["mynster"]
 vision = "normal"
 age = [20, 50]
 stats = { strength = -3, dexterity = 3, willpower = 1 }
@@ -274,6 +288,8 @@ bare = ["feet"]
 id = "gnome"
 name = "Gnome"
 description = "Small, tireless tinkerers and illusionists, curious about everything; they see well by little light."
+faith = "glimmering"
+faiths = ["spark"]
 vision = "low_light"
 age = [40, 150]
 stats = { strength = -2, toughness = 1, intelligence = "1d2+1", willpower = -1 }
@@ -301,6 +317,8 @@ kit = [
 id = "half_orc"
 name = "Half-orc"
 description = "Strong, tough, and sharp-eyed in the dark, but slow with letters and short on charm."
+faith = "mynster"
+faiths = ["howl"]
 vision = "darkvision"
 age = [14, 30]
 stats = { strength = "1d2+2", toughness = 1, intelligence = "-1d3", presence = -2 }
@@ -335,6 +353,8 @@ kit = [
 id = "goblin"
 name = "Goblin"
 description = "Small, weak, and short-lived, but quick-handed, sneaky, and at home in the dark; goblins eat little."
+faith = "big_ones"
+faiths = ["howl", "dark", "mynster"]
 vision = "darkvision"
 age = [10, 30]
 stats = { strength = -2, dexterity = 1, toughness = -1 }
@@ -359,6 +379,7 @@ kit = [
 id = "drow"
 name = "Drow"
 description = "The elves of the deep dark: graceful, sharp, and long-lived but frail, hard to poison, and dazzled by strong light."
+faith = "weaver"
 vision = "darkvision"
 age = [100, 400]
 stats = { dexterity = "1d2+1", toughness = -2, intelligence = 1, presence = 1 }
@@ -398,6 +419,8 @@ kit = [
 id = "kobold"
 name = "Kobold"
 description = "Small, scaly, and the weakest of all, but clever with traps and quick to spot them; kobolds live fast and die young."
+faith = "old_scales"
+faiths = ["howl"]
 vision = "darkvision"
 age = [6, 20]
 stats = { strength = -3, toughness = -1, presence = -1 }
@@ -429,6 +452,8 @@ kit = [
 id = "lizardfolk"
 name = "Lizardfolk"
 description = "Strong, tough swamp folk with scaly hides, cold-blooded and slow of wit, and alien to everyone else."
+faith = "frogs"
+faiths = ["mynster", "hearth"]
 vision = "normal"
 age = [12, 50]
 stats = { strength = 1, toughness = "1d2+1", intelligence = -1, presence = -2 }
@@ -458,6 +483,7 @@ kit = [
 id = "duergar"
 name = "Duergar"
 description = "The dwarves' grey cousins of the deepest dark: tough, dour, and joyless, unbowed by loads and wise in stonework."
+faith = "reckoner"
 vision = "darkvision"
 age = [40, 300]
 stats = { toughness = 2, willpower = 1, presence = -2 }
@@ -488,6 +514,7 @@ kit = [
 id = "ratfolk"
 name = "Ratfolk"
 description = "Small, nimble scavengers of sewers and ruins: weak and shunned, but hard to sicken, and they eat anything, rotten or not."
+faith = "never_full"
 vision = "low_light"
 age = [8, 40]
 stats = { strength = -2, dexterity = "1d2+1", presence = -1 }

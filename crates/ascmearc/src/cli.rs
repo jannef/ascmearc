@@ -213,6 +213,7 @@ impl Args {
                 | ScreenName::Sign
                 | ScreenName::Gender
                 | ScreenName::Class
+                | ScreenName::Faith
                 | ScreenName::ChargenTalents
                 | ScreenName::Name
                 | ScreenName::Summary,
@@ -303,6 +304,7 @@ mod tests {
             "sign",
             "gender",
             "class",
+            "faith",
             "name",
             "summary",
             "characters",

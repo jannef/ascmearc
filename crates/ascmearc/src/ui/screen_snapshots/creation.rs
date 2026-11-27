@@ -52,6 +52,20 @@ cases! {
         keys: Some("Down Enter Enter Enter"),
         ..BASE
     },
+    // The showcase's human: the Mynster, theirs, preselected, the Hearth and the Dark open.
+    faith_screen: Case {
+        name: "faith-screen",
+        screen: Some("faith"),
+        ..BASE
+    },
+    // A goblin priest: only faiths with a face, so not the Big Ones; the Howl, the first of the
+    // goblins' others, preselected.
+    faith_screen_goblin_priest: Case {
+        name: "faith-screen-goblin-priest",
+        screen: Some("race"),
+        keys: Some("Down Down Down Down Down Enter Enter Enter Up Up Up Up Enter"),
+        ..BASE
+    },
     // The showcase's thief: Random preselected; a letter marks a talent.
     chargen_talents_screen: Case {
         name: "chargen-talents-screen",
@@ -64,7 +78,7 @@ cases! {
     chargen_talents_dwarf: Case {
         name: "chargen-talents-dwarf",
         screen: Some("race"),
-        keys: Some("Down Enter Enter Enter Enter"),
+        keys: Some("Down Enter Enter Enter Enter Enter"),
         size: (100, 40),
         ..BASE
     },
@@ -89,7 +103,7 @@ cases! {
     character_summary_other: Case {
         name: "character-summary-other",
         screen: Some("gender"),
-        keys: Some("Down Enter Enter Enter Enter"),
+        keys: Some("Down Enter Enter Enter Enter Enter"),
         ..BASE
     },
     kit_summary: Case {
@@ -97,7 +111,7 @@ cases! {
         scenario: "world",
         screen: Some("new-run"),
         keys: Some(
-            "Up Enter Down Down Enter Enter Enter Down Down Down Down Down Enter Enter Enter",
+            "Up Enter Down Down Enter Enter Enter Down Down Down Down Down Enter Enter Enter Enter",
         ),
         size: (100, 36),
         ..BASE

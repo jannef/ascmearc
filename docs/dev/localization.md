@@ -356,7 +356,8 @@ ability `weapon_ability:<id>` (lower case, `combat.learned_ability`); an ability
 `ability:<id>`, by `Ability::id` (a weapon ability's `<weapon skill>.<id>`), the abilities menu's name ("Shield bash"); a song `song:<id>`
 (its talent's name in lower case); a birth sign `sign:<element>.<animal>` ("Fire Manticore",
 `Character::sign_arg`); a class and a stance `class:<id>`,
-`stance:<id>` (lower case, as `race:<id>`). The chargen name question is `class:` with a `race:`
+`stance:<id>` (lower case, as `race:<id>`); a faith `faith:<id>` (#2179, a proper name with its
+own article, "the Mynster", its label as written). The chargen name question is `class:` with a `race:`
 adjective; the epitaph `{class:a}`; a named statue `look.fallen` ("Brakka the
 dwarf"). Left as text: the `--character` refusal
 (`ClassDef::refuses`, developer text).
@@ -1335,7 +1336,7 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `resources:resource.<id>.short` | a resource's status bar label ("Sta", #2062) |
 | `scenario:<id>.arrival` | a scenario's first line after the welcome (#2035) |
 | `unique:<id>.phrase`, `.lore`; `spell:<id>.description`; `rod_effect:<id>.name`, `.description`; `slot:<id>.mark` | an item's description's words from the data, and a slot's mark in the inventory (#2035, `data_line::describe_lines`) |
-| `race:<id>.description`, `class:<id>.description`, `talent:<id>.description`, `skill:<id>.description`, `scenario:<id>.description`, `terrain:<id>.description`, `chest:<band>.description`, `sign_animal:<id>.description`, `sign_element:<id>.description`, `lucky:<element>.<animal>.<day>.description`, `animated:<body>.moves`, `status:<id>.death` | what the screens and the look line show of the data (#2035, `data_line::shown_lines`; the app's `ui::text::data_line`) |
+| `race:<id>.description`, `class:<id>.description`, `faith:<id>.description`, `talent:<id>.description`, `skill:<id>.description`, `scenario:<id>.description`, `terrain:<id>.description`, `chest:<band>.description`, `sign_animal:<id>.description`, `sign_element:<id>.description`, `lucky:<element>.<animal>.<day>.description`, `animated:<body>.moves`, `status:<id>.death` | what the screens and the look line show of the data (#2035, `data_line::shown_lines`; the app's `ui::text::data_line`) |
 | `dialogue:<scope>.mutter_verb` | how a creature mutters, its dialogue's `mutter` `verb` (`dialogue_line.rs`; without one, `talk.verb_mutters`) |
 | `quest:<id>.name`, `shop:<id>.title`, `encounter:<campaign>.<entry>.name`, `calendar:months.<n>`, `level:<id>.burial.epitaph`, `level:<id>.legend.<char>.epitaph` | names kept in saves ("Names kept in saves", below) |
 

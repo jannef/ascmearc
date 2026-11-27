@@ -267,6 +267,7 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
         }),
         "stats": view.own_scores(),
         "alignment": view.own_alignment().map(|b| b.id()),
+        "faith": view.own_faith().map(|f| content.faith(f).id.as_str()),
         "skills": skills_json(&view),
         "effects": effects,
         "diseases": diseases,

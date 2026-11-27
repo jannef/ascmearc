@@ -12,6 +12,10 @@ text = "Esc takaisin"
 of = "c8f3e3"
 text = "{keys:bare} valitse"
 
+[faith_default]
+of = "09f811"
+text = "Kansasi usko."
+
 [confirm_next]
 of = "5fde38"
 text = "{confirm:bare} seuraava"
@@ -21,20 +25,24 @@ of = "3085e5"
 text = "{confirm:bare} aloita tai muuta"
 
 [class_title]
-of = "c37b00"
-text = "Valitse luokka (3/5)"
+of = "c0fdeb"
+text = "Valitse luokka (3/6)"
+
+[faith_title]
+of = "6dfd20"
+text = "Valitse usko (4/6)"
 
 [gender_title]
-of = "3033ec"
-text = "Valitse sukupuoli (2/5)"
+of = "3786a7"
+text = "Valitse sukupuoli (2/6)"
 
 [name_title]
-of = "878f12"
-text = "Valitse nimi (5/5)"
+of = "0ece3c"
+text = "Valitse nimi (6/6)"
 
 [race_title]
-of = "670273"
-text = "Valitse kansa (1/5)"
+of = "691b28"
+text = "Valitse kansa (1/6)"
 
 [gender_female]
 of = "89b129"
@@ -84,6 +92,10 @@ text = "Satunnainen"
 of = "e52f99"
 text = "Anna sattuman valita luokkasi."
 
+[random_faith]
+of = "aa5989"
+text = "Anna sattuman valita uskosi."
+
 [random_gender]
 of = "73923b"
 text = "Anna sattuman valita sukupuolesi."
@@ -107,6 +119,10 @@ text = "{scenario:bare}, siemen {seed:bare}"
 [row_class]
 of = "907d59"
 text = "Luokka"
+
+[row_faith]
+of = "b93fb7"
+text = "Usko"
 
 [row_gender]
 of = "8539fc"

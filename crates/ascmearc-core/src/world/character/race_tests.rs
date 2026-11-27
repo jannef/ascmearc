@@ -19,6 +19,7 @@ name = "Scaled"
 description = "Scaly."
 vision = "normal"
 age = [20, 30]
+faith = "mynster"
 natural = { protection = 1, defence = 2, name = "scales" }
 
 [[race]]
@@ -27,6 +28,7 @@ name = "Hardy"
 description = "Hard to poison."
 vision = "normal"
 age = [20, 30]
+faith = "mynster"
 resist = { poison = 50 }
 
 [[race]]
@@ -35,6 +37,7 @@ name = "Light-blind"
 description = "Dazzled by strong light."
 vision = "normal"
 age = [20, 30]
+faith = "mynster"
 light_blind = { glare = 200, sight = 3, to_hit = -2 }
 
 [[race]]
@@ -43,6 +46,7 @@ name = "Gutsy"
 description = "Shrugs diseases off."
 vision = "normal"
 age = [20, 30]
+faith = "mynster"
 disease_check = 10
 
 [[race]]
@@ -51,6 +55,7 @@ name = "Scavenger"
 description = "Eats anything."
 vision = "normal"
 age = [20, 30]
+faith = "mynster"
 eats_rotten = true
 
 [[race]]
@@ -59,6 +64,7 @@ name = "Trapwise"
 description = "Notices traps."
 vision = "normal"
 age = [20, 30]
+faith = "mynster"
 passive_search = "traps"
 "##;
 

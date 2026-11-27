@@ -39,6 +39,7 @@ mod encounters;
 #[cfg(test)]
 mod examples;
 mod experience;
+mod faiths;
 mod familiars;
 mod fire;
 mod gear_condition;
@@ -300,6 +301,8 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("classes-glance.md", class_guide::glance),
         ("class-card.md", class_guide::cards),
         ("class-limits.md", character::class_limits),
+        ("faiths.md", faiths::faiths),
+        ("race-faiths.md", faiths::race_faiths),
         ("horoscope.md", character::horoscope),
         ("horoscope-animals.md", horoscope::animals),
         ("horoscope-elements.md", horoscope::elements),

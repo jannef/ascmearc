@@ -1,0 +1,7 @@
+# The Howl: Wrath, the orcs' (religions.md §5.1).
+[[faith]]
+id = "howl"
+name = "the Howl"
+description = "The orcs' Wrath, the fury that fills a body and spends it: strength, fearlessness, and a quick death unregretted."
+face = "dark"
+stranger = "bane"

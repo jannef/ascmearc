@@ -1,0 +1,8 @@
+# The Hearth: the halflings' Light (religions.md §3.3).
+[[faith]]
+id = "hearth"
+name = "the Hearth"
+description = "The halflings' Light, the fire in the middle of the house: the table, the guest, and the dead remembered at supper."
+face = "holy"
+shared = ["mynster", "spark", "glimmering", "elder_light"]
+stranger = "hears"

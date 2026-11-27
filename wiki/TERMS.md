@@ -49,6 +49,7 @@ table on its page, or grep the built page: `grep -o 'id="status-[a-z-]*"' wiki/b
 | A stance | `stances.md#stance-NAME` | `stances.md#stance-frenzy` |
 | A stat | `stats.md#stat-NAME` | `stats.md#stat-toughness` |
 | A race | `races.md#race-ID` | `races.md#race-half-elf` |
+| A faith (the Mynster, the Howl, …) | `character.md#faith-ID` | `character.md#faith-elder-light` |
 | A weapon skill | `weapon-skills.md#weapon-skill-ID` | `weapon-skills.md#weapon-skill-long-blades` |
 | A school of magic (Evocation, Restoration, …) | `schools.md#school-ID` | `schools.md#school-evocation` |
 | A weapon skill's ability (Lunge, Sunder, …) | `weapon-skills.md#weapon-ability-ID` | `weapon-skills.md#weapon-ability-lunge` |
@@ -215,6 +216,7 @@ above.
 | The great cycle | `horoscope.md#the-great-cycle` |
 | An element's season | `horoscope.md#the-elements-seasons` |
 | Alignment, good, evil, band | `alignment.md`, `alignment.md#what-moves-you` |
+| Faith, choosing one, who may take which | `character.md#choosing-a-faith` |
 | Talent, prerequisites | `talents.md`, `talents.md#choices-and-prerequisites` (a talent: its row) |
 | Racial talents | `talents-origins.md#racial-talents` |
 | Trade, Crafts, the tools of the trade (Smith, Wright, Gemcutter, Brewster, Pitman, Wortcunner, Spellwright) | `talents-origins.md#crafts-a-craftspersons-trades` (a trade: its row) |

@@ -133,6 +133,7 @@ pub(in crate::world) fn kobold_at(world: &mut World, (dx, dy): (i32, i32), hp: i
         risen: None,
         mark: None,
         alignment_override: None,
+        faith: None,
         grade: 0,
         inventory: Vec::new(),
         equipment: Default::default(),
