@@ -324,10 +324,11 @@ actives (`rage`, `veterans_wind`, `lay_on_hands`, `smite`, `radiance`,
 talent's `resource`) are effects that `TalentEffect::active` maps to a `ClassActive`;
 `Content::class_active` finds the talent that has one, whose name and description the abilities
 menu shows; a holy gift's talent may name the bands it works for (`alignment`; outside them it
-is used and does nothing, `docs/dev/alignment.md`). The priest's prayer (`prayer`, #883,
-`docs/dev/prayer.md`) is one active, `orison`, carried by its tier-1 talent (`active` maps only
-`tier = 1`); the later prayer talents add uses, answers, and titles to `FaithMods::prayer`, and
-the menu names it by its highest tier and the face that answers (`PerceptionView::ability_name`). Communion with the dark (`communion`, #884) is a band-gated passive beside Consecrate: its
+is used and does nothing, `docs/dev/alignment.md`). The priest's prayer talents (`prayer`, #883,
+`docs/dev/prayer.md`) are no class active: they deepen the Faith group's Pray that everyone with
+a faith holds (#2179), adding uses, answers, titles, and the Orison's lighter strain to
+`FaithMods::prayer`, and the menu names Pray by its highest tier and the face that answers
+(`PerceptionView::ability_name`). Communion with the dark (`communion`, #884) is a band-gated passive beside Consecrate: its
 `alignment` (`max = "callous"`) is read where it acts (`World::communes`), as a holy gift's is.
 A shared entry is one talent the tables
 name alike (`purity_of_body`, the paladin's and the ascetic's, #790); Deflect missiles is the

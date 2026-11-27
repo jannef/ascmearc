@@ -1,5 +1,5 @@
-//! The priest's prayer (`docs/dev/prayer.md`): the strain and the
-//! fizzle, the uses in their priority order with both faces' answers, the prayer's growth by the
+//! The prayer (`docs/dev/prayer.md`): the strain and the
+//! fizzle (the laity's and a priest's), the uses in their priority order with both faces' answers, the prayer's growth by the
 //! priest's levels with its titles, and the priest's rites beside it (Consecrate, Communion with
 //! the dark, Sanctuary). Every number here is hidden in the game.
 
@@ -16,24 +16,51 @@ const GAPS: [u64; 4] = [60, 10 * 60, 30 * 60, 60 * 60];
 /// The prayers of a run the fizzle table measures (the first never fizzles: no strain yet).
 const NTH: [usize; 4] = [2, 3, 5, 10];
 
-/// The strain's numbers: what a prayer adds, how fast it passes, and the fizzle.
+/// The strain an attempt adds for the laity (`[laity]`, the file's own strain without it) and for
+/// a priest (the lowest a prayer talent says; `None` if none says one).
+fn strains(content: &Content, rules: &PrayerRules) -> (u16, Option<u16>) {
+    let laity = rules.laity.as_ref().map_or(rules.strain, |l| l.strain);
+    let talents = (content.talents().iter())
+        .flat_map(|(_, def)| &def.effects)
+        .filter_map(|e| match e {
+            TalentEffect::Faith(FaithEffect::Prayer { strain, .. }) => *strain,
+            _ => None,
+        })
+        .min();
+    (laity, talents.map(|t| t.min(laity)))
+}
+
+/// The strain's numbers: what a prayer adds, for the laity and a priest, how fast it passes, and
+/// the fizzle.
 pub(super) fn prayer_strain(content: &Content) -> String {
     let Some(rules) = content.prayer() else {
         return "There is no prayer.\n".into();
     };
-    let whole = rules.decay * u64::from(rules.strain);
+    let (laity, priest) = strains(content, rules);
     let mut out = String::from("| | |\n|---|---|\n");
     let _ = writeln!(
         out,
-        "| Strain a prayer adds | {}, answered or fizzled alike (none in an unholy place for a priest who [communes with the dark](class-priest.md#talent-communion)) |",
-        rules.strain
+        "| Strain a prayer adds | {laity}, answered or fizzled alike |"
     );
-    let _ = writeln!(
+    if let Some(priest) = priest {
+        let _ = writeln!(
+            out,
+            "| Strain a priest's prayer adds | {priest}, from the [Orison](class-priest.md#talent-orison) at level 1 (none in an unholy place for a priest who [communes with the dark](class-priest.md#talent-communion)) |"
+        );
+    }
+    let gone = |strain: u16| time_words(rules.decay * u64::from(strain));
+    let _ = write!(
         out,
-        "| Strain that passes | 1 point every {}: one prayer's is gone after {} |",
+        "| Strain that passes | 1 point every {}: one prayer's is gone after {}",
         every(rules.decay),
-        time_words(whole)
+        gone(laity)
     );
+    match priest {
+        Some(priest) => {
+            let _ = writeln!(out, ", a priest's after {} |", gone(priest));
+        }
+        None => out.push_str(" |\n"),
+    }
     let _ = writeln!(
         out,
         "| Chance a prayer fizzles | {} % for every 100 strain it finds (at most 100 %) |",
@@ -41,18 +68,35 @@ pub(super) fn prayer_strain(content: &Content) -> String {
     );
     out.push_str(
         "| After a fizzle | every prayer fizzles, with no chance drawn, until the strain has passed to 0 |\n\
+         | A god that scorns you | does not hear: the prayer takes its time, answers nothing, and adds no strain |\n\
          | Nothing to answer | refused: no time, no strain |\n",
     );
     out
 }
 
-/// The chance a prayer fizzles when the priest prays again and again with the same gap between,
-/// none of the earlier ones having fizzled (a fizzle locks the prayer).
+/// The chance a priest's prayer fizzles when they pray again and again with the same gap
+/// between, none of the earlier ones having fizzled (a fizzle locks the prayer).
 pub(super) fn prayer_fizzle(content: &Content) -> String {
     let Some(rules) = content.prayer() else {
         return "There is no prayer.\n".into();
     };
-    let whole = (rules.decay * u64::from(rules.strain)).as_seconds();
+    match strains(content, rules) {
+        (_, Some(priest)) => fizzle_table(rules, priest),
+        (laity, None) => fizzle_table(rules, laity),
+    }
+}
+
+/// The same for the laity's prayer.
+pub(super) fn prayer_fizzle_laity(content: &Content) -> String {
+    let Some(rules) = content.prayer() else {
+        return "There is no prayer.\n".into();
+    };
+    fizzle_table(rules, strains(content, rules).0)
+}
+
+/// The fizzle table for prayers that each add `strain`.
+fn fizzle_table(rules: &PrayerRules, strain: u16) -> String {
+    let whole = (rules.decay * u64::from(strain)).as_seconds();
     let mut gaps: Vec<u64> = GAPS.iter().copied().filter(|&g| g < whole).collect();
     gaps.push(whole);
     let mut out = String::from("| Praying every |");
@@ -65,21 +109,23 @@ pub(super) fn prayer_fizzle(content: &Content) -> String {
     for gap in gaps {
         let _ = write!(out, "| {} |", time_words(Duration::seconds(gap)));
         for n in NTH {
-            let _ = write!(out, " {} % |", rules.fizzle_chance(found(rules, gap, n)));
+            let found = found(rules, strain, gap, n);
+            let _ = write!(out, " {} % |", rules.fizzle_chance(found));
         }
         out.push('\n');
     }
     out
 }
 
-/// The strain the `n`th prayer finds, each `gap` seconds after the one before.
-fn found(rules: &PrayerRules, gap: u64, n: usize) -> u16 {
+/// The strain the `n`th prayer finds, each adding `strain`, each `gap` seconds after the one
+/// before.
+fn found(rules: &PrayerRules, strain: u16, gap: u64, n: usize) -> u16 {
     let passed = gap / rules.decay.as_seconds().max(1);
-    let mut strain: u64 = 0;
+    let mut found: u64 = 0;
     for _ in 1..n {
-        strain = (strain + u64::from(rules.strain)).saturating_sub(passed);
+        found = (found + u64::from(strain)).saturating_sub(passed);
     }
-    u16::try_from(strain).unwrap_or(u16::MAX)
+    u16::try_from(found).unwrap_or(u16::MAX)
 }
 
 /// The uses in the priority order: what ails the priest, how each face answers, in its words,
@@ -175,6 +221,13 @@ fn use_text(content: &Content, rules: &PrayerRules, id: PrayerUse) -> (String, S
 /// Where a use is first given: `level 12 ([Prayer](...))` per class whose table gives it.
 fn gained_at(content: &Content, id: PrayerUse) -> String {
     let mut at: Vec<String> = Vec::new();
+    let laity = content.prayer().and_then(|r| r.laity.as_ref());
+    if let Some(laity) = laity.filter(|l| l.uses.contains(&id)) {
+        at.push(format!(
+            "everyone with a faith (the laity's {})",
+            laity.title.holy
+        ));
+    }
     for class in content.classes() {
         for (level, def) in class_talents(content, &class.abilities) {
             let gives = def.effects.iter().any(|e| match e {
@@ -231,8 +284,12 @@ pub(super) fn prayer_levels(content: &Content) -> String {
             "**The {}**\n\n| Level | Talent | Adds | Name (holy) | Name (dark) | Answers a prayer |\n|---:|---|---|---|---|---|",
             class.name.to_lowercase()
         );
-        let (mut holy, mut dark, mut answers, mut all) =
-            ("-".to_string(), "-".to_string(), 1, false);
+        // Below every tier, the laity's names.
+        let laity = content.prayer().and_then(|r| r.laity.as_ref());
+        let (mut holy, mut dark) = laity.map_or(("-".into(), "-".into()), |l| {
+            (l.title.holy.clone(), l.title.dark.clone())
+        });
+        let (mut answers, mut all) = (1, false);
         for (level, def) in rows {
             let mut adds: Vec<String> = Vec::new();
             for e in &def.effects {

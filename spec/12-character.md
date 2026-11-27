@@ -6,7 +6,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 
 - A run starts as a character: a race, a gender (male, female, other), and a class, chosen on New run or on the command line; otherwise the scenario's own character.
 - A class may be closed to some races, or open to a race only for some genders. New run offers only the open classes, and its Random draws only among them. A scenario's own character is never checked.
-- After the class the character chooses a faith among their people's (each race has its own and may have others open, `docs/design/religions.md` §7), their people's preselected. The paladin takes only a church of the Light, the priest only a faith whose god answers (holy or dark); everyone else any of their people's. The faith moves no roll. What it does in play comes with prayer (`docs/design/prayer.md`).
+- After the class the character chooses a faith among their people's (each race has its own and may have others open, `docs/design/religions.md` §7), their people's preselected. The paladin takes only a church of the Light, the priest only a faith whose god answers (holy or dark); everyone else any of their people's. The faith moves no roll. Who answers a prayer is the faith's; what the god thinks of you is piety's (`docs/design/prayer.md`, step 3).
 - The character has a name of 1 to 20 characters. Left empty, a name is drawn from the race's list for the gender.
 - Age is drawn within the race's range; the birthday is drawn over the year; the birth date is counted back from the run's start date.
 - Starting scores are 10 plus the race's, gender's, class's, and birth sign's adjustments, kept within 1 to 40. Male raises Strength, female Dexterity, other one random stat.
@@ -162,7 +162,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Adventurers' actives are class abilities used from the abilities menu, paid by cooldowns or by a class resource.
 - Holy gifts work only for the bands they name.
 - Casters' actives are spells, paid in mana, cast by the one cast path. A full caster starts with a cantrip and has about four spells by mid-levels; the bard, paladin, and ranger a cantrip or a boon.
-- The priest's prayer is one active that answers what ails them most, in a fixed order, its reach growing with level. A hidden strain limits it. The band at the moment picks who answers (holy or dark), and the dark answer comes with a twist.
+- Everyone with a faith has one prayer, Pray, in the abilities menu's Faith group: it answers what ails them most among what they hold, in a fixed order. The laity hold healing; the priest's talents widen its reach with level and halve its strain. A hidden strain limits it. The faith's face picks who answers (holy or dark), the dark answer comes with a twist, and a god that scorns the player's band does not hear them.
 - The thief's Openings build on one marked foe. The mark's death carries the pool to the next foe. Exploit spends every opening on one blow that the class talents grow. Trained wind is off the thief's table: "the thief already gets Exploit at level 1" (the owner).
 - The bard's songs are paid in one thing each, heard by everyone in earshot; hostile hearers resist.
 - Reprieves (Rise from the ashes, Hag's bargain, and their kin) save from death once in a life each. Starving and choking still kill.

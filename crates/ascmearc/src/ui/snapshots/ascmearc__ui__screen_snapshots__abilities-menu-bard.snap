@@ -11,23 +11,23 @@ expression: "render(case, content.clone())"
           │   b  Throw your voice   at a place you see                                  │
           │   c  Inspire            not enough inspiration                              │
           │   d  Lullaby            you have too little mana                            │
+          │ Faith                                                                       │
+          │   e  Bede                                                                   │
           │ Spells                                                                      │
-          │   e  Mend               1d3 healed, 3 mana, aimed                           │
-          │   f  Mesmerise          5 mana: you have 4                                  │
-          │   g  Sense the quick    5 mana: you have 4                                  │
-          │   h  Thunderclap        4d6 force, shoves on a big hit, 13 mana: you have 4 │
-          │   i  Bind               9 mana: you have 4                                  │
+          │   f  Mend               1d3 healed, 3 mana, aimed                           │
+          │   g  Mesmerise          5 mana: you have 4                                  │
+          │   h  Sense the quick    5 mana: you have 4                                  │
+          │   i  Thunderclap        4d6 force, shoves on a big hit, 13 mana: you have 4 │
+          │   j  Bind               9 mana: you have 4                                  │
           │ Skills                                                                      │
-          │   j  Alchemy…                                                               │
-          │   k  Feint              no foe beside you to fool                           │
-          │   l  Decipher           no unknown scroll                                   │
-          │   m  Disarm a trap      no known trap beside you                            │
-          │   n  Enchanting…                                                            │
-          │   o  Tame               no beast beside you to tame                         │
+          │   k  Alchemy…                                                               │
+          │   l  Feint              no foe beside you to fool                           │
+          │   m  Decipher           no unknown scroll                                   │
+          │   n  Disarm a trap      no known trap beside you                            │
           │                                                                             │
           │ The basilisk's stare: a foe nearby that sees you slows to a crawl a moment; │
           │ your eyes then rest two hours.                                              │
           │                                                                             │
           │                                                                             │
-          │ a-o or Enter use   > < page   Esc close                                     │
+          │ a-n or Enter use   > < page   Esc close                                     │
           └─────────────────────────────────────────────────────────────────────────────┘

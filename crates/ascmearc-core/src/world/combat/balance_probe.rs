@@ -1167,7 +1167,8 @@ fn career(
                 zeal: (gear == Gear::Plain)
                     .then(|| zeal_of(&w2, player))
                     .flatten(),
-                prayer: (gear == Gear::Plain)
+                // The priest's prayer talents' (the laity's Bede is everyone's and the same).
+                prayer: (gear == Gear::Plain && me.talent_mods(content).faith.prayer.is_some())
                     .then(|| {
                         let title = me.prayer_title(content)?.0.to_string();
                         Some((title, w2.prayer_state()?))

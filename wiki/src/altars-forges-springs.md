@@ -2,8 +2,9 @@
 
 Three kinds of [special room](special-rooms.md) hold something you can use. A forgotten altar
 answers prayers, for good or ill. A forge's anvil lets you temper metal arms and armour. A healing
-spring can be drunk from as often as you like. Each is used by walking into it, or from the *Here*
-group of the [abilities menu](abilities.md#the-abilities-menu) while you stand beside it.
+spring can be drunk from as often as you like. Each is used by walking into it, or from the
+[abilities menu](abilities.md#the-abilities-menu) while you stand beside it: the altar with Pray,
+under *Faith*, and the others under *Here*.
 
 ## Forgotten altars
 
@@ -12,8 +13,9 @@ long lost. Yet something there still listens. It is not a temple, and not a god 
 is nothing to sacrifice and no one to convert to. It is a gamble.
 
 To pray, walk into the altar and say yes when asked, or stand beside it and choose
-[Pray](abilities.md#ability-pray) from the [abilities menu](abilities.md#the-abilities-menu). It is
-listed under *Here* only while you stand next to an altar. A prayer takes a minute. Anything that
+[Pray](abilities.md#ability-pray) from the [abilities menu](abilities.md#the-abilities-menu). Next
+to an altar, Pray prays at the altar, not to your own god, and anyone may pray there, with a
+faith or without. A prayer takes a minute. Anything that
 would stop a [rest](resting.md#how-resting-works), such as a creature coming into view, a blow, or a
 noise, breaks it. A broken prayer gives nothing, and the minute is still gone.
 

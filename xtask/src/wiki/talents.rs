@@ -1,7 +1,6 @@
 //! Talents: every tree with its talents, their prerequisites and their rules
 //! in full (the game says them in words), and the talents by system.
 
-use super::util::word;
 use super::util::{Term, anchored, link, signed};
 use ascmearc_core::content::{
     ClassDef, Content, Faced, Keep, KitLineSpec, Need, PrayerUse, SignActive, SpellData,

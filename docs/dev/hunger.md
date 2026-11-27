@@ -124,7 +124,7 @@ named by races.toml's `talents`): three `HungerEffect`s of `talent/hunger.rs`, e
 `bloated_unslowed` makes `World::bloated` return the price as it is; `capacity_percent`
 (`HungerMods::capacity`, 100: twice) raises the `max` that `eat.rs::feed` overeats past (the
 states' bands are the data's for everyone, so a halfling stays Bloated longer; `satiate` and the
-orison still stop one short of Bloated); `bloated_training { every }` makes `World::digest`, when
+dark face's prayer still stop one short of Bloated); `bloated_training { every }` makes `World::digest`, when
 the player was Bloated, call `train_bloated`: one `train_stat(StatUse::Bloated)` per multiple of
 `every` passed between the nutrition before and after the burn (multiples, not points, and one
 use at a time, so the marks and the training stream are the same however time is cut; exertion's

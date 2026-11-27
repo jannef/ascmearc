@@ -1586,7 +1586,10 @@ mod tests {
             assert!(!every.contains(&Ability::Skill(id)), "{skill}");
         }
         // Pray is the Faith group's, after the class's.
-        let pray = every.iter().position(|&a| a == Ability::Pray).expect("pray");
+        let pray = every
+            .iter()
+            .position(|&a| a == Ability::Pray)
+            .expect("pray");
         assert_eq!(every[pray + 1].source(), Source::Spell);
         assert_eq!(every.iter().filter(|&&a| a == Ability::Pray).count(), 1);
         let last: Vec<Ability> = every.iter().rev().take(6).rev().copied().collect();

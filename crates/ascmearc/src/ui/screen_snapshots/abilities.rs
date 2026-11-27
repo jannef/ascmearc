@@ -149,8 +149,8 @@ cases! {
         keys: Some("Down"),
         ..BASE
     },
-    // A priest at level 1 (#886): the prayer by its first tier's title, Orison, chosen, its
-    // description below.
+    // A priest at level 1 (#886): the prayer by its first tier's title, Orison, in the Faith
+    // group (#2179), chosen, its description below.
     abilities_priest_1: Case {
         name: "abilities-priest-1",
         character: Some("human,male,priest"),
@@ -160,18 +160,19 @@ cases! {
         keys: Some("Down"),
         ..BASE
     },
-    // A priest at level 60 (#886): the prayer by its last tier's title, Miracle, chosen,
-    // between Consecrate and Sanctuary.
+    // A priest at level 60 (#886): the prayer by its last tier's title, Miracle, chosen, in
+    // the Faith group after the class's Consecrate and Sanctuary (#2179).
     abilities_priest_60: Case {
         name: "abilities-priest-60",
         character: Some("human,male,priest"),
         kit: true,
         actions: "xp:20000000 levelup:auto",
         screen: Some("abilities"),
-        keys: Some("Down Down"),
+        keys: Some("Down Down Down"),
         ..BASE
     },
-    // Beside a forgotten altar: Pray in the Here group, last.
+    // Beside a forgotten altar: the Faith group's prayer named Pray, for it prays at the altar
+    // (#2179).
     abilities_menu_here: Case {
         name: "abilities-menu-here",
         scenario: "shrine",
@@ -250,14 +251,14 @@ cases! {
     set_on_aim: Case {
         name: "set-on-aim",
         actions: "ally:dire_warg:2",
-        keys: Some("a j"),
+        keys: Some("a k"),
         ..BASE
     },
     // Come to heel chosen from the menu: the order's words, no time.
     come_to_heel: Case {
         name: "come-to-heel",
         actions: "ally:dire_warg:2",
-        keys: Some("a h"),
+        keys: Some("a i"),
         ..BASE
     },
     // A paladin of some level: the Class group, Lay on hands refused and greyed out short of

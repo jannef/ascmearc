@@ -185,8 +185,9 @@ impl World {
     pub(in crate::world) fn unavailable_msg(&self, why: Unavailable) -> Msg {
         let content = &self.content;
         match why {
-            Unavailable::While(status) => Msg::new(msg::classes::STILL_STATUS)
-                .role("status", content.status_phrase(status)),
+            Unavailable::While(status) => {
+                Msg::new(msg::classes::STILL_STATUS).role("status", content.status_phrase(status))
+            }
             Unavailable::NoMana => msg::classes::TOO_LITTLE_MANA.into(),
             // A pool with words of its own says them (Rage's "You have not the rage for it.").
             Unavailable::Short(resource) => {

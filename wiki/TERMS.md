@@ -231,9 +231,10 @@ above.
 | Class abilities | `classes.md#levels`, `abilities.md` |
 | The bard, a bard's cap at 30, Travelled hands, Jack of all trades | `class-bard.md` |
 | Songs (Inspire, the Lullaby), singing, a song's degrees, shaking a song off, Virtuoso | `abilities.md#songs` |
-| The priest's prayer (Orison, Prayer, Litany, Benediction, Miracle), what it answers | `prayer.md`, `prayer.md#what-it-answers` (a use: its row) |
+| Pray, the prayer (Bede, the priest's Orison, Prayer, Litany, Benediction, Miracle), what it answers | `prayer.md`, `prayer.md#what-it-answers` (a use: its row) |
 | Strain, a fizzled prayer | `prayer.md#strain` |
-| The holy and the dark powers, the dark face's twists (Whisper, Invocation, Rite, Pact) | `prayer.md#the-holy-and-the-dark` |
+| Who answers a prayer: the holy and the dark powers by faith, a god that scorns you, unheard | `prayer.md#who-answers` |
+| The dark powers' twists (Mutter, Whisper, Invocation, Rite, Pact) | `prayer.md#the-dark-powers-answers` |
 | Communion with the dark | `class-priest.md#talent-communion`, `prayer.md#communion-and-sanctuary` |
 | Hallowed ground, dreaded ground (Sanctuary) | `cursed-and-hallowed.md#hallowed-ground` |
 | Stats (Strength, Dexterity, …), score | `stats.md` (a stat: its row) |

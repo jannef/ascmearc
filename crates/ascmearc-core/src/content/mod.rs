@@ -394,7 +394,8 @@ pub use pipe::PipeRules;
 pub use plural::Plurals;
 pub use potion::{Draught, Drink, Flask, Splash};
 pub use prayer::{
-    Face, FaceWords, Faced, HearingRow, HearingRules, Laity, PrayerRules, PrayerUse, Standing, UseDef,
+    Face, FaceWords, Faced, HearingRow, HearingRules, Laity, PrayerRules, PrayerUse, Standing,
+    UseDef,
 };
 pub use profane::{GiftDef, GiftKind, GiftTier, ProfaneRolls, ProfaneTable};
 pub use purse::{PurseRow, Purses, RowCoins, RowPurse};

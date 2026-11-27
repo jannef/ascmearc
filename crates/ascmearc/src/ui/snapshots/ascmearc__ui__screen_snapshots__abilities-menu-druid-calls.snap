@@ -7,27 +7,27 @@ expression: "render(case, content.clone())"
           │                                                                             │
           │ Birth sign                                                                  │
           │ > a  Transfixing stare   at a place you see                                 │
+          │ Faith                                                                       │
+          │   b  Bede                                                                   │
           │ Spells                                                                      │
-          │   b  Spark               2d4 electricity, may arc, conducts, 4 mana, aimed  │
-          │   c  Barkskin            4 mana                                             │
-          │   d  Call of the wild    2 called, 5 mana                                   │
-          │   e  Water walking       5 mana                                             │
-          │   f  Bramble             19 mana, aimed                                     │
-          │   g  Rime                6d6 cold, numbs, 14 mana, aimed                    │
-          │   h  Call lightning      6d6 electricity, may arc, conducts, 20 mana, aimed │
-          │   i  Gale                20 mana, aimed                                     │
-          │   j  Call of the forest  2 called, 20 mana                                  │
-          │   k  Cloudburst          20 mana                                            │
+          │   c  Spark               2d4 electricity, may arc, conducts, 4 mana, aimed  │
+          │   d  Barkskin            4 mana                                             │
+          │   e  Call of the wild    2 called, 5 mana                                   │
+          │   f  Water walking       5 mana                                             │
+          │   g  Bramble             19 mana, aimed                                     │
+          │   h  Rime                6d6 cold, numbs, 14 mana, aimed                    │
+          │   i  Call lightning      6d6 electricity, may arc, conducts, 20 mana, aimed │
+          │   j  Gale                20 mana, aimed                                     │
+          │   k  Call of the forest  2 called, 20 mana                                  │
+          │   l  Cloudburst          20 mana                                            │
           │ Skills                                                                      │
-          │   l  Alchemy…                                                               │
-          │   m  Decipher            no unknown scroll                                  │
-          │   n  Tame                no beast beside you to tame                        │
-          │   o  Heal                nothing to treat                                   │
-          │   p  Forage              not usable here                                    │
+          │   m  Alchemy…                                                               │
+          │   n  Decipher            no unknown scroll                                  │
+          │   o  Tame                no beast beside you to tame                        │
           │                                                                             │
           │ The basilisk's stare: a foe nearby that sees you slows to a crawl a moment; │
           │ your eyes then rest two hours.                                              │
           │                                                                             │
           │                                                                             │
-          │ a-p or Enter use   > < page   Esc close                                     │
+          │ a-o or Enter use   > < page   Esc close                                     │
           └─────────────────────────────────────────────────────────────────────────────┘

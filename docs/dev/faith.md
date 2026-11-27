@@ -1,21 +1,24 @@
 # Faiths
 
 What a character professes (#2179, slice S1 of `docs/design/prayer.md` §11.1; the lore is
-`docs/design/religions.md`). A faith is chosen at creation and kept on the character. In S1
-nothing in play reads it yet: prayer (S2), the altars (S3, S4), Consecrate and the shrines (S5),
-and the temples (S6) are the design's later slices, and each adds its reads here.
+`docs/design/religions.md`). A faith is chosen at creation and kept on the character. Prayer
+reads it (S2, `docs/dev/prayer.md`): who answers is the faith's face, whether the god hears
+anywhere is its `answers` and `listens`, and it may say the prayer's lines its own way. The
+altars (S3, S4), Consecrate and the shrines (S5), and the temples (S6) are the design's later
+slices, and each adds its reads here; nothing reads `shared` or `stranger` yet.
 
 ## Modules
 
 | Module | What it holds |
 |---|---|
-| `content/faith.rs` | `FaithId` (an index in path order, saved), `FaithDef` (`id`, `name`, `description`, `face: Option<Face>`, `shared`, `stranger`, `answers`, `listens`), `Faiths` (`list`, `get`, `id`, `is_empty`), `Stranger` (cold, hears, bane), `Listens` (anywhere, altar), `NeedsFace` (holy, any; `allows`); the loader (`Content::load_faiths`, then `resolve_faiths` once races and classes are in) and the reads `Content::faiths`, `faith`, `faiths_offered(race, class)`, `default_faith(race, class)`. A faith's face is the prayer's `Face` (`content/prayer.rs`), `None` for a faith with no face |
+| `content/faith.rs` | `FaithId` (an index in path order, saved), `FaithDef` (`id`, `name`, `description`, `face: Option<Face>`, `shared`, `stranger`, `answers`, `listens`, `words`, `uses`; `hears_anywhere`), `Faiths` (`list`, `get`, `id`, `is_empty`), `Stranger` (cold, hears, bane), `Listens` (anywhere, altar), `NeedsFace` (holy, any; `allows`); the loader (`Content::load_faiths`, then `resolve_faiths` once races and classes are in) and the reads `Content::faiths`, `faith`, `faiths_offered(race, class)`, `default_faith(race, class)`. A faith's face is the prayer's `Face` (`content/prayer.rs`), `None` for a faith with no face |
 | `content/race.rs` | `RaceDef::faith` (the default) and `faiths` (the others open, in the race's order), resolved from `faith_spec`/`faiths_spec` |
 | `content/class.rs` | `ClassDef::needs_face`: a class file's `faith` (`"holy"` the paladin, `"any"` the priest) |
 | `character.rs` | `CharacterSpec::faith` (an id, `None`: the default), `with_faith`, `faith(content)` (the chosen one, else `default_faith`), `check` and `check_open` (an unknown faith; one not offered), `Start::faith` |
 | `world/turn/actor.rs` | `Actor::faith: Option<FaithId>`: set in `World::begin` from `Start::faith`; `None` for every creature; saved and hashed, left out while `None` |
 | `perception/truth.rs` | `PerceptionView::own_faith` (the player knows their faith) |
-| `content/lexicon.rs`, `content/data_line.rs` | `faith:<id>`, the name (a proper name with its own article, its label as written: "the Mynster"), and the line of data `faith:<id>.description` |
+| `content/lexicon.rs`, `content/data_line.rs` | `faith:<id>`, the name (a proper name with its own article, its label as written: "the Mynster"), and the lines of data `faith:<id>.description`, `faith:<id>.words.<field>`, and `faith:<id>.use.<use>` |
+| `world/faith/` | What play reads of it: `pray.rs` (`Actor::prayer_face`, the prayer), `standing.rs` (`World::standing`, `hearing`), `dark_face.rs` (`docs/dev/prayer.md`) |
 
 ## Data
 
@@ -24,8 +27,10 @@ the field reference is `faiths/README.toml`. Thirteen faiths: the Light's five c
 Mynster, the Hearth, the Spark, the Glimmering, the Elder Light; holy, each sharing with the
 other four), the Dark and the five dark ones (the Howl, the Weaver, the Never-Full, the
 Reckoner, the Old Scales), and two with no face (the Frogs Beyond, `answers = false`; the Big
-Ones, `listens = "altar"`). The table is optional: without it no one has a faith and a race may
-not name one.
+Ones, `listens = "altar"`). Each may say its prayers' lines its own way (`[faith.words]`,
+`[faith.use]`; the faiths with a face but the Dark itself say `unheard` and most `pray`, and the
+two with no face say `silent`, the reason the abilities menu greys Pray with). The table is optional: without it
+no one has a faith and a race may not name one.
 
 `races.toml`: `faith` (the default, required when there are faiths) and `faiths` (the others
 open, in the order a class that cannot take the default falls back to them); the lore's §7

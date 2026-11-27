@@ -7,21 +7,22 @@ expression: "render(case, content.clone())"
 
 
 
-
                     ┌─ Abilities ──────────────────────────────────────────────┐
                     │                                                          │
                     │ Birth sign                                               │
                     │ > a  Transfixing stare  at a place you see               │
+                    │ Faith                                                    │
+                    │   b  Bede                                                │
                     │ Skills                                                   │
-                    │   b  Metalcraft…                                         │
-                    │   c  Woodcraft…                                          │
-                    │   d  Salvage            on something you carry           │
+                    │   c  Metalcraft…                                         │
+                    │   d  Woodcraft…                                          │
+                    │   e  Salvage            on something you carry           │
                     │ Weapon skills                                            │
-                    │   e  Shield bash        you hold no shield               │
+                    │   f  Shield bash        you hold no shield               │
                     │                                                          │
                     │ The basilisk's stare: a foe nearby that sees you slows   │
                     │ to a crawl a moment; your eyes then rest two hours.      │
                     │                                                          │
                     │                                                          │
-                    │ a-e or Enter use   Esc close                             │
+                    │ a-f or Enter use   Esc close                             │
                     └──────────────────────────────────────────────────────────┘

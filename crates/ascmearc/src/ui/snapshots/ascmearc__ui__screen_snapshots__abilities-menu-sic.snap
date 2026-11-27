@@ -10,20 +10,20 @@ expression: "render(case, content.clone())"
                     │ Class                                                    │
                     │   b  Volley             at a place you see               │
                     │   c  Sic 'em            at a place you see               │
+                    │ Faith                                                    │
+                    │   d  Bede                                                │
                     │ Spells                                                   │
-                    │   d  Barkskin           4 mana                           │
-                    │   e  Nightsight         4 mana                           │
-                    │   f  Water walking      5 mana                           │
+                    │   e  Barkskin           4 mana                           │
+                    │   f  Nightsight         4 mana                           │
+                    │   g  Water walking      5 mana                           │
                     │ Skills                                                   │
-                    │   g  Decipher           no unknown scroll                │
-                    │   h  Tame               you already have a companion     │
-                    │   i  Forage             not usable here                  │
-                    │   j  Woodcraft…                                          │
-                    │   k  Salvage            on something you carry           │
+                    │   h  Decipher           no unknown scroll                │
+                    │   i  Tame               you already have a companion     │
+                    │   j  Forage             not usable here                  │
+                    │   k  Woodcraft…                                          │
+                    │   l  Salvage            on something you carry           │
                     │ Weapon skills                                            │
-                    │   l  Shield bash        you hold no shield               │
-                    │ Allies                                                   │
-                    │   m  Come to heel                                        │
+                    │   m  Shield bash        you hold no shield               │
                     │                                                          │
                     │ The basilisk's stare: a foe nearby that sees you slows   │
                     │ to a crawl a moment; your eyes then rest two hours.      │

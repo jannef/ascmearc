@@ -327,9 +327,17 @@ fn profess(w: &mut World, id: &str) {
 fn the_faith_picks_the_face_and_its_titles() {
     // A Callous sister of the Mynster is still the Light's, and heard.
     let mut w = priest(1);
-    assert!(pray_row(&w).starts_with("Orison (faith)"), "{}", pray_row(&w));
+    assert!(
+        pray_row(&w).starts_with("Orison (faith)"),
+        "{}",
+        pray_row(&w)
+    );
     w.player_mut().alignment = Some(Score::new(-150));
-    assert!(pray_row(&w).starts_with("Orison (faith)"), "{}", pray_row(&w));
+    assert!(
+        pray_row(&w).starts_with("Orison (faith)"),
+        "{}",
+        pray_row(&w)
+    );
     hurt(&mut w);
     run(&mut w, "pray");
     assert_eq!(last(&w), "Your wounds close.");
@@ -338,7 +346,11 @@ fn the_faith_picks_the_face_and_its_titles() {
     let mut w = priest(1);
     profess(&mut w, "dark");
     w.player_mut().alignment = Some(Score::new(300));
-    assert!(pray_row(&w).starts_with("Whisper (faith)"), "{}", pray_row(&w));
+    assert!(
+        pray_row(&w).starts_with("Whisper (faith)"),
+        "{}",
+        pray_row(&w)
+    );
     hurt(&mut w);
     run(&mut w, "pray");
     let lines = said(&w);
@@ -349,7 +361,11 @@ fn the_faith_picks_the_face_and_its_titles() {
     assert_eq!(last(&w), "Your wounds close, cold to the touch.");
     let mut w = priest(12);
     profess(&mut w, "dark");
-    assert!(pray_row(&w).starts_with("Invocation (faith)"), "{}", pray_row(&w));
+    assert!(
+        pray_row(&w).starts_with("Invocation (faith)"),
+        "{}",
+        pray_row(&w)
+    );
     run(&mut w, "pray");
     assert_eq!(last(&w), "You have nothing to ask of the dark.");
     // A faith's own words: the Howl's.

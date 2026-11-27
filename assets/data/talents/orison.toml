@@ -3,6 +3,6 @@ id = "orison"
 name = "Orison"
 tree = "class"
 granted = true
-description = "Pray (a cast's time, no mana): what ails you most is answered, as far as your prayers reach; for now, your wounds. Your god hears you more readily than the laity: your prayers strain its patience half as much. Pray too often and nothing answers a while."
+description = "Pray (a cast's time, no mana): your wounds may close. Your god hears you more readily than the laity: your prayers try its patience half as much."
 effects = [{ kind = "prayer", tier = 1, strain = 100, title = { holy = "Orison", dark = "Whisper" }, uses = ["wounds"] }]
 systems = ["hit_points", "status"]

@@ -6,23 +6,24 @@ expression: "render(case, content.clone())"
  You take off a pair of shoes. You put on a Masterwork pair of iron-shod boots (unique).
 
 
-
                     ┌─ Abilities ──────────────────────────────────────────────┐
                     │                                                          │
                     │ Birth sign                                               │
                     │ > a  Transfixing stare  at a place you see               │
                     │ Class                                                    │
                     │   b  Charge             no stamina, at a place you see   │
+                    │ Faith                                                    │
+                    │   c  Bede                                                │
                     │ Skills                                                   │
-                    │   c  Heal               nothing to treat                 │
-                    │   d  Intimidate         at a place you see               │
-                    │   e  Salvage            on something you carry           │
+                    │   d  Heal               nothing to treat                 │
+                    │   e  Intimidate         at a place you see               │
+                    │   f  Salvage            on something you carry           │
                     │ Weapon skills                                            │
-                    │   f  Shield bash        no foe within reach              │
+                    │   g  Shield bash        no foe within reach              │
                     │                                                          │
                     │ The basilisk's stare: a foe nearby that sees you slows   │
                     │ to a crawl a moment; your eyes then rest two hours.      │
                     │                                                          │
                     │                                                          │
-                    │ a-f or Enter use   Esc close                             │
+                    │ a-g or Enter use   Esc close                             │
                     └──────────────────────────────────────────────────────────┘

@@ -714,10 +714,11 @@ thaw:X,Y,R web:X,Y,R`
 - `disarm:E` tries to disarm the trap the player knows of east of them (the Disarm ability, for
   those trained in Disable device; refused, with no time, without the skill or a known trap
   there; docs/dev/traps.md).
-- `pray` prays at the forgotten altar beside the player (the Pray ability, the abilities menu's
-  Here group: a minute, then an outcome from `data/outcomes/forgotten_altar.toml`, and perhaps
-  the altar spent; refused, with no time, with no altar beside them;
-  docs/dev/special-rooms.md).
+- `pray` is the Pray ability (the abilities menu's Faith group, `docs/dev/prayer.md`): beside a
+  forgotten altar it prays at the altar (a minute, then an outcome from
+  `data/outcomes/forgotten_altar.toml`, and perhaps the altar spent; docs/dev/special-rooms.md);
+  anywhere else it is the prayer of the player's faith at every tier (refused, with no time,
+  without a faith, with one whose god does not answer there, or with nothing to pray for).
 - `drink` drinks at the healing spring beside the player (the Drink ability, Here too: ten
   seconds, then an outcome from `data/outcomes/spring.toml`; a spring never runs dry; refused,
   with no time, with no spring beside them).
@@ -841,7 +842,7 @@ All in docs/dev/crafting.md unless named.
   docs/dev/hearing.md), cackle (the witch's: her hexes in sight a degree longer), knock
   (`use:knock:E`, a lock), field_forge (`use:field_forge:E`, the craftsperson's: an ingot carried
   set on open ground there in an hour, a makeshift anvil for good, `docs/dev/crafting.md`),
-  orison (the priest's prayer at every tier, `docs/dev/prayer.md`), sanctuary (the priest's
+  sanctuary (the priest's
   hallowed ground, `docs/dev/special-rooms.md`), call_familiar (the witch's hour's sitting,
   `docs/dev/familiar.md`).
 - One aimed at a cell: `use:volley:12,5`, `use:sic:12,5` (Sic 'em: a hostile the player sees,

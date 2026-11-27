@@ -370,7 +370,13 @@ mod tests {
         assert_eq!((laity.title.of(Face::Holy), laity.strain), ("Bede", 200));
         let heard = |s| rules.hearing.row(s).strain;
         assert_eq!(
-            [Standing::Heard, Standing::Favoured, Standing::Unheard, Standing::Shunned].map(heard),
+            [
+                Standing::Heard,
+                Standing::Favoured,
+                Standing::Unheard,
+                Standing::Shunned
+            ]
+            .map(heard),
             [Some(100), Some(50), None, None]
         );
     }

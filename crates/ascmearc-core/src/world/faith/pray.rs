@@ -32,9 +32,9 @@
 
 use crate::ability::Ability;
 use crate::action::{DiseaseNews, Event};
+use crate::content::TalentEffect;
 use crate::content::data_line;
 use crate::content::{ActionKind, Content, Face, FaithId, PrayerRules, PrayerUse, Standing};
-use crate::content::TalentEffect;
 use crate::hunger::Hunger;
 use crate::lang::Msg;
 use crate::msg;

@@ -3,31 +3,31 @@ source: crates/ascmearc/src/ui/screen_snapshots.rs
 expression: "render(case, content.clone())"
 ---
  You spend 16 mana (dev).
- You give you┌─ Abilities ────────────────────────────────────────────────────────────┐
+ You give you┌─ Abilities ───────────────────────────────────────────────── Page 1/2 ─┐
              │                                                                        │
              │ Birth sign                                                             │
              │ > a  Transfixing stare  at a place you see                             │
              │ Class                                                                  │
              │   b  Knock              no lock beside you                             │
              │   c  Scribe             a scroll of a spell you know                   │
+             │ Faith                                                                  │
+             │   d  Bede                                                              │
              │ Spells                                                                 │
-             │   d  Burning hands      2d6 fire, burns one in four, 5 mana, aimed     │
-             │   e  Ray of frost       2d6 cold, numbs, 3 mana, aimed                 │
-             │   f  Magic missile      4d4 force, 3 mana, aimed                       │
-             │   g  Blink              5 mana                                         │
-             │   h  Shatter            6d6 force, shoves on a big hit, 11 mana, aimed │
+             │   e  Burning hands      2d6 fire, burns one in four, 5 mana, aimed     │
+             │   f  Ray of frost       2d6 cold, numbs, 3 mana, aimed                 │
+             │   g  Magic missile      4d4 force, 3 mana, aimed                       │
+             │   h  Blink              5 mana                                         │
+             │   i  Shatter            6d6 force, shoves on a big hit, 11 mana, aimed │
              │ Talents                                                                │
-             │   i  Blood magic                                                       │
+             │   j  Blood magic                                                       │
              │ Skills                                                                 │
-             │   j  Alchemy…                                                          │
-             │   k  Decipher           no unknown scroll                              │
-             │   l  Salvage            on something you carry                         │
-             │ Weapon skills                                                          │
-             │   m  Shield bash        you hold no shield                             │
+             │   k  Alchemy…                                                          │
+             │   l  Decipher           no unknown scroll                              │
+             │   m  Salvage            on something you carry                         │
              │                                                                        │
              │ The basilisk's stare: a foe nearby that sees you slows to a crawl a    │
              │ moment; your eyes then rest two hours.                                 │
              │                                                                        │
              │                                                                        │
-             │ a-m or Enter use   Esc close                                           │
+             │ a-m or Enter use   > < page   Esc close                                │
              └────────────────────────────────────────────────────────────────────────┘

@@ -6,24 +6,25 @@ expression: "render(case, content.clone())"
  Flames burst from you! The fire in you burns low.
 
 
-
                ┌─ Abilities ───────────────────────────────────────────────────────┐
                │                                                                   │
                │ Birth sign                                                        │
                │   a  Blaze        you are burnt out                               │
                │ Class                                                             │
                │ > b  Charge       1 stamina + 1, 2, 3… a pace, at a place you see │
+               │ Faith                                                             │
+               │   c  Bede                                                         │
                │ Skills                                                            │
-               │   c  Heal         nothing to treat                                │
-               │   d  Intimidate   at a place you see                              │
-               │   e  Metalcraft…                                                  │
-               │   f  Salvage      on something you carry                          │
+               │   d  Heal         nothing to treat                                │
+               │   e  Intimidate   at a place you see                              │
+               │   f  Metalcraft…                                                  │
+               │   g  Salvage      on something you carry                          │
                │ Weapon skills                                                     │
-               │   g  Shield bash  no foe within reach                             │
+               │   h  Shield bash  no foe within reach                             │
                │                                                                   │
                │ Rush a foe you see along the straight way and strike it as you    │
                │ come (an ability): a point of stamina, and 1, 2, 3… for the paces │
                │ in turn. Nobody you pass gets a blow in.                          │
                │                                                                   │
-               │ a-g or Enter use   Esc close                                      │
+               │ a-h or Enter use   Esc close                                      │
                └───────────────────────────────────────────────────────────────────┘

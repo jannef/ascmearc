@@ -757,10 +757,11 @@ impl<'a> PerceptionView<'a> {
             }
             // Beside a forgotten altar Pray prays at it, open to anyone (`world/fixtures/pray.rs`):
             // only what blocks that prayer greys it.
-            Ability::Pray if self.at_altar() => {
-                (self.player.effects.blocking(self.content, crate::content::ActionKind::Pray))
-                    .map(crate::ability::Unavailable::While)
-            }
+            Ability::Pray if self.at_altar() => (self
+                .player
+                .effects
+                .blocking(self.content, crate::content::ActionKind::Pray))
+            .map(crate::ability::Unavailable::While),
             // Foraging asks for the wild underfoot.
             Ability::Forage
                 if crate::world::forage_ground(self.content, self.level, self.player.pos)

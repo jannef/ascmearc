@@ -10,8 +10,8 @@ The basic commands keep their keys (see [Controls](controls.md)): moving, openin
 ## The abilities menu
 
 `a` opens the abilities menu. It lists your abilities with a letter each, in groups by where they
-come from: Racial, Birth sign, Profane, Class, Spells, Talents, Skills, Weapon skills, Items, Here,
-Allies. A group you have nothing in is left out. Profane holds what a [profane gift](profane-gifts.md)
+come from: Racial, Birth sign, Profane, Class, Faith, Spells, Talents, Skills, Weapon skills, Items,
+Here, Allies. A group you have nothing in is left out. Profane holds what a [profane gift](profane-gifts.md)
 gave you and your birth sign did not (Frost breath, or Hate-wyrm's heart's Fire breath).
 
 - Beside each ability is what it asks for once you choose it, such as `in a direction`.
@@ -39,7 +39,7 @@ Looking at the menu takes no time. It remembers the ability you used last and op
 
 Every ability the menu can show, grouped as the menu groups them. The last column links the
 section that explains it in full: a [class](classes.md#levels)'s abilities under its class, the
-priest's prayer on [Prayer](prayer.md), a skill's use on [Using your skills](skill-uses.md).
+prayer on [Prayer](prayer.md), a skill's use on [Using your skills](skill-uses.md).
 
 {{#include generated/abilities.md}}
 
@@ -72,6 +72,11 @@ you never choose them, they work by themselves as you fight. They have their own
   ([Long reach](talents-fighting.md#talent-long-reach) adds to that). It is refused, costing nothing, for
   Exploit's reasons, a target out of reach, or a wall or creature you see in the way (see
   [Thrown exploit](openings.md#thrown-exploit)).
+- **[Pray](abilities.md#ability-pray)**, under Faith: everyone with a [faith](character.md#choosing-a-faith)
+  has it. You pray to your god in the time of a spell, and your wounds may close. The menu names
+  it by how far your prayers reach: Bede for most people, Orison and the names after it for a
+  [priest](class-priest.md). Pray too often and nothing answers for a while. Next to a [forgotten altar](altars-forges-springs.md#forgotten-altars) it
+  prays at the altar instead, and anyone may use it there.
 - **Shield bash**: anyone can bash with a shield (see [Weapon skills](weapon-skills.md)), so it is always in the menu,
   and you can use it while you hold a shield. It strikes whoever stands in the direction you
   choose, in the time of a blow.
@@ -83,7 +88,7 @@ you never choose them, they work by themselves as you fight. They have their own
   table's last column links. A skill whose use is not in the game yet is listed too, greyed out
   (`not usable yet`).
 - **[Class abilities](classes.md#levels)** ([Rage](abilities.md#ability-rage), [War cry](abilities.md#ability-war-cry), [Charge](abilities.md#ability-charge), [Lullaby](abilities.md#ability-lullaby), [Cackle](abilities.md#ability-cackle), [Veteran's wind](abilities.md#ability-veterans-wind), [Lay on hands](abilities.md#ability-lay-on-hands), [Smite](abilities.md#ability-smite), [Holy radiance](abilities.md#ability-holy-radiance),
-  [Step of the wind](abilities.md#ability-step-of-the-wind), [Stunning strike](abilities.md#ability-stunning-strike), [Roundhouse](abilities.md#ability-roundhouse), [Stillness](abilities.md#ability-stillness), [Quivering palm](abilities.md#ability-quivering-palm), [Consecrate](abilities.md#ability-consecrate), [Orison](abilities.md#ability-orison), [Sanctuary](abilities.md#ability-sanctuary), [Knock](abilities.md#ability-knock)) come
+  [Step of the wind](abilities.md#ability-step-of-the-wind), [Stunning strike](abilities.md#ability-stunning-strike), [Roundhouse](abilities.md#ability-roundhouse), [Stillness](abilities.md#ability-stillness), [Quivering palm](abilities.md#ability-quivering-palm), [Consecrate](abilities.md#ability-consecrate), [Sanctuary](abilities.md#ability-sanctuary), [Knock](abilities.md#ability-knock)) come
   from your [class](classes.md)'s level table (see [Classes](classes.md#levels)). Each is under Class from the level that brings
   it.
   - Some leave you [winded](status-list.md#status-winded) for a while afterwards, and are greyed out until it passes.

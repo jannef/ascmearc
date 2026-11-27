@@ -125,7 +125,7 @@ section_shields = { text = "kilvet", of = "578d3d" }
 # The abilities menu's headings, by where each ability comes from.
 source_ally = { text = "liittolaiset", of = "e9893c" }
 source_class = { text = "luokka", of = "3e0b54" }
-source_faith = { text = "usko" }
+source_faith = { text = "usko", of = "42f575" }
 source_item = { text = "esineet", of = "7933b5" }
 source_place = { text = "täällä", of = "3b65ea" }
 source_profane = { text = "epäpyhä", of = "38cb81" }
