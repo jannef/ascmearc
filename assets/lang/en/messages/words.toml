@@ -124,6 +124,7 @@ section_shields = "shields"
 # The abilities menu's headings, by where each ability comes from.
 source_ally = "allies"
 source_class = "class"
+source_faith = "faith"
 source_item = "items"
 source_place = "here"
 source_profane = "profane"

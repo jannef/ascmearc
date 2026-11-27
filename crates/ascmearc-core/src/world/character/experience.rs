@@ -57,9 +57,9 @@ pub struct Progress {
     /// said (`world/creatures/first_sight.rs`).
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub(crate) sighted: BTreeSet<String>,
-    /// The strain of the priest's prayers (`world/classes/orison.rs`), once they have prayed.
+    /// The strain of the priest's prayers (`world/faith/pray.rs`), once they have prayed.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub(crate) prayer: Option<crate::world::classes::orison::Strain>,
+    pub(crate) prayer: Option<crate::world::faith::pray::Strain>,
     /// How often the player has broken each of the two laws (`world/character/laws.rs`).
     #[serde(default, skip_serializing_if = "super::laws::Broken::is_empty")]
     pub(crate) laws: super::laws::Broken,

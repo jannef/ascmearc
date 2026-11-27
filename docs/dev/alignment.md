@@ -70,7 +70,7 @@ there, nothing to consecrate); one paid in a resource (Smite and Lay on hands, z
 mana, or resource. Putting Holy radiance out always works. Without alignment rules every gift
 works. A **band-gated passive** (`TalentEffect::band_gated`: Communion with the dark, the
 priest's 9, `alignment = { max = "callous" }`) is read the same way, by band at the moment of
-use: `World::communes` (`world/classes/dark_face.rs`) asks the talent's bands (and the Dark prayer face)
+use: `World::communes` (`world/faith/dark_face.rs`) asks the talent's bands (and the Dark prayer face)
 where it would act, and outside them the passive does nothing, saying nothing
 (`docs/dev/prayer.md`). Retribution (the paladin's at 25, `alignment = { min = "kind" }`, #912) is
 the other: `World::retribution` (`world/classes/smite.rs`) asks its talent's bands at each blow it would

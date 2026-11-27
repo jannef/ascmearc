@@ -200,7 +200,12 @@ fn the_player_perceives_only_their_own_trained_skills() {
         .collect();
     assert_eq!(
         own,
-        [Ability::PickLock, Ability::Salvage, Ability::ShieldBash]
+        [
+            Ability::Pray,
+            Ability::PickLock,
+            Ability::Salvage,
+            Ability::ShieldBash
+        ]
     );
     // A creature's skills are never perceived: the arena's shaman has some, the player none of
     // its.

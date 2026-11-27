@@ -3,7 +3,7 @@
 # within two cells of its wearer (a 5×5 square, the wearer too, allies and foes alike) casts a
 # spell or reads a scroll (`silence`, `world/magic/hush.rs`); prayer, wands, rods, and abilities
 # that are no spells work in it. Its wearer's prayer strain passes twice as fast (`strain_decay`,
-# `world/classes/orison.rs`). +4 Defence (of Warding's Deflection, past its ladder), +6
+# `world/faith/pray.rs`). +4 Defence (of Warding's Deflection, past its ladder), +6
 # Willpower, and mana back 30% faster, for the spells cast with it off. No power: its rules are
 # fields. Every value set by hand (docs/dev/magic-items.md "Unique items").
 [[unique]]

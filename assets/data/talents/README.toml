@@ -710,13 +710,14 @@
 #                                 percent (100 to 1000); the player striking from it breaks it;
 #                                 refused, no time, on the overworld, in water, in a shop, or
 #                                 on hallowed ground
-#   prayer { tier, title, uses, answers, all }   the priest's prayer (`use:orison` at every
-#                                 tier; data/prayer.toml, docs/dev/prayer.md): `tier` (1 to 5)
-#                                 with its `title = { holy, dark }` (the tier-1 talent carries
-#                                 the ability), `uses` it may answer (disease, poison, wounds,
+#   prayer { tier, title, uses, answers, all, strain }   the priest's prayer, deepening
+#                                 everyone's Pray (`pray`; data/prayer.toml, docs/dev/prayer.md):
+#                                 `tier` (1 to 5) with its `title = { holy, dark }` (above the
+#                                 laity's), `uses` it may answer (disease, poison, wounds,
 #                                 release, mana, hunger, restoration), `answers` problems a
 #                                 prayer (1 to 7, the largest held), `all` every problem and
-#                                 every resource pool at once; at least one of them
+#                                 every resource pool at once, `strain` what an attempt adds
+#                                 (the lowest held, the laity's included); at least one of them
 #   war_cry { status, severity, difficulty }   the active War cry (`use:war_cry`): a roar as loud as
 #                                 a howl; every hostile that hears it, sees the player, and has
 #                                 vitals rolls Willpower against `difficulty` plus the player's

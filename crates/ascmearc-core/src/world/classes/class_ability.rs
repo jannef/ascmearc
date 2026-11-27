@@ -112,7 +112,6 @@ impl World {
             (ClassActive::StepOfTheWind, _) => self.wind_step(events),
             (ClassActive::Stillness, _) => self.stillness(events),
             (ClassActive::Consecrate, _) => self.begin_consecrate(),
-            (ClassActive::Orison, _) => self.orison(events),
             (ClassActive::Sanctuary, _) => self.begin_sanctuary(),
             (ClassActive::Cackle, _) => self.cackle(events),
             (ClassActive::CallFamiliar, _) => self.start_calling(),
@@ -175,29 +174,33 @@ impl World {
             return false;
         }
         if let Some(why) = ability.unavailable(me, &content) {
-            self.say(match why {
-                Unavailable::While(status) => Msg::new(msg::classes::STILL_STATUS)
-                    .role("status", content.status_phrase(status)),
-                Unavailable::NoMana => msg::classes::TOO_LITTLE_MANA.into(),
-                // A pool with words of its own says them (Rage's "You have not the rage for
-                // it.").
-                Unavailable::Short(resource) => {
-                    let def = content.resource(resource);
-                    match &def.lacking {
-                        Some(_) => Msg::new(msg::classes::LACKING)
-                            .role("words", Arg::said(data_line::lacking(&def.id))),
-                        None => Msg::new(msg::classes::TOO_LITTLE_RESOURCE)
-                            .role("name", content.resource_phrase(resource)),
-                    }
-                }
-                Unavailable::Still => msg::classes::MIND_ALREADY_STILL.into(),
-                other => {
-                    Msg::new(msg::classes::CANNOT_REASON).role("reason", other.reason(&content))
-                }
-            });
+            let refusal = self.unavailable_msg(why);
+            self.say(refusal);
             return false;
         }
         true
+    }
+
+    /// What the player is told when an ability they chose is unavailable for `why`.
+    pub(in crate::world) fn unavailable_msg(&self, why: Unavailable) -> Msg {
+        let content = &self.content;
+        match why {
+            Unavailable::While(status) => Msg::new(msg::classes::STILL_STATUS)
+                .role("status", content.status_phrase(status)),
+            Unavailable::NoMana => msg::classes::TOO_LITTLE_MANA.into(),
+            // A pool with words of its own says them (Rage's "You have not the rage for it.").
+            Unavailable::Short(resource) => {
+                let def = content.resource(resource);
+                match &def.lacking {
+                    Some(_) => Msg::new(msg::classes::LACKING)
+                        .role("words", Arg::said(data_line::lacking(&def.id))),
+                    None => Msg::new(msg::classes::TOO_LITTLE_RESOURCE)
+                        .role("name", content.resource_phrase(resource)),
+                }
+            }
+            Unavailable::Still => msg::classes::MIND_ALREADY_STILL.into(),
+            other => Msg::new(msg::classes::CANNOT_REASON).role("reason", other.reason(content)),
+        }
     }
 
     /// Veteran's wind: hit points back at once (one a level, at least its floor), then its

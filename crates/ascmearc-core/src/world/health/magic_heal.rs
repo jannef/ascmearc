@@ -5,7 +5,7 @@
 //! plenty. Besides the hit points, it ends every status whose `cured_by` names
 //! [`MAGICAL_HEALING`] (Bleeding, at any degree), even when the heal gives back no hit point.
 //! The Phoenix's rising cures the same way ([`World::cure_by_magic`], `stars.rs`), and a
-//! priest's prayer for wounds ends Bleeding itself (`orison.rs`).
+//! priest's prayer for wounds ends Bleeding itself (`pray.rs`).
 //!
 //! Mundane healing is not magic and stays as it was: the Heal skill's bandaging, resting and
 //! natural healing, a creature's own regeneration, Second wind and Veteran's wind, and what

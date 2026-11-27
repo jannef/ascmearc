@@ -107,7 +107,7 @@ pub(super) fn prayer_uses(content: &Content) -> String {
 }
 
 /// What a use answers, and how each face answers it, in words. The rules' own text (the fixes
-/// are code, `world/classes/orison.rs` and `world/classes/dark_face.rs`), so every use has its arm.
+/// are code, `world/faith/pray.rs` and `world/faith/dark_face.rs`), so every use has its arm.
 fn use_text(content: &Content, rules: &PrayerRules, id: PrayerUse) -> (String, String, String) {
     let status = |id: &str, name: &str| match content.status_id(id) {
         Some(s) => link(Term::Status, &content.status(s).id, name),

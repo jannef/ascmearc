@@ -324,7 +324,7 @@ pub use experience::{
     Discovery, Experience, FACTORS, Factor, Guideline, Kills, Levels, MAX_LEVEL, MAX_XP, Pace, pace,
 };
 pub use faction::{FactionDef, FactionId, Factions, PLAYER_FACTION, Stance};
-pub use faith::{FaithDef, FaithId, Faiths, Listens, NeedsFace, Stranger};
+pub use faith::{FaithDef, FaithId, FaithWords, Faiths, Listens, NeedsFace, Stranger};
 pub use familiar::FamiliarRules;
 pub use feint::FeintRules;
 pub use files::ContentFiles;
@@ -393,7 +393,9 @@ pub use patron::PatronRules;
 pub use pipe::PipeRules;
 pub use plural::Plurals;
 pub use potion::{Draught, Drink, Flask, Splash};
-pub use prayer::{Face, FaceWords, Faced, PrayerRules, PrayerUse, UseDef};
+pub use prayer::{
+    Face, FaceWords, Faced, HearingRow, HearingRules, Laity, PrayerRules, PrayerUse, Standing, UseDef,
+};
 pub use profane::{GiftDef, GiftKind, GiftTier, ProfaneRolls, ProfaneTable};
 pub use purse::{PurseRow, Purses, RowCoins, RowPurse};
 pub use quarrel::{PartingDef, Quarrel, QuarrelHoard, SideDef, Taker};

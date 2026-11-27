@@ -2,6 +2,7 @@
 # greyed-out row and in a refusal's `reason` ("Et voi: {reason:bare}."). Roles as in English:
 # `status` a status, `skill` a skill, `name` a resource (phrases); `words` a line of data.
 
+faithless = { text = "et tunnusta mitään uskoa" }
 familiar_lives = { text = "apurieläimesi elää yhä", of = "f835df" }
 fires_by_itself = { text = "laukeaa itsestään", of = "40aaf5" }
 have_companion = { text = "sinulla on jo seuralainen", of = "52a637" }
@@ -35,6 +36,7 @@ nothing_to_treat = { text = "ei mitään hoidettavaa", of = "b37020" }
 short = { text = "liian vähän {name:par}", of = "85871c" }
 still = { text = "mielesi on jo tyyni", of = "39943e" }
 # `skill`: the skill the actor is not trained in.
+unanswered = { text = "mikään ei vastaa sinulle täällä" }
 untrained = { text = "et hallitse {skill:par}", of = "52e773" }
 watched = { text = "jokin tarkkailee", of = "d64251" }
 # `status`: the status that keeps the ability from use.

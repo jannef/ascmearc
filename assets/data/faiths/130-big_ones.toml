@@ -6,3 +6,6 @@ description = "No god of the goblins' own: they pay fear to whatever is biggest,
 face = "none"
 stranger = "cold"
 listens = "altar"
+
+[faith.words]
+silent = "nothing big is listening"

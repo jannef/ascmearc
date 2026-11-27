@@ -5,13 +5,15 @@
 //! the priest any with a face).
 //!
 //! A faith's **face** is who answers its prayers, one of the prayer's [`Face`]s (holy: the
-//! Light's churches; dark: the Dark and the deep powers) or none (the Frogs Beyond, the Big Ones). Its `shared`, `stranger`, `answers`, and
-//! `listens` say how its altars and its god treat others; prayer and the altars read them (the
-//! design's later slices), creation reads only the face.
+//! Light's churches; dark: the Dark and the deep powers) or none (the Frogs Beyond, the Big Ones).
+//! Its `answers` and `listens` say whether its god hears a prayer away from an altar, and its
+//! `words` and `use` lines say a prayer its own way (`world/faith/pray.rs`); its `shared` and
+//! `stranger` say how its altars treat others (the design's later slices).
+//!
 //!
 //! The table is optional: without it nobody has a faith, and a race may not name one.
 
-use super::{ClassDef, Content, ContentError, Face, Races, load_table};
+use super::{ClassDef, Content, ContentError, Face, PrayerUse, Races, load_table};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
@@ -92,6 +94,50 @@ fn yes() -> bool {
     true
 }
 
+/// A faith's own words for its prayers (`[faith.words]`), each optional: the face's
+/// (`prayer.toml`'s `[words]`) where it says none. Lines of data, `faith:<id>.words.<field>`.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FaithWords {
+    /// A prayer begun and answered.
+    #[serde(default)]
+    pub pray: Option<String>,
+    /// A prayer that fizzles.
+    #[serde(default)]
+    pub fizzle: Option<String>,
+    /// A prayer refused with nothing to answer.
+    #[serde(default)]
+    pub nothing: Option<String>,
+    /// A prayer its god does not hear (the standing `unheard`).
+    #[serde(default)]
+    pub unheard: Option<String>,
+    /// Why the abilities menu greys Pray where its god answers nothing (a clause, "the Frogs do
+    /// not answer"): only a faith that answers nothing or listens only at an altar says it.
+    #[serde(default)]
+    pub silent: Option<String>,
+}
+
+impl FaithWords {
+    /// The line `field` (`pray`, `fizzle`, `nothing`, `unheard`, `silent`), if it says one.
+    pub fn get(&self, field: &str) -> Option<&str> {
+        match field {
+            "pray" => self.pray.as_deref(),
+            "fizzle" => self.fizzle.as_deref(),
+            "nothing" => self.nothing.as_deref(),
+            "unheard" => self.unheard.as_deref(),
+            "silent" => self.silent.as_deref(),
+            _ => None,
+        }
+    }
+
+    /// Every line it says, with its field, in a fixed order.
+    pub fn each(&self) -> impl Iterator<Item = (&'static str, &str)> {
+        ["pray", "fizzle", "nothing", "unheard", "silent"]
+            .into_iter()
+            .filter_map(|f| Some((f, self.get(f)?)))
+    }
+}
+
 /// A faith as written in `data/faiths/`.
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -108,6 +154,10 @@ pub(super) struct FaithSpec {
     answers: bool,
     #[serde(default)]
     listens: Listens,
+    #[serde(default)]
+    words: FaithWords,
+    #[serde(default, rename = "use")]
+    uses: BTreeMap<PrayerUse, String>,
 }
 
 #[derive(Deserialize)]
@@ -133,6 +183,19 @@ pub struct FaithDef {
     /// Whether it answers prayer at all (the Frogs Beyond do not).
     pub answers: bool,
     pub listens: Listens,
+    /// Its own words for its prayers.
+    pub words: FaithWords,
+    /// Its own line for a use answered (`[faith.use]`), by use: a line of data,
+    /// `faith:<id>.use.<use>`; the face's where it says none.
+    pub uses: BTreeMap<PrayerUse, String>,
+}
+
+impl FaithDef {
+    /// Whether its god hears a prayer away from an altar: it answers, it listens anywhere, and
+    /// it has a face.
+    pub fn hears_anywhere(&self) -> bool {
+        self.answers && self.listens == Listens::Anywhere && self.face.is_some()
+    }
 }
 
 /// Every faith, in path order.
@@ -179,6 +242,13 @@ impl Faiths {
         let mut defs = Vec::new();
         for (path, spec) in specs {
             let err = |m: String| ContentError::new(path, format!("faith `{}`: {m}", spec.id));
+            if spec.words.silent.is_some() && spec.answers && spec.listens == Listens::Anywhere {
+                return Err(err(
+                    "`words.silent` is for a faith that answers nothing or listens only at an \
+                     altar"
+                        .into(),
+                ));
+            }
             if spec.face == FaceSpec::None && spec.answers && spec.listens == Listens::Anywhere {
                 return Err(err(
                     "a faith with no face answers nothing (`answers = false`) or listens only \
@@ -209,6 +279,8 @@ impl Faiths {
                 stranger: spec.stranger,
                 answers: spec.answers,
                 listens: spec.listens,
+                words: spec.words,
+                uses: spec.uses,
             });
         }
         Ok(Self { defs, ids })

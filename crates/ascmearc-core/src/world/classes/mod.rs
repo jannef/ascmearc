@@ -1,11 +1,10 @@
-//! Classes and their abilities (docs/dev/progression.md, openings.md, prayer.md).
+//! Classes and their abilities (docs/dev/progression.md, openings.md).
 
 mod ascetic;
 mod charge;
 pub(in crate::world) mod class;
 mod class_ability;
 mod consecrate;
-mod dark_face;
 pub(in crate::world) mod focus;
 pub(in crate::world) mod invest;
 mod jack;
@@ -14,7 +13,6 @@ mod merchants_eye;
 mod oath_paid;
 mod onset;
 mod openings;
-pub(in crate::world) mod orison;
 mod rage;
 pub(in crate::world) mod sanctuary;
 mod smite;
@@ -31,7 +29,6 @@ cfg_if! {
         pub(in crate::world) mod class_active_tests;
         mod class_rogue_tests;
         mod class_tests;
-        mod dark_face_tests;
         mod focus_tests;
         mod invest_tests;
         mod ki_tests;
@@ -40,7 +37,6 @@ cfg_if! {
         mod merchants_eye_tests;
         mod oath_paid_tests;
         mod openings_tests;
-        mod orison_tests;
         mod sanctuary_tests;
         mod smite_mode_tests;
         mod smite_tests;

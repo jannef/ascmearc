@@ -148,7 +148,7 @@ impl World {
         let Some(sanctuary) = player.talent_mods(&self.content).faith.sanctuary else {
             return;
         };
-        let dark = player.prayer_face(&self.content) == Face::Dark;
+        let dark = player.prayer_face(&self.content) == Some(Face::Dark);
         let hallow = Hallow {
             at: player.pos,
             radius: sanctuary.radius,

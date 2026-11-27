@@ -1,7 +1,11 @@
-# Lines of data: faiths (`faith:<id>.description`), as the New run screen shows them.
+# Lines of data: faiths (`faith:<id>.description`), as the New run screen shows them, and each
+# faith's own words for its prayers (`faith:<id>.words.<field>`; `silent` a lower-case clause).
 
 [big_ones]
 description = { text = "Hiisillä ei ole omaa jumalaa: ne pelkäävät sitä, mikä on suurinta, ja rukoilevat sitä, joka sattuu kuuntelemaan.", of = "1bffd8" }
+
+[big_ones.words]
+silent = { text = "mikään iso ei kuuntele" }
 
 [dark]
 description = { text = "Valon langennut palvelija mustan veden alla, sanoo Mynsteri; Iltavalo, levolle käynyt Valo, sanoo sen kultti. Se ottaa kenet tahansa, heti.", of = "4756c6" }
@@ -9,32 +13,74 @@ description = { text = "Valon langennut palvelija mustan veden alla, sanoo Mynst
 [elder_light]
 description = { text = "Haltioiden Valo, ensimmäinen valo, tähdet: kärsivällisyys ja tähyily. Se ei tarvitse kirkkoa, eikä sillä ole sellaista.", of = "f10852" }
 
+[elder_light.words]
+pray = { text = "Katsot ylös kiven ohi tähtiin ja rukoilet." }
+unheard = { text = "Katsot ylös, eivätkä tähdet katso takaisin." }
+
 [frogs]
 description = { text = "Liskoihmisten usko: tähdet ovat taivaan takaisten suurten sammakoiden silmiä. Sammakot eivät huomaa ketään.", of = "f1b39c" }
+
+[frogs.words]
+silent = { text = "Taivaan Sammakot eivät vastaa" }
 
 [glimmering]
 description = { text = "Maahisten Valo, kiveen kätketty: tekeminen, uteliaisuus ja sairaiden hoito. Se ei käännytä ketään pois.", of = "4cdea1" }
 
+[glimmering.words]
+pray = { text = "Käännät kiven valoa kohti ja rukoilet." }
+unheard = { text = "Käännät kiven valoa kohti, mutta se pysyy himmeänä." }
+
 [hearth]
 description = { text = "Puolituisten Valo, tuli talon keskellä: pöytä, vieras ja vainajat, joita muistetaan illallisella.", of = "eb365c" }
+
+[hearth.words]
+pray = { text = "Luet sanat pöydän yllä." }
+unheard = { text = "Luet sanat, mutta liesi on sinulle kylmä." }
 
 [howl]
 description = { text = "Örkkien Viha, raivo, joka täyttää ruumiin ja kuluttaa sen: voimaa, pelottomuutta ja nopea kuolema katumatta.", of = "570a22" }
 
+[howl.words]
+pray = { text = "Ulvot, ja jokin ulvoo takaisin." }
+unheard = { text = "Ulvot, eikä mikään ulvo takaisin." }
+
 [mynster]
 description = { text = "Ihmisten Valon kirkko: armo, hautaaminen ja sairaat, ja katumus ennen parannusta.", of = "8dee72" }
+
+[mynster.words]
+unheard = { text = "Rukoilet, mutta Valo ei tunne sinua." }
 
 [never_full]
 description = { text = "Nälkä, rottaihmisten Vanha Äiti: vanha nälkäinen olento kaiken alla, jota Mynsteri kutsuu Epäpyhäksi.", of = "1e11b8" }
 
+[never_full.words]
+pray = { text = "Jyrsit tyhjää ja rukoilet Vanhaa Äitiä." }
+unheard = { text = "Jyrsit, mutta Vanha Äiti ei ole sinusta nälkäinen." }
+
 [old_scales]
 description = { text = "Kärmäläisten lohikäärmesukulaiset ja jumalat, joiden lähin kasvo on tulidraakki Fyrdelfin alla: oveluutta, ansoja ja laskematta kulutettuja henkiä.", of = "42deb6" }
+
+[old_scales.words]
+pray = { text = "Sihiset Vanhoille Suomuille." }
+unheard = { text = "Sihiset, eikä mikään suomuinen liikahda." }
 
 [reckoner]
 description = { text = "Harmaakääpiöiden Ahneuden jumala, joka pitää kirjaa kaikesta velasta ja omaisuudesta eikä anna mitään anteeksi.", of = "79380d" }
 
+[reckoner.words]
+pray = { text = "Luet velkasi ääneen ja rukoilet." }
+unheard = { text = "Lasket, mutta Laskija ei merkitse sinua." }
+
 [spark]
 description = { text = "Kääpiöiden Valo, kivestä pimeässä isketty: työ, vala ja muisti. Jokainen paja on sen alttari.", of = "760210" }
 
+[spark.words]
+pray = { text = "Isket kerran kiveen kuin alasimeen ja odotat." }
+unheard = { text = "Isket kiveen, eikä yksikään kipinä vastaa." }
+
 [weaver]
 description = { text = "Tummahaltioiden Kateuden jumalatar, joka antoi heille himon: jokainen tummahaltia kiipeää hänen verkossaan kohti sitä, mitä toisella on.", of = "454085" }
+
+[weaver.words]
+pray = { text = "Sinä puhut Cutojalle, ja hän cuuldele." }
+unheard = { text = "Sinä puhut Cutojalle, waan ei hän cuuldele." }

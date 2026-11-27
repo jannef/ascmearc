@@ -85,11 +85,10 @@ fn terrain(w: &World, p: Pos) -> String {
     w.content.terrain(t).id.clone()
 }
 
+/// What the place offers beside the player (Pray beside a forgotten altar is listed in the
+/// Faith group, once, and prays at the altar).
 fn here(w: &World) -> Vec<Ability> {
-    (w.perception().abilities().into_iter())
-        .map(|a| a.ability)
-        .filter(|a| a.source() == crate::ability::Source::Place)
-        .collect()
+    Ability::here(w.state.current(), &w.content, w.player_pos())
 }
 
 #[test]
@@ -99,9 +98,12 @@ fn pray_is_listed_only_beside_an_altar_that_is_not_spent() {
     assert!(Ability::every(&w.content).contains(&Ability::Pray));
     w.apply(&Action::Move(Dir::S));
     assert!(here(&w).is_empty(), "two cells away");
+    // Away from the altar Pray is the prayer: unhurt, nothing to pray for.
+    let max = w.state.player().max_hp(&w.content);
+    w.player_mut().hp = max;
     let before = w.state.time;
     w.apply(&Action::Pray);
-    assert!(said(&w, "There is no altar here to pray at."));
+    assert!(said(&w, "You have nothing to pray for."));
     assert_eq!(w.state.time, before, "refused, no time");
     w.apply(&Action::Move(Dir::N));
     let spent = w.content.terrain_id("spent_altar").expect("spent");

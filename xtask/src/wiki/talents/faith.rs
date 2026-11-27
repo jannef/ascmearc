@@ -131,10 +131,11 @@ pub(super) fn text(content: &Content, effect: &FaithEffect) -> String {
         ),
         FaithEffect::Prayer {
             tier,
+            strain,
             title,
             uses,
             answers,
             all,
-        } => prayer_text(content, tier, title.as_ref(), &uses, answers, all),
+        } => prayer_text(content, tier, strain, title.as_ref(), &uses, answers, all),
     }
 }

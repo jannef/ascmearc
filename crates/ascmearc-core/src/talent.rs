@@ -433,7 +433,6 @@ impl TalentMods {
             A::Sanctuary => self.faith.sanctuary.is_some(),
             A::Knock => self.magic.knock.is_some(),
             A::Scribe => self.magic.scribe.is_some(),
-            A::Orison => self.faith.prayer.as_ref().is_some_and(|p| p.tier > 0),
         }
     }
 

@@ -455,8 +455,18 @@ pub fn prayer_use(id: super::PrayerUse, face: super::Face) -> String {
     format!("prayer:use.{}.{}", id.id(), face.id())
 }
 
-/// The classes' lines: the talents' handed-out news, the resources' `lacking`, and the prayer's
-/// words.
+/// Faith `id`'s own word `field` for its prayers (`[faith.words]`): `faith:<id>.words.<field>`.
+pub fn faith_words(id: &str, field: &str) -> String {
+    format!("faith:{id}.words.{field}")
+}
+
+/// Faith `id`'s own line for use `use_` answered (`[faith.use]`): `faith:<id>.use.<use>`.
+pub fn faith_use(id: &str, use_: super::PrayerUse) -> String {
+    format!("faith:{id}.use.{}", use_.id())
+}
+
+/// The classes' lines: the talents' handed-out news, the resources' `lacking`, the prayer's
+/// words, and the faiths' own.
 fn class_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     for (_, def) in content.talents().iter() {
         for (key, text) in handed_news(def) {
@@ -474,11 +484,20 @@ fn class_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
             add(prayer_words(face, "pray"), &words.pray);
             add(prayer_words(face, "fizzle"), &words.fizzle);
             add(prayer_words(face, "nothing"), &words.nothing);
+            add(prayer_words(face, "unheard"), &words.unheard);
         }
         for def in &rules.uses {
             for face in [super::Face::Holy, super::Face::Dark] {
                 add(prayer_use(def.id, face), def.words.of(face));
             }
+        }
+    }
+    for (_, def) in content.faiths().list() {
+        for (field, text) in def.words.each() {
+            add(faith_words(&def.id, field), text);
+        }
+        for (&use_, text) in &def.uses {
+            add(faith_use(&def.id, use_), text);
         }
     }
 }

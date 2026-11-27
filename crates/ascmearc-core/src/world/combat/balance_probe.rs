@@ -44,7 +44,7 @@
 //!   it the same roll at style rank 0. The ranks are not set by level: each level's days are
 //!   cast through `World::practise`, a pool a day (`caster_pace`), so the pace
 //!   is the real curve's. No casts to kill: the probe prints the roll and the pool. The
-//!   priest's prayer (#886, `world/classes/orison.rs`) has no roll: a line a level says its name and
+//!   priest's prayer (#886, `world/faith/pray.rs`) has no roll: a line a level says its name and
 //!   what one prayer answers (`World::prayer_state`).
 //!
 //! - **Sneak attacks** (#688): the thief's first blow on a foe unaware of them against its
@@ -796,7 +796,7 @@ struct Snap {
     zeal: Option<Zeal>,
     /// Its prayer's name in the menu and its state, in plain gear (a class that prays): no roll,
     /// so the spell table prints what it answers.
-    prayer: Option<(String, crate::world::classes::orison::PrayerState)>,
+    prayer: Option<(String, crate::world::faith::pray::PrayerState)>,
 }
 
 /// A bare-handed player's ki (#846): their side with one blow an attack and with the flurry's

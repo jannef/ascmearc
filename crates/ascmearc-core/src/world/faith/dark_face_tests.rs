@@ -1,4 +1,4 @@
-//! The dark face of the priest's prayer and Communion with the dark (`world/classes/dark_face.rs`; the
+//! The dark face of the priest's prayer and Communion with the dark (`world/faith/dark_face.rs`; the
 //! priest design §6.2, §6.3): the plague and the poison passed to the nearest creature seen, a
 //! hex turned on its caster (not on one unseen), a hold's holder webbed, the brim; no strain in
 //! an unholy place and no Ebbing in a draining one, and nothing for the holy face.
@@ -63,10 +63,17 @@ fn world(room: Option<&str>) -> World {
         me.talents.take(talent, None);
     }
     me.alignment = Some(Score::new(-150));
+    me.faith = content.faiths().id("dark");
     me.hp = me.max_hp(&content);
     me.mana_base = 20;
     me.mana = 20;
     w
+}
+
+/// The player turned to the Mynster: the holy face answers them.
+fn holy(w: &mut World) {
+    let mynster = w.content().faiths().id("mynster");
+    w.player_mut().faith = mynster;
 }
 
 fn at(w: &World, p: Pos) -> ActorId {
@@ -107,7 +114,7 @@ fn the_plague_passes_to_the_nearest_creature_seen() {
     let shakes = w.content.disease_id("the_shakes").expect("a disease");
     let player = w.state.player;
     assert!(w.infect(player, shakes, None), "a brewing one goes too");
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert!(w.state.player().diseases.is_empty());
     assert!(said(&w, "You whisper to the dark."));
     assert!(said(&w, "The sickness leaves you, and finds another."));
@@ -126,13 +133,13 @@ fn the_plague_passes_to_the_nearest_creature_seen() {
 #[test]
 fn the_holy_face_passes_nothing_on() {
     let mut w = world(None);
-    w.player_mut().alignment = Some(Score::new(0));
+    holy(&mut w);
     let fever = sicken(&mut w, "filth_fever");
-    run(&mut w, "afflict:poisoned*3 use:orison");
+    run(&mut w, "afflict:poisoned*3 pray");
     assert!(said(&w, "The sickness leaves you."));
     assert!(!w.state.actors[&at(&w, K)].diseases.has(fever));
     w.state.progress.prayer = None;
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert_eq!(degrees(&w, at(&w, K), "poisoned"), 0);
 }
 
@@ -143,7 +150,7 @@ fn the_poison_passes_at_its_degrees_and_an_immune_one_shrugs_it_off() {
     lay(&mut w, player, "poisoned", 3, None);
     let had = degrees(&w, player, "poisoned");
     assert!(had > 0);
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert_eq!(degrees(&w, player, "poisoned"), 0);
     assert!(said(&w, "The poison leaves you, and finds another."));
     let k = at(&w, K);
@@ -162,7 +169,7 @@ fn the_poison_passes_at_its_degrees_and_an_immune_one_shrugs_it_off() {
     }
     w.state.progress.prayer = None;
     lay(&mut w, player, "poisoned", 3, None);
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert_eq!(degrees(&w, player, "poisoned"), 0);
     assert_eq!(degrees(&w, at(&w, S), "poisoned"), 0);
 }
@@ -177,7 +184,7 @@ fn a_hex_turns_on_its_caster_seen_and_a_holder_is_webbed() {
     lay(&mut w, player, "held", 1, Some(k));
     let held = degrees(&w, player, "held");
     assert!(held > 0);
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert!(said(&w, "You are released, and it is returned."));
     for id in ["ill_wished", "weakened", "held"] {
         assert_eq!(degrees(&w, player, id), 0, "{id} released");
@@ -197,7 +204,7 @@ fn the_dark_feeds_to_the_brim() {
         .as_mut()
         .expect("hungers")
         .nutrition = hunger.hungry;
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert!(said(&w, "You feel glutted."));
     let fed = w.state.player().satiation.expect("hungers").nutrition;
     // One short of Bloated, less what the prayer's own time digested.
@@ -210,20 +217,20 @@ fn communion_prays_free_in_an_unholy_place() {
     let player = w.state.player;
     w.player_mut().hp = 1;
     // Outside the room the strain is added.
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert_eq!(w.state.progress.prayer.map(|s| s.value), Some(100));
     // Inside, none is.
     w.state.progress.prayer = None;
     w.player_mut().hp = 1;
     w.state.actors.get_mut(&player).expect("player").pos = EAST;
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert!(said(&w, "Your wounds close, cold to the touch."));
     assert_eq!(w.state.progress.prayer.map(|s| s.value), Some(0));
     // A priest the holy powers answer has the talent, and it does nothing.
     w.state.progress.prayer = None;
-    w.player_mut().alignment = Some(Score::new(0));
+    holy(&mut w);
     w.player_mut().hp = 1;
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert_eq!(w.state.progress.prayer.map(|s| s.value), Some(100));
 }
 
@@ -240,7 +247,7 @@ fn communion_keeps_a_draining_room_off() {
             w.state.actors[&at(&w, H)].max_mana(&w.content) <= 0
         }
     );
-    w.player_mut().alignment = Some(Score::new(0));
+    holy(&mut w);
     run(&mut w, "wait*3");
     assert!(
         degrees(&w, player, "ebbing") > 0,
@@ -249,10 +256,18 @@ fn communion_keeps_a_draining_room_off() {
 }
 
 #[test]
-fn communion_is_a_band_gated_passive() {
+fn communion_asks_the_face_not_the_band() {
     let content = builtin();
     let book = content.talents();
     let def = book.get(book.id("communion").expect("communion"));
-    assert!(def.alignment.is_some());
-    assert!(def.effects.iter().any(|e| e.band_gated()));
+    assert!(def.alignment.is_none(), "no band of its own");
+    // A Kind priest of the Dark communes, and prays free in the cursed room.
+    let mut w = world(Some("cursed"));
+    let player = w.state.player;
+    w.player_mut().alignment = Some(Score::new(300));
+    w.player_mut().hp = 1;
+    w.state.actors.get_mut(&player).expect("player").pos = EAST;
+    assert!(w.communes(player));
+    run(&mut w, "pray");
+    assert_eq!(w.state.progress.prayer.map(|s| s.value), Some(0));
 }

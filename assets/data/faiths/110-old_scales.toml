@@ -5,3 +5,7 @@ name = "the Old Scales"
 description = "The kobolds' dragon-kin and gods, whose nearest face is the fire drake under Fyrdelf: cunning, traps, and lives spent uncounted."
 face = "dark"
 stranger = "bane"
+
+[faith.words]
+pray = "You hiss to the Old Scales."
+unheard = "You hiss, and nothing scaled stirs."

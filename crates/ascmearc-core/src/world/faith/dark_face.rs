@@ -1,4 +1,4 @@
-//! The dark face of the priest's prayer (the priest design `docs/design/priest.md` §6.2, §6.3;
+//! The dark face of the prayer (the priest design `docs/design/priest.md` §6.2, §6.3;
 //! `docs/dev/prayer.md`): what the dark powers add to the cures they answer, and Communion with
 //! the dark. No draw here but a passed-on disease's incubation (`World::infect`'s).
 //!
@@ -9,21 +9,20 @@
 //!   immunity and resistance as any dose (`World::afflict`).
 //! - **The hex turned back**: each released status whose cause the player sees is laid on that
 //!   cause at the degrees it had; a hold's holder is Webbed instead, for the hold's degrees.
-//! - **The brim**: the hunger use feeds to one short of Bloated (in `orison.rs`).
+//! - **The brim**: the hunger use feeds to one short of Bloated (in `pray.rs`).
 //!
 //! Every twist is caused by the player (`by`), so a creature that dies of it is a kill of
 //! theirs. Nothing here is a blow, but a twist that reaches a creature breaks the hallow the
 //! player stands in (design §6.4: `World::break_hallow`).
 //!
-//! **Communion** ([`World::communes`]): a holder of the Communion talent within its bands, whom
-//! the dark answers, standing where an unholy effect lies (a cursed, draining, or haunted room,
-//! or a level one covers whole): its prayers add no strain (`World::orison`), and the unholy
+//! **Communion** ([`World::communes`]): a holder of the Communion talent of a dark faith, standing
+//! where an unholy effect lies (a cursed, draining, or haunted room,
+//! or a level one covers whole): its prayers add no strain (`world/faith/pray.rs`), and the unholy
 //! place's status never touches it (`World::dwell`, the room status's one place).
 
 use crate::action::Event;
-use crate::content::{DiseaseId, Face, TalentEffect};
+use crate::content::{DiseaseId, Face};
 use crate::status::Effect;
-use crate::talent::FaithEffect;
 use crate::world::{ActorId, World};
 
 impl World {
@@ -100,9 +99,8 @@ impl World {
         }
     }
 
-    /// Whether actor `id` is in communion with the dark: it holds Communion, its band is one
-    /// the talent's `alignment` allows (or no rules say otherwise), and the dark answers its
-    /// prayers. Where it stands is the caller's question.
+    /// Whether actor `id` is in communion with the dark: it holds Communion and its faith's face
+    /// is the dark (whatever its band). Where it stands is the caller's question.
     pub(in crate::world) fn communes(&self, id: ActorId) -> bool {
         let content = &self.content;
         let Some(actor) = self.state.actors.get(&id) else {
@@ -111,19 +109,7 @@ impl World {
         if actor.talents.is_empty() || !actor.talent_mods(content).faith.communion {
             return false;
         }
-        let bands = (content.talents().iter())
-            .map(|(_, def)| def)
-            .find(|def| {
-                def.effects
-                    .iter()
-                    .any(|e| matches!(e, TalentEffect::Faith(FaithEffect::Communion)))
-            })
-            .and_then(|def| def.alignment);
-        let allowed = match (bands, content.alignment()) {
-            (Some(bands), Some(_)) => bands.allows(actor.band(content)),
-            _ => true,
-        };
-        allowed && actor.prayer_face(content) == Face::Dark
+        actor.prayer_face(content) == Some(Face::Dark)
     }
 
     /// Whether the player stands in communion: they commune, and an unholy effect lies where

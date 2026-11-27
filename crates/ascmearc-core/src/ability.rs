@@ -153,9 +153,11 @@ pub enum Ability {
     /// time; unavailable while what the actor holds is not for it ([`Unavailable::NotSoHeld`])
     /// or its stamina is short ([`Unavailable::Short`]).
     Weapon(WeaponSkillId, WeaponAbilityId),
-    /// Pray at a forgotten altar: [`Action::Pray`]. A place offers
-    /// it ([`Ability::here`]): listed only while the player stands next to such an altar (never
-    /// a spent one), absent elsewhere.
+    /// Pray: [`Action::Pray`], the Faith group's one prayer (`world/faith/pray.rs`). Had by
+    /// everyone while the game has faiths (unavailable without a faith,
+    /// [`Unavailable::Faithless`], or with one whose god answers nothing here,
+    /// [`Unavailable::Unanswered`]); beside a forgotten altar a place offers it to anyone
+    /// ([`Ability::here`]), and it prays at the altar.
     Pray,
     /// Drink at a healing spring: [`Action::Drink`]. A place offers
     /// it, as Pray: listed only while the player stands next to a spring.
@@ -198,6 +200,8 @@ pub enum Source {
     /// The character's class: its actives, and throwing one's voice
     /// (everyone's until the class tables give it to the bard alone).
     Class,
+    /// The character's faith: Pray.
+    Faith,
     /// The spells the character casts, paid in mana.
     Spell,
     /// A talent the character took: its active ones.
@@ -209,7 +213,8 @@ pub enum Source {
     /// Something worn or carried (none yet: a lantern is used as a tool, `u`).
     Item,
     /// The place the character stands in: what a special room's
-    /// feature offers next to it (Pray at a forgotten altar, Drink at a spring).
+    /// feature offers next to it (Drink at a spring; Pray at a forgotten altar is the Faith
+    /// group's).
     Place,
     /// The character's allies: the orders given to them.
     Ally,
@@ -222,6 +227,7 @@ impl Source {
         Source::Sign,
         Source::Profane,
         Source::Class,
+        Source::Faith,
         Source::Spell,
         Source::Talent,
         Source::Skill,
@@ -239,6 +245,7 @@ impl Source {
             Source::Sign => crate::msg::words::SOURCE_SIGN,
             Source::Profane => crate::msg::words::SOURCE_PROFANE,
             Source::Class => crate::msg::words::SOURCE_CLASS,
+            Source::Faith => crate::msg::words::SOURCE_FAITH,
             Source::Spell => crate::msg::words::SOURCE_SPELL,
             Source::Talent => crate::msg::words::SOURCE_TALENT,
             Source::Skill => crate::msg::words::SOURCE_SKILL,
@@ -256,6 +263,7 @@ impl Source {
             Source::Sign => "sign",
             Source::Profane => "profane",
             Source::Class => "class",
+            Source::Faith => "faith",
             Source::Spell => "spell",
             Source::Talent => "talent",
             Source::Skill => "skill",
@@ -354,6 +362,11 @@ pub enum Unavailable {
     /// One aimed in a direction with nothing beside the player it may act on, as they know it
     /// (#1327, [`crate::beside`]): "no lock beside you".
     NoTarget(crate::beside::Target),
+    /// Pray without a faith.
+    Faithless,
+    /// Pray with a faith whose god answers nothing here: the Frogs Beyond anywhere, the Big Ones
+    /// away from an altar.
+    Unanswered(crate::content::FaithId),
 }
 
 impl Unavailable {
@@ -398,6 +411,18 @@ impl Unavailable {
             Unavailable::Watched => msg::ability::WATCHED.into(),
             Unavailable::HaveCompanion => msg::ability::HAVE_COMPANION.into(),
             Unavailable::NoTarget(target) => target.reason().into(),
+            Unavailable::Faithless => msg::ability::FAITHLESS.into(),
+            // A faith with words for it says them ("the Frogs do not answer").
+            Unavailable::Unanswered(faith) => {
+                let def = content.faith(faith);
+                match def.words.silent {
+                    Some(_) => Msg::new(msg::ability::LACKING).role(
+                        "words",
+                        Arg::said(crate::content::data_line::faith_words(&def.id, "silent")),
+                    ),
+                    None => msg::ability::UNANSWERED.into(),
+                }
+            }
         }
     }
 
@@ -418,6 +443,10 @@ impl Unavailable {
             Unavailable::FiresByItself => "fires_by_itself".into(),
             Unavailable::NotSoHeld => "not_so_held".into(),
             Unavailable::NoAllies => "no_allies".into(),
+            Unavailable::Faithless => "faithless".into(),
+            Unavailable::Unanswered(faith) => {
+                format!("unanswered:{}", content.faith(faith).id).into()
+            }
             Unavailable::NotBeside => "not_beside".into(),
             Unavailable::NoCompanion => "no_companion".into(),
             Unavailable::Still => "still".into(),
@@ -505,10 +534,13 @@ impl Ability {
             .into_iter()
             .filter(|&offer| offers(offer))
             .filter_map(Ability::offered);
+        // Faith: Pray, while the game has faiths (a place may offer it too: listed once).
+        let faith = (!content.faiths().is_empty()).then_some(Ability::Pray);
         // The glowing fungus offers Gather, while herbs.toml exists.
         let gather = content.herbs().map(|_| Ability::Gather);
         let mut all: Vec<Ability> = (signs.chain(class))
             .chain(classes)
+            .chain(faith)
             .chain(spells)
             .chain(talents)
             .chain(skills)
@@ -523,6 +555,7 @@ impl Ability {
             ))
             .collect();
         all.sort_by_key(|a| a.source());
+        all.dedup();
         all
     }
 
@@ -658,9 +691,11 @@ impl Ability {
             Ability::Profession(skill) => actor.skills.get(skill).is_some(),
             Ability::ShieldBash | Ability::Salvage => true,
             Ability::Weapon(skill, id) => actor.weapon_abilities(content).contains(&(skill, id)),
+            // Everyone, while the game has faiths: the faithless see it greyed.
+            Ability::Pray => actor.faith.is_some() || !content.faiths().is_empty(),
             // A place offers it, not who one is ([`Ability::here`]); an order needs allies
             // ([`Ability::orders`]).
-            Ability::Pray | Ability::Drink | Ability::Gather => false,
+            Ability::Drink | Ability::Gather => false,
             Ability::Heel | Ability::Hold | Ability::SetOn | Ability::Give => false,
         }
     }
@@ -823,8 +858,8 @@ impl Ability {
             Ability::ShieldBash => "Strike someone next to you with the shield you hold.",
             Ability::Weapon(_, id) => &content.weapon_ability(id).description,
             Ability::Pray => {
-                "Kneel at the forgotten altar beside you and pray for a minute. Something may \
-                 answer, for good or ill."
+                "Pray to your god. Beside a forgotten altar, kneel at it for a minute instead: \
+                 something may answer, for good or ill."
             }
             Ability::Drink => {
                 "Drink from the spring beside you. Its water is mostly good, and now and then \
@@ -879,7 +914,8 @@ impl Ability {
             Ability::SecondWind | Ability::BloodMagic => Source::Talent,
             Ability::Fade => Source::Race,
             Ability::ShieldBash | Ability::Weapon(..) => Source::WeaponSkill,
-            Ability::Pray | Ability::Drink | Ability::Gather => Source::Place,
+            Ability::Pray => Source::Faith,
+            Ability::Drink | Ability::Gather => Source::Place,
             Ability::Heel | Ability::Hold | Ability::SetOn | Ability::Give => Source::Ally,
         }
     }
@@ -987,7 +1023,8 @@ impl Ability {
             Ability::Heal => Some(ActionKind::Heal),
             Ability::SecondWind | Ability::BloodMagic => Some(ActionKind::Wait),
             Ability::ShieldBash => Some(ActionKind::Melee),
-            Ability::Pray => Some(ActionKind::Pray),
+            // The prayer is a cast's time (a forgotten altar's its own, `world/fixtures/pray.rs`).
+            Ability::Pray => Some(ActionKind::Cast),
             Ability::Give => Some(ActionKind::Wear),
             Ability::Drink => Some(ActionKind::Drink),
             Ability::Gather => Some(ActionKind::Gather),
@@ -1260,7 +1297,6 @@ impl Ability {
             | Ability::Decipher
             // Whether the player has a companion is the perception's to say.
             | Ability::Tame
-            | Ability::Pray
             | Ability::Drink
             // The profession's screen says why each recipe cannot be made now.
             | Ability::Profession(_)
@@ -1281,6 +1317,12 @@ impl Ability {
                 .shield(content)
                 .is_none()
                 .then_some(Unavailable::NoShield),
+            // Away from an altar (the perception asks the altar first).
+            Ability::Pray => match actor.faith {
+                None => Some(Unavailable::Faithless),
+                Some(faith) => (!content.faith(faith).hears_anywhere())
+                    .then_some(Unavailable::Unanswered(faith)),
+            },
         };
         own.or_else(|| {
             let blocked = actor.effects.blocking(content, self.cost()?);
@@ -1325,7 +1367,6 @@ fn class_cooldown(actor: &Actor, content: &Content, active: ClassActive) -> Opti
         | ClassActive::Inspire
         | ClassActive::Lullaby
         | ClassActive::Consecrate
-        | ClassActive::Orison
         | ClassActive::Sanctuary
         | ClassActive::Cackle
         | ClassActive::CallFamiliar
@@ -1482,6 +1523,7 @@ mod tests {
                 "Birth sign",
                 "Profane",
                 "Class",
+                "Faith",
                 "Spells",
                 "Talents",
                 "Skills",
@@ -1543,11 +1585,14 @@ mod tests {
             assert!(every.contains(&Ability::Profession(id)), "{skill}");
             assert!(!every.contains(&Ability::Skill(id)), "{skill}");
         }
-        let last: Vec<Ability> = every.iter().rev().take(7).rev().copied().collect();
+        // Pray is the Faith group's, after the class's.
+        let pray = every.iter().position(|&a| a == Ability::Pray).expect("pray");
+        assert_eq!(every[pray + 1].source(), Source::Spell);
+        assert_eq!(every.iter().filter(|&&a| a == Ability::Pray).count(), 1);
+        let last: Vec<Ability> = every.iter().rev().take(6).rev().copied().collect();
         assert_eq!(
             last,
             [
-                Ability::Pray,
                 Ability::Drink,
                 Ability::Gather,
                 Ability::Heel,

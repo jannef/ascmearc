@@ -6,3 +6,7 @@ description = "The dwarves' Light, struck from stone in the dark: work, oath, an
 face = "holy"
 shared = ["mynster", "hearth", "glimmering", "elder_light"]
 stranger = "cold"
+
+[faith.words]
+pray = "You strike the stone once, as on the anvil, and wait."
+unheard = "You strike the stone, and no spark answers."

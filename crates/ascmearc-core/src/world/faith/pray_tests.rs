@@ -1,12 +1,12 @@
-//! The priest's prayer (`world/classes/orison.rs`; the priest design §6.1,
-//! §7): each use at its level, the priority order, the answers a tier gives, the refusal, the
-//! strain and its lock, the faces, and saves and replays.
+//! The one Pray (`world/faith/pray.rs`; the prayer design §4, §5, the priest design §6.1, §7):
+//! the laity's Bede, each of the priest's uses at its level, the priority order, the answers a
+//! tier gives, the refusals, the strain and its lock, the face by faith, the standing, the faiths
+//! that answer nothing, and saves and replays.
 
-use super::orison::Strain;
+use super::pray::Strain;
 use crate::ability::Ability;
 use crate::action::parse_actions;
 use crate::alignment::Score;
-use crate::content::ClassActive;
 use crate::dump::{self, Layer};
 use crate::replay::Replay;
 use crate::test_support::draws;
@@ -67,14 +67,14 @@ fn rested(w: &mut World) {
 }
 
 #[test]
-fn the_orison_closes_wounds_for_a_casts_time() {
+fn the_priests_prayer_closes_wounds_for_a_casts_time() {
     let mut w = priest(1);
-    let ability = Ability::Class(ClassActive::Orison);
+    let ability = Ability::Pray;
     assert!(ability.had_by(w.state.player(), w.content()));
     hurt(&mut w);
     run(&mut w, "afflict:bleeding*2");
     let (turn, time, rng) = (w.state.turn, w.state.time, draws(&w));
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert!(full_hp(&w));
     assert!(!has(&w, "bleeding"));
     let lines = said(&w);
@@ -98,13 +98,13 @@ fn the_orison_closes_wounds_for_a_casts_time() {
 fn nothing_to_pray_for_is_refused_free() {
     let mut w = priest(1);
     let (turn, time) = (w.state.turn, w.state.time);
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert_eq!(last(&w), "You have nothing to pray for.");
     assert_eq!((w.state.turn, w.state.time), (turn, time));
     assert_eq!(strain(&w), None);
     // Hungry at level 1: the hunger use is not theirs yet.
     hungry(&mut w);
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert!(last(&w).starts_with("You have nothing to pray for."));
     assert_eq!(strain(&w), None);
 }
@@ -114,16 +114,16 @@ fn each_use_comes_at_its_level() {
     // Daily bread at 6: hungry, fed to Satiated; rotten food harmless (Purify's rule).
     let mut w = priest(6);
     hungry(&mut w);
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert_eq!(hunger(&w), crate::hunger::Hunger::Satiated);
     assert_eq!(last(&w), "You feel fed.");
     assert!(w.state.player().talent_mods(w.content()).hunger.purify);
     // Release at 18, not at 12.
     let mut w = priest(12);
-    run(&mut w, "afflict:webbed use:orison");
+    run(&mut w, "afflict:webbed pray");
     assert_eq!(last(&w), "You have nothing to pray for.");
     let mut w = priest(18);
-    run(&mut w, "afflict:webbed afflict:ill_wished use:orison");
+    run(&mut w, "afflict:webbed afflict:ill_wished pray");
     assert!(!has(&w, "webbed") && !has(&w, "ill_wished"));
     assert_eq!(last(&w), "You are released.");
     // Restoration at 25: stat damage and drained points.
@@ -132,7 +132,7 @@ fn each_use_comes_at_its_level() {
     let me = w.player_mut();
     me.damage.take(crate::stats::Stat::Strength, 2, 14);
     me.drained[crate::stats::Stat::Toughness] = 1;
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     let me = w.state.player();
     assert!(!me.damage.is_damaged());
     assert!(crate::world::turn::actor::undrained(&me.drained));
@@ -140,7 +140,7 @@ fn each_use_comes_at_its_level() {
     // Mana at 32.
     let mut w = priest(32);
     w.player_mut().mana = 3;
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     let me = w.state.player();
     assert_eq!(me.mana, me.max_mana(&content));
     assert_eq!(last(&w), "Your mind is filled.");
@@ -158,16 +158,16 @@ fn the_most_pressing_comes_first_one_answer_a_prayer() {
         .get_mut(shakes)
         .expect("caught")
         .shown = true;
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert!(w.state.player().diseases.is_empty());
     assert!(has(&w, "poisoned") && !full_hp(&w));
     assert_eq!(last(&w), "The sickness leaves you.");
     rested(&mut w);
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert!(!has(&w, "poisoned") && !full_hp(&w));
     assert_eq!(last(&w), "The poison leaves you.");
     rested(&mut w);
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert!(full_hp(&w));
 }
 
@@ -175,7 +175,7 @@ fn the_most_pressing_comes_first_one_answer_a_prayer() {
 fn a_brewing_disease_alone_is_nothing_and_goes_with_a_shown_one() {
     let mut w = priest(12);
     run(&mut w, "infect:the_shakes");
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert_eq!(last(&w), "You have nothing to pray for.");
     assert_eq!(strain(&w), None);
     // A second, shown: both go, and neither is named.
@@ -186,7 +186,7 @@ fn a_brewing_disease_alone_is_nothing_and_goes_with_a_shown_one() {
         .get_mut(fever)
         .expect("caught")
         .shown = true;
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert!(w.state.player().diseases.is_empty());
     assert_eq!(last(&w), "The sickness leaves you.");
 }
@@ -197,7 +197,7 @@ fn benediction_answers_two_and_miracle_all_and_every_pool() {
     hurt(&mut w);
     run(&mut w, "afflict:poisoned afflict:ill_wished");
     w.player_mut().mana = 1;
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert!(!has(&w, "poisoned") && full_hp(&w), "poison, then wounds");
     assert!(has(&w, "ill_wished"), "not a third");
     assert!(w.state.player().mana < 5, "nor a fourth");
@@ -211,7 +211,7 @@ fn benediction_answers_two_and_miracle_all_and_every_pool() {
     if w.state.player().resources.has(stamina) {
         w.player_mut().resources.set(stamina, 0);
     }
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     let me = w.state.player();
     assert!(!has(&w, "poisoned") && !has(&w, "webbed") && full_hp(&w));
     assert_eq!(me.mana, me.max_mana(w.content()));
@@ -221,7 +221,7 @@ fn benediction_answers_two_and_miracle_all_and_every_pool() {
     }
     let names: Vec<String> = dump::layer_rows(&w, Layer::Abilities);
     assert!(
-        names.iter().any(|r| r.starts_with("Miracle (class)")),
+        names.iter().any(|r| r.starts_with("Miracle (faith)")),
         "{names:?}"
     );
 }
@@ -242,7 +242,7 @@ fn the_strain_passes_by_the_clock_however_it_is_cut() {
     let pray_after = |cuts: &str| {
         let mut w = priest(1);
         hurt(&mut w);
-        run(&mut w, "use:orison");
+        run(&mut w, "pray");
         run(&mut w, cuts);
         let time = w.state.time;
         strain(&w).expect("strained").now(rules, time)
@@ -271,7 +271,7 @@ fn a_strained_prayer_fizzles_by_its_chance_and_locks() {
             let mut mirror = crate::test_support::peek(&w, "orison/fizzle/player");
             let fizzles = mirror.below(100) < u32::from(strain_found) / 10;
             let before = draws(&w);
-            run(&mut w, "use:orison");
+            run(&mut w, "pray");
             assert_eq!(draws(&w), before + 1, "one draw");
             let s = strain(&w).expect("strained");
             assert_eq!(s.value, strain_found + 100);
@@ -295,7 +295,7 @@ fn a_locked_prayer_fizzles_without_a_draw_until_the_strain_is_gone() {
         pace: None,
     });
     let rng = draws(&w);
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert_eq!(last(&w), "You pray, but nothing answers.");
     assert_eq!(draws(&w), rng, "locked: no draw");
     assert!(!full_hp(&w));
@@ -304,26 +304,43 @@ fn a_locked_prayer_fizzles_without_a_draw_until_the_strain_is_gone() {
     // Two hours later the strain has passed and the lock with it.
     w.state.time += Duration::seconds(120 * 60);
     let rng = draws(&w);
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert!(full_hp(&w), "answered");
     assert_eq!(draws(&w), rng, "no strain: no draw");
     assert_eq!(strain(&w).map(|s| s.locked), Some(false));
 }
+/// The player's Pray row in the `abilities` dump.
+fn pray_row(w: &World) -> String {
+    (dump::layer_rows(w, Layer::Abilities).into_iter())
+        .find(|r| r.contains(" (faith): "))
+        .unwrap_or_default()
+}
+
+/// The player turned to faith `id`.
+fn profess(w: &mut World, id: &str) {
+    let faith = w.content().faiths().id(id);
+    assert!(faith.is_some(), "{id}");
+    w.player_mut().faith = faith;
+}
 
 #[test]
-fn the_band_picks_the_face_and_its_titles() {
-    let row = |w: &World| {
-        let names = ["Orison", "Whisper", "Prayer", "Invocation"];
-        (dump::layer_rows(w, Layer::Abilities).into_iter())
-            .find(|r| names.iter().any(|n| r.starts_with(&format!("{n} (class)"))))
-            .unwrap_or_default()
-    };
+fn the_faith_picks_the_face_and_its_titles() {
+    // A Callous sister of the Mynster is still the Light's, and heard.
     let mut w = priest(1);
-    assert!(row(&w).starts_with("Orison (class)"), "{}", row(&w));
+    assert!(pray_row(&w).starts_with("Orison (faith)"), "{}", pray_row(&w));
     w.player_mut().alignment = Some(Score::new(-150));
-    assert!(row(&w).starts_with("Whisper (class)"), "{}", row(&w));
+    assert!(pray_row(&w).starts_with("Orison (faith)"), "{}", pray_row(&w));
     hurt(&mut w);
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
+    assert_eq!(last(&w), "Your wounds close.");
+    // A Kind priest of the Dark is the dark's, in the face's words (the Dark says none of its
+    // own).
+    let mut w = priest(1);
+    profess(&mut w, "dark");
+    w.player_mut().alignment = Some(Score::new(300));
+    assert!(pray_row(&w).starts_with("Whisper (faith)"), "{}", pray_row(&w));
+    hurt(&mut w);
+    run(&mut w, "pray");
     let lines = said(&w);
     assert!(
         lines.contains(&"You whisper to the dark.".to_string()),
@@ -331,11 +348,107 @@ fn the_band_picks_the_face_and_its_titles() {
     );
     assert_eq!(last(&w), "Your wounds close, cold to the touch.");
     let mut w = priest(12);
-    assert!(row(&w).starts_with("Prayer (class)"), "{}", row(&w));
-    w.player_mut().alignment = Some(Score::new(-800));
-    assert!(row(&w).starts_with("Invocation (class)"), "{}", row(&w));
-    run(&mut w, "use:orison");
+    profess(&mut w, "dark");
+    assert!(pray_row(&w).starts_with("Invocation (faith)"), "{}", pray_row(&w));
+    run(&mut w, "pray");
     assert_eq!(last(&w), "You have nothing to ask of the dark.");
+    // A faith's own words: the Howl's.
+    let mut w = priest(1);
+    profess(&mut w, "howl");
+    hurt(&mut w);
+    run(&mut w, "pray");
+    let lines = said(&w);
+    assert!(
+        lines.contains(&"You howl, and something howls back.".to_string()),
+        "{lines:?}"
+    );
+}
+
+#[test]
+fn a_god_that_scorns_the_player_does_not_hear_them() {
+    // A Wicked sister of the Mynster: a cast's time, the faith's words, no strain, no draw.
+    let mut w = priest(1);
+    w.player_mut().alignment = Some(Score::new(-800));
+    hurt(&mut w);
+    let (turn, rng) = (w.state.turn, draws(&w));
+    run(&mut w, "pray");
+    assert_eq!(last(&w), "You pray, but the Light does not know you.");
+    assert_eq!(w.state.turn, turn + 1, "a cast's time");
+    assert_eq!(draws(&w), rng);
+    assert_eq!(strain(&w), None);
+    assert!(!full_hp(&w));
+    let state = w.prayer_state().expect("held");
+    assert_eq!(state.standing, crate::content::Standing::Unheard);
+    // Nothing to pray for is still refused free, heard or not.
+    w.player_mut().hp = w.state.player().max_hp(w.content());
+    let turn = w.state.turn;
+    run(&mut w, "pray");
+    assert_eq!(last(&w), "You have nothing to pray for.");
+    assert_eq!(w.state.turn, turn);
+    // A Good cultist of the Dark, in the dark face's words.
+    let mut w = priest(1);
+    profess(&mut w, "dark");
+    w.player_mut().alignment = Some(Score::new(500));
+    hurt(&mut w);
+    run(&mut w, "pray");
+    assert_eq!(last(&w), "The dark does not know you.");
+    assert_eq!(strain(&w), None);
+}
+
+#[test]
+fn everyone_with_a_faith_prays_the_laitys_bede() {
+    let mut w = world_with(BUILTIN.clone(), "warrior");
+    let content = w.content().clone();
+    w.player_mut().alignment = Some(Score::new(0));
+    w.player_mut().hp = w.state.player().max_hp(&content);
+    assert!(Ability::Pray.had_by(w.state.player(), &content));
+    assert!(pray_row(&w).starts_with("Bede (faith)"), "{}", pray_row(&w));
+    // Poisoned and unhurt: poison is not the laity's to ask, so nothing is spent.
+    run(&mut w, "afflict:poisoned");
+    let turn = w.state.turn;
+    run(&mut w, "pray");
+    assert_eq!(last(&w), "You have nothing to pray for.");
+    assert_eq!(w.state.turn, turn);
+    // Hurt: the wounds close, at the laity's 200 strain.
+    hurt(&mut w);
+    run(&mut w, "pray");
+    assert!(full_hp(&w));
+    assert_eq!(last(&w), "Your wounds close.");
+    assert_eq!(strain(&w).map(|s| s.value), Some(200));
+    assert!(has(&w, "poisoned"));
+}
+
+#[test]
+fn a_faith_that_answers_nothing_greys_pray_and_spends_nothing() {
+    for (faith, why) in [
+        ("frogs", "the Frogs do not answer"),
+        ("big_ones", "nothing big is listening"),
+    ] {
+        let mut w = world_with(BUILTIN.clone(), "warrior");
+        profess(&mut w, faith);
+        hurt(&mut w);
+        assert!(
+            pray_row(&w).starts_with(&format!("Pray (faith): {why}")),
+            "{}",
+            pray_row(&w)
+        );
+        let turn = w.state.turn;
+        run(&mut w, "pray");
+        assert_eq!(last(&w), format!("You cannot: {why}."));
+        assert_eq!((w.state.turn, strain(&w)), (turn, None));
+        assert!(w.prayer_state().is_none());
+    }
+    // Faithless: greyed too.
+    let mut w = world_with(BUILTIN.clone(), "warrior");
+    w.player_mut().faith = None;
+    hurt(&mut w);
+    assert!(
+        pray_row(&w).starts_with("Pray (faith): you profess nothing"),
+        "{}",
+        pray_row(&w)
+    );
+    run(&mut w, "pray");
+    assert_eq!(last(&w), "You cannot: you profess nothing.");
 }
 
 #[test]
@@ -344,7 +457,7 @@ fn a_silenced_priest_cannot_pray() {
     hurt(&mut w);
     run(&mut w, "afflict:silenced");
     let turn = w.state.turn;
-    run(&mut w, "use:orison");
+    run(&mut w, "pray");
     assert_eq!(w.state.turn, turn, "refused");
     assert!(!full_hp(&w));
     assert_eq!(strain(&w), None);
@@ -363,8 +476,8 @@ fn prayers_save_and_replay_the_same() {
     )
     .expect("world");
     let mut replay = Replay::new(&w);
-    let actions = "afflict:bleeding*3 wait*20 use:orison afflict:bleeding*3 wait*20 use:orison \
-                   use:orison";
+    let actions = "afflict:bleeding*3 wait*20 pray afflict:bleeding*3 wait*20 pray \
+                   pray";
     for action in parse_actions(actions).expect("actions") {
         w.apply(&action);
         replay.push(&action, &w);

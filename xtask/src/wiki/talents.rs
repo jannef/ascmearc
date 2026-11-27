@@ -682,11 +682,12 @@ fn prayer_use_text(content: &Content, id: PrayerUse) -> String {
     }
 }
 
-/// The priest's prayer effect in full: the tier's title, what it adds, and, for the first tier,
-/// the strain's numbers and the priority order.
+/// The priest's prayer effect in full: the tier's title, what it adds, its strain, and, for the
+/// first tier, the strain's numbers and the priority order.
 fn prayer_text(
     content: &Content,
     tier: Option<u8>,
+    strain: Option<u16>,
     title: Option<&Faced>,
     uses: &[PrayerUse],
     answers: Option<u8>,
@@ -714,28 +715,28 @@ fn prayer_text(
                 .into(),
         );
     }
+    if let Some(strain) = strain {
+        parts.push(format!(
+            "every attempt adds {strain} strain instead of the laity's {} (the lowest held \
+             counts)",
+            content
+                .prayer()
+                .and_then(|r| r.laity.as_ref())
+                .map_or(0, |l| l.strain)
+        ));
+    }
     if tier == Some(1)
         && let Some(rules) = content.prayer()
     {
         let order: Vec<&str> = rules.uses.iter().map(|u| u.id.id()).collect();
         parts.push(format!(
-            "active (the time of a spell, no mana): it answers the first problem \
-             the priest has, in the order {}. The holy powers answer {} and better, the dark \
-             ones {} and worse, by the band at the moment. Every attempt adds {} strain, \
-             answered or not, and a point passes every {}; a prayer fizzles with a chance of {} % \
-             per 100 strain (at most 100 %), and a fizzle locks the prayer: every prayer fizzles \
-             until the strain has passed to 0. With nothing to answer it is refused, with no \
-             time or strain",
+            "it deepens everyone's prayer (the time of a spell, no mana), which answers the \
+             first problem the player has, in the order {}. The holy powers or the dark answer, \
+             by the face of the player's faith. A point of strain passes every {}; a prayer \
+             fizzles with a chance of {} % per 100 strain (at most 100 %), and a fizzle locks \
+             the prayer: every prayer fizzles until the strain has passed to 0. With nothing to \
+             answer it is refused, with no time or strain",
             order.join(", "),
-            rules
-                .holy
-                .min
-                .map_or("every band".into(), |b| word(b.name(), "Bare")),
-            rules
-                .dark
-                .max
-                .map_or("every band".into(), |b| word(b.name(), "Bare")),
-            rules.strain,
             rules.decay,
             rules.fizzle_per_100,
         ));

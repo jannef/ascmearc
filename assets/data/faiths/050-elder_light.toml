@@ -6,3 +6,7 @@ description = "The elves' Light, the first light, the stars: patience and watchi
 face = "holy"
 shared = ["mynster", "hearth", "spark", "glimmering"]
 stranger = "cold"
+
+[faith.words]
+pray = "You look up, past the stone, to the stars, and pray."
+unheard = "You look up, and the stars do not look back."
