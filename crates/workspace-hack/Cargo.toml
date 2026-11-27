@@ -29,5 +29,18 @@ proc-macro2 = { version = "1", features = ["span-locations"] }
 syn = { version = "3", features = ["full"] }
 syn2 = { package = "syn", version = "2", features = ["extra-traits", "full", "visit", "visit-mut"] }
 
-[lints]
-workspace = true
+# The workspace lints (`[workspace.lints]` in the root Cargo.toml) restated, since
+# `workspace = true` can't be combined with an override; keep the two in step.
+[lints.rust]
+unsafe_code = "forbid"
+missing_debug_implementations = "warn"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+dbg_macro = "warn"
+todo = "warn"
+unwrap_used = "warn"
+
+# The dependencies above are never used in code: they exist only to unify features (#1572).
+[lints.cargo]
+unused_dependencies = "allow"
