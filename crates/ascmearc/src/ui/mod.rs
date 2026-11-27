@@ -1139,7 +1139,7 @@ mod tests {
             files.edit_table("races", |text| {
                 format!(
                     "{text}\n[[race]]\nid = \"blind\"\nname = \"Blind\"\ndescription = \"Blind.\"\n\
-                     vision = \"normal\"\nage = [20, 30]\n\
+                     vision = \"normal\"\nage = [20, 30]\nfaith = \"mynster\"\n\
                      light_blind = {{ glare = 200, sight = 5, to_hit = -1 }}\n"
                 )
             });

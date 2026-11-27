@@ -208,6 +208,8 @@ pub(super) enum Term {
     Crystal,
     Damage,
     Disease,
+    /// A faith: on the character page, where creation chooses it.
+    Faith,
     Herb,
     ItemClass,
     Potion,
@@ -246,6 +248,7 @@ impl Term {
             Term::Crystal => ("crystals.md", "crystal"),
             Term::Damage => ("damage-types.md", "damage"),
             Term::Disease => ("diseases.md", "disease"),
+            Term::Faith => ("character.md", "faith"),
             Term::Herb => ("herbs.md", "herb"),
             Term::ItemClass => ("objects.md", "class"),
             Term::Potion => ("potions.md", "potion"),

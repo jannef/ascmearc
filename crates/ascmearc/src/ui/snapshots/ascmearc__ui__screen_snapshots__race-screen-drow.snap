@@ -1,10 +1,10 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: "render(case, content.clone())"
+expression: shown
 ---
 
 
-              ┌─ Choose your race (1 of 5) ──────────────────────────────────────────┐
+              ┌─ Choose your race (1 of 6) ──────────────────────────────────────────┐
               │                                                                      │
               │   Elf                                                                │
               │   Half-elf                                                           │

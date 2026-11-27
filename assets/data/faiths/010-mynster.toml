@@ -1,0 +1,8 @@
+# The Mynster: the humans' church of the Light (docs/design/religions.md §3.2).
+[[faith]]
+id = "mynster"
+name = "the Mynster"
+description = "The humans' church of the Light: mercy, burial, and the sick, and penance before healing."
+face = "holy"
+shared = ["hearth", "spark", "glimmering", "elder_light"]
+stranger = "cold"

@@ -16,6 +16,7 @@ How far a design's slices have come is tracked in its issues, not here.
 
 ## Approved, being built
 
+- `prayer.md` (#2179): one Pray for everyone, the faith on the character, every altar a faith's.
 - `profane-gifts.md` (#1471): the layer bosses' corpses and the gift table.
 
 ## Built

@@ -720,6 +720,7 @@ fn search_the_last_seen_spot_then_go_back_and_patrol_on() {
             mark: None,
             alignment: None,
             alignment_override: None,
+            faith: None,
             npc: None,
             talk: Default::default(),
             home: None,

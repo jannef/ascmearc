@@ -1,0 +1,15 @@
+# Faiths a new character may profess (`faith:<id>`, `data/faiths/`): proper names, their label as
+# written. The Mynster and the Glimmering as the dialogue names them (Mynsteri, Hohde).
+big_ones = { word = "Iso/1", proper = true, plural_only = true }
+dark = { word = "Pimeys/40", proper = true }
+elder_light = { word = "Vanha/10 Valo/1", proper = true }
+frogs = { word = "Taivaan Sammakko/4*A", proper = true, plural_only = true }
+glimmering = { word = "Hohde/48*F", proper = true }
+hearth = { word = "Liesi/27", proper = true }
+howl = { word = "Ulvonta/9*J", proper = true }
+mynster = { word = "Mynsteri/6", proper = true }
+never_full = { word = "Kyllästymätön/34*C", proper = true }
+old_scales = { word = "Vanha/10 Suomu/1", proper = true, plural_only = true }
+reckoner = { word = "Laskija/12", proper = true }
+spark = { word = "Kipinä/12", proper = true }
+weaver = { word = "Kutoja/12", proper = true }

@@ -824,6 +824,8 @@ impl World {
             Some(_) => crate::kit::known_types(&content, &pack.items).collect(),
             None => BTreeSet::new(),
         };
+        // The faith the character professes (none without a character or faiths).
+        let faith = start.as_ref().and_then(|s| s.faith);
         let (stats, vision, (hp_base, mana_base), skills, character, weapon_skills, alignment) =
             match start {
                 Some(s) => {
@@ -952,6 +954,7 @@ impl World {
             mark: None,
             alignment: content.alignment().map(|_| alignment),
             alignment_override: None,
+            faith,
             npc: None,
             talk: Talk::default(),
             home: None,

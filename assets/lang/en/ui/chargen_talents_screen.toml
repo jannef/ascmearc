@@ -50,11 +50,11 @@ text = "You cannot take {name:bare} yet."
 # The panel's title when the race gives a free talent: `names`, the talent or talents
 # (`talent:<id>`), a list; `left`, how many remain.
 [title_free]
-text = "Choose your free {names:or} (4 of 5): {left:bare} left"
+text = "Choose your free {names:or} (5 of 6): {left:bare} left"
 
 # When the class gives trades to choose first.
 [title_trade]
-text = "Choose a trade (4 of 5): {left:bare} left"
+text = "Choose a trade (5 of 6): {left:bare} left"
 
 [title_talents]
-text = "Choose your talents (4 of 5): {left:bare} left"
+text = "Choose your talents (5 of 6): {left:bare} left"

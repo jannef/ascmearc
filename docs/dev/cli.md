@@ -192,11 +192,14 @@ The test world (`assets/campaigns/showcase/`, the `showcase` feature):
 
 - `--seed S`: default the scenario's seed; a number, or a word hashed with FNV-1a, e.g. `--seed
   ascmearc`.
-- `--character RACE,GENDER,CLASS` (e.g. `dwarf,female,warrior`; default: the scenario's
-  character): like `--seed` it shapes the run other flags start (`--scenario`, `--new`, `--record`,
-  `--capture`, and `cargo dev-cli dump` and `replay --create`) and alone does not skip the menu;
-  a class closed to the race and gender, `drow,male,priest`, is refused, while a class hidden
-  from New run (none is now) is taken; `assets/data/classes/README.toml`.
+- `--character RACE,GENDER,CLASS[,FAITH]` (e.g. `dwarf,female,warrior`, `human,male,priest,dark`;
+  default: the scenario's character): like `--seed` it shapes the run other flags start
+  (`--scenario`, `--new`, `--record`, `--capture`, and `cargo dev-cli dump` and `replay --create`)
+  and alone does not skip the menu; a class closed to the race and gender, `drow,male,priest`, is
+  refused, while a class hidden from New run (none is now) is taken;
+  `assets/data/classes/README.toml`. The faith, by id in `assets/data/faiths/`, is one open to
+  the race that the class allows (`human,male,paladin,dark` is refused); without it, the one they
+  profess unless they choose (`docs/dev/faith.md`).
 - `--name NAME`: the character's name, up to 20 characters; default: the scenario's for its own
   character, else one of the race's names picked from the seed; like `--character`. A run
   started with `--character` or `--name` (or from New run) has a chosen character and starts with
@@ -255,7 +258,8 @@ On the main menu:
   repository's).
 - Character creation over New run and the steps before them, each on its preselection (the
   first scenario's character, the Ascmearc's, an empty name): `race`, `sign` (the birth sign's
-  reveal), `gender`, `class`, `chargen-talents` (the creation picks), `name`, and `summary`.
+  reveal), `gender`, `class`, `faith`, `chargen-talents` (the creation picks), `name`, and
+  `summary`.
 
 Over a run (e.g. after a `--replay` that walks onto a pile):
 
@@ -409,8 +413,8 @@ and are **dev-only**.
 - `stats`: the player's name, race, gender, and class (`Name Brakka`, `Race Dwarf`, `Class
   Bard`), age, birth date, and sign with a lucky day's title (`Age 27`, `Born 3
   Seedtide 1417`, `Sign Wood Salamander, the Racer`), then their own scores as the rules read
-  them (`Strength 12`), then their alignment band, `Alignment Kind` (never the score), then their
-  combat stance when it is not neutral, `Stance Frenzy`, then each guild they belong to with
+  them (`Strength 12`), then their alignment band, `Alignment Kind` (never the score), then the
+  faith they profess, `Faith the Mynster`, then their combat stance when it is not neutral, `Stance Frenzy`, then each guild they belong to with
   their rank, `Guild Weyfarers' Gilde, Tin`, then `Effects Bleeding, Diseased` when they suffer
   any, then `Mark the kobold`, the creature their openings are in (docs/dev/openings.md), then
   `Diseases filth fever`, the diseases they know they have, then what they resist in words,
@@ -539,7 +543,8 @@ messages, heard sounds, and, with `--state`, the full world state; and:
   order: `id`, `current`, `max`, and `on`, the mark a marked pool's points are in, else null),
   `defence` (the total), `protection`, `resistances` (by damage type id, the word: `{"cold":
   "resistant"}`), `weight`, `burden` (`level`, `limit`, the limit in grams), `alignment` (the
-  band's id, or null without alignment rules), `guilds` (`id`, `name`, `rank`; left out before
+  band's id, or null without alignment rules), `faith` (the faith's id, or null for none),
+  `guilds` (`id`, `name`, `rank`; left out before
   joining one), `hunger` (`bloated` … `starving`, or null when nobody hungers), `stance` (the
   combat stance's id), `dazzled`.
 - `parting`: a quarrel's parting pending: `who` (the wizard), `text`, `choices` (the ids), or null.

@@ -1,0 +1,8 @@
+# The Elder Light: the elves' Light (religions.md §3.6).
+[[faith]]
+id = "elder_light"
+name = "the Elder Light"
+description = "The elves' Light, the first light, the stars: patience and watching. It needs no church, and has none."
+face = "holy"
+shared = ["mynster", "hearth", "spark", "glimmering"]
+stranger = "cold"

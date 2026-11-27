@@ -60,6 +60,7 @@ here, in its group.
 - [burden.md](burden.md): load, limits, sizes, penalties
 - [hunger.md](hunger.md): satiation, eating, corpses, starving
 - [alignment.md](alignment.md): the good–evil score and the deeds that move it
+- [faith.md](faith.md): the faiths, the faith on the character, its choice at creation
 - [craving.md](craving.md): the ratfolk craving, what eating the thinking makes of them
 - [oaths.md](oaths.md): the dwarves' free Sworn foe, Slayer's Oath, oath kills and their table
 - [skills.md](skills.md): trained skills and training marks

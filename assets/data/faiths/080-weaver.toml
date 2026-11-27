@@ -1,0 +1,7 @@
+# The Weaver: Envy, the drow's (religions.md §5.2).
+[[faith]]
+id = "weaver"
+name = "the Weaver"
+description = "The drow's goddess of Envy, who gave them the wanting: every drow climbs her web toward what another has."
+face = "dark"
+stranger = "bane"

@@ -14,6 +14,7 @@
 //! | `gem_size:<id>`, `gem_cut:<id>` | the size's and the cut's `name` |
 //! | `stock:<material id>` | the form word a piece of the material is called by ("ingot", "lump") |
 //! | `race:<id>` | its `name` in lower case ("halfling") |
+//! | `faith:<id>` | its `name` as written, a proper name with its own article ("the Mynster"), and its `label` the same |
 //! | `resource:<id>` | its `name` in lower case ("rage") |
 //! | `room:<id>` | a special room's `name` ("echoing hall", `data/room_effects/`) |
 //! | `skill:<id>` | its `name` in lower case ("open lock") |
@@ -120,6 +121,11 @@ impl Lexicon for Content {
             }
             // A race is a common noun in a sentence ("a halfling"); its `name` is a label.
             "race" => Some(labelled(&self.race(key)?.name)),
+            // A faith is a proper name, said and shown as written ("the Mynster").
+            "faith" => {
+                let def = self.faith(self.faiths().id(key)?);
+                Some((LexWord::new(&def.name).proper(true)).form("label", &def.name))
+            }
             // A resource, a skill, and a status are common words in a sentence ("You are still
             // hasted.", "Your open lock improves."); their `name`s are labels.
             "resource" => {
@@ -352,6 +358,11 @@ impl Content {
     /// A class by its name: `class:<id>` ("{class:a}": "a warrior").
     pub fn class_phrase(&self, id: &str) -> Phrase {
         Phrase::id(format!("class:{id}"))
+    }
+
+    /// A faith by its name: `faith:<id>` ("the Mynster").
+    pub fn faith_phrase(&self, id: super::FaithId) -> Phrase {
+        Phrase::id(format!("faith:{}", self.faith(id).id))
     }
 
     /// A race by its name: `race:<id>` ("{race:a}": "a halfling").

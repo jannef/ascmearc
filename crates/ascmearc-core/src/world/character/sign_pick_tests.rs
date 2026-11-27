@@ -108,6 +108,7 @@ fn foe_at(w: &mut World, at: Pos, hp: i32) -> ActorId {
         risen: None,
         mark: None,
         alignment_override: None,
+        faith: None,
         inventory: Vec::new(),
         equipment: Default::default(),
         stats: def.stats,

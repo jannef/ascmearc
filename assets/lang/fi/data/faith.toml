@@ -1,0 +1,40 @@
+# Lines of data: faiths (`faith:<id>.description`), as the New run screen shows them.
+
+[big_ones]
+description = { text = "Hiisillä ei ole omaa jumalaa: ne pelkäävät sitä, mikä on suurinta, ja rukoilevat sitä, joka sattuu kuuntelemaan.", of = "1bffd8" }
+
+[dark]
+description = { text = "Valon langennut palvelija mustan veden alla, sanoo Mynsteri; Iltavalo, levolle käynyt Valo, sanoo sen kultti. Se ottaa kenet tahansa, heti.", of = "4756c6" }
+
+[elder_light]
+description = { text = "Haltioiden Valo, ensimmäinen valo, tähdet: kärsivällisyys ja tähyily. Se ei tarvitse kirkkoa, eikä sillä ole sellaista.", of = "f10852" }
+
+[frogs]
+description = { text = "Liskoihmisten usko: tähdet ovat taivaan takaisten suurten sammakoiden silmiä. Sammakot eivät huomaa ketään.", of = "f1b39c" }
+
+[glimmering]
+description = { text = "Maahisten Valo, kiveen kätketty: tekeminen, uteliaisuus ja sairaiden hoito. Se ei käännytä ketään pois.", of = "4cdea1" }
+
+[hearth]
+description = { text = "Puolituisten Valo, tuli talon keskellä: pöytä, vieras ja vainajat, joita muistetaan illallisella.", of = "eb365c" }
+
+[howl]
+description = { text = "Örkkien Viha, raivo, joka täyttää ruumiin ja kuluttaa sen: voimaa, pelottomuutta ja nopea kuolema katumatta.", of = "570a22" }
+
+[mynster]
+description = { text = "Ihmisten Valon kirkko: armo, hautaaminen ja sairaat, ja katumus ennen parannusta.", of = "8dee72" }
+
+[never_full]
+description = { text = "Nälkä, rottaihmisten Vanha Äiti: vanha nälkäinen olento kaiken alla, jota Mynsteri kutsuu Epäpyhäksi.", of = "1e11b8" }
+
+[old_scales]
+description = { text = "Kärmäläisten lohikäärmesukulaiset ja jumalat, joiden lähin kasvo on tulidraakki Fyrdelfin alla: oveluutta, ansoja ja laskematta kulutettuja henkiä.", of = "42deb6" }
+
+[reckoner]
+description = { text = "Harmaakääpiöiden Ahneuden jumala, joka pitää kirjaa kaikesta velasta ja omaisuudesta eikä anna mitään anteeksi.", of = "79380d" }
+
+[spark]
+description = { text = "Kääpiöiden Valo, kivestä pimeässä isketty: työ, vala ja muisti. Jokainen paja on sen alttari.", of = "760210" }
+
+[weaver]
+description = { text = "Tummahaltioiden Kateuden jumalatar, joka antoi heille himon: jokainen tummahaltia kiipeää hänen verkossaan kohti sitä, mitä toisella on.", of = "454085" }

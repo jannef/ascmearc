@@ -8,16 +8,19 @@ decide who you are, one step at a time, before you set out into [the Ascmearc](a
 2. **Gender**: a small push to one [stat](stats.md) (below).
 3. **Class**: what you did before the adventure. It shapes your [stats](stats.md) again and
    trains you in a handful of [skills](skills.md) (see [Classes](classes.md)).
-4. **Talents**: pick two [talents](talents.md) from those your character may take. A bard or a
+4. **Faith**: what you believe. Your people's own faith is chosen for you unless you pick
+   another they hold to (below).
+5. **Talents**: pick two [talents](talents.md) from those your character may take. A bard or a
    human picks three, a human bard four. A letter or `Enter` marks one, **Random** lets chance
    pick, and **Done** goes on.
-5. **Name**: type your character's name, up to 20 characters (below).
-6. **Summary**: everything you chose, and what follows from it. It shows your name, race,
-   gender, class, and talents; your age, birthday, and [birth sign](horoscope.md#what-a-sign-does);
+6. **Name**: type your character's name, up to 20 characters (below).
+7. **Summary**: everything you chose, and what follows from it. It shows your name, race,
+   gender, class, faith, and talents; your age, birthday, and [birth sign](horoscope.md#what-a-sign-does);
    the [stats](stats.md) you start with, and beside them the [skills](skills.md) you are trained
    in; your [starting kit](starting-kit.md) item by item; the [alignment](alignment.md) you start
    in; your [vision](vision.md#the-four-types); and where you start. **Start the run** begins it.
-   **Name**, **Race**, **Gender**, **Class**, and **Talents** take you back to that step.
+   **Name**, **Race**, **Gender**, **Class**, **Faith**, and **Talents** take you back to that
+   step.
 
 Each step lists its options with a short description. Races and classes also show how they change
 your stats. Move with the arrow keys (or `j` and `k`), press `Enter` to choose and go on, and
@@ -79,6 +82,27 @@ the fun. There is one consolation. Your race and class also set how much
 [experience](experience.md#levels) each level needs. Long-lived [races](races.md) and patient
 callings level slowly; short-lived races and everyday folk level quickly.
 
+## Choosing a faith
+
+Every people has its own faith, and some have others open to them. The faith step lists the
+ones open to you, with your people's own chosen to start with. Pick another, or keep it.
+
+Two classes narrow the list. A [paladin](class-paladin.md) is a knight of a church of the Light,
+so only those are offered. A [priest](class-priest.md) serves a god that answers, so a faith that
+nothing answers is left out; a goblin priest, whose people pray to whoever is listening, starts
+on the Howl instead. Every other class takes any faith open to their people.
+
+Your faith changes none of your stats, skills, or rolls. For now nothing in play depends on it:
+the priest's [prayer](prayer.md) works as it always has.
+
+Each people's own faith, and the others open to them:
+
+{{#include generated/race-faiths.md}}
+
+The faiths, and who answers each:
+
+{{#include generated/faiths.md}}
+
 ## Seeing who you are
 
 The character screen (`@`) shows:
@@ -88,7 +112,8 @@ The character screen (`@`) shows:
 - your [stats](stats.md), with your attacks beside them: what you hit with, your bonus to hit,
   your [damage](combat.md#damage), and a [missile](ranged.md#getting-ready)'s range (see
   [Combat](combat.md#hitting));
-- your [alignment](alignment.md), your [level](experience.md#levels), and your experience (see
+- your [alignment](alignment.md), your [faith](character.md#choosing-a-faith), your [level](experience.md#levels), and your
+  experience (see
   [Experience](experience.md));
 - your [hit points](hit-points.md#hit-points): your [Toughness](stats.md#stat-toughness) plus what
   your race and class give;
@@ -103,7 +128,7 @@ The character screen (`@`) shows:
 and class start you with, and in each [fighting style](fighting-styles.md), which your class
 starts you with.
 
-Your race, gender, class, and sign never change once a run has started. You do get a year older on
+Your race, gender, class, faith, and sign never change once a run has started. You do get a year older on
 every birthday.
 
 See also: [Classes](classes.md), [Stats](stats.md), and [What's in the game](features.md).

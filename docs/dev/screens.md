@@ -10,7 +10,7 @@ code (`cargo xtask lang --check`): `docs/dev/localization.md` "UI text" and "Lan
 text". Its keys stay fixed in its code.
 
 Modal screens — main menu, the saved characters (Characters), new run and character
-creation (race, gender, class, talents, name, summary), pause, settings, controls, the `?` help, the inventory (`I`), the equipment screen
+creation (race, gender, class, faith, talents, name, summary), pause, settings, controls, the `?` help, the inventory (`I`), the equipment screen
 (`i`) and its choice of what goes in a slot, an item's description (a letter in the inventory,
 an upper-case slot letter on the equipment screen), the character screen (`@`), the weapon skills
 screen (`W`), the quest log (`q`), the message history (`v`), choosing what to
@@ -304,7 +304,7 @@ to open, read keys for, or draw one:
   `ui/equipment_screen.rs` (`EquipmentScreen`: slots by letter, which always name slots, so its
   own key `i` closes it only when it names none (with 13 slots `i` always names one); `ItemScreen`: the stacks that fit one slot), `ui/character_screen.rs` (name, race, gender, class, age, birthday,
   and sign (`birth_parts`/`fit_parts`, shared with the summary), the player's scores, hit points
-  and Defence total, the alignment band (`PerceptionView::own_alignment`), the Status row (every
+  and Defence total, the alignment band (`PerceptionView::own_alignment`), the faith (`own_faith`), the Status row (every
   condition the status bar can show, from the same `ui::conditions` it draws, wrapped, never
   dropped, #1695), weight and burden thresholds; the attacks beside the stats (`draw_attacks`, from `PerceptionView::own_attacks`:
   two rows each, label and name, then `OwnAttack::summary` under the name); 80 wide),

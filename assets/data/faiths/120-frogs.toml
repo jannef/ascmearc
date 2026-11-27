@@ -1,0 +1,8 @@
+# The Frogs Beyond: the lizardfolk's; nothing answers (religions.md §6.3).
+[[faith]]
+id = "frogs"
+name = "the Frogs Beyond"
+description = "The lizardfolk's: the stars are the eyes of great frogs beyond the sky. The Frogs do not notice anyone."
+face = "none"
+stranger = "cold"
+answers = false

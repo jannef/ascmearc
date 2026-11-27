@@ -1,6 +1,6 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: "render(case, content.clone())"
+expression: shown
 ---
  Welcome to Showcase. Press ? for controls.
 
@@ -30,6 +30,7 @@ expression: "render(case, content.clone())"
 │     Stance        Neutral                                                                        │
 │     Stamina       13/13                                                                          │
 │     Alignment     Neutral                                                                        │
+│     Faith         the Spark                                                                      │
 │     Oath kills    0                                                                              │
 │     Resistant to  cold, acid                                                                     │
 │                                                                                                  │

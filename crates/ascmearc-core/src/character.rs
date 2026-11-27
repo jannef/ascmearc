@@ -60,7 +60,9 @@
 //! (and its replay) is reproduced by its scenario, seed, and character.
 
 use crate::alignment::Score;
-use crate::content::{ClassDef, Content, CreatureId, RaceDef, ScenarioDef, Sign, WeaponSkillId};
+use crate::content::{
+    ClassDef, Content, CreatureId, FaithId, RaceDef, ScenarioDef, Sign, WeaponSkillId,
+};
 use crate::kit::{self, Pack};
 use crate::lang::Arg;
 use crate::rng::Rng;
@@ -150,6 +152,11 @@ pub struct CharacterSpec {
     /// Left out of the JSON while empty, so replays and saves from before creation picks load.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub talents: Vec<String>,
+    /// The faith chosen at creation, by id (`content/faith.rs`); `None`: the one the race and
+    /// class profess unless another is chosen ([`Content::default_faith`]). Left out of the JSON
+    /// while `None`, so a choice of the default is written as none.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub faith: Option<String>,
 }
 
 /// A date on the calendar that may lie before its year 1: a birth date. `month` is 1 to 12,
@@ -415,6 +422,8 @@ pub struct Start {
     /// The starting alignment score: the race's plus the class's plus the
     /// birth animal's nudge, kept on the scale.
     pub alignment: Score,
+    /// The faith the character professes (`None` without faiths).
+    pub faith: Option<FaithId>,
     pub character: Character,
     /// The starting kit: what the class, the race, and the sign give (a scenario may add to it
     /// or leave it out, [`kit::starting_pack`]).
@@ -429,6 +438,7 @@ impl CharacterSpec {
             gender,
             class: class.into(),
             talents: Vec::new(),
+            faith: None,
         }
     }
 
@@ -441,6 +451,25 @@ impl CharacterSpec {
     pub fn with_talents(mut self, talents: Vec<String>) -> Self {
         self.talents = talents;
         self
+    }
+
+    /// This race, gender, and class professing `faith` (by id; `None`: the default).
+    pub fn with_faith(mut self, faith: Option<String>) -> Self {
+        self.faith = faith;
+        self
+    }
+
+    /// The faith the character professes: the chosen one, else the race's and class's default
+    /// ([`Content::default_faith`]); `None` without faiths. An error for an unknown race, class,
+    /// or faith.
+    pub fn faith(&self, content: &Content) -> Result<Option<FaithId>, String> {
+        let (race, class) = (self.race(content)?, self.class(content)?);
+        match &self.faith {
+            Some(id) => (content.faiths().id(id))
+                .map(Some)
+                .ok_or_else(|| format!("unknown faith `{id}`")),
+            None => Ok(content.default_faith(race, class)),
+        }
     }
 
     /// The race, or why there is none.
@@ -457,9 +486,9 @@ impl CharacterSpec {
             .ok_or_else(|| format!("unknown class `{}`", self.class))
     }
 
-    /// Whether `content` has the race and the class.
+    /// Whether `content` has the race, the class, and the faith.
     pub fn check(&self, content: &Content) -> Result<(), String> {
-        self.race(content).and(self.class(content)).map(|_| ())
+        self.faith(content).map(|_| ())
     }
 
     /// [`CharacterSpec::check`], and that the class is open to the race and gender (no goblin
@@ -468,9 +497,14 @@ impl CharacterSpec {
     pub fn check_open(&self, content: &Content) -> Result<(), String> {
         let race = self.race(content)?;
         let class = self.class(content)?;
-        match class.refuses(race, self.gender) {
-            Some(why) => Err(format!("`{self}` is refused: {why}")),
-            None => Ok(()),
+        if let Some(why) = class.refuses(race, self.gender) {
+            return Err(format!("`{self}` is refused: {why}"));
+        }
+        match (&self.faith, self.faith(content)?) {
+            (Some(name), Some(id)) if !content.faiths_offered(race, class).contains(&id) => Err(
+                format!("`{self}` is refused: the faith `{name}` is not open to them"),
+            ),
+            _ => Ok(()),
         }
     }
 
@@ -480,6 +514,7 @@ impl CharacterSpec {
     pub fn start(&self, content: &Content, seed: u64, today: GameTime) -> Result<Start, String> {
         let race = self.race(content)?;
         let class = self.class(content)?;
+        let faith = self.faith(content)?;
         let raised = self.gender.raises(seed);
         let born = birth(race, seed, today);
         let horoscope = content.horoscope();
@@ -527,6 +562,7 @@ impl CharacterSpec {
                     .saturating_add(class.alignment)
                     .saturating_add(nudge),
             ),
+            faith,
             kit: kit::roll(content, &character, &trained, seed),
             character,
         })
@@ -647,7 +683,8 @@ fn starting_stats(
 }
 
 impl fmt::Display for CharacterSpec {
-    /// `race,gender,class`, as on the command line.
+    /// `race,gender,class`, as on the command line. Never the faith or the talents: the random
+    /// streams keyed by it (`character/rolls/<spec>`, ...) do not move with them.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{},{},{}", self.race, self.gender.id(), self.class)
     }
@@ -656,14 +693,22 @@ impl fmt::Display for CharacterSpec {
 impl FromStr for CharacterSpec {
     type Err = String;
 
-    /// `race,gender,class` (`dwarf,female,warrior`). Only the gender is checked here; the race
-    /// and class are checked against content when a run starts ([`CharacterSpec::check`]).
+    /// `race,gender,class` (`dwarf,female,warrior`), or with a faith `race,gender,class,faith`
+    /// (`human,male,priest,dark`). Only the gender is checked here; the race, class, and faith
+    /// are checked against content when a run starts ([`CharacterSpec::check`]).
     fn from_str(text: &str) -> Result<Self, String> {
         let parts: Vec<&str> = text.split(',').map(str::trim).collect();
-        let [race, gender, class] = parts[..] else {
-            return Err(format!(
-                "expected RACE,GENDER,CLASS (e.g. dwarf,female,warrior), got `{text}`"
-            ));
+        let (race, gender, class, faith) = match parts[..] {
+            [race, gender, class] => (race, gender, class, None),
+            [race, gender, class, faith] if !faith.is_empty() => {
+                (race, gender, class, Some(faith.to_string()))
+            }
+            _ => {
+                return Err(format!(
+                    "expected RACE,GENDER,CLASS or RACE,GENDER,CLASS,FAITH (e.g. \
+                     dwarf,female,warrior), got `{text}`"
+                ));
+            }
         };
         let gender = Gender::from_id(gender).ok_or_else(|| {
             format!("unknown gender `{gender}` (expected male, female, or other)")
@@ -673,7 +718,7 @@ impl FromStr for CharacterSpec {
                 "the race and the class must be named, got `{text}`"
             ));
         }
-        Ok(Self::new(race, gender, class))
+        Ok(Self::new(race, gender, class).with_faith(faith))
     }
 }
 
@@ -726,7 +771,7 @@ mod tests {
             "data/races.toml",
             &format!(
                 "{races}\n[[race]]\nid = \"giant\"\nname = \"Giant\"\ndescription = \"\"\n\
-                 vision = \"normal\"\nage = [20, 20]\n\
+                 vision = \"normal\"\nage = [20, 20]\nfaith = \"mynster\"\n\
                  stats = {{ strength = 4, dexterity = -2 }}\npotential = {{ strength = 3 }}\n"
             ),
         );
@@ -768,9 +813,18 @@ mod tests {
         assert_eq!(dwarf.class, "warrior");
         assert_eq!(dwarf.to_string(), "dwarf,female,warrior");
         assert_eq!(spec(" elf , other , wizard "), spec("elf,other,wizard"));
+        // A fourth word is the faith; the spec still prints as race, gender, and class.
+        let priest = spec("human,male,priest,dark");
+        assert_eq!(priest.faith.as_deref(), Some("dark"));
+        assert_eq!(priest.to_string(), "human,male,priest");
+        assert_eq!(dwarf.faith, None);
         for (bad, why) in [
             ("dwarf,female", "expected RACE,GENDER,CLASS"),
-            ("dwarf,female,warrior,extra", "expected RACE,GENDER,CLASS"),
+            (
+                "dwarf,female,warrior,spark,extra",
+                "expected RACE,GENDER,CLASS",
+            ),
+            ("dwarf,female,warrior,", "expected RACE,GENDER,CLASS"),
             ("dwarf,woman,warrior", "unknown gender `woman`"),
             (",male,warrior", "must be named"),
         ] {
@@ -1217,6 +1271,73 @@ mod tests {
         files.insert(paladin, &text.replace("\"goblin\"", "\"orc\""));
         let err = Content::load(&files).expect_err("refused");
         assert!(err.to_string().contains("unknown race `orc`"), "{err}");
+    }
+
+    #[test]
+    fn the_faith_is_the_races_unless_chosen_and_the_class_narrows_it() {
+        let content = content();
+        let faith = |text: &str| {
+            let id = spec(text).faith(&content).expect("known").expect("a faith");
+            content.faith(id).id.clone()
+        };
+        let offered = |text: &str| {
+            let s = spec(text);
+            let (race, class) = (s.race(&content).unwrap(), s.class(&content).unwrap());
+            (content.faiths_offered(race, class).into_iter())
+                .map(|id| content.faith(id).id.as_str())
+                .collect::<Vec<_>>()
+        };
+        // The race's default, or the one chosen.
+        assert_eq!(faith("human,male,warrior"), "mynster");
+        assert_eq!(faith("human,male,warrior,dark"), "dark");
+        assert_eq!(faith("drow,female,priest"), "weaver");
+        // In the order the faiths are listed, the default among them.
+        assert_eq!(offered("human,male,warrior"), ["mynster", "hearth", "dark"]);
+        assert_eq!(offered("elf,male,witch"), ["elder_light"]);
+        // The paladin takes only a holy faith, the priest any with a face.
+        assert_eq!(offered("human,male,paladin"), ["mynster", "hearth"]);
+        assert_eq!(offered("half_orc,male,paladin"), ["mynster"]);
+        assert_eq!(offered("goblin,male,priest"), ["mynster", "dark", "howl"]);
+        assert_eq!(offered("lizardfolk,male,priest"), ["mynster", "hearth"]);
+        // A class that cannot take the race's default falls back to the first of the race's
+        // others that it can, as the race lists them.
+        assert_eq!(faith("goblin,male,priest"), "howl");
+        assert_eq!(faith("lizardfolk,female,priest"), "mynster");
+        assert_eq!(faith("goblin,male,warrior"), "big_ones");
+        // `--character` refuses a faith not open to the character, or unknown.
+        let refused = |text: &str| spec(text).check_open(&content).err();
+        assert_eq!(refused("human,male,priest,dark"), None);
+        assert_eq!(
+            refused("human,male,paladin,dark").as_deref(),
+            Some("`human,male,paladin` is refused: the faith `dark` is not open to them")
+        );
+        assert!(refused("elf,male,warrior,mynster").is_some());
+        assert_eq!(
+            refused("human,male,warrior,lamp").as_deref(),
+            Some("unknown faith `lamp`")
+        );
+        // Every race and every class open to it keeps a faith, its own default among them for
+        // every class but the paladin and the priest.
+        for race in &content.races().list {
+            for class in content.classes() {
+                let offered = content.faiths_offered(race, class);
+                let open = Gender::ALL
+                    .iter()
+                    .any(|&g| class.refuses(race, g).is_none());
+                assert!(!open || !offered.is_empty(), "{} {}", race.id, class.id);
+                if class.needs_face.is_none() {
+                    assert!(offered.contains(&race.faith.expect("a faith")));
+                }
+            }
+        }
+        // The start carries it; the faith moves no roll.
+        let a = start(&content, "human,male,priest", 3);
+        let b = start(&content, "human,male,priest,dark", 3);
+        assert_eq!(content.faith(a.faith.expect("a faith")).id, "mynster");
+        assert_eq!(content.faith(b.faith.expect("a faith")).id, "dark");
+        assert_eq!((a.stats, a.skills), (b.stats, b.skills));
+        let json = serde_json::to_string(&b.character.spec).expect("serializes");
+        assert!(json.ends_with(r#""faith":"dark"}"#), "{json}");
     }
 
     /// The built-in content without skills: no skills file, and no race or class training any.

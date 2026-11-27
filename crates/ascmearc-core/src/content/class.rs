@@ -97,6 +97,7 @@ struct ClassSpec {
     only: Vec<OnlySpec>,
     #[serde(default)]
     hidden: bool,
+    faith: Option<super::NeedsFace>,
 }
 
 /// `{ skills = ["alchemy", "metalcraft"], dice = "2d4+4" }`: one of the skills, picked at
@@ -285,6 +286,9 @@ pub struct ClassDef {
     /// Never offered at character creation (the everyday folk, for now); still taken by
     /// `--character` and a scenario's own character.
     pub hidden: bool,
+    /// The face its character's faith must have (`faith = "holy"`: the paladin; `"any"`: the
+    /// priest, any but none); `None`: any faith open to the race (`content/faith.rs`).
+    pub needs_face: Option<super::NeedsFace>,
     /// The file it was read from, for the errors of [`ClassDef::check_table`].
     pub(super) file: String,
 }
@@ -441,6 +445,7 @@ impl ClassDef {
             races_not: spec.races_not,
             only: spec.only,
             hidden: spec.hidden,
+            needs_face: spec.faith,
             file: file.to_string(),
         })
     }

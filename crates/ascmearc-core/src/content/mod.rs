@@ -67,6 +67,9 @@ mod encounter_tests;
 mod english;
 mod experience;
 mod faction;
+mod faith;
+#[cfg(test)]
+mod faith_tests;
 mod familiar;
 mod feint;
 #[cfg(test)]
@@ -321,6 +324,7 @@ pub use experience::{
     Discovery, Experience, FACTORS, Factor, Guideline, Kills, Levels, MAX_LEVEL, MAX_XP, Pace, pace,
 };
 pub use faction::{FactionDef, FactionId, Factions, PLAYER_FACTION, Stance};
+pub use faith::{FaithDef, FaithId, Faiths, Listens, NeedsFace, Stranger};
 pub use familiar::FamiliarRules;
 pub use feint::FeintRules;
 pub use files::ContentFiles;
@@ -797,6 +801,8 @@ pub struct Content {
     climate: Climate,
     actions: ActionCosts,
     skills: SkillBook,
+    /// The faiths (`data/faiths/`): none without the files.
+    faiths: Faiths,
     races: Races,
     /// Names offered to new characters, by race (`data/names.toml`): flavour, not fingerprinted.
     names: Names,
@@ -973,6 +979,8 @@ impl Content {
             content.potion_labels = Some(ScrollLabelDef::parse(path, text)?);
         }
         content.stances = content.load_or_default(files)?;
+        // Faiths before the races, which name them.
+        content.load_faiths(files)?;
         let path = "data/races.toml";
         if let Some(text) = files.get_optional(path) {
             let has_vision = |id: &str| content.vision(id).is_some();
@@ -997,6 +1005,8 @@ impl Content {
                 class.check_races(|id| content.race(id).is_some())?;
             }
         }
+        // The races' faiths, and the classes' narrowing of them.
+        content.resolve_faiths()?;
         content.alignment = content.load_optional(files)?;
         content.experience = content.load_or_default(files)?;
         // Statuses before talents, which may name them (a cooldown, a critical's status).

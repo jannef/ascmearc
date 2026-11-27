@@ -1,0 +1,8 @@
+# The Spark: the dwarves' Light (religions.md §3.4).
+[[faith]]
+id = "spark"
+name = "the Spark"
+description = "The dwarves' Light, struck from stone in the dark: work, oath, and memory. Every forge is its altar."
+face = "holy"
+shared = ["mynster", "hearth", "glimmering", "elder_light"]
+stranger = "cold"

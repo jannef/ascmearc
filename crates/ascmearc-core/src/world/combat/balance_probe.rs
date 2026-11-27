@@ -1047,6 +1047,7 @@ fn career(
         gender: Gender::Male,
         class: build.class.into(),
         talents: Vec::new(),
+        faith: None,
     };
     let mut w = World::start_run(
         content.clone(),

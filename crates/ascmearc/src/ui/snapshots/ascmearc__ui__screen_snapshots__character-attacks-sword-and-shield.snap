@@ -1,9 +1,8 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: "render(case, content.clone())"
+expression: shown
 ---
  Welcome to Showcase. Press ? for controls.
-
 ┌─ Character ──────────────────────────────────────────────────────────────────────────────────────┐
 │                                                                                                  │
 │ Garrick                                                                                          │
@@ -29,6 +28,7 @@ expression: "render(case, content.clone())"
 │     Stance        Neutral                                                                        │
 │     Stamina       10/10                                                                          │
 │     Alignment     Neutral                                                                        │
+│     Faith         the Mynster                                                                    │
 │     Resistant to  acid                                                                           │
 │                                                                                                  │
 │ Weight 83.3 kg (you 70 kg, carrying 13.3 kg)                                                     │

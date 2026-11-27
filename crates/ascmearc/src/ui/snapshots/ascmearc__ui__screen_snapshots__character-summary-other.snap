@@ -1,6 +1,6 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: "render(case, content.clone())"
+expression: shown
 ---
         ┌─ Your character ─────────────────────────────────────────────────────────────────┐
         │                                                                                  │
@@ -10,8 +10,8 @@ expression: "render(case, content.clone())"
         │   Sign      Water Basilisk                                                       │
         │   Gender    Other                                                                │
         │   Class     Thief                                                                │
+        │   Faith     the Mynster                                                          │
         │   Talents   Sworn foe (vermin), Lean, Wary                                       │
-        │                                                                                  │
         │   Age 34 · born 29 Greenleaf 1410 · year of the Water Basilisk                   │
         │   St  Strength      10    Appraise        12   Negotiation      7                │
         │   Dx  Dexterity     14    Balance          5   Open lock       19                │

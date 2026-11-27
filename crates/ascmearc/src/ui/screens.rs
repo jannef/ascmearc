@@ -104,7 +104,9 @@ pub enum ScreenName {
     Gender,
     /// Choose a class (after the gender).
     Class,
-    /// Choose the talents picked at creation (after the class).
+    /// Choose a faith among the race's that the class allows (after the class).
+    Faith,
+    /// Choose the talents picked at creation (after the faith).
     ChargenTalents,
     /// Type a name (after the class).
     Name,
@@ -249,6 +251,7 @@ impl ScreenName {
                 | ScreenName::Sign
                 | ScreenName::Gender
                 | ScreenName::Class
+                | ScreenName::Faith
                 | ScreenName::ChargenTalents
                 | ScreenName::Name
                 | ScreenName::Summary
@@ -464,6 +467,7 @@ impl Screen {
             ScreenName::Sign => Screen::Sign(Box::new(SignScreen::new(content, draft))),
             ScreenName::Gender => choice(Step::Gender),
             ScreenName::Class => choice(Step::Class),
+            ScreenName::Faith => choice(Step::Faith),
             ScreenName::ChargenTalents => Screen::ChargenTalents(Box::new(
                 ChargenTalentsScreen::new(content, draft, draft.remembered.talents.as_deref()),
             )),
@@ -1076,7 +1080,16 @@ pub(super) fn open_startup_screens(
 /// steps before them, each with its preselection.
 fn startup_screens(screen: Option<ScreenName>, in_run: bool) -> Vec<ScreenName> {
     use ScreenName::*;
-    let creation = [Race, Sign, Gender, Class, ChargenTalents, Name, Summary];
+    let creation = [
+        Race,
+        Sign,
+        Gender,
+        Class,
+        Faith,
+        ChargenTalents,
+        Name,
+        Summary,
+    ];
     match (in_run, screen) {
         (false, Some(s)) if creation.contains(&s) => {
             let steps = creation.iter().take_while(|&&c| c != s);
@@ -1453,6 +1466,7 @@ mod tests {
                 Sign,
                 Gender,
                 Class,
+                Faith,
                 ChargenTalents,
                 Name
             ]
@@ -1466,6 +1480,7 @@ mod tests {
                 Sign,
                 Gender,
                 Class,
+                Faith,
                 ChargenTalents,
                 Name,
                 Summary
@@ -1862,12 +1877,14 @@ mod tests {
         app.update();
         assert_eq!(names(&app), [ScreenName::Main]);
         // Enter opens New run, and the next Enters, in the same frame, pick the Ascmearc, its
-        // character's race, read the stars, the gender and class (preselected), the talents
+        // character's race, read the stars, the gender, class, and faith (preselected), the talents
         // (Random, preselected), and a name (an
         // empty field: the first random one), and start it from the summary.
         frame(
             &mut app,
-            &[ENTER, ENTER, ENTER, ENTER, ENTER, ENTER, ENTER, ENTER],
+            &[
+                ENTER, ENTER, ENTER, ENTER, ENTER, ENTER, ENTER, ENTER, ENTER,
+            ],
         );
         assert_eq!(
             names(&app),
@@ -1878,6 +1895,7 @@ mod tests {
                 ScreenName::Sign,
                 ScreenName::Gender,
                 ScreenName::Class,
+                ScreenName::Faith,
                 ScreenName::ChargenTalents,
                 ScreenName::Name,
                 ScreenName::Summary
@@ -1937,12 +1955,12 @@ mod tests {
         let mut app = app(false);
         app.update();
         // New run, then race: down from human to dwarf; the stars; gender: down to other;
-        // class: up from thief to ranger; then a name, typed (`k` and `j` type, they move
-        // nothing here).
+        // class: up from thief to ranger; the faith and the talents as they come; then a name,
+        // typed (`k` and `j` type, they move nothing here).
         frame(
             &mut app,
             &[
-                ENTER, ENTER, down, ENTER, ENTER, down, ENTER, up, ENTER, ENTER,
+                ENTER, ENTER, down, ENTER, ENTER, down, ENTER, up, ENTER, ENTER, ENTER,
             ],
         );
         assert_eq!(names(&app).last(), Some(&ScreenName::Name));
@@ -1965,23 +1983,26 @@ mod tests {
             names(&app),
             [ScreenName::Main, ScreenName::NewRun, ScreenName::Race]
         );
-        // Another race (and its stars); the gender, class, and name open on what was chosen
-        // before.
-        frame(&mut app, &[down, ENTER, ENTER, ENTER, ENTER, ENTER, ENTER]);
+        // Another race (and its stars); the gender, class, faith, and name open on what was
+        // chosen before.
+        frame(
+            &mut app,
+            &[down, ENTER, ENTER, ENTER, ENTER, ENTER, ENTER, ENTER],
+        );
         assert_eq!(names(&app).last(), Some(&ScreenName::Summary));
         let draft = app.world().resource::<ScreenStack>().draft();
         let spec = draft.spec(&content()).expect("a character");
         assert_eq!(spec.to_string(), "halfling,other,ranger");
         assert_eq!(draft.name(&content()), "Kaj");
         // Esc steps back one screen at a time, to the main menu.
-        for left in [8, 7, 6, 5, 4, 3, 2, 1] {
+        for left in [9, 8, 7, 6, 5, 4, 3, 2, 1] {
             frame(&mut app, &[ESC]);
             assert_eq!(names(&app).len(), left);
         }
         frame(
             &mut app,
             &[
-                ENTER, ENTER, ENTER, ENTER, ENTER, ENTER, ENTER, ENTER, ENTER,
+                ENTER, ENTER, ENTER, ENTER, ENTER, ENTER, ENTER, ENTER, ENTER, ENTER,
             ],
         );
         let game = app.world().resource::<Game>();
@@ -2412,11 +2433,11 @@ mod tests {
             actions(&list),
             [Action::PickUp(ascmearc_core::Positions::of([1]))]
         );
-        // A text field: the numpad's digits type, and NumEnter accepts. (Seven Enters reach the
+        // A text field: the numpad's digits type, and NumEnter accepts. (Eight Enters reach the
         // Name step of New run.)
         let mut field = app(false);
         field.update();
-        frame(&mut field, &[ENTER; 7]);
+        frame(&mut field, &[ENTER; 8]);
         assert_eq!(names(&field).last(), Some(&ScreenName::Name));
         frame(&mut field, &[(KeyCode::KeyE, "E"), NORTH, SOUTH, NUM_ENTER]);
         assert_eq!(names(&field).last(), Some(&ScreenName::Summary));

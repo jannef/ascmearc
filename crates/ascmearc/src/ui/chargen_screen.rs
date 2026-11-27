@@ -1,13 +1,14 @@
 //! Character creation: after the scenario and the
-//! seed, New run asks for a race, reveals the birth sign (`sign_screen`), asks for a gender and a
-//! class, one screen each ([`ChoiceScreen`]), then a name (`name_screen`), then shows the
+//! seed, New run asks for a race, reveals the birth sign (`sign_screen`), asks for a gender, a
+//! class, and a faith (among the race's that the class allows, `content/faith.rs`), one screen
+//! each ([`ChoiceScreen`]), then the talents and a name (`name_screen`), then shows the
 //! character ([`SummaryScreen`]): the name, age, birthday,
 //! and birth sign, the final scores (the dice already rolled), the starting trained skills with
 //! their values, the starting kit in words, the alignment band they start in, and a way back to any
 //! step.
 //!
-//! The steps are screens on the stack, in order (New run, race, the sign, gender, class, name,
-//! summary), so
+//! The steps are screens on the stack, in order (New run, race, the sign, gender, class, faith,
+//! talents, name, summary), so
 //! Esc steps back one and the summary's "change" rows return to a step as it was left. What has
 //! been chosen so far is read off the screens on the stack ([`Draft`]); choices made before going
 //! back are remembered ([`Picks`]) and preselected when a step opens again, else the scenario's
@@ -27,7 +28,7 @@ use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::character::{CharacterSpec, Gender, NAMELESS, Start, check_name, random_name};
 use ascmearc_core::content::place_word;
-use ascmearc_core::content::{ClassDef, Content, Pace, pace};
+use ascmearc_core::content::{ClassDef, Content, FaithId, Pace, pace};
 use ascmearc_core::dice::Dice;
 use ascmearc_core::kit;
 use ascmearc_core::lang::Arg;
@@ -40,13 +41,14 @@ pub(super) const WIDTH: i32 = 72;
 /// Width of the summary's panel (where the console has room): wider, for the starting kit.
 const SUMMARY_WIDTH: i32 = 84;
 
-/// A step of character creation, in order: three choices ([`ChoiceScreen`]), then the name
+/// A step of character creation, in order: four choices ([`ChoiceScreen`]), then the name
 /// (`name_screen::NameScreen`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Step {
     Race,
     Gender,
     Class,
+    Faith,
     Name,
 }
 
@@ -57,16 +59,20 @@ impl Step {
             Step::Race => ScreenName::Race,
             Step::Gender => ScreenName::Gender,
             Step::Class => ScreenName::Class,
+            Step::Faith => ScreenName::Faith,
             Step::Name => ScreenName::Name,
         }
     }
 
-    /// The screen after this step (after the race, the birth sign's reveal).
-    fn next(self) -> ScreenName {
+    /// The screen after this step (after the race, the birth sign's reveal; after the class,
+    /// the faith, unless the content has none).
+    fn next(self, content: &Content) -> ScreenName {
         match self {
             Step::Race => ScreenName::Sign,
             Step::Gender => ScreenName::Class,
-            Step::Class => ScreenName::ChargenTalents,
+            Step::Class if content.faiths().is_empty() => ScreenName::ChargenTalents,
+            Step::Class => ScreenName::Faith,
+            Step::Faith => ScreenName::ChargenTalents,
             Step::Name => ScreenName::Summary,
         }
     }
@@ -77,6 +83,7 @@ impl Step {
             Step::Race => "race",
             Step::Gender => "gender",
             Step::Class => "class",
+            Step::Faith => "faith",
             Step::Name => "name",
         }
     }
@@ -86,6 +93,7 @@ impl Step {
             Step::Race => T::RACE_TITLE,
             Step::Gender => T::GENDER_TITLE,
             Step::Class => T::CLASS_TITLE,
+            Step::Faith => T::FAITH_TITLE,
             Step::Name => T::NAME_TITLE,
         };
         format!(" {} ", ui(text))
@@ -97,6 +105,7 @@ impl Step {
             Step::Race => T::RANDOM_RACE,
             Step::Gender => T::RANDOM_GENDER,
             Step::Class => T::RANDOM_CLASS,
+            Step::Faith => T::RANDOM_FAITH,
             Step::Name => T::RANDOM_NAME,
         }
     }
@@ -125,6 +134,7 @@ pub struct Picks {
     pub race: Option<String>,
     pub gender: Option<String>,
     pub class: Option<String>,
+    pub faith: Option<String>,
     pub name: Option<String>,
     /// The talents marked on the Talents step, in order.
     pub talents: Option<Vec<String>>,
@@ -136,6 +146,7 @@ impl Picks {
             Step::Race => self.race.as_deref(),
             Step::Gender => self.gender.as_deref(),
             Step::Class => self.class.as_deref(),
+            Step::Faith => self.faith.as_deref(),
             Step::Name => self.name.as_deref(),
         }
     }
@@ -145,6 +156,7 @@ impl Picks {
             Step::Race => &mut self.race,
             Step::Gender => &mut self.gender,
             Step::Class => &mut self.class,
+            Step::Faith => &mut self.faith,
             Step::Name => &mut self.name,
         };
         *slot = Some(id.to_string());
@@ -176,7 +188,7 @@ impl Draft {
     }
 
     /// What a step preselects when it opens: the choice remembered for it, else the scenario's
-    /// character's (no name: the Name step opens empty).
+    /// character's (no name: the Name step opens empty; a faith only if theirs names one).
     fn preselect(&self, step: Step) -> Option<String> {
         self.remembered.get(step).map(str::to_string).or_else(|| {
             let character = self.scenario.as_ref()?.character.as_ref()?;
@@ -184,6 +196,7 @@ impl Draft {
                 Step::Race => Some(character.race.clone()),
                 Step::Gender => Some(character.gender.id().to_string()),
                 Step::Class => Some(character.class.clone()),
+                Step::Faith => character.faith.clone(),
                 Step::Name => None,
             }
         })
@@ -223,7 +236,23 @@ impl Draft {
             .or_else(|| offered.first().map(|c| c.id.clone()))
             .or_else(|| content.classes().first().map(|c| c.id.clone()))?;
         let talents = self.talents.clone().unwrap_or_default();
-        Some(CharacterSpec::new(race, gender, class).with_talents(talents))
+        let spec = CharacterSpec::new(race, gender, class).with_talents(talents);
+        let faith = self.faith(content, &spec);
+        Some(spec.with_faith(faith))
+    }
+
+    /// The faith chosen for `spec` so far, by id: the step's, else its preselection, if open to
+    /// them; `None` for the one they profess unless they choose (the race's default, or the
+    /// class's fallback: [`Content::default_faith`]), so a choice of it is written as none.
+    fn faith(&self, content: &Content, spec: &CharacterSpec) -> Option<String> {
+        let (race, class) = (spec.race(content).ok()?, spec.class(content).ok()?);
+        let offered = content.faiths_offered(race, class);
+        let chosen = (self.chosen.get(Step::Faith).map(str::to_string))
+            .or_else(|| self.preselect(Step::Faith))
+            .and_then(|id| content.faiths().id(&id))
+            .filter(|id| offered.contains(id))?;
+        (Some(chosen) != content.default_faith(race, class))
+            .then(|| content.faith(chosen).id.clone())
     }
 
     /// The race and gender as chosen so far; a step not on the stack takes its preselection,
@@ -246,6 +275,19 @@ fn classes_offered<'c>(content: &'c Content, who: Option<(&str, Gender)>) -> Vec
     match who {
         Some((race, gender)) => content.classes_offered(race, gender),
         None => content.classes().iter().filter(|c| !c.hidden).collect(),
+    }
+}
+
+/// The faiths the Faith step lists for the character chosen so far, with their people's own
+/// (`None`: no race or class, or no faiths).
+fn faiths_offered(content: &Content, draft: &Draft) -> (Vec<FaithId>, Option<FaithId>) {
+    let spec = draft.spec(content);
+    let who = spec
+        .as_ref()
+        .and_then(|s| Some((s.race(content).ok()?, s.class(content).ok()?)));
+    match who {
+        Some((race, class)) => (content.faiths_offered(race, class), race.faith),
+        None => (Vec::new(), None),
     }
 }
 
@@ -298,6 +340,8 @@ pub struct ChoiceScreen {
     seed: u64,
     /// How often Random was pressed here.
     rolls: u32,
+    /// The screen Enter opens ([`Step::next`]).
+    next: ScreenName,
 }
 
 impl ChoiceScreen {
@@ -350,11 +394,35 @@ impl ChoiceScreen {
                     .collect(),
             })
             .collect(),
+            Step::Faith => {
+                let (offered, theirs) = faiths_offered(content, draft);
+                (offered.into_iter())
+                    .map(|f| {
+                        let id = content.faith(f).id.clone();
+                        Choice {
+                            name: label(content.faith_phrase(f)),
+                            description: crate::ui::text::data_line(
+                                ascmearc_core::content::data_line::description("faith", &id),
+                            ),
+                            details: (Some(f) == theirs)
+                                .then(|| ui(T::FAITH_DEFAULT))
+                                .into_iter()
+                                .collect(),
+                            id,
+                        }
+                    })
+                    .collect()
+            }
             // The name is typed, on a screen of its own.
             Step::Name => Vec::new(),
         };
-        let selected = draft
-            .preselect(step)
+        // The faith the character professes unless they choose is preselected without a choice.
+        let preselected = match step {
+            Step::Faith => (draft.spec(content))
+                .and_then(|s| Some(content.faith(s.faith(content).ok()??).id.clone())),
+            _ => draft.preselect(step),
+        };
+        let selected = preselected
             .and_then(|id| choices.iter().position(|c| c.id == id))
             .unwrap_or(0);
         Self {
@@ -363,6 +431,7 @@ impl ChoiceScreen {
             selected,
             seed,
             rolls: 0,
+            next: step.next(content),
         }
     }
 
@@ -386,7 +455,7 @@ impl ChoiceScreen {
                 if self.selected == self.choices.len() {
                     self.selected = self.roll();
                 }
-                return ScreenAction::Open(self.step.next());
+                return ScreenAction::Open(self.next);
             }
             _ => {}
         }
@@ -476,6 +545,7 @@ const SUMMARY_ROWS: &[(UiText, Row)] = &[
     (T::ROW_SIGN, Row::Sign),
     (T::ROW_GENDER, Row::Step(Step::Gender)),
     (T::ROW_CLASS, Row::Step(Step::Class)),
+    (T::ROW_FAITH, Row::Step(Step::Faith)),
     (T::ROW_TALENTS, Row::Talents),
 ];
 
@@ -536,8 +606,9 @@ pub struct SummaryScreen {
     name: String,
     /// What the character starts with, or why it cannot start.
     start: Result<Start, String>,
-    /// Race, gender, class, and name as shown, in step order.
-    names: [String; 4],
+    /// Race, gender, class, faith, and name as shown, in step order (the faith empty without
+    /// one).
+    names: [String; 5],
     /// The birth sign as shown, with a lucky day's title: `Metal Manticore, the Iron Scourge`;
     /// empty without one.
     sign: String,
@@ -575,6 +646,8 @@ impl SummaryScreen {
                 word(spec.gender.name(), "Bare"),
                 spec.class(content)
                     .map_or(spec.class.clone(), |c| label(content.class_phrase(&c.id))),
+                (spec.faith(content).ok().flatten())
+                    .map_or(String::new(), |f| label(content.faith_phrase(f))),
                 name.clone(),
             ],
             None => Default::default(),
@@ -930,7 +1003,7 @@ mod tests {
         let mut class = ChoiceScreen::new(Step::Class, &CONTENT, &draft(1));
         assert_eq!(
             press(&mut class, Nav::Enter),
-            ScreenAction::Open(ScreenName::ChargenTalents)
+            ScreenAction::Open(ScreenName::Faith)
         );
     }
 
@@ -944,7 +1017,7 @@ mod tests {
                 s.selected = s.choices.len();
                 assert_eq!(
                     press(&mut s, Nav::Enter),
-                    ScreenAction::Open(ScreenName::ChargenTalents)
+                    ScreenAction::Open(ScreenName::Faith)
                 );
                 picks.push(s.chosen().expect("a class").to_string());
             }
@@ -1000,6 +1073,55 @@ mod tests {
     }
 
     #[test]
+    fn the_faith_step_lists_the_races_faiths_the_class_allows() {
+        let ids =
+            |s: &ChoiceScreen| -> Vec<String> { s.choices.iter().map(|c| c.id.clone()).collect() };
+        // The showcase's human thief: the race's three, the Mynster theirs and preselected; the
+        // spec writes the default as none.
+        let mut d = draft(3);
+        let faith = ChoiceScreen::new(Step::Faith, &CONTENT, &d);
+        assert_eq!(ids(&faith), ["mynster", "hearth", "dark"]);
+        assert_eq!(faith.chosen(), Some("mynster"));
+        assert_eq!(faith.choices[0].details, ["The faith of your people."]);
+        assert!(faith.choices[2].details.is_empty());
+        assert_eq!(d.spec(&CONTENT).expect("a character").faith, None);
+        // Another is written by id; Enter goes on to the talents.
+        d.chosen.set(Step::Faith, "dark");
+        assert_eq!(d.spec(&CONTENT).unwrap().faith.as_deref(), Some("dark"));
+        let mut faith = ChoiceScreen::new(Step::Faith, &CONTENT, &draft(3));
+        assert_eq!(
+            press(&mut faith, Nav::Enter),
+            ScreenAction::Open(ScreenName::ChargenTalents)
+        );
+        // A paladin takes only a holy faith: the Dark, remembered, gives way to the default.
+        let mut d = draft(3);
+        d.chosen.set(Step::Class, "paladin");
+        d.remembered.set(Step::Faith, "dark");
+        let faith = ChoiceScreen::new(Step::Faith, &CONTENT, &d);
+        assert_eq!(ids(&faith), ["mynster", "hearth"]);
+        assert_eq!(faith.chosen(), Some("mynster"));
+        assert_eq!(d.spec(&CONTENT).unwrap().faith, None);
+        // A goblin priest: not the Big Ones; the Howl preselected, not marked as their people's.
+        let mut d = draft(3);
+        d.chosen.set(Step::Race, "goblin");
+        d.chosen.set(Step::Class, "priest");
+        let faith = ChoiceScreen::new(Step::Faith, &CONTENT, &d);
+        assert_eq!(ids(&faith), ["mynster", "dark", "howl"]);
+        assert_eq!(faith.chosen(), Some("howl"));
+        assert!(faith.choices.iter().all(|c| c.details.is_empty()));
+        // Random draws only listed faiths.
+        let mut faith = ChoiceScreen::new(Step::Faith, &CONTENT, &d);
+        for _ in 0..20 {
+            faith.selected = faith.choices.len();
+            press(&mut faith, Nav::Enter);
+            let pick = faith.chosen().expect("a faith").to_string();
+            let spec = CharacterSpec::new("goblin", Gender::Female, "priest")
+                .with_faith(Some(pick.clone()));
+            assert!(spec.check_open(&CONTENT).is_ok(), "{pick}");
+        }
+    }
+
+    #[test]
     fn other_never_names_the_stat_it_raises_nor_random_the_seed() {
         for seed in [1, 2, 3] {
             let mut gender = ChoiceScreen::new(Step::Gender, &CONTENT, &draft(seed));
@@ -1038,7 +1160,7 @@ mod tests {
         console.resize(80, 32);
         race.draw(&mut console);
         let text = text(&console);
-        assert!(text.contains("Choose your race (1 of 5)"), "{text}");
+        assert!(text.contains("Choose your race (1 of 6)"), "{text}");
         assert!(text.contains("> Dwarf"), "{text}");
         assert!(text.contains("Stout, stubborn folk"), "{text}");
         assert!(
@@ -1146,7 +1268,7 @@ mod tests {
         );
         // A short console squeezes out the gaps before the kit's lines go.
         let mut console = Console::default();
-        console.resize(90, 27);
+        console.resize(90, 28);
         let mut d = d.clone();
         d.chosen.set(Step::Race, "halfling");
         d.chosen.set(Step::Class, "merchant");
@@ -1297,6 +1419,7 @@ mod tests {
             ScreenName::Sign,
             ScreenName::Gender,
             ScreenName::Class,
+            ScreenName::Faith,
             ScreenName::ChargenTalents,
         ] {
             s.handle(&Press::nav(Nav::Down));

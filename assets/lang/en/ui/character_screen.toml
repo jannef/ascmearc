@@ -64,6 +64,10 @@ text = "Experience"
 [experience_next]
 text = "{xp:bare} / {next:bare}"
 
+# The row of the faith they profess.
+[faith]
+text = "Faith"
+
 [gender]
 text = "Gender"
 

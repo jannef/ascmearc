@@ -41,6 +41,7 @@ pub(in crate::world) fn foe_at(w: &mut World, creature: &str, at: Pos, score: u8
         risen: None,
         mark: None,
         alignment_override: None,
+        faith: None,
         inventory: Vec::new(),
         equipment: Default::default(),
         stats: Stats::new(PerStat::splat(score), PerStat::splat(score)),

@@ -5,6 +5,8 @@ description = "A holy knight sworn to an oath: strong and commanding, steadfast 
 # No holy order takes the goblins, the drow, the kobolds, the lizardfolk, the duergar, or the
 # ratfolk.
 races_not = ["goblin", "drow", "kobold", "lizardfolk", "duergar", "ratfolk"]
+# A Light church's knight: only a holy faith (faiths/).
+faith = "holy"
 stats = { strength = "1d3", willpower = 1, presence = "1d3" }
 hp = 6
 mana = 3
