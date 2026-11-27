@@ -119,7 +119,6 @@ mesmerise = "Lumo|katse/48"
 metalcraft = { word = "Metalli|työ/19", forms = { bare = "Metallityö…" } }
 mirk = "Pimeys/40"
 nightsight = "Yö|näkö/1*D"
-orison = "Rukous/39"
 pick_lock = "Tiirikoi lukko/1*A"
 pitch_fire = "Piki|tuli/23"
 "polearms.crushing_blow" = "Salkoaseet: Murskaava/10 isku/1"

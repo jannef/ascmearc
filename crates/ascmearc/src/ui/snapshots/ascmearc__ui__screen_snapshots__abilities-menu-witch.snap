@@ -10,20 +10,20 @@ expression: "render(case, content.clone())"
              │ Class                                                                  │
              │   b  Cackle                                                            │
              │   c  Call familiar      your familiar lives                            │
+             │ Faith                                                                  │
+             │   d  Bede                                                              │
              │ Spells                                                                 │
-             │   d  Evil eye           4 mana, aimed                                  │
-             │   e  Grave breath       2d6 necrotic, bites the wounded, 6 mana, aimed │
-             │   f  Hex of weakness    4 mana, aimed                                  │
-             │   g  Flay               2d4 necrotic, bites the wounded, 8 mana, aimed │
+             │   e  Evil eye           4 mana, aimed                                  │
+             │   f  Grave breath       2d6 necrotic, bites the wounded, 6 mana, aimed │
+             │   g  Hex of weakness    4 mana, aimed                                  │
+             │   h  Flay               2d4 necrotic, bites the wounded, 8 mana, aimed │
              │ Skills                                                                 │
-             │   h  Alchemy…                                                          │
-             │   i  Decipher           no unknown scroll                              │
-             │   j  Heal               nothing to treat                               │
-             │   k  Intimidate         at a place you see                             │
-             │   l  Forage             not usable here                                │
-             │   m  Salvage            on something you carry                         │
-             │ Weapon skills                                                          │
-             │   n  Shield bash        you hold no shield                             │
+             │   i  Alchemy…                                                          │
+             │   j  Decipher           no unknown scroll                              │
+             │   k  Heal               nothing to treat                               │
+             │   l  Intimidate         at a place you see                             │
+             │   m  Forage             not usable here                                │
+             │   n  Salvage            on something you carry                         │
              │                                                                        │
              │ The basilisk's stare: a foe nearby that sees you slows to a crawl a    │
              │ moment; your eyes then rest two hours.                                 │

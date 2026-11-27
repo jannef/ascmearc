@@ -408,8 +408,8 @@ pub(super) fn spells(p: &Probe, out: &mut String) {
     }
 }
 
-/// A caster's prayer (the priest's Orison, `world/classes/orison.rs`) in the spell table: no roll and no
-/// mana, so each level's row says its name, how many things one prayer answers, and the uses it
+/// A caster's prayer talents (the priest's Orison and after, `world/faith/pray.rs`; the laity's
+/// Bede, everyone's, is left out) in the spell table: no roll and no mana, so each level's row says its name, how many things one prayer answers, and the uses it
 /// has reached (seed 1's; the table is the same for every seed).
 fn prayer_rows(p: &Probe, class: &str, out: &mut String) {
     for level in SPELL_LEVELS {

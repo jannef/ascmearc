@@ -25,4 +25,12 @@
 #   listens       "anywhere" (the default) or "altar": heard only beside an altar, as that
 #                 altar's stranger (the Big Ones)
 #
-# Creation reads the face; prayer and the altars read the rest as they are built (prayer.md §11).
+# [faith.words]   its own words for its prayers, each optional (the face's in prayer.toml's
+#                 `[words]` otherwise): `pray` (a prayer begun and answered), `fizzle`, `nothing`
+#                 (nothing to pray for), `unheard` (its god does not hear the player), and
+#                 `silent`, a lower-case clause the abilities menu greys Pray with, for a faith
+#                 that answers nothing or listens only at an altar ("the Frogs do not answer")
+# [faith.use]     its own line for a use answered, by use id (`wounds = "..."`), each optional
+#
+# Creation reads the face; prayer reads `answers`, `listens`, and the words; the altars read the
+# rest as they are built (prayer.md §11).

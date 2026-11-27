@@ -6,7 +6,7 @@ use crate::action::AttackKind;
 use crate::combat::Strike;
 use crate::content::{ContentFiles, Power, Shrive};
 use crate::object::Stack;
-use crate::world::classes::orison::Strain;
+use crate::world::faith::pray::Strain;
 use crate::world::*;
 use std::sync::LazyLock;
 

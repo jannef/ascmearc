@@ -5,3 +5,7 @@ name = "the Weaver"
 description = "The drow's goddess of Envy, who gave them the wanting: every drow climbs her web toward what another has."
 face = "dark"
 stranger = "bane"
+
+[faith.words]
+pray = "You speketh to the Webbestre, and she herkneth."
+unheard = "You speketh to the Webbestre, and she herkneth nat."

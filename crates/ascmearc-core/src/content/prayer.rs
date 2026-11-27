@@ -1,22 +1,23 @@
-//! The priest's prayer (`assets/data/prayer.toml`; the priest design,
-//! `docs/design/priest.md` §6.1; `docs/dev/prayer.md`): the strain a prayer adds and how fast it
-//! passes, the chance a strained prayer fizzles, the bands each face of the prayer answers, the
-//! statuses the release use ends, and the uses in their priority order with their words.
+//! The prayer (`assets/data/prayer.toml`; `docs/dev/prayer.md`, the design
+//! `docs/design/prayer.md` §4, §5): the strain a prayer adds and how fast it passes, the chance a
+//! strained prayer fizzles, the statuses the release use ends, the laity's prayer, how a god's
+//! standing toward the player hears them (`[hearing]`), each face's words, and the uses in their
+//! priority order with their words.
 //!
-//! The rule itself lives in `world/classes/orison.rs`; which uses a priest has, how many answers a
-//! prayer gives, and the titles are the prayer talents' (`FaithEffect::Prayer`). The uses are a
+//! The rule itself lives in `world/faith/pray.rs`; which uses a player holds beyond the laity's,
+//! how many answers a prayer gives, and the titles are the prayer talents' (`FaithEffect::Prayer`).
+//! Who answers is the player's faith's face (`content/faith.rs`). The uses are a
 //! closed list in code ([`PrayerUse`]): the file gives each one's place in the order and its
 //! words, once each.
 //!
 //! The file is optional: without it every prayer is refused, so fixtures load.
 
 use super::{Content, ContentError, StatusId};
-use crate::alignment::{Band, Requirement};
 use crate::time::Duration;
 use serde::{Deserialize, Serialize};
 
 /// What a prayer can answer: each a problem the priest may have and its one fix
-/// (`world/classes/orison.rs`). The order here is the code's; the priority is the file's.
+/// (`world/faith/pray.rs`). The order here is the code's; the priority is the file's.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum PrayerUse {
@@ -66,7 +67,7 @@ impl PrayerUse {
     }
 }
 
-/// Who answers a prayer: the holy powers or the dark ones, by the priest's band at the moment.
+/// Who answers a prayer: the holy powers or the dark ones, by the faith's `face`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Face {
     Holy,
@@ -102,14 +103,99 @@ impl Faced {
 }
 
 /// A face's own lines: a prayer begun and answered, one that fizzles (locked or unlucky, the
-/// same words), and one refused with nothing to answer: lines of data
-/// (`content/data_line.rs::prayer_words`).
+/// same words), one refused with nothing to answer, and one a god that does not hear the player
+/// meets with silence: lines of data (`content/data_line.rs::prayer_words`). A faith's file may
+/// say any of them its own way (`content/faith.rs`).
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct FaceWords {
     pub pray: String,
     pub fizzle: String,
     pub nothing: String,
+    pub unheard: String,
+}
+
+/// The laity's prayer (`[laity]`): what everyone whose faith answers holds, a priest's talents
+/// or not: its uses, its tier (0, below every talent's), its title for each face, the strain an
+/// attempt adds, and what the abilities menu says it does.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Laity {
+    pub uses: Vec<PrayerUse>,
+    pub title: Faced,
+    pub strain: u16,
+    pub description: String,
+}
+
+/// How a god hears the player now (`World::standing`): a closed set, each a row of
+/// `[hearing]`. Only `heard` and `unheard` are reached until piety; `favoured` and `shunned` are
+/// its rows, read already.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Standing {
+    /// The plain case.
+    Heard,
+    /// Piety's good standing.
+    Favoured,
+    /// The god scorns the player.
+    Unheard,
+    /// Piety's anger.
+    Shunned,
+}
+
+impl Standing {
+    /// Its id in data and dumps.
+    pub const fn id(self) -> &'static str {
+        match self {
+            Standing::Heard => "heard",
+            Standing::Favoured => "favoured",
+            Standing::Unheard => "unheard",
+            Standing::Shunned => "shunned",
+        }
+    }
+}
+
+/// A row of `[hearing]`: the percent of the strain a heard prayer adds, `None` for a prayer not
+/// heard (it adds none).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HearingRow {
+    #[serde(default)]
+    pub strain: Option<u16>,
+}
+
+/// `[hearing]`, a row by standing.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HearingRules {
+    pub heard: HearingRow,
+    pub favoured: HearingRow,
+    pub unheard: HearingRow,
+    pub shunned: HearingRow,
+}
+
+impl Default for HearingRules {
+    /// Without the table: heard as written, the rest not heard.
+    fn default() -> Self {
+        let heard = HearingRow { strain: Some(100) };
+        Self {
+            heard,
+            favoured: heard,
+            unheard: HearingRow::default(),
+            shunned: HearingRow::default(),
+        }
+    }
+}
+
+impl HearingRules {
+    /// The row of `standing`.
+    pub fn row(&self, standing: Standing) -> HearingRow {
+        match standing {
+            Standing::Heard => self.heard,
+            Standing::Favoured => self.favoured,
+            Standing::Unheard => self.unheard,
+            Standing::Shunned => self.shunned,
+        }
+    }
 }
 
 /// A use in the priority order, with its words.
@@ -122,21 +208,22 @@ pub struct UseDef {
 /// The rules of the prayer that live in data.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PrayerRules {
-    /// The strain every attempt adds, answered or not.
+    /// The strain an attempt adds, answered or not, when neither the laity's prayer nor a
+    /// prayer talent says otherwise.
     pub strain: u16,
     /// A point of strain passes every this long.
     pub decay: Duration,
     /// The chance in percent a prayer fizzles for every 100 points of strain.
     pub fizzle_per_100: u16,
-    /// The bands the holy powers answer.
-    pub holy: Requirement,
-    /// The bands the dark powers answer.
-    pub dark: Requirement,
     /// What the release use ends.
     pub release: Vec<StatusId>,
     /// Each face's own lines.
     pub holy_words: FaceWords,
     pub dark_words: FaceWords,
+    /// The laity's prayer; `None`: only a prayer talent prays.
+    pub laity: Option<Laity>,
+    /// How each standing is heard.
+    pub hearing: HearingRules,
     /// The uses, the first the most pressing.
     pub uses: Vec<UseDef>,
 }
@@ -147,9 +234,11 @@ struct PrayerFile {
     strain: u16,
     decay: String,
     fizzle_per_100: u16,
-    holy: Requirement,
-    dark: Requirement,
     release: Vec<String>,
+    #[serde(default)]
+    laity: Option<Laity>,
+    #[serde(default)]
+    hearing: HearingRules,
     words: WordsFile,
     #[serde(rename = "use")]
     uses: Vec<UseFile>,
@@ -210,22 +299,13 @@ impl PrayerRules {
             strain: parsed.strain,
             decay,
             fizzle_per_100: parsed.fizzle_per_100,
-            holy: parsed.holy,
-            dark: parsed.dark,
             release,
             holy_words: parsed.words.holy,
             dark_words: parsed.words.dark,
+            laity: parsed.laity,
+            hearing: parsed.hearing,
             uses,
         })
-    }
-
-    /// Who answers a priest of `band` (`None` without alignment rules: the holy powers). A band
-    /// both faces allow is the holy one's.
-    pub fn face(&self, band: Option<Band>) -> Face {
-        match band {
-            Some(band) if !self.holy.allows(band) && self.dark.allows(band) => Face::Dark,
-            _ => Face::Holy,
-        }
     }
 
     /// The lines of `face`.
@@ -284,11 +364,21 @@ mod tests {
             [100, 270, 500, 1000, 2000].map(|s| rules.fizzle_chance(s)),
             [10, 27, 50, 100, 100]
         );
-        assert_eq!(rules.face(Some(Band::Neutral)), Face::Holy);
-        assert_eq!(rules.face(Some(Band::Callous)), Face::Dark);
-        assert_eq!(rules.face(Some(Band::Wicked)), Face::Dark);
-        assert_eq!(rules.face(None), Face::Holy);
         assert_eq!(rules.release.len(), 12);
+        let laity = rules.laity.as_ref().expect("the laity pray");
+        assert_eq!(laity.uses, [PrayerUse::Wounds]);
+        assert_eq!((laity.title.of(Face::Holy), laity.strain), ("Bede", 200));
+        let heard = |s| rules.hearing.row(s).strain;
+        assert_eq!(
+            [
+                Standing::Heard,
+                Standing::Favoured,
+                Standing::Unheard,
+                Standing::Shunned
+            ]
+            .map(heard),
+            [Some(100), Some(50), None, None]
+        );
     }
 
     fn load(edit: impl Fn(&str) -> String) -> Result<Content, ContentError> {
@@ -315,6 +405,7 @@ mod tests {
         bad("\"ill_wished\",", "\"no_such_status\",");
         bad("id = \"mana\"", "id = \"wounds\"");
         bad("id = \"mana\"", "id = \"glory\"");
+        bad("uses = [\"wounds\"]", "uses = [\"glory\"]");
         let mut files = ContentFiles::builtin();
         files.remove(PATH);
         let content = Content::load(&files).expect("content without the file");

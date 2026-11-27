@@ -1,5 +1,5 @@
-//! Praying at a forgotten altar (the design's §7): [`Action::Pray`],
-//! the Pray ability of the abilities menu's *Here* group, offered beside a forgotten altar.
+//! Praying at a forgotten altar (the design's §7): [`Action::Pray`] beside one, the Faith
+//! group's Pray (`world/faith/pray.rs` sends it here; anywhere else it is the prayer).
 //!
 //! - **Where**: beside a cell whose terrain a room effect's `feature` names and that `offers`
 //!   pray ([`crate::content::Content::offer_at`]); the first such cell around the player in
@@ -43,7 +43,7 @@ pub(in crate::world) struct Prayer {
 impl World {
     /// The forgotten altar beside the player: the first cell around them (in [`Dir::ALL`]
     /// order) whose terrain offers Pray.
-    fn altar_beside(&self) -> Option<Pos> {
+    pub(in crate::world) fn altar_beside(&self) -> Option<Pos> {
         let level = self.state.current();
         let here = self.player_pos();
         (Dir::ALL.iter().map(|&d| here.step(d))).find(|&p| {

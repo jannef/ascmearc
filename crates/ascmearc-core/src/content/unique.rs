@@ -442,7 +442,7 @@ pub struct UniqueDef {
     pub silence: u8,
     /// How fast its wearer's prayer strain passes while it is worn, in percent (`strain_decay =
     /// 200`: twice as fast, Swīge's, #2112; 100 without one). Read where the strain's pace is
-    /// kept (`world/classes/orison.rs`).
+    /// kept (`world/faith/pray.rs`).
     pub strain_decay: u16,
     /// What its wielder's events build besides, while it is wielded: `(resource, on, amount)`
     /// (`resource_build = { resource = "zeal", on = "melee_hit", amount = 1 }`, the Oath's,

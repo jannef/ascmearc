@@ -342,6 +342,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("class-levels.md", talents::class_levels),
         ("prayer-strain.md", prayer::prayer_strain),
         ("prayer-fizzle.md", prayer::prayer_fizzle),
+        ("prayer-fizzle-laity.md", prayer::prayer_fizzle_laity),
         ("prayer-uses.md", prayer::prayer_uses),
         ("prayer-levels.md", prayer::prayer_levels),
         ("prayer-rites.md", prayer::prayer_rites),

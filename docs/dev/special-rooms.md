@@ -378,10 +378,11 @@ none, and the room is not made), lays it, and puts the side's light on it (`canv
 Level files: `[[room]] side = "..."` (only for an effect with `sides`; default neutral), and the
 side's light on each feature cell the level draws in the room (`content/level.rs`).
 
-Prayer (`world/fixtures/pray.rs`): `Ability::Pray` (`Source::Place`, *Here*; had by no one,
-`Ability::here(level, content, pos)` lists it beside a feature that offers it, and
-`PerceptionView::abilities` appends it). `Action::Pray` (`start_prayer`: refused with no altar
-beside the player; `Spent::Pray`), `World::pray`: `keep_at` until the table's `seconds` have
+Prayer (`world/fixtures/pray.rs`): `Ability::Pray` (`Source::Faith`, the Faith group's one
+prayer, `docs/dev/prayer.md`; `Ability::here(level, content, pos)` also offers it beside a
+feature that offers it, so `PerceptionView::abilities` lists it for anyone there, faith or none,
+once, plain "Pray"). `Action::Pray` (`World::pray_action`: beside such an altar
+`start_prayer`, anywhere else the faith's prayer; `Spent::Pray`), `World::pray`: `keep_at` until the table's `seconds` have
 passed (each turn the `pray` price, the last cut to `price_until`), a broken prayer says so and
 nothing else; done, `prayer_answered`: `Deed::Prayed(side)`, `leaned_kinds(table, side, band,
 devout)` (`world/fixtures/outcome.rs`), `draw_outcome` (kind, then outcome, keyed stream),

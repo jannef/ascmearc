@@ -467,7 +467,6 @@ impl TalentEffect {
             }
             TalentEffect::Faith(FaithEffect::Consecrate { .. }) => A::Consecrate,
             TalentEffect::Faith(FaithEffect::Sanctuary { .. }) => A::Sanctuary,
-            TalentEffect::Faith(FaithEffect::Prayer { tier: Some(1), .. }) => A::Orison,
             TalentEffect::Magic(MagicEffect::Knock { .. }) => A::Knock,
             TalentEffect::Magic(MagicEffect::Scribe { .. }) => A::Scribe,
             TalentEffect::Fortune(FortuneEffect::MerchantsEye) => A::MerchantsEye,

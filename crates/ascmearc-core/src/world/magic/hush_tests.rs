@@ -1,12 +1,12 @@
 //! Swīge (#2112): its silence (`hush.rs`), two cells about its wearer, the wearer too, where no
 //! spell is cast and no scroll read, by the player or a creature, and nothing else is stopped;
-//! and its prayer strain passing twice as fast (`orison.rs`, `World::keep_strain_pace`).
+//! and its prayer strain passing twice as fast (`pray.rs`, `World::keep_strain_pace`).
 
 use crate::content::ContentFiles;
 use crate::object::Stack;
 use crate::test_support::{last, run};
 use crate::time::Duration;
-use crate::world::classes::orison::Strain;
+use crate::world::faith::pray::Strain;
 use crate::world::*;
 use std::sync::LazyLock;
 

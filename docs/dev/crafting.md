@@ -431,7 +431,7 @@ open to the untrained). The anvil keeps
 for one who has that row (the owner, #1387). Untrained, the step goes to the rules:
 `travel.rs::player_moves` refuses it, taking no time, with `World::anvil_needs`' "You need
 Metalcraft to work at the anvil." in place of the plain "The anvil blocks your way."
-(`Ability::offered` is `None` for it, so the Here group lists only Pray and Drink). Wedge stays
+(`Ability::offered` is `None` for it, so the Here group lists only Drink, Pray being the Faith group's). Wedge stays
 its own row (a door, not a recipe). `input.rs::use_ability` opens
 `ScreenName::Profession(skill)` for `Aim::Recipes`.
 

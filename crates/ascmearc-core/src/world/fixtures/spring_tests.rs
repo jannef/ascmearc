@@ -85,10 +85,10 @@ fn drink_is_listed_only_beside_a_spring() {
     w.apply(&Action::Drink);
     assert!(said(&w, "There is no spring here to drink from."));
     assert_eq!(w.state.time, before, "refused, no time");
-    // Pray is not offered at a spring, nor Drink at an altar.
+    // Pray at a spring is the prayer, no altar's: unhurt, nothing to pray for.
     w.apply(&Action::Move(Dir::N));
     w.apply(&Action::Pray);
-    assert!(said(&w, "There is no altar here to pray at."));
+    assert!(said(&w, "You have nothing to pray for."));
 }
 
 #[test]

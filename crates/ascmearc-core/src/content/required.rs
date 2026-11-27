@@ -22,7 +22,7 @@ pub const STAGGERED: &str = "staggered";
 /// while there is a prayer).
 pub const BLEEDING: &str = "bleeding";
 pub const POISONED: &str = "poisoned";
-/// The status the dark face's webs leave (the prayer's face, `world/classes/dark_face.rs`).
+/// The status the dark face's webs leave (the prayer's face, `world/faith/dark_face.rs`).
 pub const WEBBED: &str = "webbed";
 /// The spell effect drawn for the dev frost burst (`data/effects.toml`).
 pub const FROST_BURST: &str = "frost_burst";

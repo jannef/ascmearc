@@ -96,7 +96,7 @@ cases! {
         character: Some("human,male,ranger"),
         run: true,
         screen: Some("abilities"),
-        keys: Some("e p"),
+        keys: Some("f p"),
         ..BASE
     },
     // A ranger's Whittle list (#1028): the wooden weapons carried (the bow), not the knife.
@@ -219,7 +219,7 @@ cases! {
         ..BASE
     },
     // A Wright craftsperson whose kit's knife (`b`) is dropped: Woodcraft's screen (its row in the
-    // abilities menu, `c`) greys the arrows and Whittle, each with the reason in place of what it
+    // abilities menu, `d`) greys the arrows and Whittle, each with the reason in place of what it
     // takes (#1334). Only the trained have the row (#1387).
     profession_woodcraft_no_knife: Case {
         name: "profession-woodcraft-no-knife",
@@ -227,18 +227,18 @@ cases! {
         talents: Some("wright,smith,healthy,lean,skill_focus:appraise"),
         actions: "drop:b",
         screen: Some("abilities"),
-        keys: Some("c"),
+        keys: Some("d"),
         ..BASE
     },
     // A ranger's knife, but their bow put away, so none is ready: Whittle can be made, the arrows
-    // not (`e`: Woodcraft…, after the stare, Decipher, Tame, and Forage).
+    // not (`f`: Woodcraft…, after the stare, Bede, Decipher, Tame, and Forage).
     profession_woodcraft_no_launcher: Case {
         name: "profession-woodcraft-no-launcher",
         character: Some("human,male,ranger"),
         actions: "remove:missile_weapon",
         run: true,
         screen: Some("abilities"),
-        keys: Some("e"),
+        keys: Some("f"),
         ..BASE
     },
     // Metalcraft's screen (`--screen profession`, the first profession's) away from an anvil:

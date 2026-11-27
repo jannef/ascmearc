@@ -88,7 +88,10 @@ pub(super) fn abilities(content: &Content) -> String {
                 table_holders(content, |e| matches!(e, TalentEffect::Stealth(StealthEffect::ThrowVoice)))
             }
             Ability::Pray => {
-                "everyone beside a forgotten altar not yet spent (a prayer takes a minute)".into()
+                "everyone with a faith whose god answers (the Frogs Beyond never do, the Big Ones \
+                 only at an altar); everyone, faith or none, beside a forgotten altar not yet \
+                 spent, where it takes a minute"
+                    .into()
             }
             Ability::Salvage => {
                 "everyone (anywhere, with nothing; see [Salvage](salvage.md))".into()
@@ -236,7 +239,6 @@ fn read_more(content: &Content, a: Ability) -> String {
             page("Thrown exploit", "openings.md#thrown-exploit")
         }
         Ability::Class(ClassActive::Inspire | ClassActive::Lullaby) => page("Songs", "#songs"),
-        Ability::Class(ClassActive::Orison) => page("Prayer", "prayer.md"),
         Ability::Class(ClassActive::CallFamiliar) => page("Familiars", "familiars.md"),
         Ability::Class(ClassActive::FieldForge) => page(
             "The makeshift anvil",
@@ -272,10 +274,7 @@ fn read_more(content: &Content, a: Ability) -> String {
         Ability::Fade => page("Duergar", "races.md#race-duergar"),
         Ability::ShieldBash => link(Term::WeaponSkill, "shield_bash", "Weapon skills"),
         Ability::ThrowVoice => page("Throwing your voice", "hearing.md#throwing-your-voice"),
-        Ability::Pray => page(
-            "Forgotten altars",
-            "altars-forges-springs.md#forgotten-altars",
-        ),
+        Ability::Pray => page("Prayer", "prayer.md"),
         Ability::Salvage => page("Salvage", "salvage.md"),
         Ability::Drink => page(
             "Healing springs",
@@ -305,10 +304,10 @@ fn class_of(content: &Content, active: ClassActive) -> String {
 }
 
 /// How long a place's ability takes: the seconds of the outcome table the place that offers it
-/// draws on. `None` for any other ability.
+/// draws on. `None` for any other ability (Pray's prayer is a cast's time; the forgotten
+/// altar's minute is in its row's who-has-it).
 fn place_seconds(content: &Content, a: Ability) -> Option<u32> {
     let offer = match a {
-        Ability::Pray => Offer::Pray,
         Ability::Drink => Offer::Drink,
         _ => return None,
     };

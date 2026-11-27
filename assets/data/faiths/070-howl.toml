@@ -5,3 +5,7 @@ name = "the Howl"
 description = "The orcs' Wrath, the fury that fills a body and spends it: strength, fearlessness, and a quick death unregretted."
 face = "dark"
 stranger = "bane"
+
+[faith.words]
+pray = "You howl, and something howls back."
+unheard = "You howl, and nothing howls back."

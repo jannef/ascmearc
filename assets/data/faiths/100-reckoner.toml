@@ -5,3 +5,7 @@ name = "the Reckoner"
 description = "The duergar's god of Greed, who keeps the ledger of all that is owed and held, and forgives nothing."
 face = "dark"
 stranger = "bane"
+
+[faith.words]
+pray = "You count your debts aloud, and pray."
+unheard = "You count, and the Reckoner does not mark you."

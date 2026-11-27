@@ -34,19 +34,19 @@ cases! {
         keys: Some("Left"),
         ..BASE
     },
-    // The one trap known beside the player: `a c` (Disarm a trap, after the thief's birth
-    // sign's stare and Exploit, #266) disarms it at once, with no prompt (#1327).
+    // The one trap known beside the player: `a d` (Disarm a trap, after the thief's birth
+    // sign's stare, Exploit, and Bede, #266) disarms it at once, with no prompt (#1327).
     trap_disarm_at_once: Case {
         name: "trap-disarm-at-once",
         actions: "move:N*3 open:N move:N*2 move:E*67 open:S move:S*7 move:SW descend",
-        keys: Some("a c"),
+        keys: Some("a d"),
         ..BASE
     },
-    // Two beside the thief to rob: `a e` (Steal) asks which way in the message line (#1327).
+    // Two beside the thief to rob: `a f` (Steal) asks which way in the message line (#1327).
     steal_prompt: Case {
         name: "steal-prompt",
         actions: "ally:dire_warg:2",
-        keys: Some("a e"),
+        keys: Some("a f"),
         ..BASE
     },
     death_screen: Case {

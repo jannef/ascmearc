@@ -144,8 +144,8 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
             laws.summoned()
         ));
     }
-    // The prayer's strain (the priest's, hidden in the game), its face, the faith professed,
-    // and what it answers.
+    // The prayer's strain (hidden in the game), its face, the faith professed, how its god
+    // hears the player, and what it answers.
     if let Some(prayer) = world.prayer_state() {
         let locked = if prayer.locked { " (locked)" } else { "" };
         let uses: Vec<&str> = prayer.uses.iter().map(|u| u.id()).collect();
@@ -154,9 +154,10 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
             format!(", faith {}", world.content().faith(f).id)
         });
         rows.push(format!(
-            "prayer strain {}{locked}, face {}{faith}, answers {answers}, uses {}",
+            "prayer strain {}{locked}, face {}{faith}, {}, answers {answers}, uses {}",
             prayer.strain,
             prayer.face.id(),
+            prayer.standing.id(),
             uses.join(", ")
         ));
     }

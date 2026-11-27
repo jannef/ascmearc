@@ -367,12 +367,13 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
         out["danger"] = json!(world.content().floor_danger(level, world.player_level()));
         // The encounter tables matching the player's overworld cell (ground truth).
         out["encounter_tables"] = json!(world.encounter_tables_here());
-        // The priest's prayer: its strain, lock, face, and uses (ground truth).
+        // The prayer: its strain, lock, face, standing, and uses (ground truth).
         if let Some(p) = world.prayer_state() {
             out["prayer"] = json!({
                 "strain": p.strain,
                 "locked": p.locked,
                 "face": p.face.id(),
+                "standing": p.standing.id(),
                 "uses": p.uses.iter().map(|u| u.id()).collect::<Vec<_>>(),
                 "answers": p.answers,
             });

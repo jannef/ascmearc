@@ -73,7 +73,7 @@ pub enum FaithEffect {
     /// The class active Consecrate: `time` (a duration) of prayer, for `mana` mana, lifts an
     /// unholy special room (or a whole level's unholy effect) for good (`world/classes/consecrate.rs`).
     Consecrate { mana: i32, time: String },
-    /// Communion with the dark (the priest design §6.3, `world/classes/dark_face.rs`): standing in an
+    /// Communion with the dark (the priest design §6.3, `world/faith/dark_face.rs`): standing in an
     /// unholy place, its prayers add no strain and the place's status never touches it. A
     /// band-gated passive: outside its talent's `alignment` it does nothing.
     Communion,
@@ -87,13 +87,16 @@ pub enum FaithEffect {
         lasts: String,
         regen: u16,
     },
-    /// The priest's prayer (the class active Orison, `world/classes/orison.rs`; `data/prayer.toml`):
+    /// The priest's prayer, deepening everyone's Pray (`world/faith/pray.rs`; `data/prayer.toml`):
     /// a prayer talent of `tier` (1 to 5, its `title` for each face) or a use added between
     /// them; `uses` it may answer, `answers` problems a prayer (the largest held), `all` every
-    /// problem and every pool at once. The tier-1 talent carries the ability.
+    /// problem and every pool at once, `strain` what an attempt adds (the lowest held, the
+    /// laity's included, wins: the priest's Orison's 100 against the laity's 200).
     Prayer {
         #[serde(default)]
         tier: Option<u8>,
+        #[serde(default)]
+        strain: Option<u16>,
         #[serde(default)]
         title: Option<crate::content::Faced>,
         #[serde(default)]
@@ -159,7 +162,7 @@ pub struct FaithMods {
     pub communion: bool,
     /// The active Sanctuary, if it has it.
     pub sanctuary: Option<Sanctuary>,
-    /// The priest's prayer, its talents summed (`world/classes/orison.rs`), if it has any.
+    /// The prayer talents summed (`world/faith/pray.rs`), if it has any.
     pub prayer: Option<Prayer>,
 }
 
@@ -256,6 +259,7 @@ impl FaithMods {
             FaithEffect::Communion => self.communion = true,
             FaithEffect::Prayer {
                 tier,
+                strain,
                 title,
                 uses,
                 answers,
@@ -268,6 +272,10 @@ impl FaithMods {
                 prayer.uses.extend(uses);
                 prayer.answers = prayer.answers.max(answers.unwrap_or(1));
                 prayer.all |= all;
+                prayer.strain = match (prayer.strain, strain) {
+                    (Some(a), Some(b)) => Some(a.min(b)),
+                    (a, b) => a.or(b),
+                };
                 if let Some(tier) = tier.filter(|&t| t > prayer.tier) {
                     prayer.tier = tier;
                     prayer.title = title;
@@ -285,9 +293,10 @@ impl FaithMods {
     }
 }
 
-/// The priest's prayer (`world/classes/orison.rs`): what its prayer talents
-/// sum to: the uses (their union), the answers a prayer gives (the largest; at least 1), every
-/// problem at once (any), and the highest tier with its titles.
+/// A prayer held (`world/faith/pray.rs`): what the prayer talents sum to, and with the laity's
+/// what the player holds (`Actor::prayer`): the uses (their union), the answers a prayer gives
+/// (the largest; at least 1), every problem at once (any), the highest tier with its titles, and
+/// the strain an attempt adds (the lowest; `None`: the rules' own).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Prayer {
     pub uses: std::collections::BTreeSet<crate::content::PrayerUse>,
@@ -295,6 +304,7 @@ pub struct Prayer {
     pub all: bool,
     pub tier: u8,
     pub title: Option<crate::content::Faced>,
+    pub strain: Option<u16>,
 }
 
 impl Prayer {

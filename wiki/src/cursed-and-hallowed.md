@@ -71,11 +71,11 @@ hour.
 
 Strike from it, with a blow, a shot, a throw, or a spell that hits someone, and the peace is
 broken: the ground is ordinary again. The same happens when a
-[dark prayer's twist](prayer.md#the-holy-and-the-dark) reaches a creature. Being struck while on it
+[dark prayer's twist](prayer.md#the-dark-powers-answers) reaches a creature. Being struck while on it
 breaks nothing.
 
 Look at a cell of it and it reads "on hallowed ground". A priest answered by the dark powers (see
-[Prayer](prayer.md#the-holy-and-the-dark)) lays "dreaded ground" instead, which works the same. It
+[Prayer](prayer.md#the-dark-powers-answers)) lays "dreaded ground" instead, which works the same. It
 gives no light. It cannot be laid on the overworld, in water, in a shop, or on ground already
 hallowed; trying spends no time or mana.
 

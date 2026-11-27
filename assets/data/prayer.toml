@@ -1,8 +1,11 @@
-# The priest's prayer (docs/dev/prayer.md): the strain, the faces,
-# the uses in their priority order, and the words. Every number is hidden in the game and stated
-# in the wiki.
+# The prayer (docs/dev/prayer.md, the design docs/design/prayer.md §4, §5): the strain, the
+# laity's prayer, the hearing, the faces' words, the uses in their priority order. Every number is
+# hidden in the game and stated in the wiki. Who answers is the player's faith's face
+# (data/faiths/), and a faith may say any of the words below its own way.
 #
-# Every attempt, answered or not, adds `strain`; a point passes every `decay`. A prayer fizzles
+# Every attempt, answered or not, adds its strain: the lowest of the laity's and the prayer
+# talents' held (`strain` here when none says), times the hearing's percent; a point passes every
+# `decay`. A prayer fizzles
 # by chance, `fizzle_per_100` percent for every 100 points of strain it finds (100 % at most);
 # a fizzle locks the prayer, and every prayer fizzles until the strain has passed to 0. A prayer
 # with nothing to answer is refused and costs nothing.
@@ -10,12 +13,9 @@
 # The words (`[words]` and each use's `holy` and `dark`) are lines of data, said by their keys
 # (`prayer:words.<face>.<field>`, `prayer:use.<id>.<face>`; docs/dev/localization.md "Lines of
 # data"): plain text, naming no role.
-strain = 100           # added by every attempt, answered or not
+strain = 100           # added by an attempt when neither the laity's nor a talent's strain says
 decay = "1m"           # a point of strain gone every this long
 fizzle_per_100 = 10    # percent chance a prayer fizzles per 100 points of strain
-# The bands each face answers, by the priest's band at the moment (a band neither allows: holy).
-holy = { min = "neutral" }
-dark = { max = "callous" }
 # What the release use ends: hexes, holds, and webs (status ids; never the diseases' status or a
 # status a resource brings, which last exactly while their disease or pool does).
 release = [
@@ -33,9 +33,29 @@ release = [
     "ashen",
 ]
 
+# What everyone whose faith answers holds, a priest's talents or not: the uses (the union with the
+# talents'), the title for each face (a talent's tier is above it), and the strain an attempt
+# adds (the lowest held wins: the priest's Orison holds 100).
+[laity]
+uses = ["wounds"]
+title = { holy = "Bede", dark = "Mutter" }
+strain = 200
+description = "Pray to your god (a cast's time, no mana): your wounds may close. Pray too often and nothing answers a while."
+
+# How a god hears the player, by its standing toward them (one place asks it, World::standing):
+# `strain` the percent of the strain a heard prayer adds; a row without it is not heard (the
+# faith's `unheard` words, a cast's time, no strain). The player's standing is `unheard` while
+# their alignment band is one their faith's face scorns (holy: Evil or worse; dark: Good or
+# better), else `heard`; `favoured` and `shunned` are not reached yet.
+[hearing]
+heard = { strain = 100 }
+favoured = { strain = 50 }
+unheard = {}
+shunned = {}
+
 [words]
-holy = { pray = "You kneel and pray.", fizzle = "You pray, but nothing answers.", nothing = "You have nothing to pray for." }
-dark = { pray = "You whisper to the dark.", fizzle = "The dark is silent.", nothing = "You have nothing to ask of the dark." }
+holy = { pray = "You kneel and pray.", fizzle = "You pray, but nothing answers.", nothing = "You have nothing to pray for.", unheard = "You pray, but nothing knows you." }
+dark = { pray = "You whisper to the dark.", fizzle = "The dark is silent.", nothing = "You have nothing to ask of the dark.", unheard = "The dark does not know you." }
 
 # The order is the priority: the first that ails the priest is answered first. Each use at most once (one left out is never answered).
 # The dark powers answer with a twist (docs/dev/prayer.md "The dark face"): the diseases and the

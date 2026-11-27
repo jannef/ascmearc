@@ -95,7 +95,7 @@ fn cell(a: u32, b: u32) -> String {
     }
 }
 
-const ABILITIES: [&str; 25] = [
+const ABILITIES: [&str; 24] = [
     "rage",
     "second_wind",
     "blood_magic",
@@ -110,7 +110,6 @@ const ABILITIES: [&str; 25] = [
     "cackle",
     "knock",
     "field_forge",
-    "orison",
     "sanctuary",
     "call_familiar",
     "volley",

@@ -35,10 +35,10 @@ random_scrolls = { count = "1d2", below_level = 10 }
 # Bonus talents from Vigour and Grit.
 bonus_talents = { levels = [10, 20, 30, 45, 55], trees = ["vigour", "grit"] }
 # The level table (docs/design/priest.md). Mend, Blessing, and Cure
-# wounds are spells, paid in mana; the rest is the one prayer (`use:orison`, docs/dev/prayer.md)
+# wounds are spells, paid in mana; the rest is the one prayer (everyone's Pray, `pray`, docs/dev/prayer.md)
 # deepening: its tiers (Orison, Prayer, Litany, Benediction, Miracle) and the uses between them.
 # Consecrate is shared with the paladin; Communion with the dark is its dark twin, a passive
-# that works only for a priest the dark answers (`alignment`, docs/dev/alignment.md).
+# that works only for a priest of a dark faith (docs/dev/prayer.md).
 abilities = [
     { level = 1, talent = "mend" },
     { level = 1, talent = "orison" },

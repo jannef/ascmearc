@@ -5,3 +5,7 @@ name = "the Never-Full"
 description = "Hunger, the ratfolk's Ould Mother: the old hungry thing under everything, whom the Mynster calls the Profane."
 face = "dark"
 stranger = "bane"
+
+[faith.words]
+pray = "You gnaw at nothing, and pray to the Ould Mother."
+unheard = "You gnaw, and the Ould Mother is not hungry for you."

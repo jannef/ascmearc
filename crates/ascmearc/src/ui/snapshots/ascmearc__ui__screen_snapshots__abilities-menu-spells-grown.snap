@@ -3,31 +3,31 @@ source: crates/ascmearc/src/ui/screen_snapshots.rs
 expression: "render(case, content.clone())"
 ---
  You learn Dragon's hoard.
- Your thou┌─ Abilities ─────────────────────────────────────────────────────────────────┐
+ Your thou┌─ Abilities ────────────────────────────────────────────────────── Page 1/2 ─┐
           │                                                                             │
           │ Class                                                                       │
           │   a  Knock            no lock beside you                                    │
           │   b  Scribe           a scroll of a spell you know                          │
+          │ Faith                                                                       │
+          │   c  Bede                                                                   │
           │ Spells                                                                      │
-          │   c  Burning hands    4d4+2 fire, burns one in four, 4 mana, aimed          │
-          │   d  Ray of frost     2d8 cold, numbs, 2 mana, aimed                        │
-          │   e  Magic missile    6d4+1 force, 2 mana, aimed                            │
-          │ > f  Arcane bolt      6d6+4 force, shoves on a big hit, 7 mana, aimed       │
-          │   g  Blink            4 mana                                                │
-          │   h  Glamour          6 mana                                                │
-          │   i  Shatter          6d6+4 force, shoves on a big hit, 10 mana, aimed      │
-          │   j  Chain lightning  12d6+3 electricity, may arc, conducts, 14 mana, aimed │
+          │   d  Burning hands    4d4+2 fire, burns one in four, 4 mana, aimed          │
+          │   e  Ray of frost     2d8 cold, numbs, 2 mana, aimed                        │
+          │ > f  Magic missile    6d4+1 force, 2 mana, aimed                            │
+          │   g  Arcane bolt      6d6+4 force, shoves on a big hit, 7 mana, aimed       │
+          │   h  Blink            4 mana                                                │
+          │   i  Glamour          6 mana                                                │
+          │   j  Shatter          6d6+4 force, shoves on a big hit, 10 mana, aimed      │
+          │   k  Chain lightning  12d6+3 electricity, may arc, conducts, 14 mana, aimed │
           │ Skills                                                                      │
-          │   k  Decipher         no unknown scroll                                     │
-          │   l  Heal             nothing to treat                                      │
-          │   m  Jewelcraft…                                                            │
-          │   n  Salvage          on something you carry                                │
-          │ Weapon skills                                                               │
-          │   o  Shield bash      you hold no shield                                    │
+          │   l  Decipher         no unknown scroll                                     │
+          │   m  Heal             nothing to treat                                      │
+          │   n  Jewelcraft…                                                            │
+          │   o  Salvage          on something you carry                                │
           │                                                                             │
-          │ A bolt of raw force from your hand toward a place you aim at, through       │
-          │ everyone on its line. Length 6.                                             │
+          │ A dart of force that weaves past everyone in its way to strike the creature │
+          │ you aim at, and never misses. Range 8.                                      │
           │                                                                             │
           │                                                                             │
-          │ a-o or Enter use   Esc close                                                │
+          │ a-o or Enter use   > < page   Esc close                                     │
           └─────────────────────────────────────────────────────────────────────────────┘

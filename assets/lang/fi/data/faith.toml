@@ -1,7 +1,11 @@
-# Lines of data: faiths (`faith:<id>.description`), as the New run screen shows them.
+# Lines of data: faiths (`faith:<id>.description`), as the New run screen shows them, and each
+# faith's own words for its prayers (`faith:<id>.words.<field>`; `silent` a lower-case clause).
 
 [big_ones]
 description = { text = "Hiisillä ei ole omaa jumalaa: ne pelkäävät sitä, mikä on suurinta, ja rukoilevat sitä, joka sattuu kuuntelemaan.", of = "1bffd8" }
+
+[big_ones.words]
+silent = { text = "mikään iso ei kuuntele", of = "20ed1e" }
 
 [dark]
 description = { text = "Valon langennut palvelija mustan veden alla, sanoo Mynsteri; Iltavalo, levolle käynyt Valo, sanoo sen kultti. Se ottaa kenet tahansa, heti.", of = "4756c6" }
@@ -9,32 +13,74 @@ description = { text = "Valon langennut palvelija mustan veden alla, sanoo Mynst
 [elder_light]
 description = { text = "Haltioiden Valo, ensimmäinen valo, tähdet: kärsivällisyys ja tähyily. Se ei tarvitse kirkkoa, eikä sillä ole sellaista.", of = "f10852" }
 
+[elder_light.words]
+pray = { text = "Katsot ylös kiven ohi tähtiin ja rukoilet.", of = "21987d" }
+unheard = { text = "Katsot ylös, eivätkä tähdet katso takaisin.", of = "751751" }
+
 [frogs]
 description = { text = "Liskoihmisten usko: tähdet ovat taivaan takaisten suurten sammakoiden silmiä. Sammakot eivät huomaa ketään.", of = "f1b39c" }
+
+[frogs.words]
+silent = { text = "Taivaan Sammakot eivät vastaa", of = "17dafe" }
 
 [glimmering]
 description = { text = "Maahisten Valo, kiveen kätketty: tekeminen, uteliaisuus ja sairaiden hoito. Se ei käännytä ketään pois.", of = "4cdea1" }
 
+[glimmering.words]
+pray = { text = "Käännät kiven valoa kohti ja rukoilet.", of = "6d36a4" }
+unheard = { text = "Käännät kiven valoa kohti, mutta se pysyy himmeänä.", of = "4b1735" }
+
 [hearth]
 description = { text = "Puolituisten Valo, tuli talon keskellä: pöytä, vieras ja vainajat, joita muistetaan illallisella.", of = "eb365c" }
+
+[hearth.words]
+pray = { text = "Luet sanat pöydän yllä.", of = "78f831" }
+unheard = { text = "Luet sanat, mutta liesi on sinulle kylmä.", of = "e5abed" }
 
 [howl]
 description = { text = "Örkkien Viha, raivo, joka täyttää ruumiin ja kuluttaa sen: voimaa, pelottomuutta ja nopea kuolema katumatta.", of = "570a22" }
 
+[howl.words]
+pray = { text = "Ulvot, ja jokin ulvoo takaisin.", of = "01b05d" }
+unheard = { text = "Ulvot, eikä mikään ulvo takaisin.", of = "e0f6ee" }
+
 [mynster]
 description = { text = "Ihmisten Valon kirkko: armo, hautaaminen ja sairaat, ja katumus ennen parannusta.", of = "8dee72" }
+
+[mynster.words]
+unheard = { text = "Rukoilet, mutta Valo ei tunne sinua.", of = "794646" }
 
 [never_full]
 description = { text = "Nälkä, rottaihmisten Vanha Äiti: vanha nälkäinen olento kaiken alla, jota Mynsteri kutsuu Epäpyhäksi.", of = "1e11b8" }
 
+[never_full.words]
+pray = { text = "Jyrsit tyhjää ja rukoilet Vanhaa Äitiä.", of = "e14728" }
+unheard = { text = "Jyrsit, mutta Vanha Äiti ei ole sinusta nälkäinen.", of = "73f3f9" }
+
 [old_scales]
 description = { text = "Kärmäläisten lohikäärmesukulaiset ja jumalat, joiden lähin kasvo on tulidraakki Fyrdelfin alla: oveluutta, ansoja ja laskematta kulutettuja henkiä.", of = "42deb6" }
+
+[old_scales.words]
+pray = { text = "Sihiset Vanhoille Suomuille.", of = "68738f" }
+unheard = { text = "Sihiset, eikä mikään suomuinen liikahda.", of = "3dc1cc" }
 
 [reckoner]
 description = { text = "Harmaakääpiöiden Ahneuden jumala, joka pitää kirjaa kaikesta velasta ja omaisuudesta eikä anna mitään anteeksi.", of = "79380d" }
 
+[reckoner.words]
+pray = { text = "Luet velkasi ääneen ja rukoilet.", of = "db3fbb" }
+unheard = { text = "Lasket, mutta Laskija ei merkitse sinua.", of = "7c437e" }
+
 [spark]
 description = { text = "Kääpiöiden Valo, kivestä pimeässä isketty: työ, vala ja muisti. Jokainen paja on sen alttari.", of = "760210" }
 
+[spark.words]
+pray = { text = "Isket kerran kiveen kuin alasimeen ja odotat.", of = "45511d" }
+unheard = { text = "Isket kiveen, eikä yksikään kipinä vastaa.", of = "3c9247" }
+
 [weaver]
 description = { text = "Tummahaltioiden Kateuden jumalatar, joka antoi heille himon: jokainen tummahaltia kiipeää hänen verkossaan kohti sitä, mitä toisella on.", of = "454085" }
+
+[weaver.words]
+pray = { text = "Sinä puhut Cutojalle, ja hän cuuldele.", of = "bbf73f" }
+unheard = { text = "Sinä puhut Cutojalle, waan ei hän cuuldele.", of = "85184d" }

@@ -92,8 +92,9 @@ so only those are offered. A [priest](class-priest.md) serves a god that answers
 nothing answers is left out; a goblin priest, whose people pray to whoever is listening, starts
 on the Howl instead. Every other class takes any faith open to their people.
 
-Your faith changes none of your stats, skills, or rolls. For now nothing in play depends on it:
-the priest's [prayer](prayer.md) works as it always has.
+Your faith changes none of your stats, skills, or rolls. It decides who hears your
+[prayers](prayer.md#who-answers): the Light, the dark powers, or nothing at all. A faith that
+nothing answers leaves you with no prayer away from an altar.
 
 Each people's own faith, and the others open to them:
 

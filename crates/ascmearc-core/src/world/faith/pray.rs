@@ -1,37 +1,45 @@
-//! The priest's prayer (the priest design, `docs/design/priest.md`
-//! §6.1; `docs/dev/prayer.md`): the class active Orison, `use:orison` at every tier. A prayer
-//! answers what ails the player most, as far as their prayer talents reach
-//! ([`crate::talent::Prayer`]: the uses, how many answers, all at once), in the priority order
-//! of `data/prayer.toml`, under a hidden **strain** ([`Strain`]) that every attempt raises and
-//! time lowers.
+//! The one Pray (`docs/dev/prayer.md`; the design `docs/design/prayer.md` §4, §5): the Faith
+//! group's ability, `pray`, had by everyone with a faith. Beside a forgotten altar it prays at the
+//! altar (`world/fixtures/pray.rs`, the gamble); anywhere else it is the prayer below. A prayer
+//! answers what ails the player most among the uses they hold ([`Actor::prayer`]: the laity's,
+//! `prayer.toml`'s `[laity]`, and the prayer talents', [`crate::talent::Prayer`]), in the
+//! priority order of `data/prayer.toml`, under a hidden **strain** ([`Strain`]) that every
+//! attempt raises and time lowers.
 //!
-//! - **The face**: the player's band at the moment picks who answers ([`Actor::prayer_face`]):
-//!   the holy powers or the dark ones, each with its own words and titles. The dark powers
-//!   answer the same problems with a twist (`dark_face.rs`: a plague and a poison passed on, a
-//!   hex turned back, a meal to the brim).
-//! - **Refused** (no time, no strain): without a prayer talent, without the file, or with nothing
-//!   among the unlocked uses to answer (the face's `nothing`). A disease still brewing is no
-//!   problem of its own, so a prayer tells the player nothing of one.
-//! - **The attempt** takes the time of a cast and adds the strain, answered or not. A locked
-//!   prayer fizzles; else it fizzles by chance, `fizzle_per_100` percent per 100 points of the
-//!   strain it finds (one gameplay draw, made only while there is strain). A fizzle locks the
-//!   prayer until the strain has passed to 0. Answered, the first `answers` problems (every one
-//!   with `all`, and every resource pool filled) are fixed, each through its one place, each
-//!   said in the face's words; the statuses and diseases it ends say nothing of their own.
+//! - **The face**: the player's faith's ([`Actor::prayer_face`]): the holy powers or the dark
+//!   ones, each with its own words and titles; the faith may say any line its own way
+//!   ([`World::prayer_line`]). The dark powers answer the same problems with a twist
+//!   (`dark_face.rs`: a plague and a poison passed on, a hex turned back, a meal to the brim).
+//! - **Refused** (no time, no strain): without a faith, with a faith whose god answers nothing
+//!   here (the Frogs Beyond; the Big Ones away from an altar), while a status blocks casting,
+//!   without the file, or with nothing among the uses held to answer (the `nothing` line). A
+//!   disease still brewing is no problem of its own, so a prayer tells the player nothing of one.
+//! - **Unheard**: the god's standing toward the player (`standing.rs`, [`World::hearing`]) may
+//!   leave the prayer unheard: the `unheard` line, a cast's time, no strain and no draw.
+//! - **The attempt** takes the time of a cast and adds the strain held (the lowest of the
+//!   laity's and the talents'), times the hearing's percent, answered or not. A locked prayer
+//!   fizzles; else it fizzles by chance, `fizzle_per_100` percent per 100 points of the strain
+//!   it finds (one gameplay draw, made only while there is strain). A fizzle locks the prayer
+//!   until the strain has passed to 0. Answered, the first `answers` problems (every one with
+//!   `all`, and every resource pool filled) are fixed, each through its one place, each said in
+//!   the face's or the faith's words; the statuses and diseases it ends say nothing of their own.
 //!
-//! Communion with the dark (`dark_face.rs`): standing in an unholy place, a dark priest's
-//! prayers add no strain.
+//! Communion with the dark (`dark_face.rs`): standing in an unholy place, a priest of a dark
+//! faith adds no strain.
 //!
 //! The strain is lazy: its value at a moment, less a point for every `decay` since; reading it
 //! writes nothing, so however time is cut it passes the same. Nothing trains, and no score moves.
 
+use crate::ability::Ability;
 use crate::action::{DiseaseNews, Event};
+use crate::content::TalentEffect;
 use crate::content::data_line;
-use crate::content::{ActionKind, Content, Face, PrayerRules, PrayerUse, TalentEffect};
+use crate::content::{ActionKind, Content, Face, FaithId, PrayerRules, PrayerUse, Standing};
 use crate::hunger::Hunger;
+use crate::lang::Msg;
 use crate::msg;
 use crate::rng::draw;
-use crate::talent::FaithEffect;
+use crate::talent::{FaithEffect, Prayer};
 use crate::time::GameTime;
 use crate::world::Actor;
 use crate::world::{Spent, World};
@@ -69,20 +77,47 @@ impl Strain {
 }
 
 impl Actor {
-    /// Who answers its prayers now: by its band, the holy powers or the dark ones (the holy
-    /// without alignment rules or the prayer's file).
-    pub fn prayer_face(&self, content: &Content) -> Face {
-        let band = content.alignment().map(|_| self.band(content));
-        content
-            .prayer()
-            .map_or(Face::Holy, |rules| rules.face(band))
+    /// Who answers its prayers: its faith's face; `None` without a faith or for a faith with no
+    /// face (the Frogs Beyond, the Big Ones).
+    pub fn prayer_face(&self, content: &Content) -> Option<Face> {
+        self.faith.and_then(|f| content.faith(f).face)
+    }
+
+    /// The prayer it holds away from an altar: the laity's (`[laity]`) and its prayer talents',
+    /// summed ([`Prayer`]: the uses' union, the largest answers, the highest tier's title, the
+    /// lowest strain). `None` without a faith whose god hears it anywhere, or with nothing held.
+    pub fn prayer(&self, content: &Content) -> Option<Prayer> {
+        let faith = content.faith(self.faith?);
+        if !faith.hears_anywhere() {
+            return None;
+        }
+        let talents = self.talent_mods(content).faith.prayer.clone();
+        let laity = content.prayer().and_then(|r| r.laity.as_ref());
+        let Some(laity) = laity else {
+            return talents;
+        };
+        let mut held = talents.unwrap_or_else(|| Prayer {
+            answers: 1,
+            ..Prayer::default()
+        });
+        held.uses.extend(laity.uses.iter().copied());
+        held.strain = Some(held.strain.map_or(laity.strain, |s| s.min(laity.strain)));
+        if held.tier == 0 {
+            held.title = Some(laity.title.clone());
+        }
+        Some(held)
     }
 
     /// Its prayer's name and description in the abilities menu: the highest tier's title as its
-    /// face gives it, and that tier's talent's description; `None` without a prayer.
+    /// face gives it, and that tier's talent's description (the laity's, below every tier);
+    /// `None` without a prayer.
     pub fn prayer_title<'c>(&self, content: &'c Content) -> Option<(&'c str, &'c str)> {
-        let tier = (self.talent_mods(content).faith.prayer.as_ref()).map(|p| p.tier)?;
-        let face = self.prayer_face(content);
+        let tier = self.prayer(content)?.tier;
+        let face = self.prayer_face(content)?;
+        if tier == 0 {
+            let laity = content.prayer()?.laity.as_ref()?;
+            return Some((laity.title.of(face), laity.description.as_str()));
+        }
         (content.talents().iter()).find_map(|(_, def)| {
             def.effects.iter().find_map(|e| match e {
                 TalentEffect::Faith(FaithEffect::Prayer {
@@ -97,29 +132,31 @@ impl Actor {
 }
 
 /// The prayer as the dev dumps show it (ground truth): the strain now and whether it is locked,
-/// the face that answers, the uses held in priority order, and the answers a prayer gives
-/// (`None`: every one).
+/// the face that answers, the god's standing, the uses held in priority order, and the answers a
+/// prayer gives (`None`: every one).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PrayerState {
     pub strain: u16,
     pub locked: bool,
     pub face: Face,
+    pub standing: Standing,
     pub uses: Vec<PrayerUse>,
     pub answers: Option<u8>,
 }
 
 impl World {
-    /// The player's prayer (dev; `None` without a prayer talent or the rules).
+    /// The player's prayer (dev; `None` without a prayer held or the rules).
     pub fn prayer_state(&self) -> Option<PrayerState> {
         let rules = self.content.prayer()?;
         let me = self.state.player();
-        let prayer = me.talent_mods(&self.content).faith.prayer.clone()?;
+        let prayer = me.prayer(&self.content)?;
         let strain = self.state.progress.prayer;
         let time = self.state.time;
         Some(PrayerState {
             strain: strain.map_or(0, |s| s.now(rules, time)),
             locked: strain.is_some_and(|s| s.locked_at(rules, time)),
-            face: me.prayer_face(&self.content),
+            face: me.prayer_face(&self.content)?,
+            standing: self.standing(me.faith?),
             uses: (rules.uses.iter())
                 .map(|u| u.id)
                 .filter(|&u| prayer.answers_to(u))
@@ -128,16 +165,48 @@ impl World {
         })
     }
 
-    /// `use:orison`: the player prays (module docs).
-    pub(super) fn orison(&mut self, events: &mut Vec<Event>) -> Spent {
+    /// `pray` ([`crate::action::Action::Pray`]): at the forgotten altar beside the player, the
+    /// altar's prayer (`world/fixtures/pray.rs`); anywhere else, the prayer (module docs).
+    pub(in crate::world) fn pray_action(&mut self, events: &mut Vec<Event>) -> Spent {
+        if self.altar_beside().is_some() {
+            return self.start_prayer();
+        }
+        self.prayer(events)
+    }
+
+    /// The line `field` of the player's prayers (`pray`, `fizzle`, `nothing`, `unheard`): their
+    /// faith's own if it says one, else their face's.
+    fn prayer_line(&self, faith: FaithId, face: Face, field: &str) -> Msg {
+        let def = self.content.faith(faith);
+        data_line::said(match def.words.get(field) {
+            Some(_) => data_line::faith_words(&def.id, field),
+            None => data_line::prayer_words(face, field),
+        })
+    }
+
+    /// The line of use `id` answered: the faith's own if it says one, else the face's.
+    fn prayer_use_line(&self, faith: FaithId, face: Face, id: PrayerUse) -> Msg {
+        let def = self.content.faith(faith);
+        data_line::said(match def.uses.contains_key(&id) {
+            true => data_line::faith_use(&def.id, id),
+            false => data_line::prayer_use(id, face),
+        })
+    }
+
+    /// The player prays away from an altar (module docs).
+    fn prayer(&mut self, events: &mut Vec<Event>) -> Spent {
         let content = self.content.clone();
         let player = self.state.player;
         let me = self.state.player();
-        let Some(prayer) = me.talent_mods(&content).faith.prayer.clone() else {
+        if let Some(why) = Ability::Pray.unavailable(me, &content) {
+            let refusal = self.unavailable_msg(why);
+            self.say(refusal);
+            return Spent::Nothing;
+        }
+        let (Some(faith), Some(face)) = (me.faith, me.prayer_face(&content)) else {
             return Spent::Nothing;
         };
-        let face = me.prayer_face(&content);
-        let Some(rules) = content.prayer() else {
+        let (Some(rules), Some(prayer)) = (content.prayer(), me.prayer(&content)) else {
             self.say(msg::classes::NOTHING_TO_PRAY_FOR);
             return Spent::Nothing;
         };
@@ -146,9 +215,15 @@ impl World {
             .filter(|&u| prayer.answers_to(u) && self.ails(rules, u))
             .collect();
         if problems.is_empty() {
-            self.say(data_line::said(data_line::prayer_words(face, "nothing")));
+            self.say(self.prayer_line(faith, face, "nothing"));
             return Spent::Nothing;
         }
+        let spent = Spent::Turn(self.price_of(player, ActionKind::Cast));
+        // Not heard: silence, and the god was not asked, so no strain.
+        let Some(percent) = self.hearing(faith).strain else {
+            self.say(self.prayer_line(faith, face, "unheard"));
+            return spent;
+        };
         let time = self.state.time;
         let strain = self.state.progress.prayer;
         let now = strain.map_or(0, |s| s.now(rules, time));
@@ -158,7 +233,8 @@ impl World {
         let added = if self.communing_here() {
             0
         } else {
-            rules.strain
+            let base = u32::from(prayer.strain.unwrap_or(rules.strain));
+            u16::try_from(base * u32::from(percent) / 100).unwrap_or(u16::MAX)
         };
         self.state.progress.prayer = Some(Strain {
             value: now.saturating_add(added),
@@ -166,12 +242,11 @@ impl World {
             locked: fizzled,
             pace: self.strain_pace(),
         });
-        let spent = Spent::Turn(self.price_of(player, ActionKind::Cast));
         if fizzled {
-            self.say(data_line::said(data_line::prayer_words(face, "fizzle")));
+            self.say(self.prayer_line(faith, face, "fizzle"));
             return spent;
         }
-        self.say(data_line::said(data_line::prayer_words(face, "pray")));
+        self.say(self.prayer_line(faith, face, "pray"));
         let answers = if prayer.all {
             problems.len()
         } else {
@@ -180,8 +255,9 @@ impl World {
         let mut quiet = Vec::new();
         for answer in problems.into_iter().take(answers) {
             self.answer_prayer(rules, answer, face, &mut quiet);
-            if rules.use_words(answer).is_some() {
-                self.say(data_line::said(data_line::prayer_use(answer, face)));
+            if rules.use_words(answer).is_some() || content.faith(faith).uses.contains_key(&answer)
+            {
+                self.say(self.prayer_use_line(faith, face, answer));
             }
         }
         if prayer.all {

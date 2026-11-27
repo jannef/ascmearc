@@ -870,7 +870,7 @@ description = { text = "Vihollinen, joka kääntyy sinusta, maksaa siitä: se, j
 description = { text = "Paksu örkin nahka: suojaus +1.", of = "32e13c" }
 
 [orison]
-description = { text = "Rukoile (loitsun aika, ei manaa): siihen, mikä sinua eniten vaivaa, vastataan, niin pitkälle kuin rukouksesi ulottuvat; toistaiseksi haavoihisi. Rukoile liian usein, niin mikään ei vastaa hetkeen.", of = "2c1ac8" }
+description = { text = "Rukoile (loitsun aika, ei manaa): haavasi voivat sulkeutua. Jumalasi kuulee sinua maallikoita auliimmin: rukouksesi koettelevat sen kärsivällisyyttä puolet vähemmän.", of = "cc2211" }
 
 [overreach]
 description = { text = "Olet kotonasi syvillä vesillä: oppisi ylittävä loitsu on kolmanneksen vähemmän ulottumattomissasi.", of = "5ba9c1" }

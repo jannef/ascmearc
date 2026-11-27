@@ -1,4 +1,4 @@
-# Lines of data: the priest's prayer (`prayer:words.<face>.<field>`, `prayer:use.<id>.<face>`):
+# Lines of data: the prayer (`prayer:words.<face>.<field>`, `prayer:use.<id>.<face>`):
 # the prayer begun, fizzled, and refused, and each use answered, in the holy or the dark face's
 # words. The dark face's twist (a cure passed on, a hex sent back) is said as vaguely as English.
 
@@ -6,11 +6,13 @@
 fizzle = { text = "Pimeys on vaiti.", of = "cc8746" }
 nothing = { text = "Sinulla ei ole mitään pyydettävää pimeydeltä.", of = "e1a37c" }
 pray = { text = "Kuiskaat pimeydelle.", of = "56ddf8" }
+unheard = { text = "Pimeys ei tunne sinua.", of = "3bd2eb" }
 
 [words.holy]
 fizzle = { text = "Rukoilet, mutta mikään ei vastaa.", of = "b0352a" }
 nothing = { text = "Sinulla ei ole mitään, mitä rukoilla.", of = "bad2c6" }
 pray = { text = "Polvistut rukoilemaan.", of = "2934e5" }
+unheard = { text = "Rukoilet, mutta mikään ei tunne sinua.", of = "d2d12c" }
 
 [use.disease]
 dark = { text = "Tauti jättää sinut ja löytää toisen.", of = "4b88cc" }

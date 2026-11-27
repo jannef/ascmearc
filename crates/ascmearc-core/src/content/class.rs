@@ -631,9 +631,6 @@ pub enum ClassActive {
     /// A minute's prayer that lifts an unholy room's effect for good, for mana (the priest's and
     /// the paladin's Consecrate).
     Consecrate,
-    /// A prayer that answers what ails the priest most, as far as their prayers reach, under a
-    /// hidden strain (the priest's Orison and the tiers after it, `world/classes/orison.rs`).
-    Orison,
     /// A minute's kneeling rite that hallows the ground about the priest for an hour, for mana:
     /// no foe sets foot in it and wounds and mind mend there faster (`world/classes/sanctuary.rs`).
     Sanctuary,
@@ -688,7 +685,6 @@ impl ClassActive {
         ClassActive::Inspire,
         ClassActive::Lullaby,
         ClassActive::Consecrate,
-        ClassActive::Orison,
         ClassActive::Sanctuary,
         ClassActive::Cackle,
         ClassActive::CallFamiliar,
@@ -726,7 +722,6 @@ impl ClassActive {
             ClassActive::Inspire => "inspire",
             ClassActive::Lullaby => "lullaby",
             ClassActive::Consecrate => "consecrate",
-            ClassActive::Orison => "orison",
             ClassActive::Sanctuary => "sanctuary",
             ClassActive::Cackle => "cackle",
             ClassActive::CallFamiliar => "call_familiar",
@@ -857,7 +852,6 @@ impl ClassActive {
             ClassActive::LayOnHands
             | ClassActive::HolyRadiance
             | ClassActive::Consecrate
-            | ClassActive::Orison
             | ClassActive::Sanctuary
             | ClassActive::Cackle
             | ClassActive::Knock => ActionKind::Cast,

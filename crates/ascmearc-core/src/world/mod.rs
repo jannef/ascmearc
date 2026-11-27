@@ -124,8 +124,11 @@ mod allies;
 // progression.md, experience.md, stats.md, skills.md, alignment.md, resources.md).
 mod character;
 
-// Classes and their abilities (docs/dev/progression.md, openings.md, prayer.md).
+// Classes and their abilities (docs/dev/progression.md, openings.md).
 mod classes;
+
+// Faith and prayer (docs/dev/faith.md, prayer.md).
+mod faith;
 
 // Skill uses (docs/dev/skills.md, searching.md, stealing.md, hearing.md).
 mod skills;
@@ -161,7 +164,6 @@ pub use character::gifts::Streak;
 pub use character::skill_roll::{RollBonus, RollCount, SkillRoll, roll_count, skill_roll};
 pub(crate) use character::stars::{PROFANE_RISEN, RISEN, RISEN_TWICE};
 pub use character::talent::Due;
-pub use classes::orison::PrayerState;
 pub use classes::sanctuary::Hallow;
 pub use combat::attacks::{AttackSource, OwnAttack};
 pub use combat::fight::{Cause, Death};
@@ -191,6 +193,7 @@ pub use crafting::temper::{temperable, whittleable, workable, workable_wood};
 pub use creatures::parley::Truce;
 pub use creatures::statue::Statue;
 pub(crate) use creatures::unseen::{Concealed, fade_refused, unseen_by_player};
+pub use faith::pray::PrayerState;
 pub use fixtures::curse::{Rising, rise_candidates, rises_as};
 pub use fixtures::graveyard::Fallen;
 pub use fixtures::mirrors::Image;
@@ -1584,7 +1587,7 @@ impl World {
             Action::Listen(dir) => return self.listen(*dir),
             Action::Wedge(dir) => return self.wedge(*dir),
             Action::Heal { what, ally } => return self.heal(what.as_deref(), *ally, events),
-            Action::Pray => return self.start_prayer(),
+            Action::Pray => return self.pray_action(events),
             Action::Drink => return self.start_drink(),
             Action::Forage => return self.start_forage(),
             Action::Gather(dir) => return self.start_gather(*dir),

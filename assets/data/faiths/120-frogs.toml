@@ -6,3 +6,6 @@ description = "The lizardfolk's: the stars are the eyes of great frogs beyond th
 face = "none"
 stranger = "cold"
 answers = false
+
+[faith.words]
+silent = "the Frogs do not answer"

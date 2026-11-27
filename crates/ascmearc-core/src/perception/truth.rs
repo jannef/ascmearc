@@ -659,8 +659,12 @@ impl<'a> PerceptionView<'a> {
         let companion_here = (self.snapshot.allies.iter())
             .any(|a| a.here && matches!(a.source, crate::world::AllySource::Companion(_)));
         let beside = |ability| self.ways(crate::beside::Beside::Use(ability));
-        let mut own = (Ability::of(self.player, self.content).into_iter())
-            .chain(here)
+        let mut had = Ability::of(self.player, self.content);
+        // What a place offers that the player has already (Pray beside a forgotten altar) is
+        // listed once.
+        let here: Vec<Ability> = here.into_iter().filter(|a| !had.contains(a)).collect();
+        had.extend(here);
+        let mut own = (had.into_iter())
             .chain(orders)
             // Listen and Wedge only beside a closed door (the owner, #1327).
             .filter(|&ability| {
@@ -751,6 +755,13 @@ impl<'a> PerceptionView<'a> {
             {
                 Some(crate::ability::Unavailable::NotHere)
             }
+            // Beside a forgotten altar Pray prays at it, open to anyone (`world/fixtures/pray.rs`):
+            // only what blocks that prayer greys it.
+            Ability::Pray if self.at_altar() => (self
+                .player
+                .effects
+                .blocking(self.content, crate::content::ActionKind::Pray))
+            .map(crate::ability::Unavailable::While),
             // Foraging asks for the wild underfoot.
             Ability::Forage
                 if crate::world::forage_ground(self.content, self.level, self.player.pos)
@@ -769,29 +780,31 @@ impl<'a> PerceptionView<'a> {
         crate::world::fungus_ways(self.content, self.level, self.player.pos)
     }
 
-    /// The name the abilities menu gives `ability`: its own, but the priest's prayer by its
-    /// highest tier as the face that answers them gives it ("Orison", "Whisper"; they know their
-    /// band and their own talents).
+    /// Whether a forgotten altar stands beside the player: Pray prays at it (the place offers
+    /// it, [`Ability::here`]).
+    fn at_altar(&self) -> bool {
+        Ability::here(self.level, self.content, self.player.pos).contains(&Ability::Pray)
+    }
+
+    /// The name the abilities menu gives `ability`: its own, but Pray away from an altar by the
+    /// prayer's highest tier as the player's faith's face gives it ("Bede", "Orison", "Whisper";
+    /// they know their faith and their own talents).
     pub fn ability_name(&self, ability: Ability) -> std::borrow::Cow<'a, str> {
         match ability {
-            Ability::Class(crate::content::ClassActive::Orison) => {
-                match self.player.prayer_title(self.content) {
-                    Some((name, _)) => name.into(),
-                    None => ability.name(self.content),
-                }
-            }
+            Ability::Pray if !self.at_altar() => match self.player.prayer_title(self.content) {
+                Some((name, _)) => name.into(),
+                None => ability.name(self.content),
+            },
             _ => ability.name(self.content),
         }
     }
 
-    /// What the abilities menu says `ability` does: its own line, but the priest's prayer's
-    /// that of its highest tier.
+    /// What the abilities menu says `ability` does: its own line, but Pray's away from an altar
+    /// that of the prayer's highest tier.
     pub fn ability_description(&self, ability: Ability) -> &'a str {
         match ability {
-            Ability::Class(crate::content::ClassActive::Orison) => {
-                (self.player.prayer_title(self.content))
-                    .map_or_else(|| ability.description(self.content), |(_, d)| d)
-            }
+            Ability::Pray if !self.at_altar() => (self.player.prayer_title(self.content))
+                .map_or_else(|| ability.description(self.content), |(_, d)| d),
             _ => ability.description(self.content),
         }
     }

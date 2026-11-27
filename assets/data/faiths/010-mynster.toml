@@ -6,3 +6,6 @@ description = "The humans' church of the Light: mercy, burial, and the sick, and
 face = "holy"
 shared = ["hearth", "spark", "glimmering", "elder_light"]
 stranger = "cold"
+
+[faith.words]
+unheard = "You pray, but the Light does not know you."

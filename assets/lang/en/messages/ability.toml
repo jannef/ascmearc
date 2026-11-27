@@ -7,6 +7,7 @@
 # (`skill:<id>`), `name` a resource's (`resource:<id>`); `words` a resource's `lacking`, a line of
 # data (`resources:resource.<id>.lacking`, "you have not the rage for it").
 
+faithless = "you profess nothing"
 familiar_lives = "your familiar lives"
 fires_by_itself = "fires by itself"
 have_companion = "you already have a companion"
@@ -42,6 +43,7 @@ nothing_to_treat = "nothing to treat"
 # `name`: the resource, too little of it held.
 short = "not enough {name:bare}"
 still = "your mind is already still"
+unanswered = "nothing answers you here"
 # `skill`: the skill the actor is not trained in.
 untrained = "you are untrained in {skill:Bare}"
 watched = "something is watching"
