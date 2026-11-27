@@ -630,7 +630,7 @@ by `world/character/stars.rs` at the start and on every restore (`Talents::regra
 `docs/dev/character-creation.md`), in the first tree, Stars (`no_free`).
 
 **`Actor::boons`** holds the talents given for life outside every pick, with what
-they hand out (`World::bestow`, `world/fixtures/boons.rs`): a forgotten altar's Chosen and Forsaken, and
+they hand out (`World::bestow`, `world/fixtures/boons.rs`): an altar's Chosen and Forsaken, and
 a background story's `talent` and `flaw` lines (#707, `world/character/background.rs`;
 `docs/dev/background.md`). `stars::grant` puts them back on every restore beside the race's and
 the sign's grants. `OwnTalent::story` (a boon a told line names, `background::gave`) marks the

@@ -1,5 +1,5 @@
 name = "Shrine"
-description = "Three forgotten altars, good, neutral, and evil, to pray at: stand beside one and choose Pray from the abilities menu. South, a good and an evil shrine."
+description = "Three altars, hallowed, old, and unhallowed, to pray at: stand beside one and choose Pray from the abilities menu. South, a chapel of altars named for the Mynster, the Hearth, and the Howl, between a good and an evil shrine."
 start_level = "shrine"
 seed = 1
 # A priestess come to see what still listens.

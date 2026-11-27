@@ -146,9 +146,8 @@ id = "altar_glow"
 color = [220, 180, 90, 0]
 radius = 5
 
-# Forgotten altars: steady like every magical light; the colour shows
-# the altar's hidden side (gold good, grey neutral, red evil). The terrain gives the neutral one;
-# a good or an evil altar's cell carries its own as a placed light.
+# Altars (data/altars.toml): steady like every magical light; the colour shows the altar's side
+# (gold hallowed, grey old, red unhallowed), placed on its cell.
 [[light]]
 id = "altar_good"
 color = [240, 190, 80, 0]
@@ -162,6 +161,53 @@ radius = 4
 [[light]]
 id = "altar_evil"
 color = [240, 50, 40, 0]
+radius = 4
+
+# The churches' altars (data/faiths/ `glow`): an altar a level names for a church glows as that
+# church; the Mynster's is the good altar's gold, the Howl's the evil altar's red.
+[[light]]
+id = "altar_hearth"
+color = [250, 140, 70, 0]
+radius = 4
+
+[[light]]
+id = "altar_spark"
+color = [255, 120, 40, 0]
+radius = 4
+
+[[light]]
+id = "altar_glimmering"
+color = [200, 170, 255, 0]
+radius = 4
+
+[[light]]
+id = "altar_elder_light"
+color = [200, 215, 255, 0]
+radius = 4
+
+[[light]]
+id = "altar_dark"
+color = [40, 60, 150, 0]
+radius = 4
+
+[[light]]
+id = "altar_weaver"
+color = [140, 50, 190, 0]
+radius = 4
+
+[[light]]
+id = "altar_never_full"
+color = [150, 115, 80, 0]
+radius = 4
+
+[[light]]
+id = "altar_reckoner"
+color = [130, 135, 150, 0]
+radius = 4
+
+[[light]]
+id = "altar_old_scales"
+color = [90, 150, 80, 0]
 radius = 4
 
 # Light hall crystals: steady colored light.

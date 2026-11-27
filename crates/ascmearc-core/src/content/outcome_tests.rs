@@ -69,16 +69,11 @@ fn the_forgotten_altars_table_loads_with_its_minor_and_moderate_outcomes() {
 #[test]
 fn a_room_offers_pray_beside_its_feature_and_nothing_once_spent() {
     let content = content();
-    let altar = content.terrain_id("forgotten_altar").expect("altar");
+    let altar = content.terrain_id("altar").expect("altar");
     let spent = content.terrain_id("spent_altar").expect("spent");
     let (offer, table) = content.offer_at(altar).expect("the altar offers");
     assert_eq!((offer, table.id.as_str()), (Offer::Pray, "forgotten_altar"));
     assert!(content.offer_at(spent).is_none());
-    assert!(
-        content
-            .offer_at(content.terrain_id("altar").expect("altar"))
-            .is_none()
-    );
     let room = content.room_effects().id("altar").expect("the altar room");
     let def = content.room_effect(room);
     assert_eq!((def.weight, def.min_cells), (8, 9));

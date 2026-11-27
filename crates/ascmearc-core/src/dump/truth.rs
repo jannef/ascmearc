@@ -233,7 +233,8 @@ pub(super) fn leaving_rows(world: &World) -> Vec<String> {
 /// The level's special rooms (ground truth): the terrain with each special room's plain ground
 /// ([`crate::content::TerrainDef::is_plain_ground`]) drawn as its effect's mark, then one line
 /// per room (glimpsed, entered, a hoard's stacks lifted and whether it sealed, a sealed room's
-/// breach); headed by `pervading <id>` when an effect covers the level.
+/// breach), then a line per altar (its side, its church, `home`, `spent`); headed by
+/// `pervading <id>` when an effect covers the level.
 pub(super) fn room_rows(world: &World) -> Vec<String> {
     let content = world.content();
     let (level, _) = world.ground_truth();
@@ -272,6 +273,18 @@ pub(super) fn room_rows(world: &World) -> Vec<String> {
             room.min,
             room.max,
             feature_state(level, content, room)
+        ));
+    }
+    // Every altar: its side, the church it is named for, its church's own, spent.
+    for (p, altar) in level.altars() {
+        let faith = (altar.faith).map_or(String::new(), |f| format!(", {}", content.faith(f).id));
+        let home = if altar.home { ", home" } else { "" };
+        let spent = (level.terrain_at(*p))
+            .filter(|&t| Some(t) == content.altars().spent)
+            .map_or("", |_| ", spent");
+        out.push(format!(
+            "altar at {p}: {}{faith}{home}{spent}",
+            crate::content::altar_side_id(altar.side)
         ));
     }
     out

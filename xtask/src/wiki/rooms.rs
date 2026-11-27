@@ -143,7 +143,7 @@ pub(super) fn special_rooms(content: &Content) -> String {
                 None => "",
             };
             let name = content.terrain(feature).name.to_lowercase();
-            // "Shelves stand", "A forgotten altar stands".
+            // "Shelves stand", "An altar stands".
             let line = if name.ends_with('s') {
                 format!("{} stand in it{offers}.", capital(&name))
             } else {

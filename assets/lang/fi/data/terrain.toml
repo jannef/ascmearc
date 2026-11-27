@@ -45,9 +45,6 @@ description = { text = "Seinään hakattu syvennys, ruumiin mittainen. Se on tyh
 [fence]
 description = { text = "Paaluihin sidottuja halkaistuja riukuja, noin vyötärön korkuinen.", of = "90cc78" }
 
-[forgotten_altar]
-description = { text = "Kulunut kivialttari. Kädet tai aika ovat hioneet sen kaiverrukset sileiksi, eikä jumalalla, jota se palveli, ole enää nimeä. Jokin täällä kuuntelee yhä.", of = "876e2b" }
-
 [gate_closed]
 description = { text = "Riukuveräjä nahkasaranoilla, köysilenkillä kiinni sidottu.", of = "15cbd1" }
 

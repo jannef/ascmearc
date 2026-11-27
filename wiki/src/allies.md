@@ -72,8 +72,8 @@ learn, even for a caster well above their level.
 Calling up a fiend breaks an old law (the sort *fiend* in the
 [table of sorts](quests.md#sorts-of-creatures)). Every fiend that comes by your own doing
 counts: one your summon spell calls, or a scroll or item that casts one, one that comes when such
-a spell goes wrong, a [gate](miscasts.md#gates) your miscast tears open, and one a
-[forgotten altar](altars-forges-springs.md#forgotten-altars) you pray at calls up. The first
+a spell goes wrong, a [gate](miscasts.md#gates) your miscast tears open, and one an
+[altar](altars-forges-springs.md#praying-at-an-altar) you pray at calls up. The first
 time: "Your crime is witnessed." The game counts every one, but nothing else comes of it yet.
 What a creature or a gate calls up is not your doing.
 

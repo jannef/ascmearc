@@ -7,13 +7,18 @@
 //! A faith's **face** is who answers its prayers, one of the prayer's [`Face`]s (holy: the
 //! Light's churches; dark: the Dark and the deep powers) or none (the Frogs Beyond, the Big Ones).
 //! Its `answers` and `listens` say whether its god hears a prayer away from an altar, and its
-//! `words` and `use` lines say a prayer its own way (`world/faith/pray.rs`); its `shared` and
-//! `stranger` say how its altars treat others (the design's later slices).
+//! `words` and `use` lines say a prayer its own way (`world/faith/pray.rs`).
 //!
+//! A faith's **side** is good (a goodly faith), evil (a wicked one), or none: by its face (holy
+//! good, dark evil, none none) unless its file sets `side` (`good`, `evil`, or `unaligned`). An
+//! altar of its side is its faithful's own (`content/altar.rs`). An altar a level names for it
+//! glows with its `glow` and is described by its `altar_description`, and its `stranger` is what
+//! that altar does with another side's prayer.
 //!
 //! The table is optional: without it nobody has a faith, and a race may not name one.
 
-use super::{ClassDef, Content, ContentError, Face, PrayerUse, Races, load_table};
+use super::{ClassDef, Content, ContentError, Face, LightId, PrayerUse, Races, load_table};
+use crate::alignment::Alignment;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
@@ -146,8 +151,12 @@ pub(super) struct FaithSpec {
     name: String,
     description: String,
     face: FaceSpec,
-    #[serde(default)]
-    shared: Vec<String>,
+    /// Its side where it is not its face's (`good`, `evil`, `unaligned`).
+    side: Option<super::altar::SideSpec>,
+    /// The light of an altar named for it (`lights.toml`); default its side's.
+    glow: Option<String>,
+    /// What look mode says of an altar named for it.
+    altar_description: Option<String>,
     #[serde(default)]
     stranger: Stranger,
     #[serde(default = "yes")]
@@ -177,8 +186,15 @@ pub struct FaithDef {
     pub description: String,
     /// Who answers it (the prayer's faces); `None`: nothing does as a god does.
     pub face: Option<Face>,
-    /// The faiths whose faithful its altars and shrines hear as their own, in id order.
-    pub shared: Vec<FaithId>,
+    /// Its side: good (a goodly faith), evil (a wicked one), neutral (an unaligned one), or
+    /// none. Every altar of its side is its faithful's own.
+    pub side: Option<Alignment>,
+    /// The light of an altar named for it; `None`: its side's.
+    pub glow: Option<LightId>,
+    /// What look mode says of an altar named for it: the line of data
+    /// `faith:<id>.altar_description`.
+    pub altar_description: Option<String>,
+    /// What an altar named for it does with a prayer of another side.
     pub stranger: Stranger,
     /// Whether it answers prayer at all (the Frogs Beyond do not).
     pub answers: bool,
@@ -226,10 +242,13 @@ impl Faiths {
         self.ids.get(id).copied()
     }
 
-    /// Resolves the faiths of `data/faiths/`: unique ids, `shared` naming other faiths, and a
-    /// faith with no face saying how it does not answer (`answers = false` or `listens =
+    /// Resolves the faiths of `data/faiths/`: unique ids, a `glow` naming a light (`light`), and
+    /// a faith with no face saying how it does not answer (`answers = false` or `listens =
     /// "altar"`).
-    fn resolve(specs: Vec<(&str, FaithSpec)>) -> Result<Self, ContentError> {
+    fn resolve(
+        specs: Vec<(&str, FaithSpec)>,
+        light: impl Fn(&str) -> Option<LightId>,
+    ) -> Result<Self, ContentError> {
         let mut ids = BTreeMap::new();
         let mut seen: BTreeMap<&str, &str> = BTreeMap::new();
         for (i, (path, spec)) in specs.iter().enumerate() {
@@ -256,26 +275,27 @@ impl Faiths {
                         .into(),
                 ));
             }
-            let mut shared = Vec::new();
-            for other in &spec.shared {
-                match ids.get(other) {
-                    None => return Err(err(format!("shares with unknown faith `{other}`"))),
-                    Some(_) if *other == spec.id => {
-                        return Err(err("shares with itself".into()));
-                    }
-                    Some(&id) if shared.contains(&id) => {
-                        return Err(err(format!("shares with `{other}` twice")));
-                    }
-                    Some(&id) => shared.push(id),
+            let glow = match &spec.glow {
+                Some(name) => {
+                    Some(light(name).ok_or_else(|| err(format!("unknown light `{name}`")))?)
                 }
-            }
-            shared.sort();
+                None => None,
+            };
+            let face = spec.face.face();
+            let side = match (spec.side, face) {
+                (Some(side), _) => Some(side.side()),
+                (None, Some(Face::Holy)) => Some(Alignment::Good),
+                (None, Some(Face::Dark)) => Some(Alignment::Evil),
+                (None, None) => None,
+            };
             defs.push(FaithDef {
                 id: spec.id,
                 name: spec.name,
                 description: spec.description,
-                face: spec.face.face(),
-                shared,
+                face,
+                side,
+                glow,
+                altar_description: spec.altar_description,
                 stranger: spec.stranger,
                 answers: spec.answers,
                 listens: spec.listens,
@@ -362,7 +382,7 @@ impl Content {
     ) -> Result<(), ContentError> {
         let specs = load_table(files, "faiths", |f: FaithFile| f.faith)?;
         if !specs.is_empty() {
-            self.faiths = Faiths::resolve(specs)?;
+            self.faiths = Faiths::resolve(specs, |name| self.light_id(name))?;
         }
         Ok(())
     }

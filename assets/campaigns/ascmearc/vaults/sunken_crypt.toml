@@ -21,4 +21,4 @@ map = '''
 "d" = { terrain = "shallow_water", creature = "drowned" }
 # What the minster kept: the minster reliquary on the altar, the end of Sister Hild's "What the
 # water keeps".
-"m" = { terrain = "altar", objects = ["minster_reliquary"] }
+"m" = { terrain = "altar", faith = "mynster", objects = ["minster_reliquary"] }

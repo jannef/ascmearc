@@ -35,6 +35,8 @@ depth = 13
 epitaph = "Here lies {name}, {death}. Laid at the feast of a forgotten god."
 
 [legend]
+# The hidden temple's altar: an old one, its god forgotten.
+"_" = { terrain = "altar", side = "unaligned" }
 ":" = "cracked_floor"
 "O" = "open_sarcophagus"
 "i" = "candles"

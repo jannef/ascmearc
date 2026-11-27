@@ -1,7 +1,8 @@
-//! The faiths (`content/faith.rs`): the built-in ones load in order with their faces and shared
-//! ground, and the loader refuses what does not hold together.
+//! The faiths (`content/faith.rs`): the built-in ones load in order with their faces and sides,
+//! and the loader refuses what does not hold together.
 
 use super::{Content, ContentFiles, Face, Listens, Stranger};
+use crate::alignment::Alignment;
 use crate::test_support::builtin;
 
 #[test]
@@ -33,8 +34,9 @@ fn the_faiths_load_in_order_with_their_faces() {
     let def = |id: &str| content.faith(content.faiths().id(id).expect(id));
     for light in ["mynster", "hearth", "spark", "glimmering", "elder_light"] {
         assert_eq!(def(light).face, Some(Face::Holy), "{light}");
-        // Each Light church shares its ground with the other four.
-        assert_eq!(def(light).shared.len(), 4, "{light}");
+        // Every Light church is goodly, and its altars glow as its church.
+        assert_eq!(def(light).side, Some(Alignment::Good), "{light}");
+        assert!(def(light).glow.is_some(), "{light}");
     }
     for dark in [
         "dark",
@@ -45,9 +47,11 @@ fn the_faiths_load_in_order_with_their_faces() {
         "old_scales",
     ] {
         assert_eq!(def(dark).face, Some(Face::Dark), "{dark}");
-        assert!(def(dark).shared.is_empty(), "{dark}");
+        assert_eq!(def(dark).side, Some(Alignment::Evil), "{dark}");
+        assert!(def(dark).altar_description.is_some(), "{dark}");
     }
     assert_eq!(def("frogs").face, None);
+    assert_eq!(def("frogs").side, None);
     assert!(!def("frogs").answers);
     assert_eq!(def("big_ones").listens, Listens::Altar);
     assert_eq!(def("mynster").stranger, Stranger::Cold);
@@ -81,13 +85,14 @@ fn the_faiths_are_checked_when_content_loads() {
             "a faith with no face answers nothing",
         ),
         (
-            faith("face = \"holy\"\nshared = [\"lamp\"]"),
-            "shares with unknown faith `lamp`",
+            faith("face = \"holy\"\nshared = [\"mynster\"]"),
+            "unknown field `shared`",
         ),
         (
-            faith("face = \"holy\"\nshared = [\"zz\"]"),
-            "shares with itself",
+            faith("face = \"holy\"\nglow = \"no_such_light\""),
+            "unknown light `no_such_light`",
         ),
+        (faith("face = \"holy\"\nside = \"grey\""), "unknown variant `grey`"),
         (
             "[[faith]]\nid = \"mynster\"\nname = \"x\"\ndescription = \"\"\nface = \"holy\"\n"
                 .to_string(),
@@ -98,6 +103,15 @@ fn the_faiths_are_checked_when_content_loads() {
         let err = refused(&[("data/faiths/999-zz.toml", &text)]);
         assert!(err.contains(expected), "{text}: {err}");
     }
+    // A side of its own overrides the face's.
+    let mut files = ContentFiles::builtin();
+    files.insert(
+        "data/faiths/999-zz.toml",
+        &faith("face = \"dark\"\nside = \"unaligned\""),
+    );
+    let content = Content::load(&files).expect("loads");
+    let zz = content.faith(content.faiths().id("zz").expect("zz"));
+    assert_eq!(zz.side, Some(Alignment::Neutral));
     // A faith with no face that listens only at altars, or answers nothing, loads.
     for rest in ["listens = \"altar\"", "answers = false"] {
         let mut files = ContentFiles::builtin();

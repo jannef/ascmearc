@@ -51,6 +51,8 @@ depth = 10
 epitaph = "Here lies {name}, {death}. Laid among the brothers, who ask no questions."
 
 [legend]
+# The saint's altar, the Mynster's.
+"_" = { terrain = "altar", faith = "mynster" }
 "#" = "granite"
 "," = "dusty_floor"
 "N" = "empty_niche"

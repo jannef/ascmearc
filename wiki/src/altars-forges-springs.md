@@ -1,21 +1,44 @@
 # Altars, forges, and springs
 
-Three kinds of [special room](special-rooms.md) hold something you can use. A forgotten altar
-answers prayers, for good or ill. A forge's anvil lets you temper metal arms and armour. A healing
-spring can be drunk from as often as you like. Each is used by walking into it, or from the
-[abilities menu](abilities.md#the-abilities-menu) while you stand beside it: the altar with Pray,
-under *Faith*, and the others under *Here*.
+Three kinds of [special room](special-rooms.md) hold something you can use. An altar answers
+prayers, for good or ill. A forge's anvil lets you temper metal arms and armour. A healing
+spring can be drunk from as often as you like. The forge and the spring are used by walking
+into them, or from the [abilities menu](abilities.md#the-abilities-menu) under *Here* while you
+stand beside them. An altar you can stand on: pray there with
+[Pray](abilities.md#ability-pray), under *Faith*.
 
-## Forgotten altars
+## Altars
 
-An altar room holds a **forgotten altar**: worn stone, its carvings rubbed smooth, its god's name
-long lost. Yet something there still listens. It is not a temple, and not a god you serve. There
-is nothing to sacrifice and no one to convert to. It is a gamble.
+Every altar is one of three kinds, and its glow tells which:
 
-To pray, walk into the altar and say yes when asked, or stand beside it and choose
-[Pray](abilities.md#ability-pray) from the [abilities menu](abilities.md#the-abilities-menu). Next
-to an altar, Pray prays at the altar, not to your own god, and anyone may pray there, with a
-faith or without. A prayer takes a minute. Anything that
+- a **hallowed altar** glows gold. It is the altar of the goodly [faiths](character.md#choosing-a-faith):
+  [the Mynster](character.md#faith-mynster), [the Hearth](character.md#faith-hearth), [the Spark](character.md#faith-spark),
+  [the Glimmering](character.md#faith-glimmering), and [the Elder Light](character.md#faith-elder-light);
+- an **unhallowed altar** glows red. It is the altar of the wicked faiths: [the Dark](character.md#faith-dark),
+  [the Howl](character.md#faith-howl), [the Weaver](character.md#faith-weaver), [the Never-Full](character.md#faith-never-full),
+  [the Reckoner](character.md#faith-reckoner), and [the Old Scales](character.md#faith-old-scales);
+- an **old altar** glows grey. It is worn stone, its carvings rubbed smooth, its god's name long
+  lost, and it is no living faith's.
+
+[Look](controls-prompts.md#look-mode) at an altar and the game names its kind. A few altars belong to one church:
+they glow in that church's own colour, and looking at one tells you whose it is. The Mynster in
+Cēaptūn and the Glimmering in Gimmwīc keep their churches' own altars, and more stand in chapels
+and crypts across the land.
+
+An altar room's altar belongs to no church. Most dungeons draw its kind as below; a few have
+altars of their own:
+
+{{#include generated/altar-places.md}}
+
+## Praying at an altar
+
+Stand on an altar of an altar room, or beside it, and choose [Pray](abilities.md#ability-pray)
+from the [abilities menu](abilities.md#the-abilities-menu). There Pray prays at the altar, not
+to your own god, and anyone may pray, with a faith or without. Something there still listens,
+but it is not a temple, and not a god you serve. There is nothing to sacrifice and no one to
+convert to. It is a gamble. (At a church's altar, Pray is your own prayer, as anywhere else.)
+
+A prayer at an altar takes a minute. Anything that
 would stop a [rest](resting.md#how-resting-works), such as a creature coming into view, a blow, or a
 noise, breaks it. A broken prayer gives nothing, and the minute is still gone.
 
@@ -26,18 +49,17 @@ line of flavour. A few do more, for good or ill. Now and then the altar bursts a
 [fire](damage-types.md#damage-fire) and leaves rubble. The blast hurts everyone near it, you
 included, and it can kill.
 
-Every altar has a hidden side: [good, neutral, or evil](alignment.md). The game never says which,
-but its glow does: gold, grey, or red. The side tilts the odds against your own
-[alignment](alignment.md). At an altar of your own side the boons come more often; at one of the
-other side, the banes. A neutral altar, or a neutral you, leans neither way. Praying also moves
-your [alignment](alignment.md#what-moves-you) a little: toward good at a good altar, and further
-toward evil at an evil one. The [Pious](talents-exploring.md#talent-pious) talent (Wayfarer) doubles the lean
+An altar's kind tilts the odds against your own [alignment](alignment.md): a hallowed altar
+is good, an unhallowed one evil, an old one neutral. At an altar of your own side the boons come
+more often; at one of the other side, the banes. An old altar, or a neutral you, leans neither
+way. Praying also moves your [alignment](alignment.md#what-moves-you) a little: toward good at a
+hallowed altar, and further toward evil at an unhallowed one. The [Pious](talents-exploring.md#talent-pious) talent (Wayfarer) doubles the lean
 of an altar of your side and takes away an opposed one's.
 
 After each completed prayer there is an even chance the altar is
 **[spent](terrain.md#terrain-spent-altar)**. Its glow gutters and dies, it stands cold and dark,
 and nothing answers there again. So an altar usually gives one or two prayers. Then seek out the
-next one: about one generated floor in twenty has one.
+next one: about one generated floor in twenty has an altar room.
 
 {{#include generated/altar-shares.md}}
 

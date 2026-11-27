@@ -283,6 +283,8 @@ impl Content {
                 shops: self.shops.as_ref(),
                 defaults: self.draw_odds,
                 generators,
+                altars: self.altars.weights,
+                faiths: &self.faiths,
             };
             let resolved = parsed.resolve(path, &look)?;
             for mut def in resolved {

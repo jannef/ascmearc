@@ -181,7 +181,8 @@ vault_chance = 20
 loop_chance = 20
 # Chance that a south nave chapel is of its northern mirror's kind.
 mirror_chance = 70
-# Chance that a floor has a forgotten altar (in a chapel or the apse).
+# Chance that a floor has an altar (in a chapel or the apse); its side and church are the
+# dungeon level's `altars` and `altar_faith` (dungeons.toml).
 altar_chance = 35
 # Chance that a side room is lit, less a third of the flood.
 lit_chance = 35

@@ -171,12 +171,11 @@ cases! {
         keys: Some("Down Down Down"),
         ..BASE
     },
-    // Beside a forgotten altar: the Faith group's prayer named Pray, for it prays at the altar
-    // (#2179).
+    // Beside an altar: the Faith group's prayer named Pray, for it prays at the altar (#2179).
     abilities_menu_here: Case {
         name: "abilities-menu-here",
         scenario: "shrine",
-        actions: "move:N open:N move:N*3",
+        actions: "move:N open:N move:N*2",
         screen: Some("abilities"),
         ..BASE
     },

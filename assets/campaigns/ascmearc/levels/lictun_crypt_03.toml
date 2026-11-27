@@ -45,6 +45,8 @@ depth = 3
 epitaph = "Here lies {name}, {death}. Laid with the priests, under the cross."
 
 [legend]
+# The priests' altar, the Mynster's.
+"_" = { terrain = "altar", faith = "mynster" }
 "N" = "empty_niche"
 "O" = "open_sarcophagus"
 "r" = "rubble"

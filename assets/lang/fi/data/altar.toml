@@ -1,0 +1,11 @@
+# Lines of data: what look mode says of an altar after its kind's name
+# (`altar:<side>.description`, data/altars.toml).
+
+[evil]
+description = { text = "Sen valo on vanhojen hiilten punaa.", of = "" }
+
+[good]
+description = { text = "Sen valo on lämmin.", of = "" }
+
+[unaligned]
+description = { text = "Kulunut kivialttari. Kädet tai aika ovat hioneet sen kaiverrukset sileiksi, eikä jumalalla, jota se palveli, ole enää nimeä. Jokin täällä kuuntelee yhä.", of = "" }

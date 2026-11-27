@@ -18,8 +18,8 @@ brewing in you does not count yet, so a prayer tells you nothing of one.
 
 The menu names the prayer by its highest tier: Bede, then the priest's Orison, Prayer, Litany,
 Benediction, and Miracle, as the [table below](#how-it-grows) gives them, with that tier's
-description. Beside a [forgotten altar](altars-forges-springs.md#forgotten-altars) it is just
-Pray, for there it prays at the altar instead.
+description. On or beside an [altar](altars-forges-springs.md#praying-at-an-altar) that is no
+church's it is just Pray, for there it prays at the altar instead.
 
 ## What it answers
 

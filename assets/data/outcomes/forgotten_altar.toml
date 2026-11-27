@@ -1,6 +1,6 @@
-# A forgotten altar's prayer (content/outcome.rs has the fields): ADOM's
-# pool with another flavour. A prayer takes a minute; at its end one draw of the kinds (leaned by
-# the altar's hidden side against the player's band: agreement moves `lean` points from bane to
+# The prayer at an altar that names no church (content/outcome.rs has the fields; the altar
+# room's `offers`): ADOM's pool with another flavour. A prayer takes a minute; at its end one
+# draw of the kinds (leaned by the altar's side, data/altars.toml, against the player's band: agreement moves `lean` points from bane to
 # boon, opposition from boon to bane), then one by weight among that kind's outcomes. After a
 # completed prayer the altar is spent with `exhaust` percent, unless it blew apart. Weights are
 # within each kind (each kind's sum to 100). The great tier (#407) is rare: 6 in each of the

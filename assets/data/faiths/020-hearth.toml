@@ -4,7 +4,8 @@ id = "hearth"
 name = "the Hearth"
 description = "The halflings' Light, the fire in the middle of the house: the table, the guest, and the dead remembered at supper."
 face = "holy"
-shared = ["mynster", "spark", "glimmering", "elder_light"]
+glow = "altar_hearth"
+altar_description = "It is the Hearth's: a kettle hangs over a small fire beside it."
 stranger = "hears"
 
 [faith.words]

@@ -156,7 +156,7 @@ pub enum Ability {
     /// Pray: [`Action::Pray`], the Faith group's one prayer (`world/faith/pray.rs`). Had by
     /// everyone while the game has faiths (unavailable without a faith,
     /// [`Unavailable::Faithless`], or with one whose god answers nothing here,
-    /// [`Unavailable::Unanswered`]); beside a forgotten altar a place offers it to anyone
+    /// [`Unavailable::Unanswered`]); beside an altar of the gamble a place offers it to anyone
     /// ([`Ability::here`]), and it prays at the altar.
     Pray,
     /// Drink at a healing spring: [`Action::Drink`]. A place offers
@@ -213,7 +213,7 @@ pub enum Source {
     /// Something worn or carried (none yet: a lantern is used as a tool, `u`).
     Item,
     /// The place the character stands in: what a special room's
-    /// feature offers next to it (Drink at a spring; Pray at a forgotten altar is the Faith
+    /// feature offers next to it (Drink at a spring; Pray at an altar is the Faith
     /// group's).
     Place,
     /// The character's allies: the orders given to them.
@@ -602,12 +602,14 @@ impl Ability {
     }
 
     /// The abilities the place offers to whoever stands at `at` on `level`: what the feature on a
-    /// cell next to it offers (Pray beside a forgotten altar, Drink beside a spring), in menu
+    /// cell next to it offers ([`LevelState::offer_at`]: Pray beside an altar of the gamble,
+    /// Drink beside a spring), and Pray on such an altar (one walks onto an altar), in menu
     /// order. A spent altar is another terrain, which offers nothing.
     pub(crate) fn here(level: &LevelState, content: &Content, at: Pos) -> Vec<Ability> {
+        let on = Some(at).filter(|&p| level.offer_at(content, p) == Some(Offer::Pray));
         let mut found: Vec<Ability> = (Dir::ALL.iter().map(|&d| at.step(d)))
-            .filter_map(|p| level.terrain_at(p))
-            .filter_map(|t| content.offer(t))
+            .chain(on)
+            .filter_map(|p| level.offer_at(content, p))
             .filter_map(Ability::offered)
             .collect();
         if !crate::world::fungus_ways(content, level, at).is_empty() {
@@ -858,7 +860,7 @@ impl Ability {
             Ability::ShieldBash => "Strike someone next to you with the shield you hold.",
             Ability::Weapon(_, id) => &content.weapon_ability(id).description,
             Ability::Pray => {
-                "Pray to your god. Beside a forgotten altar, kneel at it for a minute instead: \
+                "Pray to your god. Beside an altar, kneel at it for a minute instead: \
                  something may answer, for good or ill."
             }
             Ability::Drink => {
@@ -1023,7 +1025,7 @@ impl Ability {
             Ability::Heal => Some(ActionKind::Heal),
             Ability::SecondWind | Ability::BloodMagic => Some(ActionKind::Wait),
             Ability::ShieldBash => Some(ActionKind::Melee),
-            // The prayer is a cast's time (a forgotten altar's its own, `world/fixtures/pray.rs`).
+            // The prayer is a cast's time (an altar's its own, `world/fixtures/pray.rs`).
             Ability::Pray => Some(ActionKind::Cast),
             Ability::Give => Some(ActionKind::Wear),
             Ability::Drink => Some(ActionKind::Drink),

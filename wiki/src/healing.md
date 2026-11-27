@@ -40,7 +40,7 @@ Magical healing is every way of getting hit points back by magic:
 - a priest's prayer for [wounds](prayer.md#prayer-wounds), and a paladin's
   [Lay on hands](abilities.md#ability-lay-on-hands);
 - the healing of a [spring](altars-forges-springs.md#healing-springs) or a
-  [forgotten altar](altars-forges-springs.md#forgotten-altars);
+  [altar](altars-forges-springs.md#praying-at-an-altar);
 - the hit points [Horn of plenty](horoscope.md#talent-horn-of-plenty) adds to Horn's grace;
 - rising from the ashes: the Phoenix's [Rise from the ashes](horoscope.md#talent-rise-from-ashes)
   and the profane gift [Twice-born](profane-gifts.md#talent-twice-born).

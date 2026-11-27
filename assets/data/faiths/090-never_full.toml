@@ -4,6 +4,8 @@ id = "never_full"
 name = "the Never-Full"
 description = "Hunger, the ratfolk's Ould Mother: the old hungry thing under everything, whom the Mynster calls the Profane."
 face = "dark"
+glow = "altar_never_full"
+altar_description = "It is the Never-Full's: a ring bitten through is carved on it."
 stranger = "bane"
 
 [faith.words]

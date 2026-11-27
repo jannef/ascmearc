@@ -14,6 +14,7 @@
 //! | `gem_size:<id>`, `gem_cut:<id>` | the size's and the cut's `name` |
 //! | `stock:<material id>` | the form word a piece of the material is called by ("ingot", "lump") |
 //! | `race:<id>` | its `name` in lower case ("halfling") |
+//! | `altar:<side>` | an altar kind's `name` by its side, `good`, `unaligned`, or `evil` ("hallowed altar", `data/altars.toml`) |
 //! | `faith:<id>` | its `name` as written, a proper name with its own article ("the Mynster"), and its `label` the same |
 //! | `resource:<id>` | its `name` in lower case ("rage") |
 //! | `room:<id>` | a special room's `name` ("echoing hall", `data/room_effects/`) |
@@ -121,6 +122,11 @@ impl Lexicon for Content {
             }
             // A race is a common noun in a sentence ("a halfling"); its `name` is a label.
             "race" => Some(labelled(&self.race(key)?.name)),
+            "altar" => {
+                let side = (crate::alignment::Alignment::ALL.into_iter())
+                    .find(|&s| super::altar::side_id(s) == key)?;
+                Some(LexWord::new(&self.altars().kind(side).name))
+            }
             // A faith is a proper name, said and shown as written ("the Mynster").
             "faith" => {
                 let def = self.faith(self.faiths().id(key)?);

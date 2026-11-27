@@ -7,7 +7,7 @@ use crate::blood::{Spatter, Stain};
 use crate::chest::Chest;
 use crate::color::Rgb;
 use crate::content::{
-    CharColors, Content, EdgeExit, Flow, Here, HiddenLocation, LevelKind, LevelTemplate, LightId,
+    Altar, CharColors, Content, EdgeExit, Flow, Here, HiddenLocation, LevelKind, LevelTemplate, LightId,
     Place, RoomEffectId, Secret, SpecialRoom, StairsLink, TerrainDef, TerrainId, Trap, TrapId,
 };
 use crate::door::Lock;
@@ -60,6 +60,10 @@ pub struct LevelState {
     /// Lights placed on cells (overriding the terrain's own light), by position.
     #[serde(with = "by_pos")]
     pub(crate) lights: BTreeMap<Pos, LightId>,
+    /// Altars, by position (`content/altar.rs`): on the altar terrain or a spent one, each its
+    /// side and the church it is named for. What the player sees: an altar's kind is its glow.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
+    pub(crate) altars: BTreeMap<Pos, Altar>,
     /// Flow of running water, by position. Presentation-only: no rule reads it.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) flow: BTreeMap<Pos, Flow>,
@@ -246,6 +250,7 @@ impl LevelState {
             start: template.player_start,
             exit: template.exit.clone(),
             lights: template.lights.clone(),
+            altars: template.altars.clone(),
             flow: template.flow.clone(),
             objects: template.objects.clone(),
             object_memory: BTreeMap::new(),
@@ -338,6 +343,30 @@ impl LevelState {
     /// through [`crate::World::ground_truth`], **for developer tools only**.
     pub fn terrain_at(&self, p: Pos) -> Option<TerrainId> {
         self.terrain.get(p).copied()
+    }
+
+    /// The altars on the level, by position (`content/altar.rs`).
+    pub fn altars(&self) -> &BTreeMap<Pos, Altar> {
+        &self.altars
+    }
+
+    /// The altar at `p`, if one stands there (or stood, spent): its side and its church. Not
+    /// hidden: its kind is its glow, and look mode names it.
+    pub fn altar_at(&self, p: Pos) -> Option<&Altar> {
+        self.altars.get(&p)
+    }
+
+    /// What the feature at `p` offers beside it ([`Content::offer`]): an altar only while it
+    /// has an unnamed record, whose prayer is the gamble (`world/fixtures/pray.rs`; an altar
+    /// named for a church, or one without a record, offers nothing yet).
+    pub fn offer_at(&self, content: &Content, p: Pos) -> Option<crate::content::Offer> {
+        let terrain = self.terrain_at(p)?;
+        if Some(terrain) == content.altars().terrain
+            && self.altar_at(p).is_none_or(|a| a.faith.is_some())
+        {
+            return None;
+        }
+        content.offer(terrain)
     }
 
     /// The pile at `p` as it is now, top first (ground truth, empty where nothing lies). Only

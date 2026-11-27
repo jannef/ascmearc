@@ -270,6 +270,33 @@ impl<'a> PerceptionView<'a> {
         }
     }
 
+    /// The altar at `p` as the player sees or remembers it, on the altar terrain or a spent
+    /// one (as the cell looks to them): its side, which its glow shows, and the church it is
+    /// named for, which its look tells. `None` where they know no altar, or one with no record.
+    pub fn altar_at(&self, p: Pos) -> Option<crate::content::Altar> {
+        let terrain = match self.cell(p) {
+            CellView::Visible(t) | CellView::Remembered(t) => t,
+            CellView::Unknown => return None,
+        };
+        (self.content.altars().holds(terrain))
+            .then(|| self.level.altar_at(p).copied())
+            .flatten()
+    }
+
+    /// What the feature at `p` offers beside it, as the player sees or remembers the cell
+    /// ([`crate::world::LevelState::offer_at`]: an altar's kind is its glow); `None` where they know nothing.
+    pub fn offer_at(&self, p: Pos) -> Option<crate::content::Offer> {
+        let terrain = match self.cell(p) {
+            CellView::Visible(t) | CellView::Remembered(t) => t,
+            CellView::Unknown => return None,
+        };
+        // As the cell looks to them: a remembered altar offers as one with its record.
+        if Some(terrain) == self.content.altars().terrain {
+            return (self.altar_at(p)?.faith.is_none()).then(|| self.content.offer(terrain))?;
+        }
+        self.content.offer(terrain)
+    }
+
     /// The chest at `p` as the player sees or remembers it: its band and
     /// whether it is shut, open, or smashed (as the cell looks to them), and, with Chest-wise,
     /// on a cell in sight, whether a shut one is locked. Never its level or what it holds.
@@ -660,7 +687,7 @@ impl<'a> PerceptionView<'a> {
             .any(|a| a.here && matches!(a.source, crate::world::AllySource::Companion(_)));
         let beside = |ability| self.ways(crate::beside::Beside::Use(ability));
         let mut had = Ability::of(self.player, self.content);
-        // What a place offers that the player has already (Pray beside a forgotten altar) is
+        // What a place offers that the player has already (Pray beside an altar) is
         // listed once.
         let here: Vec<Ability> = here.into_iter().filter(|a| !had.contains(a)).collect();
         had.extend(here);
@@ -755,7 +782,7 @@ impl<'a> PerceptionView<'a> {
             {
                 Some(crate::ability::Unavailable::NotHere)
             }
-            // Beside a forgotten altar Pray prays at it, open to anyone (`world/fixtures/pray.rs`):
+            // Beside an altar of the gamble Pray prays at it, open to anyone (`world/fixtures/pray.rs`):
             // only what blocks that prayer greys it.
             Ability::Pray if self.at_altar() => (self
                 .player
@@ -780,7 +807,7 @@ impl<'a> PerceptionView<'a> {
         crate::world::fungus_ways(self.content, self.level, self.player.pos)
     }
 
-    /// Whether a forgotten altar stands beside the player: Pray prays at it (the place offers
+    /// Whether an altar of the gamble stands beside the player, or under them: Pray prays at it (the place offers
     /// it, [`Ability::here`]).
     fn at_altar(&self) -> bool {
         Ability::here(self.level, self.content, self.player.pos).contains(&Ability::Pray)

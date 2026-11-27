@@ -283,7 +283,7 @@
 #   favour_percent { value }      shop favour, that many percent more (before the cap)
 #   pilgrim                       temple services cost half (rounded up), and a cure also mends
 #                                 a point of each damaged stat (Pious)
-#   devout                        at a forgotten altar of its own side the side's lean counts
+#   devout                        at an altar of its own side the side's lean counts
 #                                 twice, at one of the other side not at all (Pious)
 #   gem_worth                     item descriptions show what each gem in them is worth
 #   identify_carried { hours }    a magic item carried that many hours (1 to 240) from when it

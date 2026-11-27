@@ -18,4 +18,4 @@ O    *_*    O
 "O" = "standing_stone"
 "*" = "flowers"
 # The altar is named, so that look mode says what it is.
-"_" = { terrain = "altar", name = "the Stone Circle" }
+"_" = { terrain = "altar", side = "unaligned", name = "the Stone Circle" }

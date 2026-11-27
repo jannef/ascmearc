@@ -1,9 +1,11 @@
+# A spent altar: an altar gone cold (data/outcomes/forgotten_altar.toml's `spent`), or one a
+# level places so. Its record stays (data/altars.toml): what it was. Like every altar, it may be
+# stood on.
 [[terrain]]
 id = "spent_altar"
 name = "spent altar"
 description = "An altar of worn stone, cold and dark. Whatever listened here has stopped."
 stone = true
-walkable = false
 glyph = "_"
 fg = "#5a5a5e"
 bg = "#0d0d10"

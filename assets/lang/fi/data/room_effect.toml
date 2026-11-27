@@ -3,7 +3,7 @@
 # a shrine's entry by how it treats the player (`shrine.welcome`, `shrine.unwelcome`).
 
 [altar]
-enter = { text = "Täällä seisoo vanha alttari, jonka jumala on aikaa sitten unohdettu.", of = "f2e863" }
+enter = { text = "Täällä seisoo alttari.", of = "" }
 near = { text = "Edessäpäin alttarilta kajastaa heikko hehku.", of = "fd49b8" }
 
 [armoury]

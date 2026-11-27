@@ -129,7 +129,7 @@ ends every disease, the brewing ones too.
 [Horn's grace](abilities.md#ability-horns-grace), the gift of those born in the year of the
 Unicorn, shakes off one disease that shows.
 
-Now and then a [forgotten altar](altars-forges-springs.md#forgotten-altars) answers a prayer by
+Now and then an [altar](altars-forges-springs.md#praying-at-an-altar) answers a prayer by
 cleansing you of every disease.
 
 A temple's **cure** does the same for gold, for every disease. A temple's **mending** gives back

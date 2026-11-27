@@ -1,0 +1,4 @@
+# Altars by their kind (`altar:<side>`, data/altars.toml): hallowed, old, unhallowed.
+evil = "epä|pyhä/10 alttari/6"
+good = "pyhitetty/1*C alttari/6"
+unaligned = "vanha/9 alttari/6"

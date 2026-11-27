@@ -6,7 +6,7 @@ strain. The laity hold healing; the priest's prayer talents (#883, the priest de
 `docs/design/priest.md` §5, §6.1) deepen it. Who answers is the player's faith's face
 (`docs/dev/faith.md`); the dark face's twists (§6.2) and Communion with the dark (§6.3) came with
 #884; Sanctuary (§6.4, #885), the priest's 50, is hallowed ground: `docs/dev/special-rooms.md`
-"Hallowed ground". Beside a forgotten altar the same ability prays at the altar instead
+"Hallowed ground". Beside an altar of the gamble the same ability prays at the altar instead
 (`world/fixtures/pray.rs`, `docs/dev/special-rooms.md`).
 
 ## Modules
@@ -57,7 +57,7 @@ read). A use left out of the list is never answered. A prayer effect:
 
 ## The rule (`World::pray_action`)
 
-Beside a forgotten altar (`World::altar_beside`) it is the altar's prayer, for anyone, faith or
+On or beside an altar of the gamble (`World::altar_beside`) it is the altar's prayer, for anyone, faith or
 none (`docs/dev/special-rooms.md`). Anywhere else:
 
 1. Refused, no time and no strain: what `Ability::Pray.unavailable` says (no faith, "you profess

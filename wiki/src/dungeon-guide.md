@@ -65,8 +65,9 @@ west down the middle, with a narrow aisle on each side and chapels off the aisle
 crosses the plan near the east end, and past it the chancel ends in a rounded apse. West of the
 crypt lie the monks' cellars: a pillared undercroft, a cloister walk round an open garth, the
 chapter house, an ossuary walled with bones, tombs of [sarcophagi](terrain.md#terrain-sarcophagus),
-and stores. Some chapels hold a statue, and now and then one holds a
-[forgotten altar](terrain.md#terrain-forgotten-altar).
+and stores. Some chapels hold a statue, and now and then one holds an
+[altar](altars-forges-springs.md#altars): on the upper floors a hallowed altar of the Mynster,
+on the drowned floors from the fifth down an unhallowed altar of the Dark.
 
 One end of each floor lies lower than the other, and the water gathers there. On the first floor
 only the lowest corners stand in [shallow water](terrain.md#terrain-shallow-water). Each floor

@@ -1,0 +1,35 @@
+# Altars (content/altar.rs; docs/dev/faith.md "Altars"): every altar has a side, the kind the
+# player sees by its glow and its words. A hallowed altar (good) is every goodly faith's own, an
+# unhallowed one (evil) every wicked faith's, and an old one (unaligned) nobody's: the old gods'
+# gamble. A level or a vault may name an altar for a church (a legend's `faith`; its side is the
+# faith's), which then glows and reads as that church's (data/faiths/: `glow`,
+# `altar_description`). Every generated altar is unnamed, but where a dungeon level's
+# `altar_faith` names those of its church's side.
+#
+# Fields:
+#   weights       the weights a generated altar's side is drawn by, good, unaligned, evil (each
+#                 default 0; a dungeon level's `altars` sets its own)
+#   [good], [unaligned], [evil]   the kinds, by side:
+#     name          how the game names it ("hallowed altar")
+#     description   what look mode says after its name (optional)
+#     glow          the light it gives (lights.toml; default the altar terrain's own)
+#     stranger      what it does with the prayer of a faith of another side: "cold" (unheard,
+#                   the default) or "hears" (heard, in its own face)
+weights = { good = 1, unaligned = 2, evil = 1 }
+
+[good]
+name = "hallowed altar"
+description = "Its light is warm."
+glow = "altar_good"
+stranger = "cold"
+
+[unaligned]
+name = "old altar"
+description = "An altar of worn stone. Its carvings have been rubbed smooth by hands or by time, and whatever god it served has no name left. Something here still listens."
+glow = "altar_neutral"
+
+[evil]
+name = "unhallowed altar"
+description = "Its light is the red of old coals."
+glow = "altar_evil"
+stranger = "hears"

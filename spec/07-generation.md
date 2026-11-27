@@ -80,7 +80,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - A greater treasure room has "no door and no corridor, ever" (the owner). It is found by searching for the hollow wall and opened only by digging or a blast.
 - Dens: sleepers are woken by noise, harm, or a neighbour's cry, never by light or sight. A den's sleepers count toward the spawn cap. Armouries and workshops are homes of animated things.
 - Unholy rooms (cursed, draining, haunted): the dead rise, mana ebbs, a rest is haunted. Consecrate lifts them.
-- An altar answers a prayer with a boon, nothing, or a bane, leaned by its hidden side. It is not a god: there is no sacrifice, no conversion, and no wish. It may be spent after a prayer.
+- An altar is hallowed, unhallowed, or old, and its glow shows which. A hallowed altar is the goodly faiths' and an unhallowed one the wicked faiths'; an old one is no living faith's. A level may name an altar for a church, which then looks like that church's; a generated altar's kind is drawn by the dungeon's weights. An altar that is no church's answers a prayer with a boon, nothing, or a bane, leaned by its side: there is no sacrifice, no conversion, and no wish. It may be spent after a prayer.
 - A shrine heals those of its side and hinders the other side.
 - A spring never runs dry; the foul water is the price.
 - Forge and Temper: every attempt on an item counts for that item's whole life. Failing on an undamaged item damages it; failing on a damaged item destroys it. An anvil never touches affixes.

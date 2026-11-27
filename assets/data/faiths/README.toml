@@ -17,10 +17,15 @@
 #                 Dark and the powers under the hills), or "none" (nothing answers as a god
 #                 does); a faith with no face says how it does not answer, with `answers` or
 #                 `listens`
-#   shared        the faiths whose faithful its altars and shrines hear as their own, by id
-#                 (default none; each Light church lists the other four)
-#   stranger      what its altars do with another faith's prayer: "cold" (unheard, the
-#                 default), "hears" (heard, in its own face), or "bane" (the god wants you gone)
+#   side          its side where it is not its face's: "good", "evil", or "unaligned" (default:
+#                 a holy face good, a dark one evil, none none). Every altar of its side is its
+#                 faithful's own (data/altars.toml); the game calls good faiths goodly, evil
+#                 ones wicked
+#   glow          the light of an altar a level names for it (lights.toml; default its side's)
+#   altar_description   what look mode says of such an altar, after its kind's name
+#   stranger      what an altar named for it does with the prayer of a faith of another side:
+#                 "cold" (unheard, the default), "hears" (heard, in its own face), or "bane" (the
+#                 god wants you gone)
 #   answers       false: it never answers a prayer (the Frogs Beyond; default true)
 #   listens       "anywhere" (the default) or "altar": heard only beside an altar, as that
 #                 altar's stranger (the Big Ones)
@@ -33,4 +38,4 @@
 # [faith.use]     its own line for a use answered, by use id (`wounds = "..."`), each optional
 #
 # Creation reads the face; prayer reads `answers`, `listens`, and the words; the altars read the
-# rest as they are built (prayer.md §11).
+# side, the glow, and the description; the prayer at altars will read `stranger`.

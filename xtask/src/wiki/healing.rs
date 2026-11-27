@@ -704,7 +704,7 @@ fn status_ends(content: &Content, status: usize, def: &StatusDef) -> String {
 /// Every way to end status `status` sooner than it wears off (#1563), from the data: what you
 /// drink or eat that names one of its `cured_by` means, any magical healing, the scroll of restoration and a
 /// temple's cure by theirs, the spells that cleanse it, a priest's prayer, the Heal skill's
-/// treatment, the talents' actives that end it, and the forgotten altar's answers.
+/// treatment, the talents' actives that end it, and an altar's answers.
 fn status_cures(content: &Content, status: usize, def: &StatusDef) -> Vec<String> {
     let id = StatusId(status as u16);
     let named = |cures: &[String]| cures.iter().any(|c| def.cured_by.contains(c));
@@ -776,7 +776,7 @@ fn status_cures(content: &Content, status: usize, def: &StatusDef) -> Vec<String
         });
     if altar {
         out.push(
-            "now and then a [forgotten altar](altars-forges-springs.md#forgotten-altars)".into(),
+            "now and then an [altar](altars-forges-springs.md#praying-at-an-altar)".into(),
         );
     }
     out

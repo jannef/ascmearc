@@ -14,6 +14,8 @@ map = '''
 '''
 
 [legend]
+# A wayside chapel's altar, the Mynster's.
+"_" = { terrain = "altar", faith = "mynster" }
 "t" = "sconce"
 # Traps: a hidden spear trap guards the offering, a piece of jewellery rolled when the level is generated.
 "^" = { terrain = "floor", trap = "spear", loot = { pool = "jewellery" } }

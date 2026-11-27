@@ -112,11 +112,11 @@ pub(super) fn alignment_deeds(content: &Content) -> String {
             s.make_peace,
         ),
         (
-            "Praying at a good forgotten altar (gold glow)",
+            "Praying at a hallowed altar (gold glow)",
             s.prayed_good,
         ),
         (
-            "Praying at an evil forgotten altar (red glow)",
+            "Praying at an unhallowed altar (red glow)",
             s.prayed_evil,
         ),
     ];

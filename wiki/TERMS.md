@@ -141,7 +141,8 @@ above.
 | Hellegeat, a Pit | `pits.md`, `pits.md#how-a-pit-opens`, `pits.md#floors-that-forget` |
 | A Pit's warden, a sealed Pit | `pits.md#the-warden` |
 | Special room | `special-rooms.md` (a room: its row) |
-| Forgotten altar, praying | `altars-forges-springs.md#forgotten-altars` |
+| Altars: hallowed, old, unhallowed; a church's altar | `altars-forges-springs.md#altars` |
+| Praying at an altar, the gamble | `altars-forges-springs.md#praying-at-an-altar` |
 | Forge, tempering, Fine, Marvellous, Masterwork, damaged items | `altars-forges-springs.md#forges` |
 | Makeshift anvil, Field forge | `altars-forges-springs.md#the-makeshift-anvil`, `class-craftsperson.md#field-forge` |
 | Item damage, corroded, rusted, scorched, withstanding | `materials.md#item-damage` |

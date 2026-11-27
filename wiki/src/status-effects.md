@@ -86,7 +86,7 @@ stop it sooner, trying as often as it takes (see
   wound: a healing potion or spell, a [priest](class-priest.md)'s prayer for
   [wounds](prayer.md#prayer-wounds), Lay on hands, a healing spring, or rising from the ashes;
 - [Horn's grace](abilities.md#ability-horns-grace), if you were born in the year of the Unicorn;
-- now and then, an answer at a [forgotten altar](altars-forges-springs.md#forgotten-altars).
+- now and then, an answer at an [altar](altars-forges-springs.md#praying-at-an-altar).
 
 Creatures bleed the same way, and you can see it: [look mode](controls-prompts.md#look-mode) says "A giant
 rat (hostile, wounded, bleeding)". A creature can bleed to death after a fight: "The giant rat
@@ -145,7 +145,7 @@ shows them lowered.
 - [Horn's grace](abilities.md#ability-horns-grace), if you were born in the year of the Unicorn;
 - if you are trained in [Heal](skills.md#skill-heal), draw out some of a dose (see
   [Treating yourself](skill-uses.md#treating-yourself));
-- now and then, an answer at a [forgotten altar](altars-forges-springs.md#forgotten-altars).
+- now and then, an answer at an [altar](altars-forges-springs.md#praying-at-an-altar).
 
 You cannot tell whether a creature is poisoned by looking at it.
 

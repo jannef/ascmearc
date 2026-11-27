@@ -181,10 +181,7 @@ fn hunger_stops_as_text() {
 
 /// Beside what offers an action, north of the player: its scenario and
 /// the walk there.
-const OFFERS: [(&str, &str, &str); 2] = [
-    ("offer-dialog-altar", "shrine", "move:N open:N move:N*3"),
-    ("offer-dialog-spring", "spring", "move:N*5"),
-];
+const OFFERS: [(&str, &str, &str); 1] = [("offer-dialog-spring", "spring", "move:N*5")];
 
 /// #975: the question a step into each asks.
 #[test]

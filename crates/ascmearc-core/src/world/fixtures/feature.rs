@@ -36,11 +36,20 @@ fn feature_at(state: &WorldState, content: &Content, p: Pos) -> Option<Msg> {
         Noun::Plural => msg::fixtures::FEATURE_PLURAL_HERE,
         Noun::Mass => msg::fixtures::FEATURE_MASS_HERE,
     };
-    let line = Msg::new(id).role("what", Phrase::id(format!("terrain:{}", def.id)));
+    // An altar goes by its kind, or its church ("There is a hallowed altar here.").
+    let altar = (level.altar_at(p)).filter(|_| Some(terrain) == content.altars().terrain);
+    let what = match altar {
+        Some(altar) => content.altar_phrase(altar),
+        None => Phrase::id(format!("terrain:{}", def.id)),
+    };
+    let line = Msg::new(id).role("what", what);
     let note = level.place(content, p).and_then(|place| place.note_arg());
     // The description and the note are the data's words, said after the feature as written.
-    let description = (def.description.as_ref())
-        .map(|_| Arg::said(crate::content::data_line::description("terrain", &def.id)));
+    let description = match altar {
+        Some(altar) => content.altar_description(altar).map(Arg::said),
+        None => (def.description.as_ref())
+            .map(|_| Arg::said(crate::content::data_line::description("terrain", &def.id))),
+    };
     let more: Vec<Arg> = description.into_iter().chain(note).collect();
     if more.is_empty() {
         return Some(line);

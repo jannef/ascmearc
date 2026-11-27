@@ -178,7 +178,7 @@ degrees; electricity resistance 50). The breaths' looks are `data/effects.toml`'
   then one of the tier's drawn gifts the player `may_take_gift` by `weight` (another); an empty
   tier gives way up, then down (lesser → greater → dire; dire → greater → lesser); all empty is
   `None`, and the meal says "Nothing more of it will take in you.".
-- A forgotten altar's Forsaken never draws a profane bane (`bestow_flaw` skips the gifts).
+- An altar's Forsaken never draws a profane bane (`bestow_flaw` skips the gifts).
 - **Taken by the Profane** (#1809; `world/character/profane_taken.rs`): the last
   step of a gift taken, `World::profane_takes`: once `gifts_received` holds `TAKEN_AT` (13) gifts,
   lost ones counting, its two lines are said and the run ends, `die_of(Cause::Profane)` ("The

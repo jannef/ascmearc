@@ -2081,7 +2081,6 @@ mod tests {
             app.update();
         };
         for (scenario, walk, used) in [
-            ("shrine", "move:N open:N move:N*3", Action::Pray),
             ("spring", "move:N*5", Action::Drink),
         ] {
             let content = content();

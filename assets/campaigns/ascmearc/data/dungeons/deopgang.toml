@@ -65,17 +65,19 @@ shops = { chance = 50, kinds = ["general_store"], keeper = "deep_gnome_trader", 
 from = 1
 to = 4
 
-# The wild deep: caverns, the dread oftener as the floors near the bottom (one draw in 40 on the
+# The wild deep: caverns, their altars old or unhallowed, the dread oftener as the floors near the bottom (one draw in 40 on the
 # last three).
 [[dungeon.levels]]
 from = 5
 to = 8
+altars = { unaligned = 1, evil = 1 }
 generator = { kind = "caves" }
 size = [120, 60]
 
 [[dungeon.levels]]
 from = 9
 to = 11
+altars = { unaligned = 1, evil = 1 }
 generator = { kind = "caves" }
 size = [120, 60]
 temperature = 14

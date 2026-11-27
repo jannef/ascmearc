@@ -1,4 +1,4 @@
-//! Outcome tables: what a forgotten altar's prayer may bring, exactly,
+//! Outcome tables: what an altar's prayer may bring, exactly,
 //! and how often, per prayer and per altar, computed from `data/outcomes/forgotten_altar.toml`;
 //! what a healing spring's drink may bring, per drink (`data/outcomes/spring.toml`); and what
 //! each gamble potion may bring, per draught.
@@ -13,7 +13,7 @@ use ascmearc_core::content::{
 use ascmearc_core::magic::loot::LootGrade;
 use std::fmt::Write as _;
 
-/// The forgotten altar's table, if the content has it.
+/// The altars' table, if the content has it.
 fn altar(content: &Content) -> Option<&OutcomeTable> {
     content.outcomes().get("forgotten_altar")
 }
@@ -240,7 +240,7 @@ fn lines(o: &OutcomeDef) -> String {
     text
 }
 
-/// Every outcome of the forgotten altar's table: its kind, tier, weight within its kind, share
+/// Every outcome of the altars' table: its kind, tier, weight within its kind, share
 /// of its kind, what it does exactly, and what it says.
 pub(super) fn altar_outcomes(content: &Content) -> String {
     let Some(table) = altar(content) else {

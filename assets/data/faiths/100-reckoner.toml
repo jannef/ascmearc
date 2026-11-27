@@ -4,6 +4,8 @@ id = "reckoner"
 name = "the Reckoner"
 description = "The duergar's god of Greed, who keeps the ledger of all that is owed and held, and forgives nothing."
 face = "dark"
+glow = "altar_reckoner"
+altar_description = "It is the Reckoner's: notched iron tallies are nailed to it."
 stranger = "bane"
 
 [faith.words]

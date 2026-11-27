@@ -18,6 +18,8 @@ below = "fyrdelf:12"
 generator = { kind = "passage" }
 size = [80, 21]
 traps = ["arrow", "spear", "fireball", "lightning_bolt", "alarm"]
+# Orc country: its altars old or unhallowed, never hallowed.
+altars = { unaligned = 1, evil = 1 }
 # As Fyrdelf's deep workings: few secret doors; hidden things and locks only a little harder
 # than their own difficulty, as they were when depth set it (#2094).
 secret_doors = [0, 2]

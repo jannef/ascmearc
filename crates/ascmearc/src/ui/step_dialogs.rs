@@ -200,15 +200,17 @@ fn hunger_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
 }
 
 /// The feature a step in `dir` walks into and what it offers, if the player sees or remembers
-/// it and no one they see stands there (moving there would be an attack, or stop).
+/// it, it blocks the way (one walks onto an altar, and prays there from the menu), and no one
+/// they see stands there (moving there would be an attack, or stop).
 fn offered_at(view: &PerceptionView<'_>, dir: Dir) -> Option<(TerrainId, Offer)> {
     let to = view.viewer().step(dir);
     let terrain = match view.cell(to) {
         CellView::Visible(t) | CellView::Remembered(t) => t,
         CellView::Unknown => return None,
     };
-    let offer = view.content().offer(terrain)?;
-    view.actor_at(to).is_none().then_some((terrain, offer))
+    let offer = view.offer_at(to)?;
+    let blocks = !view.content().terrain(terrain).walkable;
+    (blocks && view.actor_at(to).is_none()).then_some((terrain, offer))
 }
 
 /// The screen a step in `dir` opens instead, if any: walking into an anvil opens the profession
@@ -228,7 +230,7 @@ pub(crate) fn step_screen(view: &PerceptionView<'_>, dir: Dir) -> Option<ScreenN
 /// The dialog a step in `dir` opens first, if it walks into a feature the player sees or remembers
 /// that offers an action (what the abilities menu's Here group reads, so
 /// a spent altar blocks as any wall does), where no one they see stands (moving there would be an
-/// attack, or stop): "Would you like to pray at the forgotten altar?", to use its ability, just as
+/// attack, or stop): "Would you like to drink from the spring?", to use its ability, just as
 /// the menu does, or leave it (the safe answer, selected first, and Esc's; it takes no time). An
 /// anvil asks nothing: its Temper is a recipe of Metalcraft's ([`step_screen`]).
 fn offer_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
@@ -433,14 +435,6 @@ mod tests {
     fn walking_into_what_offers_an_action_asks_first() {
         let cases = [
             (
-                "shrine",
-                "move:N open:N move:N*3",
-                "Forgotten altar",
-                "Would you like to pray at the forgotten altar?",
-                "Pray",
-                Ability::Pray,
-            ),
-            (
                 "spring",
                 "move:N*5",
                 "Spring",
@@ -499,19 +493,29 @@ mod tests {
         );
     }
 
+    /// An altar is stood on: a step onto one asks nothing, and Pray is in the menu beside it and
+    /// on it; spent, it offers nothing.
     #[test]
-    fn a_spent_altar_never_asks() {
-        let mut world = walked_to("shrine", "move:N open:N move:N*3");
-        assert!(offer_dialog(&world.perception(), Dir::N).is_some());
+    fn an_altar_never_asks_and_a_spent_one_offers_nothing() {
+        let mut world = walked_to("shrine", "move:N open:N move:N*2");
+        let altar = Pos::new(13, 3);
+        assert_eq!(world.perception().offer_at(altar), Some(Offer::Pray));
+        assert!(offer_dialog(&world.perception(), Dir::N).is_none());
+        world.apply(&Action::Move(Dir::N));
+        assert_eq!(world.perception().viewer(), altar, "it is stood on");
+        let pray = |view: &PerceptionView<'_>| {
+            (view.abilities().iter()).any(|own| own.ability == Ability::Pray && own.unavailable.is_none())
+        };
+        assert!(pray(&world.perception()));
         for _ in 0..8 {
             world.apply(&Action::Pray);
         }
         let view = world.perception();
         assert!(matches!(
-            view.cell(Pos::new(13, 3)),
+            view.cell(altar),
             CellView::Visible(t) if view.content().terrain(t).name == "spent altar"
         ));
-        assert!(offer_dialog(&view, Dir::N).is_none());
+        assert_eq!(view.offer_at(altar), None);
     }
 
     /// The spring's cell beside the player, in the dark: they neither see nor remember it.

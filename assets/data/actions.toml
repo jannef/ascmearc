@@ -79,7 +79,7 @@ search = 1000
 # A turn of making out a labelled scroll without reading it (the Decipher ability): a try takes
 # rules/decipher.toml's `seconds`, a turn of this after another.
 decipher = 1000
-# A turn of praying at a forgotten altar (the Pray ability): a prayer
+# A turn of praying at an altar (the Pray ability): a prayer
 # takes its outcome table's `seconds` (data/outcomes/), a turn of this after another.
 pray = 1000
 # A turn of drinking at a healing spring (the Drink ability): a drink

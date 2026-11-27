@@ -46,7 +46,7 @@ elixir_no_difference = "You feel no different."
 # (`Cause::epitaph`): `what`, the meal choked on or their own scroll or flask (`object:<id>`);
 # `trap`, the trap (`trap:<id>`); `noun`, their own spell's look noun ("bolt"); `spell`, the
 # spell they miscast (`spell:<id>`).
-epitaph_altar = "Struck down at a forgotten altar"
+epitaph_altar = "Struck down at an altar"
 epitaph_choked = "Choked to death on {what:a}"
 epitaph_drowned = "Drowned in deep water"
 epitaph_fall = "Fell through a collapsed floor"

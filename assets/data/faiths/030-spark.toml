@@ -4,7 +4,8 @@ id = "spark"
 name = "the Spark"
 description = "The dwarves' Light, struck from stone in the dark: work, oath, and memory. Every forge is its altar."
 face = "holy"
-shared = ["mynster", "hearth", "glimmering", "elder_light"]
+glow = "altar_spark"
+altar_description = "It is the Spark's: an anvil is carved into its face."
 stranger = "cold"
 
 [faith.words]

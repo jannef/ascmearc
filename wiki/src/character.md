@@ -100,7 +100,8 @@ Each people's own faith, and the others open to them:
 
 {{#include generated/race-faiths.md}}
 
-The faiths, and who answers each:
+The faiths, who answers each, and which [altars](altars-forges-springs.md#altars) are its own:
+a goodly faith's are the hallowed altars, a wicked faith's the unhallowed ones.
 
 {{#include generated/faiths.md}}
 

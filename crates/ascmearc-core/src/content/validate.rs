@@ -7,10 +7,42 @@ use super::{
 use std::collections::BTreeMap;
 
 impl Content {
+    /// Every altar a campaign's level or a vault places has a side (`content/altar.rs`): a bare
+    /// `altar` with no `side` or `faith` is for test content only (a test world's, or a level
+    /// outside every campaign).
+    fn check_altars(&self) -> Result<(), ContentError> {
+        let Some(altar) = self.altars().terrain else {
+            return Ok(());
+        };
+        let bare = |t: &LevelTemplate| {
+            (t.terrain.iter())
+                .find(|(p, terrain)| **terrain == altar && !t.altars.contains_key(p))
+                .map(|(p, _)| p)
+        };
+        let shipped = |id: &str| {
+            (self.level_campaign(id).and_then(|c| self.campaign(c)))
+                .is_some_and(|c| c.kind != super::CampaignKind::Test)
+        };
+        let levels = (self.levels.values())
+            .filter(|l| shipped(&l.id))
+            .map(|l| (self.level_file(&l.id), l));
+        let vaults = (self.vaults().iter()).map(|v| (v.file(), &v.template));
+        for (file, template) in levels.chain(vaults) {
+            if let Some(p) = bare(template) {
+                return Err(ContentError::new(
+                    &file,
+                    format!("the altar at {p} has no `side` or `faith` (data/altars.toml)"),
+                ));
+            }
+        }
+        Ok(())
+    }
+
     /// Cross-file checks: at most one overworld, stair and hidden location targets, and each scenario's start level,
     /// vision profile, and character's race and class exist. Levels of dungeon branches (`depths:3`) and local areas
     /// of the overworld (`local:12,30`) count as existing.
     pub(super) fn validate(&self) -> Result<(), ContentError> {
+        self.check_altars()?;
         // At most one overworld a campaign (and one outside every campaign).
         let mut overworlds: BTreeMap<Option<&str>, &str> = BTreeMap::new();
         for level in (self.levels.values()).filter(|l| l.kind == LevelKind::Overworld) {
