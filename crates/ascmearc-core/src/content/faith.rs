@@ -158,6 +158,8 @@ pub(super) struct FaithSpec {
     words: FaithWords,
     #[serde(default, rename = "use")]
     uses: BTreeMap<PrayerUse, String>,
+    #[serde(default)]
+    piety: Option<super::FaithPiety>,
 }
 
 #[derive(Deserialize)]
@@ -188,9 +190,21 @@ pub struct FaithDef {
     /// Its own line for a use answered (`[faith.use]`), by use: a line of data,
     /// `faith:<id>.use.<use>`; the face's where it says none.
     pub uses: BTreeMap<PrayerUse, String>,
+    /// Its own piety (`[faith.piety]`): deeds and kills over its side's base, its waning, its
+    /// words for the standings (`content/piety.rs`).
+    pub piety: Option<super::FaithPiety>,
 }
 
 impl FaithDef {
+    /// Its side, which says whose base deeds it counts (`data/piety.toml`'s `[side.*]`): good
+    /// for a holy face, evil for a dark one, none for a faith with no face.
+    pub fn side(&self) -> Option<crate::alignment::Alignment> {
+        match self.face? {
+            Face::Holy => Some(crate::alignment::Alignment::Good),
+            Face::Dark => Some(crate::alignment::Alignment::Evil),
+        }
+    }
+
     /// Whether its god hears a prayer away from an altar: it answers, it listens anywhere, and
     /// it has a face.
     pub fn hears_anywhere(&self) -> bool {
@@ -281,6 +295,7 @@ impl Faiths {
                 listens: spec.listens,
                 words: spec.words,
                 uses: spec.uses,
+                piety: spec.piety,
             });
         }
         Ok(Self { defs, ids })

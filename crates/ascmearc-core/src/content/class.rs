@@ -61,6 +61,8 @@ struct ClassSpec {
     #[serde(default)]
     alignment: i32,
     #[serde(default)]
+    piety: i32,
+    #[serde(default)]
     mana: u16,
     #[serde(default)]
     affinity: BTreeMap<super::spell_def::School, i8>,
@@ -229,6 +231,9 @@ pub struct ClassDef {
     /// Its part of a new character's alignment score, added to the
     /// race's: a paladin starts Good.
     pub alignment: i32,
+    /// Where its character's piety with their own faith rests and starts (`data/piety.toml`,
+    /// `docs/dev/piety.md`): a vow's standing regard; 0 for most.
+    pub piety: i32,
     /// The skills it trains, each by dice rolled when the character is made,
     /// in skill order; added to the race's.
     pub skills: Vec<(SkillId, Dice)>,
@@ -424,6 +429,7 @@ impl ClassDef {
             affinity: spec.affinity,
             experience: spec.experience,
             alignment: spec.alignment,
+            piety: spec.piety,
             skills,
             known_for,
             optional_skills,

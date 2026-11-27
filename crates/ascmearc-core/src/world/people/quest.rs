@@ -41,7 +41,7 @@ use crate::perception::PerceptionView;
 use crate::rng::Rng;
 use crate::talent::TalentMods;
 use crate::world::items::stacks_arg;
-use crate::world::{ActorId, Deed, Speech, Spent, TopicName, TopicView, World};
+use crate::world::{ActorId, Speech, Spent, TopicName, TopicView, World};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::collections::{BTreeMap, BTreeSet};
@@ -1021,7 +1021,7 @@ impl World {
             reward: &reward_path,
         };
         self.pay_reward(&content, who, &reward, taught, false);
-        self.shift_alignment(self.state.player, def.alignment, Deed::Quest);
+        self.quest_done(def.alignment);
         self.promote(&standing);
         self.quarrel_won(id, def);
     }

@@ -41,6 +41,7 @@ impl World {
         let total = &mut self.state.progress.oath_kills;
         *total = total.saturating_add(1);
         let kills = *total;
+        self.player_did(crate::world::Deed::OathKill);
         let book = content.talents();
         for band in rules.bands.iter().filter(|b| b.kills == kills) {
             let id = &book.get(band.talent).id;

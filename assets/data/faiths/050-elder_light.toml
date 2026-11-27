@@ -10,3 +10,13 @@ stranger = "cold"
 [faith.words]
 pray = "You look up, past the stone, to the stars, and pray."
 unheard = "You look up, and the stars do not look back."
+
+# Patience: the sky watched, peace kept, and no death without need.
+[faith.piety]
+deeds = { dawn_sky = 1, kill_beast = -1, make_peace = 5, kill_peaceful = -15 }
+
+[faith.piety.words]
+favoured = "The stars shine for you."
+heard = "The stars watch you."
+unheard = "The stars look away from you."
+shunned = "The stars have turned from you."

@@ -114,5 +114,6 @@ impl World {
         object::add_to_pile(&mut pile, level.objects_at(at), &content);
         level.set_pile(at, pile);
         self.say(text);
+        self.player_did(crate::world::Deed::Mined);
     }
 }

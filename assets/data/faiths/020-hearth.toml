@@ -10,3 +10,13 @@ stranger = "hears"
 [faith.words]
 pray = "You say the words over the table."
 unheard = "You say the words, but the hearth is cold to you."
+
+# Eating well, the guest, and nothing taken that is not offered.
+[faith.piety]
+deeds = { ate_meal = 1, make_peace = 8, theft = -10, kill_peaceful = -15 }
+
+[faith.piety.words]
+favoured = "The hearth burns warm for you."
+heard = "The hearth knows you."
+unheard = "The hearth has gone cold to you."
+shunned = "The hearth's door is shut to you."

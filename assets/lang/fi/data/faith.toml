@@ -1,5 +1,6 @@
 # Lines of data: faiths (`faith:<id>.description`), as the New run screen shows them, and each
-# faith's own words for its prayers (`faith:<id>.words.<field>`; `silent` a lower-case clause).
+# faith's own words for its prayers (`faith:<id>.words.<field>`; `silent` a lower-case clause), and
+# for its standings (`faith:<id>.piety.<standing>`).
 
 [big_ones]
 description = { text = "Hiisillä ei ole omaa jumalaa: ne pelkäävät sitä, mikä on suurinta, ja rukoilevat sitä, joka sattuu kuuntelemaan.", of = "1bffd8" }
@@ -10,8 +11,20 @@ silent = { text = "mikään iso ei kuuntele", of = "20ed1e" }
 [dark]
 description = { text = "Valon langennut palvelija mustan veden alla, sanoo Mynsteri; Iltavalo, levolle käynyt Valo, sanoo sen kultti. Se ottaa kenet tahansa, heti.", of = "4756c6" }
 
+[dark.piety]
+favoured = { text = "Pimeys pitää sinua lähellään.", of = "d66bcd" }
+heard = { text = "Pimeys kuulee sinua.", of = "1d78b9" }
+shunned = { text = "Pimeys on päästänyt sinusta irti.", of = "b20aca" }
+unheard = { text = "Pimeys on sinulle vaiti.", of = "674048" }
+
 [elder_light]
 description = { text = "Haltioiden Valo, ensimmäinen valo, tähdet: kärsivällisyys ja tähyily. Se ei tarvitse kirkkoa, eikä sillä ole sellaista.", of = "f10852" }
+
+[elder_light.piety]
+favoured = { text = "Tähdet loistavat sinulle.", of = "f78023" }
+heard = { text = "Tähdet valvovat sinua.", of = "fa5008" }
+shunned = { text = "Tähdet ovat kääntyneet pois sinusta.", of = "e0186e" }
+unheard = { text = "Tähdet katsovat sinusta poispäin.", of = "0f3a13" }
 
 [elder_light.words]
 pray = { text = "Katsot ylös kiven ohi tähtiin ja rukoilet.", of = "21987d" }
@@ -26,12 +39,24 @@ silent = { text = "Taivaan Sammakot eivät vastaa", of = "17dafe" }
 [glimmering]
 description = { text = "Maahisten Valo, kiveen kätketty: tekeminen, uteliaisuus ja sairaiden hoito. Se ei käännytä ketään pois.", of = "4cdea1" }
 
+[glimmering.piety]
+favoured = { text = "Kivi hohtaa sinulle.", of = "c5fdb9" }
+heard = { text = "Hohde näkee sinut.", of = "2fce01" }
+shunned = { text = "Hohde on kätkenyt valonsa sinulta.", of = "e766f8" }
+unheard = { text = "Kivi on sinulle himmeä.", of = "10d538" }
+
 [glimmering.words]
 pray = { text = "Käännät kiven valoa kohti ja rukoilet.", of = "6d36a4" }
 unheard = { text = "Käännät kiven valoa kohti, mutta se pysyy himmeänä.", of = "4b1735" }
 
 [hearth]
 description = { text = "Puolituisten Valo, tuli talon keskellä: pöytä, vieras ja vainajat, joita muistetaan illallisella.", of = "eb365c" }
+
+[hearth.piety]
+favoured = { text = "Liesi palaa sinulle lämpimänä.", of = "fd83e1" }
+heard = { text = "Liesi tuntee sinut.", of = "cd8adf" }
+shunned = { text = "Lieden ovi on sinulta suljettu.", of = "1c2160" }
+unheard = { text = "Liesi on käynyt sinulle kylmäksi.", of = "b82eca" }
 
 [hearth.words]
 pray = { text = "Luet sanat pöydän yllä.", of = "78f831" }
@@ -40,6 +65,12 @@ unheard = { text = "Luet sanat, mutta liesi on sinulle kylmä.", of = "e5abed" }
 [howl]
 description = { text = "Örkkien Viha, raivo, joka täyttää ruumiin ja kuluttaa sen: voimaa, pelottomuutta ja nopea kuolema katumatta.", of = "570a22" }
 
+[howl.piety]
+favoured = { text = "Ulvonta pauhaa veressäsi.", of = "82ba17" }
+heard = { text = "Ulvonta kuulee sinua.", of = "9ca5db" }
+shunned = { text = "Ulvonta on lähtenyt sinusta.", of = "2f7259" }
+unheard = { text = "Ulvonta on hiljaa sisälläsi.", of = "f514f3" }
+
 [howl.words]
 pray = { text = "Ulvot, ja jokin ulvoo takaisin.", of = "01b05d" }
 unheard = { text = "Ulvot, eikä mikään ulvo takaisin.", of = "e0f6ee" }
@@ -47,11 +78,23 @@ unheard = { text = "Ulvot, eikä mikään ulvo takaisin.", of = "e0f6ee" }
 [mynster]
 description = { text = "Ihmisten Valon kirkko: armo, hautaaminen ja sairaat, ja katumus ennen parannusta.", of = "8dee72" }
 
+[mynster.piety]
+favoured = { text = "Valo on kanssasi.", of = "535838" }
+heard = { text = "Valo kuulee sinua.", of = "43e948" }
+shunned = { text = "Valo on kääntynyt pois sinusta.", of = "eac0f7" }
+unheard = { text = "Valo on kaukana sinusta.", of = "151044" }
+
 [mynster.words]
 unheard = { text = "Rukoilet, mutta Valo ei tunne sinua.", of = "794646" }
 
 [never_full]
 description = { text = "Nälkä, rottaihmisten Vanha Äiti: vanha nälkäinen olento kaiken alla, jota Mynsteri kutsuu Epäpyhäksi.", of = "1e11b8" }
+
+[never_full.piety]
+favoured = { text = "Vanha Äiti pitää sinusta.", of = "be5b21" }
+heard = { text = "Vanha Äiti kuulee sinua.", of = "98fefa" }
+shunned = { text = "Vanha Äiti on kääntänyt sinulle selkänsä.", of = "3494e9" }
+unheard = { text = "Vanha Äiti on unohtanut sinut.", of = "408077" }
 
 [never_full.words]
 pray = { text = "Jyrsit tyhjää ja rukoilet Vanhaa Äitiä.", of = "e14728" }
@@ -60,12 +103,24 @@ unheard = { text = "Jyrsit, mutta Vanha Äiti ei ole sinusta nälkäinen.", of =
 [old_scales]
 description = { text = "Kärmäläisten lohikäärmesukulaiset ja jumalat, joiden lähin kasvo on tulidraakki Fyrdelfin alla: oveluutta, ansoja ja laskematta kulutettuja henkiä.", of = "42deb6" }
 
+[old_scales.piety]
+favoured = { text = "Vanhat Suomut ovat sinuun tyytyväisiä.", of = "5994a0" }
+heard = { text = "Vanhat Suomut kuulevat sinua.", of = "8fe9ea" }
+shunned = { text = "Vanhat Suomut ovat kääntyneet pois sinusta.", of = "bea377" }
+unheard = { text = "Vanhat Suomut eivät kuule sinua.", of = "6b21f4" }
+
 [old_scales.words]
 pray = { text = "Sihiset Vanhoille Suomuille.", of = "68738f" }
 unheard = { text = "Sihiset, eikä mikään suomuinen liikahda.", of = "3dc1cc" }
 
 [reckoner]
 description = { text = "Harmaakääpiöiden Ahneuden jumala, joka pitää kirjaa kaikesta velasta ja omaisuudesta eikä anna mitään anteeksi.", of = "79380d" }
+
+[reckoner.piety]
+favoured = { text = "Laskija merkitsee sinut saamapuolelle.", of = "0fffc3" }
+heard = { text = "Laskija merkitsee sinut.", of = "45bef7" }
+shunned = { text = "Laskija on kirjannut sinut velallisiin.", of = "0263cc" }
+unheard = { text = "Laskija ei merkitse sinua.", of = "002d5e" }
 
 [reckoner.words]
 pray = { text = "Luet velkasi ääneen ja rukoilet.", of = "db3fbb" }
@@ -74,12 +129,24 @@ unheard = { text = "Lasket, mutta Laskija ei merkitse sinua.", of = "7c437e" }
 [spark]
 description = { text = "Kääpiöiden Valo, kivestä pimeässä isketty: työ, vala ja muisti. Jokainen paja on sen alttari.", of = "760210" }
 
+[spark.piety]
+favoured = { text = "Kipinä palaa sinussa kirkkaana.", of = "fe6b04" }
+heard = { text = "Kipinä on kanssasi.", of = "0e62eb" }
+shunned = { text = "Kipinä on sammunut sinusta.", of = "3a36b1" }
+unheard = { text = "Kipinä sinussa on himmeä.", of = "7e4792" }
+
 [spark.words]
 pray = { text = "Isket kerran kiveen kuin alasimeen ja odotat.", of = "45511d" }
 unheard = { text = "Isket kiveen, eikä yksikään kipinä vastaa.", of = "3c9247" }
 
 [weaver]
 description = { text = "Tummahaltioiden Kateuden jumalatar, joka antoi heille himon: jokainen tummahaltia kiipeää hänen verkossaan kohti sitä, mitä toisella on.", of = "454085" }
+
+[weaver.piety]
+favoured = { text = "Cutoja hymyile sinulle.", of = "d20136" }
+heard = { text = "Cutoja cuuldele sinua.", of = "25fba1" }
+shunned = { text = "Cutoja on leickanut sinun irti werckostans.", of = "23ccba" }
+unheard = { text = "Cutoja ei cuuldele sinua.", of = "8692ba" }
 
 [weaver.words]
 pray = { text = "Sinä puhut Cutojalle, ja hän cuuldele.", of = "bbf73f" }

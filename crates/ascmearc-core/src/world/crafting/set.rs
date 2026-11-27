@@ -226,6 +226,10 @@ impl Job for Setting {
         stack.gem(&w.content).map(|(gem, _)| w.gem_stat(gem))
     }
 
+    fn deed(&self) -> Option<crate::world::Deed> {
+        Some(crate::world::Deed::GemSet)
+    }
+
     fn done(&self, w: &mut World, _: &mut Vec<Event>) {
         w.gem_set(*self);
     }

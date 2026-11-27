@@ -51,7 +51,7 @@ impl World {
         for &disease in diseases {
             self.infect(target, disease, Some(self.state.player));
         }
-        self.break_hallow();
+        self.twist_landed();
     }
 
     /// The poison the prayer cured (`ended`) goes to the nearest creature the player sees, at
@@ -69,7 +69,7 @@ impl World {
                 events,
             );
         }
-        self.break_hallow();
+        self.twist_landed();
     }
 
     /// The hexes and holds the prayer released (`ended`) are turned on their causes the player
@@ -94,9 +94,16 @@ impl World {
             };
             if let Some(status) = status {
                 self.afflict(by, status, e.severity, Some(player), events);
-                self.break_hallow();
+                self.twist_landed();
             }
         }
+    }
+
+    /// A twist landed on a creature: hallowed ground is broken, and it is the `twist_passed`
+    /// deed (`world/faith/piety.rs`).
+    fn twist_landed(&mut self) {
+        self.break_hallow();
+        self.player_did(crate::world::Deed::TwistPassed);
     }
 
     /// Whether actor `id` is in communion with the dark: it holds Communion and its faith's face

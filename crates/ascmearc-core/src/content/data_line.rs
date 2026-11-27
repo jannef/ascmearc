@@ -460,6 +460,17 @@ pub fn faith_words(id: &str, field: &str) -> String {
     format!("faith:{id}.words.{field}")
 }
 
+/// Faith `id`'s own word for piety standing `standing` (`[faith.piety.words]`):
+/// `faith:<id>.piety.<standing>`.
+pub fn faith_piety(id: &str, standing: super::Standing) -> String {
+    format!("faith:{id}.piety.{}", standing.id())
+}
+
+/// Piety band `standing`'s line `field` (`words`, `rise`, `fall`; `piety.toml`'s `[[band]]`).
+pub fn piety_band(standing: super::Standing, field: &str) -> String {
+    format!("piety:band.{}.{field}", standing.id())
+}
+
 /// Faith `id`'s own line for use `use_` answered (`[faith.use]`): `faith:<id>.use.<use>`.
 pub fn faith_use(id: &str, use_: super::PrayerUse) -> String {
     format!("faith:{id}.use.{}", use_.id())
@@ -498,6 +509,12 @@ fn class_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
         }
         for (&use_, text) in &def.uses {
             add(faith_use(&def.id, use_), text);
+        }
+        let words = def.piety.as_ref().map(|p| &p.words);
+        for standing in super::Standing::ALL {
+            if let Some(text) = words.and_then(|w| w.get(standing)) {
+                add(faith_piety(&def.id, standing), text);
+            }
         }
     }
 }
@@ -668,6 +685,16 @@ fn character_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
             for (rise, text) in [(true, &def.rise), (false, &def.fall)] {
                 if let Some(text) = text {
                     add(alignment_band(def.band, rise), text);
+                }
+            }
+        }
+    }
+    if let Some(rules) = content.piety() {
+        for band in rules.bands() {
+            add(piety_band(band.standing, "words"), &band.words);
+            for (field, text) in [("rise", &band.rise), ("fall", &band.fall)] {
+                if let Some(text) = text {
+                    add(piety_band(band.standing, field), text);
                 }
             }
         }

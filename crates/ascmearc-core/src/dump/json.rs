@@ -286,6 +286,7 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
     });
     // A second `json!`: one macro call this long passes the recursion limit.
     let Value::Object(rest) = json!({
+        "standing": view.own_standing().map(|s| s.id()),
         "hp": { "current": hp, "max": max_hp },
         "mana": { "current": mana, "max": max_mana },
         "resources": (view.own_resources().iter())
@@ -378,6 +379,11 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
                 "answers": p.answers,
             });
         }
+        // What each god thinks of the player, by faith id (ground truth).
+        let piety: serde_json::Map<String, Value> = (world.piety_rows().iter())
+            .map(|r| (world.content().faith(r.faith).id.clone(), json!(r.score)))
+            .collect();
+        out["piety"] = Value::Object(piety);
         // The current level's zones (ground truth).
         out["zones"] = (world.zones().iter())
             .map(|z| {

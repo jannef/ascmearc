@@ -1,0 +1,60 @@
+# Piety (docs/dev/piety.md): what each god thinks of the player, a hidden score per faith from
+# -100000 to 100000. Every number is hidden in the game and stated in the wiki. Play happens near
+# 0; the far ends of the scale are empty, room for something rare later.
+#
+# A score rests at 0, or for the player's own faith at their class's `piety` (classes/: the
+# priest's 20, the paladin's 40), and starts there. Deeds move it by their worth, whole (no
+# diminishing): each side's base table below, with a faith's own `[faith.piety]` (faiths/) over
+# it. Each dawn (06:00) every score moves back toward where it rests by `wane`, unless the faith
+# says its own; while the player's alignment band is one their own faith's face scorns (holy:
+# Evil or worse; dark: Good or better), that dawn takes `scorn` off their own faith's score
+# instead, never below the top of the worst band.
+#
+# The lines (`words`, `rise`, `fall`) are lines of data (`piety:band.<id>.<field>`;
+# docs/dev/localization.md "Lines of data"); a faith may say each standing its own way
+# (`[faith.piety.words]`). `rise` is said when the score rises into the band, `fall` when it falls
+# into it; `words` is the abilities menu's clause on Pray while the band is not `heard`.
+wane = { favour = 2, anger = 2 }
+scorn = 4
+
+# The bands, best first: exactly the four standings prayer reads (prayer.toml's `[hearing]`).
+[[band]]
+id = "favoured"
+from = 100
+description = "Your god hears you gladly: a prayer strains its patience less."
+words = "Your god hears you gladly."
+rise = "You feel your god's regard warm."
+
+[[band]]
+id = "heard"
+from = -49
+description = "Your god hears you: the plain case."
+words = "Your god hears you."
+rise = "You feel your god turn back toward you."
+fall = "You feel your god's regard cool."
+
+[[band]]
+id = "unheard"
+from = -199
+description = "Your god says nothing: a prayer takes its time and nothing answers."
+words = "Your god is far from you."
+rise = "You feel your god's anger ease."
+fall = "You feel your god turn its face from you."
+
+[[band]]
+id = "shunned"
+from = -100000
+description = "Your god has turned from you: nothing answers a prayer."
+words = "Your god has turned from you."
+fall = "You feel your god turn from you."
+
+# The base deeds of each side: every faith of the side counts these (a holy face's faiths are
+# the goodly side, a dark face's the wicked); a faith's own `[faith.piety]` adds deeds and
+# replaces a base worth by naming the same key (0 cancels it). `kills.tags`: each tag the victim
+# carries adds its worth; `kills.while`: a hostile kill made under the status adds its worth.
+[side.good]
+deeds = { consecrate = 8, quest_good = 6, make_peace = 3, pay_debt = 1, kill_peaceful = -10, theft = -5, attack_shopkeeper = -8, eat_kin = -25, eat_sapient = -12, eat_profane = -40, summon_fiend = -25, craving_threshold = -12, craving_gift = -25, consume_crystal = -3, quest_evil = -8, prayed_dark = -5 }
+kills = { tags = { undead = 1, fiend = 2 } }
+
+[side.evil]
+deeds = { quest_evil = 5, twist_passed = 3, consecrate = -5, prayed_holy = -5, quest_good = -3, make_peace = -3 }

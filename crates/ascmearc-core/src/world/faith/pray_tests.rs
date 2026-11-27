@@ -316,6 +316,12 @@ fn pray_row(w: &World) -> String {
         .unwrap_or_default()
 }
 
+/// The player's god `id` has cooled toward them: unheard (`world/faith/piety.rs`).
+fn lapse(w: &mut World, id: &str) {
+    let faith = w.content().faiths().id(id).expect("a faith");
+    (w.state.progress.piety).insert(faith, crate::piety::Piety::new(-60));
+}
+
 /// The player turned to faith `id`.
 fn profess(w: &mut World, id: &str) {
     let faith = w.content().faiths().id(id);
@@ -381,10 +387,11 @@ fn the_faith_picks_the_face_and_its_titles() {
 }
 
 #[test]
-fn a_god_that_scorns_the_player_does_not_hear_them() {
-    // A Wicked sister of the Mynster: a cast's time, the faith's words, no strain, no draw.
+fn a_god_that_does_not_hear_the_player_is_silent() {
+    // A sister of the Mynster the Light has cooled toward (piety): a cast's time, the faith's
+    // words, no strain, no draw.
     let mut w = priest(1);
-    w.player_mut().alignment = Some(Score::new(-800));
+    lapse(&mut w, "mynster");
     hurt(&mut w);
     let (turn, rng) = (w.state.turn, draws(&w));
     run(&mut w, "pray");
@@ -401,10 +408,10 @@ fn a_god_that_scorns_the_player_does_not_hear_them() {
     run(&mut w, "pray");
     assert_eq!(last(&w), "You have nothing to pray for.");
     assert_eq!(w.state.turn, turn);
-    // A Good cultist of the Dark, in the dark face's words.
+    // A lapsed cultist of the Dark, in the dark face's words.
     let mut w = priest(1);
     profess(&mut w, "dark");
-    w.player_mut().alignment = Some(Score::new(500));
+    lapse(&mut w, "dark");
     hurt(&mut w);
     run(&mut w, "pray");
     assert_eq!(last(&w), "The dark does not know you.");

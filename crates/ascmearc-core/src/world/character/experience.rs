@@ -24,7 +24,7 @@ use crate::talent::TalentMods;
 use crate::world::combat::fight;
 use crate::world::{Due, Spent, World};
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 /// The player's progression beyond the XP total: what they
 /// have discovered, and what their levels still ask them to choose. Left out of the saved state
@@ -70,6 +70,10 @@ pub struct Progress {
     /// The player's oath kills, one running total across all their oaths (`world/character/oath.rs`).
     #[serde(default, skip_serializing_if = "is_zero_u32")]
     pub(crate) oath_kills: u32,
+    /// What each god thinks of the player, by faith (`world/faith/piety.rs`): an entry once a
+    /// god has an opinion.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub(crate) piety: BTreeMap<crate::content::FaithId, crate::piety::Piety>,
 }
 
 impl Progress {
@@ -85,6 +89,7 @@ impl Progress {
             && self.laws.is_empty()
             && self.stripped.is_empty()
             && self.oath_kills == 0
+            && self.piety.is_empty()
     }
 
     /// Whether `what` has happened, of what may happen once in a life.

@@ -50,6 +50,7 @@ pub mod noise;
 pub mod object;
 pub mod perception;
 pub mod piece;
+pub mod piety;
 pub mod replay;
 pub mod resource;
 pub mod rng;

@@ -19,7 +19,7 @@ Alignment is good against evil, ADOM's law and chaos turned. Three modules:
   `rise`/`fall` lines (`news(from, to)`), `[shift]` (`Shifts`, `ByAlignment` for the kills), and
   `[shops] favour` by band. Without the file the player has no score, everyone counts as Neutral,
   and nothing moves.
-- `world/character/alignment.rs`, the rules: `Deed` (what moved a score; the hook the talents will read),
+- `world/character/alignment.rs`, the rules: `Deed` (what moved a score, defined in `piety.rs` and re-exported here; the hook the talents will read),
   `World::shift_alignment(actor, amount, cause)` (**the one place a score changes**; an actor
   without a score, every creature, is left alone; a band crossed queues its line in
   `World::notes`, said by `say_news` after the deed's own messages and the news, as notes that
@@ -47,7 +47,11 @@ only the player's kills, a status they caused included), `shop.rs` (`provoke`: a
 who trades; `shop_step`: theft; `pay`: paying a debt; `favour`: `keeper_favour`), `eat.rs::finish`
 (`ate_corpse`, rotten or not), `quest.rs` (`complete`: the quest's `alignment`; `quest_topics`
 asks `offers`), `talk.rs` (`chat`: `cold_greeting` before the greeting and the lines). `steal.rs::got_away_with` (a theft that took something): `player_did(Deed::Theft)`. `consecrate.rs::consecrated` (Consecrate done): `player_did(Deed::Consecrated)`. `profane.rs::profane_meal` (a layer boss's corpse eaten, after its gifts): `player_did(Deed::EatProfane)`, `eat_profane` (−300, the largest single sin; docs/dev/profane-gifts.md). `world/creatures/parley.rs::parley_turn` (a thinking creature holding its hand under the Friþwebbe's Parley, #2129): `player_did(Deed::MadePeace)`, `make_peace` (5). `craving.rs::craved` (a row of the ratfolk craving crossed, its talent given): `player_did(Deed::CravingThreshold)`, `craving_threshold` (−100; docs/dev/craving.md); `craving.rs::craving_draws` (a profane gift the craving drew taken, from 500): `player_did(Deed::CravingGift)`, `craving_gift` (−300, a keeper's meal's; nothing for a dry draw). Nothing else
-moves a score: a new deed is a `Deed` variant, a `[shift]` field, and one call where it happens.
+moves a score: a new deed is a `Deed` variant (`piety.rs`, the one vocabulary), an optional
+`[shift]` field, the piety base table or `[faith.piety.deeds]` keys that count it, and one call
+where it happens. `player_did` and `judge_kill` also hand the deed to piety (`World::please`,
+`please_kill`; a quest's through `World::quest_done`), whose own hooks are in
+`docs/dev/piety.md` "Hooks".
 
 **Readers.** Presentation reads `PerceptionView::own_alignment()` (the band, `None` without
 rules): the character screen's `Alignment` row (after Stance), the chargen summary's

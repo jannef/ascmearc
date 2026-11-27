@@ -26,49 +26,13 @@ use crate::lang::Msg;
 use crate::msg;
 use crate::world::{Actor, ActorId, World};
 
-/// What moved an alignment score. Talents that change what a deed costs (one that spares an
-/// evil character's conscience the killing of peaceful folk) will read it in
-/// [`World::shift_alignment`].
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Deed {
-    /// Killed someone not hostile to them.
-    KilledPeaceful,
-    /// Killed a beast (a neutral creature that does not talk) not hostile to them: hunting.
-    Hunted,
-    /// Killed someone hostile to them.
-    KilledHostile,
-    /// Attacked a shopkeeper who traded with them.
-    AttackedShopkeeper,
-    /// Left a shop with goods they had not paid for.
-    Theft,
-    /// Paid a shopkeeper what they owed.
-    PaidDebt,
-    /// Ate the corpse of one of their own race, or of a peaceful creature who talks.
-    AteKin,
-    /// Ate a profane corpse: a layer boss's flesh, its gifts taken (docs/design/profane-gifts.md
-    /// §9).
-    EatProfane,
-    /// Crossed a row of the ratfolk craving: its talent given (docs/design/ratfolk-craving.md
-    /// §8.1).
-    CravingThreshold,
-    /// Took a profane gift the ratfolk craving drew (docs/design/ratfolk-craving.md §8.1).
-    CravingGift,
-    /// Completed a quest that moves the score.
-    Quest,
-    /// Consecrated an unholy place (Consecrate).
-    Consecrated,
-    /// Consumed a magic crystal (docs/design/enchanting.md §5): a soul's husk drunk.
-    ConsumedCrystal,
-    /// Prayed at a forgotten altar of this side: a good altar's
-    /// prayer is a little good, an evil one's evil, a neutral one's nothing.
-    Prayed(Alignment),
-    /// A thinking creature held its hand under their Parley (the Friþwebbe, #2129): peace made.
-    MadePeace,
-}
+/// What moved a score: the one vocabulary of deeds (`crate::piety`), read by alignment's
+/// `[shift]` and by the piety tables.
+pub use crate::piety::Deed;
 
 impl Deed {
-    /// What it is worth by the rules, for the deeds they fix; `None` for those whose worth
-    /// depends on whom or what (a kill, a quest).
+    /// What it is worth to alignment by the rules, for the deeds they fix; `None` for those
+    /// whose worth depends on whom or what (a kill, a quest) and those alignment does not count.
     fn worth(self, shift: &Shifts) -> Option<i32> {
         match self {
             Deed::AttackedShopkeeper => Some(shift.attack_shopkeeper),
@@ -81,10 +45,25 @@ impl Deed {
             Deed::Consecrated => Some(shift.consecrate),
             Deed::ConsumedCrystal => Some(shift.consume_crystal),
             Deed::MadePeace => Some(shift.make_peace),
-            Deed::Prayed(Alignment::Good) => Some(shift.prayed_good),
-            Deed::Prayed(Alignment::Evil) => Some(shift.prayed_evil),
-            Deed::Prayed(Alignment::Neutral) => Some(0),
-            Deed::KilledPeaceful | Deed::Hunted | Deed::KilledHostile | Deed::Quest => None,
+            Deed::PrayedHoly => Some(shift.prayed_good),
+            Deed::PrayedDark => Some(shift.prayed_evil),
+            // Whose worth depends on whom (a kill, a quest), or that alignment does not count.
+            Deed::KilledPeaceful
+            | Deed::Hunted
+            | Deed::KilledHostile
+            | Deed::QuestGood
+            | Deed::QuestEvil
+            | Deed::AteSapient
+            | Deed::AteMeal
+            | Deed::SummonedFiend
+            | Deed::Crafted
+            | Deed::GemCut
+            | Deed::GemSet
+            | Deed::Mined
+            | Deed::Rigged
+            | Deed::OathKill
+            | Deed::TwistPassed
+            | Deed::DawnSky => None,
         }
     }
 }
@@ -146,37 +125,57 @@ impl World {
         }
     }
 
-    /// The player did `deed`, whose worth the alignment rules fix (attacking a shopkeeper,
-    /// theft, paying a debt, eating kin).
+    /// The player did `deed`: alignment moves by its worth where the rules fix one (attacking
+    /// a shopkeeper, theft, paying a debt, eating kin), and their god notices it
+    /// ([`World::please`]).
     pub(in crate::world) fn player_did(&mut self, deed: Deed) {
         let worth = (self.content.alignment()).and_then(|rules| deed.worth(&rules.shift));
         if let Some(amount) = worth {
             self.shift_alignment(self.state.player, amount, deed);
+        }
+        self.please(deed);
+    }
+
+    /// The player completed a quest whose `alignment` is `amount`: alignment moves by it, and
+    /// their god notices a quest that helps or harms (`quest_good`, `quest_evil`).
+    pub(in crate::world) fn quest_done(&mut self, amount: i32) {
+        if let Some(deed) = Deed::quest(amount) {
+            self.shift_alignment(self.state.player, amount, deed);
+            self.please(deed);
         }
     }
 
     /// The player killed `victim`, still in the world: killing someone hostile is worth what
     /// their alignment says (an evil one: a little good); killing someone not hostile is evil,
     /// the more so if they are good, but a beast (a neutral creature that does not talk) may be
-    /// hunted.
+    /// hunted. Their god notices the kill by its kind and the victim's tags
+    /// ([`World::please_kill`]).
     pub(in crate::world) fn judge_kill(&mut self, victim: ActorId) {
-        let (Some(rules), Some(actor)) = (self.content.alignment(), self.state.actors.get(&victim))
-        else {
+        let Some(actor) = self.state.actors.get(&victim) else {
             return;
         };
         let nature = actor.nature(&self.content);
         let talks = (self.content)
             .dialogue_of(actor.creature, actor.npc.as_deref())
             .is_some();
-        let shift = rules.shift;
-        let (amount, deed) = if self.stance(self.state.player, victim) == Stance::Hostile {
-            (shift.kill_hostile.of(nature), Deed::KilledHostile)
+        let creature = actor.creature;
+        let deed = if self.stance(self.state.player, victim) == Stance::Hostile {
+            Deed::KilledHostile
         } else if nature == Alignment::Neutral && !talks {
-            (shift.kill_beast, Deed::Hunted)
+            Deed::Hunted
         } else {
-            (shift.kill_peaceful.of(nature), Deed::KilledPeaceful)
+            Deed::KilledPeaceful
         };
-        self.shift_alignment(self.state.player, amount, deed);
+        if let Some(rules) = self.content.alignment() {
+            let shift = rules.shift;
+            let amount = match deed {
+                Deed::KilledHostile => shift.kill_hostile.of(nature),
+                Deed::Hunted => shift.kill_beast,
+                _ => shift.kill_peaceful.of(nature),
+            };
+            self.shift_alignment(self.state.player, amount, deed);
+        }
+        self.please_kill(creature, deed);
     }
 
     /// The player ate a corpse of `creature`: eating one of their own race (the creature's

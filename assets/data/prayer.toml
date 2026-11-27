@@ -44,9 +44,8 @@ description = "Pray to your god (a cast's time, no mana): your wounds may close.
 
 # How a god hears the player, by its standing toward them (one place asks it, World::standing):
 # `strain` the percent of the strain a heard prayer adds; a row without it is not heard (the
-# faith's `unheard` words, a cast's time, no strain). The player's standing is `unheard` while
-# their alignment band is one their faith's face scorns (holy: Evil or worse; dark: Good or
-# better), else `heard`; `favoured` and `shunned` are not reached yet.
+# faith's `unheard` words, a cast's time, no strain). The player's standing is the band of their
+# piety with their faith (piety.toml).
 [hearing]
 heard = { strain = 100 }
 favoured = { strain = 50 }

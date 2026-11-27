@@ -47,6 +47,10 @@ pub(super) fn stat_rows(view: &PerceptionView<'_>) -> Vec<String> {
     if let Some(faith) = view.own_faith() {
         rows.push(format!("Faith {}", content.faith(faith).name));
     }
+    // Where they stand with their god: a word, never the score.
+    if let Some(standing) = view.own_standing() {
+        rows.push(format!("Standing {}", standing.id()));
+    }
     // The combat stance by name, when not neutral (as the status bar shows it).
     let stance = view.own_stance();
     if !stance.is_neutral() {

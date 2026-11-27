@@ -50,6 +50,8 @@
 #   alignment     the class's part of a new character's hidden alignment score (alignment.toml;
 #                 -1000 evil to 1000 good, default 0), added to the
 #                 race's: paladins start Good, thieves and witches Callous, everyone else Neutral
+#   piety         where the character's hidden piety with their own faith rests and starts
+#                 (../piety.toml; default 0): the priest's 20, the paladin's 40
 #   skills        the skills the class trains (skills/), by skill id: dice
 #                 (`"2d6+10"`) or a number, rolled when the character is made; added to the
 #                 race's. Each class has a few skills it is known

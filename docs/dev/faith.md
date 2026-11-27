@@ -11,14 +11,14 @@ slices, and each adds its reads here; nothing reads `shared` or `stranger` yet.
 
 | Module | What it holds |
 |---|---|
-| `content/faith.rs` | `FaithId` (an index in path order, saved), `FaithDef` (`id`, `name`, `description`, `face: Option<Face>`, `shared`, `stranger`, `answers`, `listens`, `words`, `uses`; `hears_anywhere`), `Faiths` (`list`, `get`, `id`, `is_empty`), `Stranger` (cold, hears, bane), `Listens` (anywhere, altar), `NeedsFace` (holy, any; `allows`); the loader (`Content::load_faiths`, then `resolve_faiths` once races and classes are in) and the reads `Content::faiths`, `faith`, `faiths_offered(race, class)`, `default_faith(race, class)`. A faith's face is the prayer's `Face` (`content/prayer.rs`), `None` for a faith with no face |
+| `content/faith.rs` | `FaithId` (an index in path order, saved), `FaithDef` (`id`, `name`, `description`, `face: Option<Face>`, `shared`, `stranger`, `answers`, `listens`, `words`, `uses`, `piety`; `hears_anywhere`, `side`: good for a holy face, evil for a dark one), `Faiths` (`list`, `get`, `id`, `is_empty`), `Stranger` (cold, hears, bane), `Listens` (anywhere, altar), `NeedsFace` (holy, any; `allows`); the loader (`Content::load_faiths`, then `resolve_faiths` once races and classes are in) and the reads `Content::faiths`, `faith`, `faiths_offered(race, class)`, `default_faith(race, class)`. A faith's face is the prayer's `Face` (`content/prayer.rs`), `None` for a faith with no face |
 | `content/race.rs` | `RaceDef::faith` (the default) and `faiths` (the others open, in the race's order), resolved from `faith_spec`/`faiths_spec` |
 | `content/class.rs` | `ClassDef::needs_face`: a class file's `faith` (`"holy"` the paladin, `"any"` the priest) |
 | `character.rs` | `CharacterSpec::faith` (an id, `None`: the default), `with_faith`, `faith(content)` (the chosen one, else `default_faith`), `check` and `check_open` (an unknown faith; one not offered), `Start::faith` |
 | `world/turn/actor.rs` | `Actor::faith: Option<FaithId>`: set in `World::begin` from `Start::faith`; `None` for every creature; saved and hashed, left out while `None` |
 | `perception/truth.rs` | `PerceptionView::own_faith` (the player knows their faith) |
 | `content/lexicon.rs`, `content/data_line.rs` | `faith:<id>`, the name (a proper name with its own article, its label as written: "the Mynster"), and the lines of data `faith:<id>.description`, `faith:<id>.words.<field>`, and `faith:<id>.use.<use>` |
-| `world/faith/` | What play reads of it: `pray.rs` (`Actor::prayer_face`, the prayer), `standing.rs` (`World::standing`, `hearing`), `dark_face.rs` (`docs/dev/prayer.md`) |
+| `world/faith/` | What play reads of it: `pray.rs` (`Actor::prayer_face`, the prayer), `standing.rs` (`World::standing`, `hearing`), `dark_face.rs` (`docs/dev/prayer.md`), `piety.rs` (what its god thinks of the player, `docs/dev/piety.md`) |
 
 ## Data
 
