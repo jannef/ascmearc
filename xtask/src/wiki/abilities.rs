@@ -288,8 +288,8 @@ fn read_more(content: &Content, a: Ability) -> String {
     }
 }
 
-/// The class whose table first gives class active `active`, linked to its section: a class's on
-/// the classes page, a prestige class's on the prestige classes page.
+/// The class whose table first gives class active `active`, linked to its section on the
+/// classes page.
 fn class_of(content: &Content, active: ClassActive) -> String {
     let book = content.talents();
     let gives = |abilities: &[(u8, String)]| {
