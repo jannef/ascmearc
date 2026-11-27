@@ -1104,8 +1104,7 @@ fn light(
     let flood = p.flood;
     let lit = (p.lit_chance - flood / 3).max(5) as u32;
     let (cy, east) = (plan.axis, plan.east);
-    for i in 0..plan.rooms.len() {
-        let room = &plan.rooms[i];
+    for (i, room) in plan.rooms.iter().enumerate() {
         if room.kind.is_core() && i != up_room {
             continue;
         }
