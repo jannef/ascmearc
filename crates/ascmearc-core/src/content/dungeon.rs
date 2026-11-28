@@ -140,12 +140,12 @@
 
 use super::ContentError;
 use super::altar::AltarWeights;
-use super::faith::{FaithId, Faiths};
 use super::creature::CreatureId;
 use super::danger::{
     CountSpec, DangerRule, DangerSpec, Odds, OddsSpec, SpawnSpec, Spawning, SpawningSpec, StrayPool,
 };
 use super::dread::{DreadCurve, DreadCurveSpec};
+use super::faith::{FaithId, Faiths};
 use super::generator::{GeneratorDefaults, GeneratorKind, GeneratorSpec};
 use super::level::{HiddenLocation, HiddenSpec};
 use super::object::ObjectId;
@@ -312,7 +312,10 @@ impl LevelSpec {
             room_effects: table(&self.room_effects, &under.room_effects),
             shops: shops(&self.shops, &under.shops),
             altars: self.altars.or(under.altars),
-            altar_faith: self.altar_faith.clone().or_else(|| under.altar_faith.clone()),
+            altar_faith: self
+                .altar_faith
+                .clone()
+                .or_else(|| under.altar_faith.clone()),
             vaults: self.vaults.clone().or_else(|| under.vaults.clone()),
             hidden: self.hidden.clone().or_else(|| under.hidden.clone()),
         }

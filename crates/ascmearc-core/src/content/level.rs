@@ -38,11 +38,11 @@
 //! (`super::danger`): creatures of about that danger keep coming while the player is there; none on
 //! the overworld.
 
+use super::altar::{Altar, SideSpec};
 use super::creature::CreatureId;
 use super::danger::{
     CountSpec, DangerRule, DangerSpec, OddsSpec, SpawnSpec, Spawning, SpawningSpec, StrayPool,
 };
-use super::altar::{Altar, SideSpec};
 use super::faction::FactionId;
 use super::flow::Flow;
 use super::light::LightId;
@@ -1166,7 +1166,9 @@ pub(super) fn parse_level(
     // one gives no light.
     for (&p, altar) in &altars {
         let i = usize::try_from(p.y * width + p.x).unwrap_or(usize::MAX);
-        let lit = cells.get(i).is_some_and(|&t| Some(t) == content.altars().terrain);
+        let lit = cells
+            .get(i)
+            .is_some_and(|&t| Some(t) == content.altars().terrain);
         if let Some(glow) = content.altar_glow(altar).filter(|_| lit) {
             lights.entry(p).or_insert(glow);
         }

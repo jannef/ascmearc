@@ -19,7 +19,8 @@ fn shares(w: &AltarWeights) -> String {
 /// run of floors of a dungeon that sets its own, with the church its altars are named for.
 pub(super) fn altar_places(content: &Content) -> String {
     let defaults = content.altars().weights;
-    let mut out = String::from("| Place | Hallowed | Old | Unhallowed |\n|---|:---:|:---:|:---:|\n");
+    let mut out =
+        String::from("| Place | Hallowed | Old | Unhallowed |\n|---|:---:|:---:|:---:|\n");
     let _ = writeln!(out, "| Anywhere else | {} |", shares(&defaults));
     let mut branches: Vec<_> = content.dungeons().collect();
     branches.sort_by(|a, b| a.name.cmp(&b.name));
@@ -34,9 +35,8 @@ pub(super) fn altar_places(content: &Content) -> String {
                 _ => runs.push((depth, depth, key.0, key.1)),
             }
         }
-        let own = |run: &&(u32, u32, AltarWeights, Option<FaithId>)| {
-            run.2 != defaults || run.3.is_some()
-        };
+        let own =
+            |run: &&(u32, u32, AltarWeights, Option<FaithId>)| run.2 != defaults || run.3.is_some();
         let whole = runs.len() == 1;
         for (from, to, weights, faith) in runs.iter().filter(own) {
             let floors = match (whole, from == to) {
@@ -44,9 +44,7 @@ pub(super) fn altar_places(content: &Content) -> String {
                 (false, true) => format!(", floor {from}"),
                 (false, false) => format!(", floors {from}–{to}"),
             };
-            let named = faith.map_or(String::new(), |f| {
-                format!(" ({}'s)", content.faith(f).name)
-            });
+            let named = faith.map_or(String::new(), |f| format!(" ({}'s)", content.faith(f).name));
             let _ = writeln!(out, "| {}{floors}{named} | {} |", d.name, shares(weights));
         }
     }

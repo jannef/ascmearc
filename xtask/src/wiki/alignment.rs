@@ -111,14 +111,8 @@ pub(super) fn alignment_deeds(content: &Content) -> String {
             "A thinking creature holding back from you, by the [Friþwebbe](magic-items.md#unique-items)",
             s.make_peace,
         ),
-        (
-            "Praying at a hallowed altar (gold glow)",
-            s.prayed_good,
-        ),
-        (
-            "Praying at an unhallowed altar (red glow)",
-            s.prayed_evil,
-        ),
+        ("Praying at a hallowed altar (gold glow)", s.prayed_good),
+        ("Praying at an unhallowed altar (red glow)", s.prayed_evil),
     ];
     let mut out = String::from("| Deed | Moves you | Worth |\n|---|---|:---:|\n");
     for (deed, amount) in rows {

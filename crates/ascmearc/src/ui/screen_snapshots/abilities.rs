@@ -175,7 +175,7 @@ cases! {
     abilities_menu_here: Case {
         name: "abilities-menu-here",
         scenario: "shrine",
-        actions: "move:N open:N move:N*2",
+        actions: "move:N open:N move:N*3",
         screen: Some("abilities"),
         ..BASE
     },

@@ -18,8 +18,14 @@ fn the_kinds_and_weights_load() {
         .map(|&s| altars.kind(s).name.as_str())
         .collect();
     assert_eq!(names, ["hallowed altar", "old altar", "unhallowed altar"]);
-    assert_eq!(altars.kind(Alignment::Good).glow, content.light_id("altar_good"));
-    assert_eq!(altars.kind(Alignment::Evil).glow, content.light_id("altar_evil"));
+    assert_eq!(
+        altars.kind(Alignment::Good).glow,
+        content.light_id("altar_good")
+    );
+    assert_eq!(
+        altars.kind(Alignment::Evil).glow,
+        content.light_id("altar_evil")
+    );
     // One good to two unaligned to one evil: a roll of four read in that order.
     let w = AltarWeights::default();
     let sides: Vec<Alignment> = (0..4).map(|r| w.pick(r)).collect();
@@ -78,12 +84,21 @@ fn a_legend_and_an_altar_room_give_each_altar_its_record_and_glow() {
     assert_eq!(at(3), Some(Altar::of(Alignment::Evil)));
     assert!(level.rooms.iter().all(|r| r.side.is_none()));
     // The Mynster's glow on its altar, none on the spent one, the unhallowed red on the room's.
-    assert_eq!(level.lights.get(&Pos::new(1, 1)).copied(), content.light_id("altar_good"));
+    assert_eq!(
+        level.lights.get(&Pos::new(1, 1)).copied(),
+        content.light_id("altar_good")
+    );
     assert_eq!(level.lights.get(&Pos::new(2, 1)), None);
-    assert_eq!(level.lights.get(&Pos::new(3, 1)).copied(), content.light_id("altar_evil"));
+    assert_eq!(
+        level.lights.get(&Pos::new(3, 1)).copied(),
+        content.light_id("altar_evil")
+    );
     // A level outside every campaign may keep a bare altar (test content).
-    let bare = with_level("\"A\" = \"altar\"\n\"B\" = \"floor\"\n\"C\" = \"floor\"", "")
-        .expect("loads");
+    let bare = with_level(
+        "\"A\" = \"altar\"\n\"B\" = \"floor\"\n\"C\" = \"floor\"",
+        "",
+    )
+    .expect("loads");
     assert!(bare.level("t").expect("t").altars.is_empty());
 }
 
@@ -120,15 +135,31 @@ fn the_shipped_altars_have_their_churches_and_sides() {
 fn altars_that_do_not_hold_together_are_refused() {
     let floor = "\"B\" = \"floor\"\n\"C\" = \"floor\"";
     let cases = [
-        ("\"A\" = { terrain = \"altar\", faith = \"frogs\" }", "", "has no side"),
+        (
+            "\"A\" = { terrain = \"altar\", faith = \"frogs\" }",
+            "",
+            "has no side",
+        ),
         (
             "\"A\" = { terrain = \"altar\", faith = \"dark\", side = \"good\" }",
             "",
             "is not of the `side` given",
         ),
-        ("\"A\" = { terrain = \"altar\", home = true }", "", "`home` needs a `faith`"),
-        ("\"A\" = { terrain = \"floor\", side = \"good\" }", "", "are an altar's"),
-        ("\"A\" = { terrain = \"altar\", faith = \"lamp\" }", "", "unknown faith `lamp`"),
+        (
+            "\"A\" = { terrain = \"altar\", home = true }",
+            "",
+            "`home` needs a `faith`",
+        ),
+        (
+            "\"A\" = { terrain = \"floor\", side = \"good\" }",
+            "",
+            "are an altar's",
+        ),
+        (
+            "\"A\" = { terrain = \"altar\", faith = \"lamp\" }",
+            "",
+            "unknown faith `lamp`",
+        ),
         (
             "\"A\" = \"floor\"",
             "[[room]]\neffect = \"echoing\"\narea = [0, 0, 6, 3]\nfaith = \"mynster\"\n",

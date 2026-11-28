@@ -41,9 +41,8 @@ fn people(content: &Content, id: FaithId) -> Vec<&RaceDef> {
 /// Every faith in the order creation lists them: whose own it is, who answers it, and which
 /// altars are its own.
 pub(super) fn faiths(content: &Content) -> String {
-    let mut out = String::from(
-        "| Faith | Whose own faith | Answered by | Its altars |\n|---|---|---|---|\n",
-    );
+    let mut out =
+        String::from("| Faith | Whose own faith | Answered by | Its altars |\n|---|---|---|---|\n");
     for (id, def) in content.faiths().list() {
         let races: Vec<String> = (people(content, id).iter())
             .map(|r| link(Term::Race, &r.id, &r.name))

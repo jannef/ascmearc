@@ -65,10 +65,9 @@ mod way_up;
 use crate::chest::Chest;
 use crate::content::{
     Altar, AltarWeights, Content, CreatureId, CreatureSpawn, DungeonDef, FaithId, Flow, Generator,
-    GeneratorKind, LevelKind,
-    LevelPlan, LevelTemplate, LightId, ObjectId, Place, RoomEffectId, RoomOdds, Secret, ShopOdds,
-    ShopPlan, Spawning, SpecialRoom, StairsDir, StairsLink, TerrainId, Trap, Vault, VaultMonsters,
-    secret_look, sibling,
+    GeneratorKind, LevelKind, LevelPlan, LevelTemplate, LightId, ObjectId, Place, RoomEffectId,
+    RoomOdds, Secret, ShopOdds, ShopPlan, Spawning, SpecialRoom, StairsDir, StairsLink, TerrainId,
+    Trap, Vault, VaultMonsters, secret_look, sibling,
 };
 use crate::door::Lock;
 use crate::geom::{Dir, Pos};

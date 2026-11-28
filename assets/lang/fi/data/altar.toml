@@ -2,10 +2,10 @@
 # (`altar:<side>.description`, data/altars.toml).
 
 [evil]
-description = { text = "Sen valo on vanhojen hiilten punaa.", of = "" }
+description = { text = "Sen valo on vanhojen hiilten punaa.", of = "bc4a65" }
 
 [good]
-description = { text = "Sen valo on lämmin.", of = "" }
+description = { text = "Sen valo on lämmin.", of = "8305df" }
 
 [unaligned]
-description = { text = "Kulunut kivialttari. Kädet tai aika ovat hioneet sen kaiverrukset sileiksi, eikä jumalalla, jota se palveli, ole enää nimeä. Jokin täällä kuuntelee yhä.", of = "" }
+description = { text = "Kulunut kivialttari. Kädet tai aika ovat hioneet sen kaiverrukset sileiksi, eikä jumalalla, jota se palveli, ole enää nimeä. Jokin täällä kuuntelee yhä.", of = "876e2b" }

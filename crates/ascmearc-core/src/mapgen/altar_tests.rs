@@ -78,8 +78,10 @@ fn a_dungeons_weights_and_church_name_its_altars() {
     let faith = |id: &str| content.faiths().id(id);
     let mut seen = [0u32; 2];
     for seed in 0..40 {
-        for (depth, side, church) in [(2, Alignment::Good, "mynster"), (6, Alignment::Evil, "dark")]
-        {
+        for (depth, side, church) in [
+            (2, Alignment::Good, "mynster"),
+            (6, Alignment::Evil, "dark"),
+        ] {
             let id = format!("fennmynster:{depth}");
             let level = generate(&content, ("ascmearc", seed), &id, None).expect("level");
             for altar in level.altars.values() {
@@ -91,6 +93,9 @@ fn a_dungeons_weights_and_church_name_its_altars() {
     }
     assert!(seen.iter().all(|&n| n > 0), "{seen:?}");
     // Cealdhlāw's are old altars only.
-    let weights = content.dungeon("cealdhlaw").and_then(|d| d.plan(3)).map(|p| p.altars);
+    let weights = content
+        .dungeon("cealdhlaw")
+        .and_then(|d| d.plan(3))
+        .map(|p| p.altars);
     assert_eq!(weights.map(|w| w.only()), Some(Some(Alignment::Neutral)));
 }

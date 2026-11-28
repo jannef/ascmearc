@@ -433,16 +433,14 @@ mod tests {
 
     #[test]
     fn walking_into_what_offers_an_action_asks_first() {
-        let cases = [
-            (
-                "spring",
-                "move:N*5",
-                "Spring",
-                "Would you like to drink from the spring?",
-                "Drink",
-                Ability::Drink,
-            ),
-        ];
+        let cases = [(
+            "spring",
+            "move:N*5",
+            "Spring",
+            "Would you like to drink from the spring?",
+            "Drink",
+            Ability::Drink,
+        )];
         for (scenario, walk, title, text, label, ability) in cases {
             let world = walked_to(scenario, walk);
             let view = world.perception();
@@ -497,14 +495,15 @@ mod tests {
     /// on it; spent, it offers nothing.
     #[test]
     fn an_altar_never_asks_and_a_spent_one_offers_nothing() {
-        let mut world = walked_to("shrine", "move:N open:N move:N*2");
+        let mut world = walked_to("shrine", "move:N open:N move:N*3");
         let altar = Pos::new(13, 3);
         assert_eq!(world.perception().offer_at(altar), Some(Offer::Pray));
         assert!(offer_dialog(&world.perception(), Dir::N).is_none());
         world.apply(&Action::Move(Dir::N));
         assert_eq!(world.perception().viewer(), altar, "it is stood on");
         let pray = |view: &PerceptionView<'_>| {
-            (view.abilities().iter()).any(|own| own.ability == Ability::Pray && own.unavailable.is_none())
+            (view.abilities().iter())
+                .any(|own| own.ability == Ability::Pray && own.unavailable.is_none())
         };
         assert!(pray(&world.perception()));
         for _ in 0..8 {

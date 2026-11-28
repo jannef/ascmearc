@@ -27,7 +27,7 @@ elixir_no_difference = { text = "Et tunne mitään eroa.", of = "e1912f" }
 # How the death screen says a death (their own: the suffix `-nsa`): a participle, like the
 # screen's own "Kärmäläisen surmaama", so `fixtures.epitaph` can take it after a comma ("Tässä lepää
 # Brakka, syvään veteen hukkunut.").
-epitaph_altar = { text = "Alttarilla kaatunut", of = "" }
+epitaph_altar = { text = "Alttarilla kaatunut", of = "6c7faa" }
 epitaph_choked = { text = "{what:Counted_ill} tukehtunut", of = "ffca36" }
 epitaph_drowned = { text = "Syvään veteen hukkunut", of = "3e7667" }
 epitaph_fall = { text = "Sortuneen lattian läpi pudonnut", of = "d7d45a" }

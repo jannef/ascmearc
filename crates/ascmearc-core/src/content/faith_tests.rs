@@ -92,7 +92,10 @@ fn the_faiths_are_checked_when_content_loads() {
             faith("face = \"holy\"\nglow = \"no_such_light\""),
             "unknown light `no_such_light`",
         ),
-        (faith("face = \"holy\"\nside = \"grey\""), "unknown variant `grey`"),
+        (
+            faith("face = \"holy\"\nside = \"grey\""),
+            "unknown variant `grey`",
+        ),
         (
             "[[faith]]\nid = \"mynster\"\nname = \"x\"\ndescription = \"\"\nface = \"holy\"\n"
                 .to_string(),

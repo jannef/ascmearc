@@ -7,8 +7,9 @@ use crate::blood::{Spatter, Stain};
 use crate::chest::Chest;
 use crate::color::Rgb;
 use crate::content::{
-    Altar, CharColors, Content, EdgeExit, Flow, Here, HiddenLocation, LevelKind, LevelTemplate, LightId,
-    Place, RoomEffectId, Secret, SpecialRoom, StairsLink, TerrainDef, TerrainId, Trap, TrapId,
+    Altar, CharColors, Content, EdgeExit, Flow, Here, HiddenLocation, LevelKind, LevelTemplate,
+    LightId, Place, RoomEffectId, Secret, SpecialRoom, StairsLink, TerrainDef, TerrainId, Trap,
+    TrapId,
 };
 use crate::door::Lock;
 use crate::geom::Pos;

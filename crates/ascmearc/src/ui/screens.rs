@@ -2080,9 +2080,7 @@ mod tests {
             app.world_mut().write_message(press);
             app.update();
         };
-        for (scenario, walk, used) in [
-            ("spring", "move:N*5", Action::Drink),
-        ] {
+        for (scenario, walk, used) in [("spring", "move:N*5", Action::Drink)] {
             let content = content();
             let mut world =
                 ascmearc_core::World::new(content.clone(), scenario, None).expect("run");

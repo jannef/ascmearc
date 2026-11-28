@@ -775,9 +775,7 @@ fn status_cures(content: &Content, status: usize, def: &StatusDef) -> Vec<String
                 || (o.effect.cure_by.as_ref()).is_some_and(|c| def.cured_by.contains(c))
         });
     if altar {
-        out.push(
-            "now and then an [altar](altars-forges-springs.md#praying-at-an-altar)".into(),
-        );
+        out.push("now and then an [altar](altars-forges-springs.md#praying-at-an-altar)".into());
     }
     out
 }
