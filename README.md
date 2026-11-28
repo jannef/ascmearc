@@ -104,7 +104,7 @@ cargo install --git https://github.com/jannef/ascmearc --tag v0.24.0 --locked as
 
 - `--locked` uses the release's `Cargo.lock`. Add `ascmearc-cli` after `ascmearc` for the
   headless tool too.
-- It needs a Rust toolchain of at least 1.99 (`rust-version`); outside the repository,
+- It needs a Rust toolchain of at least 1.100 (`rust-version`); outside the repository,
   `rust-toolchain.toml` does not apply.
 - The result is a bare binary in `~/.cargo/bin`, not a macOS `.app`; a local build has no
   quarantine flag, so Gatekeeper does not block it.
