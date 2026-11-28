@@ -23,6 +23,10 @@
 //! `target/` above is Cargo's target directory, wherever it is ([`target_dir`]): build output
 //! is looked for there and xtask's own output (`xtask/`, `web/`) goes there too.
 
+// Linked only to pin dependency features (crates/workspace-hack, #1572); named here so the
+// `unused_dependencies` lint knows it is meant.
+use workspace_hack as _;
+
 mod bench;
 mod bench_glow;
 mod docs_check;

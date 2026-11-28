@@ -10,6 +10,10 @@
 //! ascmearc-cli dump --mod mods/pride_month --scenario ceaptun --layers view
 //! ```
 
+// Linked only to pin dependency features (crates/workspace-hack, #1572); named here so the
+// `unused_dependencies` lint knows it is meant.
+use workspace_hack as _;
+
 use ascmearc_assets::mods::{self, Mod};
 use ascmearc_core::action::parse_actions;
 use ascmearc_core::character::CharacterSpec;
