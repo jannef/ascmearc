@@ -770,7 +770,7 @@ mod tests {
         world.apply(&Action::Move(Dir::SW));
         world.apply(&Action::Move(Dir::SW));
         world.apply(&Action::PickUp(Positions::of([0])));
-        let text = drawn(&world, 80, 30);
+        let text = drawn(&world, 80, 31);
         let row = |needle: &str| {
             text.iter()
                 .find(|l| l.contains(needle))
@@ -810,8 +810,8 @@ mod tests {
         }
         assert!(row("Stance").contains("Neutral"));
         world.apply(&Action::SetStance(CombatStance::Aggressive));
-        // A row taller: the thief holds openings from level 1.
-        let text = drawn(&world, 80, 31);
+        // A row taller: the thief holds openings from level 1, and one more for the standing.
+        let text = drawn(&world, 80, 32);
         assert!(
             (text.iter()).any(|l| l.contains("Stance") && l.contains("Aggressive")),
             "{text:#?}"
@@ -822,7 +822,7 @@ mod tests {
         let thresholds = "Burdened over 15 kg, strained over 30 kg, overloaded over 45 kg";
         assert_eq!(at(thresholds), at("Weight 73.9 kg").map(|y| y + 1));
         row("@ or Esc close   A skills");
-        let empty_handed = drawn(&showcase(), 80, 30);
+        let empty_handed = drawn(&showcase(), 80, 31);
         assert!(
             (empty_handed.iter()).any(|l| l.contains("Weight 70.4 kg (you 70 kg, carrying 400 g)")),
             "{empty_handed:#?}"

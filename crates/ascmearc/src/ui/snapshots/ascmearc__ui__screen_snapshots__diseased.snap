@@ -2,7 +2,6 @@
 source: crates/ascmearc/src/ui/screen_snapshots.rs
 expression: shown
 ---
- You feel weak from hunger. You should eat soon. You stop resting after 12 hours. --more--
 ┌─ Character ──────────────────────────────────────────────────────────────────────────────────────┐
 │                                                                                                  │
 │ Tamsin                                                                                           │
@@ -29,6 +28,7 @@ expression: shown
 │     Openings      0/5                                                                            │
 │     Alignment     Callous                                                                        │
 │     Faith         the Mynster                                                                    │
+│     Standing      Heard                                                                          │
 │     Status        Diseased, Weak                                                                 │
 │     Diseased      The shakes                                                                     │
 │                                                                                                  │

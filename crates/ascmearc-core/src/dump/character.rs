@@ -5,7 +5,7 @@ use super::*;
 /// The player's character, if any (`Name Brakka`, `Race Dwarf`, `Gender Female`, `Class
 /// Warrior`, `Age 27`, `Born 3 Seedtide 1417`, `Sign Fire Manticore`, with a lucky day's title
 /// `Sign Metal Manticore, the Iron Scourge`), then their own scores, one stat a line:
-/// `Strength 12`, their alignment band, and the faith they profess (`Faith the Mynster`).
+/// `Strength 12`, their alignment band, the faith they profess (`Faith the Mynster`), and their standing with it (`Standing heard`).
 pub(super) fn stat_rows(view: &PerceptionView<'_>) -> Vec<String> {
     let content = view.content();
     let mut rows = Vec::new();

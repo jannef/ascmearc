@@ -357,7 +357,8 @@ mod tests {
                 "Willpower 12",
                 "Presence 9",
                 "Alignment Callous",
-                "Faith the Mynster"
+                "Faith the Mynster",
+                "Standing heard"
             ]
         );
         // Other names the stat it raised.
