@@ -141,6 +141,9 @@ pub struct CharacterScreen {
     alignment: Option<String>,
     /// The faith they profess, by name (`the Mynster`); `None`: none.
     faith: Option<String>,
+    /// Where they stand with their god, one word (`Heard`), never the score; `None` without a
+    /// faith whose god keeps an opinion.
+    standing: Option<String>,
     /// Their oath kills (a dwarf with a Slayer's Oath, `docs/dev/oaths.md`): the tally, which
     /// they could keep themselves; `None` without an oath.
     oath_kills: Option<u32>,
@@ -199,6 +202,7 @@ impl CharacterScreen {
                 talents: 0,
                 alignment: None,
                 faith: None,
+                standing: None,
                 oath_kills: None,
                 guilds: Vec::new(),
                 attacks: Vec::new(),
@@ -286,6 +290,7 @@ impl CharacterScreen {
             talents: view.own_talents().iter().filter(|t| !t.class).count(),
             alignment: view.own_alignment().map(|b| word(b.name(), "Bare")),
             faith: (view.own_faith()).map(|f| label(content.faith_phrase(f))),
+            standing: view.own_standing().map(standing_word),
             oath_kills: view.own_oath_kills(),
             guilds: (view.own_guilds().iter())
                 .map(|g| {
@@ -364,6 +369,7 @@ impl CharacterScreen {
         let status_rows = self.resources.len() as i32
             + i32::from(self.alignment.is_some())
             + i32::from(self.faith.is_some())
+            + i32::from(self.standing.is_some())
             + i32::from(self.oath_kills.is_some())
             + self.guilds.len() as i32
             + conditions.len() as i32
@@ -514,6 +520,14 @@ impl CharacterScreen {
             if fits(y) {
                 console.print_in(x + 4, y, &ui(T::FAITH), TEXT, NAME_W - 1);
                 console.print(x + 4 + NAME_W, y, faith, TEXT);
+            }
+            y += 1;
+        }
+        // `    Standing      Heard`: where they stand with their god, never the score.
+        if let Some(standing) = &self.standing {
+            if fits(y) {
+                console.print_in(x + 4, y, &ui(T::STANDING), TEXT, NAME_W - 1);
+                console.print(x + 4 + NAME_W, y, standing, TEXT);
             }
             y += 1;
         }
@@ -707,6 +721,17 @@ pub fn thresholds(load: &Load, width: i32) -> Vec<String> {
     fit_joined(&parts, " ", width)
 }
 
+/// A standing's one word on the character screen.
+fn standing_word(standing: ascmearc_core::content::Standing) -> String {
+    use ascmearc_core::content::Standing;
+    ui(match standing {
+        Standing::Favoured => T::STANDING_FAVOURED,
+        Standing::Heard => T::STANDING_HEARD,
+        Standing::Unheard => T::STANDING_UNHEARD,
+        Standing::Shunned => T::STANDING_SHUNNED,
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -745,7 +770,7 @@ mod tests {
         world.apply(&Action::Move(Dir::SW));
         world.apply(&Action::Move(Dir::SW));
         world.apply(&Action::PickUp(Positions::of([0])));
-        let text = drawn(&world, 80, 30);
+        let text = drawn(&world, 80, 31);
         let row = |needle: &str| {
             text.iter()
                 .find(|l| l.contains(needle))
@@ -785,8 +810,8 @@ mod tests {
         }
         assert!(row("Stance").contains("Neutral"));
         world.apply(&Action::SetStance(CombatStance::Aggressive));
-        // A row taller: the thief holds openings from level 1.
-        let text = drawn(&world, 80, 31);
+        // A row taller: the thief holds openings from level 1, and one more for the standing.
+        let text = drawn(&world, 80, 32);
         assert!(
             (text.iter()).any(|l| l.contains("Stance") && l.contains("Aggressive")),
             "{text:#?}"
@@ -797,7 +822,7 @@ mod tests {
         let thresholds = "Burdened over 15 kg, strained over 30 kg, overloaded over 45 kg";
         assert_eq!(at(thresholds), at("Weight 73.9 kg").map(|y| y + 1));
         row("@ or Esc close   A skills");
-        let empty_handed = drawn(&showcase(), 80, 30);
+        let empty_handed = drawn(&showcase(), 80, 31);
         assert!(
             (empty_handed.iter()).any(|l| l.contains("Weight 70.4 kg (you 70 kg, carrying 400 g)")),
             "{empty_handed:#?}"

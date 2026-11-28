@@ -1138,6 +1138,10 @@ impl Job for Crafting {
         Some(profession_stat(&w.content, def, resolved.main))
     }
 
+    fn deed(&self) -> Option<crate::world::Deed> {
+        Some(crate::world::Deed::Crafted)
+    }
+
     fn done(&self, w: &mut World, _: &mut Vec<Event>) {
         w.crafted(*self);
     }

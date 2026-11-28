@@ -146,6 +146,26 @@ text = "Asento"
 of = "fab11a"
 text = "Neutraali"
 
+[standing]
+of = "74d71c"
+text = "Suosio"
+
+[standing_favoured]
+of = "2d7678"
+text = "Suosittu"
+
+[standing_heard]
+of = "6d576e"
+text = "Kuultu"
+
+[standing_shunned]
+of = "9f2131"
+text = "Hylätty"
+
+[standing_unheard]
+of = "64360f"
+text = "Kuulematon"
+
 [stars]
 of = "f63ea9"
 text = "Tähdet"

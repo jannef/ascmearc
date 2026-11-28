@@ -9,3 +9,13 @@ stranger = "cold"
 
 [faith.words]
 unheard = "You pray, but the Light does not know you."
+
+# Its own deeds over the goodly base (../piety.toml): it prizes the rite of consecration most.
+[faith.piety]
+deeds = { consecrate = 10 }
+
+[faith.piety.words]
+favoured = "The Light is with you."
+heard = "The Light hears you."
+unheard = "The Light is far from you."
+shunned = "The Light has turned from you."

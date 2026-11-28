@@ -85,11 +85,13 @@ Two faiths answer no prayer away from an altar. The Frogs Beyond never answer at
 lizardfolk of that faith Pray stays greyed out ("the Frogs do not answer"). The goblins' Big Ones
 listen only at an altar ("nothing big is listening").
 
-A god that scorns you does not hear you. The Light scorns the
-[Evil and the Wicked](alignment.md); the dark powers scorn the Good and the Saintly. Fall that far
-from your faith and your prayers go unheard ("You pray, but the Light does not know you."). An
-unheard prayer takes its time and answers nothing, but adds no strain either. Kind, Neutral, and
-Callous are heard by either. So a Callous sister of the Mynster is still the Light's, and heard.
+Your god hears you by your [standing](piety.md#your-standing) with it. A god you have
+displeased enough stops hearing you, and your prayers go unheard ("You pray, but the Light does
+not know you."). An unheard prayer takes its time and answers nothing, but adds no strain either.
+A god that is glad of you, Favoured, strains less at each prayer. Your
+[alignment](alignment.md) reaches your god only slowly: the Light cools toward the Evil and the
+Wicked day by day, and the dark powers toward the Good and the Saintly
+(see [Favour fades](piety.md#favour-fades)).
 
 ## The dark powers' answers
 

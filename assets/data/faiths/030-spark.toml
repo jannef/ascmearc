@@ -10,3 +10,14 @@ stranger = "cold"
 [faith.words]
 pray = "You strike the stone once, as on the anvil, and wait."
 unheard = "You strike the stone, and no spark answers."
+
+# Work, memory, and debts paid: a debt unpaid is a wrong remembered.
+[faith.piety]
+deeds = { crafted = 2, mined = 1, oath_kill = 1, pay_debt = 5, theft = -10, attack_shopkeeper = -10 }
+wane = { favour = 2, anger = 1 }
+
+[faith.piety.words]
+favoured = "The Spark burns bright in you."
+heard = "The Spark is with you."
+unheard = "The Spark in you is dim."
+shunned = "The Spark has gone out of you."

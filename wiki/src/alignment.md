@@ -93,6 +93,11 @@ are still used and take the time of a cast, but do nothing: no healing, no blow,
 consecration, and no cooldown, [zeal](resources.md#resource-zeal), or [mana](mana.md#spending-it)
 spent. Putting your holy light out always works.
 
+**Your god.** Alignment is not [piety](piety.md), what your god thinks of you. But a god whose
+face scorns your band cools toward you a little each dawn: the Light toward the Evil and the
+Wicked, the dark powers toward the Good and the Saintly (see
+[Favour fades](piety.md#favour-fades)).
+
 **Zeal.** Any deed that moves you toward evil empties a [paladin](class-paladin.md)'s
 [zeal](resources.md#resource-zeal) at once ("Your zeal deserts you."). It bars nothing: the pool
 fills again.

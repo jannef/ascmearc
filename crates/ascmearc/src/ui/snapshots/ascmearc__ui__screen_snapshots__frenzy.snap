@@ -2,9 +2,8 @@
 source: crates/ascmearc/src/ui/screen_snapshots.rs
 expression: shown
 ---
- You fight in a frenzy.
  You┌─ Character ─────────────────────────────────────────────────────────────────────────────────────────────────┐
-    │                                                                                                             │
+ You│                                                                                                             │
     │ Garrick                                                                                                     │
     │                                                                                                             │
     │ Race    Human                                                                                               │
@@ -29,6 +28,7 @@ expression: shown
     │     Rage          11/20                                                                                     │
     │     Alignment     Neutral                                                                                   │
     │     Faith         the Mynster                                                                               │
+    │     Standing      Heard                                                                                     │
     │     Status        Raging                                                                                    │
     │     Resistant to  cold                                                                                      │
     │                                                                                                             │

@@ -18,7 +18,7 @@
 //! No draws: the counts never touch the random streams.
 
 use crate::content::{CreatureId, Law, data_line};
-use crate::world::World;
+use crate::world::{Deed, World};
 use serde::{Deserialize, Serialize};
 
 /// How often the player has broken each law. Left out of the saved state while both are 0.
@@ -90,11 +90,15 @@ impl World {
             return;
         };
         // A player who craves (`craving.rs`) hears the craving's first line instead.
-        if let Some(count) = self.broke(&laws.eat, creature, |b| &mut b.eaten)
+        let broken = self.broke(&laws.eat, creature, |b| &mut b.eaten);
+        if let Some(count) = broken
             && !self.craved(count)
             && count == 1
         {
             self.say(data_line::said(data_line::law_first("eat")));
+        }
+        if broken.is_some() {
+            self.please(Deed::AteSapient);
         }
     }
 
@@ -104,8 +108,12 @@ impl World {
         let Some(laws) = content.laws() else {
             return;
         };
-        if self.broke(&laws.summon, creature, |b| &mut b.summoned) == Some(1) {
+        let broken = self.broke(&laws.summon, creature, |b| &mut b.summoned);
+        if broken == Some(1) {
             self.say(data_line::said(data_line::law_first("summon")));
+        }
+        if broken.is_some() {
+            self.please(Deed::SummonedFiend);
         }
     }
 

@@ -1,0 +1,20 @@
+# Lines of data: the player's hidden piety crossing into a standing (`piety:band.<id>.rise`,
+# `.fall`), and Pray's clause while it is not heard (`.words`). Felt, never counted.
+
+[band.favoured]
+rise = { text = "Tunnet jumalasi suosion lämpenevän.", of = "a109dd" }
+words = { text = "Jumalasi kuulee sinua mielellään.", of = "12809c" }
+
+[band.heard]
+fall = { text = "Tunnet jumalasi suosion viilenevän.", of = "5d1375" }
+rise = { text = "Tunnet jumalasi kääntyvän taas puoleesi.", of = "0cd994" }
+words = { text = "Jumalasi kuulee sinua.", of = "d518f8" }
+
+[band.shunned]
+fall = { text = "Tunnet jumalasi hylkäävän sinut.", of = "fb68e2" }
+words = { text = "Jumalasi on kääntynyt pois sinusta.", of = "6c3d8a" }
+
+[band.unheard]
+fall = { text = "Tunnet jumalasi kääntävän kasvonsa pois sinusta.", of = "9438fe" }
+rise = { text = "Tunnet jumalasi vihan lauhtuvan.", of = "9e7ca2" }
+words = { text = "Jumalasi on kaukana sinusta.", of = "9096cd" }

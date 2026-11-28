@@ -9,3 +9,16 @@ stranger = "bane"
 [faith.words]
 pray = "You speketh to the Webbestre, and she herkneth."
 unheard = "You speketh to the Webbestre, and she herkneth nat."
+
+# Envy: taking what another had, and the fiends; peace, holy work, and her spiders' deaths offend
+# her. Her favour is climbed by others; she is slow to forget.
+[faith.piety]
+deeds = { theft = 4, summon_fiend = 10, pay_debt = -3, make_peace = -10, consecrate = -10 }
+kills = { tags = { spider = -5 } }
+wane = { favour = 4, anger = 1 }
+
+[faith.piety.words]
+favoured = "The Webbestre smyleth on thee."
+heard = "The Webbestre herkneth thee."
+unheard = "The Webbestre herkneth thee nat."
+shunned = "The Webbestre hath cut thee from hir web."

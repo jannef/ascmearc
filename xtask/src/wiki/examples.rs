@@ -1,5 +1,5 @@
 //! The worked examples on the wiki's pages (`> **Example: ...**` boxes on Combat, Stats, Burden,
-//! Skills, Mana, Enchanting, and Food; #1578, #1669, #1825) are hand-written. These tests rebuild
+//! Skills, Mana, Enchanting, Food, and Piety; #1578, #1669, #1825) are hand-written. These tests rebuild
 //! each example's character through `ascmearc-core`, as `ascmearc-cli dump --character ...
 //! --layers stats,attacks` does, or its hypothetical one through the same rules, and check that every
 //! number the box states is the number the game computes: each check is a phrase the box must
@@ -631,5 +631,48 @@ fn food_a_ratfolk_at_100_who_is_weak() {
             "faint on {}% of turns",
             mods.harm(i32::from(hunger.faint.chance))
         ),
+    );
+}
+
+#[test]
+fn piety_a_priest_of_the_mynster() {
+    use ascmearc_core::content::Standing;
+    use ascmearc_core::piety::Deed;
+    let content = content();
+    let block = example("piety.md", "a priest of the Mynster");
+    let rules = content.piety().expect("piety.toml");
+    let start = content.class("priest").expect("the priest").piety;
+    let favoured = rules.band(Standing::Favoured).from;
+    let mynster = content.faiths().id("mynster").expect("the Mynster");
+    let worth = (rules.table(mynster).expect("a table")).worth(Deed::Consecrated);
+    let away = favoured - start;
+    says(&block, &format!("starts at {start}"));
+    says(&block, &format!("from {favoured}: {away} points away"));
+    says(&block, &format!("is worth {worth} to the Mynster"));
+    says(&block, &format!("so {} consecrations", word(away / worth)));
+}
+
+#[test]
+fn piety_a_sister_who_turns_evil() {
+    use super::util::ordinal;
+    use ascmearc_core::content::Standing;
+    let content = content();
+    let block = example("piety.md", "a sister who turns Evil");
+    let rules = content.piety().expect("piety.toml");
+    let heard = rules.band(Standing::Heard).from;
+    let floor = rules.scorn_floor();
+    let unheard_on = (1..).find(|d| -rules.scorn * d < heard).expect("a day");
+    let floor_on = (1..).find(|d| -rules.scorn * d <= floor).expect("a day");
+    says(&block, &format!("each dawn takes {}", rules.scorn));
+    says(
+        &block,
+        &format!(
+            "On the {} dawn she is Unheard",
+            ordinal(unheard_on as usize)
+        ),
+    );
+    says(
+        &block,
+        &format!("on the {} she is at {floor}", ordinal(floor_on as usize)),
     );
 }

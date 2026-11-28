@@ -132,6 +132,22 @@ text = "Stance"
 [stance_neutral]
 text = "Neutral"
 
+# The row of where they stand with their god (piety), one word, never the score.
+[standing]
+text = "Standing"
+
+[standing_favoured]
+text = "Favoured"
+
+[standing_heard]
+text = "Heard"
+
+[standing_shunned]
+text = "Shunned"
+
+[standing_unheard]
+text = "Unheard"
+
 [stars]
 text = "Stars"
 

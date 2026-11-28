@@ -5,3 +5,14 @@ name = "the Dark"
 description = "The Light's fallen servant under the black water, says the Mynster; the Evening Light, the Light at rest, says its cult. It takes anyone, at once."
 face = "dark"
 stranger = "hears"
+
+# The fiends its priests bargain with, and its rooms lifted, which it hates above all.
+[faith.piety]
+deeds = { summon_fiend = 10, consecrate = -15, make_peace = 0 }
+kills = { tags = { fiend = -1 } }
+
+[faith.piety.words]
+favoured = "The dark holds you close."
+heard = "The dark hears you."
+unheard = "The dark is silent to you."
+shunned = "The dark has let you go."

@@ -61,6 +61,10 @@ impl Job for Rigging {
         Some(Stat::Dexterity)
     }
 
+    fn deed(&self) -> Option<crate::world::Deed> {
+        Some(crate::world::Deed::Rigged)
+    }
+
     fn done(&self, w: &mut World, events: &mut Vec<Event>) {
         w.rigged(*self, events);
     }

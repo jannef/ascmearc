@@ -3,7 +3,6 @@ source: crates/ascmearc/src/ui/screen_snapshots.rs
 expression: shown
 ---
  There are several objects here.
- You pick up a leather jerkin, a dagger, and 2 wax candles.
 ┌─ Character ──────────────────────────────────────────────────────────────────────────────────────┐
 │                                                                                                  │
 │ Tamsin                                                                                           │
@@ -30,6 +29,7 @@ expression: shown
 │     Openings      0/5                                                                            │
 │     Alignment     Callous                                                                        │
 │     Faith         the Mynster                                                                    │
+│     Standing      Heard                                                                          │
 │                                                                                                  │
 │ Weight 74.6 kg (you 70 kg, carrying 4.6 kg)                                                      │
 │ Burdened over 15 kg, strained over 30 kg, overloaded over 45 kg                                  │

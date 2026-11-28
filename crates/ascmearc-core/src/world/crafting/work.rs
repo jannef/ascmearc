@@ -15,7 +15,8 @@
 //!   of them, its skill marks.
 //! - **The stat** (#1790): work done to its end, whatever came of it, trains the stat it is made
 //!   with ([`Job::stat`], asked of the stacks found before the task finishes; none for salvage
-//!   yet), through the `crafted` rules of that stat (`data/stats.toml`, [`World::train_craft`]).
+//!   yet), through the `crafted` rules of that stat (`data/stats.toml`, [`World::train_craft`]),
+//!   and is its deed ([`Job::deed`]: a recipe made, a gem cut or set, a trap rigged).
 //!
 //! A new rule for every craft (an interruption, a station check) goes here once.
 
@@ -27,7 +28,7 @@ use crate::stats::Stat;
 use crate::time::Duration;
 use crate::world::levels::encounter::Watch;
 use crate::world::turn::rest::Ended;
-use crate::world::{Spent, World};
+use crate::world::{Deed, Spent, World};
 use crate::world::{
     crafting::craft_make::Crafting, crafting::cut::GemWork, crafting::enchant::Enchanting,
     crafting::field_forge::Forging, crafting::make_do::Mending, crafting::rig::Rigging,
@@ -74,6 +75,12 @@ pub(in crate::world) trait Job {
 
     /// The time is up and the stacks are found: the work's own end.
     fn done(&self, w: &mut World, events: &mut Vec<Event>);
+
+    /// The deed work done to its end is, whatever came of it (a god may notice it:
+    /// `world/faith/piety.rs`). `None`: nothing.
+    fn deed(&self) -> Option<Deed> {
+        None
+    }
 }
 
 /// The long work under way, by kind.
@@ -157,6 +164,9 @@ impl World {
                     job.done(self, events);
                     if let Some(stat) = stat {
                         self.train_craft(stat);
+                    }
+                    if let Some(deed) = job.deed() {
+                        self.player_did(deed);
                     }
                 }
                 None => self.say(job.nothing_left()),

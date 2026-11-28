@@ -356,6 +356,10 @@ impl AbilitiesScreen {
 fn describe(view: &PerceptionView<'_>, ability: Ability) -> String {
     let content = view.content();
     let mut text = view.ability_description(ability).to_string();
+    // Pray ends with where the player stands with their god, when not heard.
+    if let (Ability::Pray, Some(clause)) = (ability, view.pray_clause()) {
+        text += &format!(" {}", ui_msg(clause));
+    }
     let Ability::Spell(spell) = ability else {
         return text;
     };

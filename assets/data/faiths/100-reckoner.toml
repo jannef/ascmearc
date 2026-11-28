@@ -9,3 +9,15 @@ stranger = "bane"
 [faith.words]
 pray = "You count your debts aloud, and pray."
 unheard = "You count, and the Reckoner does not mark you."
+
+# Greed's ledger: debts paid, the delf worked; an attack on a counting-house is his gravest sin.
+# The slowest book in the march: what you have paid stands a long time, and so does what you owe.
+[faith.piety]
+deeds = { pay_debt = 10, mined = 1, attack_shopkeeper = -15, theft = -5 }
+wane = { favour = 1, anger = 1 }
+
+[faith.piety.words]
+favoured = "The Reckoner counts you in credit."
+heard = "The Reckoner marks you."
+unheard = "The Reckoner does not mark you."
+shunned = "The Reckoner has written you in arrears."

@@ -61,6 +61,7 @@ here, in its group.
 - [hunger.md](hunger.md): satiation, eating, corpses, starving
 - [alignment.md](alignment.md): the good–evil score and the deeds that move it
 - [faith.md](faith.md): the faiths, the faith on the character, its choice at creation
+- [piety.md](piety.md): what each god thinks of the player, the deeds and the dawn that move it
 - [craving.md](craving.md): the ratfolk craving, what eating the thinking makes of them
 - [oaths.md](oaths.md): the dwarves' free Sworn foe, Slayer's Oath, oath kills and their table
 - [skills.md](skills.md): trained skills and training marks
