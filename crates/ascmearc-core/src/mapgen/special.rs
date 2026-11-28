@@ -15,7 +15,7 @@
 
 use super::Canvas;
 use crate::alignment::Alignment;
-use crate::content::{RoomEffectDef, RoomEffectId, RoomEffects, RoomOdds, SpecialRoom};
+use crate::content::{Altar, RoomEffectDef, RoomEffectId, RoomEffects, RoomOdds, SpecialRoom};
 use crate::geom::{Dir, Pos};
 use crate::rng::Rng;
 use std::collections::VecDeque;
@@ -104,8 +104,9 @@ pub(super) fn pick(
 }
 
 /// Makes `room` special as [`pick`] decided: it covers the level when `whole`, else it is
-/// [`make`], with its hidden side drawn first if its effect has `sides` (one good to two neutral
-/// to one evil; one more draw, only for such an effect; a shrine's good or evil, one to one), and
+/// [`make`], with its side drawn first if its effect has `sides` (one more draw, only for such an
+/// effect: an altar room's by the level's altar weights, `Canvas::altar_odds`, one good to two
+/// unaligned to one evil by default; a shrine's good or evil, one to one), and
 /// its dressing stood along its walls after if it has `dressing` (`dress.rs`; more draws, only for
 /// such an effect).
 pub(super) fn place(
@@ -126,11 +127,8 @@ pub(super) fn place(
             _ => Alignment::Evil,
         });
     } else if effect.sides.is_some() {
-        room.side = Some(match rng.below(4) {
-            0 => Alignment::Good,
-            3 => Alignment::Evil,
-            _ => Alignment::Neutral,
-        });
+        let (weights, _) = canvas.altar_odds;
+        room.side = Some(weights.pick(rng.below(weights.total())));
     }
     let dressing = canvas.content.room_effect(room.effect).dressing;
     if !make(canvas, room) {
@@ -147,7 +145,7 @@ pub(super) fn place(
 /// Makes `room` special, laying its effect's floor over the plain floor in it: unless it
 /// overlaps another special room, or creatures shun it (or it is a teeming den, a tempting hoard,
 /// or a room with secret doors) and one patrols through it. Returns whether it did.
-pub(super) fn make(canvas: &mut Canvas, room: SpecialRoom) -> bool {
+pub(super) fn make(canvas: &mut Canvas, mut room: SpecialRoom) -> bool {
     let effect = canvas.content.room_effect(room.effect);
     let patrolled = || {
         canvas.creatures.iter().any(|c| {
@@ -191,13 +189,31 @@ pub(super) fn make(canvas: &mut Canvas, room: SpecialRoom) -> bool {
     }
     if let Some((at, terrain)) = feature {
         canvas.set(at, terrain);
-        let light = room.side.and_then(|side| effect.side_light(side));
+        // An altar's side is its record's, not the room's.
+        let light = if Some(terrain) == canvas.content.altars().terrain {
+            let altar = generated_altar(canvas, room.side.take().unwrap_or_default());
+            canvas.altars.insert(at, altar);
+            canvas.content.altar_glow(&altar)
+        } else {
+            room.side.and_then(|side| effect.side_light(side))
+        };
         if let Some(light) = light {
             canvas.lights.insert(at, light);
         }
     }
     canvas.rooms.push(room);
     true
+}
+
+/// A generated altar of `side`: named for the level's `altar_faith` when that church is of its
+/// side, else unnamed.
+pub(super) fn generated_altar(canvas: &Canvas, side: Alignment) -> Altar {
+    let (_, faith) = canvas.altar_odds;
+    Altar {
+        side,
+        faith: faith.filter(|&f| canvas.content.faith(f).side == Some(side)),
+        home: false,
+    }
 }
 
 /// Where a room's feature goes: the cell of plain floor nearest the

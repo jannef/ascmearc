@@ -18,7 +18,7 @@ map = '''
 [legend]
 "z" = { terrain = "floor", creature = "skeleton", route = "E8 W8", carry = ["short_sword", "bronze_key"], wield = "short_sword" }
 # The silver chalice the barrow's dead were given (Sister Hild's "Grave goods").
-"_" = { terrain = "altar", objects = ["silver_chalice"] }
+"_" = { terrain = "altar", side = "unaligned", objects = ["silver_chalice"] }
 "L" = { terrain = "door_closed", lock = "barrow_chamber" }
 
 # Grave goods: the coins the dead were buried with, before the plinth.

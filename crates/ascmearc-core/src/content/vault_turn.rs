@@ -128,6 +128,7 @@ fn turned_template(template: &LevelTemplate, turn: Turn) -> LevelTemplate {
         creatures,
         stairs,
         lights,
+        altars,
         flow,
         objects,
         traps,
@@ -197,6 +198,7 @@ fn turned_template(template: &LevelTemplate, turn: Turn) -> LevelTemplate {
         creatures,
         stairs,
         lights: moved(lights, at),
+        altars: moved(altars, at),
         flow: (flow.iter())
             .map(|(p, f)| (at(*p), Flow::new(turn.dir(f.dir), f.speed)))
             .collect(),

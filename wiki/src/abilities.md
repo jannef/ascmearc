@@ -75,8 +75,8 @@ you never choose them, they work by themselves as you fight. They have their own
 - **[Pray](abilities.md#ability-pray)**, under Faith: everyone with a [faith](character.md#choosing-a-faith)
   has it. You pray to your god in the time of a spell, and your wounds may close. The menu names
   it by how far your prayers reach: Bede for most people, Orison and the names after it for a
-  [priest](class-priest.md). Pray too often and nothing answers for a while. Next to a [forgotten altar](altars-forges-springs.md#forgotten-altars) it
-  prays at the altar instead, and anyone may use it there.
+  [priest](class-priest.md). Pray too often and nothing answers for a while. On or next to an [altar](altars-forges-springs.md#praying-at-an-altar)
+  that is no church's it prays at the altar instead, and anyone may use it there.
 - **Shield bash**: anyone can bash with a shield (see [Weapon skills](weapon-skills.md)), so it is always in the menu,
   and you can use it while you hold a shield. It strikes whoever stands in the direction you
   choose, in the time of a blow.

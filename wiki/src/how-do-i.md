@@ -73,7 +73,7 @@ Each question links to the place that answers it. New to the game? Start with
 - ...travel across the map? [Travel](overworld.md#travel)
 - ...find a hidden dungeon? [Hidden locations](overworld.md#hidden-locations)
 - ...lift a room's curse? [Cursed rooms](cursed-and-hallowed.md#cursed-rooms)
-- ...pray at an altar? [Forgotten altars](altars-forges-springs.md#forgotten-altars)
+- ...pray at an altar? [Praying at an altar](altars-forges-springs.md#praying-at-an-altar)
 
 See also: [Your first run](first-run.md), [Controls](controls.md), and
 [What's in the game](features.md).

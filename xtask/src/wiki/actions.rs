@@ -52,7 +52,7 @@ pub(super) fn action_costs(content: &Content) -> String {
             ActionKind::Search => {
                 "Waiting, which is a turn of searching (searching for a while takes several)"
             }
-            ActionKind::Pray => "A turn of praying at a forgotten altar (a prayer takes a minute)",
+            ActionKind::Pray => "A turn of praying at an altar (a prayer takes a minute)",
             ActionKind::Drink => {
                 "A turn of drinking at a healing spring (a drink takes ten seconds)"
             }

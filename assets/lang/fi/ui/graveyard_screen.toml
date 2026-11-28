@@ -1,8 +1,8 @@
 # The graveyard screen (`crates/ascmearc/src/ui/graveyard_screen.rs`).
 
 [cause_altar]
-of = "33a1d8"
-text = "Kaatui unohdetulla alttarilla"
+of = "e6dc85"
+text = "Kaatui alttarilla"
 
 [cause_burned]
 of = "9f1a89"

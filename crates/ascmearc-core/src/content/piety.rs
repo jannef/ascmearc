@@ -256,7 +256,7 @@ fn check_wane(wane: Wane, err: &dyn Fn(String) -> ContentError) -> Result<(), Co
 
 /// Faith `def`'s table: its side's base with its own keys over it; `None` with neither.
 fn merge(content: &Content, rules: &PietyRules, def: &FaithDef) -> Option<FaithTable> {
-    let base = rules.base(def.side());
+    let base = rules.base(def.side);
     if base.is_none() && def.piety.is_none() {
         return None;
     }

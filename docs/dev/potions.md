@@ -209,7 +209,7 @@ every later flask (smoke, fire, frost, acid, the bombers) builds on.
   dies.
 - Quest rewards and level piles name potions by id (the Watch's reward, the hub's pile, the
   still room vault).
-- Elixirs: deep loot (level 8, frequency 2), the forgotten altar's great boon `elixir`
+- Elixirs: deep loot (level 8, frequency 2), an altar's great boon `elixir`
   (`data/outcomes/forgotten_altar.toml`, one of the six by weight), and the alchemist's draw (by
   frequency, so very rarely). A shop kind's `never` list (`ShopDef::never`, read in
   `Shops::stocks`) keeps them, and the costly flasks (thunder, blasting), out of general stores

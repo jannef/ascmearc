@@ -4,7 +4,8 @@ id = "mynster"
 name = "the Mynster"
 description = "The humans' church of the Light: mercy, burial, and the sick, and penance before healing."
 face = "holy"
-shared = ["hearth", "spark", "glimmering", "elder_light"]
+glow = "altar_good"
+altar_description = "It is the Mynster's: a lamp burns before it."
 stranger = "cold"
 
 [faith.words]

@@ -160,8 +160,8 @@ There are six elixirs, one for each stat, and all are gold:
 | will | [Willpower](stats.md#stat-willpower) |
 | presence | [Presence](stats.md#stat-presence) |
 
-They are found only deep ([item level](affixes.md#base-items) 8 and below), and seldom. A
-[forgotten altar](altars-forges-springs.md#forgotten-altars)'s great boon may leave one, and an
+They are found only deep ([item level](affixes.md#base-items) 8 and below), and seldom. An
+[altar](altars-forges-springs.md#praying-at-an-altar)'s great boon may leave one, and an
 alchemist very rarely has one for 2000 [gold](shops.md#money). A [general store](shops.md) or a
 provisioner never does.
 

@@ -64,10 +64,10 @@ mod way_up;
 
 use crate::chest::Chest;
 use crate::content::{
-    Content, CreatureId, CreatureSpawn, DungeonDef, Flow, Generator, GeneratorKind, LevelKind,
-    LevelPlan, LevelTemplate, LightId, ObjectId, Place, RoomEffectId, RoomOdds, Secret, ShopOdds,
-    ShopPlan, Spawning, SpecialRoom, StairsDir, StairsLink, TerrainId, Trap, Vault, VaultMonsters,
-    secret_look, sibling,
+    Altar, AltarWeights, Content, CreatureId, CreatureSpawn, DungeonDef, FaithId, Flow, Generator,
+    GeneratorKind, LevelKind, LevelPlan, LevelTemplate, LightId, ObjectId, Place, RoomEffectId,
+    RoomOdds, Secret, ShopOdds, ShopPlan, Spawning, SpecialRoom, StairsDir, StairsLink, TerrainId,
+    Trap, Vault, VaultMonsters, secret_look, sibling,
 };
 use crate::door::Lock;
 use crate::geom::{Dir, Pos};
@@ -204,6 +204,11 @@ pub(crate) struct Canvas<'a> {
     pub vaults: Vec<&'a Vault>,
     pub terrain: Grid<TerrainId>,
     pub lights: BTreeMap<Pos, LightId>,
+    /// Altars: stamped from vaults, an altar room's (`special.rs`), and a minster's.
+    pub altars: BTreeMap<Pos, Altar>,
+    /// The weights an altar room draws its altar's side by, and the church a generated altar
+    /// of that church's side is named for (the branch's at its depth).
+    pub altar_odds: (AltarWeights, Option<FaithId>),
     /// Flow of running water stamped from vaults (generators make none of their own).
     pub flow: BTreeMap<Pos, Flow>,
     /// Objects stamped from vaults, and keys to locked rooms.
@@ -267,6 +272,8 @@ impl<'a> Canvas<'a> {
             vaults,
             terrain: Grid::new(width, height, pal.void),
             lights: BTreeMap::new(),
+            altars: BTreeMap::new(),
+            altar_odds: (AltarWeights::default(), None),
             flow: BTreeMap::new(),
             objects: BTreeMap::new(),
             traps: BTreeMap::new(),
@@ -577,6 +584,7 @@ pub fn generate_for(
             .map_or(0, |(rule, depth, _)| rule.at(depth, 1));
         canvas.population = content.spawning(id).map_or(&[], |(_, _, s)| &s.population);
         canvas.below = needs.down;
+        canvas.altar_odds = (plan.altars, plan.altar_faith);
         let built = match &plan.generator {
             Generator::Rooms(p) => rooms::build(&mut canvas, &mut rng, needs, p),
             Generator::Caves(p) => caves::build(&mut canvas, &mut rng, needs, p),
@@ -652,6 +660,7 @@ pub fn generate_for(
             creatures: canvas.creatures,
             stairs,
             lights: canvas.lights,
+            altars: canvas.altars,
             flow: canvas.flow,
             objects: canvas.objects,
             traps: canvas.traps,

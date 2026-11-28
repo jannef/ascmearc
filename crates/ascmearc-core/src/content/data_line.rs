@@ -340,8 +340,8 @@ fn describe_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
 
 /// The data's words the screens and the look line show as written: a race's, a class's, a
 /// faith's, a talent's, a skill's, a scenario's, and a birth sign animal's and element's `description`, a
-/// lucky day's, a terrain's and a chest band's `description` (the look
-/// line and a feature underfoot), an animated body's `moves`, a status's `death` (the death
+/// lucky day's, a terrain's, an altar kind's, a named altar's faith's (`altar_description`), and a
+/// chest band's `description` (the look line and a feature underfoot), an animated body's `moves`, a status's `death` (the death
 /// and graveyard screens: "Bled to death"), and a resource's `short` (the status bar).
 fn shown_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     for def in content.resources() {
@@ -355,6 +355,14 @@ fn shown_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     }
     for (_, def) in content.faiths().list() {
         add(description("faith", &def.id), &def.description);
+        if let Some(text) = &def.altar_description {
+            add(faith_altar(&def.id), text);
+        }
+    }
+    for side in crate::alignment::Alignment::ALL {
+        if let Some(text) = &content.altars().kind(side).description {
+            add(description("altar", super::altar::side_id(side)), text);
+        }
     }
     for (_, def) in content.talents().iter() {
         add(description("talent", &def.id), &def.description);
@@ -405,7 +413,7 @@ pub fn lucky_description(day: &super::Lucky) -> String {
 }
 
 /// A `description` the screens show: `<kind>:<id>.description` (`race`, `class`, `faith`, `talent`,
-/// `skill`, `terrain`, `chest`, `scenario`, `sign_animal`, `sign_element`: the kinds of their
+/// `skill`, `terrain`, `altar`, `chest`, `scenario`, `sign_animal`, `sign_element`: the kinds of their
 /// lexicon ids).
 pub fn description(kind: &str, id: &str) -> String {
     format!("{kind}:{id}.description")
@@ -458,6 +466,12 @@ pub fn prayer_use(id: super::PrayerUse, face: super::Face) -> String {
 /// Faith `id`'s own word `field` for its prayers (`[faith.words]`): `faith:<id>.words.<field>`.
 pub fn faith_words(id: &str, field: &str) -> String {
     format!("faith:{id}.words.{field}")
+}
+
+/// What look mode says of an altar named for faith `id`, its `altar_description`:
+/// `faith:<id>.altar_description`.
+pub fn faith_altar(id: &str) -> String {
+    format!("faith:{id}.altar_description")
 }
 
 /// Faith `id`'s own word for piety standing `standing` (`[faith.piety.words]`):

@@ -69,7 +69,7 @@ epitaph = "Here lies {name}, {death}."
 "l" = { terrain = "plank_floor", light = "lamp" }
 "s" = "stool"
 "t" = "sconce"
-"_" = "altar"
+"_" = { terrain = "altar", faith = "mynster" }
 "+" = "door_closed"
 "@" = { terrain = "dirt_road", spawn = "player" }
 # The way down to the first crypt: a flagstone until every plot is filled.

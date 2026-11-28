@@ -75,6 +75,8 @@ TTTTTT#TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 '''
 
 [legend]
+# The Mynster's own altar, its church's home.
+"_" = { terrain = "altar", faith = "mynster", home = true }
 "." = "grass"
 ":" = "flagstones"
 "T" = "tree"

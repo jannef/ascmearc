@@ -1,6 +1,7 @@
-//! Forgotten altars in generated levels (`special.rs`): one altar a
-//! room at the free floor nearest its middle, never beside a door, the room still whole; its
-//! side drawn one good to two neutral to one evil, shown by its light.
+//! Altars in generated levels (`special.rs`): one altar a room at the free floor nearest its
+//! middle, never beside a door, the room still whole; its record's side drawn by the level's
+//! altar weights (one good to two unaligned to one evil by default), shown by its kind's light,
+//! and a dungeon's `altar_faith` naming those of its church's side.
 
 use super::*;
 use crate::alignment::Alignment;
@@ -23,9 +24,8 @@ fn content() -> Content {
 #[test]
 fn altars_stand_inside_their_rooms_with_their_sides_lights() {
     let content = content();
-    let altar = content.terrain_id("forgotten_altar").expect("altar");
+    let altar = content.terrain_id("altar").expect("altar");
     let effect = content.room_effects().id("altar").expect("altar room");
-    let def = content.room_effect(effect);
     let mut sides = [0u32; 3];
     for seed in 0..160 {
         let level = generate(&content, ("showcase", seed), "depths:2", None).expect("level");
@@ -43,14 +43,18 @@ fn altars_stand_inside_their_rooms_with_their_sides_lights() {
                     "seed {seed}: no door beside it"
                 );
             }
-            let side = room.side.expect("a side");
+            // The side is the altar's record's, not the room's; unnamed, as generated.
+            assert_eq!(room.side, None, "seed {seed}");
+            let record = level.altars.get(&at).copied().expect("a record");
+            assert_eq!((record.faith, record.home), (None, false), "seed {seed}");
+            let side = record.side;
             sides[Alignment::ALL
                 .iter()
                 .position(|&a| a == side)
                 .expect("side")] += 1;
             assert_eq!(
                 level.lights.get(&at).copied(),
-                def.side_light(side),
+                content.altars().kind(side).glow,
                 "seed {seed}"
             );
         }
@@ -63,4 +67,35 @@ fn altars_stand_inside_their_rooms_with_their_sides_lights() {
     assert!(share(sides[0]).abs_diff(25) <= 12, "{sides:?}");
     assert!(share(sides[1]).abs_diff(50) <= 12, "{sides:?}");
     assert!(share(sides[2]).abs_diff(25) <= 12, "{sides:?}");
+}
+
+/// A dungeon level's own weights draw only the sides they give, and its `altar_faith` names the
+/// altars of its church's side: Fennmynster's upper floors hallowed and the Mynster's, the
+/// drowned ones unhallowed and the Dark's (its minster generator's altar and its altar rooms).
+#[test]
+fn a_dungeons_weights_and_church_name_its_altars() {
+    let content = crate::test_support::builtin();
+    let faith = |id: &str| content.faiths().id(id);
+    let mut seen = [0u32; 2];
+    for seed in 0..40 {
+        for (depth, side, church) in [
+            (2, Alignment::Good, "mynster"),
+            (6, Alignment::Evil, "dark"),
+        ] {
+            let id = format!("fennmynster:{depth}");
+            let level = generate(&content, ("ascmearc", seed), &id, None).expect("level");
+            for altar in level.altars.values() {
+                assert_eq!(altar.side, side, "seed {seed}, {id}");
+                assert_eq!(altar.faith, faith(church), "seed {seed}, {id}");
+                seen[usize::from(depth > 4)] += 1;
+            }
+        }
+    }
+    assert!(seen.iter().all(|&n| n > 0), "{seen:?}");
+    // Cealdhlāw's are old altars only.
+    let weights = content
+        .dungeon("cealdhlaw")
+        .and_then(|d| d.plan(3))
+        .map(|p| p.altars);
+    assert_eq!(weights.map(|w| w.only()), Some(Some(Alignment::Neutral)));
 }

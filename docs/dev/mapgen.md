@@ -314,7 +314,7 @@ in five, for loops. Vaults (the floor's named ones, then one floor in five a ran
 stamped before the plan is laid, at least two cells off the core (hall, aisles, crossing,
 chancel, cloister, undercroft); the side rooms within two cells of one are left out and each
 entrance is joined to the nearest floor by the cheapest passage through the rock. Then the
-fittings (chapels' statues, at most one `forgotten_altar` a floor, one floor in three; tombs'
+fittings (chapels' statues, at most one `altar` a floor, one floor in three, its record by the level's `altars` and `altar_faith`; tombs'
 `sarcophagus` rows, more `open_sarcophagus` the more ruin; the ossuary's walls `bone_wall`), the
 **ruin** and the **flood**, set per floor by `MinsterParams` (`content/generator.rs`, the
 `[minster]` table of `data/generators.toml`): `flood` and `ruin` (0–100) are ramps on a line from

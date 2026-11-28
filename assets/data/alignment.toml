@@ -43,7 +43,7 @@
 #                      crystal; default 0
 #   make_peace         a thinking creature holding its hand under your Parley (the Friþwebbe,
 #                      a unique amulet); default 0
-#   prayed_good        praying at a good forgotten altar (a neutral
+#   prayed_good        praying at a good (hallowed) altar (a neutral
 #   prayed_evil        altar's prayer moves nothing), and at an evil one
 #
 # [shops]  favour: how much better a good shopkeeper's prices are for a customer of each band,

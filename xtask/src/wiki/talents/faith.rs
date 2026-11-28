@@ -17,7 +17,7 @@ pub(super) fn text(content: &Content, effect: &FaithEffect) -> String {
              damaged stat"
                 .to_string()
         }
-        FaithEffect::Devout => "at a forgotten altar of their own side the side's lean counts \
+        FaithEffect::Devout => "at an altar of their own side the side's lean counts \
                                   double (30 points from bane to boon), and an opposed one leans \
                                   as a neutral one"
             .into(),

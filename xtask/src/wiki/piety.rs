@@ -122,7 +122,7 @@ pub(super) fn piety_deeds_faiths(content: &Content) -> String {
     };
     let mut out = String::new();
     for (id, def) in content.faiths().list() {
-        let base = rules.base(def.side());
+        let base = rules.base(def.side);
         let Some(own) = def.piety.as_ref().filter(|p| !p.deeds.is_empty()) else {
             continue;
         };

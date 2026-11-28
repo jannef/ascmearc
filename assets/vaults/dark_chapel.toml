@@ -15,6 +15,7 @@ map = '''
 '''
 
 [legend]
-"A" = "spent_altar"
+# The Dark's altar, gone cold (docs/dev/faith.md "Altars").
+"A" = { terrain = "spent_altar", faith = "dark" }
 "p" = { terrain = "floor", monsters = { pool = "spirit", count = 3 } }
 "$" = { terrain = "floor", loot = { pool = ["rings", "amulets"], grade = "magic" } }

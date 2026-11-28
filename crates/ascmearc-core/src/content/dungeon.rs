@@ -88,6 +88,9 @@
 //! temperature = 7
 //! danger = { base = 9, per_depth = 2 }
 //! room_effects = { chance = 40 } # field by field over the template's (below)
+//! altars = { good = 1 }         # the weights an altar room's side is drawn by (good,
+//!                               # unaligned, evil; each default 0); default data/altars.toml's
+//! altar_faith = "mynster"       # the church every generated altar of its side is named for
 //! dread_one_in = 50
 //! hidden = { id = "way", terrain = "stairs_down", to = "town", name = "The Way" }
 //!                               # a row of one level only: a hidden location on a cell of
@@ -136,11 +139,13 @@
 //! plan with what a tower has not.
 
 use super::ContentError;
+use super::altar::AltarWeights;
 use super::creature::CreatureId;
 use super::danger::{
     CountSpec, DangerRule, DangerSpec, Odds, OddsSpec, SpawnSpec, Spawning, SpawningSpec, StrayPool,
 };
 use super::dread::{DreadCurve, DreadCurveSpec};
+use super::faith::{FaithId, Faiths};
 use super::generator::{GeneratorDefaults, GeneratorKind, GeneratorSpec};
 use super::level::{HiddenLocation, HiddenSpec};
 use super::object::ObjectId;
@@ -247,6 +252,10 @@ struct LevelSpec {
     spawn: Option<SpawnSpec>,
     room_effects: Option<RoomOddsSpec>,
     shops: Option<ShopOddsSpec>,
+    /// The weights its altar rooms draw their altar's side by; default `data/altars.toml`'s.
+    altars: Option<AltarWeights>,
+    /// The church (a faith id) its generated altars of that church's side are named for.
+    altar_faith: Option<String>,
     /// Vaults (by id) stamped on each of these levels, and nowhere else.
     vaults: Option<Vec<String>>,
     /// A hidden location the level keeps on a cell its generator picks (`mapgen/hidden.rs`); on
@@ -302,6 +311,11 @@ impl LevelSpec {
             },
             room_effects: table(&self.room_effects, &under.room_effects),
             shops: shops(&self.shops, &under.shops),
+            altars: self.altars.or(under.altars),
+            altar_faith: self
+                .altar_faith
+                .clone()
+                .or_else(|| under.altar_faith.clone()),
             vaults: self.vaults.clone().or_else(|| under.vaults.clone()),
             hidden: self.hidden.clone().or_else(|| under.hidden.clone()),
         }
@@ -670,6 +684,10 @@ pub struct LevelPlan {
     pub room_odds: RoomOdds,
     /// Its shop odds; `None` without `shops.toml`.
     pub shop_odds: Option<ShopOdds>,
+    /// The weights its altar rooms draw their altar's side by (good, unaligned, evil).
+    pub altars: AltarWeights,
+    /// The church its generated altars of that church's side are named for.
+    pub altar_faith: Option<FaithId>,
     /// The vaults (ids) it stamps for certain (checked against the vaults by
     /// `Content::load_dungeons`).
     pub vaults: Vec<String>,
@@ -974,6 +992,9 @@ pub(super) struct Lookups<'a, C, K, T, H> {
     pub defaults: Option<Odds>,
     /// `data/generators.toml`.
     pub generators: &'a GeneratorDefaults,
+    /// `data/altars.toml`'s weights, and the faiths an `altar_faith` names.
+    pub altars: AltarWeights,
+    pub faiths: &'a Faiths,
 }
 
 /// What a depth's plan is resolved for: its generator's place among the branch's floors of that
@@ -1104,6 +1125,22 @@ impl LevelSpec {
             Some(h) => Some((look.hidden)(h)?),
             None => None,
         };
+        let altars = self.altars.unwrap_or(look.altars);
+        altars.check()?;
+        let altar_faith = match &self.altar_faith {
+            Some(name) => {
+                let id = (look.faiths.id(name))
+                    .ok_or_else(|| format!("`altar_faith`: unknown faith `{name}`"))?;
+                let side = look.faiths.get(id).side;
+                if side.is_none_or(|side| altars.of(side) == 0) {
+                    return Err(format!(
+                        "`altar_faith = \"{name}\"`: no altar of its side is drawn here"
+                    ));
+                }
+                Some(id)
+            }
+            None => None,
+        };
         let (danger, spawning) = match spawning {
             Some((rule, s)) => (Some(rule), Some(s)),
             None => (None, None),
@@ -1136,6 +1173,8 @@ impl LevelSpec {
             spawning,
             room_odds,
             shop_odds,
+            altars,
+            altar_faith,
             vaults: self.vaults.clone().unwrap_or_default(),
             hidden,
         })
@@ -1393,6 +1432,8 @@ mod tests {
                 neutral: 100,
             }),
             generators: &generators,
+            altars: AltarWeights::default(),
+            faiths: &Faiths::default(),
         };
         file.resolve("d", &look)
     }

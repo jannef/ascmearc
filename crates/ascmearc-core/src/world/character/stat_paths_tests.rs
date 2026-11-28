@@ -25,7 +25,7 @@ fn sure_stats() -> String {
         .collect()
 }
 
-/// A yard: the player at `@`, water at `~`, a forgotten altar at `A`, a kobold at `k`.
+/// A yard: the player at `@`, water at `~`, an old altar at `A`, a kobold at `k`.
 const YARD: &str = "\
 #######
 #@.k..#
@@ -44,7 +44,7 @@ map = '''
 [legend]
 "@" = {{ terrain = "floor", spawn = "player" }}
 "~" = {{ terrain = "water" }}
-"A" = {{ terrain = "forgotten_altar" }}
+"A" = {{ terrain = "altar", side = "unaligned" }}
 "k" = {{ terrain = "floor", creature = "kobold" }}
 "##
     );

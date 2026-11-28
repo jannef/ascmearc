@@ -12,7 +12,8 @@
 //! 2. **Vaults**: those the floor names, and on one floor in five a random one, stamped among
 //!    the side rooms (never near the hall, aisles, crossing, chancel, cloister, or undercroft);
 //!    the side rooms they cover are left out, and a passage joins each entrance to the plan.
-//! 3. **Fittings**: statues in chapels (now and then a forgotten altar, at most one a floor),
+//! 3. **Fittings**: statues in chapels (now and then an altar, at most one a floor, its side by
+//!    the level's altar weights: drawn only when they give more than one side),
 //!    sarcophagi in rows in the tombs, the ossuary's walls of bones, the chapter house's pillar
 //!    and statues, the apse's tomb or statue.
 //! 4. **Ruin** ([`MinsterParams::ruin`]): pillars fallen to rubble, walls fallen into the next
@@ -93,7 +94,7 @@ impl Stones {
             tomb: t("sarcophagus")?,
             open_tomb: t("open_sarcophagus")?,
             statue: t("statue")?,
-            altar: t("forgotten_altar")?,
+            altar: canvas.content.altars().terrain?,
             candles: t("candles")?,
         })
     }
@@ -682,11 +683,23 @@ fn free_cells(canvas: &Canvas, room: &Room) -> Vec<Pos> {
         .collect()
 }
 
+/// The record of the altar laid at `at`: its side by the level's weights (a draw only when they
+/// give more than one), named for the level's `altar_faith` when of its side; and its glow.
+fn lay_altar(canvas: &mut Canvas, rng: &mut Rng, at: Pos) {
+    let (weights, _) = canvas.altar_odds;
+    let side = (weights.only()).unwrap_or_else(|| weights.pick(rng.below(weights.total())));
+    let altar = super::special::generated_altar(canvas, side);
+    if let Some(glow) = canvas.content.altar_glow(&altar) {
+        canvas.lights.insert(at, glow);
+    }
+    canvas.altars.insert(at, altar);
+}
+
 /// The fittings (module docs, step 3); more tombs stand open the more ruin.
 fn furnish(canvas: &mut Canvas, rng: &mut Rng, plan: &Plan, stones: Stones, p: &MinsterParams) {
     let ruin = p.ruin;
     let (cy, east) = (plan.axis, plan.east);
-    // At most one forgotten altar a floor: in a chapel, or in the apse.
+    // At most one altar a floor: in a chapel, or in the apse.
     let mut shrines: Vec<Option<usize>> = vec![None];
     shrines.extend(
         (0..plan.rooms.len())
@@ -705,6 +718,9 @@ fn furnish(canvas: &mut Canvas, rng: &mut Rng, plan: &Plan, stones: Stones, p: &
             _ => stones.statue,
         },
     );
+    if altar == Some(None) {
+        lay_altar(canvas, rng, apse);
+    }
     for (i, room) in plan.rooms.iter().enumerate() {
         if room.kind.is_core() {
             continue;
@@ -723,6 +739,7 @@ fn furnish(canvas: &mut Canvas, rng: &mut Rng, plan: &Plan, stones: Stones, p: &
                 }
                 if altar == Some(Some(i)) {
                     canvas.set(at, stones.altar);
+                    lay_altar(canvas, rng, at);
                 } else if rng.chance(60) {
                     canvas.set(at, stones.statue);
                 }

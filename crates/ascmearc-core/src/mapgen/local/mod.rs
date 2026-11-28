@@ -201,6 +201,7 @@ pub(super) fn generate(
             creatures: land.creatures,
             stairs: Vec::new(),
             lights: land.lights,
+            altars: Default::default(),
             flow: land.flow,
             objects: land.objects,
             traps: Default::default(),

@@ -4,6 +4,8 @@ id = "weaver"
 name = "the Weaver"
 description = "The drow's goddess of Envy, who gave them the wanting: every drow climbs her web toward what another has."
 face = "dark"
+glow = "altar_weaver"
+altar_description = "It is the Weaver's: webs hang from it, and a spider is cut into the stone."
 stranger = "bane"
 
 [faith.words]

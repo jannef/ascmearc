@@ -38,6 +38,7 @@
 //! (`super::danger`): creatures of about that danger keep coming while the player is there; none on
 //! the overworld.
 
+use super::altar::{Altar, SideSpec};
 use super::creature::CreatureId;
 use super::danger::{
     CountSpec, DangerRule, DangerSpec, OddsSpec, SpawnSpec, Spawning, SpawningSpec, StrayPool,
@@ -260,9 +261,12 @@ struct RoomSpec {
     effect: String,
     /// `[x0, y0, x1, y1]`, inclusive: the room with its walls.
     area: [i32; 4],
-    /// Its hidden side, for an effect with `sides` (a forgotten altar's); default neutral (a
-    /// shrine's must be good or evil).
+    /// Its side, for an effect with `sides`: an altar room's altar's (default neutral, an old
+    /// altar), a shrine's (good or evil).
     side: Option<crate::alignment::Alignment>,
+    /// An altar room's: the church its altar is named for (`data/faiths/`); its side is the
+    /// faith's.
+    faith: Option<String>,
     /// `[x, y]`: the wall that opens a sealed room (`sealed = "dig"`, a greater treasure room),
     /// which it needs; on its rim, beside a cell reached from the start and floor of the room.
     breach: Option<[i32; 2]>,
@@ -322,8 +326,16 @@ pub(super) struct LegendDetail {
     route: Option<String>,
     /// Level id the stairs on this cell lead to.
     to: Option<String>,
-    /// Light preset placed on this cell (overrides the terrain's own light).
+    /// Light preset placed on this cell (overrides the terrain's own light, and an altar's glow).
     light: Option<String>,
+    /// The altar on this cell (`altar` or `spent_altar`; `content/altar.rs`): its side, `good`,
+    /// `unaligned`, or `evil`.
+    side: Option<SideSpec>,
+    /// The altar on this cell is named for this church (`data/faiths/`): its side is the
+    /// faith's.
+    faith: Option<String>,
+    /// The altar on this cell is its church's own (only with `faith`).
+    home: Option<bool>,
     /// Which way running water on this cell flows (presentation-only); required on terrain with
     /// a `flow` animation and allowed nowhere else.
     flow: Option<Dir>,
@@ -616,6 +628,9 @@ pub struct LevelTemplate {
     pub stairs: Vec<StairsLink>,
     /// Lights placed by the legend, by position.
     pub lights: BTreeMap<Pos, LightId>,
+    /// Altars, by position (`content/altar.rs`): placed by the legend or an altar room, or a
+    /// generator's; only on the altar terrain or a spent one.
+    pub altars: BTreeMap<Pos, Altar>,
     /// Flow of every running-water cell, by position (presentation-only).
     pub flow: BTreeMap<Pos, Flow>,
     /// Piles of objects, by position, each top first; only on walkable terrain.
@@ -760,6 +775,7 @@ pub(super) fn parse_level(
     let mut creatures = Vec::new();
     let mut stairs = Vec::new();
     let mut lights = BTreeMap::new();
+    let mut altars: BTreeMap<Pos, Altar> = BTreeMap::new();
     let mut flow = BTreeMap::new();
     let mut ice = BTreeMap::new();
     let mut objects: BTreeMap<Pos, Vec<Stack>> = BTreeMap::new();
@@ -817,6 +833,11 @@ pub(super) fn parse_level(
                 )));
             }
             let Some(detail) = detail else { continue };
+            if let Some(altar) = parse_altar(detail, terrain, content)
+                .map_err(|m| err(format!("legend `{ch}`: {m}")))?
+            {
+                altars.insert(pos, altar);
+            }
             if let Some(place) = place {
                 places.insert(pos, place);
             }
@@ -1069,6 +1090,8 @@ pub(super) fn parse_level(
         let [x0, y0, x1, y1] = spec.area;
         let mut room = SpecialRoom::rect(effect, Pos::new(x0, y0), Pos::new(x1, y1));
         let def = content.room_effect(effect);
+        // An altar room's side is its altar's record's, not the room's.
+        let altar_room = def.feature.is_some() && def.feature == content.altars().terrain;
         match (spec.side, def.sides.is_some()) {
             (Some(_), false) => {
                 return Err(err(format!(
@@ -1076,9 +1099,23 @@ pub(super) fn parse_level(
                     spec.effect
                 )));
             }
+            (_, true) if altar_room => {}
             (side, true) => room.side = Some(side.unwrap_or_default()),
             (None, false) => {}
         }
+        let room_altar = match (&spec.faith, altar_room) {
+            (Some(_), false) => {
+                return Err(err(format!(
+                    "room `{}` has a `faith`, but it is no altar room",
+                    spec.effect
+                )));
+            }
+            (faith, true) => Some(
+                room_altar(content, faith.as_deref(), spec.side)
+                    .map_err(|m| err(format!("room `{}`: {m}", spec.effect)))?,
+            ),
+            (None, false) => None,
+        };
         match (spec.breach, def.sealed.is_some()) {
             (Some(_), false) => {
                 return Err(err(format!(
@@ -1106,17 +1143,35 @@ pub(super) fn parse_level(
                 spec.effect, spec.area
             )));
         }
-        // Its feature, drawn by the level, shows its side by a light of its own.
+        // Its feature, drawn by the level, shows its side by a light of its own; an altar
+        // room's altars take its side (a cell the legend gave one keeps the legend's).
         let light = room.side.and_then(|side| def.side_light(side));
-        if let (Some(feature), Some(light)) = (def.feature, light) {
+        if let Some(feature) = def.feature {
             for p in room.cells() {
                 let i = usize::try_from(p.y * width + p.x).unwrap_or(usize::MAX);
-                if cells.get(i) == Some(&feature) {
+                if cells.get(i) != Some(&feature) {
+                    continue;
+                }
+                if let Some(light) = light {
                     lights.entry(p).or_insert(light);
+                }
+                if let Some(altar) = room_altar {
+                    altars.entry(p).or_insert(altar);
                 }
             }
         }
         rooms.push(room);
+    }
+    // Every altar glows as its kind, or its church, unless the legend lit it otherwise; a spent
+    // one gives no light.
+    for (&p, altar) in &altars {
+        let i = usize::try_from(p.y * width + p.x).unwrap_or(usize::MAX);
+        let lit = cells
+            .get(i)
+            .is_some_and(|&t| Some(t) == content.altars().terrain);
+        if let Some(glow) = content.altar_glow(altar).filter(|_| lit) {
+            lights.entry(p).or_insert(glow);
+        }
     }
 
     let pervading = match &parsed.effect {
@@ -1230,6 +1285,7 @@ pub(super) fn parse_level(
         creatures,
         stairs,
         lights,
+        altars,
         flow,
         objects,
         traps,
@@ -1276,6 +1332,55 @@ pub(super) fn parse_level(
         }
     }
     Ok(template)
+}
+
+/// A legend entry's altar (`side`, `faith`, `home`), if it gives one: only on the altar
+/// terrain or a spent one, of the side of the faith it names, and `home` only with a faith.
+fn parse_altar(
+    detail: &LegendDetail,
+    terrain: TerrainId,
+    content: &Content,
+) -> Result<Option<Altar>, String> {
+    if detail.side.is_none() && detail.faith.is_none() && detail.home.is_none() {
+        return Ok(None);
+    }
+    if !content.altars().holds(terrain) {
+        return Err("`side`, `faith`, and `home` are an altar's (`altar`, `spent_altar`)".into());
+    }
+    let mut altar = room_altar(
+        content,
+        detail.faith.as_deref(),
+        detail.side.map(SideSpec::side),
+    )?;
+    altar.home = detail.home.unwrap_or(false);
+    if altar.home && altar.faith.is_none() {
+        return Err("`home` needs a `faith`".into());
+    }
+    Ok(Some(altar))
+}
+
+/// The altar named for `faith` (an id) and of `side`: a faith's side is the altar's, and a
+/// `side` given beside it must be the same; with neither, an old altar.
+fn room_altar(
+    content: &Content,
+    faith: Option<&str>,
+    side: Option<Alignment>,
+) -> Result<Altar, String> {
+    let Some(name) = faith else {
+        return Ok(Altar::of(side.unwrap_or_default()));
+    };
+    let id = (content.faiths().id(name)).ok_or_else(|| format!("unknown faith `{name}`"))?;
+    let Some(own) = content.faith(id).side else {
+        return Err(format!("faith `{name}` has no side: no altar is its"));
+    };
+    if side.is_some_and(|s| s != own) {
+        return Err(format!("faith `{name}` is not of the `side` given"));
+    }
+    Ok(Altar {
+        side: own,
+        faith: Some(id),
+        home: false,
+    })
 }
 
 /// A legend entry's named place (`name`, and `note` with it), if it has one; `key` is the

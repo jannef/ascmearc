@@ -89,8 +89,8 @@ pub(super) fn abilities(content: &Content) -> String {
             }
             Ability::Pray => {
                 "everyone with a faith whose god answers (the Frogs Beyond never do, the Big Ones \
-                 only at an altar); everyone, faith or none, beside a forgotten altar not yet \
-                 spent, where it takes a minute"
+                 only at an altar); everyone, faith or none, on or beside an altar of an altar \
+                 room not yet spent, where it takes a minute"
                     .into()
             }
             Ability::Salvage => {

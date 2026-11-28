@@ -1,20 +1,20 @@
-//! Praying at a forgotten altar (the design's §7): [`Action::Pray`] beside one, the Faith
-//! group's Pray (`world/faith/pray.rs` sends it here; anywhere else it is the prayer).
+//! Praying at an altar of the gamble (the design's §7.3): [`Action::Pray`] on or beside one,
+//! the Faith group's Pray (`world/faith/pray.rs` sends it here; anywhere else it is the prayer).
 //!
-//! - **Where**: beside a cell whose terrain a room effect's `feature` names and that `offers`
-//!   pray ([`crate::content::Content::offer_at`]); the first such cell around the player in
-//!   [`Dir::ALL`] order. A spent altar is another terrain, so it offers nothing. Refused, taking
-//!   no time, anywhere else.
+//! - **Where**: an altar with a record that names no church (`LevelState::offer_at`: a
+//!   generated one, an old altar a level places), the one the player stands on, else the first
+//!   around them in [`Dir::ALL`] order. A spent altar is another terrain, so it offers nothing;
+//!   an altar named for a church offers nothing yet. Refused, taking no time, anywhere else.
 //! - **Time**: the table's `seconds`, in turns of the `pray` action ([`World::keep_at`], the
 //!   rest's machinery; the last cut short to end on time): a creature coming into view, a message, or a blow stops it, and a broken
 //!   prayer gives nothing and never spends the altar ("Your prayer is broken."), but the time is
 //!   spent.
-//! - **The answer**: the deed first ([`Deed::PrayedHoly`] or [`Deed::PrayedDark`], by the altar's side), then one outcome
+//! - **The answer**: the deed first ([`Deed::PrayedHoly`] or [`Deed::PrayedDark`], by the altar's side, its record's), then one outcome
 //!   drawn from the table, leaned by the altar's side against the player's band
 //!   ([`super::outcome::leaned_kinds`]; Pious), and its hooks (`outcome.rs`; the great ones
 //!   `boons.rs`). Then, unless the altar is gone (it blew apart), one draw of the table's `exhaust`: the altar is spent, its
 //!   cell the table's `spent` terrain and its own light gone ("The altar's glow gutters and
-//!   dies."). Nothing else is saved: the terrain is the whole record.
+//!   dies."). Nothing else is saved: the terrain says it is spent, the record keeps its side.
 //!
 //! Every draw is from the gameplay stream.
 //!
@@ -41,22 +41,19 @@ pub(in crate::world) struct Prayer {
 }
 
 impl World {
-    /// The forgotten altar beside the player: the first cell around them (in [`Dir::ALL`]
-    /// order) whose terrain offers Pray.
+    /// The altar of the gamble the player stands on, else the first beside them (in
+    /// [`Dir::ALL`] order): one that offers Pray ([`crate::world::LevelState::offer_at`]).
     pub(in crate::world) fn altar_beside(&self) -> Option<Pos> {
         let level = self.state.current();
         let here = self.player_pos();
-        (Dir::ALL.iter().map(|&d| here.step(d))).find(|&p| {
-            (level.terrain_at(p))
-                .and_then(|t| self.content.offer_at(t))
-                .is_some_and(|(offer, _)| offer == Offer::Pray)
-        })
+        (std::iter::once(here).chain(Dir::ALL.iter().map(|&d| here.step(d))))
+            .find(|&p| level.offer_at(&self.content, p) == Some(Offer::Pray))
     }
 
-    /// The hidden side of the altar on `at`: its room's, else neutral.
+    /// The side of the altar on `at`: its record's, else neutral.
     pub(super) fn altar_side(&self, at: Pos) -> Alignment {
-        (self.state.current().room_at(at))
-            .and_then(|r| r.side)
+        (self.state.current().altar_at(at))
+            .map(|a| a.side)
             .unwrap_or_default()
     }
 

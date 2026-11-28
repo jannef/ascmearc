@@ -12,6 +12,8 @@ depth = 6
 generator = { kind = "rooms" }
 size = [80, 21]
 traps = ["arrow", "spear", "pit", "alarm"]
+# The barrow's dead gods: its altars are old ones only.
+altars = { unaligned = 1 }
 # As the Depths: a secret door or two a rooms level, hidden things and locks harder the more
 # dangerous the floor.
 secret_doors = [1, 2]

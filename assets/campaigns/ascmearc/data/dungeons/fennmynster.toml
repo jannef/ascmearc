@@ -14,6 +14,10 @@ depth = 8
 generator = { kind = "minster" }
 size = [100, 40]
 traps = ["pit", "frost", "alarm", "teleport"]
+# The mother house's own chapels: its altars hallowed, the Mynster's (the cult keeps the
+# drowned floors from the fifth down, below).
+altars = { good = 1 }
+altar_faith = "mynster"
 # The monks hid their stores: more secret doors than the other dungeons, and hidden things and
 # locks harder by more than half the floor's danger.
 secret_doors = [1, 3]
@@ -61,15 +65,25 @@ room_effects = { chance = 25, per_level = 2, favoured = { flooded = 35, cursed =
 # No one trades in the drowned minster.
 shops = { chance = 0 }
 
+# The drowned floors: the cult keeps the chapels, their altars unhallowed and the Dark's.
+[[dungeon.levels]]
+from = 5
+altars = { evil = 1 }
+altar_faith = "dark"
+
 # The lower cellars (docs/design/monster-dread.md §8): the dread come oftener the deeper the
 # water stands, one draw in 75 here, one in 50 at the bottom (the default is one in 100).
 [[dungeon.levels]]
 from = 6
 to = 7
+altars = { evil = 1 }
+altar_faith = "dark"
 dread_one_in = 75
 
 # The bottom: the sunken crypt, where the minster kept what the water keeps now.
 [[dungeon.levels]]
 from = 8
+altars = { evil = 1 }
+altar_faith = "dark"
 vaults = ["sunken_crypt"]
 dread_one_in = 50

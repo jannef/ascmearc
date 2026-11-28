@@ -12,8 +12,8 @@ use ascmearc_core::Pos;
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::data_line::{animated_moves, description};
 use ascmearc_core::content::{
-    ActionKind, Content, CreatureId, MaterialId, Noun, ServiceKind, Stance, TerrainId, TrapId,
-    ZoneKind,
+    ActionKind, Altar, Content, CreatureId, MaterialId, Noun, ServiceKind, Stance, TerrainId,
+    TrapId, ZoneKind,
 };
 use ascmearc_core::damage::ResistanceWord;
 use ascmearc_core::lang::{Arg, MessageId, Modifier, Msg, Person, Phrase, Word};
@@ -33,7 +33,8 @@ pub const CURSOR_BG: Rgb = Rgb::new(0xe0, 0xc0, 0x70);
 /// reads before the terrain ("on blood-stained stone floor"), and char before that ("on charred
 /// stone floor"), if `blood` is shown. A named place
 /// with a note adds it after: "A mountain pass, Beorggeat. The way you came; snow has closed it
-/// behind you."; so does terrain with a description (a forgotten altar's), and then a
+/// behind you."; so does terrain with a description (a spent altar's), an altar's kind's or its
+/// church's ("A hallowed altar. Its light is warm."), and then a
 /// gravestone's inscription.
 pub fn describe(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
     let mut lines = vec![describe_cell(view, p, blood)];
@@ -41,19 +42,23 @@ pub fn describe(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
         lines.push(clause(T::FAR_BELOW, [("below", far_below(view, below))]));
     }
     // The data's own words after it, as written: a place's note, a terrain's description (a
-    // forgotten altar's) or a chest's band's, and a gravestone's inscription last ("A
+    // spent altar's), an altar's, or a chest's band's, and a gravestone's inscription last ("A
     // gravestone. Here lies Ælfric Wudu, 1381–1427.").
     lines.extend((view.place(p)).and_then(|place| place.note_arg()));
     let content = view.content();
     let band = (view.chest_at(p)).and_then(|c| content.chests().bands.get(c.band));
     let described = match (band, view.cell(p)) {
         (Some(band), _) => Some(description("chest", &band.id)),
-        (None, CellView::Visible(t) | CellView::Remembered(t)) => {
-            let def = content.terrain(t);
-            def.description
-                .as_ref()
-                .map(|_| description("terrain", &def.id))
-        }
+        // An altar's by its kind, or its church's.
+        (None, CellView::Visible(t) | CellView::Remembered(t)) => match lit_altar(view, p, t) {
+            Some(altar) => content.altar_description(&altar),
+            None => {
+                let def = content.terrain(t);
+                def.description
+                    .as_ref()
+                    .map(|_| description("terrain", &def.id))
+            }
+        },
         (None, CellView::Unknown) => None,
     };
     lines.extend(described.map(Arg::said));
@@ -352,7 +357,11 @@ fn fixture(view: &PerceptionView<'_>, p: Pos, t: TerrainId, blood: bool) -> (Phr
             let of = clause(T::STATUE_OF, [("of", of)]);
             (terrain_phrase(content, t), of)
         }
-        (None, None) => (terrain_phrase(content, t), none()),
+        // An altar goes by its kind: "a hallowed altar" (a spent one is a spent altar).
+        (None, None) => match lit_altar(view, p, t) {
+            Some(altar) => (content.altar_phrase(&altar), none()),
+            None => (terrain_phrase(content, t), none()),
+        },
     };
     // Char reads before the blood: "charred blood-stained stone floor"; a wall the player found
     // sounds hollow (a sealed room's breach) says so: "a hollow stone wall".
@@ -378,6 +387,14 @@ fn fixture(view: &PerceptionView<'_>, p: Pos, t: TerrainId, blood: bool) -> (Phr
         },
     };
     (phrase, of, place)
+}
+
+/// The altar standing at `p` on terrain `t`, as the player sees or remembers it: one with its
+/// glow, not spent.
+fn lit_altar(view: &PerceptionView<'_>, p: Pos, t: TerrainId) -> Option<Altar> {
+    (Some(t) == view.content().altars().terrain)
+        .then(|| view.altar_at(p))
+        .flatten()
 }
 
 /// The room clause after the ground's name ([`room`]): after a comma where the ground leads
@@ -816,9 +833,19 @@ mod tests {
     }
 
     #[test]
-    fn a_forgotten_altar_says_what_it_is_and_a_spent_one_too() {
+    fn an_altar_says_its_kind_or_its_church_and_a_spent_one_what_it_is() {
         let content = Arc::new(ascmearc_assets::content().expect("content"));
         let mut w = World::new(content, "shrine", None).expect("the shrine");
+        // A church's altar, south of the hall: its kind's name, its church's words.
+        let walk = "open:S move:S";
+        for action in ascmearc_core::action::parse_actions(walk).expect("actions") {
+            w.apply(&action);
+        }
+        assert_eq!(
+            describe(&w.perception(), Pos::new(13, 10), true),
+            "A hallowed altar. It is the Hearth's: a kettle hangs over a small fire beside it."
+        );
+        let mut w = World::new(w.content().clone(), "shrine", None).expect("the shrine");
         let walk = "move:N open:N move:N*3";
         for action in ascmearc_core::action::parse_actions(walk).expect("actions") {
             w.apply(&action);
@@ -826,7 +853,7 @@ mod tests {
         let altar = Pos::new(13, 3);
         assert_eq!(
             describe(&w.perception(), altar, true),
-            "A forgotten altar. An altar of worn stone. Its carvings have been rubbed smooth by \
+            "An old altar in an altar room. An altar of worn stone. Its carvings have been rubbed smooth by \
              hands or by time, and whatever god it served has no name left. Something here still \
              listens."
         );
@@ -835,7 +862,7 @@ mod tests {
         }
         assert_eq!(
             describe(&w.perception(), altar, true),
-            "A spent altar. An altar of worn stone, cold and dark. Whatever listened here has \
+            "A spent altar in an altar room. An altar of worn stone, cold and dark. Whatever listened here has \
              stopped.",
             "eight prayers at one altar spend it, but for one chance in 256"
         );

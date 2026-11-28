@@ -1,6 +1,7 @@
 //! The faiths (`data/faiths/`): who answers each, whose it is, and which a race may profess.
 
 use super::util::{Term, anchored, link};
+use ascmearc_core::alignment::Alignment;
 use ascmearc_core::content::{Content, Face, FaithId, Listens, RaceDef};
 use std::fmt::Write as _;
 
@@ -20,6 +21,16 @@ fn answered_by(content: &Content, id: FaithId) -> &'static str {
     }
 }
 
+/// Which altars are a faith's own, by its side: hallowed (goodly), unhallowed (wicked), old.
+fn altars(content: &Content, id: FaithId) -> &'static str {
+    match content.faith(id).side {
+        Some(Alignment::Good) => "hallowed (goodly)",
+        Some(Alignment::Evil) => "unhallowed (wicked)",
+        Some(Alignment::Neutral) => "old",
+        None => "—",
+    }
+}
+
 /// The races whose own faith `id` is, by name.
 fn people(content: &Content, id: FaithId) -> Vec<&RaceDef> {
     (content.races().list.iter())
@@ -27,9 +38,11 @@ fn people(content: &Content, id: FaithId) -> Vec<&RaceDef> {
         .collect()
 }
 
-/// Every faith in the order creation lists them: whose own it is and who answers it.
+/// Every faith in the order creation lists them: whose own it is, who answers it, and which
+/// altars are its own.
 pub(super) fn faiths(content: &Content) -> String {
-    let mut out = String::from("| Faith | Whose own faith | Answered by |\n|---|---|---|\n");
+    let mut out =
+        String::from("| Faith | Whose own faith | Answered by | Its altars |\n|---|---|---|---|\n");
     for (id, def) in content.faiths().list() {
         let races: Vec<String> = (people(content, id).iter())
             .map(|r| link(Term::Race, &r.id, &r.name))
@@ -41,9 +54,10 @@ pub(super) fn faiths(content: &Content) -> String {
         };
         let _ = writeln!(
             out,
-            "| {} | {races} | {} |",
+            "| {} | {races} | {} | {} |",
             anchored(Term::Faith, &def.id, &name(content, id)),
             answered_by(content, id),
+            altars(content, id),
         );
     }
     out

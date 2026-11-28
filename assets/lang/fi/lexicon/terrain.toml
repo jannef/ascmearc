@@ -77,7 +77,6 @@ empty_niche = { word = "tyhjä/10 syvennys/39", forms = { loc = "ine" } }
 ford = "kahlaamo/2"
 forest = { word = "metsä/10", forms = { loc = "ine" } }
 forest_floor = "metsän|pohja/10"
-forgotten_altar = "unohdettu/1*C alttari/6"
 fountain = "suihku|lähde/48*F"
 gate_closed = "suljettu/1*C portti/5*C"
 gate_open = "avoin/33 portti/5*C"

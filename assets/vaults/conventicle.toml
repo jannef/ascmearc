@@ -19,6 +19,6 @@ map = '''
 [legend]
 "r" = "uv_rune"
 # One summoner on its one cell: the rite always has its priest.
-"S" = { terrain = "altar", monsters = { pool = "summoner" } }
-"$" = { terrain = "altar", loot = { pool = ["scrolls", "wands"] } }
+"S" = { terrain = "altar", faith = "dark", monsters = { pool = "summoner" } }
+"$" = { terrain = "altar", faith = "dark", loot = { pool = ["scrolls", "wands"] } }
 "c" = { terrain = "floor", monsters = { pool = "cultist", count = 5 } }

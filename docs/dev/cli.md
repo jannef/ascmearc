@@ -180,7 +180,8 @@ The test world (`assets/campaigns/showcase/`, the `showcase` feature):
 - `chests`: in the chest hall (every kind of chest, a mimic, and both treasure rooms).
 - `hellegeat`: on the first floor of Pit 1 of Hellegeat, the fiends' branch a `portal` miscast
   opens (its record made at the start: its `<` climbs out to the hub).
-- `shrine`: before three forgotten altars, good, neutral, and evil, to pray at.
+- `shrine`: before three altars, hallowed, old, and unhallowed, to pray at; south, three named
+  for the Mynster, the Hearth, and the Howl, between a good and an evil shrine.
 - `forge`: beside a forge's anvil with arms and armour to temper.
 - `spring`: below a cave room with a healing spring to drink at.
 - `glow`: in a hall of peaceful kobolds already buffed and hexed, knowing every buff and hex
@@ -718,8 +719,8 @@ thaw:X,Y,R web:X,Y,R`
 - `disarm:E` tries to disarm the trap the player knows of east of them (the Disarm ability, for
   those trained in Disable device; refused, with no time, without the skill or a known trap
   there; docs/dev/traps.md).
-- `pray` is the Pray ability (the abilities menu's Faith group, `docs/dev/prayer.md`): beside a
-  forgotten altar it prays at the altar (a minute, then an outcome from
+- `pray` is the Pray ability (the abilities menu's Faith group, `docs/dev/prayer.md`): on or
+  beside an altar that names no church, it prays at the altar (a minute, then an outcome from
   `data/outcomes/forgotten_altar.toml`, and perhaps the altar spent; docs/dev/special-rooms.md);
   anywhere else it is the prayer of the player's faith at every tier (refused, with no time,
   without a faith, with one whose god does not answer there, or with nothing to pray for).

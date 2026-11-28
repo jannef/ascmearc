@@ -58,6 +58,8 @@ map = '''
 '''
 
 [legend]
+# The Glimmering's own altar, its church's home.
+"_" = { terrain = "altar", faith = "glimmering", home = true }
 ":" = "flagstones"
 '"' = "fungus"
 "l" = { terrain = "floor", light = "lamp" }

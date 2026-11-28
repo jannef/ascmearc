@@ -15,6 +15,7 @@ mod abilities;
 mod actions;
 mod alignment;
 mod allies;
+mod altars;
 mod animated;
 mod background;
 mod burden;
@@ -496,6 +497,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("branch-odds.md", rooms::branch_odds),
         ("teeming-dens.md", rooms::teeming_dens),
         ("altar-outcomes.md", outcomes::altar_outcomes),
+        ("altar-places.md", altars::altar_places),
         ("altar-shares.md", outcomes::altar_shares),
         ("temper-odds.md", temper::temper_odds),
         ("temper-grades.md", temper::temper_grades),

@@ -12,7 +12,7 @@ use crate::test_support::{builtin, said_text as said};
 use crate::world::World;
 use std::sync::Arc;
 
-/// A room with a forgotten altar at (5, 2), the player beside it at (4, 3).
+/// A room with an altar at (5, 2), the player beside it at (4, 3).
 const ROOM: &str = "\
 ###########
 #.........#
@@ -34,7 +34,7 @@ fn world() -> World {
             "name = \"Test\"\nambient = [120, 120, 120, 0]\nmap = '''\n{ROOM}'''\n\
              [[room]]\neffect = \"altar\"\narea = [0, 0, 10, 6]\n\
              [legend]\n\"@\" = {{ terrain = \"floor\", spawn = \"player\" }}\n\
-             \"A\" = \"forgotten_altar\"\n"
+             \"A\" = \"altar\"\n"
         ),
     );
     files.insert(

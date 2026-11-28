@@ -100,7 +100,7 @@ Law's (`[summon]`) tag (`fiend`) made by the player's own act, called where each
 summon spell (`magic/summon_spell.rs`, after "... come to your call."), its backfire
 (`magic/backfire.rs`), the player's miscast summon and portal gate (`magic/miscast.rs::miscast_summon`,
 which takes the caster, and `levels/pit.rs::open_pit`), a study mishap's summon (`magic/learn.rs`),
-and a feature outcome's summon (`fixtures/outcome.rs::summon_hostiles`, the forgotten altar's). A
+and a feature outcome's summon (`fixtures/outcome.rs::summon_hostiles`, an altar's). A
 new player summoning path calls `player_summoned` for each creature it makes. The counts live in
 `Progress::laws` (`Broken`: `eaten`, `summoned`, saved, left out while 0); the first of each says
 the law's `first` line, but for a player who craves: the ratfolk craving (docs/dev/craving.md)

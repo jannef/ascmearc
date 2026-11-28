@@ -17,10 +17,15 @@
 #                 Dark and the powers under the hills), or "none" (nothing answers as a god
 #                 does); a faith with no face says how it does not answer, with `answers` or
 #                 `listens`
-#   shared        the faiths whose faithful its altars and shrines hear as their own, by id
-#                 (default none; each Light church lists the other four)
-#   stranger      what its altars do with another faith's prayer: "cold" (unheard, the
-#                 default), "hears" (heard, in its own face), or "bane" (the god wants you gone)
+#   side          its side where it is not its face's: "good", "evil", or "unaligned" (default:
+#                 a holy face good, a dark one evil, none none). Every altar of its side is its
+#                 faithful's own (data/altars.toml); the game calls good faiths goodly, evil
+#                 ones wicked
+#   glow          the light of an altar a level names for it (lights.toml; default its side's)
+#   altar_description   what look mode says of such an altar, after its kind's name
+#   stranger      what an altar named for it does with the prayer of a faith of another side:
+#                 "cold" (unheard, the default), "hears" (heard, in its own face), or "bane" (the
+#                 god wants you gone)
 #   answers       false: it never answers a prayer (the Frogs Beyond; default true)
 #   listens       "anywhere" (the default) or "altar": heard only beside an altar, as that
 #                 altar's stranger (the Big Ones)
@@ -32,15 +37,15 @@
 #                 that answers nothing or listens only at an altar ("the Frogs do not answer")
 # [faith.use]     its own line for a use answered, by use id (`wounds = "..."`), each optional
 # [faith.piety]   what its god thinks of the player (../piety.toml, docs/dev/piety.md), each
-#                 optional: `deeds` (deed id = worth) added to its side's base table (a holy face
-#                 is the goodly side, a dark face the wicked; no face, no base), the same key
+#                 optional: `deeds` (deed id = worth) added to its side's base table (good the
+#                 goodly side's, evil the wicked's; unaligned or no side, no base), the same key
 #                 replacing the base's worth and 0 cancelling it; `kills` (`tags`: tag = worth,
 #                 `while`: status id = worth for a hostile kill under it), merged the same way;
 #                 `wane` (`{ favour, anger }`, each at least 1) in place of piety.toml's. A faith
-#                 with no face and no table notices nothing (the Frogs Beyond, the Big Ones)
+#                 with no side and no table notices nothing (the Frogs Beyond, the Big Ones)
 # [faith.piety.words]  its own line for each standing (`favoured`, `heard`, `unheard`,
 #                 `shunned`), each optional: said when the standing is reached, and on Pray in
 #                 the abilities menu while it is not `heard`; piety.toml's band lines otherwise
 #
-# Creation reads the face; prayer reads `answers`, `listens`, and the words; the altars read the
-# rest as they are built (prayer.md §11).
+# Creation reads the face; prayer reads `answers`, `listens`, and the words; the altars and piety read
+# the side; the altars the glow, and the description; the prayer at altars will read `stranger`.

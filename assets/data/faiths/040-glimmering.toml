@@ -4,7 +4,8 @@ id = "glimmering"
 name = "the Glimmering"
 description = "The gnomes' Light, kept in the stone: making, curiosity, and the hurt. It turns no one away."
 face = "holy"
-shared = ["mynster", "hearth", "spark", "elder_light"]
+glow = "altar_glimmering"
+altar_description = "It is the Glimmering's: a crystal on it glows violet-white."
 stranger = "hears"
 
 [faith.words]

@@ -10,7 +10,7 @@ use crate::test_support::{builtin, said_text as said};
 use crate::world::fixtures::outcome::leaned_kinds;
 use crate::world::*;
 
-/// A room with a forgotten altar at (5, 2), the player beside it at (4, 3), and at `k` a kobold
+/// A room with an altar at (5, 2), the player beside it at (4, 3), and at `k` a kobold
 /// (also beside it), when asked for.
 const ROOM: &str = "\
 ###########
@@ -40,7 +40,7 @@ fn world(side: &str, kobold: bool) -> World {
             "name = \"Test\"\nambient = [120, 120, 120, 0]\nmap = '''\n{ROOM}'''\n\
              [[room]]\neffect = \"altar\"\narea = [0, 0, 10, 6]\nside = \"{side}\"\n\
              [legend]\n\"@\" = {{ terrain = \"floor\", spawn = \"player\" }}\n\
-             \"A\" = \"forgotten_altar\"\n\"k\" = {k}\n"
+             \"A\" = \"altar\"\n\"k\" = {k}\n"
         ),
     );
     files.insert(
@@ -126,7 +126,7 @@ fn a_prayer_takes_a_minute_and_a_broken_one_gives_nothing() {
     w.apply(&Action::Pray);
     assert!(said(&w, "Your prayer is broken."));
     assert!(w.state.time.since(start).as_seconds() < 60);
-    assert_eq!(terrain(&w, ALTAR), "forgotten_altar", "never spent");
+    assert_eq!(terrain(&w, ALTAR), "altar", "never spent");
     assert_eq!(w.state.player().alignment, score, "no deed");
 }
 
@@ -163,7 +163,7 @@ fn pious_doubles_the_lean_of_an_altar_of_its_side() {
             "name = \"Test\"\nambient = [120, 120, 120, 0]\nmap = '''\n{ROOM}'''\n\
              [[room]]\neffect = \"altar\"\narea = [0, 0, 10, 6]\nside = \"good\"\n\
              [legend]\n\"@\" = {{ terrain = \"floor\", spawn = \"player\" }}\n\
-             \"A\" = \"forgotten_altar\"\n\"k\" = \"floor\"\n"
+             \"A\" = \"altar\"\n\"k\" = \"floor\"\n"
         ),
     );
     files.insert(
@@ -508,7 +508,7 @@ fn about_half_of_completed_prayers_spend_the_altar_and_a_spent_one_is_kept_as_te
                 spent += 1;
                 kept.get_or_insert(w);
             }
-            "forgotten_altar" => standing += 1,
+            "altar" => standing += 1,
             _ => {}
         }
     }

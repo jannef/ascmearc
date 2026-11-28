@@ -1,10 +1,11 @@
-# The shrine: three forgotten altars to pray at (the Pray ability, the
-# abilities menu's Here group, beside one). West the good altar (its glow gold), in the middle a
-# neutral one (grey), east an evil one (red); their sides are hidden, as everywhere, and only the
-# glow tells them. Each prayer takes a minute and may spend its altar; data/outcomes/ has what a
-# prayer draws. South two shrines of a side (no prayer; they treat whoever stands in them by
-# their side): west a good one (gold), east an evil one (red).
-arrival = "Three old altars stand in a row of shrines, their gods long forgotten."
+# The shrine: three altars to pray at (the Pray ability, beside one or on it). West a hallowed
+# altar (its glow gold), in the middle an old one (grey), east an unhallowed one (red): each
+# takes its side from its altar room, and the glow shows it. Each prayer takes a minute and may
+# spend its altar; data/outcomes/ has what a prayer draws. South of the hall, a chapel of three
+# altars named for churches, each glowing as its church: the Mynster's (gold), the Hearth's
+# (red-gold), and the Howl's (red). Beside it two shrines of a side (no prayer; they treat
+# whoever stands in them by their side): west a good one (gold), east an evil one (red).
+arrival = "Three altars stand in a row of shrines, and below them a chapel of three more."
 name = "The Shrine"
 ambient = [6, 6, 8, 0]
 map = '''
@@ -17,16 +18,19 @@ map = '''
 ####+########+########+####
 #.........................#
 #t...........@...........t#
-####+#################+####
-#.......###########.......#
-#...S...###########...S...#
-#.......###########.......#
+####+########+########+####
+#.......#M...H...W#.......#
+#...S...#.........#...S...#
+#.......#.........#.......#
 ###########################
 '''
 
 [legend]
 "@" = { terrain = "floor", spawn = "player" }
-"A" = "forgotten_altar"
+"A" = "altar"
+"M" = { terrain = "altar", faith = "mynster" }
+"H" = { terrain = "altar", faith = "hearth" }
+"W" = { terrain = "altar", faith = "howl" }
 "S" = "shrine_stone"
 "t" = "sconce"
 

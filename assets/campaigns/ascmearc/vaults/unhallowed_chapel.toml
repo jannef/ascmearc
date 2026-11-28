@@ -21,6 +21,6 @@ map = '''
 # His congregation.
 "z" = { terrain = "floor", creature = "zombie" }
 # The altar he defiled, bones on it.
-"_" = { terrain = "altar", objects = ["bones"] }
+"_" = { terrain = "altar", faith = "dark", objects = ["bones"] }
 # The dead he had no use for yet.
 "b" = { terrain = "floor", objects = ["bones"] }

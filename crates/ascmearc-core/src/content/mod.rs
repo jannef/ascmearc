@@ -15,6 +15,9 @@ mod affix;
 mod affix_value;
 mod alignment;
 mod ally;
+mod altar;
+#[cfg(test)]
+mod altar_tests;
 mod anim;
 pub mod animated;
 #[cfg(test)]
@@ -270,6 +273,7 @@ pub use affix::{
 };
 pub use alignment::{AlignmentRules, BandDef, ByAlignment, Shifts};
 pub use ally::AllyRules;
+pub use altar::{Altar, AltarKind, AltarWeights, Altars, side_id as altar_side_id};
 pub use anim::GlyphAnim;
 pub use animated::{Animated, AnimatedDef, Body, ID_PREFIX, Line, Numbers, Ramp, SlotLine};
 pub use aura::{Aura, CRY_TURN, Cry, TOUCH_SOURCE, touch_key};
@@ -813,6 +817,8 @@ pub struct Content {
     skills: SkillBook,
     /// The faiths (`data/faiths/`): none without the files.
     faiths: Faiths,
+    /// The altars' kinds and weights (`data/altars.toml`; the defaults without it).
+    altars: Altars,
     races: Races,
     /// Names offered to new characters, by race (`data/names.toml`): flavour, not fingerprinted.
     names: Names,
@@ -1091,6 +1097,8 @@ impl Content {
         horoscope::check_talents(content.horoscope.as_ref(), &content.talents)?;
         content.load_terrain(files)?;
         content.talents.check_terrain(&content)?;
+        // Altars after the terrain, the lights, and the faiths, which they name.
+        content.load_altars(files)?;
         content.load_diseases(files)?;
         let table: Vec<_> = files.table("room_effects").collect();
         if !table.is_empty() {

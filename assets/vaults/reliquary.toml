@@ -15,5 +15,7 @@ map = '''
 '''
 
 [legend]
+# A saint's reliquary: the Mynster's altar.
+"_" = { terrain = "altar", faith = "mynster" }
 "B" = "brazier"
 "R" = { terrain = "floor", loot = "rare", trap = "lightning_bolt", known = true, dir = "S" }

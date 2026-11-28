@@ -210,15 +210,15 @@ impl World {
         }
     }
 
-    /// Whether the player's alignment band is one `faith`'s face scorns (a holy face Evil or
-    /// worse, a dark one Good or better); never without alignment rules or for a faith with no
-    /// face.
+    /// Whether the player's alignment band is one `faith`'s side scorns (a goodly faith Evil or
+    /// worse, a wicked one Good or better); never without alignment rules or for an unaligned or
+    /// sideless faith.
     fn scorned_by_faith(&self, faith: FaithId) -> bool {
         let content = &self.content;
         if content.alignment().is_none() {
             return false;
         }
-        let side = match content.faith(faith).side() {
+        let side = match content.faith(faith).side {
             Some(side @ (Alignment::Good | Alignment::Evil)) => side,
             _ => return false,
         };

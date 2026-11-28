@@ -1,5 +1,5 @@
-# Outdoor vault: the walls of a roofless chapel, pillars still standing in the nave, an
-# altar at its east end that glows faintly at night. Grass grows through the flagstones. Spaces
+# Outdoor vault: the walls of a roofless chapel, pillars still standing in the nave, the
+# Mynster's altar at its east end, long gone cold. Grass grows through the flagstones. Spaces
 # take the local area's own ground.
 name = "Ruined chapel"
 kind = "outdoor"
@@ -14,6 +14,8 @@ map = '''
 '''
 
 [legend]
+# The chapel's altar, the Mynster's, long gone cold.
+"_" = { terrain = "spent_altar", faith = "mynster" }
 "." = "flagstones"
 "," = "rubble"
 '"' = "tall_grass"

@@ -67,7 +67,7 @@ When you step onto a pile, the [message line](the-screen.md#messages) tells you 
 `You see here a dagger.` for a single stack, `There are several objects here.` for more.
 
 If you arrive on a special feature of the ground, such as an
-[altar](altars-forges-springs.md#forgotten-altars), a faint rune, webs, glowing fungus, an
+[altar](altars-forges-springs.md#praying-at-an-altar), a faint rune, webs, glowing fungus, an
 open or smashed chest, acid-pitted floor, or cracked floor, it is named first, once each time you
 come to it: `There is an altar here.` Plain ground, grass and flowers, doors, and candles say
 nothing. A feature you cannot stand on, such as a [worn statue](terrain.md#terrain-statue), is

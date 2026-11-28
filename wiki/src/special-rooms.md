@@ -186,16 +186,16 @@ where a dungeon favours or bans nothing. "Only" says where it can come at all.
   One floor in twenty that draws a cursed room is cursed throughout instead.
 - **Haunted room.** A fine camp spot that is not. [Rest](resting.md#how-resting-works) in it and
   the dead come, once every hour (see [Haunted rooms](cursed-and-hallowed.md#haunted-rooms) below).
-- **Altar room.** An old altar stands in the middle of the room, its god long forgotten, and a
-  faint glow rises from it; you notice it from the doorway. Stand beside it and you may
-  [pray](abilities.md#ability-pray) (see [Forgotten altars](altars-forges-springs.md#forgotten-altars)).
+- **Altar room.** An altar stands in the middle of the room, hallowed, old, or unhallowed (see
+  [Altars](altars-forges-springs.md#altars)), and a faint glow rises from it; you notice it from
+  the doorway. Stand on it or beside it and you may [pray](abilities.md#ability-pray) (see [Praying at an altar](altars-forges-springs.md#praying-at-an-altar)).
   Only rooms of 9 floor cells or more can be one.
 - **Forge.** A cold forge with an old anvil in the middle of the room; you smell soot and cold
   iron from the doorway. Stand beside the anvil and you may [temper](altars-forges-springs.md#forges)
   metal arms or armour you carry (see [Forges](altars-forges-springs.md#forges)). Only rooms of 9
   floor cells or more can be one.
-- **Shrine.** A squat stone shrine stands in the middle of the room. Like a forgotten altar it has
-  a hidden side, but only **[good or evil](alignment.md)**, either as likely, and its stone's light
+- **Shrine.** A squat stone shrine stands in the middle of the room. Like an altar it has
+  a side, but only **[good or evil](alignment.md)**, either as likely, and its stone's light
   tells which: gold for good, red for evil. It cares only whether you are on its side (see
   [Alignment](alignment.md)).
   - Of its side, you [heal](healing.md#how-fast-you-heal) twice as fast inside ("You feel welcome here.").

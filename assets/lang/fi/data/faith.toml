@@ -10,6 +10,7 @@ silent = { text = "mikään iso ei kuuntele", of = "20ed1e" }
 
 [dark]
 description = { text = "Valon langennut palvelija mustan veden alla, sanoo Mynsteri; Iltavalo, levolle käynyt Valo, sanoo sen kultti. Se ottaa kenet tahansa, heti.", of = "4756c6" }
+altar_description = { text = "Se on Pimeyden: siihen on kaiverrettu puoliksi veden alle vajonnut aurinko.", of = "3e7b94" }
 
 [dark.piety]
 favoured = { text = "Pimeys pitää sinua lähellään.", of = "d66bcd" }
@@ -19,6 +20,7 @@ unheard = { text = "Pimeys on sinulle vaiti.", of = "674048" }
 
 [elder_light]
 description = { text = "Haltioiden Valo, ensimmäinen valo, tähdet: kärsivällisyys ja tähyily. Se ei tarvitse kirkkoa, eikä sillä ole sellaista.", of = "f10852" }
+altar_description = { text = "Se on Vanhan Valon: sen kiveen on hakattu yksi ainoa tähti.", of = "afece4" }
 
 [elder_light.piety]
 favoured = { text = "Tähdet loistavat sinulle.", of = "f78023" }
@@ -38,6 +40,7 @@ silent = { text = "Taivaan Sammakot eivät vastaa", of = "17dafe" }
 
 [glimmering]
 description = { text = "Maahisten Valo, kiveen kätketty: tekeminen, uteliaisuus ja sairaiden hoito. Se ei käännytä ketään pois.", of = "4cdea1" }
+altar_description = { text = "Se on Hohteen: sen päällä hehkuu kide sinipunaisen valkoisena.", of = "e87371" }
 
 [glimmering.piety]
 favoured = { text = "Kivi hohtaa sinulle.", of = "c5fdb9" }
@@ -51,6 +54,7 @@ unheard = { text = "Käännät kiven valoa kohti, mutta se pysyy himmeänä.", o
 
 [hearth]
 description = { text = "Puolituisten Valo, tuli talon keskellä: pöytä, vieras ja vainajat, joita muistetaan illallisella.", of = "eb365c" }
+altar_description = { text = "Se on Lieden: sen vieressä riippuu pata pienen tulen yllä.", of = "f57fc0" }
 
 [hearth.piety]
 favoured = { text = "Liesi palaa sinulle lämpimänä.", of = "fd83e1" }
@@ -64,6 +68,7 @@ unheard = { text = "Luet sanat, mutta liesi on sinulle kylmä.", of = "e5abed" }
 
 [howl]
 description = { text = "Örkkien Viha, raivo, joka täyttää ruumiin ja kuluttaa sen: voimaa, pelottomuutta ja nopea kuolema katumatta.", of = "570a22" }
+altar_description = { text = "Se on Ulvonnan: siihen on kaiverrettu ammottava kita, ja kynnet ovat uurtaneet kiveä.", of = "0fc281" }
 
 [howl.piety]
 favoured = { text = "Ulvonta pauhaa veressäsi.", of = "82ba17" }
@@ -77,6 +82,7 @@ unheard = { text = "Ulvot, eikä mikään ulvo takaisin.", of = "e0f6ee" }
 
 [mynster]
 description = { text = "Ihmisten Valon kirkko: armo, hautaaminen ja sairaat, ja katumus ennen parannusta.", of = "8dee72" }
+altar_description = { text = "Se on Mynsterin: sen edessä palaa lamppu.", of = "c219fe" }
 
 [mynster.piety]
 favoured = { text = "Valo on kanssasi.", of = "535838" }
@@ -89,6 +95,7 @@ unheard = { text = "Rukoilet, mutta Valo ei tunne sinua.", of = "794646" }
 
 [never_full]
 description = { text = "Nälkä, rottaihmisten Vanha Äiti: vanha nälkäinen olento kaiken alla, jota Mynsteri kutsuu Epäpyhäksi.", of = "1e11b8" }
+altar_description = { text = "Se on Kyllästymättömän: siihen on kaiverrettu läpi purtu rengas.", of = "f473b6" }
 
 [never_full.piety]
 favoured = { text = "Vanha Äiti pitää sinusta.", of = "be5b21" }
@@ -102,6 +109,7 @@ unheard = { text = "Jyrsit, mutta Vanha Äiti ei ole sinusta nälkäinen.", of =
 
 [old_scales]
 description = { text = "Kärmäläisten lohikäärmesukulaiset ja jumalat, joiden lähin kasvo on tulidraakki Fyrdelfin alla: oveluutta, ansoja ja laskematta kulutettuja henkiä.", of = "42deb6" }
+altar_description = { text = "Se on Vanhojen Suomujen: sen päälle on kasattu luotuja suomuja.", of = "c5f118" }
 
 [old_scales.piety]
 favoured = { text = "Vanhat Suomut ovat sinuun tyytyväisiä.", of = "5994a0" }
@@ -115,6 +123,7 @@ unheard = { text = "Sihiset, eikä mikään suomuinen liikahda.", of = "3dc1cc" 
 
 [reckoner]
 description = { text = "Harmaakääpiöiden Ahneuden jumala, joka pitää kirjaa kaikesta velasta ja omaisuudesta eikä anna mitään anteeksi.", of = "79380d" }
+altar_description = { text = "Se on Laskijan: siihen on naulattu lovettuja rautaisia pykäläpuita.", of = "c9717e" }
 
 [reckoner.piety]
 favoured = { text = "Laskija merkitsee sinut saamapuolelle.", of = "0fffc3" }
@@ -128,6 +137,7 @@ unheard = { text = "Lasket, mutta Laskija ei merkitse sinua.", of = "7c437e" }
 
 [spark]
 description = { text = "Kääpiöiden Valo, kivestä pimeässä isketty: työ, vala ja muisti. Jokainen paja on sen alttari.", of = "760210" }
+altar_description = { text = "Se on Kipinän: sen kylkeen on kaiverrettu alasin.", of = "ef4e35" }
 
 [spark.piety]
 favoured = { text = "Kipinä palaa sinussa kirkkaana.", of = "fe6b04" }
@@ -141,6 +151,7 @@ unheard = { text = "Isket kiveen, eikä yksikään kipinä vastaa.", of = "3c924
 
 [weaver]
 description = { text = "Tummahaltioiden Kateuden jumalatar, joka antoi heille himon: jokainen tummahaltia kiipeää hänen verkossaan kohti sitä, mitä toisella on.", of = "454085" }
+altar_description = { text = "Se on Kutojan: siitä riippuu seittejä, ja kiveen on hakattu hämähäkki.", of = "abac23" }
 
 [weaver.piety]
 favoured = { text = "Cutoja hymyile sinulle.", of = "d20136" }

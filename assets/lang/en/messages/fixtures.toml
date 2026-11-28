@@ -13,7 +13,7 @@
 # `character.talent_chosen`); `verb` a damage type's verb ("burns"), text until those words are
 # converted. `level` is a number.
 
-# The forgotten altar's fire, harming the player (`outcome.rs`).
+# An altar's fire, harming the player (`outcome.rs`).
 altar_fire_harmless = "The altar's fire washes over you harmlessly."
 # `verb`: the fire's damage type's verb ("burns"); `who`: the creature hit, by its type.
 altar_fire_hits = "The altar's fire {verb:bare} {who:a}."

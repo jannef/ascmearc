@@ -39,6 +39,9 @@ pub fn word_ids(content: &Content) -> BTreeSet<String> {
         .iter()
         .for_each(|d| add("disease", &d.id));
     (content.room_effects().defs().iter()).for_each(|d| add("room", &d.id));
+    for side in ascmearc_core::alignment::Alignment::ALL {
+        add("altar", ascmearc_core::content::altar_side_id(side));
+    }
     content.skills().iter().for_each(|d| add("skill", &d.id));
     content
         .terrain_defs()

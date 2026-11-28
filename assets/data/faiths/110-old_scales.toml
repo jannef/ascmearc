@@ -4,6 +4,8 @@ id = "old_scales"
 name = "the Old Scales"
 description = "The kobolds' dragon-kin and gods, whose nearest face is the fire drake under Fyrdelf: cunning, traps, and lives spent uncounted."
 face = "dark"
+glow = "altar_old_scales"
+altar_description = "It is the Old Scales': shed scales lie heaped on it."
 stranger = "bane"
 
 [faith.words]

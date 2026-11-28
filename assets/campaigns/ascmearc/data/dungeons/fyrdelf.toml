@@ -15,6 +15,8 @@ depth = 12
 generator = { kind = "mines" }
 size = [100, 36]
 traps = ["arrow", "spear", "fireball", "lightning_bolt", "alarm"]
+# The duergar's halls: their altars old or the deep powers', never hallowed.
+altars = { unaligned = 1, evil = 1 }
 # Few secret doors (the duergar dig, they do not hide), hidden things harder to find the more
 # dangerous the floor, and the hardest locks of the three dungeons.
 secret_doors = [0, 2]

@@ -74,7 +74,7 @@ floor", mark `k` (`c` is the cold room's), `needs_below`, `floor = "cracked_floo
 guardians = [2, 4], danger = 1 }`, #415), cursed (6, mark
 `g`, `level_chance` 5, `rise = { faction = "undead", after = "2m" }`, `unholy`,
 #408), altar (8, "altar room",
-`min_cells = 9`, `feature = "forgotten_altar"`, `sides`, `offers = { pray = "forgotten_altar" }`,
+`min_cells = 9`, `feature = "altar"`, `sides`, `offers = { pray = "forgotten_altar" }`,
 #406), forge (3, mark `F`, `min_cells = 9`, `feature = "anvil"`, `offers = { temper = true }`,
 #418), shrine (4, mark `i`, `min_cells = 9`, `feature = "shrine_stone"`, `sides` with the
 altar's lights, `shrine = { regen = 200, status = "unwelcome", ... }`, #413), haunted (5, mark
@@ -343,11 +343,13 @@ of one more. Decipher script's marks (#1270: all reading) double inside: a check
 grimoire read to its end (100 %) are one mark anywhere and two in the scriptorium (200), a
 scroll read and used up (50 %) a mark there for certain. Nothing is saved; no action, no ability.
 
-## Forgotten altars and prayer
+## Altars and prayer
 
-#406, the design's §7. Data: the `altar` effect, the terrains `forgotten_altar` (glyph `_`,
-light `altar_neutral`, a `description` look mode adds after its name) and `spent_altar` (dark,
-no light), the lights `altar_good`, `altar_neutral`, `altar_evil` (`data/lights.toml`), the
+#406, the design's §7. Data: the `altar` effect, the terrains `altar` (glyph `_`, walkable,
+its own light `altar_glow` for an altar with no record) and `spent_altar` (dark, no light,
+walkable), the altars' kinds and their lights `altar_good`, `altar_neutral`, `altar_evil`
+(`data/altars.toml`, `data/lights.toml`; the record, its side and church, is
+`docs/dev/faith.md` "Altars"), the
 `pray` action cost (1000 a turn), `[shift] prayed_good`/`prayed_evil` (`data/alignment.toml`),
 and the outcome table `data/outcomes/forgotten_altar.toml`.
 
@@ -357,11 +359,14 @@ Outcome tables (`content/outcome.rs`, `Content::outcomes`, one file each, the id
 `id`, `weight` within its kind, `message` or `messages`, `otherwise`, and `effect`, an
 `OutcomeEffect`: each field one hook, applied in the struct's order). `OutcomeTable::leaned`
 moves the lean; `Content::offer_at(terrain)` is what a feature cell offers (the first effect
-whose `feature` it is), so a spent altar, another terrain, offers nothing.
+whose `feature` it is), so a spent altar, another terrain, offers nothing; on a level,
+`LevelState::offer_at(content, p)` asks it, and an altar offers only while its record names
+no church (an altar named for one, or with no record, offers nothing yet).
 
 Walking into a feature (#975): `ui::step_dialogs::offer_dialog`, beside the trap's question, asks for a step
-into a cell the perception shows (visible or remembered) whose terrain has an `offer_at`, with no
-actor seen on it. The question is the offer's entry in `assets/lang/en/ui/step_dialogs.toml`
+into a cell the perception shows (visible or remembered) that blocks the way and offers something
+(`PerceptionView::offer_at`), with no actor seen on it; an altar is walked onto, so it asks
+nothing. The question is the offer's entry in `assets/lang/en/ui/step_dialogs.toml`
 (`offer_pray`, `offer_drink`, `offer_temper`) with the terrain as a phrase, `Ability::offered` the
 ability, and yes is `ScreenAction::UseAbility`, the menu's own path. An anvil (`Offer::Temper`,
 no ability) asks nothing: `ui::step_dialogs::step_screen` opens Metalcraft's screen (#1387, below). A
@@ -370,21 +375,25 @@ The rules are unchanged: a `move` into one says it blocks the way, with no time.
 act on a step, and the rest that block (`shrine_stone`, `shelves`, `statue`, `fountain`) offer
 nothing, so none of them asks.
 
-Generation (`mapgen/special.rs`): `place` draws the side (one `below(4)` from the map stream:
-0 good, 3 evil, else neutral) only for an effect with `sides`, then `make` finds the feature's
+Generation (`mapgen/special.rs`): `place` draws the side only for an effect with `sides` (one
+draw from the map stream: a shrine's `below(2)`, else `below(total)` of the level's altar
+weights, `AltarWeights::pick`: 1:2:1 reads 0 good, 1 and 2 unaligned, 3 evil), then `make` finds the feature's
 cell (`feature_cell`: plain free floor nearest the box's middle, nothing on it or on a patrol,
 no door among its eight neighbours, and the room's walkable cells still 4-connected without it;
-none, and the room is not made), lays it, and puts the side's light on it (`canvas.lights`).
-Level files: `[[room]] side = "..."` (only for an effect with `sides`; default neutral), and the
-side's light on each feature cell the level draws in the room (`content/level.rs`).
+none, and the room is not made), lays it, and puts the side's light on it (`canvas.lights`); an
+altar's side goes to its record instead (`generated_altar`: named for the level's
+`altar_faith` when of that church's side), with its glow, and the room keeps none.
+Level files: `[[room]] side = "..."` (only for an effect with `sides`; default neutral) and, in
+an altar room, `faith`; a shrine's side's light on each feature cell the level draws in the
+room, an altar room's record on each of its altars (`content/level.rs`).
 
 Prayer (`world/fixtures/pray.rs`): `Ability::Pray` (`Source::Faith`, the Faith group's one
-prayer, `docs/dev/prayer.md`; `Ability::here(level, content, pos)` also offers it beside a
-feature that offers it, so `PerceptionView::abilities` lists it for anyone there, faith or none,
+prayer, `docs/dev/prayer.md`; `Ability::here(level, content, pos)` also offers it beside, or
+on, an altar that offers it, so `PerceptionView::abilities` lists it for anyone there, faith or none,
 once, plain "Pray"). `Action::Pray` (`World::pray_action`: beside such an altar
 `start_prayer`, anywhere else the faith's prayer; `Spent::Pray`), `World::pray`: `keep_at` until the table's `seconds` have
 passed (each turn the `pray` price, the last cut to `price_until`), a broken prayer says so and
-nothing else; done, `prayer_answered`: `Deed::PrayedHoly` or `Deed::PrayedDark` by side, `leaned_kinds(table, side, band,
+nothing else; done, `prayer_answered`: `Deed::PrayedHoly` or `Deed::PrayedDark` by the record's side (`altar_side`), `leaned_kinds(table, side, band,
 devout)` (`world/fixtures/outcome.rs`), `draw_outcome` (kind, then outcome, keyed stream),
 `befall`, then, while the altar's cell is still the feature and the player lives, the exhaustion
 draw (`exhaust` above 0 only): `set_terrain(spent)` with the placed light removed.
@@ -411,10 +420,11 @@ too), `teleport` (the trap's move), `explode` (`sound_at`, then `cast_burst` wit
 `Caster::Place`, whose harm is `World::place_hurts`: resisted, "The altar's fire burns you.", a
 seen creature's line, `Harm::Place`), and `becomes` (the placed light removed, `set_terrain`).
 
-Nothing new is saved but `SpecialRoom::side` (left out while `None`): the terrain is the record
-of a spent or blown altar. The `rooms` dev layer adds `, side good` and `, spent`/`, destroyed`
-(`dump/truth.rs::feature_state`). The showcase's `shrine` scenario has a good, a neutral, and an evil
-altar side by side. Talent: Pious (system `special_rooms`, which holds prayer,
+What is saved: the altar's record (`LevelState::altars`), and the terrain says a spent or a
+blown altar. The `rooms` dev layer adds a shrine's `, side good`, `, spent`/`, destroyed`
+(`dump/truth.rs::feature_state`), and a line per altar. The showcase's `shrine` scenario has a
+hallowed, an old, and an unhallowed altar side by side, and south of them altars named for the
+Mynster, the Hearth, and the Howl. Talent: Pious (system `special_rooms`, which holds prayer,
 #773; `devout`, `FaithMods::devout`; hook `leaned_kinds`).
 
 The great outcomes (#407, `world/fixtures/boons.rs`; tests `world/fixtures/boons_tests.rs`) are five more hooks,

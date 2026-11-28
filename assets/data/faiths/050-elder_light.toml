@@ -4,7 +4,8 @@ id = "elder_light"
 name = "the Elder Light"
 description = "The elves' Light, the first light, the stars: patience and watching. It needs no church, and has none."
 face = "holy"
-shared = ["mynster", "hearth", "spark", "glimmering"]
+glow = "altar_elder_light"
+altar_description = "It is the Elder Light's: a single star is cut into its stone."
 stranger = "cold"
 
 [faith.words]

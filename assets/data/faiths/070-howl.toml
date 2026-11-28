@@ -4,6 +4,8 @@ id = "howl"
 name = "the Howl"
 description = "The orcs' Wrath, the fury that fills a body and spends it: strength, fearlessness, and a quick death unregretted."
 face = "dark"
+glow = "altar_evil"
+altar_description = "It is the Howl's: an open jaw is carved on it, the stone scored by claws."
 stranger = "bane"
 
 [faith.words]
