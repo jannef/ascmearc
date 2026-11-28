@@ -11,3 +11,13 @@ stranger = "hears"
 [faith.words]
 pray = "You turn a stone to the light and pray."
 unheard = "You turn a stone to the light, but it stays dull."
+
+# Making, and the stone made to shine.
+[faith.piety]
+deeds = { gem_cut = 3, gem_set = 3, crafted = 2 }
+
+[faith.piety.words]
+favoured = "The stone glimmers for you."
+heard = "The Glimmering sees you."
+unheard = "The stone is dull to you."
+shunned = "The Glimmering has hidden its light from you."

@@ -167,6 +167,8 @@ pub(super) struct FaithSpec {
     words: FaithWords,
     #[serde(default, rename = "use")]
     uses: BTreeMap<PrayerUse, String>,
+    #[serde(default)]
+    piety: Option<super::FaithPiety>,
 }
 
 #[derive(Deserialize)]
@@ -204,6 +206,9 @@ pub struct FaithDef {
     /// Its own line for a use answered (`[faith.use]`), by use: a line of data,
     /// `faith:<id>.use.<use>`; the face's where it says none.
     pub uses: BTreeMap<PrayerUse, String>,
+    /// Its own piety (`[faith.piety]`): deeds and kills over its side's base, its waning, its
+    /// words for the standings (`content/piety.rs`).
+    pub piety: Option<super::FaithPiety>,
 }
 
 impl FaithDef {
@@ -301,6 +306,7 @@ impl Faiths {
                 listens: spec.listens,
                 words: spec.words,
                 uses: spec.uses,
+                piety: spec.piety,
             });
         }
         Ok(Self { defs, ids })

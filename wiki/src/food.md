@@ -105,6 +105,9 @@ Every such corpse you eat, fresh or rotten, puts one [training
 mark](stats.md#raising-your-stats) into one of your six stats, picked at random. Nothing is said.
 The mark comes even if the corpse comes back up.
 
+The Never-Full, the ratfolk's god, is [pleased](piety.md#what-pleases-your-god) by each such
+meal, and the Light displeased. Her opinion of you comes and goes; the craving does not.
+
 As the count grows, the craving changes you for good. At each count below you hear its line and
 gain its talent, which you keep among your other talents. The stat changes add up: by 400 you
 have +5 Strength, Dexterity, and Toughness, −2 Intelligence, and −4 Presence. The last column is

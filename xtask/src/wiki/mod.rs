@@ -68,6 +68,7 @@ mod objects;
 mod order;
 mod outcomes;
 mod overworld;
+mod piety;
 mod potions;
 mod prayer;
 mod profane;
@@ -347,6 +348,12 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("prayer-uses.md", prayer::prayer_uses),
         ("prayer-levels.md", prayer::prayer_levels),
         ("prayer-rites.md", prayer::prayer_rites),
+        ("piety-bands.md", piety::piety_bands),
+        ("piety-deeds-goodly.md", piety::piety_deeds_goodly),
+        ("piety-deeds-wicked.md", piety::piety_deeds_wicked),
+        ("piety-deeds-faiths.md", piety::piety_deeds_faiths),
+        ("piety-kills.md", piety::piety_kills),
+        ("piety-time.md", piety::piety_time),
         ("fletching.md", skills::fletching),
         ("crafting-groups.md", crafting::crafting_groups),
         ("crafting-work.md", crafting::crafting_work),

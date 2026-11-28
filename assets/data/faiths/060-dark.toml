@@ -7,3 +7,14 @@ face = "dark"
 glow = "altar_dark"
 altar_description = "It is the Dark's: a sun half under water is carved on it."
 stranger = "hears"
+
+# The fiends its priests bargain with, and its rooms lifted, which it hates above all.
+[faith.piety]
+deeds = { summon_fiend = 10, consecrate = -15, make_peace = 0 }
+kills = { tags = { fiend = -1 } }
+
+[faith.piety.words]
+favoured = "The dark holds you close."
+heard = "The dark hears you."
+unheard = "The dark is silent to you."
+shunned = "The dark has let you go."

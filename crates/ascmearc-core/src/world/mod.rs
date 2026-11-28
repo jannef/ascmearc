@@ -193,6 +193,8 @@ pub use crafting::temper::{temperable, whittleable, workable, workable_wood};
 pub use creatures::parley::Truce;
 pub use creatures::statue::Statue;
 pub(crate) use creatures::unseen::{Concealed, fade_refused, unseen_by_player};
+pub use faith::piety::PietyRow;
+pub(crate) use faith::piety::{pray_clause, standing_of};
 pub use faith::pray::PrayerState;
 pub use fixtures::curse::{Rising, rise_candidates, rises_as};
 pub use fixtures::graveyard::Fallen;
@@ -1029,6 +1031,8 @@ impl World {
         // `familiar.rs`), before the story knows them.
         world.bring_companion();
         world.bring_familiar();
+        // A vowed class's god thinks a little well of them from the start (`faith/piety.rs`).
+        world.vow();
         let kept = world.companion().is_some() || world.familiar().is_some();
         if world.settle_in() || kept || inherits {
             *world.perception =

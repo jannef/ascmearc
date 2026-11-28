@@ -11,3 +11,15 @@ stranger = "bane"
 [faith.words]
 pray = "You gnaw at nothing, and pray to the Ould Mother."
 unheard = "You gnaw, and the Ould Mother is not hungry for you."
+
+# Hunger's sacrament: the thinking eaten, the craving's rows crossed, the profane meal. She is
+# never full, so her favour goes fast; she is slow to forget.
+[faith.piety]
+deeds = { eat_sapient = 3, eat_kin = 5, eat_profane = 25, craving_threshold = 12, craving_gift = 12, consecrate = -10 }
+wane = { favour = 4, anger = 1 }
+
+[faith.piety.words]
+favoured = "The Ould Mother is fond of you."
+heard = "The Ould Mother hears you."
+unheard = "The Ould Mother has forgotten you."
+shunned = "The Ould Mother has turned her back on you."

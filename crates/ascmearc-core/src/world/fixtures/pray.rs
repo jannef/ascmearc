@@ -9,8 +9,8 @@
 //!   rest's machinery; the last cut short to end on time): a creature coming into view, a message, or a blow stops it, and a broken
 //!   prayer gives nothing and never spends the altar ("Your prayer is broken."), but the time is
 //!   spent.
-//! - **The answer**: the deed first ([`Deed::Prayed`], by the altar's side, its record's), then
-//!   one outcome drawn from the table, leaned by the altar's side against the player's band
+//! - **The answer**: the deed first ([`Deed::PrayedHoly`] or [`Deed::PrayedDark`], by the altar's side, its record's), then one outcome
+//!   drawn from the table, leaned by the altar's side against the player's band
 //!   ([`super::outcome::leaned_kinds`]; Pious), and its hooks (`outcome.rs`; the great ones
 //!   `boons.rs`). Then, unless the altar is gone (it blew apart), one draw of the table's `exhaust`: the altar is spent, its
 //!   cell the table's `spent` terrain and its own light gone ("The altar's glow gutters and
@@ -104,7 +104,9 @@ impl World {
             return;
         };
         let side = self.altar_side(altar);
-        self.player_did(Deed::Prayed(side));
+        if let Some(deed) = Deed::prayed(side) {
+            self.player_did(deed);
+        }
         self.train_stat(crate::content::StatUse::Prayed);
         let me = self.state.player();
         let devout = me.talent_mods(&content).faith.devout;

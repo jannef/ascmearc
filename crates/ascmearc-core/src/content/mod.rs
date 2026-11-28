@@ -146,6 +146,7 @@ mod overworld;
 pub(crate) mod part;
 mod particles;
 mod patron;
+mod piety;
 mod pipe;
 pub mod place_word;
 mod plural;
@@ -394,6 +395,9 @@ pub use overworld::{Landscape, LocalArea, local_area_id, parse_local_area};
 pub use part::{MAX_OBJECT_PARTS, MAX_PARTS, Part, PartDef, PartId, PartRole};
 pub use particles::{ParticleEmitter, ParticleTrigger};
 pub use patron::PatronRules;
+pub use piety::{
+    DeedTable, FaithPiety, FaithTable, KillTable, PietyBand, PietyRules, PietyWords, Wane,
+};
 pub use pipe::PipeRules;
 pub use plural::Plurals;
 pub use potion::{Draught, Drink, Flask, Splash};
@@ -759,6 +763,9 @@ pub struct Content {
     /// The penalties of shots by distance (`data/ranged.toml`); none
     /// without the file.
     ranged: RangedRules,
+    /// Piety (`data/piety.toml`): the bands, the waning, the base deeds by side, each faith's
+    /// table merged; none without the file, when no god has an opinion.
+    piety: Option<PietyRules>,
     /// The priest's prayer (`data/prayer.toml`): the strain, the
     /// faces, the uses in their order; none without the file, when every prayer is refused.
     prayer: Option<PrayerRules>,
@@ -1219,6 +1226,8 @@ impl Content {
         content.webs = content.load_optional(files)?;
         content.ranged = content.load_or_default(files)?;
         content.prayer = content.load_optional(files)?;
+        // After the faiths, the creatures (tags), and the statuses it names.
+        content.piety = content.load_optional(files)?;
         content.allies = content.load_optional(files)?;
         content.stat_training = content.load_or_default(files)?;
         content.tuning = content.load_or_default(files)?;

@@ -16,6 +16,8 @@ How far a design's slices have come is tracked in its issues, not here.
 
 ## Approved, being built
 
+- `piety.md` (#2181): a score per god, deeds by side, favour that waxes and wanes, anger,
+  offerings; altars by side (amending `prayer.md`).
 - `prayer.md` (#2179): one Pray for everyone, the faith on the character, every altar a faith's.
 - `profane-gifts.md` (#1471): the layer bosses' corpses and the gift table.
 

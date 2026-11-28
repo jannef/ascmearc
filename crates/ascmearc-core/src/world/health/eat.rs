@@ -166,6 +166,9 @@ impl World {
         self.say(Msg::new(msg::health::EAT).role("what", what));
         self.ate_goods(dish.meal, &food);
         self.consume(&food, burden, false, events);
+        if self.content.object(food.object).corpse.is_none() {
+            self.player_did(crate::world::Deed::AteMeal);
+        }
     }
 
     /// The player has eaten `food` (said already), carrying `burden` before: it feeds and does

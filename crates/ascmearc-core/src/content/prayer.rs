@@ -128,8 +128,7 @@ pub struct Laity {
 }
 
 /// How a god hears the player now (`World::standing`): a closed set, each a row of
-/// `[hearing]`. Only `heard` and `unheard` are reached until piety; `favoured` and `shunned` are
-/// its rows, read already.
+/// `[hearing]`, and each a band of piety (`data/piety.toml`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Standing {
     /// The plain case.
@@ -143,6 +142,14 @@ pub enum Standing {
 }
 
 impl Standing {
+    /// Every standing, best first.
+    pub const ALL: [Standing; 4] = [
+        Standing::Favoured,
+        Standing::Heard,
+        Standing::Unheard,
+        Standing::Shunned,
+    ];
+
     /// Its id in data and dumps.
     pub const fn id(self) -> &'static str {
         match self {

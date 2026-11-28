@@ -103,6 +103,7 @@
   - [Spell glow](spell-glow.md)
   - [Wands and rods](wands-and-rods.md)
 - [Prayer](prayer.md)
+  - [Piety](piety.md)
 
 # Items
 

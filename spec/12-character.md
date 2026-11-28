@@ -6,7 +6,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 
 - A run starts as a character: a race, a gender (male, female, other), and a class, chosen on New run or on the command line; otherwise the scenario's own character.
 - A class may be closed to some races, or open to a race only for some genders. New run offers only the open classes, and its Random draws only among them. A scenario's own character is never checked.
-- After the class the character chooses a faith among their people's (each race has its own and may have others open, `docs/design/religions.md` §7), their people's preselected. The paladin takes only a church of the Light, the priest only a faith whose god answers (holy or dark); everyone else any of their people's. The faith moves no roll. Who answers a prayer is the faith's; what the god thinks of you is piety's (`docs/design/prayer.md`, step 3).
+- After the class the character chooses a faith among their people's (each race has its own and may have others open, `docs/design/religions.md` §7), their people's preselected. The paladin takes only a church of the Light, the priest only a faith whose god answers (holy or dark); everyone else any of their people's. The faith moves no roll. Who answers a prayer is the faith's; what the god thinks of you is piety's ("Piety" below).
 - The character has a name of 1 to 20 characters. Left empty, a name is drawn from the race's list for the gender.
 - Age is drawn within the race's range; the birthday is drawn over the year; the birth date is counted back from the run's start date.
 - Starting scores are 10 plus the race's, gender's, class's, and birth sign's adjustments, kept within 1 to 40. Male raises Strength, female Dexterity, other one random stat.
@@ -52,6 +52,16 @@ Part of the design document; the index is [`specification.md`](../specification.
 - **Alignment bars nothing**: no class, talent, or ability is refused or greyed by band, and nothing remembers a drop. A holy gift outside its bands is still listed and used, and does nothing. The owner's exception: a quest may name the bands it is offered to.
 - A sin empties the paladin's zeal; it bars nothing.
 - **The two laws** (#1764): the First Law, never call up a fiend (`fiend`) by your own act, and the Second Law, never eat the flesh of a thinking creature (one tagged `sapient`). Each is counted on the player and told once, the first time, in words from data. **The ratfolk craving** (#1804, docs/dev/craving.md): a ratfolk who eats the thinking hears "The ancient craving awakens in you." in place of the law's line; each such corpse trains a random stat by a mark, and at counts set in data (10, 25, 50, 100, 200, 300, 400, and 500) a granted talent of the Craving tree changes them for good, each a step toward evil: stronger, faster, hungrier, the calmer stances lost and every stance fought one step more aggressive, hunger's harm doubled and every talent that eases hunger taken for good at 100, immune to disease at 200 and to poison at 400; from 500 a profane gift drawn, and one more every 100 after, each a heavier step toward evil, until the thirteenth gift ever received ends them. **Surrender to hunger** (#1827): one of another race who has eaten 100 of the thinking may take this Grit talent at a level's pick and crave from then on, the count starting at the pick and every count half again as far (15, 38, 75, … 750, then every 150), their own race's hunger pace growing as a ratfolk's does.
+
+## Piety
+
+- Each god keeps a hidden opinion of the player: a score per faith, from −100 000 to 100 000, of which everyday play uses a few hundred points around 0. The far ends are left for something rare later. Piety is not alignment: alignment is what the player is, piety what their god thinks.
+- The player sees only a standing, one word: favoured, heard, unheard, or shunned, by bands at small numbers. A prayer reads the standing: a favoured one strains less, an unheard or shunned one is not heard. Never a number.
+- A score rests at 0, or for the player's own faith at their class's vow (the priest a little, the paladin a little more), and starts there.
+- Deeds move it by a few points each, whole: no diminishing. Each side has one base table, what pleases and offends every faith of the Light and every dark one; a faith adds its own deeds and changes the base's. Kills count by their kind and by the victim's tags, and a few by the player's state (the Howl's kills while Raging). A faith with no side notices nothing.
+- Favour waxes and wanes: each dawn every opinion moves a little back toward where it rests, favour and anger alike, each faith at its own pace; no god's favour or anger lasts for ever. While the player's alignment band is one their faith's face scorns, that dawn their god cools toward them instead, down to the edge of shunned. This is the one place alignment enters piety.
+- Crossing into another standing says so, in the faith's own words; smaller moves are silent.
+- Piety bars nothing the victory needs, and never touches the ratfolk craving: it reads its meals as deeds and changes nothing of it.
 
 ## Stats
 
@@ -162,7 +172,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Adventurers' actives are class abilities used from the abilities menu, paid by cooldowns or by a class resource.
 - Holy gifts work only for the bands they name.
 - Casters' actives are spells, paid in mana, cast by the one cast path. A full caster starts with a cantrip and has about four spells by mid-levels; the bard, paladin, and ranger a cantrip or a boon.
-- Everyone with a faith has one prayer, Pray, in the abilities menu's Faith group: it answers what ails them most among what they hold, in a fixed order. The laity hold healing; the priest's talents widen its reach with level and halve its strain. A hidden strain limits it. The faith's face picks who answers (holy or dark), the dark answer comes with a twist, and a god that scorns the player's band does not hear them.
+- Everyone with a faith has one prayer, Pray, in the abilities menu's Faith group: it answers what ails them most among what they hold, in a fixed order. The laity hold healing; the priest's talents widen its reach with level and halve its strain. A hidden strain limits it. The faith's face picks who answers (holy or dark), the dark answer comes with a twist, and a god that thinks ill of the player ("Piety") does not hear them.
 - The thief's Openings build on one marked foe. The mark's death carries the pool to the next foe. Exploit spends every opening on one blow that the class talents grow. Trained wind is off the thief's table: "the thief already gets Exploit at level 1" (the owner).
 - The bard's songs are paid in one thing each, heard by everyone in earshot; hostile hearers resist.
 - Reprieves (Rise from the ashes, Hag's bargain, and their kin) save from death once in a life each. Starving and choking still kill.

@@ -415,7 +415,8 @@ and are **dev-only**.
   Bard`), age, birth date, and sign with a lucky day's title (`Age 27`, `Born 3
   Seedtide 1417`, `Sign Wood Salamander, the Racer`), then their own scores as the rules read
   them (`Strength 12`), then their alignment band, `Alignment Kind` (never the score), then the
-  faith they profess, `Faith the Mynster`, then their combat stance when it is not neutral, `Stance Frenzy`, then each guild they belong to with
+  faith they profess, `Faith the Mynster`, then where they stand with its god, `Standing heard`
+  (never the score; `docs/dev/piety.md`), then their combat stance when it is not neutral, `Stance Frenzy`, then each guild they belong to with
   their rank, `Guild Weyfarers' Gilde, Tin`, then `Effects Bleeding, Diseased` when they suffer
   any, then `Mark the kobold`, the creature their openings are in (docs/dev/openings.md), then
   `Diseases filth fever`, the diseases they know they have, then what they resist in words,
@@ -501,7 +502,8 @@ On a level with a danger, `truth` and `actors` start with `danger 3 population 2
   the size of its pool now, `roll slug_charm scroll_of_lightning x1 of 4`; the named monsters
   dead, `slain fire_drake`; a dwarf's oath kills and the bands crossed, once there are any
   (`docs/dev/oaths.md`), `oath kills 75, 3 bands`; the two laws broken (`docs/dev/alignment.md`), once either is,
-  `laws broken: ate 1 sapient, summoned 0 fiend`, and for a ratfolk the craving's rows crossed
+  `laws broken: ate 1 sapient, summoned 0 fiend`, each god's opinion of the player with its standing
+  (`docs/dev/piety.md`), `piety mynster 20 (heard), dark -6 (heard)`, and for a ratfolk the craving's rows crossed
   (`docs/dev/craving.md`), `...; craving 1 threshold` (a surrendered character's with its base,
 `...; craving 0 thresholds from 120`); what an aristocrat's stipend holds, `stipend 412 gold: a fizzy pink
   potion`; a merchant's stake with their partner in hundredths, its last week, and the weekly
@@ -544,7 +546,7 @@ messages, heard sounds, and, with `--state`, the full world state; and:
   order: `id`, `current`, `max`, and `on`, the mark a marked pool's points are in, else null),
   `defence` (the total), `protection`, `resistances` (by damage type id, the word: `{"cold":
   "resistant"}`), `weight`, `burden` (`level`, `limit`, the limit in grams), `alignment` (the
-  band's id, or null without alignment rules), `faith` (the faith's id, or null for none),
+  band's id, or null without alignment rules), `faith` (the faith's id, or null for none), `standing` (the player's standing with it: `heard`, or null without a god that keeps an opinion),
   `guilds` (`id`, `name`, `rank`; left out before
   joining one), `hunger` (`bloated` … `starving`, or null when nobody hungers), `stance` (the
   combat stance's id), `dazzled`.
@@ -553,6 +555,8 @@ messages, heard sounds, and, with `--state`, the full world state; and:
   (`id`), or null; with `--state` also the dev `encounter_tables`, those
   matching the player's cell.
 - `effects` (status ids), `diseases` (the known ones' ids).
+- With `--state`, `piety`: each god's opinion of the player by faith id, `{ "mynster": 20 }`
+  (ground truth; `docs/dev/piety.md`).
 - `death`: `{turn, time, place, by, of, cause, trap}` or null; `of` the status that killed,
   `cause` when neither a creature nor a status effect killed them ("Starved to death", choking,
   "Killed by a fireball trap", "Fell through a collapsed floor", and the like), `trap` the id of

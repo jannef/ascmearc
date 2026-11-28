@@ -161,6 +161,16 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
             uses.join(", ")
         ));
     }
+    // What each god thinks of the player (hidden in the game): the score and its standing.
+    let piety: Vec<String> = (world.piety_rows().iter())
+        .map(|r| {
+            let id = &world.content().faith(r.faith).id;
+            format!("{id} {} ({})", r.score, r.standing.id())
+        })
+        .collect();
+    if !piety.is_empty() {
+        rows.push(format!("piety {}", piety.join(", ")));
+    }
     // Each stat's pile with the price in force: the rise's, or the drop's for a negative pile.
     let player = world.state().player();
     let rules = world.content().stat_training();

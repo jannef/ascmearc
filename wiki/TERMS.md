@@ -235,6 +235,10 @@ above.
 | Pray, the prayer (Bede, the priest's Orison, Prayer, Litany, Benediction, Miracle), what it answers | `prayer.md`, `prayer.md#what-it-answers` (a use: its row) |
 | Strain, a fizzled prayer | `prayer.md#strain` |
 | Who answers a prayer: the holy and the dark powers by faith, a god that scorns you, unheard | `prayer.md#who-answers` |
+| Piety, what your god thinks of you | `piety.md` |
+| Standing (favoured, heard, unheard, shunned) | `piety.md#your-standing` |
+| What pleases a god, the deeds of each faith | `piety.md#what-pleases-your-god` |
+| Favour fading, a god's anger fading, the scorn | `piety.md#favour-fades` |
 | The dark powers' twists (Mutter, Whisper, Invocation, Rite, Pact) | `prayer.md#the-dark-powers-answers` |
 | Communion with the dark | `class-priest.md#talent-communion`, `prayer.md#communion-and-sanctuary` |
 | Hallowed ground, dreaded ground (Sanctuary) | `cursed-and-hallowed.md#hallowed-ground` |

@@ -393,7 +393,7 @@ on, an altar that offers it, so `PerceptionView::abilities` lists it for anyone 
 once, plain "Pray"). `Action::Pray` (`World::pray_action`: beside such an altar
 `start_prayer`, anywhere else the faith's prayer; `Spent::Pray`), `World::pray`: `keep_at` until the table's `seconds` have
 passed (each turn the `pray` price, the last cut to `price_until`), a broken prayer says so and
-nothing else; done, `prayer_answered`: `Deed::Prayed(side)` (the record's side, `altar_side`), `leaned_kinds(table, side, band,
+nothing else; done, `prayer_answered`: `Deed::PrayedHoly` or `Deed::PrayedDark` by the record's side (`altar_side`), `leaned_kinds(table, side, band,
 devout)` (`world/fixtures/outcome.rs`), `draw_outcome` (kind, then outcome, keyed stream),
 `befall`, then, while the altar's cell is still the feature and the player lives, the exhaustion
 draw (`exhaust` above 0 only): `set_terrain(spent)` with the placed light removed.

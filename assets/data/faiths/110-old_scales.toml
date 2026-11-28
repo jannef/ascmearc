@@ -11,3 +11,14 @@ stranger = "bane"
 [faith.words]
 pray = "You hiss to the Old Scales."
 unheard = "You hiss, and nothing scaled stirs."
+
+# Cunning and traps; a dragon's death is apostasy in one blow.
+[faith.piety]
+deeds = { rigged = 3 }
+kills = { tags = { dragon = -250 } }
+
+[faith.piety.words]
+favoured = "The Old Scales are pleased with you."
+heard = "The Old Scales hear you."
+unheard = "The Old Scales do not hear you."
+shunned = "The Old Scales have turned from you."

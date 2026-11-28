@@ -46,11 +46,10 @@ read). A use left out of the list is never answered. A prayer effect:
 
 - **The face** (`Actor::prayer_face`) is the faith's: holy, dark, or none (no faith, or a faith
   with no face). The band no longer picks it: a Callous Mynster priest is the holy face's.
-- **The standing** (`World::standing`) is the one place prayer asks a god's opinion. Its body is a
-  placeholder until piety: `Unheard` while the player's band is one the face scorns
-  (`Band::scorned_by`: holy scorns Evil or worse, dark Good or better), else `Heard`; a faith with
-  no face, or content without alignment rules, scorns nobody. `Favoured` and `Shunned` are
-  reached by nothing yet. Piety replaces this body and nothing else.
+- **The standing** (`World::standing`) is the one place prayer asks a god's opinion: the band of
+  the player's piety with the faith (`docs/dev/piety.md`), `Heard` without `data/piety.toml` or
+  for a faith that notices nothing. The alignment band reaches it only through piety's dawn
+  scorn.
 - **The hearing** (`World::hearing`) is the standing's row of `[hearing]`: `strain: Some(percent)`
   heard at that percent of the strain, `None` not heard. The altars (S3, S4) will multiply their
   relation's percent in here.
@@ -181,8 +180,8 @@ answers nothing else; the priest's Orison at its own strain with the laity's use
 refusal; the faithless and the Frogs refused free, the Big Ones away from an altar; each use at
 its level; the priority order; a brewing disease alone; two answers at 40, all and every pool at
 60; the strain's decay however cut; the fizzle chance with mirrored draws; the lock and its end;
-the face from the faith (a Callous Mynster priest heard by the holy face); the placeholder
-standing (an Evil sister and a Good cultist unheard: a cast's time, no strain); the faiths' own
+the face from the faith (a Callous Mynster priest heard by the holy face); a god that does not
+hear the player (a lapsed sister and cultist unheard by piety: a cast's time, no strain); the faiths' own
 words; a silenced priest; save and replay. `world/faith/dark_face_tests.rs`: the plague passed to
 the nearest seen creature (brewing ones too), the holy face passing nothing on, the poison at its
 degrees and an immune skeleton taking none, a hex turned on its seen caster and not an unseen

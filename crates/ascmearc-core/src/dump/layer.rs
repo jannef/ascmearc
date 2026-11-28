@@ -48,7 +48,7 @@ pub enum Layer {
     Equipment,
     /// Not a map: the player's character (`Race Dwarf`, `Gender Female`, `Class Warrior`), if
     /// any, then their own scores, one stat a line (`Strength 12`, lowered while a status effect
-    /// or stat damage lowers it), then their alignment band (`Alignment Kind`, never the score) and their faith (`Faith the Mynster`), then their status effects by name (`Effects Bleeding,
+    /// or stat damage lowers it), then their alignment band (`Alignment Kind`, never the score) and their faith (`Faith the Mynster`) and where they stand with it (`Standing heard`), then their status effects by name (`Effects Bleeding,
     /// Diseased`), the creature their openings are in (`Mark the kobold`), and the diseases they know they have (`Diseases filth fever`) if any; never
     /// potentials, modifiers, how severe an effect is, or a disease's timers.
     Stats,

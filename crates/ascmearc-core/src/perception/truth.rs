@@ -1262,6 +1262,24 @@ impl<'a> PerceptionView<'a> {
         self.player.faith
     }
 
+    /// Where the player stands with their faith's god, which they feel: a word, never the score
+    /// (`docs/dev/piety.md`); `None` without a faith, without the piety rules, or for a faith
+    /// that notices nothing.
+    pub fn own_standing(&self) -> Option<crate::content::Standing> {
+        let faith = self.player.faith?;
+        self.content.piety()?.table(faith)?;
+        let piety = &self.progress.piety;
+        Some(crate::world::standing_of(self.content, piety, faith))
+    }
+
+    /// The line Pray's description ends with while the player's standing is not `heard` ("The
+    /// Light is far from you."), away from an altar; `None` otherwise.
+    pub fn pray_clause(&self) -> Option<crate::lang::Msg> {
+        let faith = self.player.faith.filter(|_| !self.at_altar())?;
+        let key = crate::world::pray_clause(self.content, &self.progress.piety, faith)?;
+        Some(crate::content::data_line::said(key))
+    }
+
     /// What the player carries against what they can: their burden, and the
     /// weights at which it changes, which follow from scores they know.
     pub fn own_load(&self) -> Load {

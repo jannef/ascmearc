@@ -4,7 +4,6 @@ expression: shown
 ---
  Welcome to Showcase. Press ? for controls.
 
-
 ┌─ Character ──────────────────────────────────────────────────────────────────────────────────────┐
 │                                                                                                  │
 │ Dorvak                                                                                           │
@@ -31,6 +30,7 @@ expression: shown
 │     Stamina       13/13                                                                          │
 │     Alignment     Neutral                                                                        │
 │     Faith         the Spark                                                                      │
+│     Standing      Heard                                                                          │
 │     Oath kills    0                                                                              │
 │     Resistant to  cold, acid                                                                     │
 │                                                                                                  │

@@ -321,6 +321,8 @@ impl World {
         for moved in self.settle(Check::Daily) {
             self.say(moved.news());
         }
+        // Every god's opinion wanes toward where it rests (`world/faith/piety.rs`).
+        self.piety_dawn();
     }
 
     /// The dev skip to `to` passes no moment ([`World::skip_time_dev`]): a daily check it jumps
